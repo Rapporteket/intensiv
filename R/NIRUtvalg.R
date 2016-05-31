@@ -8,15 +8,13 @@
 #' @export
 
 NIRUtvalg <- function(RegData, datoFra, datoTil, minald=0, maxald=130, erMann='', InnMaate='', 
-			ShType='alle', dodInt='', fargepalett='BlaaOff')
+			dodInt='', fargepalett='BlaaOff')   #shType='alle', 
 {
 
-indShType <- if (ShType %in% c('lokal','sentral','region')) {switch(ShType,
-										lokal = which(RegData$ShType == 1),
-										sentral = which(RegData$ShType == 2),
-										region = which(RegData$ShType == 3))
-								} else {indShType <- which(RegData$ShType %in% 1:3)}
-RegData <- RegData[indShType, ]
+# Definer intersect-operator
+ "%i%" <- intersect
+      
+#RegData <- RegData[indShType, ]
 	
 
 Ninn <- dim(RegData)[1]
@@ -27,7 +25,13 @@ indInnMaate <- if (InnMaate %in% c(0,6,8)) {which(RegData$InnMaate == InnMaate)
 				} else {indInnMaateUt <- 1:Ninn}
 indDod <- if (dodInt %in% 0:1) {which(as.numeric(RegData$DischargedIntensiveStatus)==dodInt)
 				} else {indDod <- 1:Ninn}
-indMed <- intersect(indAld, intersect(indDato, intersect(indKj, intersect(indInnMaate,indDod))))
+#indShType <- if (shType %in% c('lokal','sentral','region')) {switch(ShType,
+#                    lokal = which(RegData$ShType == 1),
+#                    sentral = which(RegData$ShType == 2),
+#                    region = which(RegData$ShType == 3))
+#            } else {indShType <- 1:Ninn}
+indMed <- indAld %i% indDato %i% indKj %i% indInnMaate %i% indDod       #%i% indShType
+
 RegData <- RegData[indMed,]
 
 

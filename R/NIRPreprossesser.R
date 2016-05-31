@@ -14,12 +14,13 @@ NIRPreprosess <- function(RegData=RegData, reshID=reshID)
   # Rapporteket får kun levert ferdigstilte registreringer fra MRS/NHN.
 
   #Kjønn
-  names(RegData)[which(names(RegData) == 'isMale')] <- 'erMann'
- #RegData$erMann[RegData$Kjonn == 'K'] <- 0
-  #RegData$erMann[RegData$Kjonn == 'M'] <- 1
+  RegData$erMann <- NA
+  RegData$erMann[RegData$PatientGender == 'Female'] <- 0
+  RegData$erMann[RegData$PatientGender == 'Male'] <- 1
   
   #Riktig navn på regions-variabel:
-	RegData$Region <- RegData$RHF
+  #Mangler regionsvariabel!!!
+#	RegData$Region <- RegData$RHF
 
 # Endre variabelnavn:
 	#For enkelhetsskyld kalles Saps2Score som er Estimert mortalitet for SMR
@@ -31,11 +32,12 @@ NIRPreprosess <- function(RegData=RegData, reshID=reshID)
 	names(RegData)[which(names(RegData) == 'TypeOfAdmission')] <- 'InnMaate'
 	names(RegData)[which(names(RegData) == 'Nems')] <- 'NEMS'
 	names(RegData)[which(names(RegData) == 'ReAdmitted')] <- 'Reinn'
+	names(RegData)[which(names(RegData) == 'AgeAdmitted')] <- 'alder'
 	
 # Riktig format
 	dodInt <- as.numeric(dodInt)
 	RegData$ShNavn <- as.character(RegData$ShNavn)
-	RegData$alder <- as.numeric(RegData$decimalAge)	#
+#	RegData$alder <- as.numeric(RegData$decimalAge)	#
 
 	#Riktig format på datovariable:
 	RegData <- RegData[which(RegData$DateAdmittedIntensive!=''),]	#Tar ut registreringer som ikke har innleggelsesdato
