@@ -2,7 +2,7 @@
 #'
 #' Denne funksjonen navner om variabler og beregner evt. nye.
 #'
-#' @inheritParams FigAndeler
+#' @inheritParams NIRFigAndeler
 #'
 #' @return Data En liste med det filtrerte datasettet og sykehusnavnet som tilsvarer reshID
 #'

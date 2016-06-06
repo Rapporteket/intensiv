@@ -6,12 +6,12 @@
 #' Argumentet \emph{valgtVar} har følgende valgmuligheter:
 #'    \itemize{
 #'     \item alder: Aldersfordeling, 10-årige grupper 
-#'     \item InnMaate: 
+#'     \item InnMaate: Hastegrad inn på intensiv (Elektivt, Akutt medisinsk, Akutt kirurgisk)
 #'     \item liggetid: Liggetid 
-#'     \item NEMS:  
-#'     \item Nas: 
-#'     \item respiratortid: 
-#'     \item SAPSII: 
+#'     \item NEMS: Skår for ressursbruk. (Nine Equivalents of Nursing Manpower Use Score)
+#'     \item Nas: Skår for sykepleieraktiviteter. (Nursing Activities Score)
+#'     \item respiratortid: Tid tilbrakt i respirator
+#'     \item SAPSII: Skår for alvorlighetsgrad av sykdom.  (Simplified Acute Physiology Score II)
 #'    }
 #' Argumentet \emph{enhetsUtvalg} har følgende valgmuligheter:
 #'    \itemize{
@@ -21,9 +21,9 @@
 #'     \item 3: Egen enhet mot egen sykehustype
 #'     \item 4: Egen sykehustype
 #'     \item 5: Egen sykehustype mot resten av landet
-#'     \item 6: Egen enhet mot egen region
-#'     \item 7: Egen region
-#'	   \item 8: Egen region mot resten
+#'     \item 6: Egen enhet mot egen region [NB: Mangler pt. variabel for region]
+#'     \item 7: Egen region [NB: Mangler pt. variabel for region]
+#'	   \item 8: Egen region mot resten [NB: Mangler pt. variabel for region]
 #'    	}							
 #'    				
 #' @param RegData En dataramme med alle nødvendige variabler fra registeret
@@ -55,14 +55,16 @@
 #'				0: i live, 
 #'				1: død,   
 #'				alle, standard (alle andre verdier)
-#'	@param ShType Må velge en av: region, sentral, lokal, alle 
+#' @param overfPas Overført under pågående intensivbehandling? 
+#'				1 = Pasienten er ikke overført
+#'				2 = Pasienten er overført
 #'				
 #' @return Søylediagram (fordeling) av valgt variabel. De enkelte verdiene kan også sendes med.
 #'
 #' @export
 #'
 
-FigAndeler  <- function(RegData, valgtVar, datoFra='2012-04-01', datoTil='3000-12-31', 
+NIRFigAndeler  <- function(RegData, valgtVar, datoFra='2012-04-01', datoTil='3000-12-31', 
 		minald=0, maxald=130, erMann='',InnMaate='', dodInt='',outfile='', 
 		preprosess=1, hentData=0, reshID, enhetsUtvalg=1)	
 {
@@ -72,9 +74,6 @@ if (hentData == 1) {
   RegData <- NIRRegDataSQL(datoFra, datoTil)
 }
 
-#Hvilken sykehustype
-#shType=as.character(RegData$ShType[match(reshID, RegData$ReshId)])
-      
 # Hvis RegData ikke har blitt preprosessert. (I samledokument gjøre dette i samledokumentet)
 if (preprosess){
        RegData <- NIRPreprosess(RegData=RegData, reshID=reshID)
@@ -87,8 +86,8 @@ indEgen1 <- match(reshID, RegData$ReshId)
 if (enhetsUtvalg %in% c(2,3,4,6,7)) {	
 		RegData <- switch(as.character(enhetsUtvalg),
 						'2' = RegData[which(RegData$ReshId == reshID),],	#kun egen enhet
-						'3' = subset(RegData,ShType==ShType[indEgen1]),
-						'4' = RegData[which(RegData$ShType == RegData$ShType[indEgen1]),],	#kun egen shgruppe
+						'3' = subset(RegData,grType==grType[indEgen1]),
+						'4' = RegData[which(RegData$grType == RegData$grType[indEgen1]),],	#kun egen shgruppe
 						'6' = RegData[which(RegData$Region == as.character(RegData$Region[indEgen1])),],	#sml region
 						'7' = RegData[which(RegData$Region == as.character(RegData$Region[indEgen1])),])	#kun egen region
 	}
@@ -181,7 +180,7 @@ if (valgtVar=='SAPSII') {
 
 
 NIRUtvalg <- NIRUtvalg(RegData=RegData, datoFra=datoFra, datoTil=datoTil, minald=minald, maxald=maxald, 
-                       erMann=erMann,InnMaate=InnMaate,dodInt=dodInt)
+                       overfPas=overfPas, erMann=erMann, InnMaate=InnMaate, dodInt=dodInt)
 RegData <- NIRUtvalg$RegData
 
 utvalgTxt <- NIRUtvalg$utvalgTxt
@@ -192,8 +191,8 @@ if (enhetsUtvalg %in% c(1,2,3,6)) {	#Involverer egen enhet
 		shtxt <- as.character(RegData$ShNavn[indEgen1]) } else {
 		shtxt <- switch(as.character(enhetsUtvalg), 	
 			'0' = 'Hele landet',
-			'4' = shTypetext[RegData$ShType[indEgen1]],
-			'5' = shTypetext[RegData$ShType[indEgen1]],
+			'4' = shTypetext[RegData$grType[indEgen1]],
+			'5' = shTypetext[RegData$grType[indEgen1]],
 			'7' = as.character(RegData$Region[indEgen1]),
 			'8' = as.character(RegData$Region[indEgen1]))
 			}
@@ -207,18 +206,18 @@ if (enhetsUtvalg %in% c(0,2,4,7)) {		#Ikke sammenlikning
 			if (enhetsUtvalg %in% c(1,3,6)) {	#Involverer egen enhet
 				indHoved <-which(as.numeric(RegData$ReshId)==reshID) } else {
 				indHoved <- switch(as.character(enhetsUtvalg),
-						'5' = which(RegData$ShType == RegData$ShType[indEgen1]),	#shgr
+						'5' = which(RegData$grType == RegData$grType[indEgen1]),	#shgr
 						'8' = which(RegData$Region == RegData$Region[indEgen1]))}	#region
 			smltxt <- switch(as.character(enhetsUtvalg),
 				'1' = 'landet forøvrig',
-				'3' = paste('andre ', shTypetext[RegData$ShType[indEgen1]], sep=''),	#RegData inneh. kun egen shgruppe
+				'3' = paste('andre ', shTypetext[RegData$grType[indEgen1]], sep=''),	#RegData inneh. kun egen shgruppe
 				'5' = 'andre typer sykehus',
 				'6' = paste(RegData$Region[indEgen1], ' forøvrig', sep=''),	#RegData inneh. kun egen region
 				'8' = 'andre regioner')
 			indRest <- switch(as.character(enhetsUtvalg),
 				'1' = which(as.numeric(RegData$ReshId) != reshID),
 				'3' = which(as.numeric(RegData$ReshId) != reshID),	#RegData inneh. kun egen shgruppe
-				'5' = which(RegData$ShType != RegData$ShType[indEgen1]),
+				'5' = which(RegData$grType != RegData$grType[indEgen1]),
 				'6' = which(as.numeric(RegData$ReshId)!=reshID),	#RegData inneh. kun egen region
 				'8' = which(RegData$Region != RegData$Region[indEgen1]))
 			}								
