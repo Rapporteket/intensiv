@@ -1,0 +1,47 @@
+%add long tables
+\usepackage{longtable}
+%\usepackage{afterpage} %\afterpage{\clearpage} unngå sideskift etter floatflsuh
+%\restylefloat{figure} %gjør det mulig å angi H som parameter for plassering av floats
+
+%bytte font og grå skrift
+\usepackage{xcolor}
+\renewcommand{\familydefault}{\sfdefault}
+\definecolor{SKDE}{rgb}{0,0.32,0.61}
+\definecolor{lysblaa}{rgb}{0.27,0.51,0.71}
+\definecolor{moerkblaa}{rgb}{0.0,0.0,0.47}
+\definecolor{lysgraa}{rgb}{0.8,0.8,0.8}
+\definecolor{middelsgraa}{rgb}{0.5,0.5,0.5}
+\definecolor{moerkgraa}{rgb}{0.25,0.25,0.25}
+\color{moerkgraa}
+\usepackage[colorlinks, linkcolor=lysblaa]{hyperref} %lyseblå linker fremfor rød
+
+%bytte overskrifter og luft etter de
+\usepackage[compact]{titlesec}
+\titleformat{\section} {\vspace*{10pt}\color{SKDE}\normalfont\Large\bfseries} {\thesection}{}{}
+\titleformat{\subsection} {\color{middelsgraa}\normalfont\large\bfseries} {\thesection}{}{}
+%\titlespacing{\subsection}{0pt}{*0}{*0}  HVORFOR I HELVETTE FUNKER IKKE DETTE?
+
+%marger og luft mellom avsnitt
+\usepackage[strict]{changepage}
+\usepackage[left=3cm,top=2.7cm,right=4cm, bottom=6cm]{geometry}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{7pt} %1ex plus 0.5 ex minus 0.2ex
+\setlength{\headsep}{2.5cm}
+\setlength{\footskip}{3.7cm}
+
+%endre format på figurtekst
+\usepackage[font=small,labelfont=bf]{caption}
+
+%topptekst og vertikal sidenummer
+\fancyhead{}\fancyfoot{}  % clear all fields
+\fancyheadoffset[LO, RE]{3cm}
+\fancyfootoffset[LO]{1.5cm}
+\fancyfootoffset[RE]{1.5cm}
+\fancyhead[LO]{\colorbox{SKDE}{\textcolor{white}{\hspace*{2cm}\scshape\small Norsk Intensivregister}}}
+\fancyhead[RE]{\hspace*{2cm}\colorbox{SKDE}{\textcolor{white}{\scshape\small Norsk Intensivregister \hspace*{3cm}}}}
+\fancyfoot[LO]{\colorbox{SKDE}{\textcolor{white}{\scshape\small\thepage}} \\ \vspace*{-0.1cm}\colorbox{SKDE}{\textcolor{SKDE}{\scshape\small\thepage}} \\ \vspace*{-0.1cm}\colorbox{SKDE}{\textcolor{SKDE}{\scshape\small\thepage}} } 
+\fancyfoot[RE]{\colorbox{SKDE}{\textcolor{white}{\scshape\small\thepage}} \\ \vspace*{-0.1cm}\colorbox{SKDE}{\textcolor{SKDE}{\scshape\small\thepage}} \\ \vspace*{-0.1cm}\colorbox{SKDE}{\textcolor{SKDE}{\scshape\small\thepage}} \\ \vspace*{-0.1cm}\colorbox{SKDE}{\textcolor{SKDE}{\scshape\small\thepage}}} 
+\renewcommand{\headrulewidth}{0pt} %\iffloatpage{0pt}{0.4pt}
+\renewcommand{\footrulewidth}{0pt}
+\setcounter{secnumdepth}{-1} 
+

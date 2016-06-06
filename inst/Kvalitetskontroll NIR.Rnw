@@ -1,0 +1,492 @@
+\documentclass [norsk,a4paper,twoside]{article}
+
+\usepackage[utf8x]{inputenc}
+\usepackage[norsk]{babel}
+\usepackage{Sweave}
+\usepackage{fancyhdr}
+\usepackage{rotating} %add rotating for plain tables
+\usepackage{pdflscape} %add rotating/landcape for pdf
+
+%add long tables
+\usepackage{longtable}
+%\usepackage{afterpage} %\afterpage{\clearpage} unngå sideskift etter floatflsuh
+%\restylefloat{figure} %gjør det mulig å angi H som parameter for plassering av floats
+
+%bytte font og grå skrift
+\usepackage{xcolor}
+\renewcommand{\familydefault}{\sfdefault}
+\definecolor{SKDE}{rgb}{0,0.32,0.61}
+\definecolor{lysblaa}{rgb}{0.27,0.51,0.71}
+\definecolor{moerkblaa}{rgb}{0.0,0.0,0.47}
+\definecolor{lysgraa}{rgb}{0.8,0.8,0.8}
+\definecolor{middelsgraa}{rgb}{0.5,0.5,0.5}
+\definecolor{moerkgraa}{rgb}{0.25,0.25,0.25}
+\color{moerkgraa}
+\usepackage[colorlinks, linkcolor=lysblaa]{hyperref} %lyseblå linker fremfor rød
+
+%bytte overskrifter og luft etter de
+\usepackage[compact]{titlesec}
+\titleformat{\section} {\vspace*{10pt}\color{SKDE}\normalfont\Large\bfseries} {\thesection}{}{}
+\titleformat{\subsection} {\color{middelsgraa}\normalfont\large\bfseries} {\thesection}{}{}
+%\titlespacing{\subsection}{0pt}{*0}{*0}  HVORFOR I HELVETTE FUNKER IKKE DETTE?
+
+%marger og luft mellom avsnitt
+\usepackage[strict]{changepage}
+\usepackage[left=3cm,top=2.7cm,right=4cm, bottom=6cm]{geometry}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{7pt} %1ex plus 0.5 ex minus 0.2ex
+\setlength{\headsep}{2.5cm}
+\setlength{\footskip}{3.7cm}
+
+%endre format på figurtekst
+\usepackage[font=small,labelfont=bf]{caption}
+
+%topptekst og vertikal sidenummer
+\fancyhead{}\fancyfoot{}  % clear all fields
+\fancyheadoffset[LO, RE]{3cm}
+\fancyfootoffset[LO]{1.5cm}
+\fancyfootoffset[RE]{1.5cm}
+\fancyhead[LO]{\colorbox{SKDE}{\textcolor{white}{\hspace*{2cm}\scshape\small Norsk Intensivregister}}}
+\fancyhead[RE]{\hspace*{2cm}\colorbox{SKDE}{\textcolor{white}{\scshape\small Norsk Intensivregister \hspace*{3cm}}}}
+\fancyfoot[LO]{\colorbox{SKDE}{\textcolor{white}{\scshape\small\thepage}} \\ \vspace*{-0.1cm}\colorbox{SKDE}{\textcolor{SKDE}{\scshape\small\thepage}} \\ \vspace*{-0.1cm}\colorbox{SKDE}{\textcolor{SKDE}{\scshape\small\thepage}} } 
+\fancyfoot[RE]{\colorbox{SKDE}{\textcolor{white}{\scshape\small\thepage}} \\ \vspace*{-0.1cm}\colorbox{SKDE}{\textcolor{SKDE}{\scshape\small\thepage}} \\ \vspace*{-0.1cm}\colorbox{SKDE}{\textcolor{SKDE}{\scshape\small\thepage}} \\ \vspace*{-0.1cm}\colorbox{SKDE}{\textcolor{SKDE}{\scshape\small\thepage}}} 
+\renewcommand{\headrulewidth}{0pt} %\iffloatpage{0pt}{0.4pt}
+\renewcommand{\footrulewidth}{0pt}
+\setcounter{secnumdepth}{-1} 
+
+
+\begin{document}
+
+<<hente.data, echo=FALSE, term=FALSE>>=
+library(RJDBC)
+library(RMySQL)
+library(xtable)
+#kontakt <- dbConnect(MySQL(), user="nir", password="nir", dbname="nir", host='172.19.15.124')  #'localhost'
+kontakt <- dbConnect(MySQL(), user="ro_IRRDS", password="fropFav2", dbname="IntensivRegisterReportDataStaging", host='172.19.13.111')
+spørring.tab <- 'SELECT * from resh' 
+spørring.nir <- 'SELECT FreshOrganizationUnitId AS avdid, 			
+					    DateAdmittedIntensive AS inndato,
+					    DateDischargedIntensive AS utdato,
+					    AgeAdmitted AS alder,
+					    DaysAdmittedIntensiv AS liggetid,
+					    Respirator AS respiratortid,
+					    Saps2Score,
+					    Saps2ScoreNumber AS SAPSII,
+					    TypeOfAdmission AS innmaate,
+					    ShType AS sykehustype,
+					    ShTypeTxt AS sykehustekst,
+					    ShusNr AS sykehusnr,
+					    ShNavn AS sykehusnavn,
+						ChronicDiseases AS sykdom,
+						Glasgow AS glasgow,
+						DeadPatientDuring24Hours AS dode,
+						DischargedHospitalStatus AS utstatus,
+						RapportgrunnlagID AS id
+				FROM dump as d, resh as r
+				WHERE (d.FreshOrganizationUnitId = r.AvdReshID)'
+tabell <- dbGetQuery(kontakt, spørring.tab)
+nir <- dbGetQuery(kontakt, spørring.nir)
+nir$aar <- as.numeric(substring(strptime(nir$inndato, format='%Y-%m-%d'),1,4))
+nir$navn <- ''
+for(id in 1:dim(nir)[1]){nir$navn[id] <- paste(tabell$Organisasjon[which(tabell$AvdReshID==nir$avdid[id])],tabell$Avdeling[which(tabell$AvdReshID==nir$avdid[id])], sep=' - ')}
+#dump av hele datasettet:
+spørring.nir.alt <- 'SELECT * from dump'
+nir.alt <- dbGetQuery(kontakt, spørring.nir.alt)
+nir.alt <- nir.alt[-which(nir.alt$FreshOrganizationUnitId==109046),]  #Tar ut HN-IKT
+nir.alt <- cbind(nir.alt, sykehusnr=0) #må ha sykehusnr på disse (kan sikkert gjøres raskere vha. spørring)
+for(i in 1:dim(nir.alt)[1]){nir.alt$sykehusnr[i] <- tabell$ShType[which(tabell$AvdReshID==nir.alt$FreshOrganizationUnitId[i])]}
+dbDisconnect(kontakt)
+rm(kontakt,spørring.tab,spørring.nir)
+
+#Send inn EgenReshID=0 hvis vi skal se på alle avdelinger.
+nir.alle.avd <- nir #alle avdelinger
+if(EgenReshID != 0) {
+  nir <- nir[which((nir$avdid)==EgenReshID), ]
+  avd.navn <- paste(tabell$Organisasjon[which(tabell$AvdReshID==EgenReshID)],
+                    tabell$Avdeling[which(tabell$AvdReshID==EgenReshID)], sep=' - ')
+  avd.navn.2 <- avd.navn
+} else {
+  avd.navn <- 'Alle avdelinger'
+  avd.navn.2 <- 'Avdelingene'
+}
+
+#Send inn aar=0 hvis vi skal se på hele perioden
+if(aar != 0) {
+  nir <- nir[which(as.numeric(substring(nir$inndato,1,4))==aar),]
+}
+tidsperiode <-  if (aar==0) {'hele registreringsperioden'} else 
+				if (aar!=0)	{paste(aar, '. I denne perioden har ', avd.navn,  ' registrert ',dim(nir)[1], ' inngrep', sep='')}
+@
+
+\setcounter{secnumdepth}{-1} 
+\fontsize{13pt}{2pt}\selectfont
+\pagestyle{empty}
+\includegraphics[height=2.5cm]{gfx/blank} \\
+\Huge
+\hspace*{-0.03cm}\textcolor{middelsgraa}{\bf{Norsk Intensivregister}}\ \\
+\includegraphics[width=3cm]{gfx/blank} \\
+\huge
+\vspace*{0.1cm}\hspace*{-3.8cm}\colorbox{SKDE}{\textcolor{white}{\hspace*{3.474cm} Kontroll av datakvalitet}} \\ 
+\includegraphics[width=3cm]{gfx/blank} \\
+\Large
+\hspace*{0.032cm}\textcolor{middelsgraa}{\bf{\Sexpr{avd.navn}}}\\ 
+\normalsize
+%\includegraphics[height=9cm]{gfx/blank2} \\ \hspace*{-0.2cm}
+\begin{center}\vspace*{13cm}
+\includegraphics[width=5cm]{gfx/Servicemiljo}
+\end{center}
+\clearpage
+\setcounter{page}{1}
+\pagenumbering{roman}
+\pagestyle{fancy}
+\tableofcontents
+\newpage
+\listoftables
+\newpage
+\pagenumbering{arabic}
+
+\fvset{listparameters={\setlength{\topsep}{0pt}}}
+\renewenvironment{Schunk}{\vspace{\topsep}}{\vspace{\topsep}}
+
+
+\section*{Informasjonsgrunnlag og ansvarsforhold}
+\addcontentsline{toc}{section}{Informasjonsgrunnlag og ansvarsforhold}
+
+Denne rapporten er fremstilt automatisk på grunnlag av en mal laget av
+Senter for Klinisk Dokumentasjon og Evaluering (SKDE) på oppdrag
+fra Norsk Intensivregister (NIR). Alle resultater er basert på tall fra registeret og er gyldige per 
+rapportdato. Tilsvarende rapport av annen dato kan derfor gi andre resulter ettersom datagrunnlaget er
+basert på hva som til enhver tid er registrert i databasen.
+
+Alle vurderinger og tolkninger av data, såvel som feil i resultater på
+bakgrunn av feil i datagrunnlaget er det styringsgruppa for
+registeret som er ansvarlige for, ikke SKDE.
+
+De data som rapporteres er på aggregert nivå og rapporten inneholder derfor ingen
+data om enkeltpersoner. I tilfeller der utvalget inneholder få registreringer og
+er kombinert med for eksempel demografisk informasjon, kan det ikke utelukkes
+at rapporterte data kan tilbakeføres til enkeltpersoner. Det er registeret sitt ansvar
+å vurdere hvorvidt rapporten skal vurderes som sensitiv eller ikke.
+
+Rapporten, som er laget ved hjelp av statistikkverktøyet R, dokumentverktøyet \LaTeX{} og 
+rapporteringsløsningen JasperReports, distribueres rutinemessig til epostadressene til brukere av registerets database, 
+men den kan også genereres av brukerne på \textit{helseregister.no}.
+
+
+\section*{Innledning}
+\addcontentsline{toc}{section}{Innledning}
+Dette er en automatisk generert kvalitetskontroll av utvalgte variabler innrapportert til 
+Norsk Intensivregister. Rapporten er ment å være til hjelp under 
+kvalitetssikring av en avdelings egne data. Rapporten viser registreringskompletthet av data og spredning i
+verdier for enkeltvariabler. Verdier som er ``unormalt'' høye eller lave bør kontrolleres.
+
+For kategoriske variabler vil ikke feil bli automatisk påpekt; rapporten vil kun avdekke eventuelle
+praksisforskjeller mellom egen avdeling og landet forøvrig i form av eventuelle forskjeller i kompletthet. 
+Variablene som er kvalitetskontrollert er i første rekke et utvalg av kontinuerlige variabler.
+
+
+\section*{Resultater}
+\addcontentsline{toc}{section}{Resultater}
+\subsection*{Oppsummeringstall for NIR}
+\addcontentsline{toc}{subsection}{Oppsummeringstall for NIR}
+ 
+<<TabAlleReg, results=tex, echo=FALSE>>=
+avd.navn <- paste(tabell$Organisasjon[which(tabell$AvdReshID==EgenReshID)],
+                  tabell$Avdeling[which(tabell$AvdReshID==EgenReshID)], sep=' - ')
+
+tabell.ant <- addmargins(as.table(ftable(nir.alle.avd[c('navn','aar')])))
+ant.avd <- dim(tabell.ant)[1]-1
+tabell.ant <- cbind(c(1:ant.avd, 'Alle avd.:'), tabell.ant)
+tabell.avd <- cbind(1:ant.avd, rownames(tabell.ant)[1:ant.avd])
+colnames(tabell.avd) <- c('Nummer', 'Avdelingsnavn')
+colnames(tabell.ant)[c(1,dim(tabell.ant)[2]) ]<- c('Nummer', 'Alle år')
+print(xtable(tabell.avd, align=c('l','c','l'), caption="Avdelinger som har registrert data", label="tab:AvdNavn"), include.rownames=FALSE)
+avd.nr <- which(row.names(tabell.ant)==avd.navn)
+print(xtable(tabell.ant, digits=0, align=c('l', 'c', rep('r', ncol(tabell.ant)-1)), caption=paste('Antall registreringer per år og avdeling. I denne tabellen er avdelingen \\mbox{nummer ',avd.nr,'.} Se \\mbox{Tabell \\ref{tab:AvdNavn}} for øvrige avdelingsnavn.',sep=''), label='tab:AntReg'), include.rownames=FALSE, hline.after=c(-1,0,nrow(tabell.avd)))
+@
+
+Den første registrering i datamaterialet som denne rapporten behandler er gjort i \Sexpr{max(1998,min(nir.alle.avd$aar))}. 
+\mbox{Tabell \ref{tab:AvdNavn}} viser hvilke avdelinger som har bidratt med data, mens Tabell \ref{tab:AntReg} viser antall 
+registreringer for disse avdelingene. Per dags dato er det \Sexpr{dim(tabell.ant)[1]-1} avdelinger 
+som registrerer data og det er totalt gjort \Sexpr{dim(nir.alle.avd)[1]} registreringer. \textit{\Sexpr{avd.navn.2}} startet 
+innrapportering til NIR i \Sexpr{min(nir$aar)} og har til nå gjort \Sexpr{dim(nir)[1]} registreringer. \clearpage
+
+\vspace*{0.5cm}
+\subsection*{Datautvalg}
+\addcontentsline{toc}{subsection}{Datautvalg}
+Denne kvalitetskontrollen kan genereres for ulike utvalg av registerets data. Denne rapporten viser data for \Sexpr{tidsperiode}.
+
+\vspace*{1cm}
+\subsection*{Ekstremobservasjoner}
+\addcontentsline{toc}{subsection}{Ekstremobservasjoner}
+Tabell \ref{tab:OppsumKontVar} viser, for utvalgte variabler, følgende nøkkelverdier:  
+antall registreringer, registreringsprosent, minimum, maksimum, median og antall avvikende observasjoner.
+\vspace*{0.5cm}
+
+
+<<kontinuerlige.variabler, results=tex, echo=FALSE>>=
+kont.var.navn <- sort(c('alder', 'liggetid', 'respiratortid', 'Saps2Score','SAPSII'))
+kont.var <- as.matrix(nir[,kont.var.navn])
+Ant.reg <- apply(!is.na(kont.var),2,sum)
+gjennomsnitt <- apply(kont.var,2,mean, na.rm=TRUE)
+standardavvik <- apply(kont.var,2,sd, na.rm=TRUE)
+ant.std <- 2		#Hvor mange SD som defineres som avvik
+grenser <- rbind(gjennomsnitt - ant.std*standardavvik, gjennomsnitt + ant.std*standardavvik)
+
+#foreløpig manuelle grenser, skriv om slik at aktuelle grenser kun kommer inn om grensene over overskrider disse
+grenser[,'alder'] <- c(0,100)
+grenser[,'liggetid'] <- c(0,200)
+grenser[,'respiratortid'] <- c(0,100)
+grenser[,'Saps2Score'] <- c(0,100)
+grenser[,'SAPSII'] <- c(0,163)
+
+avvik <- (t(kont.var) > grenser[2,]) | (t(kont.var) < grenser[1,])
+ant.avvik <- apply(avvik==1, 1, sum, na.rm=TRUE)
+avvik <- which(avvik , arr.ind=TRUE)
+
+		
+kont.var.oppsummert <- cbind(Ant.reg,
+                             Min=apply(kont.var, 2, min, na.rm=TRUE),
+		                     Maks=apply(kont.var, 2, max, na.rm=TRUE), 
+		                     Median=apply(kont.var,2,median, na.rm=TRUE),
+		                     Ant.avvik=ant.avvik)
+#kont.var.oppsummert[which(kont.var.oppsummert[,'ant.avvik']==0),'ant.avvik'] <- ''
+
+xtable(kont.var.oppsummert, digits=c(0,0,1,1,1,0), align=c('l','r','r','r','r','r'), 
+		caption='Totalt antall registreringer, minimum, maksimum, median og antall 
+		avvikende observasjoner av utvalgte variabler.',
+		label="tab:OppsumKontVar")
+@
+
+\vspace*{1.5cm}
+Tabell \ref{tab:UteliggKontVar} viser hvilke registreringer som har avvikende verdier. 
+Avvik er i utgangspunktet her definert som observasjoner som ligger mer enn to standardavvik fra 
+den aktuelle gjennomsnittsverdien, men for visse variabler har grensene for avvik gitt seg selv ut ifra 
+variablenes karakteristika. Merk dog at relativt store avvik \textit{kan} forekomme uten at det 
+nødvendigvis er feil i registreringene.\\ \vspace*{0.5cm}
+
+<<sjekk.kontinuerlig.variabler, results=tex, echo=FALSE,>>=
+kont.var.sjekk <- cbind(ID=nir$id[avvik[,2]], 
+                        Dato=substring(strptime(nir$inndato[avvik[,2]], format='%Y-%m-%d'),1,10), 
+						Variabel=rownames(avvik), Verdi=0)	#
+for(i in 1:dim(kont.var.sjekk)[1]){kont.var.sjekk[i,'Verdi'] <- nir[avvik[i,2],kont.var.sjekk[i,'Variabel']]}
+print(xtable(kont.var.sjekk[order(kont.var.sjekk[,'ID']),], 
+             align=c('r','r', 'r', 'r', 'r'),
+			 digits=1, 
+			 caption='Registreringer som bør sjekkes.', 
+			 label="tab:UteliggKontVar"), 
+	 include.rownames=FALSE,
+)
+@
+\clearpage
+
+
+\subsection*{Andelsvariabler}
+\addcontentsline{toc}{subsection}{Andelsvariabler}
+
+Tabell \ref{tab:Innleggelse}, \ref{tab:Sykdom}, \ref{tab:Dode} og \ref{tab:UtStatus} viser registreringsandeler for utvalgte variabler for \textit{\Sexpr{avd.navn}} sammenlignet 
+med tilsvarende andeler for de ulike sykehustypene i landet forøvrig. Et stort avvik her kan tyde på en under- eller 
+overrapportering eller praksisforskjeller. Eventuelle ulikheter kan også dels skyldes ulikheter i pasientmassene.
+Tabellene gir også informasjon om kompletthet i registreringene til avdelingen.\newline 
+
+<<andelsvaribler, results=tex, echo=FALSE>>=
+lokal <- nir.alle.avd[setdiff(which(nir.alle.avd$sykehustype==1),which(nir.alle.avd$FreshOrganizationUnitId==EgenReshID)),]
+regional <- nir.alle.avd[setdiff(which(nir.alle.avd$sykehustype==2),which(nir.alle.avd$FreshOrganizationUnitId==EgenReshID)),]
+sentral <- nir.alle.avd[setdiff(which(nir.alle.avd$sykehustype==3),which(nir.alle.avd$FreshOrganizationUnitId==EgenReshID)),]
+
+#TypeOfAdmission
+innmaate <- as.data.frame(cbind('Type innleggelse'=c('ikke registrert','planlagt operasjon','akutt nonoperativ','akutt operasjon'), Avdeling=0, Lokalsykehus=0, Regionalsykehus=0, Sentralsykehus=0))
+for(i in 2:5) {innmaate[,i] <- as.numeric(as.character(innmaate[,i]))}
+score <- c(0,0,6,8)
+for(i in 1:dim(innmaate)[1]) {
+  if(i==1) {
+    innmaate$Avdeling[i] <- round(length(which(is.na(nir$innmaate)))/length(nir$innmaate)*100,1)
+    innmaate$Lokalsykehus[i] <- round(length(which(is.na(lokal$innmaate)))/length(lokal$innmaate)*100,1)
+    innmaate$Regionalsykehus[i] <- round(length(which(is.na(regional$innmaate)))/length(regional$innmaate)*100,1)
+    innmaate$Sentralsykehus[i] <- round(length(which(is.na(sentral$innmaate)))/length(sentral$innmaate)*100,1)
+
+  } else {
+    innmaate$Avdeling[i] <- round(length(which(nir$innmaate==score[i]))/length(nir$innmaate)*100,1)
+    innmaate$Lokalsykehus[i] <- round(length(which(lokal$innmaate==score[i]))/length(lokal$innmaate)*100,1)
+	innmaate$Regionalsykehus[i] <- round(length(which(regional$innmaate==score[i]))/length(regional$innmaate)*100,1)
+	innmaate$Sentralsykehus[i] <- round(length(which(sentral$innmaate==score[i]))/length(sentral$innmaate)*100,1)
+  }
+}
+print(xtable(innmaate, 
+             align=rep('r', ncol(innmaate)+1),
+			 digits=1, 
+			 caption='Type innleggelse for Avdelingen og landet forøvrig oppgitt som prosentandeler.', 
+			 label="tab:Innleggelse"), 
+			 include.rownames=FALSE,
+			 table.placement = 'H')
+
+	 #ChronicDeseases
+sykdom <- as.data.frame(cbind('Kronisk sykdom'=c('ikke registrert','ingen','metastatisk cancer', 'hematologisk malignitet', 'AIDS'), Avdeling=0, Lokalsykehus=0, Regionalsykehus=0, Sentralsykehus=0))
+for(i in 2:5) {sykdom[,i] <- as.numeric(as.character(sykdom[,i]))}
+score <- c(0,0,9,10,17)
+for(i in 1:dim(sykdom)[1]) {
+  if(i==1) {
+    sykdom$Avdeling[i] <- round(length(which(is.na(nir$sykdom)))/length(nir$sykdom)*100,1)
+    sykdom$Lokalsykehus[i] <- round(length(which(is.na(lokal$sykdom)))/length(lokal$sykdom)*100,1)
+    sykdom$Regionalsykehus[i] <- round(length(which(is.na(regional$sykdom)))/length(regional$sykdom)*100,1)
+    sykdom$Sentralsykehus[i] <- round(length(which(is.na(sentral$sykdom)))/length(sentral$sykdom)*100,1)
+
+  } else {
+    sykdom$Avdeling[i] <- round(length(which(nir$sykdom==score[i]))/length(nir$sykdom)*100,1)
+    sykdom$Lokalsykehus[i] <- round(length(which(lokal$sykdom==score[i]))/length(lokal$sykdom)*100,1)
+	sykdom$Regionalsykehus[i] <- round(length(which(regional$sykdom==score[i]))/length(regional$sykdom)*100,1)
+	sykdom$Sentralsykehus[i] <- round(length(which(sentral$sykdom==score[i]))/length(sentral$sykdom)*100,1)
+  }
+}
+print(xtable(sykdom, 
+             align=rep('r', ncol(sykdom)+1),
+			 digits=1, 
+			 caption='Prosentandeler med kronisk sykdom for Avdelingen og landet forøvrig.', 
+			 label="tab:Sykdom"), 
+	 include.rownames=FALSE)
+	 
+#DeadPatientDuring24Hours
+dode <- as.data.frame(cbind('Død i løpet av 24 timer'=c('ikke registrert','ja','nei'), Avdeling=0, Lokalsykehus=0, Regionalsykehus=0, Sentralsykehus=0))
+for(i in 2:5) {dode[,i] <- as.numeric(as.character(dode[,i]))}
+score <- c(0,1,2)
+for(i in 1:dim(dode)[1]) {
+  if(i==1) {
+    dode$Avdeling[i] <- round(length(which(is.na(nir$dode)))/length(nir$dode)*100,1)
+    dode$Lokalsykehus[i] <- round(length(which(is.na(lokal$dode)))/length(lokal$dode)*100,1)
+    dode$Regionalsykehus[i] <- round(length(which(is.na(regional$dode)))/length(regional$dode)*100,1)
+    dode$Sentralsykehus[i] <- round(length(which(is.na(sentral$dode)))/length(sentral$dode)*100,1)
+
+  } else {
+    dode$Avdeling[i] <- round(length(which(nir$dode==score[i]))/length(nir$dode)*100,1)
+    dode$Lokalsykehus[i] <- round(length(which(lokal$dode==score[i]))/length(lokal$dode)*100,1)
+	dode$Regionalsykehus[i] <- round(length(which(regional$dode==score[i]))/length(regional$dode)*100,1)
+	dode$Sentralsykehus[i] <- round(length(which(sentral$dode==score[i]))/length(sentral$dode)*100,1)
+  }
+}
+print(xtable(dode, 
+             align=rep('r', ncol(dode)+1),
+			 digits=1, 
+			 caption='Prosentandeler pasienter som døde i løpet av de første 24 timene.', 
+			 label="tab:Dode"), 
+	 include.rownames=FALSE)
+
+	 
+#DischargedHospitalStatus
+utstatus <- as.data.frame(cbind('Ved utskrivelse fra sykehus'=c('ikke registrert','i livet','død intensiv','død post','reinnlagt intensiv'), Avdeling=0, Lokalsykehus=0, Regionalsykehus=0, Sentralsykehus=0))
+for(i in 2:5) {utstatus[,i] <- as.numeric(as.character(utstatus[,i]))}
+score <- c(0,0,1,2,3)
+for(i in 1:dim(utstatus)[1]) {
+  if(i==1) {
+    utstatus$Avdeling[i] <- round(length(which(is.na(nir$utstatus)))/length(nir$utstatus)*100,1)
+    utstatus$Lokalsykehus[i] <- round(length(which(is.na(lokal$utstatus)))/length(lokal$utstatus)*100,1)
+    utstatus$Regionalsykehus[i] <- round(length(which(is.na(regional$utstatus)))/length(regional$utstatus)*100,1)
+    utstatus$Sentralsykehus[i] <- round(length(which(is.na(sentral$utstatus)))/length(sentral$utstatus)*100,1)
+
+  } else {
+    utstatus$Avdeling[i] <- round(length(which(nir$utstatus==score[i]))/length(nir$utstatus)*100,1)
+    utstatus$Lokalsykehus[i] <- round(length(which(lokal$utstatus==score[i]))/length(lokal$utstatus)*100,1)
+	utstatus$Regionalsykehus[i] <- round(length(which(regional$utstatus==score[i]))/length(regional$utstatus)*100,1)
+	utstatus$Sentralsykehus[i] <- round(length(which(sentral$utstatus==score[i]))/length(sentral$utstatus)*100,1)
+  }
+}
+print(xtable(utstatus, 
+             align=rep('r', ncol(utstatus)+1),
+			 digits=1, 
+			 caption='Pasientenes status ved utskrivelse fra sykehus angitt som prosentandeler.', 
+			 label="tab:UtStatus"), 
+	 include.rownames=FALSE)
+
+@	
+
+\vspace*{1cm}
+\subsection*{Registreringskompletthet}
+\addcontentsline{toc}{subsection}{Registreringskompletthet}
+Det er vanskelig å gi en god kvalitetskontroll for kategoriske variabler, men vi kan betrakte variablenes 
+kompletthet. Her kan igjen avvik mellom egen avdeling og resten av landet si noe 
+om praksisforskjeller, men mindre om datakvalitet. Vær oppmerksom på at komplettheten kan, i alle fall
+til en viss grad, ha noe ulike tolkninger avhengig av variabeltypene.
+
+Tabell \ref{tab:Kompletthet} viser registreringskomplettheten for de angitte variablene ved \textit{\Sexpr{avd.navn}} 
+sammenlignet med landet forøvrig. For å få best mulig datakvalitet bør registreringsprosenten naturligvis være så 
+høy som mulig.\newline\hspace*{-5.5cm}
+
+<<kompletthet, results=tex, echo=FALSE>>=
+variabler <- c('TypeOfAdmission','TransferredStatus','PatientTransferredFromHospital','PatientTransferredToHospital','DischargedHospitalStatus','ChronicDiseases','Glasgow','Age','SystolicBloodPressure',
+               'HeartRate','Temperature','MvOrCpap','UrineOutput','SerumUreaOrBun','Leukocytes','Potassium','Sodium','Hco3','Bilirubin','CerebralCirculationAbolishedReasonForNo','OrganDonationCompletedReasonForNoStatus',
+               'FormType','DischargedIntensiveStatus','DateAdmittedIntensive','DateDischargedIntensive','BirthDate','DaysAdmittedIntensiv','AgeAdmitted','Respirator','Saps2ScoreNumber','Saps2Score','MoreThan24Hours',
+               'MechanicalRespirator','DeadPatientDuring24Hours','MovedPatientToAnotherIntensivDuring24Hours','ReAdmitted','Nems','Nas','BrainDamage','CerebralCirculationAbolished','OrganDonationCompletedStatus','Updated')
+
+Avdeling <- nir.alt[which(nir.alt$FreshOrganizationUnitId==EgenReshID),]
+lokal <- nir.alt[setdiff(which(nir.alt$sykehusnr==1),which(nir.alt$FreshOrganizationUnitId==EgenReshID)),]
+regional <- nir.alt[setdiff(which(nir.alt$sykehusnr==2),which(nir.alt$FreshOrganizationUnitId==EgenReshID)),]
+sentral <- nir.alt[setdiff(which(nir.alt$sykehusnr==3),which(nir.alt$FreshOrganizationUnitId==EgenReshID)),]
+
+kompletthet <- as.data.frame(cbind('Registreringskompletthet'=variabler, Avdeling=0, Lokalsykehus=0, Regionalsykehus=0, Sentralsykehus=0))
+for(i in 2:5) {kompletthet[,i] <- as.numeric(as.character(kompletthet[,i]))}
+for(i in 1:dim(kompletthet)[1]) {
+    kompletthet$Avdeling[i] <- 100-round(length(which(is.na(Avdeling[,variabler[i]])))/length(Avdeling[,variabler[i]])*100,1)
+    kompletthet$Lokalsykehus[i] <- 100-round(length(which(is.na(lokal[,variabler[i]])))/length(lokal[,variabler[i]])*100,1)
+    kompletthet$Regionalsykehus[i] <- 100-round(length(which(is.na(regional[,variabler[i]])))/length(regional[,variabler[i]])*100,1)
+    kompletthet$Sentralsykehus[i] <- 100-round(length(which(is.na(sentral[,variabler[i]])))/length(sentral[,variabler[i]])*100,1)
+}
+print(xtable(kompletthet, 
+             align=rep('r', ncol(kompletthet)+1),
+			 digits=1, 
+			 caption='Variablenes kompletthet, angitt i prosent, for Avdelingen og landet forøvrig.', 
+			 label="tab:Kompletthet"), 
+			 include.rownames=FALSE,
+			 size='small')
+
+@	
+\clearpage
+
+\section*{Avslutning}
+\addcontentsline{toc}{section}{Avslutning}
+Hensikten med denne rapporten er at den aktuelle avdeling skal kunne sjekke unormale registreringer 
+og rette opp eventuelle feil. Det er også meningen at rapporten skal kunne peke på områder og 
+spesifikke variabler hvor avdelingen eventuelt bør iverksette tiltak for å høyne registreringskomplettheten. 
+
+\end{document}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
