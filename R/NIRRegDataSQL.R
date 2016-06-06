@@ -10,7 +10,7 @@
 #'
 NIRRegDataSQL <- function(datoFra = '2011-01-01', datoTil = '2099-01-01') {
   
-  registryName <- "intensiv"
+  registryName <- "nir"
   dbType <- "mysql"
   
   query <- paste0('SELECT
