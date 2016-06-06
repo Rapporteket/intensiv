@@ -1,10 +1,10 @@
-﻿#' Henter data registrert for Hjerneslag
+#' Henter data registrert for Intensiv
 #'
-#' Henter data for Hjerneslagregisteret fra "staging"
+#' Henter data for Intensivregisteret fra "staging"
 #'
-#' @inheritParams FigAndeler
+#' @inheritParams NIRFigAndeler
 #'
-#' @return Henter dataramma RegData for Hjerneslag
+#' @return Henter dataramma RegData for Intensivregisteret
 #' @export
 #'
 #'

@@ -65,12 +65,12 @@ Argumentet \emph{valgtVar} har følgende valgmuligheter:
    \itemize{
     \item alder_u18: Pasienter under 18 år 
     \item alder_over80: Pasienter under 18 år 
-    \item DodeSykehus: Pasienter som dør under sykehusoppholdet (intensiv/post)
-    \item DodeIntensiv: Pasienter som dør på intensivavdelinga. 
-    \item InnMaate: Hastegrad inn på intensiv (Elektivt, Akutt medisinsk, Akutt kirurgisk)
+    \item dodeSykehus: Pasienter som dør under sykehusoppholdet (intensiv/post)
+    \item dodeIntensiv: Pasienter som dør på intensivavdelinga. 
+    \item innMaate: Hastegrad inn på intensiv (Elektivt, Akutt medisinsk, Akutt kirurgisk)
 	Dette valget viser en annen figurtype.
-    \item MechanicalRespirator: Pasienter som har fått respiratorstøtte
-    \item Reinn: Andel reinnlagte (kun hvor dette er registrert, dvs. fjerner ukjente)
+    \item respStotte: Pasienter som har fått respiratorstøtte
+    \item reinn: Andel reinnlagte (kun hvor dette er registrert, dvs. fjerner ukjente)
    }
 }
 
