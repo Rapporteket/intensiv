@@ -35,7 +35,6 @@ NIRPreprosess <- function(RegData=RegData, reshID=reshID)
 	names(RegData)[which(names(RegData) == 'AgeAdmitted')] <- 'alder'
 	
 # Riktig format
-	dodInt <- as.numeric(dodInt)
 	RegData$ShNavn <- as.character(RegData$ShNavn)
 #	RegData$alder <- as.numeric(RegData$decimalAge)	#
 

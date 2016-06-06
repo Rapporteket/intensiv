@@ -14,8 +14,8 @@ NIRUtvalg <- function(RegData, datoFra, datoTil, minald=0, maxald=130, erMann=''
 # Definer intersect-operator
  "%i%" <- intersect
       
-#RegData <- RegData[indgrType, ]
-	
+ dodInt <- as.numeric(dodInt)
+ 
 
 Ninn <- dim(RegData)[1]
 indAld <- which(RegData$alder >= minald & RegData$alder <= maxald)

@@ -177,7 +177,7 @@ reshID=112044
 enhetsUtvalg=3
 
 setwd("c:/ResultattjenesteGIT/Intensiv/")
-FigAndeler(RegData=RegData, valgtVar=valgtVar, minald=minald, maxald=maxald,  datoFra=datoFra, 
+NIRFigAndeler(RegData=RegData, valgtVar=valgtVar, minald=minald, maxald=maxald,  datoFra=datoFra, 
 	datoTil=datoTil, InnMaate=InnMaate, dodInt=dodInt,erMann=erMann, outfile=outfile, 
 	hentData=0, preprosess=1, reshID=reshID, enhetsUtvalg=enhetsUtvalg)
 
