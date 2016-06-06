@@ -14,7 +14,7 @@ NIRPreprosess <- function(RegData=RegData, reshID=reshID)
   # Rapporteket får kun levert ferdigstilte registreringer fra MRS/NHN.
 
   #Kjønn
-  RegData$erMann <- NA
+  RegData$erMann <- NULL
   RegData$erMann[RegData$PatientGender == 'Female'] <- 0
   RegData$erMann[RegData$PatientGender == 'Male'] <- 1
   
@@ -39,7 +39,7 @@ NIRPreprosess <- function(RegData=RegData, reshID=reshID)
 #	RegData$alder <- as.numeric(RegData$decimalAge)	#
 
 	#Riktig format på datovariable:
-	RegData <- RegData[which(RegData$DateAdmittedIntensive!=''),]	#Tar ut registreringer som ikke har innleggelsesdato
+#	RegData <- RegData[which(RegData$DateAdmittedIntensive!=''),]	#Tar ut registreringer som ikke har innleggelsesdato
 	RegData$InnDato <- as.POSIXlt(RegData$DateAdmittedIntensive, format="%Y-%m-%d") 
 	RegData$Innleggelsestidspunkt <- as.POSIXlt(RegData$DateAdmittedIntensive, format="%Y-%m-%d %H:%M:%S" )
 
