@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.2.0.final using JasperReports Library version 6.2.0  -->
-<!-- 2016-06-06T14:39:01 -->
+<!-- 2016-06-06T15:15:20 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="NIRFigAndeler" language="groovy" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" scriptletClass="no.skde.report.nir.NirCommonScriptletRPackage" isIgnorePagination="true" uuid="3f778bca-66ba-459b-b6ec-b197965038fd">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<property name="ireport.jasperserver.url" value="https://test.helseregister.no/rapporteket_test/"/>
-	<property name="ireport.jasperserver.report.resource" value="/organizations/Intensiv/Reports/NIRFigAndeler_files/MainJrxml"/>
+	<property name="ireport.jasperserver.report.resource" value="/organizations/Intensiv/Reports/NIRFigAndeler_files/Main_Jrxml"/>
 	<property name="ireport.jasperserver.reportUnit" value="/organizations/Intensiv/Reports/NIRFigAndeler"/>
 	<property name="ireport.jasperserver.user" value="superuser"/>
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
@@ -69,9 +69,9 @@
 		<band splitType="Stretch"/>
 	</pageHeader>
 	<columnHeader>
-		<band height="480" splitType="Stretch">
+		<band height="555" splitType="Stretch">
 			<image hAlign="Center" vAlign="Top">
-				<reportElement x="29" y="0" width="480" height="480" uuid="1f6420fe-897f-4745-a19d-bd06d5a53830"/>
+				<reportElement x="0" y="0" width="555" height="555" uuid="c3c7fbda-da15-48c6-b23a-612421678334"/>
 				<imageExpression><![CDATA["file:" + $P{REPORT_SCRIPTLET}.getFileName()]]></imageExpression>
 			</image>
 		</band>
@@ -83,10 +83,7 @@
 		<band splitType="Stretch"/>
 	</columnFooter>
 	<pageFooter>
-		<band splitType="Stretch">
-			<property name="local_mesure_unitheight" value="pixel"/>
-			<property name="com.jaspersoft.studio.unit.height" value="px"/>
-		</band>
+		<band splitType="Stretch"/>
 	</pageFooter>
 	<summary>
 		<band splitType="Stretch"/>
