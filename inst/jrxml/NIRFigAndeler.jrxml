@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.2.0.final using JasperReports Library version 6.2.0  -->
-<!-- 2016-06-07T08:07:17 -->
+<!-- 2016-06-07T09:51:49 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="NIRFigAndeler" language="groovy" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" scriptletClass="no.skde.report.nir.NirCommonScriptletRPackage" isIgnorePagination="true" uuid="3f778bca-66ba-459b-b6ec-b197965038fd">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
@@ -31,10 +31,10 @@
 	<parameter name="rFunctionCallString" class="java.lang.String" isForPrompting="false">
 		<defaultValueExpression><![CDATA[new String("NIRFigAndeler(RegData=0, valgtVar=valgtVar, minald=minald, maxald=maxald,  datoFra=datoFra, datoTil=datoTil, InnMaate=InnMaate, dodInt=dodInt,erMann=erMann, outfile=outfile, hentData=1, preprosess=1, reshID=reshID, enhetsUtvalg=enhetsUtvalg)")]]></defaultValueExpression>
 	</parameter>
-	<parameter name="varName" class="java.lang.String">
+	<parameter name="valgtVar" class="java.lang.String">
 		<defaultValueExpression><![CDATA[new String("alder")]]></defaultValueExpression>
 	</parameter>
-	<parameter name="startDate" class="java.util.Date">
+	<parameter name="beginDate" class="java.util.Date">
 		<defaultValueExpression><![CDATA[new SimpleDateFormat("yyyy-MM-dd").parse("2011-01-01")]]></defaultValueExpression>
 	</parameter>
 	<parameter name="endDate" class="java.util.Date">

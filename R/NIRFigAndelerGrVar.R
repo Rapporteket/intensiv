@@ -30,7 +30,7 @@
 #'
 #' @export
 NIRFigAndelerGrVar <- function(RegData, valgtVar, minald=0, maxald=130, datoFra='1950-01-01', datoTil='3000-01-01', 
-	grType, InnMaate=99, dodInt='', erMann='', hentData=0, preprosess=1, outfile) 
+	grType=99, InnMaate=99, dodInt='', erMann='', hentData=0, preprosess=1, outfile) 
 {
 
 # ?Legge til: respiratortid, Nas, NEMS, SAPSII, liggetid over gitte grenser
