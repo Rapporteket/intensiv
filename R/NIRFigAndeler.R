@@ -86,8 +86,8 @@ indEgen1 <- match(reshID, RegData$ReshId)
 if (enhetsUtvalg %in% c(2,3,4,6,7)) {	
 		RegData <- switch(as.character(enhetsUtvalg),
 						'2' = RegData[which(RegData$ReshId == reshID),],	#kun egen enhet
-						'3' = subset(RegData,grType==grType[indEgen1]),
-						'4' = RegData[which(RegData$grType == RegData$grType[indEgen1]),],	#kun egen shgruppe
+						'3' = subset(RegData,ShType==ShType[indEgen1]),
+						'4' = RegData[which(RegData$ShType == RegData$ShType[indEgen1]),],	#kun egen shgruppe
 						'6' = RegData[which(RegData$Region == as.character(RegData$Region[indEgen1])),],	#sml region
 						'7' = RegData[which(RegData$Region == as.character(RegData$Region[indEgen1])),])	#kun egen region
 	}
@@ -191,8 +191,8 @@ if (enhetsUtvalg %in% c(1,2,3,6)) {	#Involverer egen enhet
 		shtxt <- as.character(RegData$ShNavn[indEgen1]) } else {
 		shtxt <- switch(as.character(enhetsUtvalg), 	
 			'0' = 'Hele landet',
-			'4' = shTypetext[RegData$grType[indEgen1]],
-			'5' = shTypetext[RegData$grType[indEgen1]],
+			'4' = shTypetext[RegData$ShType[indEgen1]],
+			'5' = shTypetext[RegData$ShType[indEgen1]],
 			'7' = as.character(RegData$Region[indEgen1]),
 			'8' = as.character(RegData$Region[indEgen1]))
 			}
@@ -206,18 +206,18 @@ if (enhetsUtvalg %in% c(0,2,4,7)) {		#Ikke sammenlikning
 			if (enhetsUtvalg %in% c(1,3,6)) {	#Involverer egen enhet
 				indHoved <-which(as.numeric(RegData$ReshId)==reshID) } else {
 				indHoved <- switch(as.character(enhetsUtvalg),
-						'5' = which(RegData$grType == RegData$grType[indEgen1]),	#shgr
+						'5' = which(RegData$ShType == RegData$ShType[indEgen1]),	#shgr
 						'8' = which(RegData$Region == RegData$Region[indEgen1]))}	#region
 			smltxt <- switch(as.character(enhetsUtvalg),
 				'1' = 'landet forøvrig',
-				'3' = paste('andre ', shTypetext[RegData$grType[indEgen1]], sep=''),	#RegData inneh. kun egen shgruppe
+				'3' = paste('andre ', shTypetext[RegData$ShType[indEgen1]], sep=''),	#RegData inneh. kun egen shgruppe
 				'5' = 'andre typer sykehus',
 				'6' = paste(RegData$Region[indEgen1], ' forøvrig', sep=''),	#RegData inneh. kun egen region
 				'8' = 'andre regioner')
 			indRest <- switch(as.character(enhetsUtvalg),
 				'1' = which(as.numeric(RegData$ReshId) != reshID),
 				'3' = which(as.numeric(RegData$ReshId) != reshID),	#RegData inneh. kun egen shgruppe
-				'5' = which(RegData$grType != RegData$grType[indEgen1]),
+				'5' = which(RegData$ShType != RegData$ShType[indEgen1]),
 				'6' = which(as.numeric(RegData$ReshId)!=reshID),	#RegData inneh. kun egen region
 				'8' = which(RegData$Region != RegData$Region[indEgen1]))
 			}								
