@@ -29,8 +29,8 @@
 #' @return Søylediagram med andeler av valgt variabel for hvert sykehus
 #'
 #' @export
-NIRFigAndelerGrVar <- function(RegData, valgtVar, minald=0, maxald=130, datoFra='1950-01-01', datoTil='3000-01-01', 
-	grType=99, InnMaate=99, dodInt='', erMann='', hentData=0, preprosess=1, outfile) 
+NIRFigAndelerGrVar <- function(RegData, valgtVar, minald=0, maxald=130, datoFra='2011-01-01', datoTil='3000-01-01', 
+	grType=99, InnMaate=99, dodInt='', erMann='', hentData=0, preprosess=1, outfile='') 
 {
 
 # ?Legge til: respiratortid, Nas, NEMS, SAPSII, liggetid over gitte grenser

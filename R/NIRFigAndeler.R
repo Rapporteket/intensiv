@@ -64,7 +64,7 @@
 #' @export
 #'
 
-NIRFigAndeler  <- function(RegData, valgtVar, datoFra='2012-04-01', datoTil='3000-12-31', 
+NIRFigAndeler  <- function(RegData, valgtVar, datoFra='2011-01-01', datoTil='3000-12-31', 
 		minald=0, maxald=130, erMann='',InnMaate='', dodInt='',outfile='', 
 		preprosess=1, hentData=0, reshID, enhetsUtvalg=1)	
 {
