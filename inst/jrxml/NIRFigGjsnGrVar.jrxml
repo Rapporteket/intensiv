@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.2.0.final using JasperReports Library version 6.2.0  -->
-<!-- 2016-06-07T10:36:01 -->
+<!-- 2016-06-09T08:42:38 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="NIRFigGjsnGrVar" language="groovy" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" scriptletClass="no.skde.report.nir.NirCommonScriptletRPackage" uuid="45fe8ce0-ff63-4edb-9fe2-e19b7f09ad23">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
@@ -9,6 +9,7 @@
 	<property name="ireport.jasperserver.report.resource" value="/organizations/Intensiv/Reports/NIRFigGjsnGrVar_files/Main_Jrxml"/>
 	<property name="ireport.jasperserver.reportUnit" value="/organizations/Intensiv/Reports/NIRFigGjsnGrVar"/>
 	<property name="ireport.jasperserver.user" value="superuser"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<parameter name="LoggedInUser" class="com.jaspersoft.jasperserver.api.metadata.user.domain.User" isForPrompting="false">
 		<parameterDescription><![CDATA[At server side, gets the User object from the JRS logged in user]]></parameterDescription>
 	</parameter>
@@ -33,21 +34,21 @@
 	<parameter name="valgtVar" class="java.lang.String">
 		<defaultValueExpression><![CDATA[new String("alder")]]></defaultValueExpression>
 	</parameter>
-	<parameter name="statMeasureMethod" class="java.lang.String"/>
-	<parameter name="minAge" class="java.lang.Integer">
-		<defaultValueExpression><![CDATA[new java.lang.Integer(0)]]></defaultValueExpression>
-	</parameter>
-	<parameter name="maxAge" class="java.lang.Integer">
-		<defaultValueExpression><![CDATA[new java.lang.Integer(130)]]></defaultValueExpression>
-	</parameter>
-	<parameter name="inFromSituation" class="java.lang.Integer"/>
-	<parameter name="grType" class="java.lang.Integer"/>
 	<parameter name="beginDate" class="java.util.Date">
 		<defaultValueExpression><![CDATA[new SimpleDateFormat("yyyy-MM-dd").parse("2011-01-01")]]></defaultValueExpression>
 	</parameter>
 	<parameter name="endDate" class="java.util.Date">
 		<defaultValueExpression><![CDATA[new Date()]]></defaultValueExpression>
 	</parameter>
+	<parameter name="minAge" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[new java.lang.Integer(0)]]></defaultValueExpression>
+	</parameter>
+	<parameter name="maxAge" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[new java.lang.Integer(130)]]></defaultValueExpression>
+	</parameter>
+	<parameter name="statMeasureMethod" class="java.lang.String"/>
+	<parameter name="inFromSituation" class="java.lang.Integer"/>
+	<parameter name="grType" class="java.lang.Integer"/>
 	<parameter name="vitalStatus" class="java.lang.Integer"/>
 	<parameter name="erMann" class="java.lang.Integer"/>
 	<queryString language="SQL">

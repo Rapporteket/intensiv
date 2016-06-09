@@ -42,7 +42,9 @@ NIRPreprosess <- function(RegData=RegData, reshID=reshID)
 #	RegData <- RegData[which(RegData$DateAdmittedIntensive!=''),]	#Tar ut registreringer som ikke har innleggelsesdato
 	RegData$InnDato <- as.POSIXlt(RegData$DateAdmittedIntensive, format="%Y-%m-%d") 
 	RegData$Innleggelsestidspunkt <- as.POSIXlt(RegData$DateAdmittedIntensive, format="%Y-%m-%d %H:%M:%S" )
-
+	#RegData$InnDato <- strptime(RegData$DateAdmittedIntensive, format="%Y-%m-%d") # %H:%M:%S" )  #"%d.%m.%Y"	"%Y-%m-%d"
+	#RegData$Aar <- 1900 + strptime(RegData$DateAdmittedIntensive, format="%Y")$year
+	
   return(invisible(RegData))
 }
 

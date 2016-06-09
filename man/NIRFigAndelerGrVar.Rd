@@ -5,8 +5,9 @@
 \title{Søylediagram med andeler for hver grupperingsenhet (sykehus, RHF, ...)}
 \usage{
 NIRFigAndelerGrVar(RegData, valgtVar, minald = 0, maxald = 130,
-  datoFra = "1950-01-01", datoTil = "3000-01-01", grType, InnMaate = 99,
-  dodInt = "", erMann = "", hentData = 0, preprosess = 1, outfile)
+  datoFra = "2011-01-01", datoTil = "3000-01-01", grType = 99,
+  InnMaate = 99, dodInt = "", erMann = "", hentData = 0,
+  preprosess = 1, outfile = "")
 }
 \arguments{
 \item{RegData}{En dataramme med alle nødvendige variabler fra registeret}
@@ -64,7 +65,7 @@ For valgtVar lik reinn eller DodeInt viser figuren andel av hhv. reinnleggelser 
 Argumentet \emph{valgtVar} har følgende valgmuligheter:
    \itemize{
     \item alder_u18: Pasienter under 18 år 
-    \item alder_over80: Pasienter under 18 år 
+    \item alder_over80: Pasienter over 80 år (>80)
     \item dodeSykehus: Pasienter som dør under sykehusoppholdet (intensiv/post)
     \item dodeIntensiv: Pasienter som dør på intensivavdelinga. 
     \item innMaate: Hastegrad inn på intensiv (Elektivt, Akutt medisinsk, Akutt kirurgisk)

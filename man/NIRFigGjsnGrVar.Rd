@@ -5,7 +5,7 @@
 \title{Søylediagram med gjennomsnitt/median for hver grupperingsenhet (sykehus, RHF, ...)}
 \usage{
 NIRFigGjsnGrVar(RegData, valgtVar, valgtMaal = "Gjsn", minald = 0,
-  maxald = 130, datoFra = "2000-01-01", datoTil = "3000-01-01",
+  maxald = 130, datoFra = "2011-01-01", datoTil = "3000-01-01",
   grType = 99, InnMaate = 99, dodInt = "", erMann = "",
   preprosess = 1, hentData = 0, outfile)
 }
@@ -18,8 +18,8 @@ NIRFigGjsnGrVar(RegData, valgtVar, valgtMaal = "Gjsn", minald = 0,
 
 Argumentet \emph{valgtVar} har følgende valgmuligheter:
    \itemize{
-    \item alder: Aldersfordeling, 10-årige grupper 
-    \item SMR: Standardisert mortalitetsratio
+    \item alder: Pasientens alders 
+    \item SMR: Standardisert mortalitetsratio (Gir annen figurtype)
     \item liggetid: Liggetid 
     \item NEMS: Skår for ressursbruk. (Nine Equivalents of Nursing Manpower Use Score)
     \item Nas: Skår for sykepleieraktiviteter. (Nursing Activities Score)

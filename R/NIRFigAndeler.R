@@ -21,7 +21,7 @@
 #'     \item 3: Egen enhet mot egen sykehustype
 #'     \item 4: Egen sykehustype
 #'     \item 5: Egen sykehustype mot resten av landet
-#'     \item 6: Egen enhet mot egen region [NB: Mangler pt. variabel for region]
+#'     \item 6: Egen enhet mot egen region [NB: Intensivregiisteret mangler pt. variabel for region]
 #'     \item 7: Egen region [NB: Mangler pt. variabel for region]
 #'	   \item 8: Egen region mot resten [NB: Mangler pt. variabel for region]
 #'    	}							
@@ -182,7 +182,6 @@ if (valgtVar=='SAPSII') {
 NIRUtvalg <- NIRUtvalg(RegData=RegData, datoFra=datoFra, datoTil=datoTil, minald=minald, maxald=maxald, 
                        overfPas=overfPas, erMann=erMann, InnMaate=InnMaate, dodInt=dodInt)
 RegData <- NIRUtvalg$RegData
-
 utvalgTxt <- NIRUtvalg$utvalgTxt
 
 shTypetext <- c('lokale/sentrale', 'lokale/sentrale', 'regionale')				

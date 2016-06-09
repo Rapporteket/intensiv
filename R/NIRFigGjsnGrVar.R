@@ -45,7 +45,7 @@ if (preprosess){
      }
 
 grVar <- 'ShNavn'
-RegData <- RegData[which(RegData[ ,grVar] != ''),] #Tar ut registreringer uten grupperingsnavn
+#RegData <- RegData[which(RegData[ ,grVar] != ''),] #Tar ut registreringer uten grupperingsnavn
 
 
 Ngrense <- 10		
