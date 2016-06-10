@@ -13,7 +13,6 @@
 #'     \item respiratortidDod: Respiratortid brukt på de som dør på intensiv
 #'     \item respStotte: Pasienter som har fått respiratorstøtte
 #'     \item reinn: Andel reinnlagte (kun hvor dette er registrert, dvs. fjerner ukjente)
-#'		\item SMR: Standardisert mortalitetsratio
 #'    }
 #'
 #' @inheritParams NIRFigAndeler 
@@ -101,8 +100,8 @@ if (valgtVar=='liggetidDod') {
   RegData <- RegData[which(RegData$DischargedIntensiveStatus %in% 0:1), ]  	#Tar bort ukjente  
   RegData$Variabel<-RegData$liggetid
   RegData$Variabel2<- as.numeric(RegData$DischargedIntensiveStatus)*RegData$liggetid
-  VarTxt <- 'pasienter'
-  Tittel <- 'Andel av total liggetid brukt på de som dør på intensiv'
+  VarTxt <- 'liggedøgn for døde'
+  Tittel <- 'Andel av total liggetid brukt på dem som dør på intensiv'
 }
 
 if (valgtVar=='respiratortidDod') {
@@ -110,8 +109,8 @@ if (valgtVar=='respiratortidDod') {
   RegData <- RegData[which(RegData$DischargedIntensiveStatus %in% 0:1), ]    #Tar bort ukjente  
   RegData$Variabel<-RegData$respiratortid
   RegData$Variabel2<-as.numeric(RegData$DischargedIntensiveStatus)*RegData$respiratortid
-  VarTxt <- 'pasienter'
-  Tittel <- 'Andel av total respiratortid brukt på de som dør på intensiv'
+  VarTxt <- 'liggedøgn for døde'
+  Tittel <- 'Andel av total respiratortid brukt på dem som dør på intensiv'
 }
 
 
@@ -123,17 +122,17 @@ if (valgtVar=='respiratortidDod') {
   }
   
   
-if (valgtVar == 'SMR') {
-	minald <- max(minald,18)	#Tatt ut ifm. at utvalg gjøres.
-  #Tar ut reinnlagte og overflyttede, samt de med SAPSII=0 (ikke scorede)
-  RegData <- RegData[RegData$DischargedHospitalStatus!= 3, ]
-  RegData <- RegData[RegData$Overf==1, ] 
-  RegData <- RegData[as.numeric(RegData$SAPSII) > 0, ]
+#if (valgtVar == 'SMR') {
+#	minald <- max(minald,18)	#Tatt ut ifm. at utvalg gjøres.
+#  #Tar ut reinnlagte og overflyttede, samt de med SAPSII=0 (ikke scorede)
+ # RegData <- RegData[RegData$DischargedHospitalStatus!= 3, ]
+ # RegData <- RegData[RegData$Overf==1, ] 
+ # RegData <- RegData[as.numeric(RegData$SAPSII) > 0, ]
 #NB: Ny variabel. DischargedHospitalStatus ikke lenger i bruk...............
- RegData$Variabel[which(RegData$DischargedHospitalStatus!=0)] <- 1 
-  VarTxt <- 'pasienter over 18 år som døde'
-  Tittel <- 'SMR (uten overflyttede og reinnlagte pasienter)'  
-}
+# RegData$Variabel[which(RegData$DischargedHospitalStatus!=0)] <- 1 
+#  VarTxt <- 'pasienter over 18 år som døde'
+#  Tittel <- 'SMR (uten overflyttede og reinnlagte pasienter)'  
+#}
   
   
   #-------------------------Forberedelse...-----------------------------------------
@@ -209,13 +208,13 @@ if (valgtVar %in% c('liggetidDod','respiratortidDod')) {
 	Andeler <- rbind(AndelRest, AndelHoved) 
 }  
     
-    if (valgtVar == 'SMR') {
-	  meanSAPS2scoreRest<-tapply(RegData$SMR[indRest], RegData$Aar[indRest], mean) #I NIRUtvalg ser man att Saps2Score kalles for SMR
-	  meanSAPS2scoreHoved<-tapply(RegData$SMR[indHoved], RegData$Aar[indHoved], mean)
-	  AndelRest<-AndelRest/meanSAPS2scoreRest #=andel døde på enheten/gjennomsnittlig Saps2Score på enheten
-	  AndelHoved<-AndelHoved/meanSAPS2scoreHoved
-	  Andeler <- rbind(AndelRest, AndelHoved)
-	}
+#    if (valgtVar == 'SMR') {
+#	  meanSAPS2scoreRest<-tapply(RegData$SMR[indRest], RegData$Aar[indRest], mean) #I NIRUtvalg ser man att Saps2Score kalles for SMR
+#	  meanSAPS2scoreHoved<-tapply(RegData$SMR[indHoved], RegData$Aar[indHoved], mean)
+#	  AndelRest<-AndelRest/meanSAPS2scoreRest #=andel døde på enheten/gjennomsnittlig Saps2Score på enheten
+#	  AndelHoved<-AndelHoved/meanSAPS2scoreHoved
+#	  Andeler <- rbind(AndelRest, AndelHoved)
+#	}
 
 
 	#-----------Figur---------------------------------------
@@ -241,7 +240,6 @@ if (valgtVar %in% c('liggetidDod','respiratortidDod')) {
     par('fig' = c(0,1,0,1-hmarg)) 
     cexleg <- 1	#Størrelse på legendtekst
     ylabtext="Andel (%)"
-	if (valgtVar == 'SMR') {ylabtext="SMR" }
 
     
     ymax <- min(119, 1.25*max(Andeler,na.rm=T))

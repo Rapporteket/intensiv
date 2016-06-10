@@ -14,7 +14,6 @@ NIRRegDataSQL <- function(datoFra = '2011-01-01', datoTil = '2099-01-01') {
   dbType <- "mysql"
   
   query <- paste0('SELECT
-	AgeAdmitted,
 	Bilirubin,
 	BrainDamage,
 	CerebralCirculationAbolished, 
@@ -24,7 +23,7 @@ NIRRegDataSQL <- function(datoFra = '2011-01-01', datoTil = '2099-01-01') {
 	DateDischargedIntensive,
 	DaysAdmittedIntensiv,
 	DeadPatientDuring24Hours,
-	AgeAdmitted AS decimalAge,
+	PatientAge AS decimalAge,
 	DischargedHospitalStatus,
 	DischargedIntensiveStatus,
 	Glasgow,
@@ -39,6 +38,7 @@ NIRRegDataSQL <- function(datoFra = '2011-01-01', datoTil = '2099-01-01') {
 	Nems,
 	OrganDonationCompletedReasonForNoStatus,
 	OrganDonationCompletedStatus,
+	PatientAge,
 	PatientGender,
 	PatientTransferredFromHospital,
 	PatientTransferredToHospital,

@@ -133,74 +133,10 @@ og kan genereres av intensivregisterets databasebrukerne på \textit{helseregist
 
 
 <<LasteData, echo=FALSE, eval=T>>=
-library(DBI)
-library(RMySQL)
-library(yaml)
-conf <- yaml.load_file('../dbConfig.yml')
-
-
-con <- dbConnect( dbDriver("MySQL") ,
- dbname=conf$nir$name ,
- host=conf$nir$host ,
- user=conf$nir$user ,
- password=conf$nir$pass )
-
-query <- "SET NAMES utf8;"
-tmp <- dbGetQuery(con, query)
-#query <- "SET character_set_results = utf8;"	#latin1;"	#		
-#tmp <- dbGetQuery(con, query)
-
-
-query <- 'select 
-	AVD_RESH as AvdRESH, 
-	DateAdmittedIntensive,
-	DaysAdmittedIntensiv,
-	AgeAdmitted as decimalAge,
-	DischargedIntensiveStatus,
-	DischargedHospitalStatus, 	
-	isMale,
-	MechanicalRespirator,
-	Nas, 
-	Nems,
-	PasientGUID as PID,
-	ReAdmitted,
-	Respirator,
-	Saps2Score,
-	Saps2ScoreNumber ,
-	ShType, ShTypeTxt, ShNavn,
-	TransferredStatus,
-	TypeOfAdmission
-
-FROM Main'
-
-#Avdeling, Bilirubin, BirthDate
-#BrainDamage, CerebralCirculationAbolished, CerebralCirculationAbolishedReasonForNo, ChronicDiseases
-#DataSettID, DateDischargedIntensive, DeadPatientDuring24Hours, DSPasientnummer
-#Glasgow, Hco3, HeartRate, KontaktFraDato, KontaktID
-#Leukocytes, MechanicalRespirator, MoreThan24Hours, MovedPatientToAnotherIntensivDuring24Hours
-#MvOrCpap, 
-#OrganDonationCompletedReasonForNoStatus, OrganDonationCompletedStatus
-#Organisasjon, OrgReshID, PatientTransferredFromHospital, PatientTransferredToHospital
-#Potassium, RapportgrunnlagID, ReAdmitted
-#SerumUreaOrBun, Sodium, SystolicBloodPressure, Temperature, UrineOutput
-	
-
-NIRdata <- dbGetQuery(con, query)
-dbstop <- dbDisconnect(con)
-
-source("../NIRFigAndeler.R", encoding="UTF-8")
-source("../NIRFigMeanMed.R", encoding="UTF-8")
-source("../NIRFigFordeling.R", encoding="UTF-8")
-source("../NIRFigAndelerGrVar.R", encoding="UTF-8")	#source("FigInnMaate.R", encoding="UTF-8")
-source("../NIRLibUtvalg.R", encoding="UTF-8")
-libkat <- '../'
-
 @
 
 <<FellesParam, echo=FALSE>>=
 library(xtable)
-egenavd <- 1	#1-Eget sykehus (standard), 0-Hele landet
-sml <- 1		#Sml med resten av landet eller ikke. (0-ikke sml, 1-sml). Ikke aktiv når hele landet valgt.
 datoFra <- '2011-01-01'	
 datoTil <- '3013-12-31'	#Parameteren brukes også i figurene.
 outfile <- ''
@@ -211,31 +147,11 @@ figKrymp1 <- 0.7	#Skaleringsparameter for enkeltfigurer
 
 <<'Variabeldef og datautvalg',echo=FALSE, eval=T>>=
 
-#Fra NIRLibUtvalg... - Heller kjøre funksjonen? ------------------
-#	NIRdata$alder <- as.numeric(NIRdata$decimalAge)	#
-#	NIRdata$InnDato <- as.POSIXlt(NIRdata$DateAdmittedIntensive, format="%Y-%m-%d") # %H:%M:%S" )	#"%d.%m.%Y"	"%Y-%m-%d"
-#	NIRdata$Innleggelsestidspunkt <- as.POSIXlt(NIRdata$DateAdmittedIntensive, format="%Y-%m-%d %H:%M:%S" )
-
-#For enkelhetsskyld kalles Saps2Score som er Estimert mortalitet for SMR
-#	names(NIRdata)[which(names(NIRdata) == 'isMale')] <- 'erMann'
-#	names(NIRdata)[which(names(NIRdata) == 'FreshOrganizationalUnitId')] <- 'AvdID'
-#	names(NIRdata)[which(names(NIRdata) == 'DaysAdmittedIntensiv')] <- 'liggetid'
-#	names(NIRdata)[which(names(NIRdata) == 'Respirator')] <- 'respiratortid'
-#	names(NIRdata)[which(names(NIRdata) == 'TransferredStatus')] <- 'Overf'
-#	names(NIRdata)[which(names(NIRdata) == 'Saps2Score')] <- 'SMR' #Saps2Score er SAPS estimert mortalitet
-#	names(NIRdata)[which(names(NIRdata) == 'Saps2ScoreNumber')] <- 'SAPSII'
-#	names(NIRdata)[which(names(NIRdata) == 'TypeOfAdmission')] <- 'InnMaate'
-#	names(NIRdata)[which(names(NIRdata) == 'Nems')] <- 'NEMS'
-#	names(NIRdata)[which(names(NIRdata) == 'ReAdmitted')] <- 'Reinn'
-#----------------
-#UTVALG
-
-NIRutvalg <- NIRLibUtvalg(RegData=NIRdata, datoFra=datoFra, datoTil=datoTil, fargepalett='BlaaRapp')
+NIRutvalg <- NIRUtvalg(RegData=NIRdata, datoFra=datoFra, datoTil=datoTil, fargepalett='BlaaRapp')
 NIRdata <- NIRutvalg$RegData
 NIRdata <- NIRdata[NIRdata$erMann %in% 0:1, ]	#Tar ut registreringer som ikke har kjønn
 NIRdata$Aar <- as.factor(NIRdata$InnDato$year+1900)
 N <- dim(NIRdata)[1]
-#NIRdata$PID <- sample(1:(2*N), N, replace = TRUE)
 names(NIRdata)[which(names(NIRdata) == 'PasientId')] <- 'PID'
 LiggeGr <- c(-0.001, 1, 7, 14, 1000)	#<24t, 1-7døgn, 7-14døgn, >14døgn
 NIRdata$LiggetidGr <-  cut(NIRdata$liggetid, breaks=LiggeGr, include.lowest=FALSE, right=FALSE,
@@ -310,14 +226,13 @@ xtable(alderDIV, digits=1, align=c('l', rep('r', ncol(alderDIV))),
 		label='tab:Alderskarakteristikker')
 
 #dum <- Fordeling(RegData=NIRdata, valgtVar='alder', ShType='alle', datoFra=datoFra, datoTil=datoTil, 
-#		libkat=libkat, outfile='FigAlderFord.pdf') 
-dum <- FigAndeler(RegData=NIRdata, valgtVar='alder', libkat=libkat, datoFra=datoFra, 
+#		preprosess=0, hentData=0, outfile='FigAlderFord.pdf') 
+dum <- NIRFigAndeler(RegData=NIRdata, valgtVar='alder', preprosess=0, hentData=0, datoFra=datoFra, 
 	datoTil=datoTil, enhetsUtvalg=1, reshID=reshID, outfile='FigAlderFord.pdf')
-dum <- MeanMed(RegData=NIRdata, valgtVar='alder', valgtMaal='', libkat=libkat, ShType=ShTypeEgen, 
-		datoFra=datoFra, datoTil=datoTil, outfile='FigAlderGjsn.pdf')
-dum <- MeanMed(RegData=NIRdata, valgtVar='alder', valgtMaal='Med', libkat=libkat, ShType=ShTypeEgen, 
-		datoFra=datoFra, datoTil=datoTil, outfile='FigAlderMed.pdf')
-		
+dum <- NIRFigGjsnGrVar(RegData=NIRdata, valgtVar='alder', valgtMaal='', preprosess=0, hentData=0, 
+                       ShType=ShTypeEgen, datoFra=datoFra, datoTil=datoTil, outfile='FigAlderGjsn.pdf')
+dum <- NIRFigGjsnGrVar(RegData=NIRdata, valgtVar='alder', valgtMaal='Med', preprosess=0, hentData=0, 
+                       ShType=ShTypeEgen, datoFra=datoFra, datoTil=datoTil, outfile='FigAlderMed.pdf')
 @
 
 \begin{figure}[ht]
@@ -349,13 +264,13 @@ xtable(tabKjonnShType, digits=1, align=c('l', rep('r', ncol(tabKjonnShType))),
 		label='tab:KjonnShType')
 
 #, out.width='.6\\textwidth'
-#dum <- Fordeling(RegData=NIRdata, valgtVar='alder', libkat=libkat, erMann=0,
+#dum <- Fordeling(RegData=NIRdata, valgtVar='alder', preprosess=0, hentData=0, erMann=0,
 #		ShType=ShTypeEgen, datoFra=datoFra, datoTil=datoTil, outfile='FigAlderK.pdf')
-#dum <- Fordeling(RegData=NIRdata, valgtVar='alder', libkat=libkat, erMann=1,
+#dum <- Fordeling(RegData=NIRdata, valgtVar='alder', preprosess=0, hentData=0, erMann=1,
 #		ShType=ShTypeEgen, datoFra=datoFra, datoTil=datoTil, outfile='FigAlderM.pdf')
-dum <- FigAndeler(RegData=NIRdata, valgtVar='alder', libkat=libkat, erMann=0,
+dum <- NIRFigAndeler(RegData=NIRdata, valgtVar='alder', preprosess=0, hentData=0, erMann=0,
 	datoFra=datoFra, datoTil=datoTil, enhetsUtvalg=3, reshID=reshID, outfile='FigAlderK.pdf')
-dum <- FigAndeler(RegData=NIRdata, valgtVar='alder', libkat=libkat, erMann=1,
+dum <- NIRFigAndeler(RegData=NIRdata, valgtVar='alder', preprosess=0, hentData=0, erMann=1,
 	datoFra=datoFra, datoTil=datoTil, enhetsUtvalg=3, reshID=reshID, outfile='FigAlderM.pdf')
 @ 
 
@@ -397,13 +312,13 @@ xtable(tabLiggetidShType, digits=1, align=c('l', rep('r', ncol(tabLiggetidShType
 		label='tab:LiggetidShType')
 		
 #dum <- Fordeling(RegData=NIRdata, valgtVar='liggetid', ShType='alle', datoFra=datoFra, datoTil=datoTil, 
-#	libkat=libkat, outfile='FigLiggetidFordAlle.pdf') 
-dum <- FigAndeler(RegData=NIRdata, valgtVar='liggetid', libkat=libkat, datoFra=datoFra, 
+#	preprosess=0, hentData=0, outfile='FigLiggetidFordAlle.pdf') 
+dum <- NIRFigAndeler(RegData=NIRdata, valgtVar='liggetid', preprosess=0, hentData=0, datoFra=datoFra, 
 	datoTil=datoTil, enhetsUtvalg=1, reshID=reshID, outfile='FigLiggetidFordAlle.pdf')
 
-dum <- MeanMed(RegData=NIRdata, valgtVar='liggetid', valgtMaal='Mean', libkat=libkat,  
+dum <- NIRFigGjsnGrVar(RegData=NIRdata, valgtVar='liggetid', valgtMaal='Mean', preprosess=0, hentData=0,  
 			ShType=ShTypeEgen, datoFra=datoFra, datoTil=datoTil, outfile='FigLiggetidGjsn.pdf')
-dum <- MeanMed(RegData=NIRdata, valgtVar='liggetid', valgtMaal='Med', libkat=libkat,  
+dum <- NIRFigGjsnGrVar(RegData=NIRdata, valgtVar='liggetid', valgtMaal='Med', preprosess=0, hentData=0,  
 			ShType=ShTypeEgen, datoFra=datoFra, datoTil=datoTil, outfile='FigLiggetidMed.pdf')
 @
 
@@ -431,7 +346,7 @@ NregReinn <- length(which(NIRdata$Reinn %in% 1:2))
 AndelReinnAlle <- round(100*length(which(NIRdata$Reinn == 1))/length(which(NIRdata$Reinn %in% 1:2)), 1)
 AndelReinnEgen <- round(100*length(which(NIRdataEget$Reinn == 1))/length(which(NIRdataEget$Reinn %in% 1:2)),1)
 
-dum <- AndelerGrVar(RegData=NIRdata, valgtVar='Reinn', libkat=libkat, ShType=ShTypeEgen, datoFra=datoFra, 
+dum <- AndelerGrVar(RegData=NIRdata, valgtVar='Reinn', preprosess=0, hentData=0, ShType=ShTypeEgen, datoFra=datoFra, 
 	datoTil=datoTil, outfile='FigReinn.pdf') 
 @
 
@@ -474,7 +389,7 @@ xtable(tabTypeOpphShType, digits=1, align=c('l', rep('r', ncol(tabTypeOpphShType
 		caption='Prosentvis fordeling av type opphold for ulike sykehuskategorier',
 		label='tab:TypeOpphShType')
 
-dum <- AndelerGrVar(RegData=NIRdata, valgtVar='InnMaate', libkat=libkat, ShType=ShTypeEgen, datoFra=datoFra, 
+dum <- AndelerGrVar(RegData=NIRdata, valgtVar='InnMaate', preprosess=0, hentData=0, ShType=ShTypeEgen, datoFra=datoFra, 
 	datoTil=datoTil, outfile='FigTypeOpph.pdf') 
 @
 
@@ -529,7 +444,7 @@ xtable(tabNEMSShType, digits=c(0,0,1,0,1,1), align=c('l', rep('r', ncol(tabNEMSS
 		caption='NEMS-poeng per døgn for ulike sykehuskategorier',
 		label='tab:NEMS')
 
-dum <- MeanMed(RegData=NIRdata, valgtVar='NEMS', valgtMaal='Mean', libkat=libkat,  
+dum <- NIRFigGjsnGrVar(RegData=NIRdata, valgtVar='NEMS', valgtMaal='Mean', preprosess=0, hentData=0,  
 			ShType=ShTypeEgen, datoFra=datoFra, datoTil=datoTil, outfile='FigNEMS.pdf')
 @
 
@@ -630,12 +545,12 @@ xtable(tabRespShType, digits=c(0,1,1,1,0), align=c('l', 'r','r','r','c'),
 		label='tab:Resp')
 
 #dum <- Fordeling(RegData=NIRdata, valgtVar='respiratortid', ShType=ShTypeEgen, 
-#	datoFra=datoFra, datoTil=datoTil, libkat=libkat, outfile='FigResptidFord.pdf') 
-dum <- FigAndeler(RegData=NIRdata, valgtVar='respiratortid', libkat=libkat, datoFra=datoFra, 
+#	datoFra=datoFra, datoTil=datoTil, preprosess=0, hentData=0, outfile='FigResptidFord.pdf') 
+dum <- NIRFigAndeler(RegData=NIRdata, valgtVar='respiratortid', preprosess=0, hentData=0, datoFra=datoFra, 
 	datoTil=datoTil, enhetsUtvalg=3, reshID=reshID, outfile='FigResptidFord.pdf')
-dum <- MeanMed(RegData=NIRdata, valgtVar='respiratortid', valgtMaal='Mean', libkat=libkat,  
+dum <- NIRFigGjsnGrVar(RegData=NIRdata, valgtVar='respiratortid', valgtMaal='Mean', preprosess=0, hentData=0,  
 		ShType=ShTypeEgen, datoFra=datoFra, datoTil=datoTil, outfile='FigResptidGjsn.pdf') 
-dum <- MeanMed(RegData=NIRdata, valgtVar='respiratortid', valgtMaal='Med', libkat=libkat,  
+dum <- NIRFigGjsnGrVar(RegData=NIRdata, valgtVar='respiratortid', valgtMaal='Med', preprosess=0, hentData=0,  
 		ShType=ShTypeEgen, datoFra=datoFra, datoTil=datoTil, outfile='FigResptidMed.pdf') 
 @
 
@@ -695,10 +610,10 @@ xtable(tabSAPSShType, digits=c(0,1,1,0,0), align=c('l','r','r','c','c'),
 		label='tab:SAPSII')
 
 #dum <- Fordeling(RegData=NIRdata, valgtVar='SAPSII', ShType=ShTypeEgen, datoFra=datoFra, datoTil=datoTil, 
-#		libkat=libkat, outfile='FigSAPSford.pdf') 
-dum <- FigAndeler(RegData=NIRdata, valgtVar='SAPSII', libkat=libkat, datoFra=datoFra, 
+#		preprosess=0, hentData=0, outfile='FigSAPSford.pdf') 
+dum <- NIRFigAndeler(RegData=NIRdata, valgtVar='SAPSII', preprosess=0, hentData=0, datoFra=datoFra, 
 	datoTil=datoTil, enhetsUtvalg=3, reshID=reshID, outfile='FigSAPSford.pdf')
-dum <- MeanMed(RegData=NIRdata, valgtVar='SAPSII', valgtMaal='Mean', libkat=libkat,  
+dum <- NIRFigGjsnGrVar(RegData=NIRdata, valgtVar='SAPSII', valgtMaal='Mean', preprosess=0, hentData=0,  
 		ShType=ShTypeEgen, datoFra=datoFra, datoTil=datoTil, outfile='FigSAPSgjsn.pdf') 
 @
 
@@ -781,7 +696,7 @@ da disse vil kunne utgjøre en markant feilkilde. Uansett må man tolke SMR-verd
 særleg med tanke på at det er stort innslag av «case mix».
 
 <<SMR, echo=FALSE, message=FALSE>>=
-dum <- MeanMed(RegData=NIRdata, valgtVar='SMR', valgtMaal='Mean', libkat=libkat,  
+dum <- NIRFigGjsnGrVar(RegData=NIRdata, valgtVar='SMR', valgtMaal='Mean', preprosess=0, hentData=0,  
 		ShType=ShTypeEgen, datoFra=datoFra, datoTil=datoTil, outfile='FigSMR.pdf') 
 @
 \begin{figure}[ht] 
@@ -837,7 +752,7 @@ xtable(tabDodInt, digits=c(0,rep(1,dim(tabDodInt)[2])), align=c('l',rep('r',dim(
 
 AndelRespStotte <- round(100*length(which(NIRdataUtv$respiratortid>0))/dim(NIRdataUtv)[1],1)
 
-dum <- MeanMed(RegData=NIRdata, valgtVar='liggetid', valgtMaal='Mean', libkat=libkat, dodInt=1, 
+dum <- NIRFigGjsnGrVar(RegData=NIRdata, valgtVar='liggetid', valgtMaal='Mean', preprosess=0, hentData=0, dodInt=1, 
 		ShType=ShTypeEgen, datoFra=datoFra, datoTil=datoTil, outfile='FigLiggetidDode.pdf') 	#LiggetidDodGjsn.pdf
 @
 
