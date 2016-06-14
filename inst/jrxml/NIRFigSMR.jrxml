@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.0.0.final using JasperReports Library version 6.0.0  -->
-<!-- 2015-03-18T13:19:40 -->
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="SMR" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" scriptletClass="no.skde.report.nir.NirCommonScriptlet" uuid="dac3a249-a722-4d7d-a330-de90aa5d1964">
+<!-- Created with Jaspersoft Studio version 6.2.0.final using JasperReports Library version 6.2.0  -->
+<!-- 2016-06-14T16:58:50 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="NIRFigGjsnGrVar" language="groovy" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" scriptletClass="no.skde.report.nir.NirCommonScriptletRPackage" uuid="45fe8ce0-ff63-4edb-9fe2-e19b7f09ad23">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
-	<property name="ireport.jasperserver.url" value="https://test.helseregister.no/test.rapporteket/"/>
+	<property name="ireport.jasperserver.url" value="https://test.helseregister.no/rapporteket_test/"/>
 	<property name="ireport.jasperserver.report.resource" value="/organizations/Intensiv/Reports/SMR_files/main_jrxml"/>
 	<property name="ireport.jasperserver.reportUnit" value="/organizations/Intensiv/Reports/SMR"/>
 	<property name="ireport.jasperserver.user" value="superuser"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<parameter name="LoggedInUser" class="com.jaspersoft.jasperserver.api.metadata.user.domain.User" isForPrompting="false">
 		<parameterDescription><![CDATA[At server side, gets the User object from the JRS logged in user]]></parameterDescription>
 	</parameter>
@@ -16,21 +17,25 @@
 		<parameterDescription><![CDATA[Full name of JRS logged in user. Depends on the LoggedInUser parameter]]></parameterDescription>
 		<defaultValueExpression><![CDATA[$P{LoggedInUser}.getFullName()]]></defaultValueExpression>
 	</parameter>
-	<parameter name="LoggedInUserEmailAddress" class="java.lang.String" isForPrompting="false">
-		<defaultValueExpression><![CDATA[$P{LoggedInUser}.getEmailAddress()]]></defaultValueExpression>
-	</parameter>
 	<parameter name="LoggedInUserAttribute_AVD_RESH" class="java.lang.String" isForPrompting="false"/>
 	<parameter name="LoggedInUserAVD_RESH" class="java.lang.String">
+		<parameterDescription><![CDATA[Provides the AVD_RESH user attribute. Relevant only for users externally defined by helseregister]]></parameterDescription>
 		<defaultValueExpression><![CDATA[$P{LoggedInUserAttribute_AVD_RESH}]]></defaultValueExpression>
 	</parameter>
 	<parameter name="reportName" class="java.lang.String" isForPrompting="false">
-		<defaultValueExpression><![CDATA[new String("SMR")]]></defaultValueExpression>
+		<defaultValueExpression><![CDATA[new String("NIRFigGjsnGrVar")]]></defaultValueExpression>
 	</parameter>
-	<parameter name="rScriptName" class="java.lang.String" isForPrompting="false">
-		<defaultValueExpression><![CDATA[new String("NIRFigMeanMed.R")]]></defaultValueExpression>
+	<parameter name="rPackageName" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[new String("intensiv")]]></defaultValueExpression>
 	</parameter>
 	<parameter name="rFunctionCallString" class="java.lang.String" isForPrompting="false">
-		<defaultValueExpression><![CDATA[new String("MeanMed(RegData=RegData, valgtVar='SMR', valgtMaal='Gjsn', minald=minald, maxald=maxald, datoFra=datoFra, datoTil=datoTil, ShType=ShType, InnMaate=InnMaate, dodInt=dodInt, erMann=erMann, libkat=libkat, outfile=outfile)")]]></defaultValueExpression>
+		<defaultValueExpression><![CDATA[new String("NIRFigGjsnGrVar(RegData=0, valgtVar='SMR', valgtMaal='', minald=minald, maxald=maxald, datoFra=datoFra, datoTil=datoTil, grType=grType, InnMaate=InnMaate, erMann=erMann, hentData=1, preprosess=1, outfile=outfile)")]]></defaultValueExpression>
+	</parameter>
+	<parameter name="beginDate" class="java.util.Date">
+		<defaultValueExpression><![CDATA[new SimpleDateFormat("yyyy-MM-dd").parse("2011-01-01")]]></defaultValueExpression>
+	</parameter>
+	<parameter name="endDate" class="java.util.Date">
+		<defaultValueExpression><![CDATA[new Date()]]></defaultValueExpression>
 	</parameter>
 	<parameter name="minAge" class="java.lang.Integer">
 		<defaultValueExpression><![CDATA[new java.lang.Integer(0)]]></defaultValueExpression>
@@ -38,199 +43,12 @@
 	<parameter name="maxAge" class="java.lang.Integer">
 		<defaultValueExpression><![CDATA[new java.lang.Integer(130)]]></defaultValueExpression>
 	</parameter>
-	<parameter name="hospitalsLevel" class="java.lang.String"/>
+	<parameter name="erMann" class="java.lang.Integer"/>
 	<parameter name="inFromSituation" class="java.lang.Integer"/>
-	<parameter name="startDate" class="java.util.Date">
-		<defaultValueExpression><![CDATA[new SimpleDateFormat("yyyy-MM-dd").parse("2011-01-01")]]></defaultValueExpression>
-	</parameter>
-	<parameter name="endDate" class="java.util.Date">
-		<defaultValueExpression><![CDATA[new Date()]]></defaultValueExpression>
-	</parameter>
-	<parameter name="vitalStatus" class="java.lang.Integer"/>
-	<parameter name="erMann" class="java.lang.Integer">
-		<defaultValueExpression><![CDATA[new Integer(99)]]></defaultValueExpression>
-	</parameter>
+	<parameter name="grType" class="java.lang.Integer"/>
 	<queryString language="SQL">
-		<![CDATA[SELECT
-	Avdeling,
-	AvdRESH + '0' AS AvdRESH,
-	Bilirubin,
-	BrainDamage + '0' AS BrainDamage,
-	CerebralCirculationAbolished + '0' AS CerebralCirculationAbolished,
-	CerebralCirculationAbolishedReasonForNo,
-	ChronicDiseases,
-	cast(DateAdmittedIntensive AS CHAR(19)) AS DateAdmittedIntensive,
-	cast(DateDischargedIntensive AS CHAR(19)) AS DateDischargedIntensive,
-	DaysAdmittedIntensiv + '0' AS DaysAdmittedIntensiv,
-	DeadPatientDuring24Hours + '0' AS DeadPatientDuring24Hours,
-	decimalAge,
-	DischargedHospitalStatus,
-	DischargedIntensiveStatus,
-	Glasgow + '0' AS Glasgow,
-	Hco3 + '0' AS Hco3,
-	HeartRate + '0' AS HeartRate,
-	isMale + '0' AS isMale,
-	Leukocytes + '0' AS Leukocytes,
-	MechanicalRespirator + '0' AS MechanicalRespirator,
-	MoreThan24Hours + '0' AS MoreThan24Hours,
-	MovedPatientToAnotherIntensivDuring24Hours + '0' AS MovedPatientToAnotherIntensivDuring24Hours,
-	MvOrCpap,
-	Nas + '0' AS Nas,
-	Nems + '0' AS Nems,
-	OrganDonationCompletedReasonForNoStatus,
-	OrganDonationCompletedStatus + '0' AS OrganDonationCompletedStatus,
-	PatientTransferredFromHospital + '0' AS PatientTransferredFromHospital,
-	PatientTransferredToHospital + '0' AS PatientTransferredToHospital,
-	Potassium + '0' AS Potassium,
-	ReAdmitted + '0' AS ReAdmitted,
-	Respirator + '0' AS Respirator,
-	Saps2Score + '0' AS Saps2Score,
-	Saps2ScoreNumber + '0' AS Saps2ScoreNumber,
-	SerumUreaOrBun,
-	ShNavn,
-	ShType,
-	ShTypeTxt,
-	Sodium,
-	SystolicBloodPressure,
-	Temperature + '0' AS Temperature,
-	TransferredStatus,
-	TypeOfAdmission,
-	UrineOutput
-FROM
-	all_variables]]>
+		<![CDATA[]]>
 	</queryString>
-	<field name="Avdeling" class="java.lang.String">
-		<fieldDescription><![CDATA[]]></fieldDescription>
-	</field>
-	<field name="AvdRESH" class="java.lang.Double">
-		<fieldDescription><![CDATA[]]></fieldDescription>
-	</field>
-	<field name="Bilirubin" class="java.lang.String">
-		<fieldDescription><![CDATA[]]></fieldDescription>
-	</field>
-	<field name="BrainDamage" class="java.lang.Double">
-		<fieldDescription><![CDATA[]]></fieldDescription>
-	</field>
-	<field name="CerebralCirculationAbolished" class="java.lang.Double">
-		<fieldDescription><![CDATA[]]></fieldDescription>
-	</field>
-	<field name="CerebralCirculationAbolishedReasonForNo" class="java.lang.String">
-		<fieldDescription><![CDATA[]]></fieldDescription>
-	</field>
-	<field name="ChronicDiseases" class="java.lang.String">
-		<fieldDescription><![CDATA[]]></fieldDescription>
-	</field>
-	<field name="DateAdmittedIntensive" class="java.lang.String">
-		<fieldDescription><![CDATA[]]></fieldDescription>
-	</field>
-	<field name="DateDischargedIntensive" class="java.lang.String">
-		<fieldDescription><![CDATA[]]></fieldDescription>
-	</field>
-	<field name="DaysAdmittedIntensiv" class="java.lang.Double">
-		<fieldDescription><![CDATA[]]></fieldDescription>
-	</field>
-	<field name="DeadPatientDuring24Hours" class="java.lang.Double">
-		<fieldDescription><![CDATA[]]></fieldDescription>
-	</field>
-	<field name="decimalAge" class="java.lang.Double">
-		<fieldDescription><![CDATA[]]></fieldDescription>
-	</field>
-	<field name="DischargedHospitalStatus" class="java.lang.String">
-		<fieldDescription><![CDATA[]]></fieldDescription>
-	</field>
-	<field name="DischargedIntensiveStatus" class="java.lang.String">
-		<fieldDescription><![CDATA[]]></fieldDescription>
-	</field>
-	<field name="Glasgow" class="java.lang.Double">
-		<fieldDescription><![CDATA[]]></fieldDescription>
-	</field>
-	<field name="Hco3" class="java.lang.Double">
-		<fieldDescription><![CDATA[]]></fieldDescription>
-	</field>
-	<field name="HeartRate" class="java.lang.Double">
-		<fieldDescription><![CDATA[]]></fieldDescription>
-	</field>
-	<field name="isMale" class="java.lang.Double">
-		<fieldDescription><![CDATA[]]></fieldDescription>
-	</field>
-	<field name="Leukocytes" class="java.lang.Double">
-		<fieldDescription><![CDATA[]]></fieldDescription>
-	</field>
-	<field name="MechanicalRespirator" class="java.lang.Double">
-		<fieldDescription><![CDATA[]]></fieldDescription>
-	</field>
-	<field name="MoreThan24Hours" class="java.lang.Double">
-		<fieldDescription><![CDATA[]]></fieldDescription>
-	</field>
-	<field name="MovedPatientToAnotherIntensivDuring24Hours" class="java.lang.Double">
-		<fieldDescription><![CDATA[]]></fieldDescription>
-	</field>
-	<field name="MvOrCpap" class="java.lang.String">
-		<fieldDescription><![CDATA[]]></fieldDescription>
-	</field>
-	<field name="Nas" class="java.lang.Double">
-		<fieldDescription><![CDATA[]]></fieldDescription>
-	</field>
-	<field name="Nems" class="java.lang.Double">
-		<fieldDescription><![CDATA[]]></fieldDescription>
-	</field>
-	<field name="OrganDonationCompletedReasonForNoStatus" class="java.lang.String">
-		<fieldDescription><![CDATA[]]></fieldDescription>
-	</field>
-	<field name="OrganDonationCompletedStatus" class="java.lang.Double">
-		<fieldDescription><![CDATA[]]></fieldDescription>
-	</field>
-	<field name="PatientTransferredFromHospital" class="java.lang.Double">
-		<fieldDescription><![CDATA[]]></fieldDescription>
-	</field>
-	<field name="PatientTransferredToHospital" class="java.lang.Double">
-		<fieldDescription><![CDATA[]]></fieldDescription>
-	</field>
-	<field name="Potassium" class="java.lang.Double">
-		<fieldDescription><![CDATA[]]></fieldDescription>
-	</field>
-	<field name="ReAdmitted" class="java.lang.Double">
-		<fieldDescription><![CDATA[]]></fieldDescription>
-	</field>
-	<field name="Respirator" class="java.lang.Double">
-		<fieldDescription><![CDATA[]]></fieldDescription>
-	</field>
-	<field name="Saps2Score" class="java.lang.Double">
-		<fieldDescription><![CDATA[]]></fieldDescription>
-	</field>
-	<field name="Saps2ScoreNumber" class="java.lang.Double">
-		<fieldDescription><![CDATA[]]></fieldDescription>
-	</field>
-	<field name="SerumUreaOrBun" class="java.lang.String">
-		<fieldDescription><![CDATA[]]></fieldDescription>
-	</field>
-	<field name="ShNavn" class="java.lang.String">
-		<fieldDescription><![CDATA[]]></fieldDescription>
-	</field>
-	<field name="ShType" class="java.lang.String">
-		<fieldDescription><![CDATA[]]></fieldDescription>
-	</field>
-	<field name="ShTypeTxt" class="java.lang.String">
-		<fieldDescription><![CDATA[]]></fieldDescription>
-	</field>
-	<field name="Sodium" class="java.lang.String">
-		<fieldDescription><![CDATA[]]></fieldDescription>
-	</field>
-	<field name="SystolicBloodPressure" class="java.lang.String">
-		<fieldDescription><![CDATA[]]></fieldDescription>
-	</field>
-	<field name="Temperature" class="java.lang.Double">
-		<fieldDescription><![CDATA[]]></fieldDescription>
-	</field>
-	<field name="TransferredStatus" class="java.lang.String">
-		<fieldDescription><![CDATA[]]></fieldDescription>
-	</field>
-	<field name="TypeOfAdmission" class="java.lang.String">
-		<fieldDescription><![CDATA[]]></fieldDescription>
-	</field>
-	<field name="UrineOutput" class="java.lang.String">
-		<fieldDescription><![CDATA[]]></fieldDescription>
-	</field>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
@@ -243,7 +61,7 @@ FROM
 	<columnHeader>
 		<band height="800" splitType="Stretch">
 			<image hAlign="Center" vAlign="Top">
-				<reportElement x="29" y="0" width="480" height="800" uuid="328ed81b-873f-414b-bd27-00451dfe7c89"/>
+				<reportElement x="29" y="0" width="560" height="800" uuid="cf2858bc-afd4-47d0-a5ee-9e434e794e50"/>
 				<imageExpression><![CDATA["file:" + $P{REPORT_SCRIPTLET}.getFileName()]]></imageExpression>
 			</image>
 		</band>

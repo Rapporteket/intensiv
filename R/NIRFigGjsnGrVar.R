@@ -57,7 +57,9 @@ if (valgtVar == 'SMR') {
 #Tar ut reinnlagte og overflyttede, samt de med SAPSII=0 (ikke scorede) 
 #og de 	under 18år (tas ut i NIRutvalg)
 	minald <- max(18, minald) 
-	RegData <- RegData[RegData$DischargedHospitalStatus!= 3, ]
+	datoTil <- '2015-12-31'
+	RegData <- RegData[RegData$DischargedHospitalStatus %in% 0:2, ]#0:i live, 1:død int., 2:død post
+	      #Variabelen tatt bort desember 2015
 	RegData <- RegData[RegData$Overf==1, ] 
 	RegData <- RegData[as.numeric(RegData$SAPSII) > 0, ]
 }
@@ -114,7 +116,7 @@ if( valgtVar =='SMR') {t1 <- ''}
 
 grTypetextstreng <- c('lokal-/sentral', 'lokal-/sentral', 'regional')				
 if (grType %in% 1:3) {grTypeTxt <- grTypetextstreng[grType]} else {grTypeTxt <- 'alle '}
-tittel <- c(paste(t1, valgtVar, ', ', grTypeTxt,'sykehus', sep='')) 
+tittel <- c(paste0(t1, valgtVar, ', ', grTypeTxt, 'sykehus')) 
 			
 	
 #-----------Figur---------------------------------------
@@ -248,6 +250,7 @@ par('fig'=c(vmarg, 1, 0, 1-0.02*(NutvTxt-1)))	#Har alltid datoutvalg med
 		legend('top', 	c(paste(grTypeTxt, 'sykehus, ', sprintf('%.2f', MidtHele), ', N=', N, sep=''),
 				'(uten reinnlagte og overflyttede pasienter)'),
 				col=c(farger[2],NA), lwd=c(2,NA), bty='n')	#, cex=0.8
+		tittel <- c(tittel, '(basert på sykehusmortalitet, t.o.m. 2015)')
 	} else {
 		polygon(c(rep(KIHele[1],2), rep(KIHele[2],2)), c(0, max(posKI)+min(posKI), max(posKI)+min(posKI),0), 
 			col=farger[4], border=farger[4])
