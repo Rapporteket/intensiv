@@ -5,3 +5,4 @@ Intensiv.Rproj
 *.png
 NIRdata10000.Rdata
 FigNIRMeanMed_sql.R
+*.pdf

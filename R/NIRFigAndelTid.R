@@ -9,7 +9,7 @@
 #'     \item alder_over80: Pasienter over 80 år  (>80)
 #'     \item dodeSykehus: Pasienter som dør under sykehusoppholdet (intensiv/post)
 #'     \item dodeIntensiv: Pasienter som dør på intensivavdelinga. 
-#'		\item liggetidDod: Andel av total liggetid brukt på de som dør på intensiv
+#'	 \item liggetidDod: Andel av total liggetid brukt på de som dør på intensiv
 #'     \item respiratortidDod: Respiratortid brukt på de som dør på intensiv
 #'     \item respStotte: Pasienter som har fått respiratorstøtte
 #'     \item reinn: Andel reinnlagte (kun hvor dette er registrert, dvs. fjerner ukjente)
@@ -98,18 +98,18 @@ if (valgtVar=='reinn') {
 if (valgtVar=='liggetidDod') {
   RegData <- RegData[which(RegData$liggetid>=0), ]    #Tar bort liggetid<0 samt NA
   RegData <- RegData[which(RegData$DischargedIntensiveStatus %in% 0:1), ]  	#Tar bort ukjente  
-  RegData$Variabel<-RegData$liggetid
-  RegData$Variabel2<- as.numeric(RegData$DischargedIntensiveStatus)*RegData$liggetid
-  VarTxt <- 'liggedøgn for døde'
+  RegData$Variabel<-RegData$liggetid	#Liggetid for alle (total liggetid)
+  RegData$Variabel2<- as.numeric(RegData$DischargedIntensiveStatus)*RegData$liggetid #Liggetid for døde
+  VarTxt <- 'pasienter som døde'
   Tittel <- 'Andel av total liggetid brukt på dem som dør på intensiv'
 }
 
 if (valgtVar=='respiratortidDod') {
   RegData <- RegData[which(RegData$respiratortid>=0), ]    #Tar bort respiratortid<0 samt NA
-  RegData <- RegData[which(RegData$DischargedIntensiveStatus %in% 0:1), ]    #Tar bort ukjente  
+  RegData <- RegData[which(RegData$DischargedIntensiveStatus %in% 0:1), ]    #Tar bort ukjente. 0:levende, 1:døde  
   RegData$Variabel<-RegData$respiratortid
   RegData$Variabel2<-as.numeric(RegData$DischargedIntensiveStatus)*RegData$respiratortid
-  VarTxt <- 'liggedøgn for døde'
+  VarTxt <- 'pasienter som døde'
   Tittel <- 'Andel av total respiratortid brukt på dem som dør på intensiv'
 }
 
@@ -191,14 +191,15 @@ if (enhetsUtvalg %in% c(0,2,4,7)) {		#Ikke sammenlikning
     NAarRest <- tapply(RegData$Variabel[indRest], RegData$Aar[indRest], length)	
     NAarHendRest <- tapply(RegData$Variabel[indRest], RegData$Aar[indRest],sum, na.rm=T)
     AndelRest <- NAarHendRest/NAarRest*100
-    NAarHoved <- tapply(RegData[indHoved, 'Variabel'], RegData[indHoved ,'Aar'], length)
-    NAarHendHoved <- tapply(RegData[indHoved, 'Variabel'], RegData[indHoved ,'Aar'],sum, na.rm=T)
+    NAarHoved <- tapply(RegData[indHoved, 'Variabel'], RegData[indHoved ,'Aar'], length) #Tot. ant. per år
+    NAarHendHoved <- tapply(RegData[indHoved, 'Variabel'], RegData[indHoved ,'Aar'],sum, na.rm=T) #Ant. hendelser per år
     AndelHoved <- NAarHendHoved/NAarHoved*100
     Andeler <- rbind(AndelRest, AndelHoved)
 
 if (valgtVar %in% c('liggetidDod','respiratortidDod')) {
-	NAarHendRest<-NAarRest      #Komment: for liggetid og respiratortid er det mer naturlig å vise total antall pasienter instedet før total antall 
-	NAarHendHoved<-NAarHoved    #         liggetid i døgn, navnene blir litt villedende men enklest å gjøre dette på denne måten 
+#Komment: for liggetid og respiratortid vises antall pasienter og ikke antall liggedøgn for døde
+	NAarHendRest<- tapply(RegData$DischargedIntensiveStatus[indRest], RegData$Aar[indRest], sum)      
+	NAarHendHoved<-tapply(RegData[indHoved, 'DischargedIntensiveStatus'], RegData[indHoved ,'Aar'],sum, na.rm=T)    #         liggetid i døgn, navnene blir litt villedende men enklest å gjøre dette på denne måten 
 	SUMAarRest <- tapply(RegData$Variabel[indRest], RegData$Aar[indRest], sum,na.rm=T)  
 	SUMAarHendRest <- tapply(RegData$Variabel2[indRest], RegData$Aar[indRest],sum, na.rm=T)
 	AndelRest <- SUMAarHendRest/SUMAarRest*100

@@ -103,14 +103,14 @@ for (reshID in AlleResh ) {
 rm(list=ls())
 setwd("c:/ResultattjenesteGIT/Intensiv/")
 load("NIRdata10000.Rdata")
-valgtVar <- 'alder'	#'SMR', alder, liggetid, respiratortid,  SAPSII, 'NEMS', 'Nas'
-minald <- 30 #(standard: 0)
+valgtVar <- 'SMR'	#'SMR', alder, liggetid, respiratortid,  SAPSII, 'NEMS', 'Nas'
+minald <- 0 #(standard: 0)
 maxald <- 130	#(standard: 130, må være større enn minald!)
-InnMaate <- 6 #0-El, 6-Ak.m, 8-Ak.k, (alle - alt unntatt 0,6,8)
+InnMaate <- '' #0-El, 6-Ak.m, 8-Ak.k, (alle - alt unntatt 0,6,8)
 valgtMaal = '' #'Med' = median. Alt annet gir gjennomsnitt
 datoFra <- '2010-12-30'	# standard: 0	format: YYYY-MM-DD. Kan spesifisere bare første del, eks. YYYY el. YYYY-MM. 
 datoTil <- '2016-08-01'	# standard: 3000
-dodInt <- 0	# 0-i live, 1 -død, standard: alle (alle andre verdier)
+dodInt <- ''	# 0-i live, 1 -død, standard: alle (alle andre verdier)
 erMann <- ''	#Kjønn: 0-kvinner, 1-menn, standard: alle (alle andre verdier)
 grType <- 99	#1/2: sentral/lokal, 3:regional, 99:'alle'
 outfile <- paste0(valgtVar,grType, '.png')
@@ -162,8 +162,9 @@ rm(list=ls())
 #NIRdata <- read.table('C:/Registre/NIR/data/Main2016-02-02.csv', sep=';', header=T) #, 
 NIRdata <- read.table('C:/Registre/NIR/data/MainPROD2016-05-10.csv', sep=';', header=T) #, 
 save(NIRdata, file='NIRdata10000.Rdata')
+load("NIRdata10000.Rdata")#RegData
 RegData <- NIRdata[sample(dim(NIRdata)[1], 10000),]
-valgtVar <- 'Nas'	#'alder', 'liggetid', 'respiratortid',  'SAPSII', 'NEMS', 'Nas', 'InnMaate'
+valgtVar <- 'InnMaate'	#'alder', 'liggetid', 'respiratortid',  'SAPSII', 'NEMS', 'Nas', 'InnMaate'
 outfile <- ''	#paste('Ford_',valgtVar, '.pdf', sep='')
 minald <- 0 #(standard: 0)
 maxald <- 130	#(standard: 130, må være større enn minald!)
@@ -266,7 +267,7 @@ dodInt <- 99	# 0-i live, 1 -død, standard: alle (alle andre verdier)
 erMann <- ''	#Kjønn: 0-kvinner, 1-menn, standard: alle (alle andre verdier)
 valgtMaal <- 'Med'
 enhetsUtvalg <- 3	#0-5
-valgtVar <- 'liggetid'	#'alder', 'liggetid', 'respiratortid', 'SAPSII', 
+valgtVar <- 'SAPSII'	#'alder', 'liggetid', 'respiratortid', 'SAPSII', 
 outfile <- ''	#paste0(valgtVar, '.png')
 
 NIRFigGjsnTid(RegData=RegData, outfile=outfile, valgtVar=valgtVar, datoFra=datoFra, datoTil=datoTil, 
