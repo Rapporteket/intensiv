@@ -134,8 +134,10 @@ rapporteringsløsningen JasperReports
 og kan genereres av intensivregisterets databasebrukerne på \textit{helseregister.no}.
 
 
-<<LasteData, echo=FALSE, eval=F>>=
-NIRdata <- NIRRegDataSQL()
+<<LasteData, echo=FALSE, eval=T>>=
+if (!exists('NIRdata')){
+      NIRdata <- NIRRegDataSQL()
+}
 @
 
 <<FellesParam, echo=FALSE>>=
