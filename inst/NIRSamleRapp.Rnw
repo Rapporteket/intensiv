@@ -132,7 +132,7 @@ rapporteringsløsningen JasperReports
 og kan genereres av intensivregisterets databasebrukerne på \textit{helseregister.no}.
 
 
-<<LasteData, echo=FALSE, eval=F>>=
+<<LasteData, echo=FALSE, eval=T>>=
 NIRdata <- NIRRegDataSQL()
 @
 
