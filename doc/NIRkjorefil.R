@@ -72,18 +72,14 @@ aggregate(NIRdata$DaysAdmittedIntensiv, by=list(NIRdata$ShNavn, NIRdata$ShTypeTx
 #--------------------------------------SAMLERAPPORT-----------------------------------
 rm(list=ls())
 library(knitr)
+library(intensiv)
 library(tools)	#texi2pdf
 
-source("C:/Registre/NIR/trunk/MeanMed/NIRFigMeanMed.R", encoding="UTF-8")
-source("C:/Registre/NIR/trunk/Fordeling/NIRFigFordeling.R", encoding="UTF-8")
-source("C:/Registre/NIR/trunk/Andeler/NIRFigAndeler.R", encoding="UTF-8")
-source("C:/Registre/NIR/trunk/AndelerGrVar/NIRFigAndelerGrVar.R", encoding="UTF-8")
-source("C:/Registre/Rlib/trunk/NIRLibUtvalg.R", encoding="UTF-8")
-NIRdata <- read.table('C:/Registre/NIR/data/NIR2014-11-07ansi.csv', sep=';', header=T)	#NIRvarSQL.csv
-libkat <-  'C:/Registre/Rlib/trunk/'
+#NIRdata <- read.table('C:/Registre/NIR/data/NIR2014-11-07ansi.csv', sep=';', header=T)	#NIRvarSQL.csv
+load("../NIRdata10000.Rdata")
+NIRdata <- RegData
 reshID <- 112044 #102090 Ahus, 112044 Haukeland
-setwd('C:/Registre/NIR/trunk/NIRSamleRapp') 
-NIRdata <- NIRdata[sample(1:dim(NIRdata)[1],4000), ]
+setwd('C:/ResultattjenesteGIT/intensiv/inst/') 
 #knit(input, output = NULL, tangle = FALSE, text = NULL, envir = parent.frame())
 knit('NIRSamleRapp.Rnw')
 texi2pdf(file='NIRSamleRapp.tex')
@@ -99,11 +95,11 @@ for (reshID in AlleResh ) {
 	file.rename('NIRSamleRapp.pdf', paste0('NIRSamleRapp', reshID, '.pdf'))	#list.files(pattern="water_*.img", paste0("water_", 1:700))
 }
 
-#--------------------------------------- SENTRALMÅL ----------------------------------
+#--------------------------------------- SENTRALMÅL per enhet----------------------------------
 rm(list=ls())
 setwd("c:/ResultattjenesteGIT/Intensiv/")
 load("NIRdata10000.Rdata")
-valgtVar <- 'SMR'	#'SMR', alder, liggetid, respiratortid,  SAPSII, 'NEMS', 'Nas'
+valgtVar <- 'liggetid'	#'SMR', alder, liggetid, respiratortid,  SAPSII, 'NEMS', 'Nas'
 minald <- 0 #(standard: 0)
 maxald <- 130	#(standard: 130, må være større enn minald!)
 InnMaate <- '' #0-El, 6-Ak.m, 8-Ak.k, (alle - alt unntatt 0,6,8)
@@ -112,7 +108,7 @@ datoFra <- '2010-12-30'	# standard: 0	format: YYYY-MM-DD. Kan spesifisere bare f
 datoTil <- '2016-08-01'	# standard: 3000
 dodInt <- ''	# 0-i live, 1 -død, standard: alle (alle andre verdier)
 erMann <- ''	#Kjønn: 0-kvinner, 1-menn, standard: alle (alle andre verdier)
-grType <- 99	#1/2: sentral/lokal, 3:regional, 99:'alle'
+grType <- 2	#1/2: sentral/lokal, 3:regional, 99:'alle'
 outfile <- paste0(valgtVar,grType, '.png')
 
 NIRFigGjsnGrVar(RegData=RegData, valgtVar=valgtVar, valgtMaal=valgtMaal, minald=minald, maxald=maxald, 
@@ -236,7 +232,7 @@ datoTil <- '2016-12-01'	# standard: 3000-01-01
 dodInt <- ''	# 0-i live, 1 -død, standard: alle (alle andre verdier)
 erMann <- 99	#Kjønn: 0-kvinner, 1-menn, standard: alle (alle andre verdier)
 enhetsUtvalg <- 1	#0-5
-valgtVar <- 'respiratortidDod'	#'alder_u18', 'alder_over80', 'dodeSykehus', 'dodeIntensiv', 'liggetidDod', 
+valgtVar <- 'liggetidDod'	#'alder_u18', 'alder_over80', 'dodeSykehus', 'dodeIntensiv', 'liggetidDod', 
                         #'respiratortidDod', 'respStotte', 'reinn', 'SMR'
 outfile <- paste0(valgtVar, '.png')
 

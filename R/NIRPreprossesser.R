@@ -4,11 +4,11 @@
 #'
 #' @inheritParams NIRFigAndeler
 #'
-#' @return Data En liste med det filtrerte datasettet og sykehusnavnet som tilsvarer reshID
+#' @return Data En liste med det filtrerte datasettet (og sykehusnavnet som tilsvarer reshID, ikke pt)
 #'
 #' @export
 #'
-NIRPreprosess <- function(RegData=RegData, reshID=reshID)
+NIRPreprosess <- function(RegData=RegData)	#, reshID=reshID)
 {
   #Kun ferdigstilte registreringer:
   # Rapporteket får kun levert ferdigstilte registreringer fra MRS/NHN.

@@ -132,7 +132,8 @@ rapporteringsløsningen JasperReports
 og kan genereres av intensivregisterets databasebrukerne på \textit{helseregister.no}.
 
 
-<<LasteData, echo=FALSE, eval=T>>=
+<<LasteData, echo=FALSE, eval=F>>=
+NIRdata <- NIRRegDataSQL()
 @
 
 <<FellesParam, echo=FALSE>>=
@@ -142,7 +143,11 @@ datoTil <- '3013-12-31'	#Parameteren brukes også i figurene.
 outfile <- ''
 figKrymp1 <- 0.7	#Skaleringsparameter for enkeltfigurer
 #s1 <- 0.8	#Skaleringsparameter for enkeltfigurer
-
+NIRdata <- NIRPreprosess(NIRdata)
+NIRdata$ShType[NIRdata$ShType ==2 ] <- 1	#Har nå kun type lokal/sentral og regional
+ShTypeTxt <- c('lokal/sentral','lokal/sentral', 'regional')
+ShTypeEgen <-NIRdata$ShType[match(reshID, NIRdata$ReshId)]
+ShTypeEgenTxt <- ShTypeTxt[ShTypeEgen]
 @
 
 <<'Variabeldef og datautvalg',echo=FALSE, eval=T>>=
@@ -152,26 +157,24 @@ NIRdata <- NIRutvalg$RegData
 NIRdata <- NIRdata[NIRdata$erMann %in% 0:1, ]	#Tar ut registreringer som ikke har kjønn
 NIRdata$Aar <- as.factor(NIRdata$InnDato$year+1900)
 N <- dim(NIRdata)[1]
-names(NIRdata)[which(names(NIRdata) == 'PasientId')] <- 'PID'
+#names(NIRdata)[which(names(NIRdata) == 'PasientId')] <- 'PID'
 LiggeGr <- c(-0.001, 1, 7, 14, 1000)	#<24t, 1-7døgn, 7-14døgn, >14døgn
 NIRdata$LiggetidGr <-  cut(NIRdata$liggetid, breaks=LiggeGr, include.lowest=FALSE, right=FALSE,
 			levels=c('0', '<24t', '1-7døgn', '7-14døgn', '>14døgn'))
-#NIRdata$LiggetidGr[NIRdata$liggetid==0] <- 'NA'	#Tar bort de som har registrert liggetid lengde 0.
 
-NIRdata$ShNavn <- as.factor(NIRdata$ShNavn)
+#NIRdata$ShNavn <- as.factor(NIRdata$ShNavn)	#Hvis dette legges på, får vi ikke valgt ut bare sykehustypens sykehus
 NIRdata <- NIRdata[which(NIRdata$InnMaate %in% c(0,6,8)), ] 
 
 tabKjPst <- round(table(NIRdata$erMann)/N*100, digits=1)
-ShTypeEgen <- as.character(NIRdata[which(NIRdata$AvdRESH == reshID),'ShTypeTxt'])[1]
-ind <- list(Eget = which(NIRdata$AvdRESH == reshID),
-			EgenShType = which(NIRdata$ShTypeTxt == ShTypeEgen),
+ind <- list(Eget = which(NIRdata$ReshId == reshID),
+			EgenShType = which(NIRdata$ShType == ShTypeEgen),
 			Alle = 1:N)
-shtxt <- as.character(NIRdata[which(NIRdata$AvdRESH == reshID),'ShNavn'])[1]
+shtxt <- as.character(NIRdata[which(NIRdata$ReshId == reshID),'ShNavn'])[1]
 NIRdataEget <- NIRdata[ind$Eget, ]
 NIRdataResten <- NIRdata[setdiff(1:N,ind$Eget), ]
 Neget <- dim(NIRdataEget)[1]
 tabKjPstEget <- round(table(NIRdataEget$erMann)/Neget*100, digits=1)
-ShTypeEgen <- as.character(NIRdata[which(NIRdata$AvdRESH == reshID),'ShTypeTxt'])[1]
+#ShTypeEgen <- as.character(NIRdata[which(NIRdata$ReshId == reshID),'ShTypeTxt'])[1]
 
 @
 
@@ -200,7 +203,7 @@ Den skal ikke offentliggjøres. NIR sentralt vil produsere årsrapport med samle
 #For bare Eget sykehus
 tabAvdNEget <- rbind(
 	'Ferdigstilte intensivopphold' = table(NIRdataEget$Aar), #Neget,		
-	'Registrerte pasienter' = table(aggregate(erMann~Aar+PID,data=NIRdataEget,length)$Aar),	#length(table(NIRdataEget$PID)),
+	'Registrerte pasienter' = table(aggregate(erMann~Aar+PasientGUID,data=NIRdataEget,length)$Aar),	#length(table(NIRdataEget$PasientId)),
 	'Antall intensivdøgn' = round(as.numeric(tapply(NIRdataEget$liggetid, NIRdataEget$Aar, sum)),0)	#sum(NIRdataEget$DaysAdmittedIntensiv, na.rm=T))
 	)
 #colnames(tabAvdNEget)[dim(tabAvdNEget)[2]]<- 'Totalt:'
@@ -225,14 +228,14 @@ xtable(alderDIV, digits=1, align=c('l', rep('r', ncol(alderDIV))),
 		caption='Aldersfordeling (år)',
 		label='tab:Alderskarakteristikker')
 
-#dum <- Fordeling(RegData=NIRdata, valgtVar='alder', ShType='alle', datoFra=datoFra, datoTil=datoTil, 
+#dum <- Fordeling(RegData=NIRdata, valgtVar='alder', grType='alle', datoFra=datoFra, datoTil=datoTil, 
 #		preprosess=0, hentData=0, outfile='FigAlderFord.pdf') 
 dum <- NIRFigAndeler(RegData=NIRdata, valgtVar='alder', preprosess=0, hentData=0, datoFra=datoFra, 
 	datoTil=datoTil, enhetsUtvalg=1, reshID=reshID, outfile='FigAlderFord.pdf')
 dum <- NIRFigGjsnGrVar(RegData=NIRdata, valgtVar='alder', valgtMaal='', preprosess=0, hentData=0, 
-                       ShType=ShTypeEgen, datoFra=datoFra, datoTil=datoTil, outfile='FigAlderGjsn.pdf')
+                       grType=ShTypeEgen, datoFra=datoFra, datoTil=datoTil, outfile='FigAlderGjsn.pdf')
 dum <- NIRFigGjsnGrVar(RegData=NIRdata, valgtVar='alder', valgtMaal='Med', preprosess=0, hentData=0, 
-                       ShType=ShTypeEgen, datoFra=datoFra, datoTil=datoTil, outfile='FigAlderMed.pdf')
+                       grType=ShTypeEgen, datoFra=datoFra, datoTil=datoTil, outfile='FigAlderMed.pdf')
 @
 
 \begin{figure}[ht]
@@ -249,13 +252,13 @@ dum <- NIRFigGjsnGrVar(RegData=NIRdata, valgtVar='alder', valgtMaal='Med', prepr
 \end{figure}
 
 
+
 <<TabKjonn, results='asis', echo=FALSE>>=
 #1,2,3 = lokal, regional, sentral
 tabKjonnShType <- round(100*rbind(
 	'Egen enhet' = table(NIRdataEget$erMann)/Neget,	
-	'Regionalenheter' = table(NIRdata[which(NIRdata$ShType==2), 'erMann'])/length(which(NIRdata$ShType==2)),	
-	'Lokalenheter' = table(NIRdata[which(NIRdata$ShType==1), 'erMann'])/length(which(NIRdata$ShType==1)),	
-	'Sentralenheter' = table(NIRdata[which(NIRdata$ShType==3), 'erMann'])/length(which(NIRdata$ShType==3)),	
+	'Lokal-/Sentralenheter' = table(NIRdata[which(NIRdata$ShType==1), 'erMann'])/length(which(NIRdata$ShType==1)),	
+	'Regionalenheter' = table(NIRdata[which(NIRdata$ShType==3), 'erMann'])/length(which(NIRdata$ShType==3)),	
 	'Hele landet' = table(NIRdata$erMann)/N
 	),1)
 colnames(tabKjonnShType) <- c('Kvinner(%)', 'Menn(%)')
@@ -265,9 +268,9 @@ xtable(tabKjonnShType, digits=1, align=c('l', rep('r', ncol(tabKjonnShType))),
 
 #, out.width='.6\\textwidth'
 #dum <- Fordeling(RegData=NIRdata, valgtVar='alder', preprosess=0, hentData=0, erMann=0,
-#		ShType=ShTypeEgen, datoFra=datoFra, datoTil=datoTil, outfile='FigAlderK.pdf')
+#		grType=ShTypeEgen, datoFra=datoFra, datoTil=datoTil, outfile='FigAlderK.pdf')
 #dum <- Fordeling(RegData=NIRdata, valgtVar='alder', preprosess=0, hentData=0, erMann=1,
-#		ShType=ShTypeEgen, datoFra=datoFra, datoTil=datoTil, outfile='FigAlderM.pdf')
+#		grType=ShTypeEgen, datoFra=datoFra, datoTil=datoTil, outfile='FigAlderM.pdf')
 dum <- NIRFigAndeler(RegData=NIRdata, valgtVar='alder', preprosess=0, hentData=0, erMann=0,
 	datoFra=datoFra, datoTil=datoTil, enhetsUtvalg=3, reshID=reshID, outfile='FigAlderK.pdf')
 dum <- NIRFigAndeler(RegData=NIRdata, valgtVar='alder', preprosess=0, hentData=0, erMann=1,
@@ -278,7 +281,7 @@ dum <- NIRFigAndeler(RegData=NIRdata, valgtVar='alder', preprosess=0, hentData=0
 \centering \includegraphics[width= \Sexpr{figKrymp1}\textwidth]{FigAlderK.pdf} 
 \centering \includegraphics[width= \Sexpr{figKrymp1}\textwidth]{FigAlderM.pdf} 
  \caption{Aldersfordelig blant hhv. kvinner og menn ved \Sexpr{shtxt} mot 
-	\Sexpr{paste(ShTypeEgen,'sykehus', sep='')} forøvrig.}	
+	\Sexpr{paste(ShTypeEgenTxt,'sykehus', sep='')} forøvrig.}	
   \label{fig:AlderKM}
 \end{figure}
 
@@ -294,16 +297,14 @@ osv.). Liggetiden blir registrert i døgn med en desimal, dvs. timer/24.
 <<'TabLiggetid', results='asis', echo=FALSE>>=
 #1,2,3 = lokal, regional, sentral
 tabLiggEget <- table(NIRdataEget$LiggetidGr)
-tabLiggLok <- table(NIRdata[which(NIRdata$ShType==1), 'LiggetidGr'])
-tabLiggReg <- table(NIRdata[which(NIRdata$ShType==2), 'LiggetidGr'])
-tabLiggSentr <- table(NIRdata[which(NIRdata$ShType==3), 'LiggetidGr'])
+tabLiggLokSentr <- table(NIRdata[which(NIRdata$ShType==1), 'LiggetidGr'])
+tabLiggReg <- table(NIRdata[which(NIRdata$ShType==3), 'LiggetidGr'])
 tabLiggAlle <- table(NIRdata$LiggetidGr)
 
 tabLiggetidShType <- round(100*rbind(
 #	'Egen enhet' = tabLiggEget/sum(tabLiggEget),	
-	'Lokalenheter' = tabLiggLok/sum(tabLiggLok),		
+	'Lokal-/sentralenheter' = tabLiggLokSentr/sum(tabLiggLokSentr),		
 	'Regionalenheter' = tabLiggReg/sum(tabLiggReg),		
-	'Sentralenheter' = tabLiggSentr/sum(tabLiggSentr),		
 	'Hele landet' = tabLiggAlle/sum(tabLiggAlle)
 	),1)
 colnames(tabLiggetidShType) <- c('<24t', '1-7døgn', '7-14døgn', '>14døgn')
@@ -311,15 +312,15 @@ xtable(tabLiggetidShType, digits=1, align=c('l', rep('r', ncol(tabLiggetidShType
 		caption='Prosentvis fordeling av liggetid',
 		label='tab:LiggetidShType')
 		
-#dum <- Fordeling(RegData=NIRdata, valgtVar='liggetid', ShType='alle', datoFra=datoFra, datoTil=datoTil, 
+#dum <- Fordeling(RegData=NIRdata, valgtVar='liggetid', grType='alle', datoFra=datoFra, datoTil=datoTil, 
 #	preprosess=0, hentData=0, outfile='FigLiggetidFordAlle.pdf') 
 dum <- NIRFigAndeler(RegData=NIRdata, valgtVar='liggetid', preprosess=0, hentData=0, datoFra=datoFra, 
 	datoTil=datoTil, enhetsUtvalg=1, reshID=reshID, outfile='FigLiggetidFordAlle.pdf')
 
 dum <- NIRFigGjsnGrVar(RegData=NIRdata, valgtVar='liggetid', valgtMaal='Mean', preprosess=0, hentData=0,  
-			ShType=ShTypeEgen, datoFra=datoFra, datoTil=datoTil, outfile='FigLiggetidGjsn.pdf')
+			grType=ShTypeEgen, datoFra=datoFra, datoTil=datoTil, outfile='FigLiggetidGjsn.pdf')
 dum <- NIRFigGjsnGrVar(RegData=NIRdata, valgtVar='liggetid', valgtMaal='Med', preprosess=0, hentData=0,  
-			ShType=ShTypeEgen, datoFra=datoFra, datoTil=datoTil, outfile='FigLiggetidMed.pdf')
+			grType=ShTypeEgen, datoFra=datoFra, datoTil=datoTil, outfile='FigLiggetidMed.pdf')
 @
 
 
@@ -332,7 +333,7 @@ dum <- NIRFigGjsnGrVar(RegData=NIRdata, valgtVar='liggetid', valgtMaal='Med', pr
 \begin{figure}[ht] 
 \centering \includegraphics[width= \Sexpr{figKrymp1}\textwidth]{FigLiggetidGjsn.pdf} 
 \centering \includegraphics[width= \Sexpr{figKrymp1}\textwidth]{FigLiggetidMed.pdf} 
- \caption{Gjennomsnittlig og median liggetid ved \Sexpr{paste(ShTypeEgen,'sykehus', sep='')}.}	
+ \caption{Gjennomsnittlig og median liggetid ved \Sexpr{paste(ShTypeEgenTxt,'sykehus', sep='')}.}	
   \label{fig:LiggetidMM}
 \end{figure}
 
@@ -346,7 +347,7 @@ NregReinn <- length(which(NIRdata$Reinn %in% 1:2))
 AndelReinnAlle <- round(100*length(which(NIRdata$Reinn == 1))/length(which(NIRdata$Reinn %in% 1:2)), 1)
 AndelReinnEgen <- round(100*length(which(NIRdataEget$Reinn == 1))/length(which(NIRdataEget$Reinn %in% 1:2)),1)
 
-dum <- AndelerGrVar(RegData=NIRdata, valgtVar='Reinn', preprosess=0, hentData=0, ShType=ShTypeEgen, datoFra=datoFra, 
+dum <- NIRFigAndelerGrVar(RegData=NIRdata, valgtVar='reinn', preprosess=0, hentData=0, grType=ShTypeEgen, datoFra=datoFra, 
 	datoTil=datoTil, outfile='FigReinn.pdf') 
 @
 
@@ -359,7 +360,7 @@ Ved \Sexpr{shtxt} utgjør reinnleggelser \Sexpr{AndelReinnEgen}\% av oppholdene.
 
 \begin{figure}[ht] 
   \centering \includegraphics[width= \Sexpr{figKrymp1}\textwidth]{FigReinn.pdf} 
-  \caption{Andel reinnleggelser for alle \Sexpr{paste(ShTypeEgen,'sykehus', sep='')}}
+  \caption{Andel reinnleggelser for alle \Sexpr{paste(ShTypeEgenTxt,'sykehus', sep='')}}
   \label{fig:ReinnEgen}
 \end{figure}
 
@@ -372,16 +373,14 @@ Ved \Sexpr{shtxt} utgjør reinnleggelser \Sexpr{AndelReinnEgen}\% av oppholdene.
 #1,2,3 = lokal, regional, sentral
 #InnMaate - 0-El, 6-Ak.m, 8-Ak.k,
 tabTypeOpphEget <- table(NIRdataEget$InnMaate)
-tabTypeOpphLok <- table(NIRdata[which(NIRdata$ShType==1), 'InnMaate'])
-tabTypeOpphReg <- table(NIRdata[which(NIRdata$ShType==2), 'InnMaate'])
-tabTypeOpphSentr <- table(NIRdata[which(NIRdata$ShType==3), 'InnMaate'])
+tabTypeOpphLokSentr <- table(NIRdata[which(NIRdata$ShType==1), 'InnMaate'])
+tabTypeOpphReg <- table(NIRdata[which(NIRdata$ShType==3), 'InnMaate'])
 tabTypeOpphAlle <- table(NIRdata$InnMaate)
 
 tabTypeOpphShType <- round(100*rbind(
 	'Egen enhet' = tabTypeOpphEget/sum(tabTypeOpphEget),	
-	'Lokalenheter' = tabTypeOpphLok/sum(tabTypeOpphLok),		
+	'Lokal-/Sentralenheter' = tabTypeOpphLokSentr/sum(tabTypeOpphLokSentr),		
 	'Regionalenheter' = tabTypeOpphReg/sum(tabTypeOpphReg),		
-	'Sentralenheter' = tabTypeOpphSentr/sum(tabTypeOpphSentr),		
 	'Hele landet' = tabTypeOpphAlle/sum(tabTypeOpphAlle)
 	),1)
 colnames(tabTypeOpphShType) <- c('Elektivt', 'Akutt med.', 'Akutt kir.')
@@ -389,13 +388,13 @@ xtable(tabTypeOpphShType, digits=1, align=c('l', rep('r', ncol(tabTypeOpphShType
 		caption='Prosentvis fordeling av type opphold for ulike sykehuskategorier',
 		label='tab:TypeOpphShType')
 
-dum <- AndelerGrVar(RegData=NIRdata, valgtVar='InnMaate', preprosess=0, hentData=0, ShType=ShTypeEgen, datoFra=datoFra, 
+dum <- NIRFigAndelerGrVar(RegData=NIRdata, valgtVar='innMaate', preprosess=0, hentData=0, grType=ShTypeEgen, datoFra=datoFra, 
 	datoTil=datoTil, outfile='FigTypeOpph.pdf') 
 @
 
 \begin{figure}[ht] 
   \centering \includegraphics[width= \Sexpr{figKrymp1}\textwidth]{FigTypeOpph.pdf} 
-  \caption{Fordeling av type opphold for \Sexpr{paste(ShTypeEgen,'sykehusenheter.', sep='')}}
+  \caption{Fordeling av type opphold for \Sexpr{paste(ShTypeEgenTxt,'sykehusenheter.', sep='')}}
   \label{fig:TypeOpph}
 \end{figure}
 
@@ -414,9 +413,9 @@ som har vart lenger enn 24 timer og der det faktisk er skåret NEMS-poeng.
 <<'TabNEMS', results='asis', echo=FALSE>>=
 #NEMS, kun opphold > 24t	
 indNEMS <- which( (NIRdata$liggetid>=1) & (NIRdata$NEMS>1))	#NEMS=0 el 1 - ikke registrert.
-NIRdataUtv <- NIRdata[indNEMS, c('NEMS', 'ShType','liggetid','AvdRESH')]
+NIRdataUtv <- NIRdata[indNEMS, c('NEMS', 'ShType','liggetid','ReshId')]
 NIRdataUtv$NEMSd <- NIRdataUtv$NEMS/NIRdataUtv$liggetid
-indEgenUtv <- which(NIRdataUtv$AvdRESH == reshID)
+indEgenUtv <- which(NIRdataUtv$ReshId == reshID)
 
 #1,2,3 = lokal, regional, sentral which(NIRdataUtv$ShType==1
 NEMSegen <- c(mean(NIRdataUtv$NEMS[indEgenUtv], na.rm=T), 
@@ -435,9 +434,8 @@ NEMSalle <- c(mean(NIRdataUtv$NEMS, na.rm=T),
 
 tabNEMSShType <- round(rbind(
 	'Egen enhet' = c(length(intersect(indEgenUtv, indNEMS)), NEMSegen),	
-	'Lokalenheter' = c(NEMS_N[1], NEMSgjsn[1], NEMSmed[1], NEMSgjsnD[1], NEMSmedD[1]),
+	'Lokal-/Sentralenheter' = c(NEMS_N[1], NEMSgjsn[1], NEMSmed[1], NEMSgjsnD[1], NEMSmedD[1]),
 	'Regionalenheter' = c(NEMS_N[2], NEMSgjsn[2], NEMSmed[2], NEMSgjsnD[2], NEMSmedD[2]),		
-	'Sentralenheter' = c(NEMS_N[3], NEMSgjsn[3], NEMSmed[3], NEMSgjsnD[3], NEMSmedD[3]),		
 	'Hele landet' = c(dim(NIRdataUtv)[1], NEMSalle) ),1)
 colnames(tabNEMSShType) <- c('N', 'Gj.sn/opph', 'Median/opph', 'Gj.sn/døgn', 'Median/døgn')
 xtable(tabNEMSShType, digits=c(0,0,1,0,1,1), align=c('l', rep('r', ncol(tabNEMSShType))), 
@@ -445,12 +443,12 @@ xtable(tabNEMSShType, digits=c(0,0,1,0,1,1), align=c('l', rep('r', ncol(tabNEMSS
 		label='tab:NEMS')
 
 dum <- NIRFigGjsnGrVar(RegData=NIRdata, valgtVar='NEMS', valgtMaal='Mean', preprosess=0, hentData=0,  
-			ShType=ShTypeEgen, datoFra=datoFra, datoTil=datoTil, outfile='FigNEMS.pdf')
+			grType=ShTypeEgen, datoFra=datoFra, datoTil=datoTil, outfile='FigNEMS.pdf')
 @
 
 \begin{figure}[ht] 
 \centering \includegraphics[width= \Sexpr{figKrymp1}\textwidth]{FigNEMS.pdf} 
-    \caption{Gjennomsnittlig NEMS per døgn for \Sexpr{paste(ShTypeEgen,'sykehus.', sep='')}}
+    \caption{Gjennomsnittlig NEMS per døgn for \Sexpr{paste(ShTypeEgenTxt,'sykehus.', sep='')}}
 	\label{fig:NEMS}
 \end{figure}
 
@@ -463,8 +461,8 @@ dum <- NIRFigGjsnGrVar(RegData=NIRdata, valgtVar='NEMS', valgtMaal='Mean', prepr
 NIRdata$NasD <- NIRdata$Nas/NIRdata$liggetid	#floor(NIRdataUtv$liggetid)
 AntOver177prD <- sum(NIRdata$NasD >177, na.rm=T)
 indNas <- intersect(which(NIRdata$NasD <= 177), which( (NIRdata$liggetid > 8/24) & (NIRdata$Nas>0)))	#Nas=0 ikke registrert (?)
-NIRdataUtv <- NIRdata[indNas, c('Nas', 'NasD', 'ShType','liggetid','AvdRESH')]
-indEgenUtv <- which(NIRdataUtv$AvdRESH == reshID)
+NIRdataUtv <- NIRdata[indNas, c('Nas', 'NasD', 'ShType','liggetid','ReshId')]
+indEgenUtv <- which(NIRdataUtv$ReshId == reshID)
 
 #1,2,3 = lokal, regional, sentral which(NIRdataUtv$ShType==1
 Nasegen <- c(mean(NIRdataUtv$Nas[indEgenUtv], na.rm=T), 
@@ -483,9 +481,8 @@ Nasalle <- c(mean(NIRdataUtv$Nas, na.rm=T),
 
 tabNasShType <- round(rbind(
 	'Egen enhet' = c(length(indEgenUtv), Nasegen),	
-	'Lokalenheter' = c(Nas_N[1], Nasgjsn[1], Nasmed[1], NasgjsnD[1], NasmedD[1]),
+	'Lokal-/Sentralenheter' = c(Nas_N[1], Nasgjsn[1], Nasmed[1], NasgjsnD[1], NasmedD[1]),
 	'Regionalenheter' = c(Nas_N[2], Nasgjsn[2], Nasmed[2], NasgjsnD[2], NasmedD[2]),		
-	'Sentralenheter' = c(Nas_N[3], Nasgjsn[3], Nasmed[3], NasgjsnD[3], NasmedD[3]),		
 	'Hele landet' = c(dim(NIRdataUtv)[1], Nasalle) ),1)
 colnames(tabNasShType) <- c('N', 'Gj.sn/opph', 'Med./opph', 'Gj.sn/døgn', 'Med./døgn')
 xtable(tabNasShType, digits=c(0,0,1,0,1,1), align=c('l', rep('r', ncol(tabNasShType))), 
@@ -519,14 +516,14 @@ Lokal behandlingstradisjon er ytterligere en faktor.
 #Gj.snitt, Median, % av opphold, Spredning, døgn(min,max) \
 
 indResp <- which(NIRdata$respiratortid>0)
-NIRdataUtv <- NIRdata[indResp, c('respiratortid', 'ShType','AvdRESH')]
-indEgenUtv <- which(NIRdataUtv$AvdRESH == reshID)
+NIRdataUtv <- NIRdata[indResp, c('respiratortid', 'ShType','ReshId')]
+indEgenUtv <- which(NIRdataUtv$ReshId == reshID)
 
 #1,2,3 = lokal, regional, sentral which(NIRdataUtv$ShType==1
 RespEgen <- round(summary(NIRdataUtv$respiratortid[indEgenUtv]),1)
-RespLok <- round(summary(NIRdataUtv$respiratortid[which(NIRdataUtv$ShType == 1)]),1)
-RespReg <- round(summary(NIRdataUtv$respiratortid[which(NIRdataUtv$ShType == 2)]),1)
-RespSen <- round(summary(NIRdataUtv$respiratortid[which(NIRdataUtv$ShType == 3)]),1)
+RespLokSentr <- round(summary(NIRdataUtv$respiratortid[which(NIRdataUtv$ShType == 1)]),1)
+RespReg <- round(summary(NIRdataUtv$respiratortid[which(NIRdataUtv$ShType == 3)]),1)
+#RespSen <- round(summary(NIRdataUtv$respiratortid[which(NIRdataUtv$ShType == 3)]),1)
 AndelResp <- round(100*c(length(which(NIRdata$MechanicalRespirator[ind$Eget]==1))/Neget,
 		tapply(NIRdata$MechanicalRespirator==1, NIRdata$ShType, sum)/table(NIRdata$ShType),
 		length(which(NIRdata$MechanicalRespirator==1))/N),1)
@@ -534,9 +531,8 @@ RespAlle <- round(summary(NIRdataUtv$respiratortid),1)
 
 tabRespShType <- rbind(
 	'Egen enhet' = c(RespEgen[4], RespEgen[3], AndelResp[1], paste(RespEgen[1],' - ',RespEgen[6], sep='')),	
-	'Lokalenheter' = c(RespLok[4], RespLok[3], AndelResp[2], paste(RespLok[1],' - ',RespLok[6], sep='')),
+	'Lokal-/Sentralenheter' = c(RespLokSentr[4], RespLokSentr[3], AndelResp[2], paste(RespLokSentr[1],' - ',RespLokSentr[6], sep='')),
 	'Regionalenheter' = c(RespReg[4], RespReg[3], AndelResp[3], paste(RespReg[1],' - ',RespReg[6], sep='')),		
-	'Sentralenheter' = c(RespSen[4], RespSen[3], AndelResp[4], paste(RespSen[1],' - ',RespSen[6], sep='')),		
 	'Hele landet' = c(RespAlle[4], RespAlle[3], AndelResp[5], paste(RespAlle[1],' - ',RespAlle[6], sep=''))
 					)
 colnames(tabRespShType) <- c('Gj.sn', 'Median', 'Andel(%)', 'Spredning')
@@ -544,27 +540,27 @@ xtable(tabRespShType, digits=c(0,1,1,1,0), align=c('l', 'r','r','r','c'),
 		caption='Antall døgn med respirasjonsstøtte for ulike sykehuskategorier.',
 		label='tab:Resp')
 
-#dum <- Fordeling(RegData=NIRdata, valgtVar='respiratortid', ShType=ShTypeEgen, 
+#dum <- Fordeling(RegData=NIRdata, valgtVar='respiratortid', grType=ShTypeEgen, 
 #	datoFra=datoFra, datoTil=datoTil, preprosess=0, hentData=0, outfile='FigResptidFord.pdf') 
 dum <- NIRFigAndeler(RegData=NIRdata, valgtVar='respiratortid', preprosess=0, hentData=0, datoFra=datoFra, 
 	datoTil=datoTil, enhetsUtvalg=3, reshID=reshID, outfile='FigResptidFord.pdf')
 dum <- NIRFigGjsnGrVar(RegData=NIRdata, valgtVar='respiratortid', valgtMaal='Mean', preprosess=0, hentData=0,  
-		ShType=ShTypeEgen, datoFra=datoFra, datoTil=datoTil, outfile='FigResptidGjsn.pdf') 
+		grType=ShTypeEgen, datoFra=datoFra, datoTil=datoTil, outfile='FigResptidGjsn.pdf') 
 dum <- NIRFigGjsnGrVar(RegData=NIRdata, valgtVar='respiratortid', valgtMaal='Med', preprosess=0, hentData=0,  
-		ShType=ShTypeEgen, datoFra=datoFra, datoTil=datoTil, outfile='FigResptidMed.pdf') 
+		grType=ShTypeEgen, datoFra=datoFra, datoTil=datoTil, outfile='FigResptidMed.pdf') 
 @
 
 
 \begin{figure}[ht] 
 \centering \includegraphics[width= \Sexpr{figKrymp1}\textwidth]{FigResptidFord.pdf} 
-  \caption{Fordeling av respiratortid ved \Sexpr{paste(ShTypeEgen,'sykehus', sep='')}}
+  \caption{Fordeling av respiratortid ved \Sexpr{paste(ShTypeEgenTxt,'sykehus', sep='')}}
   \label{fig:ResptidFord}
 \end{figure}
 
 \begin{figure}[ht] 
 \centering \includegraphics[width= \Sexpr{figKrymp1}\textwidth]{FigResptidGjsn.pdf} 
 \centering \includegraphics[width= \Sexpr{figKrymp1}\textwidth]{FigResptidMed.pdf} 
- \caption{Gjennomsnittlig og median respiratortid ved \Sexpr{paste(ShTypeEgen,'sykehus', sep='')}.}	
+ \caption{Gjennomsnittlig og median respiratortid ved \Sexpr{paste(ShTypeEgenTxt,'sykehus', sep='')}.}	
   \label{fig:ResptidMM}
 \end{figure}
 
@@ -582,50 +578,47 @@ og om Glasgow Coma Score er ensartet skåret.
 <<'SAPSII', results='asis', echo=FALSE>>=
 #Gj.snitt, Median, % av opphold, Spredning, døgn(min,max) \
 indSAPS <- which(as.numeric(NIRdata$SAPSII) > 0 & as.numeric(NIRdata$alder) > 18)
-NIRdataUtv <- NIRdata[indSAPS, c('SAPSII', 'ShType','AvdRESH')]
-indEgenUtv <- which(NIRdataUtv$AvdRESH == reshID)
+NIRdataUtv <- NIRdata[indSAPS, c('SAPSII', 'ShType','ReshId')]
+indEgenUtv <- which(NIRdataUtv$ReshId == reshID)
 
 #1,2,3 = lokal, regional, sentral which(NIRdataUtv$ShType==1
 SAPSEgen <- round(summary(NIRdataUtv$SAPSII[indEgenUtv]),1)
-SAPSLok <- round(summary(NIRdataUtv$SAPSII[which(NIRdataUtv$ShType == 1)]),1)
-SAPSReg <- round(summary(NIRdataUtv$SAPSII[which(NIRdataUtv$ShType == 2)]),1)
-SAPSsen <- round(summary(NIRdataUtv$SAPSII[which(NIRdataUtv$ShType == 3)]),1)
+SAPSLokSent <- round(summary(NIRdataUtv$SAPSII[which(NIRdataUtv$ShType == 1)]),1)
+SAPSReg <- round(summary(NIRdataUtv$SAPSII[which(NIRdataUtv$ShType == 3)]),1)
 SAPSAlle <- round(summary(NIRdataUtv$SAPSII),1)
 
 tabSAPSShType <- rbind(
 	'Egen enhet' = c(SAPSEgen[4], SAPSEgen[3], paste(SAPSEgen[2],' - ',SAPSEgen[5], sep=''),  
-			paste(SAPSEgen[1],' - ',SAPSEgen[6], sep='')),	
-	'Lokalenheter' = c(SAPSLok[4], SAPSLok[3], paste(SAPSLok[2],' - ',SAPSLok[5], sep=''),
-			paste(SAPSLok[1],' - ',SAPSLok[6], sep='')),
-	'Regionalenheter' = c(SAPSReg[4], SAPSReg[3], paste(SAPSReg[2],' - ',SAPSReg[5], sep=''),
-			paste(SAPSReg[1],' - ',SAPSReg[6], sep='')),		
-	'Sentralenheter' = c(SAPSsen[4], SAPSsen[3], paste(SAPSsen[2],' - ',SAPSsen[5], sep=''),
-			paste(SAPSsen[1],' - ',SAPSsen[6], sep='')),		
-	'Hele landet' = c(SAPSAlle[4], SAPSAlle[3], paste(SAPSAlle[2],' - ',SAPSAlle[5], sep=''),
-			paste(SAPSAlle[1],' - ',SAPSAlle[6], sep=''))
+			paste0(SAPSEgen[1],' - ',SAPSEgen[6])),	
+	'Lokal-/Sentenheter' = c(SAPSLokSent[4], SAPSLokSent[3], paste0(SAPSLokSent[2],' - ',SAPSLokSent[5]),
+			paste0(SAPSLokSent[1],' - ',SAPSLokSent[6])),
+	'Regionalenheter' = c(SAPSReg[4], SAPSReg[3], paste0(SAPSReg[2],' - ',SAPSReg[5]),
+			paste0(SAPSReg[1],' - ',SAPSReg[6])),		
+	'Hele landet' = c(SAPSAlle[4], SAPSAlle[3], paste0(SAPSAlle[2],' - ',SAPSAlle[5]),
+			paste0(SAPSAlle[1],' - ',SAPSAlle[6]))
 					)
 colnames(tabSAPSShType) <- c('Gj.sn', 'Median', '25-75prosentil', 'Spredning')
 xtable(tabSAPSShType, digits=c(0,1,1,0,0), align=c('l','r','r','c','c'), 
 		caption='SAPS-skåre for ulike sykehuskategorier.',
 		label='tab:SAPSII')
 
-#dum <- Fordeling(RegData=NIRdata, valgtVar='SAPSII', ShType=ShTypeEgen, datoFra=datoFra, datoTil=datoTil, 
+#dum <- Fordeling(RegData=NIRdata, valgtVar='SAPSII', grType=ShTypeEgen, datoFra=datoFra, datoTil=datoTil, 
 #		preprosess=0, hentData=0, outfile='FigSAPSford.pdf') 
 dum <- NIRFigAndeler(RegData=NIRdata, valgtVar='SAPSII', preprosess=0, hentData=0, datoFra=datoFra, 
 	datoTil=datoTil, enhetsUtvalg=3, reshID=reshID, outfile='FigSAPSford.pdf')
 dum <- NIRFigGjsnGrVar(RegData=NIRdata, valgtVar='SAPSII', valgtMaal='Mean', preprosess=0, hentData=0,  
-		ShType=ShTypeEgen, datoFra=datoFra, datoTil=datoTil, outfile='FigSAPSgjsn.pdf') 
+		grType=ShTypeEgen, datoFra=datoFra, datoTil=datoTil, outfile='FigSAPSgjsn.pdf') 
 @
 
 SAPS II: Totalt er \Sexpr{length(indEgenUtv)} opphold er skåret for \Sexpr{shtxt}.
 SAPS II antas å være noenlunde normalfordelt. Figur \ref{fig:SAPSII} viser fordeling av SAPS og gjennomsnittlig
-SAPSII for \Sexpr{ShTypeEgen}sykehus. 
+SAPSII for \Sexpr{ShTypeEgenTxt}sykehus. 
 
 
 \begin{figure}[ht] 
 \centering \includegraphics[width= \Sexpr{figKrymp1}\textwidth]{FigSAPSford.pdf} 
 \centering \includegraphics[width= \Sexpr{figKrymp1}\textwidth]{FigSAPSgjsn.pdf} 
- \caption{Fordeling av SAPS II og gjennomsnittlig SAPS II ved \Sexpr{paste(ShTypeEgen,'sykehus', sep='')}.}	
+ \caption{Fordeling av SAPS II og gjennomsnittlig SAPS II ved \Sexpr{paste(ShTypeEgenTxt,'sykehus.', sep='')}.}	
   \label{fig:SAPSII}
 \end{figure}
 
@@ -646,7 +639,7 @@ Status for pasienter utskrevet fra \Sexpr{shtxt}.
 #0: I live, 1:Død intensiv, 2:Død post, 3:reinnlagt intensiv 
 NIRdata$DischargedHospitalStatus <- factor(NIRdata$DischargedHospitalStatus, levels=0:3)
 
-#ind$Eget <- which(NIRdata$AvdRESH == reshID)
+#ind$Eget <- which(NIRdata$ReshId == reshID)
 ind$IkkeOverf <- which(NIRdata$Overf ==1)
 ind$Overf <- which(NIRdata$Overf %in% 2:3)
 
@@ -697,11 +690,11 @@ særleg med tanke på at det er stort innslag av «case mix».
 
 <<SMR, echo=FALSE, message=FALSE>>=
 dum <- NIRFigGjsnGrVar(RegData=NIRdata, valgtVar='SMR', valgtMaal='Mean', preprosess=0, hentData=0,  
-		ShType=ShTypeEgen, datoFra=datoFra, datoTil=datoTil, outfile='FigSMR.pdf') 
+		grType=ShTypeEgen, datoFra=datoFra, datoTil=datoTil, outfile='FigSMR.pdf') 
 @
 \begin{figure}[ht] 
 \centering \includegraphics[width= \Sexpr{figKrymp1}\textwidth]{FigSMR.pdf} 
-  \caption{Standardisert mortalitetsratio, \Sexpr{paste(ShTypeEgen,'sykehus', sep='')}}
+  \caption{Standardisert mortalitetsratio, \Sexpr{paste(ShTypeEgenTxt,'sykehus.', sep='')}}
   \label{fig:SMR}
 \end{figure}
 
@@ -712,11 +705,11 @@ dum <- NIRFigGjsnGrVar(RegData=NIRdata, valgtVar='SMR', valgtMaal='Mean', prepro
 <<'DodInt', results='asis', echo=FALSE>>=
 #Døde, intensiv
 NIRdataUtv <- NIRdata[which(NIRdata$DischargedHospitalStatus==1), 
-			c('AvdRESH', 'ShType', 'liggetid', 'respiratortid', 'InnMaate' )]
+			c('ReshId', 'ShType', 'liggetid', 'respiratortid', 'InnMaate' )]
 N_innmShT <- ftable(NIRdata[c('InnMaate', 'ShType')])
 
 Ndod_innmShT <- ftable(NIRdataUtv[c('InnMaate', 'ShType')]) #0:Planlagt op., 6:Akutt non-op, 8:Akutt op.
-indUtvEget <- which(NIRdataUtv$AvdRESH == reshID)
+indUtvEget <- which(NIRdataUtv$ReshId == reshID)
 Ndod_innmEgen <- table(NIRdataUtv[indUtvEget, 'InnMaate'])
 N_innmEgen <- table(NIRdata[ind$Eget, 'InnMaate'])
 
@@ -745,7 +738,7 @@ tabDodInt <- round(100*rbind(
 	'Akutt operative' = c(Ndod_innmEgen[3]/sum(N_innmEgen), 
 			Ndod_innmShT[3]/N_innmShT[3,], sum(Ndod_innmShT[3,])/sum(N_innmShT[3,]))
 			),1)
-colnames(tabDodInt) <- c('Egen enh.(%)', 'Lokale(%)', 'Regionale(%)', 'Sentrale(%)', 'Alle(%)')
+colnames(tabDodInt) <- c('Egen enh.(%)', 'Lokale/Sentrale(%)', 'Regionale(%)', 'Alle(%)')
 xtable(tabDodInt, digits=c(0,rep(1,dim(tabDodInt)[2])), align=c('l',rep('r',dim(tabDodInt)[2])), 
 		caption= 'Prosentandel pasienter som dør på intensiv',
 		label='tab:DodInt')
@@ -753,12 +746,11 @@ xtable(tabDodInt, digits=c(0,rep(1,dim(tabDodInt)[2])), align=c('l',rep('r',dim(
 AndelRespStotte <- round(100*length(which(NIRdataUtv$respiratortid>0))/dim(NIRdataUtv)[1],1)
 
 dum <- NIRFigGjsnGrVar(RegData=NIRdata, valgtVar='liggetid', valgtMaal='Mean', preprosess=0, hentData=0, dodInt=1, 
-		ShType=ShTypeEgen, datoFra=datoFra, datoTil=datoTil, outfile='FigLiggetidDode.pdf') 	#LiggetidDodGjsn.pdf
+		grType=ShTypeEgen, datoFra=datoFra, datoTil=datoTil, outfile='FigLiggetidDode.pdf') 	#LiggetidDodGjsn.pdf
 @
 
 Gjennomsnittlig og median liggetid på landsbasis for de som dør på intensiv er henholdsvis 
-\Sexpr{DodLiggGjsn} og \Sexpr{DodLiggMed} døgn.
-
+\Sexpr{DodLiggGjsn} og \Sexpr{DodLiggMed} døgn. 
 Av de som døde på intensiv, hadde \Sexpr{AndelRespStotte} \% fått respirasjonsstøtte.
 
 
@@ -766,7 +758,7 @@ Av de som døde på intensiv, hadde \Sexpr{AndelRespStotte} \% fått respirasjon
 
 \begin{figure}[ht] 
 \centering \includegraphics[width= \Sexpr{figKrymp1}\textwidth]{FigLiggetidDode.pdf} 
-  \caption{Gjennomsnittlig liggetid på intensiv for ikke-overlevere, \Sexpr{paste(ShTypeEgen,'sykehus', sep='')}}
+  \caption{Gjennomsnittlig liggetid på intensiv for ikke-overlevere, \Sexpr{paste0(ShTypeEgenTxt,'sykehus.')}}
   \label{fig:FigLiggetidDode}
 \end{figure}
 

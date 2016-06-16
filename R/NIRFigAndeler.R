@@ -148,7 +148,7 @@ if (valgtVar=='Nas') {
 }
 
 if (valgtVar=='NEMS') {
-  tittel <- 'Fordeling av NEMS'  
+  tittel <- 'Fordeling av NEMS per døgn'  
   indMed <- which( (RegData$liggetid>=1) & (RegData$NEMS>1))	#NEMS=0 el 1 - ikke registrert.
   RegData <- RegData[indMed, ]
   gr <- c(seq(0, 60,10), 500) 
