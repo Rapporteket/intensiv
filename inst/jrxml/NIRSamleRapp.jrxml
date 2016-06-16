@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.2.0.final using JasperReports Library version 6.2.0  -->
-<!-- 2016-06-16T12:25:13 -->
+<!-- 2016-06-16T15:09:51 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="NGERmonthlyReport" language="groovy" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" scriptletClass="no.skde.tools.report.ProcessNowebRapporteket" uuid="334d651a-6c7d-4382-8db8-edbe0421acda">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
@@ -40,10 +40,6 @@
 	</parameter>
 	<parameter name="emailSubject" class="java.lang.String" isForPrompting="false">
 		<defaultValueExpression><![CDATA[new String("Samlerapport for Norsk Intensivregister")]]></defaultValueExpression>
-	</parameter>
-	<parameter name="usePdfAnnotation" class="java.lang.Integer" isForPrompting="false">
-		<parameterDescription><![CDATA[Set to 0 to void annotations]]></parameterDescription>
-		<defaultValueExpression><![CDATA[new Integer(0)]]></defaultValueExpression>
 	</parameter>
 	<queryString language="SQL">
 		<![CDATA[]]>

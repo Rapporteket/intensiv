@@ -76,10 +76,10 @@ library(intensiv)
 library(tools)	#texi2pdf
 
 #NIRdata <- read.table('C:/Registre/NIR/data/NIR2014-11-07ansi.csv', sep=';', header=T)	#NIRvarSQL.csv
+setwd('C:/ResultattjenesteGIT/intensiv/inst/') 
 load("../NIRdata10000.Rdata")
 NIRdata <- RegData
 reshID <- 112044 #102090 Ahus, 112044 Haukeland
-setwd('C:/ResultattjenesteGIT/intensiv/inst/') 
 #knit(input, output = NULL, tangle = FALSE, text = NULL, envir = parent.frame())
 knit('NIRSamleRapp.Rnw')
 texi2pdf(file='NIRSamleRapp.tex')

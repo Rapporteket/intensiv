@@ -100,10 +100,11 @@
 
 <<setup, include=FALSE, cache=FALSE>>=
 # this is equivalent to \SweaveOpts{...}
-#knitr::opts_chunk$set(warnings=FALSE,echo=FALSE)
-#knitr::opts_chunk$set(fig.align='center', fig.show='hold', out.width='.8\\textwidth', cache=FALSE)
-#knitr::options(replace.assign=TRUE, width=90)
-options(replace.assign=TRUE, width=90, warnings=FALSE,echo=FALSE, fig.align='center', fig.show='hold', out.width='.8\\textwidth', cache=FALSE)
+knitr::opts_chunk$set(warnings=FALSE,echo=FALSE)
+knitr::opts_chunk$set(fig.path='')	#Settes også i rapbase
+knitr::opts_knit$set(root.dir = './')	#Settes også i rapbase
+knitr::opts_chunk$set(fig.align='center', fig.show='hold', out.width='.8\\textwidth', cache=FALSE)
+options(replace.assign=TRUE, width=90) #, warnings=FALSE, echo=FALSE, fig.align='center', fig.show='hold', out.width='.8\\textwidth', cache=FALSE)
 #fig.path='figurer/', 
 @
 
@@ -133,7 +134,7 @@ rapporteringsløsningen JasperReports
 og kan genereres av intensivregisterets databasebrukerne på \textit{helseregister.no}.
 
 
-<<LasteData, echo=FALSE, eval=T>>=
+<<LasteData, echo=FALSE, eval=F>>=
 NIRdata <- NIRRegDataSQL()
 @
 
