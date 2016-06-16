@@ -100,11 +100,10 @@
 
 <<setup, include=FALSE, cache=FALSE>>=
 # this is equivalent to \SweaveOpts{...}
-knitr::opts_chunk$set(warnings=FALSE,echo=FALSE)
-knitr::opts_knit$set(root.dir = './')
-knitr::opts_chunk$set(fig.path='./', fig.align='center', fig.show='hold', out.width='.8\\textwidth',
-	cache=FALSE)
-knitr::options(replace.assign=TRUE, width=90)
+#knitr::opts_chunk$set(warnings=FALSE,echo=FALSE)
+#knitr::opts_chunk$set(fig.align='center', fig.show='hold', out.width='.8\\textwidth', cache=FALSE)
+#knitr::options(replace.assign=TRUE, width=90)
+knitr::options(replace.assign=TRUE, width=90, warnings=FALSE,echo=FALSE, fig.align='center', fig.show='hold', out.width='.8\\textwidth', cache=FALSE)
 #fig.path='figurer/', 
 @
 
