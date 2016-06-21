@@ -9,7 +9,7 @@
 #' Argumentet \emph{valgtVar} har følgende valgmuligheter:
 #'    \itemize{
 #'     \item alder_u18: Pasienter under 18 år 
-#'     \item alder_over80: Pasienter over 80 år (>80)
+#'     \item alder_over80: Pasienter over 80 år (>=80)
 #'     \item dodeSykehus: Pasienter som dør under sykehusoppholdet (intensiv/post)
 #'     \item dodeIntensiv: Pasienter som dør på intensivavdelinga. 
 #'     \item innMaate: Hastegrad inn på intensiv (Elektivt, Akutt medisinsk, Akutt kirurgisk)
@@ -41,7 +41,7 @@ if (hentData == 1) {
 
 # Hvis RegData ikke har blitt preprosessert. (I samledokument gjøre dette i samledokumentet)
 if (preprosess){
-       RegData <- NIRPreprosess(RegData=RegData, reshID=reshID)
+       RegData <- NIRPreprosess(RegData=RegData)	#, reshID=reshID)
      }
 
 RegData$Variabel <- 0
@@ -55,7 +55,7 @@ if (valgtVar=='alder_u18') {	#endret fra under18
 
 if (valgtVar=='alder_over80') {	#endret fra over80
   RegData <- RegData[which(RegData$alder>=0), ]    #Tar bort alder<0
-  RegData$Variabel[which(RegData$alder>80)] <- 1 #?Endre til >=
+  RegData$Variabel[which(RegData$alder>=80)] <- 1 #?Endre til >=
   tittel <- 'Pasienter over 80 år'
 }
 

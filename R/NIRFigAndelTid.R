@@ -6,7 +6,7 @@
 #' Argumentet \emph{valgtVar} har følgende valgmuligheter:
 #'    \itemize{
 #'     \item alder_u18: Pasienter under 18 år 
-#'     \item alder_over80: Pasienter over 80 år  (>80)
+#'     \item alder_over80: Pasienter over 80 år  (>=80)
 #'     \item dodeSykehus: Pasienter som dør under sykehusoppholdet (intensiv/post)
 #'     \item dodeIntensiv: Pasienter som dør på intensivavdelinga. 
 #'	 \item liggetidDod: Andel av total liggetid brukt på de som dør på intensiv
@@ -30,7 +30,7 @@ NIRFigAndelTid <- function(RegData, valgtVar, datoFra='2011-01-01', datoTil='300
   
   # Hvis RegData ikke har blitt preprosessert. (I samledokument gjøre dette i samledokumentet)
   if (preprosess){
-    RegData <- NIRPreprosess(RegData=RegData, reshID=reshID)
+    RegData <- NIRPreprosess(RegData=RegData)	#, reshID=reshID)
   }
   
   

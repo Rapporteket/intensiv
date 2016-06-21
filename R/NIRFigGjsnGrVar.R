@@ -41,7 +41,7 @@ if (hentData == 1) {
 
 # Hvis RegData ikke har blitt preprosessert. (I samledokument gjøre dette i samledokumentet)
 if (preprosess){
-       RegData <- NIRPreprosess(RegData=RegData)#, reshID=reshID)
+       RegData <- NIRPreprosess(RegData=RegData) #, reshID=reshID)
      }
 
 grVar <- 'ShNavn'
@@ -52,6 +52,7 @@ Ngrense <- 10
 ben <- NULL		#Benevning
 
 RegData$Variabel  <- as.numeric(RegData[ ,valgtVar])
+varTittel <- valgtVar
 
 if (valgtVar == 'SMR') {
 #Tar ut reinnlagte og overflyttede, samt de med SAPSII=0 (ikke scorede) 
@@ -93,6 +94,7 @@ if (valgtVar == 'Nas') {
 		indMed <- which( (RegData$liggetid>=1) & (RegData$NEMS>1))	#NEMS=0 el 1 - ikke registrert.
 		RegData <- RegData[indMed, ]
 		RegData$NEMS24 <- RegData$NEMS/RegData$liggetid	#floor(RegData$liggetid)
+		varTittel <- 'NEMS/døgn'
 	}
 
 #Gjøre utvalg
@@ -116,7 +118,8 @@ if( valgtVar =='SMR') {t1 <- ''}
 
 grTypetextstreng <- c('lokal-/sentral', 'lokal-/sentral', 'regional')				
 if (grType %in% 1:3) {grTypeTxt <- grTypetextstreng[grType]} else {grTypeTxt <- 'alle '}
-tittel <- c(paste0(t1, valgtVar, ', ', grTypeTxt, 'sykehus')) 
+#tittel <- c(paste0(t1, valgtVar, ', ', grTypeTxt, 'sykehus')) 
+tittel <- c(paste0(t1, varTittel, ', ', grTypeTxt, 'sykehus')) 
 			
 	
 #-----------Figur---------------------------------------

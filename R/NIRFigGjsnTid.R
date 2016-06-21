@@ -42,7 +42,7 @@ NIRFigGjsnTid <- function(RegData, valgtVar, datoFra='2011-01-01', datoTil='3000
   
 # Hvis RegData ikke har blitt preprosessert. (I samledokument gjøre dette i samledokumentet)
   if (preprosess){
-    RegData <- NIRPreprosess(RegData=RegData, reshID=reshID)
+    RegData <- NIRPreprosess(RegData=RegData)	#, reshID=reshID)
   }
   
 RegData$Aar <- 1900 + strptime(RegData$InnDato, format="%Y")$year
