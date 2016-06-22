@@ -81,12 +81,12 @@
 %	DATE SECTION
 {\Large \today}\\[2cm] % Date, change the \today to a set date if you want to be precise
 
-\vspace{5cm}
+\vspace{7cm}
 
-%	LOGO SECTION
-% \includegraphics[height=2cm]{../logoNIR.jpg}\\[1cm] % Include a department/university logo - this will require the graphicx package
+% LOGO
+\includegraphics[height=2cm]{logoNIR.jpg}\\[1cm] % Include a department/university logo - this will require the graphicx package
  
- \vfill % Fill the rest of the page with whitespace
+% \vfill % Fill the rest of the page with whitespace
 \end{titlepage}
 
 
