@@ -72,9 +72,8 @@ knitr::opts_chunk$set()	#Settes også i rapbase
 knitr::opts_knit$set(root.dir = './')	#Settes også i rapbase
 knitr::opts_chunk$set(fig.align='center', fig.show='hold', out.width='.8\\textwidth', cache=FALSE)
 options(replace.assign=TRUE, width=90) #, warnings=FALSE, echo=FALSE, fig.align='center', fig.show='hold', out.width='.8\\textwidth', cache=FALSE)
-system.file("logoNIR.jpg", package = "intensiv")
+#system.file("logoNIR.jpg", package = "intensiv")
 @
-
 
 \begin{titlepage}
 \newcommand{\HRule}{\rule{\linewidth}{0.5mm}} % Defines a new command for the horizontal lines, change thickness here
@@ -95,9 +94,11 @@ system.file("logoNIR.jpg", package = "intensiv")
 
 \vspace{7cm}
 
-% LOGO
-\includegraphics[height=2cm]{logoNIR.jpg}\\[1cm] % Include a department/university logo - this will require the graphicx package
- 
+% LOGO, Include a department/university logo - this will require the graphicx package
+ \includegraphics[height=2cm]{\Sexpr{system.file(file='logoNIR.jpg', package='intensiv')}}
+ %\\[1cm]
+% \includegraphics[height=2cm]{../logoNIR.jpg}\\[1cm] 
+% \includepdf[fitpaper]{\Sexpr{system.file(file='ForsideV1logo.pdf', package='norgast')}}
 % \vfill % Fill the rest of the page with whitespace
 \end{titlepage}
 
@@ -134,6 +135,8 @@ at rapporterte data kan tilbakeføres til enkeltpersoner. Det er registeret sitt
 Rapporten er laget ved hjelp av statistikkverktøyet R, dokumentverktøyet \LaTeX{} og 
 rapporteringsløsningen JasperReports
 og kan genereres av intensivregisterets databasebrukerne på \textit{helseregister.no}.
+
+
 
 
 <<LasteData, echo=FALSE, eval=T>>=
