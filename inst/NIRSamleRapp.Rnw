@@ -254,7 +254,8 @@ dum <- NIRFigGjsnGrVar(RegData=NIRdata, valgtVar='alder', valgtMaal='Med', prepr
 \begin{figure}[ht] 
 \centering \includegraphics[width= \Sexpr{figKrymp1}\textwidth]{FigAlderGjsn.pdf} 
 \centering \includegraphics[width= \Sexpr{figKrymp1}\textwidth]{FigAlderMed.pdf} 
- \caption{Gjennomsnitt og median alder ved \Sexpr{ShTypeEgen}sykehus.}	
+ \caption{Gjennomsnitt og median alder ved Sexpr{paste0(ShTypeEgenTxt,'sykehus').}	
+ 
   \label{fig:Alder}
 \end{figure}
 
