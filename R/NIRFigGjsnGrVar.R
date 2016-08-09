@@ -15,8 +15,9 @@
 #'     \item alder: Pasientens alders 
 #'     \item SMR: Standardisert mortalitetsratio (Gir annen figurtype)
 #'     \item liggetid: Liggetid 
-#'     \item NEMS: Skår for ressursbruk. (Nine Equivalents of Nursing Manpower Use Score)
-#'     \item Nas: Skår for sykepleieraktiviteter. (Nursing Activities Score)
+#'     \item Nas: Skår for sykepleieraktiviteter. (Nursing Activities Score). Per døgn.
+#'     \item NEMS: Skår for ressursbruk per opphold. (Nine Equivalents of Nursing Manpower Use Score)
+#'     \item NEMS24: NEMS-skår per døgn. 
 #'     \item respiratortid: Tid tilbrakt i respirator
 #'     \item SAPSII: Skår for alvorlighetsgrad av sykdom.  (Simplified Acute Physiology Score II)
 #'    }
@@ -48,7 +49,6 @@ grVar <- 'ShNavn'
 Ngrense <- 10		
 ben <- NULL		#Benevning
 
-RegData$Variabel  <- as.numeric(RegData[ ,valgtVar])
 varTittel <- valgtVar
 
 if (valgtVar == 'SMR') {
@@ -76,6 +76,10 @@ minald <- max(18, minald)
 RegData <- RegData[as.numeric(RegData$SAPSII) > 0, ]
 }
 
+if (valgtVar %in% c('alder', 'liggetid', 'NEMS', 'respiratortid', 'SAPSII', 'SMR')){
+      RegData$Variabel  <- as.numeric(RegData[ ,valgtVar])
+}
+      
 if (valgtVar == 'Nas') {
 		#valgtVar <- 'NAS24'
 		RegData$NAS24 <- RegData$Nas/RegData$liggetid	#floor(RegData$liggetid)
@@ -91,7 +95,6 @@ if (valgtVar == 'Nas') {
 	#Dvs. NEMS-poeng totalt, altså NEMS per opphold
 		indMed <- which( (RegData$liggetid>=1) & (RegData$NEMS>1))	#NEMS=0 el 1 - ikke registrert.
 		RegData <- RegData[indMed, ]
-		RegData$Variabel <- RegData$NEMS
 		varTittel <- 'NEMS/opphold'
 	}
 if (valgtVar=='NEMS24') {
