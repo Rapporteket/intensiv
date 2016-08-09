@@ -112,8 +112,8 @@ options(replace.assign=TRUE, width=90) #, warnings=FALSE, echo=FALSE, fig.align=
 
 
 
-\section{Informasjonsgrunnlag og ansvarsforhold}
-%\section*{Informasjonsgrunnlag og ansvarsforhold}
+%\section{Informasjonsgrunnlag og ansvarsforhold}
+\section*{Informasjonsgrunnlag og ansvarsforhold}
 
 Denne rapporten er fremstilt automatisk på grunnlag av en mal laget av
 Lena Ringstad Olsen ved Senter for Klinisk Dokumentasjon og Evaluering (SKDE) på oppdrag
