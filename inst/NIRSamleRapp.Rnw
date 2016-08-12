@@ -247,14 +247,14 @@ dum <- NIRFigGjsnGrVar(RegData=NIRdata, valgtVar='alder', valgtMaal='Med', prepr
 
 \begin{figure}[ht]
 \centering \includegraphics[width= \Sexpr{figKrymp1}\textwidth]{FigAlderFord.pdf} 
-\caption{\label{fig:AlderFord} Aldersfordeling, alle intensivopphold i uttrekket}
+\caption{\label{fig:AlderFord} Aldersfordeling, alle intensivopphold i uttrekket.}
 \end{figure}
 
 
 \begin{figure}[ht] 
 \centering \includegraphics[width= \Sexpr{figKrymp1}\textwidth]{FigAlderGjsn.pdf} 
 \centering \includegraphics[width= \Sexpr{figKrymp1}\textwidth]{FigAlderMed.pdf} 
- \caption{Gjennomsnitt og median alder ved Sexpr{paste0(ShTypeEgenTxt,'sykehus').}	
+ \caption{Gjennomsnitt og median alder ved \Sexpr{paste0(ShTypeEgenTxt,'sykehus.')}}	
  
   \label{fig:Alder}
 \end{figure}
@@ -762,5 +762,3 @@ Av de som døde på intensiv, hadde \Sexpr{AndelRespStotte} \% fått respirasjon
 
 
 \end{document}
-
-
