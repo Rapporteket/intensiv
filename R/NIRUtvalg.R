@@ -42,7 +42,7 @@ RegData <- RegData[indMed,]
 
 
 N <- dim(RegData)[1]	#N=0 gir feilmelding
-grTypetext <- c('lokale/sentrale', 'lokale/sentrale', 'regionale')				
+grTypetext <- c('lokal/sentral', 'lokal/sentral', 'region')				
 
 utvalgTxt <- c(paste(
 	'Registreringsperiode: ', if (N>0) {min(RegData$InnDato, na.rm=T)} else {datoFra}, 

@@ -127,14 +127,14 @@ if (dim(RegData)[1] >= 0) {
 	AndelerGrSort <- AndelerGr[sortInd]
 	AndelHele <- sum(RegData$Variabel==1)/N*100	#round(100*sum(RegData$Variabel)/N, 2)
 	GrNavnSort <- names(Ngr)[sortInd]	#paste(names(Ngr)[sortInd], ', ',Ngrtxt[sortInd], sep='')
-	
+
 	andeltxt <- paste(sprintf('%.1f',AndelerGrSort), '%',sep='') 	#round(as.numeric(AndelerGrSort),1)
 	if (length(indGrUt)>0) {andeltxt[(AntGr+1):(AntGr+length(indGrUt))] <- ''}
 
 
 NgrtxtSort <- Ngrtxt[sortInd]
 
-grTypetextstreng <- c('lokal-/sentral', 'lokal-/sentral', 'regional')				
+grTypetextstreng <- c('lokal-/sentral', 'lokal-/sentral', 'region')				
 if (grType %in% 1:3) {grTypeTxt <- grTypetextstreng[grType]} else {grTypeTxt <- 'alle '}
 
 #--------------------------FIGUR---------------------------------------------------
@@ -171,12 +171,13 @@ if (valgtVar=='innMaate') {
 	AndelerGr <- ftable(RegData[ ,c(grVar, 'InnMaate')])/rep(Ngr,3)*100
 	sortInd <- order(AndelerGr[,2])
 	dataAlle <- table(RegData$Variabel)/N*100
-#Legger til resultat for hele gruppa. Og legger til en tom etter for å få plass til legend
+	
+	#Legger til resultat for hele gruppa. Og legger til en tom etter for å få plass til legend
 	pos <- barplot(cbind(as.numeric(dataAlle), rep(0,3), t(AndelerGr[sortInd,])), horiz=T, beside=FALSE, 
 			border=NA, col=farger[1:3], 
-			main='', font.main=1, xlab='', ylim=c(ymin, 1.05*ymax+2), las=1, cex.names=xkr, ) 	# ylim=c(0.05, 1.24)*length(Ngr),xlim=c(0,ymax), cex.axis=0.9, cex.names=0.8*xkr,
-	GrNavnSort <- c(paste(grTypeTxt, 'sykehus', sep=''), '', GrNavnSort)
-	NgrtxtSort<- c(paste('N=', N, sep=''), '', NgrtxtSort)
+			main='', font.main=1, xlab='', ylim=c(ymin, 1.05*ymax+2), las=1, cex.names=xkr ) 	# ylim=c(0.05, 1.24)*length(Ngr),xlim=c(0,ymax), cex.axis=0.9, cex.names=0.8*xkr,
+	GrNavnSort <- c(paste(grTypeTxt, 'sykehus', sep=''), '', names(Ngr)[sortInd])
+	NgrtxtSort<- c(paste('N=', N, sep=''), '', Ngrtxt[sortInd])
 		legend(x=50, y=1.05*ymax+2, c('Elektivt','Akutt med.', 'Akutt kir.'), xjust=0.5, yjust=0.5,	#inset=0.01,# max(pos)*1.01 x=50, y=ymax,
 			fill=farger[1:3], border=farger[1:3], ncol=3, bty='n')	#cex=0.9,  ncol=6,
 	xmax <- 100
@@ -192,9 +193,10 @@ if (valgtVar=='innMaate') {
 
 	text(x=pmax(AndelerGrSort, max(strwidth(NgrtxtSort, units='user', cex=xkr)))+xmax*0.01, y=pos+0.1, 
 		andeltxt, las=1, cex=xkr, adj=0, col=farger[1])	#Andeler, hvert sykehus	
-}
+      }
 	mtext(at=pos, GrNavnSort, side=2, las=1, cex=cexGrNavn*xkr, adj=1, line=0.25)	#Sykehusnavn
-	text(x=0.005*xmax, y=pos, NgrtxtSort, las=1, cex=xkr, adj=0, col=farger[4], lwd=3)	#c(Ngrtxt[sortInd],''),
+	Nfarge <- ifelse(valgtVar == 'innMaate', farger[4], farger[1]) 
+	text(x=0.005*xmax, y=pos, NgrtxtSort, las=1, cex=xkr, adj=0, lwd=3, col=Nfarge)	#, col=farger[4]	c(Ngrtxt[sortInd],''),
 	mtext('Prosent (%)', las=1, side=1, cex=xkr, line=2.2*xkr)
 	title(tittel, line=1.5, font.main=1, cex.main=1.5)
 	mtext('(Tall på søylene angir antall registreringer)', las=1, side=1, cex=xkr, line=3.2*xkr)

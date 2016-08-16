@@ -15,8 +15,9 @@
 #'     \item alder: Pasientens alders 
 #'     \item SMR: Standardisert mortalitetsratio (Gir annen figurtype)
 #'     \item liggetid: Liggetid 
-#'     \item NEMS: Skår for ressursbruk. (Nine Equivalents of Nursing Manpower Use Score)
-#'     \item Nas: Skår for sykepleieraktiviteter. (Nursing Activities Score)
+#'     \item Nas: Skår for sykepleieraktiviteter. (Nursing Activities Score). Per døgn.
+#'     \item NEMS: Skår for ressursbruk per opphold. (Nine Equivalents of Nursing Manpower Use Score)
+#'     \item NEMS24: NEMS-skår per døgn. 
 #'     \item respiratortid: Tid tilbrakt i respirator
 #'     \item SAPSII: Skår for alvorlighetsgrad av sykdom.  (Simplified Acute Physiology Score II)
 #'    }
@@ -32,9 +33,6 @@ NIRFigGjsnGrVar <- function(RegData, valgtVar, valgtMaal='Gjsn', minald=0, maxal
 			datoTil='3000-01-01', grType=99, InnMaate=99, dodInt='', erMann='', preprosess=1, hentData=0, 
 			outfile) {
 
-#Inngangsparametre:
-	#grType - Må velge en av: region, sentral, lokal, alle 
-	
 if (hentData == 1) {		
   RegData <- NIRRegDataSQL(datoFra, datoTil)
 }
@@ -51,7 +49,6 @@ grVar <- 'ShNavn'
 Ngrense <- 10		
 ben <- NULL		#Benevning
 
-RegData$Variabel  <- as.numeric(RegData[ ,valgtVar])
 varTittel <- valgtVar
 
 if (valgtVar == 'SMR') {
@@ -79,23 +76,35 @@ minald <- max(18, minald)
 RegData <- RegData[as.numeric(RegData$SAPSII) > 0, ]
 }
 
+if (valgtVar %in% c('alder', 'liggetid', 'NEMS', 'respiratortid', 'SAPSII', 'SMR')){
+      RegData$Variabel  <- as.numeric(RegData[ ,valgtVar])
+}
+      
 if (valgtVar == 'Nas') {
 		#valgtVar <- 'NAS24'
 		RegData$NAS24 <- RegData$Nas/RegData$liggetid	#floor(RegData$liggetid)
 		indMed <- intersect(which(RegData$NAS24 <= 177), 
 							which( (RegData$liggetid > 8/24) & (RegData$Nas>0)))
 		RegData <- RegData[indMed, ]
-		RegData$Nas <- RegData$NAS24
+		RegData$Variabel <- RegData$NAS24
+		varTittel <- 'Nas/døgn'
 }
 
 	if (valgtVar=='NEMS') {
 	#Inkluderer: opphald lenger enn 24 timar og det faktisk er skåra NEMS-poeng.
-	#Dvs. NEMS-poeng totalt/liggjedøger, altså NEMS/24 timar
+	#Dvs. NEMS-poeng totalt, altså NEMS per opphold
 		indMed <- which( (RegData$liggetid>=1) & (RegData$NEMS>1))	#NEMS=0 el 1 - ikke registrert.
 		RegData <- RegData[indMed, ]
-		RegData$NEMS24 <- RegData$NEMS/RegData$liggetid	#floor(RegData$liggetid)
-		varTittel <- 'NEMS/døgn'
+		varTittel <- 'NEMS/opphold'
 	}
+if (valgtVar=='NEMS24') {
+      #Inkluderer: opphald lenger enn 24 timar og det faktisk er skåra NEMS-poeng.
+      #Dvs. NEMS-poeng totalt/liggjedøger, altså NEMS/24 timar
+      indMed <- which( (RegData$liggetid>=1) & (RegData$NEMS>1))	#NEMS=0 el 1 - ikke registrert.
+      RegData <- RegData[indMed, ]
+      RegData$Variabel <- RegData$NEMS/RegData$liggetid	#floor(RegData$liggetid)
+      varTittel <- 'NEMS/døgn'
+}
 
 #Gjøre utvalg
 NIRutvalg <- NIRUtvalg(RegData=RegData, datoFra=datoFra, datoTil=datoTil, minald=minald, maxald=maxald, 
@@ -116,7 +125,7 @@ t1 <- 'Median ' } else {t1 <- 'Gjennomsnittlig '}
 
 if( valgtVar =='SMR') {t1 <- ''}
 
-grTypetextstreng <- c('lokal-/sentral', 'lokal-/sentral', 'regional')				
+grTypetextstreng <- c('lokal-/sentral', 'lokal-/sentral', 'region')				
 if (grType %in% 1:3) {grTypeTxt <- grTypetextstreng[grType]} else {grTypeTxt <- 'alle '}
 #tittel <- c(paste0(t1, valgtVar, ', ', grTypeTxt, 'sykehus')) 
 tittel <- c(paste0(t1, varTittel, ', ', grTypeTxt, 'sykehus')) 
