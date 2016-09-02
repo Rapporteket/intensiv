@@ -14,5 +14,6 @@ AndelerHighchart <- function(outfile) {
     hc_xAxis(categories = 2012:2016) %>% 
     hc_add_series(data = c(3900,  4200,  5700,  8500, 11900),
                   name = "Downloads")
+  
   htmlwidgets::saveWidget(h1, outfile, selfcontained = TRUE)
 }
