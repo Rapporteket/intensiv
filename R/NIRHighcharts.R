@@ -17,5 +17,6 @@ AndelerHighchart <- function(outfile) {
     hc_add_series(data = c(3900,  4200,  5700,  8500, 11900),
                   name = "Downloads")
   
-  htmlwidgets::saveWidget(h1, outfile, selfcontained = FALSE)
+  htmlwidgets::saveWidget(h1, outfile, selfcontained = FALSE,
+                          libdir = "hc_jsFiles")
 }
