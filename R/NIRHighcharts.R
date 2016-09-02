@@ -3,6 +3,7 @@
 #' asæglksa
 #' 
 #' @param outfile String providing fully qualified path and name of html widget
+#' @importFrom magrittr "%>%"
 #' @export
 
 AndelerHighchart <- function(outfile) {
