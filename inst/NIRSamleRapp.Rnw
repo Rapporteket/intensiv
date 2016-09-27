@@ -173,6 +173,7 @@ NIRdata$LiggetidGr <-  cut(NIRdata$liggetid, breaks=LiggeGr, include.lowest=FALS
 
 #NIRdata$ShNavn <- as.factor(NIRdata$ShNavn)	#Hvis dette legges på, får vi ikke valgt ut bare sykehustypens sykehus
 NIRdata <- NIRdata[which(NIRdata$InnMaate %in% c(0,6,8)), ] 
+NIRdata$InnMaate <- as.factor(NIRdata$InnMaate, levels = c(0,6,8))
 
 tabKjPst <- round(table(NIRdata$erMann)/N*100, digits=1)
 ind <- list(Eget = which(NIRdata$ReshId == reshID),
