@@ -3,7 +3,7 @@ rm(list=ls())
 library(intensiv)
 reshID=112044
 datoFra <- '2011-01-01'	# standard: 0	format: YYYY-MM-DD. Kan spesifisere bare første del, eks. YYYY el. YYYY-MM. 
-datoTil <- '2017-05-01'	# standard: 3000-01-01
+datoTil <- '2015-12-31'	# standard: 3000-01-01
 dodInt <- ''	# 0-i live, 1 -død, standard: alle (alle andre verdier)
 erMann <- ''	#Kjønn: 0-kvinner, 1-menn, standard: alle (alle andre verdier)
 minald <- 0 #(standard: 0)
@@ -47,8 +47,8 @@ innMaate, lok/sentral, 2015
 innMaate, region, 2015
 dodeIntensiv, lok/sentral, 2015
 dodeIntensiv, region, 2015
-dodeSykehus, lok/sentral, 2015
-dodeSykehus, region, 2015
+dod30d, lok/sentral, 2015
+dod30d, region, 2015
 alder_over80, lok/sentral, 2015
 alder_over80, region, 2015
 alder_u18, lok/sentral, 2015
@@ -62,7 +62,7 @@ datoTil <- '2015-12-31'
 valgtVar <- 'innMaate'
 grType <- 1
 
-for (valgtVar in c('alder_u18', 'alder_over80', 'dodeSykehus', 'dodeIntensiv', 'innMaate', 
+for (valgtVar in c('alder_u18', 'alder_over80', 'dod30d', 'dodeIntensiv', 'innMaate', 
 				'respStotte', 'reinn')) {
 	for (grType in  c(1,3)) {
 	outfile <- paste0(valgtVar, 'ShGr', grType, 'PerEnhet2015.pdf')
@@ -74,7 +74,7 @@ for (valgtVar in c('alder_u18', 'alder_over80', 'dodeSykehus', 'dodeIntensiv', '
 dodInt <- ''	# 0-i live, 1 -død, standard: alle (alle andre verdier)
 datoFra <- '2011-01-01'
 datoTil <- '2015-12-31'
-for (valgtVar in c('alder_u18', 'alder_over80', 'dodeSykehus', 'dodeIntensiv', 'liggetidDod', 
+for (valgtVar in c('alder_u18', 'alder_over80', 'dod30d', 'dodeIntensiv', 'liggetidDod', 
                    'respiratortidDod', 'respStotte', 'reinn')) {
 outfile <- paste0(valgtVar, 'AndelTid_alle.pdf')
 NIRFigAndelTid(RegData=RegData, valgtVar=valgtVar, datoFra=datoFra, datoTil=datoTil, 

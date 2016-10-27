@@ -228,8 +228,8 @@ xtable(tabAvdNEget, digits=0, align=c('l', rep('r', ncol(tabAvdNEget))),
 \subsection{Alder og kjønn}
 
 <<'TabAlder', results='asis', echo=FALSE, eval=T>>=
-alderDIV <- cbind('Egen enhet'= summary(NIRdataEget$alder)[1:6],
-			'Resten av landet'= summary(NIRdataResten$alder)[1:6])
+alderDIV <- cbind('Egen enhet'= summary(NIRdataEget$Alder)[1:6],
+			'Resten av landet'= summary(NIRdataResten$Alder)[1:6])
 rownames(alderDIV) <- c('Minimum:', '25% av pasientene er under:', 'Median:','Gjennsomsnitt:',
 		'25% av pasientene er over:', 'Maksimum:')
 
@@ -577,7 +577,7 @@ og om Glasgow Coma Score er ensartet skåret.
 
 <<'SAPSII', results='asis', echo=FALSE>>=
 #Gj.snitt, Median, % av opphold, Spredning, døgn(min,max) \
-indSAPS <- which(as.numeric(NIRdata$SAPSII) > 0 & as.numeric(NIRdata$alder) >= 18)
+indSAPS <- which(as.numeric(NIRdata$SAPSII) > 0 & as.numeric(NIRdata$Alder) >= 18)
 NIRdataUtv <- NIRdata[indSAPS, c('SAPSII', 'ShType','ReshId')]
 indEgenUtv <- which(NIRdataUtv$ReshId == reshID)
 
@@ -623,11 +623,11 @@ SAPSII for \Sexpr{ShTypeEgenTxt}sykehus.
 
 
 \clearpage
-\subsection{Vital status ut sykehus}
+%\subsection{Vital status ut sykehus}
 
-Status for pasienter utskrevet fra \Sexpr{shtxt}.
+%Status for pasienter utskrevet fra \Sexpr{shtxt}.
 
-<<'StatusUt', results='asis', echo=FALSE>>=
+<<'StatusUt', results='asis', echo=FALSE, eval=FALSE >>=
 #For egen avdeling vil pasientar som er øverførte til anna sjukehus/annan intensivavdeling, sortere under "levende".
 
 #Tal på overførte pasientar er i seg sjølv interessant, så det er fint om vi kan få fram både 
@@ -703,7 +703,7 @@ dum <- NIRFigGjsnGrVar(RegData=NIRdata, valgtVar='SMR', valgtMaal='Mean', prepro
 
 <<'DodInt', results='asis', echo=FALSE>>=
 #Døde, intensiv
-NIRdataUtv <- NIRdata[which(NIRdata$DischargedHospitalStatus==1), 
+NIRdataUtv <- NIRdata[which(NIRdata$DischargedIntensiveStatus==1), 
 			c('ReshId', 'ShType', 'liggetid', 'respiratortid', 'InnMaate' )]
 N_innmShT <- ftable(NIRdata[c('InnMaate', 'ShType')])
 

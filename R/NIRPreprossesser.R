@@ -31,12 +31,11 @@ NIRPreprosess <- function(RegData=RegData)	#, reshID=reshID)
 	names(RegData)[which(names(RegData) == 'Saps2ScoreNumber')] <- 'SAPSII'
 	names(RegData)[which(names(RegData) == 'TypeOfAdmission')] <- 'InnMaate'
 	names(RegData)[which(names(RegData) == 'Nems')] <- 'NEMS'
-	names(RegData)[which(names(RegData) == 'ReAdmitted')] <- 'Reinn'
-	names(RegData)[which(names(RegData) == 'PatientAge')] <- 'alder'
+#	names(RegData)[which(names(RegData) == 'ReAdmitted')] <- 'Reinn'
+	names(RegData)[which(names(RegData) == 'PatientAge')] <- 'Alder'
 	
 # Riktig format
 	RegData$ShNavn <- as.character(RegData$ShNavn)
-#	RegData$alder <- as.numeric(RegData$decimalAge)	#
 
 	#Riktig format på datovariable:
 #	RegData <- RegData[which(RegData$DateAdmittedIntensive!=''),]	#Tar ut registreringer som ikke har innleggelsesdato
@@ -45,6 +44,12 @@ NIRPreprosess <- function(RegData=RegData)	#, reshID=reshID)
 	#RegData$InnDato <- strptime(RegData$DateAdmittedIntensive, format="%Y-%m-%d") # %H:%M:%S" )  #"%d.%m.%Y"	"%Y-%m-%d"
 	#RegData$Aar <- 1900 + strptime(RegData$DateAdmittedIntensive, format="%Y")$year
 	
-  return(invisible(RegData))
+	# Nye variable:
+	#En "overlever": Person som er i live 30 dager etter innleggelse.
+	RegData$Dod30 <- 0
+	RegData$Dod30[which(difftime(as.Date(RegData$Morsdato, format="%Y-%m-%d %H:%M:%S"), 
+	                              as.Date(RegData$InnDato), units='days')< 30)] <- 1
+	
+return(invisible(RegData))
 }
 

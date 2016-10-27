@@ -10,7 +10,7 @@
 #'    \itemize{
 #'     \item alder_u18: Pasienter under 18 år 
 #'     \item alder_over80: Pasienter over 80 år (>=80)
-#'     \item dodeSykehus: Pasienter som dør under sykehusoppholdet (intensiv/post)
+#'     \item dod30d: Pasienter som dør innen 30 dager etter innleggelse
 #'     \item dodeIntensiv: Pasienter som dør på intensivavdelinga. 
 #'     \item innMaate: Hastegrad inn på intensiv (Elektivt, Akutt medisinsk, Akutt kirurgisk)
 #'		Dette valget viser en annen figurtype.
@@ -48,22 +48,23 @@ RegData$Variabel <- 0
 
 
 if (valgtVar=='alder_u18') {	#endret fra under18
-  RegData <- RegData[which(RegData$alder>=0), ]    #Tar bort alder<0
-  RegData$Variabel[which(RegData$alder<18)] <- 1 
+  RegData <- RegData[which(RegData$Alder>=0), ]    #Tar bort alder<0
+  RegData$Variabel[which(RegData$Alder<18)] <- 1 
   tittel <- 'Pasienter under 18 år'
 }
 
 if (valgtVar=='alder_over80') {	#endret fra over80
-  RegData <- RegData[which(RegData$alder>=0), ]    #Tar bort alder<0
-  RegData$Variabel[which(RegData$alder>=80)] <- 1 #?Endre til >=
+  RegData <- RegData[which(RegData$Alder>=0), ]    #Tar bort alder<0
+  RegData$Variabel[which(RegData$Alder>=80)] <- 1 #?Endre til >=
   tittel <- 'Pasienter over 80 år'
 }
 
-if (valgtVar=='dodeSykehus') {
+if (valgtVar=='dod30d') {
 #Tar bort ukjente og de som ikke er utskrevet, dvs. tar ut 3:reinnlagt
-  RegData <- RegData[which(RegData$DischargedHospitalStatus %in% 0:2), ]    
-  RegData$Variabel[which(RegData$DischargedHospitalStatus!=0)] <- 1 
-  tittel <- 'Andel pasienter som døde under sykehusoppholdet'
+  #RegData <- RegData[which(RegData$DischargedHospitalStatus %in% 0:2), ]    
+  #RegData$Variabel[which(RegData$DischargedHospitalStatus!=0)] <- 1 
+  RegData$Variabel <- RegData$Dod30
+  tittel <- 'Pasienter som døde innen 30 dager etter innleggelse'
 }
 
 if (valgtVar=='dodeIntensiv') {
@@ -90,9 +91,9 @@ if (valgtVar=='respStotte') {
 
 if (valgtVar=='reinn') {
 #Andel reinnlagte kun hvor dette er registrert. #Ja=1, nei=2, ukjent=9
-RegData <- RegData[which(RegData$Reinn %in% 1:2), ]
-RegData$Variabel[which(RegData$Reinn==1)] <- 1  
-  tittel <-'Andel reinnleggelser'
+RegData <- RegData[which(RegData$ReAdmitted %in% 1:2), ]
+RegData$Variabel[which(RegData$ReAdmitted==1)] <- 1  
+  tittel <-'Andel reinnleggelser på intensivavdelinga'
 }
 
 #Gjøre utvalg 
@@ -157,6 +158,20 @@ if 	( max(Ngr) < Ngrense)	{#Dvs. hvis ALLE er mindre enn grensa.
 if (grType %in% 1:3) {xkr <- 1} else {xkr <- 0.85}
 cexGrNavn <- 0.9
 
+
+AndelerUt <- rbind(Andeler$Hoved, Andeler$Rest)
+rownames(AndelerUt) <- c(shtxt, smltxt)
+AntallUt <- rbind(AntHoved, AntRest)
+rownames(AntallUt) <- c(shtxt, smltxt)
+
+UtData <- list(paste(toString(TittelUt),'.', sep=''), AndelerUt, AntallUt, grtxt )
+names(UtData) <- c('Tittel', 'Andeler', 'Antall', 'GruppeTekst')
+return(invisible(UtData))
+
+
+
+
+
 FigTypUt <- figtype(outfile, height=3*800, fargepalett=NIRutvalg$fargepalett)	
 farger <- FigTypUt$farger
 #Tilpasse marger for å kunne skrive utvalgsteksten
@@ -200,6 +215,7 @@ if (valgtVar=='innMaate') {
 #		andeltxt, las=1, cex=xkr, adj=0, col=farger[1])	#Andeler, hvert sykehus	
 	text(x=0.02*max(AndelerGr, na.rm=T), y=pos+0.1, andeltxt, las=1, cex=xkr, adj=0, col=farger[1])	#Andeler, hvert sykehus	
       }
+	  
 	mtext(at=pos, GrNavnSort, side=2, las=1, cex=cexGrNavn*xkr, adj=1, line=0.25)	#Sykehusnavn, inkl. N
 	#Nfarge <- ifelse(valgtVar == 'innMaate', farger[4], farger[1]) 
 	#if (valgtVar == 'innMaate') {text(x=0.005*xmax, y=pos, NgrtxtSort, las=1, cex=xkr, adj=0, lwd=3, col=farger[4])}

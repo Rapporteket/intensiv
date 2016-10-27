@@ -71,8 +71,8 @@ if (enhetsUtvalg %in% c(2,3,4,6,7)) {
 	}
 
 if (valgtVar=='alder') {
-  RegData <- RegData[which(RegData$alder>=0), ]    #Tar bort alder<0
-  RegData$Variabel<-RegData$alder  
+  RegData <- RegData[which(RegData$Alder>=0), ]    #Tar bort alder<0
+  RegData$Variabel<-RegData$Alder  
   TittelVar <- 'Alder'
   ytxt1 <- 'alder (år)'
 }
