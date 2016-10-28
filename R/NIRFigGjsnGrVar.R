@@ -80,7 +80,9 @@ minald <- max(18, minald)
 RegData <- RegData[as.numeric(RegData$SAPSII) > 0, ]
 }
 
-if (valgtVar %in% c('alder', 'liggetid', 'NEMS', 'respiratortid', 'SAPSII', 'SMR')){
+if (valgtVar == 'alder') {RegData$Variabel <- RegData$Alder}
+
+if (valgtVar %in% c('liggetid', 'NEMS', 'respiratortid', 'SAPSII', 'SMR')){
       RegData$Variabel  <- as.numeric(RegData[ ,valgtVar])
 }
       
