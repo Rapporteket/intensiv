@@ -42,12 +42,7 @@ library(knitr)
 library(intensiv)
 library(tools)	#texi2pdf
 
-#NIRdata <- read.table('C:/Registre/NIR/data/NIR2014-11-07ansi.csv', sep=';', header=T)	#NIRvarSQL.csv
 setwd('C:/ResultattjenesteGIT/intensiv/inst/') 
-NIRdata <- read.table(file='C:/Registre/NIR/data/Main2016-09-27.csv', header=T, sep=';',encoding = 'UTF-8')
-RegData <- NIRdata[sample(1:dim(NIRdata)[1],10000),]
-#load("../NIRdata10000.Rdata")
-#NIRdata <- RegData
 reshID <- 112044 #102090 Ahus, 112044 Haukeland
 #knit(input, output = NULL, tangle = FALSE, text = NULL, envir = parent.frame())
 knit('NIRSamleRapp.Rnw')
@@ -64,10 +59,15 @@ for (reshID in AlleResh ) {
 	file.rename('NIRSamleRapp.pdf', paste0('NIRSamleRapp', reshID, '.pdf'))	#list.files(pattern="water_*.img", paste0("water_", 1:700))
 }
 
+#-------------------------------------LASTE DATA-----------------------------------------------
+NIRdata <- read.table(file='C:/Registre/NIR/data/Main2016-09-27.csv', header=T, sep=';',encoding = 'UTF-8')
+#RegData <- NIRdata[sample(1:dim(NIRdata)[1],10000),]
+#save(RegData, file='C:/Registre/NIR/data/NIRdata10000.Rdata')
+load("C:/Registre/NIR/data/NIRdata10000.Rdata") #RegData
+
 #--------------------------------------- SENTRALMÅL per enhet----------------------------------
 rm(list=ls())
 setwd("c:/ResultattjenesteGIT/Intensiv/")
-#load("NIRdata10000.Rdata")
 valgtVar <- 'liggetid'	#'SMR', alder, liggetid, respiratortid,  SAPSII, 'NEMS', 'Nas'
 minald <- 10 #(standard: 0)
 maxald <- 130	#(standard: 130, må være større enn minald!)
@@ -124,11 +124,6 @@ Fordeling(RegData=NIRdata, valgtVar=valgtVar, minald=minald, maxald=maxald, grTy
 
 #--------------------------------------- Andeler ----------------------------------
 rm(list=ls())
-#NIRdata <- read.table('C:/Registre/NIR/data/Main2016-02-02.csv', sep=';', header=T) #, 
-NIRdata <- read.table('C:/Registre/NIR/data/MainPROD2016-05-10.csv', sep=';', header=T) #, 
-save(NIRdata, file='NIRdata10000.Rdata')
-load("NIRdata10000.Rdata")#RegData
-RegData <- NIRdata[sample(dim(NIRdata)[1], 10000),]
 valgtVar <- 'InnMaate'	#'alder', 'liggetid', 'respiratortid',  'SAPSII', 'NEMS', 'Nas', 'InnMaate'
 outfile <- ''	#paste('Ford_',valgtVar, '.pdf', sep='')
 minald <- 0 #(standard: 0)
