@@ -45,6 +45,7 @@ library(tools)	#texi2pdf
 #NIRdata <- read.table('C:/Registre/NIR/data/NIR2014-11-07ansi.csv', sep=';', header=T)	#NIRvarSQL.csv
 setwd('C:/ResultattjenesteGIT/intensiv/inst/') 
 NIRdata <- read.table(file='C:/Registre/NIR/data/Main2016-09-27.csv', header=T, sep=';',encoding = 'UTF-8')
+RegData <- NIRdata[sample(1:dim(NIRdata)[1],10000),]
 #load("../NIRdata10000.Rdata")
 #NIRdata <- RegData
 reshID <- 112044 #102090 Ahus, 112044 Haukeland
@@ -67,17 +68,17 @@ for (reshID in AlleResh ) {
 rm(list=ls())
 setwd("c:/ResultattjenesteGIT/Intensiv/")
 #load("NIRdata10000.Rdata")
-valgtVar <- 'SMR'	#'SMR', alder, liggetid, respiratortid,  SAPSII, 'NEMS', 'Nas'
+valgtVar <- 'liggetid'	#'SMR', alder, liggetid, respiratortid,  SAPSII, 'NEMS', 'Nas'
 minald <- 10 #(standard: 0)
 maxald <- 130	#(standard: 130, må være større enn minald!)
 InnMaate <- '' #0-El, 6-Ak.m, 8-Ak.k, (alle - alt unntatt 0,6,8)
 valgtMaal = '' #'Med' = median. Alt annet gir gjennomsnitt
-datoFra <- '2010-12-30'	# standard: 0	format: YYYY-MM-DD. Kan spesifisere bare første del, eks. YYYY el. YYYY-MM. 
-datoTil <- '2016-08-01'	# standard: 3000
+datoFra <- '2015-01-01'	# standard: 0	format: YYYY-MM-DD. Kan spesifisere bare første del, eks. YYYY el. YYYY-MM. 
+datoTil <- '2015-12-31'	# standard: 3000
 dodInt <- ''	# 0-i live, 1 -død, standard: alle (alle andre verdier)
 erMann <- ''	#Kjønn: 0-kvinner, 1-menn, standard: alle (alle andre verdier)
 grType <- 99	#1/2: sentral/lokal, 3:regional, 99:'alle'
-outfile <- paste0(valgtVar, '.png')#,grType
+outfile <- paste0(valgtVar, 'MM.png')#,grType
 
 NIRFigGjsnGrVar(RegData=RegData, valgtVar=valgtVar, valgtMaal=valgtMaal, minald=minald, maxald=maxald, 
                 grType=grType, InnMaate=InnMaate, datoFra=datoFra, datoTil=datoTil, dodInt=dodInt, 
@@ -159,17 +160,17 @@ for (valgtVar in variable) {
 rm(list=ls())
 setwd("c:/ResultattjenesteGIT/Intensiv/")
 load("NIRdata10000.Rdata")#RegData
-valgtVar <- 'innMaate'	#alder_u18', 'alder_over80', 'dod30d', 'dodeIntensiv', 'innMaate', 
+valgtVar <- 'dod30d'	#alder_u18', 'alder_over80', 'dod30d', 'dodeIntensiv', 'innMaate', 
                         #'respStotte', 'reinn
 minald <- 0 #(standard: 0)
 maxald <- 130	#(standard: 130, må være større enn minald!)
 InnMaate <- '' #0-El, 6-Ak.m, 8-Ak.k, (alle - alt unntatt 0,6,8)
-grType <- 3	#1/2: sentral/lokal, 3:regional, 99:'alle'
+grType <- 99	#1/2: sentral/lokal, 3:regional, 99:'alle'
 datoFra <- '2011-01-01'	# standard: 0	format: YYYY-MM-DD. Kan spesifisere bare første del, eks. YYYY el. YYYY-MM. 
 datoTil <- '2017-05-01'	# standard: 3000-01-01
 dodInt <- ''	# 0-i live, 1 -død, standard: alle (alle andre verdier)
 erMann <- ''	#Kjønn: 0-kvinner, 1-menn, standard: alle (alle andre verdier)
-outfile <- paste0(valgtVar, '3GrVar.png')
+outfile <- paste0(valgtVar, 'GrVar.png')
 
 NIRFigAndelerGrVar(RegData=RegData, valgtVar=valgtVar, minald=minald, maxald=maxald,  datoFra=datoFra, 
 	datoTil=datoTil, InnMaate=InnMaate, dodInt=dodInt,erMann=erMann, outfile=outfile, 

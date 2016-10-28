@@ -159,14 +159,14 @@ if (grType %in% 1:3) {xkr <- 1} else {xkr <- 0.85}
 cexGrNavn <- 0.9
 
 
-AndelerUt <- rbind(Andeler$Hoved, Andeler$Rest)
-rownames(AndelerUt) <- c(shtxt, smltxt)
-AntallUt <- rbind(AntHoved, AntRest)
-rownames(AntallUt) <- c(shtxt, smltxt)
+#AndelerUt <- rbind(Andeler$Hoved, Andeler$Rest)
+#rownames(AndelerUt) <- c(shtxt, smltxt)
+#AntallUt <- rbind(AntHoved, AntRest)
+#rownames(AntallUt) <- c(shtxt, smltxt)
 
-UtData <- list(paste(toString(TittelUt),'.', sep=''), AndelerUt, AntallUt, grtxt )
-names(UtData) <- c('Tittel', 'Andeler', 'Antall', 'GruppeTekst')
-return(invisible(UtData))
+#UtData <- list(paste(toString(TittelUt),'.', sep=''), AndelerUt, AntallUt, grtxt )
+#names(UtData) <- c('Tittel', 'Andeler', 'Antall', 'GruppeTekst')
+#return(invisible(UtData))
 
 
 
@@ -223,8 +223,11 @@ if (valgtVar=='innMaate') {
 	mtext('Prosent (%)', las=1, side=1, cex=xkr, line=2.2*xkr)
 	mtext('(Tall på søylene angir antall registreringer)', las=1, side=1, cex=xkr, line=3.2*xkr)
 
+mtext(at=max(pos)+0.35*log(max(pos)), paste0('(N)' ), side=2, las=1, cex=xkr, adj=1, line=0.25)
+
 #Tekst som angir hvilket utvalg som er gjort
 mtext(utvalgTxt, side=3, las=1, cex=0.9, adj=0, col=farger[1], line=c(3+0.8*((NutvTxt-1):0)))
+
 
 
 

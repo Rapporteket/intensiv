@@ -286,6 +286,9 @@ par('fig'=c(vmarg, 1, 0, 1-0.02*(NutvTxt-1)))	#Har alltid datoutvalg med
 	text(x=0.005*xmax, y=pos+0.1, las=1, cex=xkr, adj=0, col=farger[1],
 				c(sprintf(paste('%.', AntDes,'f', sep=''), Midt[1:AntGr]), rep('',length(Ngr)-AntGr)))
 	mtext(at=pos+0.1, GrNavnSort, side=2, las=1, cex=cexGrNavn*xkr, adj=1, line=0.25)	
+
+	
+mtext(at=max(pos)+0.35*log(max(pos)), paste0('(N)' ), side=2, las=1, cex=xkr, adj=1, line=0.25)
 	
 #Tekst som angir hvilket utvalg som er gjort
 mtext(utvalgTxt, side=3, las=1, cex=0.9, adj=0, col=farger[1], line=c(3+0.8*((NutvTxt-1):0)))
