@@ -98,7 +98,7 @@ RegData$Variabel[which(RegData$ReAdmitted==1)] <- 1
 
 #Gjøre utvalg 
 NIRutvalg <- NIRUtvalg(RegData=RegData, datoFra=datoFra, datoTil=datoTil, minald=minald, maxald=maxald, 
-		erMann=erMann, InnMaate=InnMaate, grType=grType, dodInt='')
+		erMann=erMann, InnMaate=InnMaate, grType=grType, dodInt=dodInt)
 RegData <- NIRutvalg$RegData
 utvalgTxt <- NIRutvalg$utvalgTxt
 
