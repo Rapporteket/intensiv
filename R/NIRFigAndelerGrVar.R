@@ -64,14 +64,14 @@ if (valgtVar=='dod30d') {
   #RegData <- RegData[which(RegData$DischargedHospitalStatus %in% 0:2), ]    
   #RegData$Variabel[which(RegData$DischargedHospitalStatus!=0)] <- 1 
   RegData$Variabel <- RegData$Dod30
-  tittel <- 'Pasienter som døde innen 30 dager etter innleggelse'
+  tittel <-  'Andel opphold der pasienten døde innen 30 dager etter innleggelse'
 }
 
 if (valgtVar=='dodeIntensiv') {
 	#Andel som dør på intensiv
 	RegData$Variabel <- RegData$DischargedIntensiveStatus	#0: I live, 1: Død intensiv
 	RegData <- RegData[which(RegData$Variabel %in% 0:1), ]
-	tittel <-'Andel som dør på intensiv'
+	tittel <- 'Andel opphold der pasienten døde på intensiv'
 }
 
 if (valgtVar=='innMaate') {
@@ -93,7 +93,7 @@ if (valgtVar=='reinn') {
 #Andel reinnlagte kun hvor dette er registrert. #Ja=1, nei=2, ukjent=9
 RegData <- RegData[which(RegData$ReAdmitted %in% 1:2), ]
 RegData$Variabel[which(RegData$ReAdmitted==1)] <- 1  
-  tittel <-'Andel reinnleggelser på intensivavdelinga'
+  tittel <-'Andel reinnleggelser på intensivavdelingen (innen 72t)'
 }
 
 #Gjøre utvalg 

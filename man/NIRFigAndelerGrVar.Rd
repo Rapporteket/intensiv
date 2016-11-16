@@ -65,8 +65,8 @@ For valgtVar lik reinn eller DodeInt viser figuren andel av hhv. reinnleggelser 
 Argumentet \emph{valgtVar} har følgende valgmuligheter:
    \itemize{
     \item alder_u18: Pasienter under 18 år 
-    \item alder_over80: Pasienter over 80 år (>80)
-    \item dodeSykehus: Pasienter som dør under sykehusoppholdet (intensiv/post)
+    \item alder_over80: Pasienter over 80 år (>=80)
+    \item dod30d: Pasienter som dør innen 30 dager etter innleggelse
     \item dodeIntensiv: Pasienter som dør på intensivavdelinga. 
     \item innMaate: Hastegrad inn på intensiv (Elektivt, Akutt medisinsk, Akutt kirurgisk)
 	Dette valget viser en annen figurtype.
