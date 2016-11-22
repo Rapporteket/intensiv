@@ -1,6 +1,36 @@
+#' IKKE PÅBEGYNT....!!!
+#'
+#' bLA, BAL
+#'
+#' Detajer: Her bør man liste opp hvilke variable funksjonen benytter...
+#'
+#' @inheritParams NIRFigAndeler
+#' @inheritParams NIRFigAndelerGrVar
+#' @param valgtMaal 'Med' = median. Alt annet gir gjennomsnitt 
+#'
+#' Argumentet \emph{valgtVar} har følgende valgmuligheter:
+#'    \itemize{
+#'     \item alder: Pasientens alders 
+#'     \item SMR: Standardisert mortalitetsratio (Gir annen figurtype)
+#'     \item liggetid: Liggetid 
+#'     \item Nas: Skår for sykepleieraktiviteter. (Nursing Activities Score). Per døgn.
+#'     \item NEMS: Skår for ressursbruk per opphold. (Nine Equivalents of Nursing Manpower Use Score)
+#'     \item NEMS24: NEMS-skår per døgn. 
+#'     \item respiratortid: Tid tilbrakt i respirator
+#'     \item SAPSII: Skår for alvorlighetsgrad av sykdom.  (Simplified Acute Physiology Score II)
+#'    }
+#'
+#' Detajer: Her bør man liste opp hvilke variable funksjonen benytter.
+#'
+#' @return Søylediagram med gjennomsnitt/median av valgt variabel for hvert sykehus
+#'
+#' @export
 
 
-
+NIRFigSoyler <- function(RegData, valgtVar, valgtMaal='Gjsn', minald=0, maxald=130, datoFra='2011-01-01', 
+                            datoTil='3000-01-01', grType=99, InnMaate=99, dodInt='', erMann='', preprosess=1, 
+                            hentData=0, outfile) {
+      
 
 #---------------------------------------FRA ANDELER--------------------------
 #Hvis for få observasjoner..
@@ -81,4 +111,5 @@ mtext(utvalgTxt, side=3, las=1, cex=0.9, adj=0, col=farger[1], line=c(3+0.8*((Nu
 par('fig'=c(0, 1, 0, 1)) 
 if ( outfile != '') {dev.off()}
 
+}
 }
