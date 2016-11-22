@@ -219,7 +219,7 @@ if (valgtVar=='innMaate') {
 	mtext(at=pos, GrNavnSort, side=2, las=1, cex=cexGrNavn*xkr, adj=1, line=0.25)	#Sykehusnavn, inkl. N
 	#Nfarge <- ifelse(valgtVar == 'innMaate', farger[4], farger[1]) 
 	#if (valgtVar == 'innMaate') {text(x=0.005*xmax, y=pos, NgrtxtSort, las=1, cex=xkr, adj=0, lwd=3, col=farger[4])}
-	title(tittel, line=1.5, font.main=1, cex.main=1.5)
+	title(tittel, line=1.5, font.main=1, cex.main=1.3)
 	mtext('Prosent (%)', las=1, side=1, cex=xkr, line=2.2*xkr)
 	mtext('(Tall på søylene angir antall registreringer)', las=1, side=1, cex=xkr, line=3.2*xkr)
 
