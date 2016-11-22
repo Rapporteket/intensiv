@@ -147,13 +147,16 @@ if (!exists('NIRdata')){
 
 <<FellesParam, echo=FALSE>>=
 library(xtable)
+'%i%' <- intersect
 datoFra <- '2011-01-01'	
 datoTil <- '3013-12-31'	#Parameteren brukes også i figurene.
 outfile <- ''
 figKrymp1 <- 0.7	#Skaleringsparameter for enkeltfigurer
 #s1 <- 0.8	#Skaleringsparameter for enkeltfigurer
 NIRdata <- NIRPreprosess(NIRdata)
+NIRdata$ShType[which(!(NIRdata$ShType %in% 1:3)) ] <- NA
 NIRdata$ShType[NIRdata$ShType ==2 ] <- 1	#Har nå kun type lokal/sentral og regional
+#NIRdata$ShType <- factor(NIRdata$ShType, levels=c(1,3))	#Lager krøll senere
 ShTypeTxt <- c('lokal/sentral','lokal/sentral', 'regional')
 ShTypeEgen <-NIRdata$ShType[match(reshID, NIRdata$ReshId)]
 ShTypeEgenTxt <- ShTypeTxt[ShTypeEgen]
@@ -163,7 +166,9 @@ ShTypeEgenTxt <- ShTypeTxt[ShTypeEgen]
 
 NIRutvalg <- NIRUtvalg(RegData=NIRdata, datoFra=datoFra, datoTil=datoTil, fargepalett='BlaaRapp')
 NIRdata <- NIRutvalg$RegData
-NIRdata <- NIRdata[NIRdata$erMann %in% 0:1, ]	#Tar ut registreringer som ikke har kjønn
+#Tar ut registreringer som ikke har kjønn #og ugyldig ShType
+indMed <- which(NIRdata$erMann %in% 0:1) #%i% which(NIRdata$ShType %in% 1:3)
+NIRdata <- NIRdata[indMed, ]	
 NIRdata$Aar <- as.factor(NIRdata$InnDato$year+1900)
 N <- dim(NIRdata)[1]
 #names(NIRdata)[which(names(NIRdata) == 'PasientId')] <- 'PID'
@@ -173,6 +178,7 @@ NIRdata$LiggetidGr <-  cut(NIRdata$liggetid, breaks=LiggeGr, include.lowest=FALS
 
 #NIRdata$ShNavn <- as.factor(NIRdata$ShNavn)	#Hvis dette legges på, får vi ikke valgt ut bare sykehustypens sykehus
 NIRdata <- NIRdata[which(NIRdata$InnMaate %in% c(0,6,8)), ] 
+NIRdata$InnMaate <- factor(NIRdata$InnMaate, levels = c(0,6,8))
 
 tabKjPst <- round(table(NIRdata$erMann)/N*100, digits=1)
 ind <- list(Eget = which(NIRdata$ReshId == reshID),
@@ -227,8 +233,8 @@ xtable(tabAvdNEget, digits=0, align=c('l', rep('r', ncol(tabAvdNEget))),
 \subsection{Alder og kjønn}
 
 <<'TabAlder', results='asis', echo=FALSE, eval=T>>=
-alderDIV <- cbind('Egen enhet'= summary(NIRdataEget$alder)[1:6],
-			'Resten av landet'= summary(NIRdataResten$alder)[1:6])
+alderDIV <- cbind('Egen enhet'= summary(NIRdataEget$Alder)[1:6],
+			'Resten av landet'= summary(NIRdataResten$Alder)[1:6])
 rownames(alderDIV) <- c('Minimum:', '25% av pasientene er under:', 'Median:','Gjennsomsnitt:',
 		'25% av pasientene er over:', 'Maksimum:')
 
@@ -345,9 +351,9 @@ dum <- NIRFigGjsnGrVar(RegData=NIRdata, valgtVar='liggetid', valgtMaal='Med', pr
 \subsection{Reinnleggelser}
 
 <<Reinn, echo=FALSE, message=FALSE>>=
-NregReinn <- length(which(NIRdata$Reinn %in% 1:2))
-AndelReinnAlle <- round(100*length(which(NIRdata$Reinn == 1))/length(which(NIRdata$Reinn %in% 1:2)), 1)
-AndelReinnEgen <- round(100*length(which(NIRdataEget$Reinn == 1))/length(which(NIRdataEget$Reinn %in% 1:2)),1)
+NregReinn <- length(which(NIRdata$ReAdmitted %in% 1:2))
+AndelReinnAlle <- round(100*length(which(NIRdata$ReAdmitted == 1))/length(which(NIRdata$ReAdmitted %in% 1:2)), 1)
+AndelReinnEgen <- round(100*length(which(NIRdataEget$ReAdmitted == 1))/length(which(NIRdataEget$ReAdmitted %in% 1:2)),1)
 
 dum <- NIRFigAndelerGrVar(RegData=NIRdata, valgtVar='reinn', preprosess=0, hentData=0, grType=ShTypeEgen, datoFra=datoFra, 
 	datoTil=datoTil, outfile='FigReinn.pdf') 
@@ -576,7 +582,7 @@ og om Glasgow Coma Score er ensartet skåret.
 
 <<'SAPSII', results='asis', echo=FALSE>>=
 #Gj.snitt, Median, % av opphold, Spredning, døgn(min,max) \
-indSAPS <- which(as.numeric(NIRdata$SAPSII) > 0 & as.numeric(NIRdata$alder) >= 18)
+indSAPS <- which(as.numeric(NIRdata$SAPSII) > 0 & as.numeric(NIRdata$Alder) >= 18)
 NIRdataUtv <- NIRdata[indSAPS, c('SAPSII', 'ShType','ReshId')]
 indEgenUtv <- which(NIRdataUtv$ReshId == reshID)
 
@@ -622,11 +628,11 @@ SAPSII for \Sexpr{ShTypeEgenTxt}sykehus.
 
 
 \clearpage
-\subsection{Vital status ut sykehus}
+%\subsection{Vital status ut sykehus}
 
-Status for pasienter utskrevet fra \Sexpr{shtxt}.
+%Status for pasienter utskrevet fra \Sexpr{shtxt}.
 
-<<'StatusUt', results='asis', echo=FALSE>>=
+<<'StatusUt', results='asis', echo=FALSE, eval=FALSE >>=
 #For egen avdeling vil pasientar som er øverførte til anna sjukehus/annan intensivavdeling, sortere under "levende".
 
 #Tal på overførte pasientar er i seg sjølv interessant, så det er fint om vi kan få fram både 
@@ -702,7 +708,7 @@ dum <- NIRFigGjsnGrVar(RegData=NIRdata, valgtVar='SMR', valgtMaal='Mean', prepro
 
 <<'DodInt', results='asis', echo=FALSE>>=
 #Døde, intensiv
-NIRdataUtv <- NIRdata[which(NIRdata$DischargedHospitalStatus==1), 
+NIRdataUtv <- NIRdata[which(NIRdata$DischargedIntensiveStatus==1), 
 			c('ReshId', 'ShType', 'liggetid', 'respiratortid', 'InnMaate' )]
 N_innmShT <- ftable(NIRdata[c('InnMaate', 'ShType')])
 
@@ -718,7 +724,7 @@ ResptidShType <- tapply(NIRdata$respiratortid, NIRdata$ShType, sum, na.rm=T)
 ResptidDodShType <- tapply(NIRdataUtv$respiratortid, NIRdataUtv$ShType, sum, na.rm=T)
 
 DodLiggGjsn <- round(mean(NIRdataUtv$liggetid, na.rm=T),1)
-DodLiggMed <- median(NIRdataUtv$liggetid, na.rm=T)
+DodLiggMed <- sprintf('%.1f', median(NIRdataUtv$liggetid, na.rm=T))
 
 tabDodInt <- round(100*rbind(
 	'Opphold' = c(sum(Ndod_innmEgen)/Neget,  colSums(Ndod_innmShT)/colSums(N_innmShT),

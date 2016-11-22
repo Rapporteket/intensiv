@@ -71,14 +71,14 @@ if (enhetsUtvalg %in% c(2,3,4,6,7)) {
 	}
 
 if (valgtVar=='alder') {
-  RegData <- RegData[which(RegData$alder>=0), ]    #Tar bort alder<0
-  RegData$Variabel<-RegData$alder  
+  RegData <- RegData[which(RegData$Alder>=0), ]    #Tar bort alder<0
+  RegData$Variabel<-RegData$Alder  
   TittelVar <- 'Alder'
   ytxt1 <- 'alder (år)'
 }
 
 if (valgtVar=='liggetid') {
-  RegData <- RegData[which(RegData$liggetid>=0), ]    #Tar bort liggetid<0 samt NA
+  RegData <- RegData[which(RegData$liggetid>0), ]    #Tar bort liggetid<0 samt NA
   RegData <- RegData[which(RegData$DischargedIntensiveStatus %in% 0:1), ]    #Tar bort ukjente  
   RegData$Variabel<-RegData$liggetid  
   TittelVar <- 'Liggetid'
@@ -86,7 +86,7 @@ if (valgtVar=='liggetid') {
 }
 
 if (valgtVar=='respiratortid') {
-  RegData <- RegData[which(RegData$respiratortid>=0), ]    #Tar bort liggetid<0 samt NA
+  RegData <- RegData[which(RegData$respiratortid>0), ]    #Tar bort liggetid<0 samt NA
   RegData <- RegData[which(RegData$DischargedIntensiveStatus %in% 0:1), ]    #Tar bort ukjente  
   RegData$Variabel<-RegData$respiratortid
   TittelVar <- 'Respiratortid'

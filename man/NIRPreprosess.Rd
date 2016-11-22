@@ -4,16 +4,13 @@
 \alias{NIRPreprosess}
 \title{Preprosesser data fra Intensivregisteret}
 \usage{
-NIRPreprosess(RegData = RegData, reshID = reshID)
+NIRPreprosess(RegData = RegData)
 }
 \arguments{
 \item{RegData}{En dataramme med alle nødvendige variabler fra registeret}
-
-\item{reshID}{Parameter følger fra innlogging helseregister.no og angir
-hvilken enhet i spesialisthelsetjenesten brukeren tilhører}
 }
 \value{
-Data En liste med det filtrerte datasettet og sykehusnavnet som tilsvarer reshID
+Data En liste med det filtrerte datasettet (og sykehusnavnet som tilsvarer reshID, ikke pt)
 }
 \description{
 Denne funksjonen navner om variabler og beregner evt. nye.

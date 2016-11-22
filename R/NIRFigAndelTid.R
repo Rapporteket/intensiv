@@ -7,7 +7,7 @@
 #'    \itemize{
 #'     \item alder_u18: Pasienter under 18 år 
 #'     \item alder_over80: Pasienter over 80 år  (>=80)
-#'     \item dodeSykehus: Pasienter som dør under sykehusoppholdet (intensiv/post)
+#'     \item dod30d: Pasienter som dør innen 30 dager etter innleggelse #ut:dodeSykehus
 #'     \item dodeIntensiv: Pasienter som dør på intensivavdelinga. 
 #'	 \item liggetidDod: Andel av total liggetid brukt på de som dør på intensiv
 #'     \item respiratortidDod: Respiratortid brukt på de som dør på intensiv
@@ -61,38 +61,39 @@ NIRFigAndelTid <- function(RegData, valgtVar, datoFra='2011-01-01', datoTil='300
 #   }
   
 if (valgtVar=='alder_u18') {
-  RegData <- RegData[which(RegData$alder>=0), ]    #Tar bort alder<0
-  RegData$Variabel[which(RegData$alder<18)] <- 1 
+  RegData <- RegData[which(RegData$Alder>=0), ]    #Tar bort alder<0
+  RegData$Variabel[which(RegData$Alder<18)] <- 1 
   VarTxt <- 'under 18 år'
   Tittel <- 'Andel under 18 år'
 }
 
 if (valgtVar=='alder_over80') {
-  RegData <- RegData[which(RegData$alder>=0), ]    #Tar bort alder<0
-  RegData$Variabel[which(RegData$alder>=80)] <- 1 
+  RegData <- RegData[which(RegData$Alder>=0), ]    #Tar bort alder<0
+  RegData$Variabel[which(RegData$Alder>=80)] <- 1 
   VarTxt <- 'over 80 år'
   Tittel <- 'Andel over 80 år'
 }
 
-if (valgtVar=='dodeSykehus') {
-  RegData <- RegData[which(RegData$DischargedHospitalStatus %in% 0:2), ]  	#Tar bort ukjente og de som ikke er utskrevet
-  RegData$Variabel[which(RegData$DischargedHospitalStatus!=0)] <- 1 
+if (valgtVar=='dod30d') {
+#  RegData <- RegData[which(RegData$DischargedHospitalStatus %in% 0:2), ]  	#Tar bort ukjente og de som ikke er utskrevet
+#  RegData$Variabel[which(RegData$DischargedHospitalStatus!=0)] <- 1 
+  RegData$Variabel <- RegData$Dod30
   VarTxt <- 'pasienter som døde'
-  Tittel <- 'Andel pasienter som døde under sykehusoppholdet'
+  Tittel <- 'Andel opphold der pasienten døde innen 30 dager etter innleggelse'
 }
 
 if (valgtVar=='dodeIntensiv') {
   RegData <- RegData[which(RegData$DischargedIntensiveStatus %in% 0:1), ]		#Tar bort ukjente
   RegData$Variabel[which(RegData$DischargedIntensiveStatus==1)] <- 1 
   VarTxt <- 'pasienter som døde på intensiv'
-  Tittel <- 'Andel pasienter som døde på intensiv'
+  Tittel <- 'Andel opphold der pasienten døde på intensiv'
 }
 
 if (valgtVar=='reinn') {
-  RegData <- RegData[which(RegData$Reinn %in% 1:2), ]  	#Tar bort ukjente
-  RegData$Variabel[which(RegData$Reinn==1)] <- 1 
+  RegData <- RegData[which(RegData$ReAdmitted %in% 1:2), ]  	#Tar bort ukjente
+  RegData$Variabel[which(RegData$ReAdmitted==1)] <- 1 
   VarTxt <- 'reinnleggelser'
-  Tittel <- 'Andel reinnleggelser'
+  Tittel <- 'Andel reinnleggelser på intensivavdelingen (innen 72t)'
 }
 
 if (valgtVar=='liggetidDod') {
@@ -121,19 +122,7 @@ if (valgtVar=='respiratortidDod') {
         Tittel <-'Andel med respiratorstøtte'
   }
   
-  
-#if (valgtVar == 'SMR') {
-#	minald <- max(minald,18)	#Tatt ut ifm. at utvalg gjøres.
-#  #Tar ut reinnlagte og overflyttede, samt de med SAPSII=0 (ikke scorede)
- # RegData <- RegData[RegData$DischargedHospitalStatus!= 3, ]
- # RegData <- RegData[RegData$Overf==1, ] 
- # RegData <- RegData[as.numeric(RegData$SAPSII) > 0, ]
-#NB: Ny variabel. DischargedHospitalStatus ikke lenger i bruk...............
-# RegData$Variabel[which(RegData$DischargedHospitalStatus!=0)] <- 1 
-#  VarTxt <- 'pasienter over 18 år som døde'
-#  Tittel <- 'SMR (uten overflyttede og reinnlagte pasienter)'  
-#}
-  
+   
   
   #-------------------------Forberedelse...-----------------------------------------
   #Gjør utvalg

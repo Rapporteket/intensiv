@@ -63,14 +63,13 @@ filtrert på de utvalg som er gjort.
 Argumentet \emph{valgtVar} har følgende valgmuligheter:
    \itemize{
     \item alder_u18: Pasienter under 18 år 
-    \item alder_over80: Pasienter over 80 år  (>80)
-    \item dodeSykehus: Pasienter som dør under sykehusoppholdet (intensiv/post)
+    \item alder_over80: Pasienter over 80 år  (>=80)
+    \item dod30d: Pasienter som dør innen 30 dager etter innleggelse #ut:dodeSykehus
     \item dodeIntensiv: Pasienter som dør på intensivavdelinga. 
-	\item liggetidDod: Andel av total liggetid brukt på de som dør på intensiv
+ \item liggetidDod: Andel av total liggetid brukt på de som dør på intensiv
     \item respiratortidDod: Respiratortid brukt på de som dør på intensiv
     \item respStotte: Pasienter som har fått respiratorstøtte
     \item reinn: Andel reinnlagte (kun hvor dette er registrert, dvs. fjerner ukjente)
-	\item SMR: Standardisert mortalitetsratio
    }
 }
 

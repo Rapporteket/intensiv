@@ -12,6 +12,8 @@ NIRRegDataSQL <- function(datoFra = '2011-01-01', datoTil = '2099-01-01') {
   
   registryName <- "nir"
   dbType <- "mysql"
+
+#	DischargedHospitalStatus,
   
   query <- paste0('SELECT
 	Bilirubin,
@@ -23,8 +25,6 @@ NIRRegDataSQL <- function(datoFra = '2011-01-01', datoTil = '2099-01-01') {
 	DateDischargedIntensive,
 	DaysAdmittedIntensiv,
 	DeadPatientDuring24Hours,
-	PatientAge AS decimalAge,
-	DischargedHospitalStatus,
 	DischargedIntensiveStatus,
 	Glasgow,
 	Hco3,
@@ -32,6 +32,7 @@ NIRRegDataSQL <- function(datoFra = '2011-01-01', datoTil = '2099-01-01') {
 	Leukocytes,
 	MechanicalRespirator,
 	MoreThan24Hours,
+	Morsdato,
 	MovedPatientToAnotherIntensivDuring24Hours,
 	MvOrCpap,
 	Nas,
@@ -40,7 +41,7 @@ NIRRegDataSQL <- function(datoFra = '2011-01-01', datoTil = '2099-01-01') {
 	OrganDonationCompletedStatus,
 	PatientAge,
 	PatientGender,
-      PasientGUID,
+    PasientGUID,
 	PatientTransferredFromHospital,
 	PatientTransferredToHospital,
 	Potassium,
