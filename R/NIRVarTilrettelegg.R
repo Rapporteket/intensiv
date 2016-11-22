@@ -45,42 +45,13 @@
 #' @export
 #'
 
-NIRVarTilrettelegg  <- function(RegData, valgtVar)
+NIRVarTilrettelegg  <- function(RegData, valgtVar){
 #, datoFra='2011-01-01', datoTil='3000-12-31', 
 #		minald=0, maxald=130, erMann='',InnMaate='', dodInt='',outfile='', 
 #		preprosess=1, hentData=0, reshID, enhetsUtvalg=1)	
-{
 
-#SKAL ENHETSUTVALG GJØRES HER, ELLER ER DET BEDRE Å FLYTTE DET TIL UTVALGSFUNKSJONEN??
-
-if (hentData == 1) {		
-  RegData <- NIRRegDataSQL(datoFra, datoTil)
-}
-
-# Hvis RegData ikke har blitt preprosessert. (I samledokument gjøre dette i samledokumentet)
-if (preprosess){
-       RegData <- NIRPreprosess(RegData=RegData)	#, reshID=reshID)
-     }
 
 "%i%" <- intersect
-
-#Når bare skal sammenlikne med sykehusgruppe eller region, eller ikke sammenlikne, 
-#trengs ikke data for hele landet:
-reshID <- as.numeric(reshID)
-indEgen1 <- match(reshID, RegData$ReshId)
-if (enhetsUtvalg %in% c(2,3,4,6,7)) {	
-		RegData <- switch(as.character(enhetsUtvalg),
-						'2' = RegData[which(RegData$ReshId == reshID),],	#kun egen enhet
-						'3' = subset(RegData,ShType==ShType[indEgen1]),
-						'4' = RegData[which(RegData$ShType == RegData$ShType[indEgen1]),],	#kun egen shgruppe
-						'6' = RegData[which(RegData$Region == as.character(RegData$Region[indEgen1])),],	#sml region
-						'7' = RegData[which(RegData$Region == as.character(RegData$Region[indEgen1])),])	#kun egen region
-	}
-
-NIRUtvalg <- NIRUtvalg(RegData=RegData, datoFra=datoFra, datoTil=datoTil, minald=minald, maxald=maxald, 
-                       erMann=erMann,InnMaate=InnMaate,dodInt=dodInt)
-RegData <- NIRUtvalg$RegData
-
 
 #----------- Figurparametre ------------------------------
 cexgr <- 1	#Kan endres for enkeltvariable
@@ -90,45 +61,38 @@ grtxt2 <- ''	#Spesifiseres evt. for hver enkelt variabel
 subtxt <- ''	#Benevning
 flerevar <- 0
 
-grNavn <- 
-xAkseTxt
-yAkseTxt
-pktTxt #(evt. søyletekst)
-tittel <- 
-txtEtiketter 	#legend
-N
-utvalgTxt
-verdier	#andeler, gjennomsnitt, ...
-verdiTxt 	#pstTxt, ...
-strIfig		#cex
+grNavn <- ''
+#ben - benevning
+xAkseTxt <- ''
+yAkseTxt <- ''
+pktTxt <- '' #(evt. søyletekst)
+tittel <- ''
+txtEtiketter  <- ''	#legend
+N <- ''
+verdier <- ''	#andeler, gjennomsnitt, ...
+verdiTxt <- '' 	#pstTxt, ...
+strIfig <- ''		#cex
+
+
+RegData$Variabel <- 0
 
 #--------------- Definere variable ------------------------------
 #Variabeltyper: Numeriske, kategoriske, indikator
 #Eksempel Numeriske variable
-if (valgtVar=='alder') {	#Andeler
-	tittel <- 'Aldersfordeling'
+if (valgtVar=='alder') {	#Fordeling, sentralmål
+  RegData <- RegData[which(RegData$Alder>=0), ]    #Tar bort alder<0
+  RegData$Variabel<-RegData$Alder  	#GjsnTid, GjsnGrVar
 	gr <- c(seq(0, 100, 10),150)	#c(0,16,31,46,61,76,200)	
 	RegData$VariabelGr <- cut(RegData$Alder, breaks=gr, include.lowest=TRUE, right=FALSE)	
     grtxt <- c('0-9','10-19','20-29','30-39','40-49','50-59','60-69','70-79','80-89','90-99','100+')
 	subtxt <- 'Aldersgrupper'
+    ben <- 'alder (år)'
+	tittel <- 'Alder'
 }
-if (valgtVar=='alder') {	#GjsnTid
-  RegData <- RegData[which(RegData$Alder>=0), ]    #Tar bort alder<0
-  RegData$Variabel<-RegData$Alder  
-  TittelVar <- 'Alder'
-  ytxt1 <- 'alder (år)'
-}
-if (valgtVar == 'alder') {RegData$Variabel <- RegData$Alder}	#GjsnGrVar
-
-if (valgtVar=='alder_u18') {	#AndelTid
+if (valgtVar=='alder_u18') {	#AndelTid, AndelerGrVar
   RegData <- RegData[which(RegData$Alder>=0), ]    #Tar bort alder<0
   RegData$Variabel[which(RegData$Alder<18)] <- 1 
   VarTxt <- 'under 18 år'
-  Tittel <- 'Andel under 18 år'
-}
-if (valgtVar=='alder_u18') {	#AndelerGrVar
-  RegData <- RegData[which(RegData$Alder>=0), ]    #Tar bort alder<0
-  RegData$Variabel[which(RegData$Alder<18)] <- 1 
   tittel <- 'Pasienter under 18 år'
 }
 
@@ -209,75 +173,9 @@ if (valgtVar=='SAPSII') {
 }
 
 
-
-NIRUtvalg <- NIRUtvalg(RegData=RegData, datoFra=datoFra, datoTil=datoTil, minald=minald, maxald=maxald, 
-                       overfPas=overfPas, erMann=erMann, InnMaate=InnMaate, dodInt=dodInt)
-RegData <- NIRUtvalg$RegData
-utvalgTxt <- NIRUtvalg$utvalgTxt
-
-shTypetext <- c('lokale/sentrale', 'lokale/sentrale', 'regionale')				
-indEgen1 <- match(reshID, RegData$ReshId)
-if (enhetsUtvalg %in% c(1,2,3,6)) {	#Involverer egen enhet
-		shtxt <- as.character(RegData$ShNavn[indEgen1]) } else {
-		shtxt <- switch(as.character(enhetsUtvalg), 	
-			'0' = 'Hele landet',
-			'4' = shTypetext[RegData$ShType[indEgen1]],
-			'5' = shTypetext[RegData$ShType[indEgen1]],
-			'7' = as.character(RegData$Region[indEgen1]),
-			'8' = as.character(RegData$Region[indEgen1]))
-			}
-			
-if (enhetsUtvalg %in% c(0,2,4,7)) {		#Ikke sammenlikning
-			medSml <- 0
-			indHoved <- 1:dim(RegData)[1]	#Tidligere redusert datasettet for 2,4,7. (+ 3og6)
-			indRest <- NULL
-		} else {						#Skal gjøre sammenlikning
-			medSml <- 1
-			if (enhetsUtvalg %in% c(1,3,6)) {	#Involverer egen enhet
-				indHoved <-which(as.numeric(RegData$ReshId)==reshID) } else {
-				indHoved <- switch(as.character(enhetsUtvalg),
-						'5' = which(RegData$ShType == RegData$ShType[indEgen1]),	#shgr
-						'8' = which(RegData$Region == RegData$Region[indEgen1]))}	#region
-			smltxt <- switch(as.character(enhetsUtvalg),
-				'1' = 'landet forøvrig',
-				'3' = paste('andre ', shTypetext[RegData$ShType[indEgen1]], sep=''),	#RegData inneh. kun egen shgruppe
-				'5' = 'andre typer sykehus',
-				'6' = paste(RegData$Region[indEgen1], ' forøvrig', sep=''),	#RegData inneh. kun egen region
-				'8' = 'andre regioner')
-			indRest <- switch(as.character(enhetsUtvalg),
-				'1' = which(as.numeric(RegData$ReshId) != reshID),
-				'3' = which(as.numeric(RegData$ReshId) != reshID),	#RegData inneh. kun egen shgruppe
-				'5' = which(RegData$ShType != RegData$ShType[indEgen1]),
-				'6' = which(as.numeric(RegData$ReshId)!=reshID),	#RegData inneh. kun egen region
-				'8' = which(RegData$Region != RegData$Region[indEgen1]))
-			}								
-
-			
-#--------------- Gjøre beregninger ------------------------------
-#Gjør beregninger selv om det evt ikke skal vise figur ut. Trenger utdata.
-Andeler <- list(Hoved = 0, Rest =0)
-NRest <- 0
-AntRest <- 0
-AntHoved <- switch(as.character(flerevar), 
-				'0' = table(RegData$VariabelGr[indHoved]),
-				'1' = colSums(sapply(RegData[indHoved ,variable], as.numeric), na.rm=T))
-NHoved <- switch(as.character(flerevar), 
-				'0' = sum(AntHoved),	#length(indHoved)- Kan inneholde NA
-				'1' = length(indHoved))
-Andeler$Hoved <- 100*AntHoved/NHoved
-
-if (medSml==1) {
-	AntRest <- switch(as.character(flerevar), 
-					'0' = table(RegData$VariabelGr[indRest]),
-					'1' = colSums(sapply(RegData[indRest ,variable], as.numeric), na.rm=T))
-	NRest <- switch(as.character(flerevar), 
-					'0' = sum(AntRest),	#length(indRest)- Kan inneholde NA
-					'1' = length(indRest))
-	Andeler$Rest <- 100*AntRest/NRest
-}
-
-			
-#-----------Figur---------------------------------------
-#Innparametre: subtxt, grtxt, grtxt2, tittel, Andeler, utvalgTxt, retn, cexgr
+flerevar <- 0
+UtData <- list(RegData=RegData, grtxt, subtxt, ben, tittel)
+#RegData inneholder nå variablene 'Variabel' og 'VariabelGr'
+return(invisible(UtData)) 
 
 }

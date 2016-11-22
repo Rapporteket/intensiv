@@ -192,7 +192,7 @@ if (length(KIekstrem) == 0) {	#Hvis ikke KIekstrem definert i variabeldefinisjon
 MidtRest <- NULL
 KonfRest <- NULL
 if (medSml ==  1) {
-NRest <- tapply(RegData[indRest ,'Variabel'], RegData[indRest, 'Aar'], length)
+Nrest <- tapply(RegData[indRest ,'Variabel'], RegData[indRest, 'Aar'], length)
 	if (valgtMaal=='Med') {
 		MedIQRrest <- plot(RegData$Aar[indRest],RegData$Variabel[indRest],  notch=TRUE, plot=FALSE)
 		MidtRest <- as.numeric(MedIQRrest$stats[3, ])
@@ -200,8 +200,8 @@ NRest <- tapply(RegData[indRest ,'Variabel'], RegData[indRest, 'Aar'], length)
 	} else {
 	MidtRest <- tapply(RegData[indRest,'Variabel'], RegData[indRest, 'Aar'], mean)	#indRest
 	SDRest <- tapply(RegData[indRest,'Variabel'], RegData[indRest, 'Aar'], sd)
-	NRest <- tapply(RegData[indRest,'Variabel'], RegData[indRest, 'Aar'], length)
-	KonfRest <- rbind(MidtRest - 2*SDRest/sqrt(NRest), MidtRest + 2*SDRest/sqrt(NRest))
+	Nrest <- tapply(RegData[indRest,'Variabel'], RegData[indRest, 'Aar'], length)
+	KonfRest <- rbind(MidtRest - 2*SDRest/sqrt(Nrest), MidtRest + 2*SDRest/sqrt(Nrest))
 	}
 }
 
@@ -249,7 +249,7 @@ if (medSml==1) {
 		c(KonfRest[1,c(1,1:AntAar, AntAar)], KonfRest[2,c(AntAar,AntAar:1,1)]), 
 			col=fargeRestRes, border=NA)
 	legend('top', bty='n', fill=fargeRestRes, border=fargeRestRes, cex=cexgr,
-		paste('95% konfidensintervall for ', smltxt, ', N=', sum(NRest, na.rm=T), sep=''))
+		paste('95% konfidensintervall for ', smltxt, ', N=', sum(Nrest, na.rm=T), sep=''))
 }
 h <- strheight(1, cex=cexgr)*0.7	#,  units='figure',
 b <- 1.1*strwidth(max(N, na.rm=T), cex=cexgr)/2	#length(Aartxt)/30
