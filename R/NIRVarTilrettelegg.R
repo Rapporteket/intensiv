@@ -173,8 +173,8 @@ if (valgtVar=='SAPSII') {
 }
 
 
-flerevar <- 0
-UtData <- list(RegData=RegData, grtxt, subtxt, ben, tittel)
+UtData <- list(RegData=RegData, grtxt=grtxt, subtxt=subtxt, ben=ben, retn=retn,
+               tittel=tittel, flerevar=flerevar)
 #RegData inneholder nå variablene 'Variabel' og 'VariabelGr'
 return(invisible(UtData)) 
 

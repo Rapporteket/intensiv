@@ -91,12 +91,12 @@ if (preprosess){
 
 #--------------- Definere variable ------------------------------
 
-NIRVarSpesifik <- NIRVarTilrettelegg(RegData=RegData, valgtVar=valgtVar)
+NIRVarSpes <- NIRVarTilrettelegg(RegData=RegData, valgtVar=valgtVar)
 
-RegData <- NIRVarSpesifik$RegData
+RegData <- NIRVarSpes$RegData
 
 
-NIRUtvalg <- NIRUtvalg(RegData=RegData, datoFra=datoFra, datoTil=datoTil, minald=minald, maxald=maxald, 
+NIRUtvalg <- NIRUtvalgEnh(RegData=RegData, datoFra=datoFra, datoTil=datoTil, minald=minald, maxald=maxald, 
                        overfPas=overfPas, erMann=erMann, InnMaate=InnMaate, dodInt=dodInt)
 RegData <- NIRUtvalg$RegData
 utvalgTxt <- NIRUtvalg$utvalgTxt
@@ -109,30 +109,31 @@ utvalgTxt <- NIRUtvalg$utvalgTxt
 Andeler <- list(Hoved = 0, Rest =0)
 N <- list(Hoved = 0, Rest =0)
 Ant <- list(Hoved = 0, Rest =0)
-Ant$Hoved <- switch(as.character(flerevar), 
-				'0' = table(RegData$VariabelGr[indHoved]),
-				'1' = colSums(sapply(RegData[indHoved ,variable], as.numeric), na.rm=T))
-N$Hoved <- switch(as.character(flerevar), 
-				'0' = sum(Ant$Hoved),	#length(indHoved)- Kan inneholde NA
-				'1' = length(indHoved))
+Ant$Hoved <- switch(as.character(NIRVarSpes$flerevar), 
+				'0' = table(RegData$VariabelGr[NIRUtvalg$ind$Hoved]),
+				'1' = colSums(sapply(RegData[NIRUtvalg$ind$Hoved ,variable], as.numeric), na.rm=T))
+N$Hoved <- switch(as.character(NIRVarSpes$flerevar), 
+				'0' = sum(Ant$Hoved),	#length(ind$Hoved)- Kan inneholde NA
+				'1' = length(ind$Hoved))
 Andeler$Hoved <- 100*Ant$Hoved/N$Hoved
 
-if (medSml==1) {
-	Ant$Rest <- switch(as.character(flerevar), 
-					'0' = table(RegData$VariabelGr[indRest]),
-					'1' = colSums(sapply(RegData[indRest ,variable], as.numeric), na.rm=T))
-	N$Rest <- switch(as.character(flerevar), 
-					'0' = sum(Ant$Rest),	#length(indRest)- Kan inneholde NA
-					'1' = length(indRest))
+if (NIRUtvalg$medSml==1) {
+	Ant$Rest <- switch(as.character(NIRVarSpes$flerevar), 
+					'0' = table(RegData$VariabelGr[ind$Rest]),
+					'1' = colSums(sapply(RegData[ind$Rest ,variable], as.numeric), na.rm=T))
+	N$Rest <- switch(as.character(NIRVarSpes$flerevar), 
+					'0' = sum(Ant$Rest),	#length(ind$Rest)- Kan inneholde NA
+					'1' = length(ind$Rest))
 	Andeler$Rest <- 100*Ant$Rest/N$Rest
 }
 
-grtxt <- paste0(rev(NIRVarSpesifik$grtxt), ' (', rev(sprintf('%.1f',Andeler$Hoved)), '%)') 
+grtxt <- paste0(rev(NIRVarSpes$grtxt), ' (', rev(sprintf('%.1f',Andeler$Hoved)), '%)') 
 
 
-FigDataParam <- list(Andeler=Andeler, tittel, smltxt, N=N, grtxt)
+FigDataParam <- list(Andeler=Andeler, NIRVarSpes$tittel, NIRVarSpes$retn, smltxt, N=N, grtxt)
 
-if (lagFig == 1) {NIRFigSoyler(RegData, FigDataParam='', outfile)
+if (lagFig == 1) {
+      NIRFigSoyler(RegData, FigDataParam=FigDataParam, outfile)
 	} else {
             DataUt <- list(RegData=RegData, Andeler=Andeler, N=N)
             return(invisible(DataUt))}

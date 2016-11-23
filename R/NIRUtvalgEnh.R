@@ -89,6 +89,7 @@ if (enhetsUtvalg %in% c(1,2,3,6)) {	#Involverer egen enhet
                             '8' = as.character(RegData$Region[indEgen1]))
       }
 
+ind <- list(Hoved=0, Rest=0)
 if (enhetsUtvalg %in% c(0,2,4,7)) {		#Ikke sammenlikning
       medSml <- 0
       ind$Hoved <- 1:dim(RegData)[1]	#Tidligere redusert datasettet for 2,4,7. (+ 3og6)
@@ -117,13 +118,7 @@ if (enhetsUtvalg %in% c(0,2,4,7)) {		#Ikke sammenlikning
 
 
 
-
-
-
-
-#Hvis denne skal flyttes til utvalg. Må sende med følgende tilbake:
-#medSml, smltxt, 
-
-UtData <- list(RegData=RegData, utvalgTxt=utvalgTxt, fargepalett=fargepalett, ind=ind, medSml, smltxt)
+UtData <- list(RegData=RegData, utvalgTxt=utvalgTxt, fargepalett=fargepalett, ind=ind, 
+               medSml=medSml, smltxt=smltxt)
 return(invisible(UtData)) 
 }

@@ -39,13 +39,14 @@ NIRdata <- read.table(file='C:/Registre/NIR/data/Main2016-09-27.csv', header=T, 
 load("C:/Registre/NIR/data/NIRdata10000.Rdata") #RegData
 
 #-------------------------------------- Parametre ----------------------------------------------------
+library(intensiv)
 setwd("c:/ResultattjenesteGIT/Intensiv/")
 reshID=112044
 minald <- 10 #(standard: 0)
 maxald <- 130	#(standard: 130, må være større enn minald!)
 InnMaate <- '' #0-El, 6-Ak.m, 8-Ak.k, (alle - alt unntatt 0,6,8)
 valgtMaal = '' #'Med' = median. Alt annet gir gjennomsnitt
-datoFra <- '2015-01-01'	# standard: 0	format: YYYY-MM-DD. Kan spesifisere bare første del, eks. YYYY el. YYYY-MM. 
+datoFra <- '2011-01-01'	# standard: 0	format: YYYY-MM-DD. Kan spesifisere bare første del, eks. YYYY el. YYYY-MM. 
 datoTil <- '2015-12-31'	# standard: 3000
 dodInt <- ''	# 0-i live, 1 -død, standard: alle (alle andre verdier)
 erMann <- ''	#Kjønn: 0-kvinner, 1-menn, standard: alle (alle andre verdier)
@@ -58,7 +59,6 @@ variable <- c('alder', 'liggetid', 'respiratortid',  'SAPSII', 'NEMS', 'Nas', 'I
 valgtVar <- 'alder'	#'alder', 'liggetid', 'respiratortid',  'SAPSII', 'NEMS', 'Nas', 'InnMaate'
 outfile <- ''	#paste('Ford_',valgtVar, '.pdf', sep='')
 
-setwd("c:/ResultattjenesteGIT/Intensiv/")
 NIRAndeler(RegData=RegData, valgtVar=valgtVar, minald=minald, maxald=maxald,  datoFra=datoFra, 
 	datoTil=datoTil, InnMaate=InnMaate, dodInt=dodInt,erMann=erMann, outfile=outfile, 
 	hentData=0, preprosess=1, reshID=reshID, enhetsUtvalg=enhetsUtvalg)
