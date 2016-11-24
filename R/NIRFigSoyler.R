@@ -32,12 +32,13 @@ grNavn <- ''
 #ben - benevning
 xAkseTxt <- ''
 yAkseTxt <- ''
-pktTxt #(evt. søyletekst)
+pktTxt <- '' #(evt. søyletekst)
 txtEtiketter  <- ''	#legend
 N <- ''
 #verdier <- ''	#andeler, gjennomsnitt, ...
 verdiTxt <- '' 	#pstTxt, ...
 strIfig <- 1		#cex, beregner andre størrelser relativt til denne(?) Mulig må ha dynamisk str. ift. antall grupper..      
+cexgr <- strIfig
 Andeler <- FigDataParam$Andeler
 tittel <- FigDataParam$tittel
 smltxt <- FigDataParam$smltxt
@@ -45,9 +46,18 @@ N <- FigDataParam$N
 #Nhoved <- FigDataParam$Nhoved
 #NRest <- FigDataParam$Nrest
 
+retn <- FigDataParam$retn
+utvalgTxt <- FigDataParam$utvalgTxt
+grtxt <- FigDataParam$grtxt
+grtxt2 <- FigDataParam$grtxt2
+medSml <- FigDataParam$medSml
+subtxt <- FigDataParam$subtxt
+
+
+
+
 #---------------------------------------FRA FIGANDELER--------------------------
 #Hvis for få observasjoner..
-enhetsUtvalg <- 1		#MÅ FJERNES!!!
 if (dim(RegData)[1] < 10 | (length(which(RegData$ReshId == reshID))<5 & enhetsUtvalg %in% c(1,3))) {
 	#-----------Figur---------------------------------------
 FigTypUt <- figtype(outfile)
@@ -64,7 +74,7 @@ FigTypUt <- figtype(outfile)
 
 
 #Plottspesifikke parametre:
-FigTypUt <- figtype(outfile, fargepalett=NIRUtvalg$fargepalett)
+FigTypUt <- figtype(outfile, fargepalett=FigDataParam$fargepalett)
 #Tilpasse marger for å kunne skrive utvalgsteksten
 NutvTxt <- length(utvalgTxt)
 vmarg <- switch(retn, V=0, H=max(0, strwidth(grtxt, units='figure', cex=cexgr)*0.7))
@@ -89,7 +99,7 @@ if (retn == 'H') {
 
 	if (medSml == 1) {
 		points(as.numeric(rev(Andeler$Rest)), pos, col=fargeRest,  cex=2, pch=18) #c("p","b","o"), 
-		legend('top', c(paste0(shtxt, ' (N=', N$hoved,')'), paste0(smltxt, ' (N=', N$rest,')')), 
+		legend('top', c(paste0(shtxt, ' (N=', N$hoved,')'), paste0(smltxt, ' (N=', N$Rest,')')), 
 			border=c(fargeSh,NA), col=c(fargeSh,fargeRest), bty='n', pch=c(15,18), pt.cex=2, 
 			lwd=lwdRest, lty=NA, ncol=1)
 		} else {	
@@ -104,15 +114,15 @@ if (retn == 'V' ) {
 	pos <- barplot(as.numeric(Andeler$Hoved), beside=TRUE, las=1, ylab=yAkseTxt,	
 		sub=subtxt,	col=fargeSh, border='white', ylim=c(0, ymax))	
 	mtext(at=pos, grtxt, side=1, las=1, cex=cexgr, adj=0.5, line=0.5)
-	mtext(at=pos, grtxt2, side=1, las=1, cex=cexgr, adj=0.5, line=1.5)
+	mtext(at=pos, grtxt2, side=1, las=1, cex=0.9*cexgr, adj=0.5, line=1.5)
 
 if (medSml == 1) {
 	points(pos, as.numeric(Andeler$Rest), col=fargeRest,  cex=2, pch=18) #c("p","b","o"), 
-	legend('top', c(paste(shtxt, ' (N=', N$hoved,')', sep=''), paste(smltxt, ' (N=', N$rest,')', sep='')), 
+	legend('top', c(paste(shtxt, ' (N=', N$Hoved,')', sep=''), paste(smltxt, ' (N=', N$Rest,')', sep='')), 
 		border=c(fargeSh,NA), col=c(fargeSh,fargeRest), bty='n', pch=c(15,18), pt.cex=2, lty=c(NA,NA), 
 		lwd=lwdRest, ncol=2, cex=cexleg)
 	} else {	
-	legend('top', paste(shtxt, ' (N=', N$hoved,')', sep=''), 
+	legend('top', paste0(shtxt, ' (N=', N$Hoved,')'), 
 		border=NA, fill=fargeSh, bty='n', ncol=1, cex=cexleg)
 	}
 } 

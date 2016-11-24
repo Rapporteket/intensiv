@@ -7,7 +7,7 @@
 NIRAndeler(RegData, valgtVar, datoFra = "2011-01-01",
   datoTil = "3000-12-31", minald = 0, maxald = 130, erMann = "",
   InnMaate = "", dodInt = "", outfile = "", preprosess = 1,
-  hentData = 0, reshID, enhetsUtvalg = 1)
+  hentData = 0, reshID, enhetsUtvalg = 1, lagFig = 1)
 }
 \arguments{
 \item{RegData}{En dataramme med alle nødvendige variabler fra registeret}
@@ -51,6 +51,8 @@ TRUE: Ja (Standard)}
 hvilken enhet i spesialisthelsetjenesten brukeren tilhører}
 
 \item{enhetsUtvalg}{Gjør gruppeutvalg med eller uten sammenlikning. Se \strong{Details} for oversikt.}
+
+\item{lagFig}{Angir om figur skal lages eller ikke 0-ikke lag, 1-lag}
 
 \item{overfPas}{Overført under pågående intensivbehandling? 
 1 = Pasienten er ikke overført

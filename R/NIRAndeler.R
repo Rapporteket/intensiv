@@ -60,6 +60,7 @@
 #' @param overfPas Overført under pågående intensivbehandling? 
 #'				1 = Pasienten er ikke overført
 #'				2 = Pasienten er overført
+#' @param lagFig Angir om figur skal lages eller ikke 0-ikke lag, 1-lag
 #'				
 #' @return Søylediagram (fordeling) av valgt variabel. De enkelte verdiene kan også sendes med.
 #'
@@ -68,7 +69,7 @@
 
 NIRAndeler  <- function(RegData, valgtVar, datoFra='2011-01-01', datoTil='3000-12-31', 
 		minald=0, maxald=130, erMann='',InnMaate='', dodInt='',outfile='', 
-		preprosess=1, hentData=0, reshID, enhetsUtvalg=1)	
+		preprosess=1, hentData=0, reshID, enhetsUtvalg=1, lagFig=1)	
 {
 
 
@@ -76,7 +77,7 @@ if (hentData == 1) {
   RegData <- NIRRegDataSQL(datoFra, datoTil) #minald=0, maxald=130, erMann='',InnMaate='', dodInt=''
 }
 
-# Hvis RegData ikke har blitt preprosessert. (I samledokument gjøre dette i samledokumentet)
+# Hvis RegData ikke har blitt preprosessert. (I samledokument gjøres dette i samledokumentet)
 if (preprosess){
        RegData <- NIRPreprosess(RegData=RegData)	#, reshID=reshID)
      }
@@ -127,16 +128,26 @@ if (NIRUtvalg$medSml==1) {
 	Andeler$Rest <- 100*Ant$Rest/N$Rest
 }
 
-grtxt <- paste0(rev(NIRVarSpes$grtxt), ' (', rev(sprintf('%.1f',Andeler$Hoved)), '%)') 
 
+#grtxt <- paste0(rev(NIRVarSpes$grtxt), ' (', rev(sprintf('%.1f',Andeler$Hoved)), '%)') 
+grtxt2 <- paste0('(', sprintf('%.1f',Andeler$Hoved), '%)')
 
-FigDataParam <- list(Andeler=Andeler, NIRVarSpes$tittel, NIRVarSpes$retn, smltxt, N=N, grtxt)
+FigDataParam <- list(Andeler=Andeler, N=N, 
+                     grtxt2=grtxt2, 
+                     grtxt=NIRVarSpes$grtxt,
+                     tittel=NIRVarSpes$tittel, 
+                     retn=NIRVarSpes$retn, 
+                     subtxt=NIRVarSpes$subtxt,
+                     utvalgTxt=NIRUtvalg$utvalgTxt, 
+                     fargepalett=NIRUtvalg$fargepalett, 
+                     medSml=NIRUtvalg$medSml, 
+                     smltxt=NIRUtvalg$smltxt)
+
 
 if (lagFig == 1) {
       NIRFigSoyler(RegData, FigDataParam=FigDataParam, outfile)
-	} else {
-            DataUt <- list(RegData=RegData, Andeler=Andeler, N=N)
-            return(invisible(DataUt))}
+      }
+
+return(invisible(FigDataParam))
 
 }
-
