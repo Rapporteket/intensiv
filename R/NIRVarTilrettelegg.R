@@ -73,6 +73,10 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar){
       
       
       RegData$Variabel <- 0
+      #Kan her definere opp alle aktuelle grupperingsvariable og deres tekst, eller 
+      #sende inn grupperingsvariabel og så gjøre beregninger. (Ulempe: Ekstra avhengigheter)
+      #Sentralt spm: Hvor skal det avgjøres hvilken figurtype som vises???
+      
       
       #--------------- Definere variable ------------------------------
       #Variabeltyper: Numeriske, kategoriske, indikator
@@ -88,7 +92,7 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar){
             tittel <- 'Alder'
       }
       if (valgtVar=='alder_u18') {	#AndelTid, AndelerGrVar
-            #retn <- 'H' #retn vil avhenge av figurtype!
+            #retn <- 'H' #retn vil avhenge av figurtype, dvs. må avhenge av grupperingsvariabel. 
             RegData <- RegData[which(RegData$Alder>=0), ]    #Tar bort alder<0
             RegData$Variabel[which(RegData$Alder<18)] <- 1 
             VarTxt <- 'under 18 år'

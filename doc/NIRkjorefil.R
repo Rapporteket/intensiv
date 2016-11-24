@@ -54,6 +54,37 @@ overfPas <- ''    #Overført under pågående intensivbehandling?	1 = Nei, 2 = J
 grType <- 99	#1/2: sentral/lokal, 3:regional, 99:'alle'
 enhetsUtvalg <- 1	#0-5
 
+#--------------------------------------- Ny struktur basert på grVar? ----------------------------------
+#Prioriter kvalitetsindikatorene: reinn, SMR, median innleggelse (se årsrapport)
+#Median respiratortid < 2,5 døger -> Kan vi vise andel med respiratortid <2,5døgn og sette grense på 50%?
+#Standardisert mortalitetsratio (SMR) < 0,7 (etter ikkje-justert alvorsskåre) 
+#Andel reinnlegging til intensiv i løpet av 72 timar < 4% av opphalda (def. endret 2016)
+#Alle disse vises per sykehus for et gitt tidsintervall (siste 12 mnd?)
+#I tillegg kanskje vi skal vise utvikling over tid for valgt sykehus og sykehustype?
+#PRIORITER ANDELGRVAR og GJSNGRVAR SOM NESTE FIGUR, dvs. søylefigur.
+
+Neste figur er AndelerGr for reinnleggelse
+
+grVar <- 
+#      0 - (Søyle) fordelingsfigur for den aktuelle variabelen.
+#      1 - (Søyle) fordelingsfigur for flere variable, dvs. andel av mange variable samlet.
+#      (med 0/1 erstatter grVar "flerevar")
+#      aar - AndelTid -> linjeplott
+#      shus - (Søyle) AndelerGrVar, GjsnGrVar - hvordan skille disse?
+      
+
+variable <- c('alder', 'liggetid', 'respiratortid',  'SAPSII', 'NEMS', 'Nas', 'InnMaate')
+valgtVar <- 'alder'	#'alder', 'liggetid', 'respiratortid',  'SAPSII', 'NEMS', 'Nas', 'InnMaate'
+outfile <- ''	#paste('Ford_',valgtVar, '.pdf', sep='')
+
+Utdata <- NIRAndeler(RegData=RegData, valgtVar=valgtVar, minald=minald, maxald=maxald,  datoFra=datoFra, 
+                     datoTil=datoTil, InnMaate=InnMaate, dodInt=dodInt,erMann=erMann, outfile=outfile, 
+                     hentData=0, preprosess=1, reshID=reshID, enhetsUtvalg=enhetsUtvalg, lagFig=1)
+
+NIRFigAndeler(RegData=RegData, valgtVar=valgtVar, minald=minald, maxald=maxald,  datoFra=datoFra, 
+              datoTil=datoTil, InnMaate=InnMaate, dodInt=dodInt,erMann=erMann, outfile=outfile, 
+              hentData=0, preprosess=1, reshID=reshID, enhetsUtvalg=enhetsUtvalg)
+
 #--------------------------------------- Andeler ----------------------------------
 variable <- c('alder', 'liggetid', 'respiratortid',  'SAPSII', 'NEMS', 'Nas', 'InnMaate')
 valgtVar <- 'alder'	#'alder', 'liggetid', 'respiratortid',  'SAPSII', 'NEMS', 'Nas', 'InnMaate'
