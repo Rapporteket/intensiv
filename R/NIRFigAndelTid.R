@@ -169,7 +169,7 @@ if (enhetsUtvalg %in% c(0,2,4,7)) {		#Ikke sammenlikning
 			}								
 
     
-    NHovedRes <- length(indHoved)
+    NhovedRes <- length(indHoved)
     NSmlRes <- length(indRest)
     
     
@@ -267,11 +267,11 @@ if (valgtVar %in% c('liggetidDod','respiratortidDod')) {
     Ttxt <- paste('(Tall ved punktene angir antall ', VarTxt, ')', sep='') 
     if (medSml == 1) { 
       text(Aartxt, AndelRest, pos=3, NAarHendRest, cex=0.9, col=fargeRest)
-      legend('topleft', border=NA, c(paste(shtxt, ' (N=', NHovedRes, ')', sep=''),
+      legend('topleft', border=NA, c(paste(shtxt, ' (N=', NhovedRes, ')', sep=''),
                                      paste(smltxt, ' (N=', NSmlRes, ')', sep=''), Ttxt), bty='n', ncol=1, cex=cexleg, 
              col=c(fargeHoved, fargeRest, NA), lwd=3)		
     } else {
-      legend('top', c(paste(shtxt, ' (N=', NHovedRes, ')', sep=''), Ttxt), 
+      legend('top', c(paste(shtxt, ' (N=', NhovedRes, ')', sep=''), Ttxt), 
              col=c(fargeHoved, NA), lwd=3, bty='n')
     }
     

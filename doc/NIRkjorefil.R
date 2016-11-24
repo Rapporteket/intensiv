@@ -1,34 +1,5 @@
 
-dbDisconnect(con)
-
-#----------------------------------------------------------------------------------------
-ENDRINGER, kommentarer 7.feb. 2014 ->
-#----------------------------------------------------------------------------------------
-
-Variable i bruk per feb.2014:
-	Endre (i Talend el tilsvarende):
-	Fra dumptabell:
-	FreshOrganizationalUnitId AS AvdID, 
-	date(DateAdmittedIntensive) AS datoinn,
-	DaysAdmittedIntensiv AS liggetid,
-	Respirator AS respiratortid,
-	TransferredStatus AS Overf,
-	TypeOfAdmission AS InnMaate,	#NB: Brukt TypeOfAdmission i NIRLibUtvalg
-	Saps2ScoreNumber AS SAPSII,
-	(AgeAdmitted AS alder - trenger ikke endre)
-	DischargedIntensiveStatus, Saps2Score, NEMS, 
-	Fra reshtabell: r.ShType, r.ShTypeTxt, r.ShNavn,
-		#Innhold i ShType er nå 1,2,3. Kan se ut til at det tidligere har vært 
-		#c('region', 'sentral', 'lokal'). Programmerer ut fra 1,2,3. 
-		#Vil gjerne endre så kommmer 1,2, fra inputktr.
-	dump as d, resh as r
-	WHERE d.FreshOrganizationalUnitId = r.AvdReshID
-	#Saps2Score tilsvarer beregnet SMR
-Beregnet vi tidligere alder selv? Vi trenger desimalalder. Det er nå ei salig blanding av 
-heltall og desimaltall som i utgangspunktet er definert som tekst.
-
-
-#--------------------------------------Kvalitetskontroll-----------------------------------
+#--------------------------------------Kvalitetskontroll - ikke operativ-----------------------------------
 rm(list=ls())
 library(knitr)
 setwd('C:/registre/NIR/trunk/KvalKtrAvData') 
@@ -48,123 +19,63 @@ reshID <- 112044 #102090 Ahus, 112044 Haukeland
 knit('NIRSamleRapp.Rnw')
 texi2pdf(file='NIRSamleRapp.tex')
 
-#NIRSamleRapp for hver enkelt enhet (alle)
-NIRdata <- read.table('C:/Registre/NIR/data/NIR2014-11-07.csv', sep=';', header=T)	#NIRvarSQL.csv
-AlleResh <- c(...)
-#AlleResh <- c(700385, 700720, 106271)	#De som mangler sykehusnavn
 
-for (reshID in AlleResh ) {
-	knit('NIRSamleRapp.Rnw')
-	texi2pdf(file='NIRSamleRapp.tex')
-	file.rename('NIRSamleRapp.pdf', paste0('NIRSamleRapp', reshID, '.pdf'))	#list.files(pattern="water_*.img", paste0("water_", 1:700))
-}
+#NIRSamleRapp for hver enkelt enhet (alle)
+#for (reshID in AlleResh ) {
+#	knit('NIRSamleRapp.Rnw')
+#	texi2pdf(file='NIRSamleRapp.tex')
+#	file.rename('NIRSamleRapp.pdf', paste0('NIRSamleRapp', reshID, '.pdf'))	#list.files(pattern="water_*.img", paste0("water_", 1:700))
+#}
+
+
+#Ta med med/uten overføringer som valg? JA
 
 #-------------------------------------LASTE DATA-----------------------------------------------
+rm(list=ls())
+
 NIRdata <- read.table(file='C:/Registre/NIR/data/Main2016-09-27.csv', header=T, sep=';',encoding = 'UTF-8')
 #RegData <- NIRdata[sample(1:dim(NIRdata)[1],10000),]
 #save(RegData, file='C:/Registre/NIR/data/NIRdata10000.Rdata')
 load("C:/Registre/NIR/data/NIRdata10000.Rdata") #RegData
 
-#--------------------------------------- SENTRALMÅL per enhet----------------------------------
-rm(list=ls())
+#-------------------------------------- Parametre ----------------------------------------------------
+library(intensiv)
 setwd("c:/ResultattjenesteGIT/Intensiv/")
-valgtVar <- 'liggetid'	#'SMR', alder, liggetid, respiratortid,  SAPSII, 'NEMS', 'Nas'
+reshID=112044
 minald <- 10 #(standard: 0)
 maxald <- 130	#(standard: 130, må være større enn minald!)
 InnMaate <- '' #0-El, 6-Ak.m, 8-Ak.k, (alle - alt unntatt 0,6,8)
 valgtMaal = '' #'Med' = median. Alt annet gir gjennomsnitt
-datoFra <- '2015-01-01'	# standard: 0	format: YYYY-MM-DD. Kan spesifisere bare første del, eks. YYYY el. YYYY-MM. 
+datoFra <- '2011-01-01'	# standard: 0	format: YYYY-MM-DD. Kan spesifisere bare første del, eks. YYYY el. YYYY-MM. 
 datoTil <- '2015-12-31'	# standard: 3000
 dodInt <- ''	# 0-i live, 1 -død, standard: alle (alle andre verdier)
 erMann <- ''	#Kjønn: 0-kvinner, 1-menn, standard: alle (alle andre verdier)
+overfPas <- ''    #Overført under pågående intensivbehandling?	1 = Nei, 2 = Ja
 grType <- 99	#1/2: sentral/lokal, 3:regional, 99:'alle'
-outfile <- paste0(valgtVar, 'MM.png')#,grType
-
-NIRFigGjsnGrVar(RegData=RegData, valgtVar=valgtVar, valgtMaal=valgtMaal, minald=minald, maxald=maxald, 
-                grType=grType, InnMaate=InnMaate, datoFra=datoFra, datoTil=datoTil, dodInt=dodInt, 
-                erMann=erMann, outfile=outfile) 
-
-
-#Ta med med/uten overføringer som valg? JA
-
-for (valgtVar in c('SMR', 'liggetid', 'respiratortid',  'SAPSII', 'NEMS')){
-outfile <- paste(valgtVar, 'GjsnGrVar.pdf', sep='')
-NIRFigGjsnGrVar(RegData=RegData, valgtVar=valgtVar, valgtMaal=valgtMaal, minald=minald, maxald=maxald, grType=grType, 
-		InnMaate=InnMaate, datoFra=datoFra, datoTil=datoTil, dodInt=dodInt, erMann=erMann, 
-		outfile=outfile) 
-}
-		
-#--------------------------------------- FORDELING - tas ut? ----------------------------------
-rm(list=ls())
-setwd("c:/ResultattjenesteGIT/Intensiv/")
-NIRdata <- read.table('C:/Registre/NIR/data/NIR2013.csv', sep=';', header=T)	#NIRvarSQL.csv
-RegData <- NIRdata
-setwd('C:/Registre/NIR/trunk/Fordeling') 
-valgtVar <- 'respiratortid'	#'respiratortid', liggetid, respiratortid,  SAPSII, 'NEMS', 'Nas'
-outfile <- ''	#paste('Ford_',valgtVar, '.pdf', sep='')
-minald <- 80 #(standard: 0)
-maxald <- 130	#(standard: 130, må være større enn minald!)
-InnMaate <- '' #0-El, 6-Ak.m, 8-Ak.k, (alle - alt unntatt 0,6,8)
-grType <- ''	#3:region, 1 el 2: sentral/lokal, alle
-datoFra <- '2013-01-01'	# standard: 0	format: YYYY-MM-DD. Kan spesifisere bare første del, eks. YYYY el. YYYY-MM. 
-dodInt <- ''	# 0-i live, 1 -død, standard: alle (alle andre verdier)
-datoTil <- '2013-12-31'	# standard: 3000
-erMann <- ''	#Kjønn: 0-kvinner, 1-menn, standard: alle (alle andre verdier)
-
-Fordeling(RegData=RegData, valgtVar=valgtVar, minald=minald, maxald=maxald, grType=grType, 
-		InnMaate=InnMaate, erMann=erMann, datoFra=datoFra, datoTil=datoTil, dodInt=dodInt, outfile=outfile) 
-
-#Liggetid og respiratortid for pasienter som ikke er overført mellom sykehus.
-
-for (valgtVar in c('alder', 'liggetid', 'respiratortid', 'SAPSII', 'NEMS')) {
-outfile <- paste(valgtVar, '.pdf', sep='')
-Fordeling(RegData=NIRdata, valgtVar=valgtVar, minald=minald, maxald=maxald, grType=grType, 
-		InnMaate=InnMaate, erMann=erMann, datoFra=datoFra, datoTil=datoTil, dodInt=dodInt, outfile=outfile) 
-		}
+enhetsUtvalg <- 1	#0-5
 
 #--------------------------------------- Andeler ----------------------------------
-rm(list=ls())
-valgtVar <- 'InnMaate'	#'alder', 'liggetid', 'respiratortid',  'SAPSII', 'NEMS', 'Nas', 'InnMaate'
+variable <- c('alder', 'liggetid', 'respiratortid',  'SAPSII', 'NEMS', 'Nas', 'InnMaate')
+valgtVar <- 'alder'	#'alder', 'liggetid', 'respiratortid',  'SAPSII', 'NEMS', 'Nas', 'InnMaate'
 outfile <- ''	#paste('Ford_',valgtVar, '.pdf', sep='')
-minald <- 0 #(standard: 0)
-maxald <- 130	#(standard: 130, må være større enn minald!)
-InnMaate <- '' #0-El, 6-Ak.m, 8-Ak.k, (alle - alt unntatt 0,6,8)
-#grType <- ''	#region, sentral, lokal, alle (må velges) - Ikke nå lenger?
-datoFra <- '2013-01-01'	# standard: 0	format: YYYY-MM-DD. Kan spesifisere bare første del, eks. YYYY el. YYYY-MM. 
-dodInt <- ''	# 0-i live, 1 -død, standard: alle (alle andre verdier)
-datoTil <- '2016-12-31'	# standard: 3000
-erMann <- ''	#Kjønn: 0-kvinner, 1-menn, standard: alle (alle andre verdier)
-reshID=112044
-enhetsUtvalg=3
 
-setwd("c:/ResultattjenesteGIT/Intensiv/")
+Utdata <- NIRAndeler(RegData=RegData, valgtVar=valgtVar, minald=minald, maxald=maxald,  datoFra=datoFra, 
+	datoTil=datoTil, InnMaate=InnMaate, dodInt=dodInt,erMann=erMann, outfile=outfile, 
+	hentData=0, preprosess=1, reshID=reshID, enhetsUtvalg=enhetsUtvalg, lagFig=1)
+
 NIRFigAndeler(RegData=RegData, valgtVar=valgtVar, minald=minald, maxald=maxald,  datoFra=datoFra, 
 	datoTil=datoTil, InnMaate=InnMaate, dodInt=dodInt,erMann=erMann, outfile=outfile, 
 	hentData=0, preprosess=1, reshID=reshID, enhetsUtvalg=enhetsUtvalg)
 
-variable <- c('alder', 'liggetid', 'respiratortid',  'SAPSII', 'NEMS', 'Nas', 'InnMaate')
 
 for (valgtVar in variable) {
 	outfile <- paste0(valgtVar, '_and.png')
-	FigAndeler(RegData=RegData, valgtVar=valgtVar, minald=minald, maxald=maxald,  datoFra=datoFra, 
-	datoTil=datoTil, InnMaate=InnMaate, dodInt=dodInt,erMann=erMann, outfile=outfile, 
-	reshID=reshID, enhetsUtvalg=enhetsUtvalg)
-}
+#figurfunksjon
+	}
 
 #--------------------------------------- AndelGrVar ----------------------------------
-rm(list=ls())
-setwd("c:/ResultattjenesteGIT/Intensiv/")
-load("NIRdata10000.Rdata")#RegData
 valgtVar <- 'dod30d'	#alder_u18', 'alder_over80', 'dod30d', 'dodeIntensiv', 'innMaate', 
                         #'respStotte', 'reinn
-minald <- 0 #(standard: 0)
-maxald <- 130	#(standard: 130, må være større enn minald!)
-InnMaate <- '' #0-El, 6-Ak.m, 8-Ak.k, (alle - alt unntatt 0,6,8)
-grType <- 99	#1/2: sentral/lokal, 3:regional, 99:'alle'
-datoFra <- '2011-01-01'	# standard: 0	format: YYYY-MM-DD. Kan spesifisere bare første del, eks. YYYY el. YYYY-MM. 
-datoTil <- '2017-05-01'	# standard: 3000-01-01
-dodInt <- ''	# 0-i live, 1 -død, standard: alle (alle andre verdier)
-erMann <- ''	#Kjønn: 0-kvinner, 1-menn, standard: alle (alle andre verdier)
 outfile <- paste0(valgtVar, 'GrVar.png')
 
 NIRFigAndelerGrVar(RegData=RegData, valgtVar=valgtVar, minald=minald, maxald=maxald,  datoFra=datoFra, 
@@ -184,18 +95,6 @@ for (valgtVar in variable) {
 		
 		
 #---------------------AndelTid----------------------------------------------
-rm(list=ls())
-setwd("c:/ResultattjenesteGIT/Intensiv/")
-load("NIRdata10000.Rdata")#RegData
-reshID=112044
-minald <- 0 #(standard: 0)
-maxald <- 130	#(standard: 130, må være større enn minald!)
-InnMaate <- '' #0-El, 6-Ak.m, 8-Ak.k, (alle - alt unntatt 0,6,8)
-datoFra <- '2011-01-01'	# standard: 0	format: YYYY-MM-DD. Kan spesifisere bare første del, eks. YYYY el. YYYY-MM. 
-datoTil <- '2016-12-01'	# standard: 3000-01-01
-dodInt <- ''	# 0-i live, 1 -død, standard: alle (alle andre verdier)
-erMann <- 99	#Kjønn: 0-kvinner, 1-menn, standard: alle (alle andre verdier)
-enhetsUtvalg <- 1	#0-5
 valgtVar <- 'liggetidDod'	#'alder_u18', 'alder_over80', 'dod30d', 'dodeIntensiv', 'liggetidDod', 
                         #'respiratortidDod', 'respStotte', 'reinn', 'SMR'
 outfile <- paste0(valgtVar, '.png')
@@ -214,19 +113,6 @@ for (valgtVar in variable){
 }
 
 #---------------------GjsnTid----------------------------------------------
-rm(list=ls())
-setwd("c:/ResultattjenesteGIT/Intensiv/")
-load("NIRdata10000.Rdata")#RegData
-reshID=112044
-minald <- 0 #(standard: 0)
-maxald <- 130	#(standard: 130, må være større enn minald!)
-InnMaate <- 99 #0-El, 6-Ak.m, 8-Ak.k, (alle - alt unntatt 0,6,8)
-datoFra <- '2012-01-01'	# standard: 0	format: YYYY-MM-DD. Kan spesifisere bare første del, eks. YYYY el. YYYY-MM. 
-datoTil <- '2016-12-01'	# standard: 3000-01-01
-dodInt <- 99	# 0-i live, 1 -død, standard: alle (alle andre verdier)
-erMann <- ''	#Kjønn: 0-kvinner, 1-menn, standard: alle (alle andre verdier)
-valgtMaal <- 'Med'
-enhetsUtvalg <- 3	#0-5
 valgtVar <- 'SAPSII'	#'alder', 'liggetid', 'respiratortid', 'SAPSII', 
 outfile <- ''	#paste0(valgtVar, '.png')
 
@@ -244,32 +130,29 @@ for (valgtVar in variable) {
 }
 
 
-#---------------------------------------TEST----------------------------------
+#--------------------------------------- SENTRALMÅL per enhet----------------------------------
 
-setwd('C:/registre/NIR/trunk/MeanMed') 
-source("FigMeanMed.R", encoding="UTF-8")
-for (valgtVar in c('alder', 'liggetid', 'respiratortid',  'SAPSII')) {
-#valgtVar <- 'NEMS'
-	for (minald in c(0, 50, 80) ) {
-		for (InnMaate in c(0,6,8) ) {
-			for (valgtMaal in c('', 'Med') ) {
-				for (grType in c('region', 'sentral', 'lokal')) {
-					for (dF in 1:3) { datoFra <- c('0','2011','2012')[dF]
-						for (dT in 1:3) {datoTil <- c('2012-02-02','3000')[dT]
-							for (dodInt in c('',0,1)) {
-							outfile <- paste('C:/NIR/NIRrep/testFig/',
-								valgtVar, '_minA', minald, '_innM', InnMaate, valgtMaal, '_', grType,
-								'_dF', dF, '_dT', dT, dodInt, '.png', sep='')
-							MeanMed(RegData=NIRdata, valgtVar=valgtVar, valgtMaal=valgtMaal, minald=minald, maxald=maxald, grType=grType, 
-								InnMaate=InnMaate, datoFra=datoFra, datoTil=datoTil, dodInt=dodInt, outfile=outfile) 
-							}
-						}
-					}
-				}
-			}
-		}	
-	}
+valgtVar <- 'liggetid'	#'SMR', alder, liggetid, respiratortid,  SAPSII, 'NEMS', 'Nas'
+outfile <- paste0(valgtVar, 'MM.png')#,grType
+
+NIRFigGjsnGrVar(RegData=RegData, valgtVar=valgtVar, valgtMaal=valgtMaal, minald=minald, maxald=maxald, 
+                grType=grType, InnMaate=InnMaate, datoFra=datoFra, datoTil=datoTil, dodInt=dodInt, 
+                erMann=erMann, outfile=outfile) 
+
+
+
+for (valgtVar in c('SMR', 'liggetid', 'respiratortid',  'SAPSII', 'NEMS')){
+      outfile <- paste0(valgtVar, 'GjsnGrVar.pdf')
+      NIRFigGjsnGrVar(RegData=RegData, valgtVar=valgtVar, valgtMaal=valgtMaal, minald=minald, maxald=maxald, grType=grType, 
+                      InnMaate=InnMaate, datoFra=datoFra, datoTil=datoTil, dodInt=dodInt, erMann=erMann, 
+                      outfile=outfile) 
 }
 
-4*3*3*2*3*3*2*3
+#--------------------------------------- FORDELING - tatt vekk ----------------------------------
+
+Fordeling(RegData=RegData, valgtVar=valgtVar, minald=minald, maxald=maxald, grType=grType, 
+          InnMaate=InnMaate, erMann=erMann, datoFra=datoFra, datoTil=datoTil, dodInt=dodInt, outfile=outfile) 
+#Liggetid og respiratortid for pasienter som ikke er overført mellom sykehus.
+#valgtVar in c('alder', 'liggetid', 'respiratortid', 'SAPSII', 'NEMS')) {
+
 
