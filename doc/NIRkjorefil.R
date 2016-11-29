@@ -33,7 +33,7 @@ texi2pdf(file='NIRSamleRapp.tex')
 #-------------------------------------LASTE DATA-----------------------------------------------
 rm(list=ls())
 
-NIRdata <- read.table(file='C:/Registre/NIR/data/Main2016-09-27.csv', header=T, sep=';',encoding = 'UTF-8')
+NIRdata <- read.table(file='C:/Registre/NIR/data/Main2016-11-28.csv', header=T, sep=';',encoding = 'UTF-8')
 #RegData <- NIRdata[sample(1:dim(NIRdata)[1],10000),]
 #save(RegData, file='C:/Registre/NIR/data/NIRdata10000.Rdata')
 load("C:/Registre/NIR/data/NIRdata10000.Rdata") #RegData
@@ -42,17 +42,18 @@ load("C:/Registre/NIR/data/NIRdata10000.Rdata") #RegData
 library(intensiv)
 setwd("c:/ResultattjenesteGIT/Intensiv/")
 reshID=112044
-minald <- 10 #(standard: 0)
+minald <- 0 #(standard: 0)
 maxald <- 130	#(standard: 130, må være større enn minald!)
 InnMaate <- '' #0-El, 6-Ak.m, 8-Ak.k, (alle - alt unntatt 0,6,8)
 valgtMaal = '' #'Med' = median. Alt annet gir gjennomsnitt
-datoFra <- '2011-01-01'	# standard: 0	format: YYYY-MM-DD. Kan spesifisere bare første del, eks. YYYY el. YYYY-MM. 
+datoFra <- '2015-01-01'	# standard: 0	format: YYYY-MM-DD. Kan spesifisere bare første del, eks. YYYY el. YYYY-MM. 
 datoTil <- '2015-12-31'	# standard: 3000
 dodInt <- ''	# 0-i live, 1 -død, standard: alle (alle andre verdier)
 erMann <- ''	#Kjønn: 0-kvinner, 1-menn, standard: alle (alle andre verdier)
 overfPas <- ''    #Overført under pågående intensivbehandling?	1 = Nei, 2 = Ja
 grType <- 99	#1/2: sentral/lokal, 3:regional, 99:'alle'
-enhetsUtvalg <- 1	#0-5
+enhetsUtvalg <- 0	#0-5
+Parameter for evt. kvalitetsmål? angis i Tilrettelegging
 
 #--------------------------------------- Ny struktur basert på grVar? ----------------------------------
 #Prioriter kvalitetsindikatorene: reinn, SMR, median innleggelse (se årsrapport)
@@ -61,6 +62,7 @@ enhetsUtvalg <- 1	#0-5
 #Andel reinnlegging til intensiv i løpet av 72 timar < 4% av opphalda (def. endret 2016)
 #Alle disse vises per sykehus for et gitt tidsintervall (siste 12 mnd?)
 #I tillegg kanskje vi skal vise utvikling over tid for valgt sykehus og sykehustype?
+
 #PRIORITER ANDELGRVAR og GJSNGRVAR SOM NESTE FIGUR, dvs. søylefigur.
 
 Neste figur er AndelerGr for reinnleggelse
