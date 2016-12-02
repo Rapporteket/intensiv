@@ -53,7 +53,7 @@ erMann <- ''	#Kjønn: 0-kvinner, 1-menn, standard: alle (alle andre verdier)
 overfPas <- ''    #Overført under pågående intensivbehandling?	1 = Nei, 2 = Ja
 grType <- 99	#1/2: sentral/lokal, 3:regional, 99:'alle'
 enhetsUtvalg <- 0	#0-5
-Parameter for evt. kvalitetsmål? angis i Tilrettelegging
+#Parameter for evt. kvalitetsmål? angis i Tilrettelegging
 
 #--------------------------------------- Ny struktur basert på grVar? ----------------------------------
 #Prioriter kvalitetsindikatorene: reinn, SMR, median innleggelse (se årsrapport)
@@ -64,9 +64,12 @@ Parameter for evt. kvalitetsmål? angis i Tilrettelegging
 #I tillegg kanskje vi skal vise utvikling over tid for valgt sykehus og sykehustype?
 
 #PRIORITER ANDELGRVAR og GJSNGRVAR SOM NESTE FIGUR, dvs. søylefigur.
+#TRENGER OGSÅ TIDSTREND
+#FJERNER FORELØPIG STABEL FRA ANDELERGRVAR, DVS. FJERNER FIGUREN FOR INNMÅTE (-> Egen figurtype?)
 
 Neste figur er AndelerGr for reinnleggelse
 
+#Forslag til def av grVar hvis ikke kjernen skal være figurtypen
 grVar <- 
 #      0 - (Søyle) fordelingsfigur for den aktuelle variabelen.
 #      1 - (Søyle) fordelingsfigur for flere variable, dvs. andel av mange variable samlet.
@@ -82,10 +85,6 @@ outfile <- ''	#paste('Ford_',valgtVar, '.pdf', sep='')
 Utdata <- NIRAndeler(RegData=RegData, valgtVar=valgtVar, minald=minald, maxald=maxald,  datoFra=datoFra, 
                      datoTil=datoTil, InnMaate=InnMaate, dodInt=dodInt,erMann=erMann, outfile=outfile, 
                      hentData=0, preprosess=1, reshID=reshID, enhetsUtvalg=enhetsUtvalg, lagFig=1)
-
-NIRFigAndeler(RegData=RegData, valgtVar=valgtVar, minald=minald, maxald=maxald,  datoFra=datoFra, 
-              datoTil=datoTil, InnMaate=InnMaate, dodInt=dodInt,erMann=erMann, outfile=outfile, 
-              hentData=0, preprosess=1, reshID=reshID, enhetsUtvalg=enhetsUtvalg)
 
 #--------------------------------------- Andeler ----------------------------------
 variable <- c('alder', 'liggetid', 'respiratortid',  'SAPSII', 'NEMS', 'Nas', 'InnMaate')

@@ -100,6 +100,13 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar){
       }
       
       #Eksempel, indikator - bare i andeler, typisk ikke fordeling og gjennomsnitt, dvs. .
+	  if (valgtVar=='reinn') {
+		#Andel reinnlagte kun hvor dette er registrert. #Ja=1, nei=2, ukjent=9
+		RegData <- RegData[which(RegData$ReAdmitted %in% 1:2), ]	#Tar bort ukjente
+		RegData$Variabel[which(RegData$ReAdmitted==1)] <- 1  
+		tittel <-'Reinnleggelser på intensivavdelingen (innen 72t)'
+	}
+ 
       if (valgtVar=='dodeIntensiv') { #AndelGrVar
             #Andel som dør på intensiv
             RegData$Variabel <- RegData$DischargedIntensiveStatus	#0: I live, 1: Død intensiv
@@ -110,10 +117,42 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar){
             RegData <- RegData[which(RegData$DischargedIntensiveStatus %in% 0:1), ]		#Tar bort ukjente
             RegData$Variabel[which(RegData$DischargedIntensiveStatus==1)] <- 1 
             VarTxt <- 'pasienter som døde på intensiv'
-            Tittel <- 'Andel opphold der pasienten døde på intensiv'
+            tittel <- 'Andel opphold der pasienten døde på intensiv'
       }
       
-      
+
+#Fra AndelerGrVar
+if (valgtVar=='dod30d') {
+#Tar bort ukjente og de som ikke er utskrevet, dvs. tar ut 3:reinnlagt
+  #RegData <- RegData[which(RegData$DischargedHospitalStatus %in% 0:2), ]    
+  #RegData$Variabel[which(RegData$DischargedHospitalStatus!=0)] <- 1 
+  RegData$Variabel <- RegData$Dod30
+  tittel <-  'Andel opphold der pasienten døde innen 30 dager etter innleggelse'
+}
+
+if (valgtVar=='dodeIntensiv') {
+	#Andel som dør på intensiv
+	RegData$Variabel <- RegData$DischargedIntensiveStatus	#0: I live, 1: Død intensiv
+	RegData <- RegData[which(RegData$Variabel %in% 0:1), ]
+	tittel <- 'Andel opphold der pasienten døde på intensiv'
+}
+
+if (valgtVar=='innMaate') {
+	#Innleggelsesmåte. Genererer annen figurtype
+      #0:Planlagt operasjon, 6:Akutt nonoperativ, 8:Akutt operasjon
+      RegData$Variabel <- RegData$InnMaate	#Gir ikke mening i andelsberegning, men trenger å være tilgengelig.
+      RegData <- RegData[which(RegData$InnMaate %in% c(0,6,8)), ]
+	tittel <-'Innkomstmåte'
+}
+
+if (valgtVar=='respStotte') {
+	#Fått respiratorstøtte. Ja=1, nei=2,
+  RegData <- RegData[which(RegData$MechanicalRespirator %in% 1:2), ]
+  RegData$Variabel[which(RegData$MechanicalRespirator==1)] <- 1  
+  tittel <-'Andel med respiratorstøtte'
+}
+
+ 
       #Eksempel, kategorisk
       if (valgtVar=='InnMaate') {
             tittel <- 'Fordeling av Innkomstmåte'   

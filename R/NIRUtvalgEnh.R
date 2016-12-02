@@ -89,7 +89,9 @@ if (enhetsUtvalg %in% c(1,2,3,6)) {	#Involverer egen enhet
                             '8' = as.character(RegData$Region[indEgen1]))
       }
 
+
 ind <- list(Hoved=0, Rest=0)
+smltxt <- ''
 if (enhetsUtvalg %in% c(0,2,4,7)) {		#Ikke sammenlikning
       medSml <- 0
       ind$Hoved <- 1:dim(RegData)[1]	#Tidligere redusert datasettet for 2,4,7. (+ 3og6)

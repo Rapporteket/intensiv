@@ -133,6 +133,8 @@ if (NIRUtvalg$medSml==1) {
 grtxt2 <- paste0('(', sprintf('%.1f',Andeler$Hoved), '%)')
 
 FigDataParam <- list(Andeler=Andeler, N=N, 
+					Ant=Ant,	
+ 					 soyletxt=soyletxt,
                      grtxt2=grtxt2, 
                      grtxt=NIRVarSpes$grtxt,
                      tittel=NIRVarSpes$tittel, 
@@ -145,7 +147,10 @@ FigDataParam <- list(Andeler=Andeler, N=N,
 
 
 if (lagFig == 1) {
-      NIRFigSoyler(RegData, FigDataParam=FigDataParam, outfile)
+      NIRFigSoyler(RegData, Andeler, Ant, tittel=NIRVarSpes$tittel, smltxt=NIRVarSpes$tittel, 
+	  N=0, retn='H', 
+					utvalgTxt, grtxt, grtxt2, medSml, subtxt='',, outfile)	
+	  #ENDRE så figurparametrene skrives fullt ut i parameterkallet
       }
 
 return(invisible(FigDataParam))

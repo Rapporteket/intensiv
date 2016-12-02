@@ -1,4 +1,4 @@
-#' IKKE PÅBEGYNT....!!!
+#' Lager søylefigur
 #'
 #' bLA, BAL
 #'
@@ -27,7 +27,8 @@
 #' @export
 
 
-NIRFigSoyler <- function(RegData, FigDataParam='', outfile) {
+NIRFigSoyler <- function(RegData, Andeler, tittel='mangler tittel', smltxt, N=0, retn='H', 
+					utvalgTxt, grtxt, grtxt2, medSml, subtxt='', outfile='') {
 grNavn <- ''
 #ben - benevning
 xAkseTxt <- ''
@@ -39,19 +40,17 @@ N <- ''
 verdiTxt <- '' 	#pstTxt, ...
 strIfig <- 1		#cex, beregner andre størrelser relativt til denne(?) Mulig må ha dynamisk str. ift. antall grupper..      
 cexgr <- strIfig
-Andeler <- FigDataParam$Andeler
-tittel <- FigDataParam$tittel
-smltxt <- FigDataParam$smltxt
-N <- FigDataParam$N
-#Nhoved <- FigDataParam$Nhoved
-#NRest <- FigDataParam$Nrest
-
-retn <- FigDataParam$retn
-utvalgTxt <- FigDataParam$utvalgTxt
-grtxt <- FigDataParam$grtxt
-grtxt2 <- FigDataParam$grtxt2
-medSml <- FigDataParam$medSml
-subtxt <- FigDataParam$subtxt
+#DETTE SKAL INN I FUNKSJONSKALL
+#Andeler <- FigDataParam$Andeler
+#tittel <- FigDataParam$tittel
+#smltxt <- FigDataParam$smltxt
+# <- FigDataParam$N
+#retn <- FigDataParam$retn
+#utvalgTxt <- FigDataParam$utvalgTxt
+#grtxt <- FigDataParam$grtxt
+#grtxt2 <- FigDataParam$grtxt2
+#medSml <- FigDataParam$medSml
+#subtxt <- FigDataParam$subtxt
 
 
 
