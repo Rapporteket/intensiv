@@ -67,9 +67,9 @@ enhetsUtvalg <- 0	#0-5
 #TRENGER OGSÅ TIDSTREND
 #FJERNER FORELØPIG STABEL FRA ANDELERGRVAR, DVS. FJERNER FIGUREN FOR INNMÅTE (-> Egen figurtype?)
 
-Neste figur er AndelerGr for reinnleggelse
+#------Neste figur er AndelerGr for reinnleggelse
 
-#Forslag til def av grVar hvis ikke kjernen skal være figurtypen
+#Forslag til def av grVar hvis IKKE kjernen skal være figurtypen
 grVar <- 
 #      0 - (Søyle) fordelingsfigur for den aktuelle variabelen.
 #      1 - (Søyle) fordelingsfigur for flere variable, dvs. andel av mange variable samlet.
@@ -80,7 +80,7 @@ grVar <-
 
 variable <- c('alder', 'liggetid', 'respiratortid',  'SAPSII', 'NEMS', 'Nas', 'InnMaate')
 valgtVar <- 'alder'	#'alder', 'liggetid', 'respiratortid',  'SAPSII', 'NEMS', 'Nas', 'InnMaate'
-outfile <- ''	#paste('Ford_',valgtVar, '.pdf', sep='')
+outfile <- paste('Ford_',valgtVar, '.pdf', sep='')
 
 Utdata <- NIRAndeler(RegData=RegData, valgtVar=valgtVar, minald=minald, maxald=maxald,  datoFra=datoFra, 
                      datoTil=datoTil, InnMaate=InnMaate, dodInt=dodInt,erMann=erMann, outfile=outfile, 
@@ -106,14 +106,17 @@ for (valgtVar in variable) {
 	}
 
 #--------------------------------------- AndelGrVar ----------------------------------
-valgtVar <- 'dod30d'	#alder_u18', 'alder_over80', 'dod30d', 'dodeIntensiv', 'innMaate', 
+grVar <- 'ShNavn'
+valgtVar <- 'reinn'	#alder_u18', 'alder_over80', 'dod30d', 'dodeIntensiv', 'innMaate', 
                         #'respStotte', 'reinn
-outfile <- paste0(valgtVar, 'GrVar.png')
+outfile <- ''#paste0(valgtVar, 'GrVar.png')
 
-NIRFigAndelerGrVar(RegData=RegData, valgtVar=valgtVar, minald=minald, maxald=maxald,  datoFra=datoFra, 
-	datoTil=datoTil, InnMaate=InnMaate, dodInt=dodInt,erMann=erMann, outfile=outfile, 
-	grType=grType)
-
+#NIRFigAndelerGrVar(RegData=RegData, valgtVar=valgtVar, minald=minald, maxald=maxald,  datoFra=datoFra, 
+#	datoTil=datoTil, InnMaate=InnMaate, dodInt=dodInt,erMann=erMann, outfile=outfile, 
+#	grType=grType)
+NIRAndelerGrVar(RegData=RegData, valgtVar=valgtVar, minald=minald, maxald=maxald,  datoFra=datoFra, 
+                datoTil=datoTil, InnMaate=InnMaate, dodInt=dodInt,erMann=erMann, outfile=outfile, 
+                grType=grType, grVar=grVar, hentData=0, preprosess=1, lagFig=1)
 
 variable <- c('alder_u18', 'alder_over80', 'dod30d', 'dodeIntensiv', 'innMaate', 
       'respStotte', 'reinn')

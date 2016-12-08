@@ -2,9 +2,11 @@
 % Please edit documentation in R/NIRFigSoyler.R
 \name{NIRFigSoyler}
 \alias{NIRFigSoyler}
-\title{IKKE PÅBEGYNT....!!!}
+\title{Lager søylefigur}
 \usage{
-NIRFigSoyler(RegData, FigDataParam = "", outfile)
+NIRFigSoyler(RegData, Andeler, tittel = "mangler tittel", smltxt, N = 0,
+  retn = "H", yAkseTxt = "", utvalgTxt, grtxt, grtxt2, cexgr = 1, medSml,
+  subtxt = "", outfile = "")
 }
 \arguments{
 \item{RegData}{En dataramme med alle nødvendige variabler fra registeret}

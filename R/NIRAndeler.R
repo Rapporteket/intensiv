@@ -148,8 +148,7 @@ FigDataParam <- list(Andeler=Andeler, N=N,
 
 if (lagFig == 1) {
       NIRFigSoyler(RegData, Andeler, Ant, tittel=NIRVarSpes$tittel, smltxt=NIRVarSpes$tittel, 
-	  N=0, retn='H', 
-					utvalgTxt, grtxt, grtxt2, medSml, subtxt='',, outfile)	
+	  N=0, retn='H', utvalgTxt, grtxt, grtxt2, medSml, subtxt='', outfile=outfil)	
 	  #ENDRE så figurparametrene skrives fullt ut i parameterkallet
       }
 

@@ -58,7 +58,9 @@ RegData <- RegData[indMed,]
 
 
 N <- dim(RegData)[1]	#N=0 gir feilmelding
-grTypetext <- c('lokal/sentral', 'lokal/sentral', 'region')				
+grTypetextstreng <- c('lokal/sentral', 'lokal/sentral', 'region')				
+if (grType %in% 1:3) {grTypeTxt <- grTypetextstreng[grType]} else {grTypeTxt <- 'alle '}
+
 
 utvalgTxt <- c(paste(
 	'Registreringsperiode: ', if (N>0) {min(RegData$InnDato, na.rm=T)} else {datoFra}, 
@@ -69,29 +71,26 @@ utvalgTxt <- c(paste(
 	if (erMann %in% 0:1) {paste('Kjønn: ', c('Kvinner', 'Menn')[erMann+1], sep='')},
 	if (InnMaate %in% c(0,6,8)) {paste('Innmåte: ', 
 			c('Elektivt',0,0,0,0,0, 'Akutt medisinsk',0, 'Akutt kirurgi')[InnMaate+1], sep='')},
-	if (grType %in% 1:3) {paste('Sykehustype: ', grTypetext[grType], sep='')},
+	if (grType %in% 1:3) {paste('Sykehustype: ', grTypetextstreng[grType], sep='')},
 	if (dodInt %in% 0:1) {paste('Status ut fra intensiv: ', c('Levende','Død')[as.numeric(dodInt)+1], sep='')}
 )
 
 
-
-
 #Enhetsutvalg:
-shTypetext <- c('lokale/sentrale', 'lokale/sentrale', 'regionale')				
 indEgen1 <- match(reshID, RegData$ReshId)
 if (enhetsUtvalg %in% c(1,2,3,6)) {	#Involverer egen enhet
       shtxt <- as.character(RegData$ShNavn[indEgen1]) } else {
             shtxt <- switch(as.character(enhetsUtvalg), 	
                             '0' = 'Hele landet',
-                            '4' = shTypetext[RegData$ShType[indEgen1]],
-                            '5' = shTypetext[RegData$ShType[indEgen1]],
+                            '4' = grTypetextstreng[RegData$ShType[indEgen1]],
+                            '5' = grTypetextstreng[RegData$ShType[indEgen1]],
                             '7' = as.character(RegData$Region[indEgen1]),
                             '8' = as.character(RegData$Region[indEgen1]))
       }
 
 
 ind <- list(Hoved=0, Rest=0)
-smltxt <- ''
+smltxt <- grTypeTxt      #Før: ''
 if (enhetsUtvalg %in% c(0,2,4,7)) {		#Ikke sammenlikning
       medSml <- 0
       ind$Hoved <- 1:dim(RegData)[1]	#Tidligere redusert datasettet for 2,4,7. (+ 3og6)
@@ -105,7 +104,7 @@ if (enhetsUtvalg %in% c(0,2,4,7)) {		#Ikke sammenlikning
                                      '8' = which(RegData$Region == RegData$Region[indEgen1]))}	#region
       smltxt <- switch(as.character(enhetsUtvalg),
                        '1' = 'landet forøvrig',
-                       '3' = paste0('andre ', shTypetext[RegData$ShType[indEgen1]]),	#RegData inneh. kun egen shgruppe
+                       '3' = paste0('andre ', grTypetextstreng[RegData$ShType[indEgen1]]),	#RegData inneh. kun egen shgruppe
                        '5' = 'andre typer sykehus',
                        '6' = paste0(RegData$Region[indEgen1], ' forøvrig'),	#RegData inneh. kun egen region
                        '8' = 'andre regioner')

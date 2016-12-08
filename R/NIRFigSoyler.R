@@ -27,75 +27,78 @@
 #' @export
 
 
-NIRFigSoyler <- function(RegData, Andeler, tittel='mangler tittel', smltxt, N=0, retn='H', 
-					utvalgTxt, grtxt, grtxt2, medSml, subtxt='', outfile='') {
-grNavn <- ''
-#ben - benevning
+NIRFigSoyler <- function(RegData, Andeler, tittel='mangler tittel', smltxt, N=0, retn='H', yAkseTxt='',
+					utvalgTxt, grtxt, grtxt2, cexgr=1, medSml, subtxt='', outfile='') {
 xAkseTxt <- ''
-yAkseTxt <- ''
 pktTxt <- '' #(evt. søyletekst)
 txtEtiketter  <- ''	#legend
-N <- ''
 #verdier <- ''	#andeler, gjennomsnitt, ...
 verdiTxt <- '' 	#pstTxt, ...
-strIfig <- 1		#cex, beregner andre størrelser relativt til denne(?) Mulig må ha dynamisk str. ift. antall grupper..      
-cexgr <- strIfig
-#DETTE SKAL INN I FUNKSJONSKALL
-#Andeler <- FigDataParam$Andeler
-#tittel <- FigDataParam$tittel
-#smltxt <- FigDataParam$smltxt
-# <- FigDataParam$N
-#retn <- FigDataParam$retn
-#utvalgTxt <- FigDataParam$utvalgTxt
-#grtxt <- FigDataParam$grtxt
-#grtxt2 <- FigDataParam$grtxt2
-#medSml <- FigDataParam$medSml
-#subtxt <- FigDataParam$subtxt
 
-
-
-
-#---------------------------------------FRA FIGANDELER--------------------------
+#---------------------------------------FRA FIGANDELER og AndelGrVar--------------------------
 #Hvis for få observasjoner..
+
 if (dim(RegData)[1] < 10 | (length(which(RegData$ReshId == reshID))<5 & enhetsUtvalg %in% c(1,3))) {
 	#-----------Figur---------------------------------------
-FigTypUt <- figtype(outfile)
+	figtype(outfile)  #FigTypUt <- figtype(outfile)
 	farger <- FigTypUt$farger
 	plot.new()
-	#title(main=paste('variabel: ', valgtVar, sep=''))	#, line=-6)
+	#title(paste0('variabel: ', valgtVar))
 	title(tittel)	#, line=-6)
 	legend('topleft',utvalgTxt, bty='n', cex=0.9, text.col=farger[1])
-#	text(0.5, 0.6, 'Færre enn 5 egne registreringer eller færre enn 10 totalt', cex=1.2)
 	text(0.5, 0.6, 'For få registreringer', cex=1.2)
 	if ( outfile != '') {dev.off()}
 } else {
 
-
+	
 
 #Plottspesifikke parametre:
-FigTypUt <- figtype(outfile, fargepalett=FigDataParam$fargepalett)
+#Høyde må avhenge av antall grupper
+hoyde <- ifelse(length(Andeler$Hoved)>20, 3*800, 3*600)
+FigTypUt <- figtype(outfile, height=hoyde, fargepalett=NIRUtvalg$fargepalett)	
 #Tilpasse marger for å kunne skrive utvalgsteksten
 NutvTxt <- length(utvalgTxt)
-vmarg <- switch(retn, V=0, H=max(0, strwidth(grtxt, units='figure', cex=cexgr)*0.7))
+vmarg <- switch(retn, V=0, H=max(0, strwidth(grtxt, units='figure', cex=cexgr)*0.75))
+#NB: strwidth oppfører seg ulikt avh. av device...
 par('fig'=c(vmarg, 1, 0, 1-0.02*(NutvTxt-1)))	#Har alltid datoutvalg med
 	
+		
 farger <- FigTypUt$farger
-fargeSh <- farger[1]
+fargeHoved <- ifelse(grVar %in% c('ShNavn'), farger[4], farger[1])
 fargeRest <- farger[3]
 antGr <- length(grtxt)
 lwdRest <- 3	#tykkelse på linja som repr. landet
 cexleg <- 1	#Størrelse på legendtekst
 
-yAkseTxt <- "Andel pasienter (%)"	#Denne kan avhenge av figurtype
-
 
 #Horisontale søyler
 if (retn == 'H') {
-	xmax <- min(max(c(Andeler$Hoved, Andeler$Rest),na.rm=T)*1.25, 100)
-	pos <- barplot(rev(as.numeric(Andeler$Hoved)), horiz=TRUE, beside=TRUE, las=1, xlab="Andel pasienter (%)", #main=tittel, 
-		col=fargeSh, border='white', font.main=1, xlim=c(0, xmax), ylim=c(0.05,1.4)*antGr)	#  
-	mtext(at=pos+0.05, text=grtxt, side=2, las=1, cex=cexgr, adj=1, line=0.25)
+	xmax <- min(max(c(Andeler$Hoved, Andeler$Rest),na.rm=T)*1.25, 100)	#max(AndelerGr)*1.15
+	ymin <- 0.5/cexgr^4	#0.05*antGr #Fordi avstand til x-aksen av en eller annen grunn øker når antall sykehus øker
+	ymax <- 0.2+1.2*length(Andeler$Hoved) #1.4*antGr
 
+	pos <- barplot(rev(as.numeric(Andeler$Hoved)), horiz=TRUE, beside=TRUE, las=1, xlab="Andel pasienter (%)", #main=tittel, 
+		col=fargeHoved, border=NA, cex.names=cexgr, xlim=c(0, xmax), ylim=c(ymin,ymax))	
+	#Avvik i FigAndelGrVar:
+		#as.numeric(Andeler$Hoved),
+		#beside=FALSE, col=farger[3], 
+
+	if (grVar %in% c('ShNavn')	){	#Må si noe om den "gamle figurtypen"
+	      grtxt <- rev(grtxt)
+	      grTypeTxt <- smltxt
+	      mtext(at=max(pos)+0.35*log(max(pos)), paste0('(N)' ), side=2, las=1, cex=cexgr, adj=1, line=0.25)
+	      
+	      lines(x=rep(AndelHele, 2), y=c(0, max(pos)+0.55), col=farger[2], lwd=3)
+	      legend(x=xmax, y=1.02*ymax, xjust=1, yjust=0.5, col=farger[2], border=NA, lty=c(1,NA), lwd=3, 
+	             bty='n', cex = 0.9,	#box.col='white')
+	             paste0('total andel, ', grTypeTxt, 'sykehus: ', sprintf('%.1f', AndelHele), '%, N=', N$Hoved)) 
+	      text(x=0.02*max(AndelerGr, na.rm=T), y=pos+0.1, rev(soyletxt), las=1, cex=cexgr, adj=0, col=farger[1])	#Andeler, hvert sykehus	
+	}
+
+	#Legge på gruppe/søylenavn
+	mtext(at=pos+0.05, text=grtxt, side=2, las=1, cex=cexgr, adj=1, line=0.25) 
+ 
+	
 	if (medSml == 1) {
 		points(as.numeric(rev(Andeler$Rest)), pos, col=fargeRest,  cex=2, pch=18) #c("p","b","o"), 
 		legend('top', c(paste0(shtxt, ' (N=', N$hoved,')'), paste0(smltxt, ' (N=', N$Rest,')')), 
@@ -107,6 +110,8 @@ if (retn == 'H') {
 		}
 	}
 
+
+	
 if (retn == 'V' ) {
 #Vertikale søyler eller linje
 	ymax <- min(max(c(Andeler$Hoved, Andeler$Rest),na.rm=T)*1.25, 115)
@@ -127,7 +132,7 @@ if (medSml == 1) {
 } 
 
 
-title(tittel, line=1, font.main=1)
+title(tittel, line=1) #line=1.5, cex.main=1.3)
 
 #Tekst som angir hvilket utvalg som er gjort
 avst <- 0.8
