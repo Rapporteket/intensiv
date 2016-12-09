@@ -48,7 +48,7 @@ RegData <- NIRVarSpes$RegData
 
 #------- Gjøre utvalg
 NIRUtvalg <- NIRUtvalgEnh(RegData=RegData, datoFra=datoFra, datoTil=datoTil, minald=minald, maxald=maxald, 
-                       overfPas=overfPas, erMann=erMann, InnMaate=InnMaate, dodInt=dodInt)
+                       overfPas=overfPas, erMann=erMann, InnMaate=InnMaate, dodInt=dodInt, grType=grType)
 RegData <- NIRUtvalg$RegData
 utvalgTxt <- NIRUtvalg$utvalgTxt
 
@@ -67,19 +67,20 @@ if (dim(RegData)[1] >= 0) {
 	AntGr <- length(which(Ngr >= Ngrense))	#length(which(Midt>0))
 	AndelerGr <- as.vector(table(RegData[which(RegData$Variabel==1) , grVar])/Ngr*100)	#round(100*Nvar/Ngr,2)
 	
-	indGrUt <- as.numeric(which(Ngr < Ngrense))
-	if (length(indGrUt)==0) { indGrUt <- 0}
-	AndelerGr[indGrUt] <- -0.001
-	sortInd <- order(as.numeric(AndelerGr), decreasing=TRUE) 
+	if (sum(which(Ngr < Ngrense))>0) {indGrUt <- as.numeric(which(Ngr<Ngrense))} else {indGrUt <- 0}
+	AndelerGr[indGrUt] <- -0.0001
+	sortInd <- order(as.numeric(AndelerGr), decreasing=NIRVarSpes$sortAvtagende) 
 	
 	AndelerGrSort <- AndelerGr[sortInd]
-	AndelHele <- sum(RegData$Variabel==1)/N*100	#round(100*sum(RegData$Variabel)/N, 2)
+	AndelHele <- sum(RegData$Variabel==1)/N*100	
 	Ngrtxt <- as.character(Ngr)	#
-	Ngrtxt[indGrUt] <- paste0('<', Ngrense) #paste(' (<', Ngrense,')',sep='')	#
-	GrNavnSort <- rev(paste0(names(Ngr)[sortInd], ' (',Ngrtxt[sortInd], ')'))
+	Ngrtxt[indGrUt] <- paste0('<', Ngrense) 
+	GrNavnSort <- paste0(names(Ngr)[sortInd], ' (',Ngrtxt[sortInd], ')')
 	
-	andeltxt <- paste0(sprintf('%.1f',AndelerGrSort), '%') 	#round(as.numeric(AndelerGrSort),1)
-	if (length(indGrUt)>0) {andeltxt[(AntGr+1):(AntGr+length(indGrUt))] <- ''}
+	andeltxtUsort <- paste0(sprintf('%.1f',AndelerGr), '  %') 	
+	andeltxtUsort[indGrUt] <- ''
+	andeltxt <- andeltxtUsort[sortInd]
+	#if (length(indGrUt)>0) {andeltxt[(AntGr+1):(AntGr+length(indGrUt))] <- ''}
 	
 
 #grTypetextstreng <- c('lokal-/sentral', 'lokal-/sentral', 'region')				
@@ -91,8 +92,10 @@ yAkseTxt <- "Andel pasienter (%)"	#Denne kan avhenge av figurtype
 
 
 
-FigDataParam <- list(Andeler=Andeler, N=N, 
-					 Ant=Ant,
+FigDataParam <- list(Andeler=Andeler, 
+                     AndelTot=AndelHele, 
+                     N=N, 
+				Ant=Ant,
                      grtxt2='', 
 			 soyletxt=andeltxt,
                      grtxt=GrNavnSort,
@@ -106,12 +109,18 @@ FigDataParam <- list(Andeler=Andeler, N=N,
                      medSml=NIRUtvalg$medSml, 
                      smltxt=NIRUtvalg$smltxt)
 
+#Lagre beregnede data
+#if (hentData==1) {
+      save(FigDataParam, file='data/AndelerGrVar.Rdata')
+#}
+
 #FigDataParam skal inn som enkeltparametre i funksjonskallet
 if (lagFig == 1) {
       cexgr <- 1-ifelse(AntGr>20, 0.25*AntGr/60, 0)
-      NIRFigSoyler(RegData, Andeler=Andeler, N=N, cexgr=cexgr, tittel=NIRVarSpes$tittel, 
+      NIRFigSoyler(RegData, Andeler=Andeler, AndelTot=AndelHele, N=N, cexgr=cexgr, tittel=NIRVarSpes$tittel, 
                    smltxt=NIRUtvalg$smltxt, yAkseTxt=yAkseTxt,utvalgTxt=NIRUtvalg$utvalgTxt, 
-                   grTypeTxt=NIRUtvalg$grTypeTxt,  grtxt=NIRVarSpes$grtxt, soyletxt=andeltxt,
+                   grTypeTxt=NIRUtvalg$grTypeTxt,  fargepalett=NIRUtvalg$fargepalett, grtxt=GrNavnSort, 
+                   soyletxt=andeltxt,grVar=grVar,
                    medSml=NIRUtvalg$medSml, subtxt=NIRVarSpes$subtxt, outfile=outfile)
       }
 

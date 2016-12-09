@@ -105,6 +105,7 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar){
 		RegData <- RegData[which(RegData$ReAdmitted %in% 1:2), ]	#Tar bort ukjente
 		RegData$Variabel[which(RegData$ReAdmitted==1)] <- 1  
 		tittel <-'Reinnleggelser på intensivavdelingen (innen 72t)'
+		sortAvtagende <- FALSE      #Rekkefølge
 	}
  
       if (valgtVar=='dodeIntensiv') { #AndelGrVar
@@ -216,7 +217,7 @@ if (valgtVar=='respStotte') {
       
       
       UtData <- list(RegData=RegData, grtxt=grtxt, subtxt=subtxt, ben=ben, retn=retn,
-                     tittel=tittel, flerevar=flerevar)
+                     tittel=tittel, flerevar=flerevar, sortAvtagende=sortAvtagende)
       #RegData inneholder nå variablene 'Variabel' og 'VariabelGr'
       return(invisible(UtData)) 
       

@@ -51,7 +51,7 @@ datoTil <- '2015-12-31'	# standard: 3000
 dodInt <- ''	# 0-i live, 1 -død, standard: alle (alle andre verdier)
 erMann <- ''	#Kjønn: 0-kvinner, 1-menn, standard: alle (alle andre verdier)
 overfPas <- ''    #Overført under pågående intensivbehandling?	1 = Nei, 2 = Ja
-grType <- 99	#1/2: sentral/lokal, 3:regional, 99:'alle'
+grType <- 0	#1/2: sentral/lokal, 3:regional, 99:'alle'
 enhetsUtvalg <- 0	#0-5
 #Parameter for evt. kvalitetsmål? angis i Tilrettelegging
 
@@ -109,15 +109,16 @@ for (valgtVar in variable) {
 grVar <- 'ShNavn'
 valgtVar <- 'reinn'	#alder_u18', 'alder_over80', 'dod30d', 'dodeIntensiv', 'innMaate', 
                         #'respStotte', 'reinn
-outfile <- ''#paste0(valgtVar, 'GrVar.png')
+outfile <- paste0(valgtVar, 'GrVar.png')
+RegData <- NIRdata
 
-#NIRFigAndelerGrVar(RegData=RegData, valgtVar=valgtVar, minald=minald, maxald=maxald,  datoFra=datoFra, 
-#	datoTil=datoTil, InnMaate=InnMaate, dodInt=dodInt,erMann=erMann, outfile=outfile, 
-#	grType=grType)
 NIRAndelerGrVar(RegData=RegData, valgtVar=valgtVar, minald=minald, maxald=maxald,  datoFra=datoFra, 
                 datoTil=datoTil, InnMaate=InnMaate, dodInt=dodInt,erMann=erMann, outfile=outfile, 
                 grType=grType, grVar=grVar, hentData=0, preprosess=1, lagFig=1)
 
+#NIRFigAndelerGrVar(RegData=RegData, valgtVar=valgtVar, minald=minald, maxald=maxald,  datoFra=datoFra, 
+#	datoTil=datoTil, InnMaate=InnMaate, dodInt=dodInt,erMann=erMann, outfile=outfile, 
+#	grType=grType)
 variable <- c('alder_u18', 'alder_over80', 'dod30d', 'dodeIntensiv', 'innMaate', 
       'respStotte', 'reinn')
 for (valgtVar in variable) {

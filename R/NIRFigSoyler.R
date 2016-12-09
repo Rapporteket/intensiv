@@ -27,8 +27,9 @@
 #' @export
 
 
-NIRFigSoyler <- function(RegData, Andeler, tittel='mangler tittel', smltxt, N=0, retn='H', yAkseTxt='',
-					utvalgTxt, grtxt, grtxt2, cexgr=1, medSml, subtxt='', outfile='') {
+NIRFigSoyler <- function(RegData, Andeler, AndelTot=0, tittel='mangler tittel', smltxt, N=0, retn='H', yAkseTxt='',
+					utvalgTxt='', grTypeTxt='', soyletxt='',grtxt, grtxt2, shtxt='', grVar='',
+					cexgr=1, medSml=0, fargepalett='BlaaOff', subtxt='', outfile='') {
 xAkseTxt <- ''
 pktTxt <- '' #(evt. søyletekst)
 txtEtiketter  <- ''	#legend
@@ -55,7 +56,7 @@ if (dim(RegData)[1] < 10 | (length(which(RegData$ReshId == reshID))<5 & enhetsUt
 #Plottspesifikke parametre:
 #Høyde må avhenge av antall grupper
 hoyde <- ifelse(length(Andeler$Hoved)>20, 3*800, 3*600)
-FigTypUt <- figtype(outfile, height=hoyde, fargepalett=NIRUtvalg$fargepalett)	
+FigTypUt <- figtype(outfile, height=hoyde, fargepalett=fargepalett)	
 #Tilpasse marger for å kunne skrive utvalgsteksten
 NutvTxt <- length(utvalgTxt)
 vmarg <- switch(retn, V=0, H=max(0, strwidth(grtxt, units='figure', cex=cexgr)*0.75))
@@ -88,27 +89,28 @@ if (retn == 'H') {
 	      grTypeTxt <- smltxt
 	      mtext(at=max(pos)+0.35*log(max(pos)), paste0('(N)' ), side=2, las=1, cex=cexgr, adj=1, line=0.25)
 	      
-	      lines(x=rep(AndelHele, 2), y=c(0, max(pos)+0.55), col=farger[2], lwd=3)
+	      lines(x=rep(AndelTot, 2), y=c(0, max(pos)+0.55), col=farger[2], lwd=3)
 	      legend(x=xmax, y=1.02*ymax, xjust=1, yjust=0.5, col=farger[2], border=NA, lty=c(1,NA), lwd=3, 
 	             bty='n', cex = 0.9,	#box.col='white')
-	             paste0('total andel, ', grTypeTxt, 'sykehus: ', sprintf('%.1f', AndelHele), '%, N=', N$Hoved)) 
-	      text(x=0.02*max(AndelerGr, na.rm=T), y=pos+0.1, rev(soyletxt), las=1, cex=cexgr, adj=0, col=farger[1])	#Andeler, hvert sykehus	
+	             paste0('total andel, ', grTypeTxt, 'sykehus: ', sprintf('%.1f', AndelTot), '%, N=', N$Hoved)) 
+	      text(x=0.02*max(Andeler$Hoved, na.rm=T), y=pos+0.1, rev(soyletxt), las=1, cex=cexgr, adj=0, col=farger[1])	#Andeler, hvert sykehus	
 	}
 
 	#Legge på gruppe/søylenavn
 	mtext(at=pos+0.05, text=grtxt, side=2, las=1, cex=cexgr, adj=1, line=0.25) 
- 
-	
-	if (medSml == 1) {
-		points(as.numeric(rev(Andeler$Rest)), pos, col=fargeRest,  cex=2, pch=18) #c("p","b","o"), 
-		legend('top', c(paste0(shtxt, ' (N=', N$hoved,')'), paste0(smltxt, ' (N=', N$Rest,')')), 
-			border=c(fargeSh,NA), col=c(fargeSh,fargeRest), bty='n', pch=c(15,18), pt.cex=2, 
-			lwd=lwdRest, lty=NA, ncol=1)
-		} else {	
-		legend('top', paste0(shtxt, ' (N=', N$hoved,')'), 
-			border=NA, fill=fargeSh, bty='n', ncol=1)
-		}
-	}
+      
+	#Fordelingsfigurer:
+	if (grVar == '') {
+      	if (medSml == 1) {
+      		points(as.numeric(rev(Andeler$Rest)), pos, col=fargeRest,  cex=2, pch=18) #c("p","b","o"), 
+      		legend('top', c(paste0(shtxt, ' (N=', N$hoved,')'), paste0(smltxt, ' (N=', N$Rest,')')), 
+      			border=c(fargeHoved,NA), col=c(fargeHoved,fargeRest), bty='n', pch=c(15,18), pt.cex=2, 
+      			lwd=lwdRest, lty=NA, ncol=1)
+      		} else {	
+      		legend('top', paste0(shtxt, ' (N=', N$hoved,')'), 
+      			border=NA, fill=fargeHoved, bty='n', ncol=1)
+      		}
+	}}
 
 
 	
@@ -116,18 +118,18 @@ if (retn == 'V' ) {
 #Vertikale søyler eller linje
 	ymax <- min(max(c(Andeler$Hoved, Andeler$Rest),na.rm=T)*1.25, 115)
 	pos <- barplot(as.numeric(Andeler$Hoved), beside=TRUE, las=1, ylab=yAkseTxt,	
-		sub=subtxt,	col=fargeSh, border='white', ylim=c(0, ymax))	
+		sub=subtxt,	col=fargeHoved, border='white', ylim=c(0, ymax))	
 	mtext(at=pos, grtxt, side=1, las=1, cex=cexgr, adj=0.5, line=0.5)
 	mtext(at=pos, grtxt2, side=1, las=1, cex=0.9*cexgr, adj=0.5, line=1.5)
 
 if (medSml == 1) {
 	points(pos, as.numeric(Andeler$Rest), col=fargeRest,  cex=2, pch=18) #c("p","b","o"), 
 	legend('top', c(paste(shtxt, ' (N=', N$Hoved,')', sep=''), paste(smltxt, ' (N=', N$Rest,')', sep='')), 
-		border=c(fargeSh,NA), col=c(fargeSh,fargeRest), bty='n', pch=c(15,18), pt.cex=2, lty=c(NA,NA), 
+		border=c(fargeHoved,NA), col=c(fargeHoved,fargeRest), bty='n', pch=c(15,18), pt.cex=2, lty=c(NA,NA), 
 		lwd=lwdRest, ncol=2, cex=cexleg)
 	} else {	
 	legend('top', paste0(shtxt, ' (N=', N$Hoved,')'), 
-		border=NA, fill=fargeSh, bty='n', ncol=1, cex=cexleg)
+		border=NA, fill=fargeHoved, bty='n', ncol=1, cex=cexleg)
 	}
 } 
 
