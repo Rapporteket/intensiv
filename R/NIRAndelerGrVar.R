@@ -92,7 +92,7 @@ yAkseTxt <- "Andel pasienter (%)"	#Denne kan avhenge av figurtype
 
 
 
-FigDataParam <- list(Andeler=Andeler, 
+AndelerGrVar <- list(Andeler=Andeler, 
                      AndelTot=AndelHele, 
                      N=N, 
 				Ant=Ant,
@@ -111,7 +111,7 @@ FigDataParam <- list(Andeler=Andeler,
 
 #Lagre beregnede data
 #if (hentData==1) {
-      save(FigDataParam, file='data/AndelerGrVar.Rdata')
+      save(AndelerGrVar, file='data/AndelerGrVar.RData')
 #}
 
 #FigDataParam skal inn som enkeltparametre i funksjonskallet
