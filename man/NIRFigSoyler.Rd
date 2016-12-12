@@ -4,17 +4,50 @@
 \alias{NIRFigSoyler}
 \title{Lager søylefigur}
 \usage{
-NIRFigSoyler(RegData, Andeler, tittel = "mangler tittel", smltxt, N = 0,
-  retn = "H", yAkseTxt = "", utvalgTxt, grtxt, grtxt2, cexgr = 1, medSml,
-  subtxt = "", outfile = "")
+NIRFigSoyler(RegData, AggVerdier, AndelTot = 0, tittel = "mangler tittel",
+  smltxt, N = 0, retn = "H", yAkseTxt = "", utvalgTxt = "",
+  grTypeTxt = "", soyletxt = "", grtxt, grtxt2, hovedgrTxt = "",
+  grVar = "", cexgr = 1, medSml = 0, fargepalett = "BlaaOff",
+  xAkseTxt = "", outfile = "")
 }
 \arguments{
 \item{RegData}{En dataramme med alle nødvendige variabler fra registeret}
 
-\item{outfile}{Navn på fil figuren skrives til. Standard: '' (Figur skrives
-til systemets standard utdataenhet (som regel skjerm))}
+\item{AggVerdier}{Liste med AggVerdier i hver kategori (aldersgruppe, sykehus, ...). 
+AggVerdier$Hoved er enten andelene for hele utvalget i hver kategori eller f.eks. egen enhet
+AggVerdier$Rest er andelene for gruppa det sammenlignes mot.}
 
-\item{valgtMaal}{'Med' = median. Alt annet gir gjennomsnitt 
+\item{AndelTot}{Andelen for hele gruppa (ett tall)}
+
+\item{tittel}{Figurtittel}
+
+\item{smltxt}{Tekststreng som angir hva vi evt. sammenlikner med}
+
+\item{N}{Totalantall angitt i N$Hoved og N$Rest}
+
+\item{retn}{Horisontale eller Vertikale søyler ('H', 'V')}
+
+\item{yAkseTxt}{Tekst på y-aksen}
+
+\item{utvalgTxt}{Tekst som angir hvilke utvalg som er gjort}
+
+\item{grTypeTxt}{Tekst som angir}
+
+\item{soyletxt}{Tekst PÅ hver søyle}
+
+\item{grtxt}{Navn på gruppene/kategoriene (Eks 40-50 år)}
+
+\item{grtxt2}{Evt. undertekst på kategoriene (Eks 28%)}
+
+\item{hovedgrTxt}{Angivelse av hovedgruppe, eks. eget sykehus}
+
+\item{cexgr}{Skalering av gruppetekst (trenger mindre font når flere grupper)}
+
+\item{medSml}{Angir om vi skal gjøre sammenlikning eller ikke (verdier: 1/0)}
+
+\item{fargepalett}{'BlaaOff'}
+
+\item{xAkseTxt}{tekst på x-aksen
 
 Argumentet \emph{valgtVar} har følgende valgmuligheter:
    \itemize{
@@ -29,14 +62,18 @@ Argumentet \emph{valgtVar} har følgende valgmuligheter:
    }
 
 Detajer: Her bør man liste opp hvilke variable funksjonen benytter.}
+
+\item{outfile}{Navn på fil figuren skrives til. Standard: '' (Figur skrives
+til systemets standard utdataenhet (som regel skjerm))}
+
+\item{valgtMaal}{'Med' = median. Alt annet gir gjennomsnitt}
 }
 \value{
 Søylediagram med gjennomsnitt/median av valgt variabel for hvert sykehus
 }
 \description{
-bLA, BAL
-}
-\details{
-Detajer: Her bør man liste opp hvilke variable funksjonen benytter...
+Funksjonen genererer søylediagram basert på data som leveres funksjonen. Søylediagrammenes utseende
+varierer noe for ulike datatyper, dvs. den kan vise både fordelingsfigur, AggVerdier eller sentralmål for 
+gitt grupperingsvariabel, ...
 }
 

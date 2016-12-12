@@ -1,0 +1,195 @@
+#' Søylediagram med gjennomsnitt/median for hver grupperingsenhet (sykehus, RHF, ...)
+#'
+#' Funksjon som genererer en figur med gjennomsnitt/median
+#' for hvert sykehus og kan ta inn ulike numeriske variable.
+#' Funksjonen er delvis skrevet for å kunne brukes til andre grupperingsvariable enn sykehus
+#'
+#' Detajer: Her bør man liste opp hvilke variable funksjonen benytter...
+#'
+#' @inheritParams NIRFigAndeler
+#' @inheritParams NIRFigAndelerGrVar
+#' @param valgtMaal 'Med' = median. Alt annet gir gjennomsnitt 
+#'
+#' Argumentet \emph{valgtVar} har følgende valgmuligheter:
+#'    \itemize{
+#'     \item alder: Pasientens alders 
+#'     \item SMR: Standardisert mortalitetsratio (Gir annen figurtype)
+#'     \item liggetid: Liggetid 
+#'     \item Nas: Skår for sykepleieraktiviteter. (Nursing Activities Score). Per døgn.
+#'     \item NEMS: Skår for ressursbruk per opphold. (Nine Equivalents of Nursing Manpower Use Score)
+#'     \item NEMS24: NEMS-skår per døgn. 
+#'     \item respiratortid: Tid tilbrakt i respirator
+#'     \item SAPSII: Skår for alvorlighetsgrad av sykdom.  (Simplified Acute Physiology Score II)
+#'    }
+#'
+#' Detajer: Her bør man liste opp hvilke variable funksjonen benytter.
+#'
+#' @return Søylediagram med gjennomsnitt/median av valgt variabel for hvert sykehus
+#'
+#' @export
+
+
+NIRFigGjsnGrVar <- function(RegData, valgtVar, valgtMaal='Gjsn', minald=0, maxald=130, datoFra='2011-01-01', 
+			datoTil='3000-01-01', grType=99, InnMaate=99, dodInt='', erMann='', preprosess=1, hentData=0, 
+			grVar='ShNavn', lagFig=1, outfile) {
+      
+      
+if (hentData == 1) {		
+  RegData <- NIRRegDataSQL(datoFra, datoTil)
+}
+
+# Hvis RegData ikke har blitt preprosessert. (I samledokument gjøre dette i samledokumentet)
+if (preprosess){
+       RegData <- NIRPreprosess(RegData=RegData) #, reshID=reshID)
+     }
+
+#------- Tilrettelegge variable
+NIRVarSpes <- NIRVarTilrettelegg(RegData=RegData, valgtVar=valgtVar)
+RegData <- NIRVarSpes$RegData
+
+#------- Gjøre utvalg
+NIRUtvalg <- NIRUtvalgEnh(RegData=RegData, datoFra=datoFra, datoTil=datoTil, minald=minald, maxald=maxald, 
+                          overfPas=overfPas, erMann=erMann, InnMaate=InnMaate, dodInt=dodInt, grType=grType)
+RegData <- NIRUtvalg$RegData
+utvalgTxt <- NIRUtvalg$utvalgTxt
+
+Ngrense <- 10		
+#ben <- NULL		#Benevning
+'%i%' <- intersect
+
+varTittel <- valgtVar
+
+RegData[ ,grVar] <- as.factor(RegData[ ,grVar])
+#Grupper som ikke har registreringer vil nå ikke komme med i oversikta. Gjøres dette tidligere, vil alle
+#grupper komme med uansett om de ikke har registreringer.
+
+#	RegData$Variabel <- as.numeric(RegData[ ,valgtVar])
+
+if(dim(RegData)[1]>0) {Ngr <- table(RegData[ ,grVar])}	else {Ngr <- 0}
+
+
+t1 <- switch(valgtMaal,
+			Med = 'Median ',
+			Gjsn = 'Gjennomsnittlig ')
+
+if( valgtVar =='SMR') {t1 <- ''}
+
+#grTypetextstreng <- c('lokal-/sentral', 'lokal-/sentral', 'region')				
+#if (grType %in% 1:3) {grTypeTxt <- grTypetextstreng[grType]} else {grTypeTxt <- 'alle '}
+
+tittel <- c(paste0(t1, varTittel, ', ', NIRUtvalg$grTypeTxt, 'sykehus')) 
+			
+	
+Ngrtxt <- paste0(' (', as.character(Ngr),')') 
+indGrUt <- which(Ngr < Ngrense)
+if (length(indGrUt)==0) { indGrUt <- 0}
+Ngrtxt[indGrUt] <- paste0(' (<', Ngrense,')')	
+N <- dim(RegData)[1]
+
+dummy0 <- -0.0001
+#Kommer ut ferdig sortert!
+if (valgtMaal=='Med') {
+	MedIQR <- plot(RegData[ ,grVar], RegData$Variabel, notch=TRUE, plot=FALSE)
+	MedIQR$stats[ ,indGrUt] <- dummy0
+	MedIQR$conf[ ,indGrUt] <- dummy0
+	sortInd <- order( MedIQR$stats[3,], decreasing=NIRVarSpes$sortAvtagende) 
+	Midt <- as.numeric(MedIQR$stats[3, sortInd])
+	KIned <- MedIQR$conf[1, sortInd]
+	KIopp <- MedIQR$conf[2, sortInd]
+	MedIQRHele <-  boxplot.stats(RegData$Variabel, do.conf = TRUE)
+	MidtHele <- as.numeric(MedIQRHele$stats[3])	#median(RegData$Variabel)
+	KIHele <- MedIQRHele$conf
+	#Hvis vil bruke vanlige konf.int:
+	#j <- ceiling(N/2 - 1.96*sqrt(N/4))
+	#k <- ceiling(N/2 + 1.96*sqrt(N/4))
+	#KIHele <- sort(RegData$Variabel)[c(j,k)]
+#The notches (if requested) extend to +/-1.58 IQR/sqrt(n). (Chambers et al. (1983, p. 62), given in McGill et al. (1978, p. 16).) 
+#They are based on asymptotic normality of the median and roughly equal sample sizes for the two medians being compared, 
+#and are said to be rather insensitive to the underlying distributions of the samples. The idea appears to be to give 
+#roughly a 95% confidence interval for the difference in two medians. 	
+	} 
+	
+if (valgtMaal=='Gjsn') {	#Gjennomsnitt er standard, men må velges.
+	if (valgtVar=='SMR') { #Bør tas ut av Gjsn...
+		#DischargedIntensiveStatus: 0 i live (0), 1 død (1 og 2) [har tatt ut reinnl (3)]
+		#RegData$DodUt <- ifelse(RegData$DischargedHospitalStatus == 0, 0, 1) 
+		ObsGr <- tapply(RegData$Dod30, RegData[ ,grVar], mean, na.rm=T)
+		EstGr <- tapply(RegData$SMR, RegData[ ,grVar], mean, na.rm=T)
+		ind0 <- which(EstGr == 0)
+		Gjsn <- 100*ObsGr/EstGr  
+		if (length(ind0)>0) {Gjsn[ind0] <- 0}#Unngå å dele på 0
+		#Vi benytter p.t. ikke konf.int for SMR. Setter alle SE lik 0
+		     #TestPoGr <- which((Ngr*ObsGr-3*sqrt(Ngr*ObsGr*(1-ObsGr)) <= 0) | (Ngr*ObsGr+3*sqrt(Ngr*ObsGr*(1-ObsGr)) > Ngr))
+		     #SE <- sqrt(ObsGr*(1-ObsGr))*100/(sqrt(Ngr)*EstGr)
+		     #if (length(TestPoGr)>0) {SE[TestPoGr] <- 0}
+		SE <- rep(0, length(Ngr))
+		Obs <-  mean(RegData$Dod30)	#Kun 0 og 1
+		Est <- mean(RegData$Variabel, na.rm=T)
+		MidtHele <- ifelse(Est ==0, 0, 100*Obs/Est)
+		#KIHele <- c(0,0)    #MidtHele +  100*sqrt(Obs*(1-Obs)/N)/Est*c(-2,2)
+	} else {
+	      Gjsn <- tapply(RegData$Variabel, RegData[ ,grVar], mean, na.rm=T)
+		SE <- tapply(RegData$Variabel, RegData[ ,grVar], sd, na.rm=T)/sqrt(Ngr)
+		MidtHele <- mean(RegData$Variabel)	#mean(RegData$Variabel)
+		KIhele <- MidtHele + sd(RegData$Variabel)/sqrt(N)*c(-2,2)
+	}
+      
+	Gjsn[indGrUt] <- dummy0
+	SE[indGrUt] <- 0
+	sortInd <- order(Gjsn, decreasing=NIRVarSpes$sortAvtagende) 
+	Midt <- as.numeric(Gjsn[sortInd])
+	KIned <- Gjsn[sortInd] - 2*SE[sortInd]
+	KIopp <- Gjsn[sortInd] + 2*SE[sortInd]
+	}
+
+
+#if (sum(which(Ngr < Ngrense))>0) {indGrUt <- as.numeric(which(Ngr<Ngrense))} else {indGrUt <- 0}
+#AndelerGr[indGrUt] <- -0.0001
+
+#KOMMER UT MED FEIL SØYLETEKST PGA SORTERING
+
+AggVerdier <- list(Hoved=Midt, Rest=0, KIned=KIned, KIopp=KIopp, KIhele=KIhele)
+GrNavnSort <- paste0(names(Ngr)[sortInd], Ngrtxt[sortInd])
+if (valgtVar == 'SMR') {AntDes <- 2} else {AntDes <- 1} 
+AntGr <- length(which(Midt>=0))
+soyletxt <- c(sprintf(paste0('%.', AntDes,'f'), Midt[1:AntGr]), rep('',length(Ngr)-AntGr))
+
+#Se NIRAndelerGrVar for forklaring av innhold i lista GjsnGrVarData
+GjsnGrVarData <- list(AggVerdier=AggVerdier, #Endres til Soyleverdi? Evt. AggVerdier
+                         AndelTot=MidtHele, #Til AggVerdiTot?
+                         N=list(Hoved=N), 
+                         #Ant=Ant,
+                         grtxt2='', 
+                         soyletxt=soyletxt,
+                         grtxt=GrNavnSort,
+                         tittel=tittel,    #NIRVarSpes$tittel, 
+                         #yAkseTxt=yAkseTxt, 
+                         retn='H', 
+                         xAkseTxt=NIRVarSpes$xAkseTxt,
+                         grTypeTxt=NIRUtvalg$grTypeTxt,			 
+                         utvalgTxt=NIRUtvalg$utvalgTxt, 
+                         fargepalett=NIRUtvalg$fargepalett, 
+                         medSml=NIRUtvalg$medSml, 
+                         smltxt=NIRUtvalg$smltxt)
+
+#Lagre beregnede data
+#if (hentData==1) {
+save(GjsnGrVarData, file='data/GjsnGrVarData.RData')
+#}
+
+#FigDataParam skal inn som enkeltparametre i funksjonskallet
+if (lagFig == 1) {
+      cexgr <- 1-ifelse(AntGr>20, 0.25*AntGr/60, 0)
+      NIRFigSoyler(RegData, AggVerdier=AggVerdier, AndelTot=MidtHele, N=list(Hoved=N), cexgr=cexgr, tittel=NIRVarSpes$tittel, 
+                   smltxt=NIRUtvalg$smltxt, yAkseTxt=yAkseTxt,utvalgTxt=NIRUtvalg$utvalgTxt, 
+                   grTypeTxt=NIRUtvalg$grTypeTxt,  fargepalett=NIRUtvalg$fargepalett, grtxt=GrNavnSort, 
+                   soyletxt=soyletxt,  grVar=grVar,
+                   medSml=NIRUtvalg$medSml, xAkseTxt=NIRVarSpes$xAkseTxt, outfile=outfile)
+}
+
+return(invisible(GjsnGrVarData))
+
+}
+
+
+

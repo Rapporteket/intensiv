@@ -1,6 +1,6 @@
-#' Søylediagram som viser andeler av ulike variabler
+#' Søylediagram som viser AggVerdier av ulike variabler
 #'
-#' Denne funksjonen beregner andeler (fordeling) av valgt variabel
+#' Denne funksjonen beregner AggVerdier (fordeling) av valgt variabel
 #' filtrert på de utvalg som er gjort. Kan trenge funksjonerne:
 #' NIRUtvalgEnh (skal endre navn til NIRUtvalg når ferdig)
 #' NIRFigSoyler
@@ -113,7 +113,7 @@ NIRAndeler  <- function(RegData, valgtVar, datoFra='2011-01-01', datoTil='3000-1
       
       #--------------- Gjøre beregninger ------------------------------
       #Gjør beregninger selv om det evt ikke skal vise figur ut. Trenger utdata.
-      Andeler <- list(Hoved = 0, Rest =0)
+      AggVerdier <- list(Hoved = 0, Rest =0)
       N <- list(Hoved = 0, Rest =0)
       Ant <- list(Hoved = 0, Rest =0)
       Ant$Hoved <- switch(as.character(NIRVarSpes$flerevar), 
@@ -122,7 +122,7 @@ NIRAndeler  <- function(RegData, valgtVar, datoFra='2011-01-01', datoTil='3000-1
       N$Hoved <- switch(as.character(NIRVarSpes$flerevar), 
                         '0' = sum(Ant$Hoved),	#length(ind$Hoved)- Kan inneholde NA
                         '1' = length(ind$Hoved))
-      Andeler$Hoved <- 100*Ant$Hoved/N$Hoved
+      AggVerdier$Hoved <- 100*Ant$Hoved/N$Hoved
       
       if (NIRUtvalg$medSml==1) {
             Ant$Rest <- switch(as.character(NIRVarSpes$flerevar), 
@@ -131,14 +131,14 @@ NIRAndeler  <- function(RegData, valgtVar, datoFra='2011-01-01', datoTil='3000-1
             N$Rest <- switch(as.character(NIRVarSpes$flerevar), 
                              '0' = sum(Ant$Rest),	#length(ind$Rest)- Kan inneholde NA
                              '1' = length(ind$Rest))
-            Andeler$Rest <- 100*Ant$Rest/N$Rest
+            AggVerdier$Rest <- 100*Ant$Rest/N$Rest
       }
       
       
-      #grtxt <- paste0(rev(NIRVarSpes$grtxt), ' (', rev(sprintf('%.1f',Andeler$Hoved)), '%)') 
-      grtxt2 <- paste0('(', sprintf('%.1f',Andeler$Hoved), '%)')
+      #grtxt <- paste0(rev(NIRVarSpes$grtxt), ' (', rev(sprintf('%.1f',AggVerdier$Hoved)), '%)') 
+      grtxt2 <- paste0('(', sprintf('%.1f',AggVerdier$Hoved), '%)')
       
-      FigDataParam <- list(Andeler=Andeler, N=N, 
+      FigDataParam <- list(AggVerdier=AggVerdier, N=N, 
                            Ant=Ant,	
                            soyletxt=soyletxt,
                            grtxt2=grtxt2, 
@@ -153,7 +153,7 @@ NIRAndeler  <- function(RegData, valgtVar, datoFra='2011-01-01', datoTil='3000-1
       
       
       if (lagFig == 1) {
-            NIRFigSoyler(RegData, Andeler, Ant, tittel=NIRVarSpes$tittel, smltxt=NIRVarSpes$tittel, 
+            NIRFigSoyler(RegData, AggVerdier, Ant, tittel=NIRVarSpes$tittel, smltxt=NIRVarSpes$tittel, 
                          N=0, retn='H', utvalgTxt, grtxt, grtxt2, medSml, xAkseTxt='', outfile=outfil)	
             #ENDRE så figurparametrene skrives fullt ut i parameterkallet
       }

@@ -62,17 +62,17 @@ NIRUtvalgEnh <- function(RegData, datoFra, datoTil, minald=0, maxald=130, erMann
       if (grType %in% 1:3) {grTypeTxt <- grTypetextstreng[grType]} else {grTypeTxt <- 'alle '}
       
       
-      utvalgTxt <- c(paste(
+      utvalgTxt <- c(paste0(
             'Registreringsperiode: ', if (N>0) {min(RegData$InnDato, na.rm=T)} else {datoFra}, 
-            ' til ', if (N>0) {max(RegData$InnDato, na.rm=T)} else {datoTil}, sep='' ),
+            ' til ', if (N>0) {max(RegData$InnDato, na.rm=T)} else {datoTil}),
             if ((minald>0) | (maxald<130)) {
-                  paste('Pasienter fra ', if (N>0) {sprintf('%.1f',min(RegData$Alder, na.rm=T))} else {minald}, 
-                        ' til ', if (N>0) {sprintf('%.1f',max(RegData$Alder, na.rm=T))} else {maxald}, ' år', sep='')},
-            if (erMann %in% 0:1) {paste('Kjønn: ', c('Kvinner', 'Menn')[erMann+1], sep='')},
+                  paste0('Pasienter fra ', if (N>0) {sprintf('%.1f',min(RegData$Alder, na.rm=T))} else {minald}, 
+                        ' til ', if (N>0) {sprintf('%.1f',max(RegData$Alder, na.rm=T))} else {maxald}, ' år')},
+            if (erMann %in% 0:1) {paste0('Kjønn: ', c('Kvinner', 'Menn')[erMann+1])},
             if (InnMaate %in% c(0,6,8)) {paste('Innmåte: ', 
                                                c('Elektivt',0,0,0,0,0, 'Akutt medisinsk',0, 'Akutt kirurgi')[InnMaate+1], sep='')},
-            if (grType %in% 1:3) {paste('Sykehustype: ', grTypetextstreng[grType], sep='')},
-            if (dodInt %in% 0:1) {paste('Status ut fra intensiv: ', c('Levende','Død')[as.numeric(dodInt)+1], sep='')}
+            if (grType %in% 1:3) {paste0('Sykehustype: ', grTypetextstreng[grType])},
+            if (dodInt %in% 0:1) {paste0('Status ut fra intensiv: ', c('Levende','Død')[as.numeric(dodInt)+1])}
       )
       
       

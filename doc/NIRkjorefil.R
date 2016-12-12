@@ -1,3 +1,7 @@
+#Til analysebok:
+#Liggetid og respiratortid for pasienter som ikke er overført mellom sykehus.
+
+
 
 #--------------------------------------Kvalitetskontroll - ikke operativ-----------------------------------
 rm(list=ls())
@@ -45,7 +49,7 @@ reshID=112044
 minald <- 0 #(standard: 0)
 maxald <- 130	#(standard: 130, må være større enn minald!)
 InnMaate <- '' #0-El, 6-Ak.m, 8-Ak.k, (alle - alt unntatt 0,6,8)
-valgtMaal = '' #'Med' = median. Alt annet gir gjennomsnitt
+valgtMaal = 'Gjsn' #'Med' = median. 'Gjsn' = gjennomsnitt. Alt annet gir gjennomsnitt
 datoFra <- '2015-01-01'	# standard: 0	format: YYYY-MM-DD. Kan spesifisere bare første del, eks. YYYY el. YYYY-MM. 
 datoTil <- '2015-12-31'	# standard: 3000
 dodInt <- ''	# 0-i live, 1 -død, standard: alle (alle andre verdier)
@@ -63,11 +67,9 @@ enhetsUtvalg <- 0	#0-5
 #Alle disse vises per sykehus for et gitt tidsintervall (siste 12 mnd?)
 #I tillegg kanskje vi skal vise utvikling over tid for valgt sykehus og sykehustype?
 
-#PRIORITER ANDELGRVAR og GJSNGRVAR SOM NESTE FIGUR, dvs. søylefigur.
+#PRIORITER GJSNGRVAR SOM NESTE FIGUR, dvs. søylefigur.
 #TRENGER OGSÅ TIDSTREND
 #FJERNER FORELØPIG STABEL FRA ANDELERGRVAR, DVS. FJERNER FIGUREN FOR INNMÅTE (-> Egen figurtype?)
-
-#------Neste figur er AndelerGr for reinnleggelse
 
 #Forslag til def av grVar hvis IKKE kjernen skal være figurtypen
 grVar <- 
@@ -149,12 +151,17 @@ for (valgtVar in variable){
 }
 
 #---------------------GjsnTid----------------------------------------------
-valgtVar <- 'SAPSII'	#'alder', 'liggetid', 'respiratortid', 'SAPSII', 
+valgtVar <- 'alder'	#'alder', 'liggetid', 'respiratortid', 'SAPSII', 
 outfile <- ''	#paste0(valgtVar, '.png')
 
 NIRFigGjsnTid(RegData=RegData, outfile=outfile, valgtVar=valgtVar, datoFra=datoFra, datoTil=datoTil, 
                     erMann=erMann,minald=minald, maxald=maxald, InnMaate=InnMaate, dodInt=dodInt,
 		              valgtMaal=valgtMaal,tittel=1, enhetsUtvalg=enhetsUtvalg, reshID=reshID)
+
+NIRAndelerGrVar(grType=grType, grVar=grVar, hentData=0, preprosess=1, lagFig=1)
+#NIRFigGjsnTid(RegData=RegData, outfile=outfile, valgtVar=valgtVar, datoFra=datoFra, datoTil=datoTil, 
+#                    erMann=erMann,minald=minald, maxald=maxald, InnMaate=InnMaate, dodInt=dodInt,
+#		              valgtMaal=valgtMaal,tittel=1, enhetsUtvalg=enhetsUtvalg, reshID=reshID)
 		
 variable <- c('alder', 'liggetid', 'respiratortid', 'SAPSII')		
 
@@ -188,7 +195,6 @@ for (valgtVar in c('SMR', 'liggetid', 'respiratortid',  'SAPSII', 'NEMS')){
 
 Fordeling(RegData=RegData, valgtVar=valgtVar, minald=minald, maxald=maxald, grType=grType, 
           InnMaate=InnMaate, erMann=erMann, datoFra=datoFra, datoTil=datoTil, dodInt=dodInt, outfile=outfile) 
-#Liggetid og respiratortid for pasienter som ikke er overført mellom sykehus.
 #valgtVar in c('alder', 'liggetid', 'respiratortid', 'SAPSII', 'NEMS')) {
 
 

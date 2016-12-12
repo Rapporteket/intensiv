@@ -2,12 +2,12 @@
 % Please edit documentation in R/NIRAndeler.R
 \name{NIRAndeler}
 \alias{NIRAndeler}
-\title{Søylediagram som viser andeler av ulike variabler}
+\title{Søylediagram som viser AggVerdier av ulike variabler}
 \usage{
 NIRAndeler(RegData, valgtVar, datoFra = "2011-01-01",
   datoTil = "3000-12-31", minald = 0, maxald = 130, erMann = "",
-  InnMaate = "", dodInt = "", outfile = "", preprosess = 1,
-  hentData = 0, reshID, enhetsUtvalg = 1, lagFig = 1)
+  InnMaate = "", dodInt = "", outfile = "", grType = 99,
+  preprosess = 1, hentData = 0, reshID, enhetsUtvalg = 1, lagFig = 1)
 }
 \arguments{
 \item{RegData}{En dataramme med alle nødvendige variabler fra registeret}
@@ -34,10 +34,16 @@ standard: alle (alt unntatt 0,6,8 / ikke spesifisert)}
 \item{dodInt}{Levende/død ut fra intensiv. 
 0: i live, 
 1: død,   
-alle, standard (alle andre verdier)}
+alle: standard (alle andre verdier)}
 
 \item{outfile}{Navn på fil figuren skrives til. Standard: '' (Figur skrives
 til systemets standard utdataenhet (som regel skjerm))}
+
+\item{grType}{Gjør gruppeutvalg på sykehustype
+1: lokal-/sentralsykehus
+2: lokal-/sentralsykehus
+3: regionsykehus
+99: alle (standard)}
 
 \item{preprosess}{Preprosesser data
 FALSE: Nei
@@ -62,7 +68,7 @@ hvilken enhet i spesialisthelsetjenesten brukeren tilhører}
 Søylediagram (fordeling) av valgt variabel. De enkelte verdiene kan også sendes med.
 }
 \description{
-Denne funksjonen beregner andeler (fordeling) av valgt variabel
+Denne funksjonen beregner AggVerdier (fordeling) av valgt variabel
 filtrert på de utvalg som er gjort. Kan trenge funksjonerne:
 NIRUtvalgEnh (skal endre navn til NIRUtvalg når ferdig)
 NIRFigSoyler

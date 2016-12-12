@@ -1,6 +1,6 @@
-#' Søylediagram med andeler for hver grupperingsenhet (sykehus, RHF, ...)
+#' Søylediagram med AggVerdier for hver grupperingsenhet (sykehus, RHF, ...)
 #'
-#' Funksjon som genererer en figur med andeler av en gitt variabel for ei valgt gruppering, 
+#' Funksjon som genererer en figur med AggVerdier av en gitt variabel for ei valgt gruppering, 
 #' f.eks. enheter. I øyeblikket benytter funksjonen bare 'ShNavn' som grupperingsvariabel, men 
 #' andre valg kan lett inkluderes. 
 #'
@@ -24,7 +24,7 @@
 #' @inheritParams NIRAndeler
 #' 
 #' 
-#' @return Søylediagram med andeler av valgt variabel for hvert sykehus
+#' @return Søylediagram med AggVerdier av valgt variabel for hvert sykehus
 #'
 #' @export
 NIRAndelerGrVar <- function(RegData, valgtVar, minald=0, maxald=130, datoFra='2011-01-01', datoTil='3000-01-01', 
@@ -88,12 +88,12 @@ NIRAndelerGrVar <- function(RegData, valgtVar, minald=0, maxald=130, datoFra='20
       #if (grType %in% 1:3) {grTypeTxt <- grTypetextstreng[grType]} else {grTypeTxt <- 'alle '}
       N = list(Hoved=N, Rest=0)
       Ant = list(Hoved=Ngr, Rest=0)
-      Andeler = list(Hoved=AndelerGrSort, Rest=0)
+      AggVerdier = list(Hoved=AndelerGrSort, Rest=0)
       yAkseTxt <- "Andel pasienter (%)"	#Denne kan avhenge av figurtype
       
       
       #Se NIRAndelerGrVar for forklaring av innhold i AndelerGrVarData
-      AndelerGrVarData <- list(Andeler=Andeler, 
+      AndelerGrVarData <- list(AggVerdier=AggVerdier, 
                                AndelTot=AndelHele, 
                                N=N, 
                                Ant=Ant,
@@ -118,7 +118,7 @@ NIRAndelerGrVar <- function(RegData, valgtVar, minald=0, maxald=130, datoFra='20
       #FigDataParam skal inn som enkeltparametre i funksjonskallet
       if (lagFig == 1) {
             cexgr <- 1-ifelse(AntGr>20, 0.25*AntGr/60, 0)
-            NIRFigSoyler(RegData, Andeler=Andeler, AndelTot=AndelHele, N=N, cexgr=cexgr, tittel=NIRVarSpes$tittel, 
+            NIRFigSoyler(RegData, AggVerdier=AggVerdier, AndelTot=AndelHele, N=N, cexgr=cexgr, tittel=NIRVarSpes$tittel, 
                          smltxt=NIRUtvalg$smltxt, yAkseTxt=yAkseTxt,utvalgTxt=NIRUtvalg$utvalgTxt, 
                          grTypeTxt=NIRUtvalg$grTypeTxt,  fargepalett=NIRUtvalg$fargepalett, grtxt=GrNavnSort, 
                          soyletxt=andeltxt,grVar=grVar,

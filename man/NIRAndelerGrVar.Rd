@@ -2,7 +2,7 @@
 % Please edit documentation in R/NIRAndelerGrVar.R
 \name{NIRAndelerGrVar}
 \alias{NIRAndelerGrVar}
-\title{Søylediagram med andeler for hver grupperingsenhet (sykehus, RHF, ...)}
+\title{Søylediagram med AggVerdier for hver grupperingsenhet (sykehus, RHF, ...)}
 \usage{
 NIRAndelerGrVar(RegData, valgtVar, minald = 0, maxald = 130,
   datoFra = "2011-01-01", datoTil = "3000-01-01", grType = 99,
@@ -12,7 +12,7 @@ NIRAndelerGrVar(RegData, valgtVar, minald = 0, maxald = 130,
 \arguments{
 \item{RegData}{En dataramme med alle nødvendige variabler fra registeret}
 
-\item{valgtVar}{Hvilken variabel som skal visualiseres}
+\item{valgtVar}{Hvilken variabel som skal visualiseres. Se \strong{Details} for oversikt.}
 
 \item{minald}{Alder, fra og med (Standardverdi: 0)}
 
@@ -22,9 +22,11 @@ NIRAndelerGrVar(RegData, valgtVar, minald = 0, maxald = 130,
 
 \item{datoTil}{Seneste dato i utvalget (vises alltid i figuren).}
 
-\item{grType}{Gjør gruppeutvalg for
- 1 eller 2: lokal-/sentralsykehus
-3: regionsykehus}
+\item{grType}{Gjør gruppeutvalg på sykehustype
+1: lokal-/sentralsykehus
+2: lokal-/sentralsykehus
+3: regionsykehus
+99: alle (standard)}
 
 \item{InnMaate}{0: Elektivt, 
 6: Akutt medisinsk, 
@@ -34,7 +36,7 @@ standard: alle (alt unntatt 0,6,8 / ikke spesifisert)}
 \item{dodInt}{Levende/død ut fra intensiv. 
 0: i live, 
 1: død,   
-alle, standard (alle andre verdier)}
+alle: standard (alle andre verdier)}
 
 \item{erMann}{Kjønn, standard: alt annet enn 0/1 gir begge kjønn
 0: Kvinner
@@ -50,18 +52,21 @@ TRUE: Ja (Standard)}
 
 \item{outfile}{Navn på fil figuren skrives til. Standard: '' (Figur skrives
 til systemets standard utdataenhet (som regel skjerm))}
+
+\item{lagFig}{Angir om figur skal lages eller ikke 0-ikke lag, 1-lag}
 }
 \value{
-Søylediagram med andeler av valgt variabel for hvert sykehus
+Søylediagram med AggVerdier av valgt variabel for hvert sykehus
 }
 \description{
-Funksjon som genererer en figur med andeler av en variabel for en grupperingsvariabelen sykehus.
-Funksjonen er tilrettelagt for å kunne brukes til andre grupperingsvariable enn sykehus
+Funksjon som genererer en figur med AggVerdier av en gitt variabel for ei valgt gruppering, 
+f.eks. enheter. I øyeblikket benytter funksjonen bare 'ShNavn' som grupperingsvariabel, men 
+andre valg kan lett inkluderes.
 }
 \details{
 Figurtypen som genereres er avhengig av valgtVar. Ved valgtVar='InnMaate', får man ei oversikt oversikt
-over andel av innkomsttype ved hver enhet.
-For valgtVar lik reinn eller DodeInt viser figuren andel av hhv. reinnleggelser og døde for hver enhet.
+over andel av innkomsttype ved hver enhet, dvs. ei fordeling av de tre innkomsttypene for hver enhet.
+For andre "valgtVar" viser figuren andel av den valgte variabelen for hver enhet.
 Argumentet \emph{valgtVar} har følgende valgmuligheter:
    \itemize{
     \item alder_u18: Pasienter under 18 år 
@@ -73,5 +78,7 @@ Argumentet \emph{valgtVar} har følgende valgmuligheter:
     \item respStotte: Pasienter som har fått respiratorstøtte
     \item reinn: Andel reinnlagte (kun hvor dette er registrert, dvs. fjerner ukjente)
    }
+Funksjonen benytter funksjonene: NIRRegDataSQL, NIRPreprosess, NIRVarTilrettelegg, NIRUtvalgEnh
+og NIRFigSoyler
 }
 
