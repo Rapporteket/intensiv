@@ -120,6 +120,6 @@ NIRUtvalgEnh <- function(RegData, datoFra, datoTil, minald=0, maxald=130, erMann
       
       
       UtData <- list(RegData=RegData, utvalgTxt=utvalgTxt, fargepalett=fargepalett, ind=ind, 
-                     medSml=medSml, smltxt=smltxt)
+                     medSml=medSml, smltxt=smltxt, grTypeTxt=grTypeTxt)
       return(invisible(UtData)) 
 }

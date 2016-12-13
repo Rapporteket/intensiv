@@ -21,7 +21,8 @@ AggVerdier$Rest er andelene for gruppa det sammenlignes mot.}
 
 \item{tittel}{Figurtittel}
 
-\item{smltxt}{Tekststreng som angir hva vi evt. sammenlikner med}
+\item{smltxt}{Tekststreng som angir hva vi evt. sammenlikner med. Benyttes også til å angi 
+gruppenavnet (i f.eks. tekstetikett) hvis det er gjort utvalg på f.eks. en sykehustype.}
 
 \item{N}{Totalantall angitt i N$Hoved og N$Rest}
 
@@ -49,18 +50,6 @@ AggVerdier$Rest er andelene for gruppa det sammenlignes mot.}
 
 \item{xAkseTxt}{tekst på x-aksen
 
-Argumentet \emph{valgtVar} har følgende valgmuligheter:
-   \itemize{
-    \item alder: Pasientens alders 
-    \item SMR: Standardisert mortalitetsratio (Gir annen figurtype)
-    \item liggetid: Liggetid 
-    \item Nas: Skår for sykepleieraktiviteter. (Nursing Activities Score). Per døgn.
-    \item NEMS: Skår for ressursbruk per opphold. (Nine Equivalents of Nursing Manpower Use Score)
-    \item NEMS24: NEMS-skår per døgn. 
-    \item respiratortid: Tid tilbrakt i respirator
-    \item SAPSII: Skår for alvorlighetsgrad av sykdom.  (Simplified Acute Physiology Score II)
-   }
-
 Detajer: Her bør man liste opp hvilke variable funksjonen benytter.}
 
 \item{outfile}{Navn på fil figuren skrives til. Standard: '' (Figur skrives
@@ -75,5 +64,18 @@ Søylediagram med gjennomsnitt/median av valgt variabel for hvert sykehus
 Funksjonen genererer søylediagram basert på data som leveres funksjonen. Søylediagrammenes utseende
 varierer noe for ulike datatyper, dvs. den kan vise både fordelingsfigur, AggVerdier eller sentralmål for 
 gitt grupperingsvariabel, ...
+}
+\details{
+#' Figurtypen som genereres er avhengig av valgtVar. Argumentet \emph{valgtVar} har følgende valgmuligheter:
+   \itemize{
+    \item alder: Pasientens alders 
+    \item SMR: Standardisert mortalitetsratio (Gir annen figurtype)
+    \item liggetid: Liggetid 
+    \item Nas: Skår for sykepleieraktiviteter. (Nursing Activities Score). Per døgn.
+    \item NEMS: Skår for ressursbruk per opphold. (Nine Equivalents of Nursing Manpower Use Score)
+    \item NEMS24: NEMS-skår per døgn. 
+    \item respiratortid: Tid tilbrakt i respirator
+    \item SAPSII: Skår for alvorlighetsgrad av sykdom.  (Simplified Acute Physiology Score II)
+   }
 }
 

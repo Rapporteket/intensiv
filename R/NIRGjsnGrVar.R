@@ -29,7 +29,7 @@
 #' @export
 
 
-NIRFigGjsnGrVar <- function(RegData, valgtVar, valgtMaal='Gjsn', minald=0, maxald=130, datoFra='2011-01-01', 
+NIRGjsnGrVar <- function(RegData, valgtVar, valgtMaal='Gjsn', minald=0, maxald=130, datoFra='2011-01-01', 
 			datoTil='3000-01-01', grType=99, InnMaate=99, dodInt='', erMann='', preprosess=1, hentData=0, 
 			grVar='ShNavn', lagFig=1, outfile) {
       
@@ -131,13 +131,13 @@ if (valgtMaal=='Gjsn') {	#Gjennomsnitt er standard, men må velges.
 	      Gjsn <- tapply(RegData$Variabel, RegData[ ,grVar], mean, na.rm=T)
 		SE <- tapply(RegData$Variabel, RegData[ ,grVar], sd, na.rm=T)/sqrt(Ngr)
 		MidtHele <- mean(RegData$Variabel)	#mean(RegData$Variabel)
-		KIhele <- MidtHele + sd(RegData$Variabel)/sqrt(N)*c(-2,2)
+		KIHele <- MidtHele + sd(RegData$Variabel)/sqrt(N)*c(-2,2)
 	}
       
 	Gjsn[indGrUt] <- dummy0
 	SE[indGrUt] <- 0
 	sortInd <- order(Gjsn, decreasing=NIRVarSpes$sortAvtagende) 
-	Midt <- as.numeric(Gjsn[sortInd])
+	Midt <- Gjsn[sortInd] #as.numeric(Gjsn[sortInd])
 	KIned <- Gjsn[sortInd] - 2*SE[sortInd]
 	KIopp <- Gjsn[sortInd] + 2*SE[sortInd]
 	}
@@ -146,19 +146,24 @@ if (valgtMaal=='Gjsn') {	#Gjennomsnitt er standard, men må velges.
 #if (sum(which(Ngr < Ngrense))>0) {indGrUt <- as.numeric(which(Ngr<Ngrense))} else {indGrUt <- 0}
 #AndelerGr[indGrUt] <- -0.0001
 
-#KOMMER UT MED FEIL SØYLETEKST PGA SORTERING
-
-AggVerdier <- list(Hoved=Midt, Rest=0, KIned=KIned, KIopp=KIopp, KIhele=KIhele)
 GrNavnSort <- paste0(names(Ngr)[sortInd], Ngrtxt[sortInd])
 if (valgtVar == 'SMR') {AntDes <- 2} else {AntDes <- 1} 
-AntGr <- length(which(Midt>=0))
-soyletxt <- c(sprintf(paste0('%.', AntDes,'f'), Midt[1:AntGr]), rep('',length(Ngr)-AntGr))
+soyletxt <- sprintf(paste0('%.', AntDes,'f'), Midt) 
+#soyletxt <- c(sprintf(paste0('%.', AntDes,'f'), Midt[1:AntGr]), rep('',length(Ngr)-AntGr))
+indUT <- which(Midt<0)  #Rydd slik at bare benytter indGrUt
+soyletxt[indUT] <- ''
+KIned[indUT] <- NA
+KIopp[indUT] <- NA
 
-#Se NIRAndelerGrVar for forklaring av innhold i lista GjsnGrVarData
+AggVerdier <- list(Hoved=Midt, Rest=0, KIned=KIned, KIopp=KIopp, KIHele=KIHele)
+Ngr <- list(Hoved=Ngr, Rest=0)
+
+
+#Se NIRFigSoyler for forklaring av innhold i lista GjsnGrVarData
 GjsnGrVarData <- list(AggVerdier=AggVerdier, #Endres til Soyleverdi? Evt. AggVerdier
                          AndelTot=MidtHele, #Til AggVerdiTot?
                          N=list(Hoved=N), 
-                         #Ant=Ant,
+                         Ngr=Ngr,
                          grtxt2='', 
                          soyletxt=soyletxt,
                          grtxt=GrNavnSort,
@@ -179,8 +184,8 @@ save(GjsnGrVarData, file='data/GjsnGrVarData.RData')
 
 #FigDataParam skal inn som enkeltparametre i funksjonskallet
 if (lagFig == 1) {
-      cexgr <- 1-ifelse(AntGr>20, 0.25*AntGr/60, 0)
-      NIRFigSoyler(RegData, AggVerdier=AggVerdier, AndelTot=MidtHele, N=list(Hoved=N), cexgr=cexgr, tittel=NIRVarSpes$tittel, 
+      cexgr <- 1-ifelse(length(soyletxt)>20, 0.25*length(soyletxt)/60, 0)
+      NIRFigSoyler(RegData, AggVerdier=AggVerdier, AndelTot=MidtHele, Ngr=Ngr, N=list(Hoved=N), cexgr=cexgr, tittel=NIRVarSpes$tittel, 
                    smltxt=NIRUtvalg$smltxt, yAkseTxt=yAkseTxt,utvalgTxt=NIRUtvalg$utvalgTxt, 
                    grTypeTxt=NIRUtvalg$grTypeTxt,  fargepalett=NIRUtvalg$fargepalett, grtxt=GrNavnSort, 
                    soyletxt=soyletxt,  grVar=grVar,

@@ -87,16 +87,16 @@ NIRAndelerGrVar <- function(RegData, valgtVar, minald=0, maxald=130, datoFra='20
       #grTypetextstreng <- c('lokal-/sentral', 'lokal-/sentral', 'region')				
       #if (grType %in% 1:3) {grTypeTxt <- grTypetextstreng[grType]} else {grTypeTxt <- 'alle '}
       N = list(Hoved=N, Rest=0)
-      Ant = list(Hoved=Ngr, Rest=0)
+      Ngr = list(Hoved=Ngr, Rest=0)
       AggVerdier = list(Hoved=AndelerGrSort, Rest=0)
       yAkseTxt <- "Andel pasienter (%)"	#Denne kan avhenge av figurtype
       
       
-      #Se NIRAndelerGrVar for forklaring av innhold i AndelerGrVarData
+      #Se NIRFigSoyler for forklaring av innhold i AndelerGrVarData
       AndelerGrVarData <- list(AggVerdier=AggVerdier, 
                                AndelTot=AndelHele, 
                                N=N, 
-                               Ant=Ant,
+                               Ngr=Ngr,
                                grtxt2='', 
                                soyletxt=andeltxt,
                                grtxt=GrNavnSort,

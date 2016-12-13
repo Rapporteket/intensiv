@@ -55,7 +55,8 @@ datoTil <- '2015-12-31'	# standard: 3000
 dodInt <- ''	# 0-i live, 1 -død, standard: alle (alle andre verdier)
 erMann <- ''	#Kjønn: 0-kvinner, 1-menn, standard: alle (alle andre verdier)
 overfPas <- ''    #Overført under pågående intensivbehandling?	1 = Nei, 2 = Ja
-grType <- 0	#1/2: sentral/lokal, 3:regional, 99:'alle'
+grType <- 99	#1/2: sentral/lokal, 3:regional, 99:'alle'
+grVar <- 'ShNavn'
 enhetsUtvalg <- 0	#0-5
 #Parameter for evt. kvalitetsmål? angis i Tilrettelegging
 
@@ -175,13 +176,12 @@ for (valgtVar in variable) {
 
 #--------------------------------------- SENTRALMÅL per enhet----------------------------------
 
-valgtVar <- 'liggetid'	#'SMR', alder, liggetid, respiratortid,  SAPSII, 'NEMS', 'Nas'
-outfile <- paste0(valgtVar, 'MM.png')#,grType
+valgtVar <- 'alder'	#'SMR', alder, liggetid, respiratortid,  SAPSII, 'NEMS', 'Nas'
+outfile <- '' #paste0(valgtVar, 'MM.png')#,grType
 
-NIRFigGjsnGrVar(RegData=RegData, valgtVar=valgtVar, valgtMaal=valgtMaal, minald=minald, maxald=maxald, 
-                grType=grType, InnMaate=InnMaate, datoFra=datoFra, datoTil=datoTil, dodInt=dodInt, 
+NIRGjsnGrVar(RegData=RegData, valgtVar=valgtVar, valgtMaal=valgtMaal, minald=minald, maxald=maxald, 
+                grType=grType, grVar=grVar, InnMaate=InnMaate, datoFra=datoFra, datoTil=datoTil, dodInt=dodInt, 
                 erMann=erMann, outfile=outfile) 
-
 
 
 for (valgtVar in c('SMR', 'liggetid', 'respiratortid',  'SAPSII', 'NEMS')){
