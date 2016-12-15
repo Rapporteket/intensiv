@@ -69,8 +69,8 @@ NIRAndelerGrVar <- function(RegData, valgtVar, minald=0, maxald=130, datoFra='20
       AndelerGr <- as.vector(table(RegData[which(RegData$Variabel==1) , grVar])/Ngr*100)	#round(100*Nvar/Ngr,2)
       
       if (sum(which(Ngr < Ngrense))>0) {indGrUt <- as.numeric(which(Ngr<Ngrense))} else {indGrUt <- 0}
-      AndelerGr[indGrUt] <- -0.0001
-      sortInd <- order(as.numeric(AndelerGr), decreasing=NIRVarSpes$sortAvtagende) 
+      AndelerGr[indGrUt] <- NA #-0.0001
+      sortInd <- order(as.numeric(AndelerGr), decreasing=NIRVarSpes$sortAvtagende, na.last = FALSE) 
       
       AndelerGrSort <- AndelerGr[sortInd]
       AndelHele <- sum(RegData$Variabel==1)/N*100	
@@ -78,32 +78,29 @@ NIRAndelerGrVar <- function(RegData, valgtVar, minald=0, maxald=130, datoFra='20
       Ngrtxt[indGrUt] <- paste0('<', Ngrense) 
       GrNavnSort <- paste0(names(Ngr)[sortInd], ' (',Ngrtxt[sortInd], ')')
       
-      andeltxtUsort <- paste0(sprintf('%.1f',AndelerGr), '  %') 	
+      andeltxtUsort <- paste0(sprintf('%.1f',AndelerGr), ' %') 	
       andeltxtUsort[indGrUt] <- ''
       andeltxt <- andeltxtUsort[sortInd]
-      #if (length(indGrUt)>0) {andeltxt[(AntGr+1):(AntGr+length(indGrUt))] <- ''}
       
       
-      #grTypetextstreng <- c('lokal-/sentral', 'lokal-/sentral', 'region')				
-      #if (grType %in% 1:3) {grTypeTxt <- grTypetextstreng[grType]} else {grTypeTxt <- 'alle '}
       N = list(Hoved=N, Rest=0)
       Ngr = list(Hoved=Ngr, Rest=0)
       AggVerdier = list(Hoved=AndelerGrSort, Rest=0)
-      yAkseTxt <- "Andel pasienter (%)"	#Denne kan avhenge av figurtype
+      xAkseTxt <- "Andel pasienter (%)"	#Denne kan avhenge av figurtype
       
       
       #Se NIRFigSoyler for forklaring av innhold i AndelerGrVarData
       AndelerGrVarData <- list(AggVerdier=AggVerdier, 
-                               AndelTot=AndelHele, 
+                               AggTot=AndelHele, 
                                N=N, 
                                Ngr=Ngr,
                                grtxt2='', 
                                soyletxt=andeltxt,
                                grtxt=GrNavnSort,
                                tittel=NIRVarSpes$tittel, 
-                               yAkseTxt=yAkseTxt, 
+                               #yAkseTxt=yAkseTxt, 
                                retn='H', 
-                               xAkseTxt=NIRVarSpes$xAkseTxt,
+                               xAkseTxt=xAkseTxt, #NIRVarSpes$xAkseTxt,
                                grTypeTxt=NIRUtvalg$grTypeTxt,			 
                                utvalgTxt=NIRUtvalg$utvalgTxt, 
                                fargepalett=NIRUtvalg$fargepalett, 
@@ -118,11 +115,12 @@ NIRAndelerGrVar <- function(RegData, valgtVar, minald=0, maxald=130, datoFra='20
       #FigDataParam skal inn som enkeltparametre i funksjonskallet
       if (lagFig == 1) {
             cexgr <- 1-ifelse(AntGr>20, 0.25*AntGr/60, 0)
-            NIRFigSoyler(RegData, AggVerdier=AggVerdier, AndelTot=AndelHele, N=N, cexgr=cexgr, tittel=NIRVarSpes$tittel, 
-                         smltxt=NIRUtvalg$smltxt, yAkseTxt=yAkseTxt,utvalgTxt=NIRUtvalg$utvalgTxt, 
+            NIRFigSoyler(RegData, AggVerdier=AggVerdier, AggTot=AndelHele, Ngr=Ngr,N=N, cexgr=cexgr, 
+                         tittel=NIRVarSpes$tittel, 
+                         smltxt=NIRUtvalg$smltxt, utvalgTxt=NIRUtvalg$utvalgTxt, #yAkseTxt=yAkseTxt,
                          grTypeTxt=NIRUtvalg$grTypeTxt,  fargepalett=NIRUtvalg$fargepalett, grtxt=GrNavnSort, 
-                         soyletxt=andeltxt,grVar=grVar,
-                         medSml=NIRUtvalg$medSml, xAkseTxt=NIRVarSpes$xAkseTxt, outfile=outfile)
+                         soyletxt=andeltxt,grVar=grVar, #medKI = medKI,
+                         medSml=NIRUtvalg$medSml, xAkseTxt=xAkseTxt, outfile=outfile)
       }
       
       return(invisible(AndelerGrVarData))

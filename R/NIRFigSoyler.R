@@ -21,7 +21,7 @@
 #' @param AggVerdier Liste med AggVerdier i hver kategori (aldersgruppe, sykehus, ...). 
 #'                AggVerdier$Hoved er enten andelene for hele utvalget i hver kategori eller f.eks. egen enhet
 #'                AggVerdier$Rest er andelene for gruppa det sammenlignes mot.
-#' @param AndelTot Andelen for hele gruppa (ett tall)
+#' @param AggTot Aggregert verdi for hele gruppa (ett tall)
 #' @param tittel Figurtittel
 #' @param medSml Angir om vi skal gjøre sammenlikning eller ikke (verdier: 1/0)
 #' @param smltxt Tekststreng som angir hva vi evt. sammenlikner med. Benyttes også til å angi 
@@ -46,15 +46,14 @@
 #' @export
 
 
-NIRFigSoyler <- function(RegData, AggVerdier, AndelTot=0, Ngr=0, tittel='mangler tittel', smltxt, N=0, retn='H', 
+NIRFigSoyler <- function(RegData, AggVerdier, AggTot=0, Ngr, tittel='mangler tittel', smltxt, N, retn='H', 
                          yAkseTxt='', utvalgTxt='', grTypeTxt='', soyletxt='',grtxt, grtxt2, hovedgrTxt='', 
-                         grVar='', cexgr=1, medSml=0, fargepalett='BlaaOff', xAkseTxt='', outfile='') {
+                         grVar='', valgtMaal='', cexgr=1, medSml=0, fargepalett='BlaaOff', xAkseTxt='', 
+                         medKI=0, outfile='') { #Ngr=list(Hoved=0)
 
 pktTxt <- '' #(evt. søyletekst)
 txtEtiketter  <- ''	#legend
-#verdier <- ''	#AggVerdier, gjennomsnitt, ...
 verdiTxt <- '' 	#pstTxt, ...
-if (valgtMaal %in% c('Med', 'Gjsn') ) {medKI <- 1} else {medKI <- 0}
 
 #---------------------------------------FRA FIGANDELER og AndelGrVar--------------------------
 #Hvis for få observasjoner..
@@ -98,98 +97,92 @@ if (dim(RegData)[1] < 10 | (max(Ngr$Hoved) < 10) | #Ngrense) | #Denne er skummel
 	
 	#Horisontale søyler
 if (retn == 'H') {
-	  xmax <- min(max(c(AggVerdier$Hoved, AggVerdier$Rest),na.rm=T)*1.25, 100)	
-	  if (valgtMaal %in% c('Gjsn','Med')) {
-			xmax <- min(max(xmax, AggVerdier$KIned, AggVerdier$KIopp, AggVerdier$KIHele, na.rm=T), 100)  #min(1.1*max(c(Midt, KIned, KIopp, KIHele)), 1.5*max(Midt))
-		medKI <- ifelse(valgtVar=='SMR', 0, 1) }
-
+	#Definerer disse i beregningsfunksjonen?  
+      xmax <- max(c(AggVerdier$Hoved, AggVerdier$Rest),na.rm=T)*1.2
+      xmax <- ifelse(valgtMaal=='', min(xmax, 100), xmax) 	#100 som maks bare hvis andelsfigur..
 	  ymin <- 0.5/cexgr^4	#0.05*antGr #Fordi avstand til x-aksen av en eller annen grunn øker når antall sykehus øker
 	  ymax <- 0.2+1.2*length(AggVerdier$Hoved) #c(0.3/xkr^4,  0.3+1.25*length(Midt))
 
 	  #Må def. pos først for å få strek for hele gruppa bak søylene
 	  ### reverserer for å slippe å gjøre det på konf.int
 	  pos <- rev(barplot(rev(as.numeric(AggVerdier$Hoved)), horiz=T, xlim=c(0,xmax), ylim=c(ymin, ymax), #, plot=FALSE)
-	                 border=NA, col.axis='white', col='white'))
+	                     xlab=xAkseTxt, border=NA, col.axis='white', col='white'))
 					# col=farger[3]),  xlab='', las=1) 	
+	  indOK <- which(AggVerdier$Hoved>=0)
+	  posOK <- pos[indOK]
+	  posOver <- max(pos)+0.35*log(max(pos))
+	  posDiff <- pos[1]-pos[2]
+	  
 	  if (medKI == 1) {	#Legge på konf.int for hele populasjonen
 	        #options(warn=-1)	#Unngå melding om KI med lengde 0
 	        KIHele <- AggVerdier$KIHele
 	        AntGr <- length(which(AggVerdier$Hoved>0))
-	        indOK <- which(AggVerdier$Hoved>=0)
-	        posKI <- pos[indOK]
-	        
-	        polygon(c(rep(KIHele[1],2), rep(KIHele[2],2)), c(0, max(posKI)+min(posKI), max(posKI)+min(posKI),0), 
-	                col=farger[4], border=farger[4])
-	        #polygon(c(rep(KIHele[1],2), rep(KIHele[2],2)), c(0, max(posKI)+min(posKI), max(posKI)+min(posKI),0), 
-	        #        col=farger[4], border=farger[4])
+	        posOK <- pos[indOK]
+	        polygon(c(rep(KIHele[1],2), rep(KIHele[2],2)), col=farger[3], border=farger[3],
+	                c(min(posOK)-0.5, max(posOK)+0.5, max(posOK)+0.6,min(posOK)-0.6))
+	        #polygon(c(rep(KIHele[1],2), rep(KIHele[2],2)), c(0, max(posOK)+min(posOK), max(posOK)+min(posOK),0), 
+	         #       col=farger[2], border=farger[2])
 	  }
-	  
-	         
+
 	if (grVar %in% c('ShNavn')) {	#Må si noe om den "gamle figurtypen"
 	      #grtxt <- rev(grtxt)
 	      grTypeTxt <- smltxt
-	      mtext(at=max(pos)+0.35*log(max(pos)), paste0('(N)' ), side=2, las=1, cex=cexgr, adj=1, line=0.25)
-	      
-	      lines(x=rep(AndelTot, 2), y=c(0, max(pos)+0.55), col=farger[2], lwd=2.5)
-	      text(x=0.02*max(AggVerdier$Hoved, na.rm=T), y=pos+0.1, rev(soyletxt), las=1, cex=cexgr, adj=0, col=farger[1])	#AggVerdier, hvert sykehus	
+	      mtext(at=posOver, paste0('(N)' ), side=2, las=1, cex=cexgr, adj=1, line=0.25)
+	      lines(x=rep(AggTot, 2), y=c(min(posOK)-0.5, max(posOK)+0.5), col=farger[1], lwd=2.5) #y=c(0, max(pos)+0.55), 
+	      barplot(rev(as.numeric(AggVerdier$Hoved)), horiz=TRUE, beside=TRUE, las=1, add=TRUE,
+	              col=fargeHoved, border=NA, cex.names=cexgr) #, xlim=c(0, xmax), ylim=c(ymin,ymax)
+	      soyleXpos <- xmax*max(strwidth(soyletxt, units='figure', cex=cexgr))
+	      text(x=soyleXpos, y=pos+0.1, soyletxt, las=1, cex=cexgr, adj=1, col=farger[1])	#AggVerdier, hvert sykehus
+	                  #0.06*max(AggVerdier$Hoved, na.rm=T)
 	      }
 
-		barplot(rev(as.numeric(AggVerdier$Hoved)), horiz=TRUE, beside=TRUE, las=1, xlab=xAkseTxt,
-					 col=fargeHoved, border=NA, cex.names=cexgr, xlim=c(0, xmax), ylim=c(ymin,ymax))	
 
-      if (valgtVar == 'SMR') {	#Skal ikke ha med konfidensintervall
-      	  legend('top', c(paste0(grTypeTxt, 'sykehus, ', sprintf('%.2f', MidtHele), ', N=', N),
-      					   '(uten reinnlagte og overflyttede pasienter)'),
-      			 col=c(farger[2],NA), lwd=c(2,NA), bty='n')	
-      }
-
-		if (medKI == 1) {	#Legge på konf.int for hver enkelt gruppe/sykehus
-		      arrows(x0=AggVerdier$Hoved, y0=posKI, x1=AggVerdier$KIopp, y1=posKI, 
-		             length=0.5/max(pos), code=2, angle=90, lwd=1, col=farger[1])
-		      arrows(x0=AggVerdier$Hoved, y0=posKI, x1=AggVerdier$KIned, y1=posKI, 
-		             length=0.5/max(pos), code=2, angle=90, lwd=1, col=farger[1])
-		}
-		#------Tegnforklaring (legend)--------
-		if (valgtMaal %in% c('Gjsn', 'Med')) { 
-		      KItxt <- ifelse(medKI ==1, paste0('95% konf.int., ', grTypeTxt, 'sykehus (', 
-		                                        sprintf('%.1f', KIHele[1]), '-', sprintf('%.1f', KIHele[2]), ')'), NULL)
-		      TXT <- c(paste0('totalt: ', sprintf('%.1f', AndelTot), ', N=', N), 
-		               KItxt)
-		      legend('top', TXT, fill=c('white', farger[4]),  border='white', lwd=2, 
-		             col=c(farger[2], farger[4]), seg.len=0.6, merge=TRUE, bty='n')
-		} else { #Går bare videre til neste vhis ikke valgtMaal er oppfylt
-		      legend(x=xmax, y=1.02*ymax, xjust=1, yjust=0.5, col=farger[2], border=NA, lty=c(1,NA), lwd=3, 
-		             bty='n', cex = 0.9,	#box.col='white')
-		             paste0(grTypeTxt, 'sykehus: ', sprintf('%.1f', AndelTot), '%, N=', N$Hoved)
-		      ) 
-		}
-		#--------------------------------------
-		
-		
+	if (medKI == 1) {	#Legge på konf.int for hver enkelt gruppe/sykehus
+	      arrows(x0=AggVerdier$Hoved, y0=pos, x1=AggVerdier$KIopp, y1=pos, 
+	             length=0.5/max(pos), code=2, angle=90, lwd=1, col=farger[1])
+	      arrows(x0=AggVerdier$Hoved, y0=pos, x1=AggVerdier$KIned, y1=pos, 
+	             length=0.5/max(pos), code=2, angle=90, lwd=1, col=farger[1])
+	}
+	#------Tegnforklaring (legend)--------
+	if (valgtMaal %in% c('Gjsn', 'Med')) { #Sentralmålfigur
+	      if (medKI == 0) { #Hopper over hvis ikke valgtMaal er oppfylt
+	            TXT <- paste0('totalt: ', sprintf('%.1f', AggTot), ', N=', N$Hoved)
+      	      legend(xmax/3, posOver+posDiff, TXT, fill=NA,  border=NA, lwd=2.5, xpd=TRUE, #inset=c(-0.1,0),
+      	             col=farger[1], cex=cexleg, seg.len=0.6, merge=TRUE, bty='n')
+	      } else {
+	            TXT <- c(paste0('totalt: ', sprintf('%.1f', AggTot), ', N=', N$Hoved), 
+	                     paste0('95% konf.int., ', grTypeTxt, 'sykehus (', 
+	                             sprintf('%.1f', KIHele[1]), '-', sprintf('%.1f', KIHele[2]), ')'))
+      	      legend(xmax/3, posOver+2*posDiff, TXT, fill=c(NA, farger[3]),  border=NA, lwd=2.5,  #inset=c(-0.1,0),
+      	             col=c(farger[1], farger[3]), cex=cexleg, seg.len=0.6, merge=TRUE, bty='n')
+	      }
+	} else { 
+	      legend(xmax/3, posOver+1.5*posDiff, paste0(grTypeTxt, 'sykehus: ', sprintf('%.1f', AggTot), '%, N=', N$Hoved),
+	             col=farger[1], border=NA, lwd=2.5, xpd=TRUE, bty='n', cex = cexleg) 
+	}
+	  #Fordelingsfigurer:
+	  if (grVar == '') {
+      	  if (medSml == 1) { #Legge på prikker for sammenlikning
+      	        legend('top', c(paste0(hovedgrTxt, ' (N=', N$Hoved,')'), paste0(smltxt, ' (N=', N$Rest,')')), 
+      	               border=c(fargeHoved,NA), col=c(fargeHoved,fargeRest), bty='n', pch=c(15,18), pt.cex=2, 
+      	               lwd=lwdRest, lty=NA, ncol=1)
+      	  } else {	
+      	        legend('top', paste0(hovedgrTxt, ' (N=', N$Hoved,')'), 
+      	               border=NA, fill=fargeHoved, bty='n', ncol=1)
+      	  }
+	  }
+	#--------------------------------------
 
 
       #Legge på gruppe/søylenavn
       mtext(at=pos+0.05, text=grtxt, side=2, las=1, cex=cexgr, adj=1, line=0.25) 
       
       #Fordelingsfigurer:
-      if (grVar == '') {
+      #if (grVar == '') {
       	if (medSml == 1) { #Legge på prikker for sammenlikning
       		  points(as.numeric(rev(AggVerdier$Rest)), pos, col=fargeRest,  cex=2, pch=18) #c("p","b","o"), 
-      		  legend('top', c(paste0(hovedgrTxt, ' (N=', N$hoved,')'), paste0(smltxt, ' (N=', N$Rest,')')), 
-      				 border=c(fargeHoved,NA), col=c(fargeHoved,fargeRest), bty='n', pch=c(15,18), pt.cex=2, 
-      				 lwd=lwdRest, lty=NA, ncol=1)
-      	} else {	
-      		  legend('top', paste0(hovedgrTxt, ' (N=', N$hoved,')'), 
-      				 border=NA, fill=fargeHoved, bty='n', ncol=1)
       	}
-      }
-      
-      
-      #mtext(paste0(t1, valgtVar, ben0), las=1, side=1, line=2) #cex=xkr, 
-      #text(x=0.005*xmax, y=pos+0.1, las=1, cex=xkr, adj=0, col=farger[1], soyletxt
-      #    c(sprintf(paste0('%.', AntDes,'f'), Midt[1:AntGr]), rep('',length(Ngr)-AntGr)))
-      #mtext(at=pos+0.1, GrNavnSort, side=2, las=1, cex=cexGrNavn*xkr, adj=1, line=0.25)	
-      
+       #}
       }		#Slutt horisontale søyler
       	
 	
@@ -215,7 +208,7 @@ if (retn == 'H') {
 	
   
 				
-	title(tittel, line=1) #line=1.5, cex.main=1.3)
+	title(tittel, line=1.5) #cex.main=1.3)
 
 	#Tekst som angir hvilket utvalg som er gjort
 	avst <- 0.8

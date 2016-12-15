@@ -31,7 +31,7 @@
 
 NIRGjsnGrVar <- function(RegData, valgtVar, valgtMaal='Gjsn', minald=0, maxald=130, datoFra='2011-01-01', 
 			datoTil='3000-01-01', grType=99, InnMaate=99, dodInt='', erMann='', preprosess=1, hentData=0, 
-			grVar='ShNavn', lagFig=1, outfile) {
+			grVar='ShNavn', medKI=1, lagFig=1, outfile) {
       
       
 if (hentData == 1) {		
@@ -49,7 +49,8 @@ RegData <- NIRVarSpes$RegData
 
 #------- Gjøre utvalg
 NIRUtvalg <- NIRUtvalgEnh(RegData=RegData, datoFra=datoFra, datoTil=datoTil, minald=minald, maxald=maxald, 
-                          overfPas=overfPas, erMann=erMann, InnMaate=InnMaate, dodInt=dodInt, grType=grType)
+                          overfPas=overfPas, erMann=erMann, InnMaate=InnMaate, dodInt=dodInt, 
+						  grType=grType)
 RegData <- NIRUtvalg$RegData
 utvalgTxt <- NIRUtvalg$utvalgTxt
 
@@ -57,13 +58,9 @@ Ngrense <- 10
 #ben <- NULL		#Benevning
 '%i%' <- intersect
 
-varTittel <- valgtVar
-
 RegData[ ,grVar] <- as.factor(RegData[ ,grVar])
 #Grupper som ikke har registreringer vil nå ikke komme med i oversikta. Gjøres dette tidligere, vil alle
 #grupper komme med uansett om de ikke har registreringer.
-
-#	RegData$Variabel <- as.numeric(RegData[ ,valgtVar])
 
 if(dim(RegData)[1]>0) {Ngr <- table(RegData[ ,grVar])}	else {Ngr <- 0}
 
@@ -72,27 +69,30 @@ t1 <- switch(valgtMaal,
 			Med = 'Median ',
 			Gjsn = 'Gjennomsnittlig ')
 
-if( valgtVar =='SMR') {t1 <- ''}
 
-#grTypetextstreng <- c('lokal-/sentral', 'lokal-/sentral', 'region')				
-#if (grType %in% 1:3) {grTypeTxt <- grTypetextstreng[grType]} else {grTypeTxt <- 'alle '}
-
-tittel <- c(paste0(t1, varTittel, ', ', NIRUtvalg$grTypeTxt, 'sykehus')) 
+tittel <- c(paste0(t1, valgtVar, ', ', NIRUtvalg$grTypeTxt, 'sykehus')) 
 			
-	
+if( valgtVar =='SMR') {tittel <- c(paste0('SMR, ', NIRUtvalg$grTypeTxt, 'sykehus'),
+								'(uten reinnlagte og overflyttede pasienter)')}
+
 Ngrtxt <- paste0(' (', as.character(Ngr),')') 
 indGrUt <- which(Ngr < Ngrense)
 if (length(indGrUt)==0) { indGrUt <- 0}
 Ngrtxt[indGrUt] <- paste0(' (<', Ngrense,')')	
 N <- dim(RegData)[1]
 
-dummy0 <- -0.0001
+KIHele <- c(0,0)    
+KIned <- c(0,0)
+KIhele <- c(0,0)
+		
+
+dummy0 <- NA #-0.0001
 #Kommer ut ferdig sortert!
 if (valgtMaal=='Med') {
 	MedIQR <- plot(RegData[ ,grVar], RegData$Variabel, notch=TRUE, plot=FALSE)
 	MedIQR$stats[ ,indGrUt] <- dummy0
 	MedIQR$conf[ ,indGrUt] <- dummy0
-	sortInd <- order( MedIQR$stats[3,], decreasing=NIRVarSpes$sortAvtagende) 
+	sortInd <- order( MedIQR$stats[3,], decreasing=NIRVarSpes$sortAvtagende, na.last = FALSE) 
 	Midt <- as.numeric(MedIQR$stats[3, sortInd])
 	KIned <- MedIQR$conf[1, sortInd]
 	KIopp <- MedIQR$conf[2, sortInd]
@@ -110,15 +110,14 @@ if (valgtMaal=='Med') {
 	} 
 	
 if (valgtMaal=='Gjsn') {	#Gjennomsnitt er standard, men må velges.
-	if (valgtVar=='SMR') { #Bør tas ut av Gjsn...
-		#DischargedIntensiveStatus: 0 i live (0), 1 død (1 og 2) [har tatt ut reinnl (3)]
-		#RegData$DodUt <- ifelse(RegData$DischargedHospitalStatus == 0, 0, 1) 
+	if (valgtVar=='SMR') { #Bør tas ut av Gjsn...?
+		medKI <- 0
 		ObsGr <- tapply(RegData$Dod30, RegData[ ,grVar], mean, na.rm=T)
 		EstGr <- tapply(RegData$SMR, RegData[ ,grVar], mean, na.rm=T)
 		ind0 <- which(EstGr == 0)
 		Gjsn <- 100*ObsGr/EstGr  
 		if (length(ind0)>0) {Gjsn[ind0] <- 0}#Unngå å dele på 0
-		#Vi benytter p.t. ikke konf.int for SMR. Setter alle SE lik 0
+		#Vi benytter ikke konf.int for SMR. Setter alle SE lik 0
 		     #TestPoGr <- which((Ngr*ObsGr-3*sqrt(Ngr*ObsGr*(1-ObsGr)) <= 0) | (Ngr*ObsGr+3*sqrt(Ngr*ObsGr*(1-ObsGr)) > Ngr))
 		     #SE <- sqrt(ObsGr*(1-ObsGr))*100/(sqrt(Ngr)*EstGr)
 		     #if (length(TestPoGr)>0) {SE[TestPoGr] <- 0}
@@ -126,7 +125,6 @@ if (valgtMaal=='Gjsn') {	#Gjennomsnitt er standard, men må velges.
 		Obs <-  mean(RegData$Dod30)	#Kun 0 og 1
 		Est <- mean(RegData$Variabel, na.rm=T)
 		MidtHele <- ifelse(Est ==0, 0, 100*Obs/Est)
-		#KIHele <- c(0,0)    #MidtHele +  100*sqrt(Obs*(1-Obs)/N)/Est*c(-2,2)
 	} else {
 	      Gjsn <- tapply(RegData$Variabel, RegData[ ,grVar], mean, na.rm=T)
 		SE <- tapply(RegData$Variabel, RegData[ ,grVar], sd, na.rm=T)/sqrt(Ngr)
@@ -136,7 +134,7 @@ if (valgtMaal=='Gjsn') {	#Gjennomsnitt er standard, men må velges.
       
 	Gjsn[indGrUt] <- dummy0
 	SE[indGrUt] <- 0
-	sortInd <- order(Gjsn, decreasing=NIRVarSpes$sortAvtagende) 
+	sortInd <- order(Gjsn, decreasing=NIRVarSpes$sortAvtagende, na.last = FALSE) 
 	Midt <- Gjsn[sortInd] #as.numeric(Gjsn[sortInd])
 	KIned <- Gjsn[sortInd] - 2*SE[sortInd]
 	KIopp <- Gjsn[sortInd] + 2*SE[sortInd]
@@ -150,21 +148,22 @@ GrNavnSort <- paste0(names(Ngr)[sortInd], Ngrtxt[sortInd])
 if (valgtVar == 'SMR') {AntDes <- 2} else {AntDes <- 1} 
 soyletxt <- sprintf(paste0('%.', AntDes,'f'), Midt) 
 #soyletxt <- c(sprintf(paste0('%.', AntDes,'f'), Midt[1:AntGr]), rep('',length(Ngr)-AntGr))
-indUT <- which(Midt<0)  #Rydd slik at bare benytter indGrUt
+indUT <- which(is.na(Midt))  #Rydd slik at bare benytter indGrUt
 soyletxt[indUT] <- ''
 KIned[indUT] <- NA
 KIopp[indUT] <- NA
 
 AggVerdier <- list(Hoved=Midt, Rest=0, KIned=KIned, KIopp=KIopp, KIHele=KIHele)
-Ngr <- list(Hoved=Ngr, Rest=0)
+Ngr <- list(Hoved=Ngr[sortInd], Rest=0)
 
 
 #Se NIRFigSoyler for forklaring av innhold i lista GjsnGrVarData
 GjsnGrVarData <- list(AggVerdier=AggVerdier, #Endres til Soyleverdi? Evt. AggVerdier
-                         AndelTot=MidtHele, #Til AggVerdiTot?
+                        AggTot=MidtHele, #Til AggVerdiTot?
                          N=list(Hoved=N), 
                          Ngr=Ngr,
                          grtxt2='', 
+				 medKI=medKI,
                          soyletxt=soyletxt,
                          grtxt=GrNavnSort,
                          tittel=tittel,    #NIRVarSpes$tittel, 
@@ -185,10 +184,11 @@ save(GjsnGrVarData, file='data/GjsnGrVarData.RData')
 #FigDataParam skal inn som enkeltparametre i funksjonskallet
 if (lagFig == 1) {
       cexgr <- 1-ifelse(length(soyletxt)>20, 0.25*length(soyletxt)/60, 0)
-      NIRFigSoyler(RegData, AggVerdier=AggVerdier, AndelTot=MidtHele, Ngr=Ngr, N=list(Hoved=N), cexgr=cexgr, tittel=NIRVarSpes$tittel, 
+      NIRFigSoyler(RegData, AggVerdier=AggVerdier, AggTot=MidtHele, Ngr=Ngr, N=list(Hoved=N), cexgr=cexgr, 
+                   tittel=tittel, 
                    smltxt=NIRUtvalg$smltxt, yAkseTxt=yAkseTxt,utvalgTxt=NIRUtvalg$utvalgTxt, 
                    grTypeTxt=NIRUtvalg$grTypeTxt,  fargepalett=NIRUtvalg$fargepalett, grtxt=GrNavnSort, 
-                   soyletxt=soyletxt,  grVar=grVar,
+                   soyletxt=soyletxt,  grVar=grVar, medKI=medKI,
                    medSml=NIRUtvalg$medSml, xAkseTxt=NIRVarSpes$xAkseTxt, outfile=outfile)
 }
 
