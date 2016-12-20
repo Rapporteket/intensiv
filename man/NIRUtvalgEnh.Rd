@@ -5,8 +5,8 @@
 \title{Funksjon som gjør utvalg av dataene, returnerer det filtrerte datasettet og utvalgsteksten.}
 \usage{
 NIRUtvalgEnh(RegData, datoFra, datoTil, minald = 0, maxald = 130,
-  erMann = "", InnMaate = "", grType = 99, overfPas = 99, dodInt = "",
-  fargepalett = "BlaaOff")
+  erMann = "", InnMaate = "", grType = 99, enhetsUtvalg = 0,
+  reshID = 0, overfPas = 99, dodInt = "", fargepalett = "BlaaOff")
 }
 \arguments{
 \item{RegData}{En dataramme med alle nødvendige variabler fra registeret}
@@ -27,6 +27,11 @@ NIRUtvalgEnh(RegData, datoFra, datoTil, minald = 0, maxald = 130,
 6: Akutt medisinsk, 
 8: Akutt kirurgisk, 
 standard: alle (alt unntatt 0,6,8 / ikke spesifisert)}
+
+\item{enhetsUtvalg}{Gjør gruppeutvalg med eller uten sammenlikning. Se \strong{Details} for oversikt.}
+
+\item{reshID}{Parameter følger fra innlogging helseregister.no og angir
+hvilken enhet i spesialisthelsetjenesten brukeren tilhører}
 
 \item{overfPas}{Overført under pågående intensivbehandling? 
 1 = Pasienten er ikke overført
