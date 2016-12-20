@@ -55,7 +55,6 @@ RegData <- NIRUtvalg$RegData
 utvalgTxt <- NIRUtvalg$utvalgTxt
 
 Ngrense <- 10		
-#ben <- NULL		#Benevning
 '%i%' <- intersect
 
 RegData[ ,grVar] <- as.factor(RegData[ ,grVar])
@@ -164,8 +163,10 @@ GjsnGrVarData <- list(AggVerdier=AggVerdier, #Endres til Soyleverdi? Evt. AggVer
                          Ngr=Ngr,
                          grtxt2='', 
 				 medKI=medKI,
+				 KImaal = NIRVarSpes$KImaal,
                          soyletxt=soyletxt,
                          grtxt=GrNavnSort,
+				 valgtMaal=valgtMaal,
                          tittel=tittel,    #NIRVarSpes$tittel, 
                          #yAkseTxt=yAkseTxt, 
                          retn='H', 
@@ -185,10 +186,10 @@ save(GjsnGrVarData, file='data/GjsnGrVarData.RData')
 if (lagFig == 1) {
       cexgr <- 1-ifelse(length(soyletxt)>20, 0.25*length(soyletxt)/60, 0)
       NIRFigSoyler(RegData, AggVerdier=AggVerdier, AggTot=MidtHele, Ngr=Ngr, N=list(Hoved=N), cexgr=cexgr, 
-                   tittel=tittel, 
+                   tittel=tittel, valgtMaal=valgtMaal,
                    smltxt=NIRUtvalg$smltxt, yAkseTxt=yAkseTxt,utvalgTxt=NIRUtvalg$utvalgTxt, 
                    grTypeTxt=NIRUtvalg$grTypeTxt,  fargepalett=NIRUtvalg$fargepalett, grtxt=GrNavnSort, 
-                   soyletxt=soyletxt,  grVar=grVar, medKI=medKI,
+                   soyletxt=soyletxt,  grVar=grVar, medKI=medKI, KImaal = NIRVarSpes$KImaal,
                    medSml=NIRUtvalg$medSml, xAkseTxt=NIRVarSpes$xAkseTxt, outfile=outfile)
 }
 

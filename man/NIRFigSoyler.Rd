@@ -4,11 +4,11 @@
 \alias{NIRFigSoyler}
 \title{Lager søylefigur}
 \usage{
-NIRFigSoyler(RegData, AggVerdier, AndelTot = 0, tittel = "mangler tittel",
-  smltxt, N = 0, retn = "H", yAkseTxt = "", utvalgTxt = "",
-  grTypeTxt = "", soyletxt = "", grtxt, grtxt2, hovedgrTxt = "",
-  grVar = "", cexgr = 1, medSml = 0, fargepalett = "BlaaOff",
-  xAkseTxt = "", outfile = "")
+NIRFigSoyler(RegData, AggVerdier, AggTot = 0, Ngr,
+  tittel = "mangler tittel", smltxt, N, retn = "H", yAkseTxt = "",
+  utvalgTxt = "", grTypeTxt = "", soyletxt = "", grtxt, grtxt2,
+  hovedgrTxt = "", grVar = "", valgtMaal = "", cexgr = 1, medSml = 0,
+  fargepalett = "BlaaOff", xAkseTxt = "", medKI = 0, outfile = "")
 }
 \arguments{
 \item{RegData}{En dataramme med alle nødvendige variabler fra registeret}
@@ -17,7 +17,7 @@ NIRFigSoyler(RegData, AggVerdier, AndelTot = 0, tittel = "mangler tittel",
 AggVerdier$Hoved er enten andelene for hele utvalget i hver kategori eller f.eks. egen enhet
 AggVerdier$Rest er andelene for gruppa det sammenlignes mot.}
 
-\item{AndelTot}{Andelen for hele gruppa (ett tall)}
+\item{AggTot}{Aggregert verdi for hele gruppa (ett tall)}
 
 \item{tittel}{Figurtittel}
 
@@ -42,6 +42,8 @@ gruppenavnet (i f.eks. tekstetikett) hvis det er gjort utvalg på f.eks. en syke
 
 \item{hovedgrTxt}{Angivelse av hovedgruppe, eks. eget sykehus}
 
+\item{valgtMaal}{'Med' = median. Alt annet gir gjennomsnitt}
+
 \item{cexgr}{Skalering av gruppetekst (trenger mindre font når flere grupper)}
 
 \item{medSml}{Angir om vi skal gjøre sammenlikning eller ikke (verdier: 1/0)}
@@ -54,8 +56,6 @@ Detajer: Her bør man liste opp hvilke variable funksjonen benytter.}
 
 \item{outfile}{Navn på fil figuren skrives til. Standard: '' (Figur skrives
 til systemets standard utdataenhet (som regel skjerm))}
-
-\item{valgtMaal}{'Med' = median. Alt annet gir gjennomsnitt}
 }
 \value{
 Søylediagram med gjennomsnitt/median av valgt variabel for hvert sykehus

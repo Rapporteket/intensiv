@@ -8,7 +8,7 @@
 #' @export
 
 NIRUtvalgEnh <- function(RegData, datoFra, datoTil, minald=0, maxald=130, erMann='', InnMaate='', 
-                         grType=99, overfPas=99, dodInt='', fargepalett='BlaaOff')    
+                         grType=99, enhetsUtvalg=0, reshID=0, overfPas=99, dodInt='', fargepalett='BlaaOff')    
 {
       
       # Definer intersect-operator
@@ -120,6 +120,6 @@ NIRUtvalgEnh <- function(RegData, datoFra, datoTil, minald=0, maxald=130, erMann
       
       
       UtData <- list(RegData=RegData, utvalgTxt=utvalgTxt, fargepalett=fargepalett, ind=ind, 
-                     medSml=medSml, smltxt=smltxt, grTypeTxt=grTypeTxt)
+                     medSml=medSml, hovedgrTxt=hovedgrTxt,smltxt=smltxt, grTypeTxt=grTypeTxt)
       return(invisible(UtData)) 
 }

@@ -101,6 +101,7 @@ NIRAndelerGrVar <- function(RegData, valgtVar, minald=0, maxald=130, datoFra='20
                                #yAkseTxt=yAkseTxt, 
                                retn='H', 
                                xAkseTxt=xAkseTxt, #NIRVarSpes$xAkseTxt,
+                               KImaal = NIRVarSpes$KImaal,
                                grTypeTxt=NIRUtvalg$grTypeTxt,			 
                                utvalgTxt=NIRUtvalg$utvalgTxt, 
                                fargepalett=NIRUtvalg$fargepalett, 
@@ -119,7 +120,7 @@ NIRAndelerGrVar <- function(RegData, valgtVar, minald=0, maxald=130, datoFra='20
                          tittel=NIRVarSpes$tittel, 
                          smltxt=NIRUtvalg$smltxt, utvalgTxt=NIRUtvalg$utvalgTxt, #yAkseTxt=yAkseTxt,
                          grTypeTxt=NIRUtvalg$grTypeTxt,  fargepalett=NIRUtvalg$fargepalett, grtxt=GrNavnSort, 
-                         soyletxt=andeltxt,grVar=grVar, #medKI = medKI,
+                         soyletxt=andeltxt,grVar=grVar, KImaal = NIRVarSpes$KImaal, #medKI = medKI,
                          medSml=NIRUtvalg$medSml, xAkseTxt=xAkseTxt, outfile=outfile)
       }
       

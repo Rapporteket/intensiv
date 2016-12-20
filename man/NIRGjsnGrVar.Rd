@@ -7,7 +7,8 @@
 NIRGjsnGrVar(RegData, valgtVar, valgtMaal = "Gjsn", minald = 0,
   maxald = 130, datoFra = "2011-01-01", datoTil = "3000-01-01",
   grType = 99, InnMaate = 99, dodInt = "", erMann = "",
-  preprosess = 1, hentData = 0, grVar = "ShNavn", lagFig = 1, outfile)
+  preprosess = 1, hentData = 0, grVar = "ShNavn", medKI = 1,
+  lagFig = 1, outfile)
 }
 \arguments{
 \item{RegData}{En dataramme med alle nødvendige variabler fra registeret}

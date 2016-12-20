@@ -38,6 +38,7 @@ texi2pdf(file='NIRSamleRapp.tex')
 rm(list=ls())
 
 NIRdata <- read.table(file='C:/Registre/NIR/data/Main2016-11-28.csv', header=T, sep=';',encoding = 'UTF-8')
+RegData <- NIRdata
 #RegData <- NIRdata[sample(1:dim(NIRdata)[1],10000),]
 #save(RegData, file='C:/Registre/NIR/data/NIRdata10000.Rdata')
 load("C:/Registre/NIR/data/NIRdata10000.Rdata") #RegData
@@ -51,13 +52,13 @@ maxald <- 130	#(standard: 130, må være større enn minald!)
 InnMaate <- '' #0-El, 6-Ak.m, 8-Ak.k, (alle - alt unntatt 0,6,8)
 valgtMaal = 'Gjsn' #'Med' = median. 'Gjsn' = gjennomsnitt. Alt annet gir gjennomsnitt
 datoFra <- '2015-01-01'	# standard: 0	format: YYYY-MM-DD. Kan spesifisere bare første del, eks. YYYY el. YYYY-MM. 
-datoTil <- '2015-12-31'	# standard: 3000
+datoTil <- '2016-12-31'	# standard: 3000
 dodInt <- ''	# 0-i live, 1 -død, standard: alle (alle andre verdier)
 erMann <- ''	#Kjønn: 0-kvinner, 1-menn, standard: alle (alle andre verdier)
 overfPas <- ''    #Overført under pågående intensivbehandling?	1 = Nei, 2 = Ja
 grType <- 99	#1/2: sentral/lokal, 3:regional, 99:'alle'
 grVar <- 'ShNavn'
-enhetsUtvalg <- 0	#0-5
+enhetsUtvalg <- 1	#0-5
 #Parameter for evt. kvalitetsmål? angis i Tilrettelegging
 
 #--------------------------------------- Ny struktur basert på grVar? ----------------------------------
@@ -68,10 +69,6 @@ enhetsUtvalg <- 0	#0-5
 #Alle disse vises per sykehus for et gitt tidsintervall (siste 12 mnd?)
 #I tillegg kanskje vi skal vise utvikling over tid for valgt sykehus og sykehustype?
 
-#PRIORITER GJSNGRVAR SOM NESTE FIGUR, dvs. søylefigur.
-#TRENGER OGSÅ TIDSTREND
-#FJERNER FORELØPIG STABEL FRA ANDELERGRVAR, DVS. FJERNER FIGUREN FOR INNMÅTE (-> Egen figurtype?)
-
 #Forslag til def av grVar hvis IKKE kjernen skal være figurtypen
 grVar <- 
 #      0 - (Søyle) fordelingsfigur for den aktuelle variabelen.
@@ -81,36 +78,30 @@ grVar <-
 #      shus - (Søyle) AndelerGrVar, GjsnGrVar - hvordan skille disse?
       
 
-variable <- c('alder', 'liggetid', 'respiratortid',  'SAPSII', 'NEMS', 'Nas', 'InnMaate')
-valgtVar <- 'alder'	#'alder', 'liggetid', 'respiratortid',  'SAPSII', 'NEMS', 'Nas', 'InnMaate'
-outfile <- paste('Ford_',valgtVar, '.pdf', sep='')
-
-Utdata <- NIRAndeler(RegData=RegData, valgtVar=valgtVar, minald=minald, maxald=maxald,  datoFra=datoFra, 
-                     datoTil=datoTil, InnMaate=InnMaate, dodInt=dodInt,erMann=erMann, outfile=outfile, 
-                     hentData=0, preprosess=1, reshID=reshID, enhetsUtvalg=enhetsUtvalg, lagFig=1)
-
 #--------------------------------------- Andeler ----------------------------------
-variable <- c('alder', 'liggetid', 'respiratortid',  'SAPSII', 'NEMS', 'Nas', 'InnMaate')
-valgtVar <- 'alder'	#'alder', 'liggetid', 'respiratortid',  'SAPSII', 'NEMS', 'Nas', 'InnMaate'
-outfile <- ''	#paste('Ford_',valgtVar, '.pdf', sep='')
+valgtVar <- 'Nas24'	#'alder', 'liggetid', 'respiratortid',  'SAPSII', 'NEMS24', 'Nas24', 'InnMaate'
+outfile <- '' #paste('Ford_',valgtVar, '.pdf', sep='')
 
 Utdata <- NIRAndeler(RegData=RegData, valgtVar=valgtVar, minald=minald, maxald=maxald,  datoFra=datoFra, 
-	datoTil=datoTil, InnMaate=InnMaate, dodInt=dodInt,erMann=erMann, outfile=outfile, 
-	hentData=0, preprosess=1, reshID=reshID, enhetsUtvalg=enhetsUtvalg, lagFig=1)
+                        datoTil=datoTil, InnMaate=InnMaate, dodInt=dodInt,erMann=erMann, outfile=outfile, 
+                        hentData=0, preprosess=1, reshID=reshID, enhetsUtvalg=enhetsUtvalg, lagFig=1)
 
-NIRFigAndeler(RegData=RegData, valgtVar=valgtVar, minald=minald, maxald=maxald,  datoFra=datoFra, 
-	datoTil=datoTil, InnMaate=InnMaate, dodInt=dodInt,erMann=erMann, outfile=outfile, 
-	hentData=0, preprosess=1, reshID=reshID, enhetsUtvalg=enhetsUtvalg)
+#NIRFigAndeler(RegData=RegData, valgtVar=valgtVar, minald=minald, maxald=maxald,  datoFra=datoFra, 
+#	datoTil=datoTil, InnMaate=InnMaate, dodInt=dodInt,erMann=erMann, outfile=outfile, 
+#	hentData=0, preprosess=1, reshID=reshID, enhetsUtvalg=enhetsUtvalg)
 
 
+variable <- c('alder', 'liggetid', 'respiratortid',  'SAPSII', 'NEMS24', 'Nas24', 'InnMaate')
 for (valgtVar in variable) {
-	outfile <- paste0(valgtVar, '_and.png')
-#figurfunksjon
-	}
+	outfile <- paste0(valgtVar, '_Ford.png')
+	NIRAndeler(RegData=RegData, valgtVar=valgtVar, minald=minald, maxald=maxald,  datoFra=datoFra, 
+	                     datoTil=datoTil, InnMaate=InnMaate, dodInt=dodInt,erMann=erMann, outfile=outfile, 
+	                     hentData=0, preprosess=1, reshID=reshID, enhetsUtvalg=enhetsUtvalg, lagFig=1)
+}
 
 #--------------------------------------- AndelGrVar ----------------------------------
 grVar <- 'ShNavn'
-valgtVar <- 'alder_u18'	#alder_u18', 'alder_over80', 'dod30d', 'dodeIntensiv', 'innMaate', 
+valgtVar <- 'reinn'	#alder_u18', 'alder_over80', 'dod30d', 'dodeIntensiv', 'innMaate', 
                         #'respStotte', 'reinn
 outfile <- '' #paste0(valgtVar, 'GrVar.png')
 
@@ -121,13 +112,13 @@ NIRAndelerGrVar(RegData=RegData, valgtVar=valgtVar, minald=minald, maxald=maxald
 #NIRFigAndelerGrVar(RegData=RegData, valgtVar=valgtVar, minald=minald, maxald=maxald,  datoFra=datoFra, 
 #	datoTil=datoTil, InnMaate=InnMaate, dodInt=dodInt,erMann=erMann, outfile=outfile, 
 #	grType=grType)
-variable <- c('alder_u18', 'alder_over80', 'dod30d', 'dodeIntensiv', 'innMaate', 
+variable <- c('alder_u18', 'alder_over80', 'dod30d', 'dodeIntensiv', #'innMaate', 
       'respStotte', 'reinn')
 for (valgtVar in variable) {
-		outfile <- paste0(valgtVar, 'GrVar3.png')
-		NIRFigAndelerGrVar(RegData=RegData, valgtVar=valgtVar, minald=minald, maxald=maxald,  datoFra=datoFra, 
-		                   datoTil=datoTil, InnMaate=InnMaate, dodInt=dodInt,erMann=erMann, outfile=outfile, 
-		                   grType=grType)
+		outfile <- paste0(valgtVar, 'GrVar.png')
+		NIRAndelerGrVar(RegData=RegData, valgtVar=valgtVar, minald=minald, maxald=maxald,  datoFra=datoFra, 
+		                datoTil=datoTil, InnMaate=InnMaate, dodInt=dodInt,erMann=erMann, outfile=outfile, 
+		                grType=grType, grVar=grVar, hentData=0, preprosess=1, lagFig=1)
                   }
 
 		
@@ -175,8 +166,8 @@ for (valgtVar in variable) {
 
 #--------------------------------------- SENTRALMÅL per enhet----------------------------------
 
-valgtMaal <- 'Gjsn'
-valgtVar <- 'SMR'	#'SMR', alder, liggetid, respiratortid,  SAPSII, 'NEMS', 'Nas'
+valgtMaal <- 'Med'
+valgtVar <- 'respiratortid'	#'SMR', alder, liggetid, respiratortid,  SAPSII, 'NEMS', 'Nas'
 outfile <- '' #paste0(valgtVar, 'MM.png')#,grType
 
 NIRGjsnGrVar(RegData=RegData, valgtVar=valgtVar, valgtMaal=valgtMaal, minald=minald, maxald=maxald, 
