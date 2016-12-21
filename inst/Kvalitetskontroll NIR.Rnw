@@ -80,7 +80,6 @@ spørring.nir <- 'SELECT FreshOrganizationUnitId AS avdid,
 						ChronicDiseases AS sykdom,
 						Glasgow AS glasgow,
 						DeadPatientDuring24Hours AS dode,
-						DischargedHospitalStatus AS utstatus,
 						RapportgrunnlagID AS id
 				FROM dump as d, resh as r
 				WHERE (d.FreshOrganizationUnitId = r.AvdReshID)'
@@ -371,31 +370,6 @@ print(xtable(dode,
 	 include.rownames=FALSE)
 
 	 
-#DischargedHospitalStatus
-utstatus <- as.data.frame(cbind('Ved utskrivelse fra sykehus'=c('ikke registrert','i livet','død intensiv','død post','reinnlagt intensiv'), Avdeling=0, Lokalsykehus=0, Regionalsykehus=0, Sentralsykehus=0))
-for(i in 2:5) {utstatus[,i] <- as.numeric(as.character(utstatus[,i]))}
-score <- c(0,0,1,2,3)
-for(i in 1:dim(utstatus)[1]) {
-  if(i==1) {
-    utstatus$Avdeling[i] <- round(length(which(is.na(nir$utstatus)))/length(nir$utstatus)*100,1)
-    utstatus$Lokalsykehus[i] <- round(length(which(is.na(lokal$utstatus)))/length(lokal$utstatus)*100,1)
-    utstatus$Regionalsykehus[i] <- round(length(which(is.na(regional$utstatus)))/length(regional$utstatus)*100,1)
-    utstatus$Sentralsykehus[i] <- round(length(which(is.na(sentral$utstatus)))/length(sentral$utstatus)*100,1)
-
-  } else {
-    utstatus$Avdeling[i] <- round(length(which(nir$utstatus==score[i]))/length(nir$utstatus)*100,1)
-    utstatus$Lokalsykehus[i] <- round(length(which(lokal$utstatus==score[i]))/length(lokal$utstatus)*100,1)
-	utstatus$Regionalsykehus[i] <- round(length(which(regional$utstatus==score[i]))/length(regional$utstatus)*100,1)
-	utstatus$Sentralsykehus[i] <- round(length(which(sentral$utstatus==score[i]))/length(sentral$utstatus)*100,1)
-  }
-}
-print(xtable(utstatus, 
-             align=rep('r', ncol(utstatus)+1),
-			 digits=1, 
-			 caption='Pasientenes status ved utskrivelse fra sykehus angitt som prosentandeler.', 
-			 label="tab:UtStatus"), 
-	 include.rownames=FALSE)
-
 @	
 
 \vspace*{1cm}
@@ -411,7 +385,7 @@ sammenlignet med landet forøvrig. For å få best mulig datakvalitet bør regis
 høy som mulig.\newline\hspace*{-5.5cm}
 
 <<kompletthet, results=tex, echo=FALSE>>=
-variabler <- c('TypeOfAdmission','TransferredStatus','PatientTransferredFromHospital','PatientTransferredToHospital','DischargedHospitalStatus','ChronicDiseases','Glasgow','Age','SystolicBloodPressure',
+variabler <- c('TypeOfAdmission','TransferredStatus','PatientTransferredFromHospital','PatientTransferredToHospital','ChronicDiseases','Glasgow','Age','SystolicBloodPressure',
                'HeartRate','Temperature','MvOrCpap','UrineOutput','SerumUreaOrBun','Leukocytes','Potassium','Sodium','Hco3','Bilirubin','CerebralCirculationAbolishedReasonForNo','OrganDonationCompletedReasonForNoStatus',
                'FormType','DischargedIntensiveStatus','DateAdmittedIntensive','DateDischargedIntensive','BirthDate','DaysAdmittedIntensiv','AgeAdmitted','Respirator','Saps2ScoreNumber','Saps2Score','MoreThan24Hours',
                'MechanicalRespirator','DeadPatientDuring24Hours','MovedPatientToAnotherIntensivDuring24Hours','ReAdmitted','Nems','Nas','BrainDamage','CerebralCirculationAbolished','OrganDonationCompletedStatus','Updated')

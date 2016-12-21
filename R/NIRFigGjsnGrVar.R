@@ -48,18 +48,22 @@ grVar <- 'ShNavn'
 
 Ngrense <- 10		
 ben <- NULL		#Benevning
+'%i%' <- intersect
 
 varTittel <- valgtVar
 
 if (valgtVar == 'SMR') {
-#Tar ut reinnlagte og overflyttede, samt de med SAPSII=0 (ikke scorede) 
+#Tar ut reinnlagte på intensiv og overflyttede, samt de med SAPSII=0 (ikke scorede) 
 #og de 	under 18år (tas ut i NIRutvalg)
 	minald <- max(18, minald) 
-	datoTil <- '2015-12-31'
-	RegData <- RegData[RegData$DischargedHospitalStatus %in% 0:2, ]#0:i live, 1:død int., 2:død post
-	      #Variabelen tatt bort desember 2015
-	RegData <- RegData[RegData$Overf==1, ] 
-	RegData <- RegData[as.numeric(RegData$SAPSII) > 0, ]
+	#datoTil <- '2015-12-31'
+	#RegData <- RegData[RegData$DischargedHospitalStatus %in% 0:2, ]#0:i live, 1:død int., 2:død post
+	#      #Variabelen tatt bort desember 2015
+	indMed <- which(RegData$ReAdmitted==2) %i% which(RegData$Overf==1) %i% which(as.numeric(RegData$SAPSII)>0)
+	#RegData <- RegData[RegData$ReAdmitted==2,] #1:Ja, 2:Nei, 3:Ukjent, -1:Ikke utfylt
+	#RegData <- RegData[RegData$Overf==1, ] 
+	#RegData <- RegData[as.numeric(RegData$SAPSII) > 0, ]
+	RegData <- RegData[indMed,]
 }
 
 if (valgtVar %in% c('respiratortid', 'liggetid')) {
@@ -76,7 +80,9 @@ minald <- max(18, minald)
 RegData <- RegData[as.numeric(RegData$SAPSII) > 0, ]
 }
 
-if (valgtVar %in% c('alder', 'liggetid', 'NEMS', 'respiratortid', 'SAPSII', 'SMR')){
+if (valgtVar == 'alder') {RegData$Variabel <- RegData$Alder}
+
+if (valgtVar %in% c('liggetid', 'NEMS', 'respiratortid', 'SAPSII', 'SMR')){
       RegData$Variabel  <- as.numeric(RegData[ ,valgtVar])
 }
       
@@ -183,8 +189,8 @@ if (valgtMaal=='Med') {
 } else {	#Gjennomsnitt blir standard.
 	if (valgtVar=='SMR') { 
 		#DischargedIntensiveStatus: 0 i live (0), 1 død (1 og 2) [har tatt ut reinnl (3)]
-		RegData$StatusUtGr <- ifelse(RegData$DischargedHospitalStatus == 0, 0, 1) 
-		ObsGr <- tapply(RegData$StatusUtGr, RegData[ ,grVar], mean, na.rm=T)
+		#RegData$DodUt <- ifelse(RegData$DischargedHospitalStatus == 0, 0, 1) 
+		ObsGr <- tapply(RegData$Dod30, RegData[ ,grVar], mean, na.rm=T)
 		EstGr <- tapply(RegData$SMR, RegData[ ,grVar], mean, na.rm=T)
 		ind0 <- which(EstGr == 0)
 		Gjsn <- 100*ObsGr/EstGr  
@@ -194,7 +200,7 @@ if (valgtMaal=='Med') {
 		     #SE <- sqrt(ObsGr*(1-ObsGr))*100/(sqrt(Ngr)*EstGr)
 		     #if (length(TestPoGr)>0) {SE[TestPoGr] <- 0}
 		SE <- rep(0, length(Ngr))
-		Obs <-  mean(RegData$StatusUtGr)	#Kun 0 og 1
+		Obs <-  mean(RegData$Dod30)	#Kun 0 og 1
 		Est <- mean(RegData$Variabel, na.rm=T)
 		MidtHele <- ifelse(Est ==0, 0, 100*Obs/Est)
 		KIHele <- c(0,0)    #MidtHele +  100*sqrt(Obs*(1-Obs)/N)/Est*c(-2,2)
@@ -262,7 +268,7 @@ par('fig'=c(vmarg, 1, 0, 1-0.02*(NutvTxt-1)))	#Har alltid datoutvalg med
 		legend('top', 	c(paste(grTypeTxt, 'sykehus, ', sprintf('%.2f', MidtHele), ', N=', N, sep=''),
 				'(uten reinnlagte og overflyttede pasienter)'),
 				col=c(farger[2],NA), lwd=c(2,NA), bty='n')	#, cex=0.8
-		tittel <- c(tittel, '(basert på sykehusmortalitet, t.o.m. 2015)')
+		#tittel <- c(tittel, '(basert på sykehusmortalitet, t.o.m. 2015)')
 	} else {
 		polygon(c(rep(KIHele[1],2), rep(KIHele[2],2)), c(0, max(posKI)+min(posKI), max(posKI)+min(posKI),0), 
 			col=farger[4], border=farger[4])
@@ -282,6 +288,9 @@ par('fig'=c(vmarg, 1, 0, 1-0.02*(NutvTxt-1)))	#Har alltid datoutvalg med
 	text(x=0.005*xmax, y=pos+0.1, las=1, cex=xkr, adj=0, col=farger[1],
 				c(sprintf(paste('%.', AntDes,'f', sep=''), Midt[1:AntGr]), rep('',length(Ngr)-AntGr)))
 	mtext(at=pos+0.1, GrNavnSort, side=2, las=1, cex=cexGrNavn*xkr, adj=1, line=0.25)	
+
+	
+mtext(at=max(pos)+0.35*log(max(pos)), paste0('(N)' ), side=2, las=1, cex=xkr, adj=1, line=0.25)
 	
 #Tekst som angir hvilket utvalg som er gjort
 mtext(utvalgTxt, side=3, las=1, cex=0.9, adj=0, col=farger[1], line=c(3+0.8*((NutvTxt-1):0)))

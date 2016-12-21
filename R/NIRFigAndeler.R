@@ -112,7 +112,7 @@ flerevar <- 0
 if (valgtVar=='alder') {
 	tittel <- 'Aldersfordeling'
 	gr <- c(seq(0, 100, 10),150)	#c(0,16,31,46,61,76,200)	
-	RegData$VariabelGr <- cut(RegData$alder, breaks=gr, include.lowest=TRUE, right=FALSE)	
+	RegData$VariabelGr <- cut(RegData$Alder, breaks=gr, include.lowest=TRUE, right=FALSE)	
     grtxt <- c('0-9','10-19','20-29','30-39','40-49','50-59','60-69','70-79','80-89','90-99','100+')
 	subtxt <- 'Aldersgrupper'
 }

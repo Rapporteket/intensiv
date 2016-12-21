@@ -1,0 +1,107 @@
+---
+title: "Intensiv: data processing (analysebok)"
+author: "Lena Ringstad Olsen"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  \usepackage[utf8]{inputenc}
+---
+
+The _NorScir_ package provide interactive results from the registry
+_NorScir_ at _Rapporteket_.
+
+```{r}
+library(NorScir)
+```
+
+Denne pakken avhenger av pakken  _rapbase_ . Det lagres aggregerte data når pakken kjøres. (Må beskrives.)
+
+## Eksempeldata
+I pakken er det lagret aggregerte data. (Vi må lage en strategi for hvordan vi navgir ulike datasett. Eks.
+navnet avhenger av valgtVar, valgtMaal, grVar, utvalg, ...
+valgtMaal og grVar angir tilsammen hviken figurtype som genereres.
+
+#```{r}
+#data(NorScirSampleData)
+#head(names(NorScirSampleData), 10)
+#```
+
+Aggrerte data er lagret i katalogen  _data/_ og er lagret fra R med funksjonen _save()_
+(ikke kjørt):
+
+```{r, eval=FALSE}
+save(NorScirSampleData, file='NorScirSampleData.rda')
+```
+
+## Generelt om pakken
+Des. 2016: Har endret struktur på figur-pakken til intensiv. Dvs. alle søylefigurer benytter samme figurfil. Tilrettelegging av variable skjer også i samme fil. Andeler, GjsnGrVar og AndelerGrVar kjører på ny struktur. Tidstrend (AndelTid og GjsnTid) må også tilrettelegges. 
+Gammel  og ny versjon finnes i samme pakke. (Eks NIRFigAndel og NIRAndel)
+Legger på linje for måloppnåelse for kvalitetsindikatorene: 
+Reinnleggelser <4% (AndelerGrVar)
+Median respiratortid <2,5døgn (GjsnGrVar)
+SMR <0.7 (GjsnGrVar)
+
+
+## General functions
+Disse funksjonene hentes inn av "rapport"funksjonene.
+(Kan man ikke hente inn beskrivelsen som står i hver funksjon..?)
+
+### NIRRegDataSQL.R
+Definerer SQL-spørring for å hente data fra registerets database ("staging"database på Rapporteket) og
+henter  data.and loads the global registry data set. 
+Denne funksjonen vi bare fungere når den kjøres mot den definerte databasen. 
+
+### NIRPreprosess.R
+Preprosesserer data, dvs. legger på riktig format, endrer navn på noen variable, beregner nye varible.
+
+### NIRVarTilrettelegg.R
+Tilrettelegger data.
+
+### NIRUtvalgEnh.R og NIRUtvalg.R
+
+### NIRFigSoyler.R
+
+
+## Report functions
+ _R_-funksjonene i lista under kan generere ulike søylediagrammer (samt aggregerte data) som kan publiseres på 
+ _Rapporteket_.
+
+### NIRAndeler.R og NIRFigAndeler.R
+Søylediagram som viser fordelinga til valgt variabel, _e.g._:
+#```{r, fig.width=7}
+#NIRAndeler(RegData=RegData, valgtVar='liggetid', minald=0, maxald=130, datoFra=2014-01-01, 
+#                        datoTil='2100-01-01', InnMaate=99, dodInt=99,erMann=99, outfile='', 
+#                        hentData=0, preprosess=1, reshID=112044, enhetsUtvalg=1, lagFig=1)
+#```
+
+
+### NIRAndelerGrVar.R og NIRFigAndelerGrVar.R
+
+### NIRGjsnGrVar.R og NIRFigGjsnGrVar.R
+
+### NIRFigAndelTid.R
+Lager figur. Per 20.des. 2016 ikke laget versjon tilpasset ny struktur.
+
+### NIRFigGjsnTid.R
+Lager figur. Per 20.des. 2016 ikke laget versjon tilpasset ny struktur.
+
+
+
+### NIRAndelerGrVar.R
+Søylediagram som viser andel av en valgt variabel per valgt gruppering (eks sykehus), _e.g._:
+#```{r, fig.width=7}
+#NIRAndelerGrVar(RegData, valgtVar='reinn', minald=0, maxald=130, datoFra='2011-01-01', datoTil='3000-01-01', 
+#                            grType=99, grVar='', InnMaate=99, dodInt='', erMann='', hentData=0, preprosess=1, 
+#                            outfile='', lagFig=1) 
+#```
+
+#### Analyser...
+For variables "AAis" and "FAis" an additional cathegory "None" was introduced
+at some point. In the above function "None" is recoded as "U" as requested by
+the registry during autumn 2015.
+
+
+
+
