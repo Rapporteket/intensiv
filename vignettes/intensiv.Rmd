@@ -37,12 +37,11 @@ save(NorScirSampleData, file='NorScirSampleData.rda')
 
 ## Generelt om pakken
 Des. 2016: Har endret struktur på figur-pakken til intensiv. Dvs. alle søylefigurer benytter samme figurfil. Tilrettelegging av variable skjer også i samme fil. Andeler, GjsnGrVar og AndelerGrVar kjører på ny struktur. Tidstrend (AndelTid og GjsnTid) må også tilrettelegges. 
-Gammel  og ny versjon finnes i samme pakke. (Eks NIRFigAndel og NIRAndel)
-Legger på linje for måloppnåelse for kvalitetsindikatorene: 
-Reinnleggelser <4% (AndelerGrVar)
-Median respiratortid <2,5døgn (GjsnGrVar)
-SMR <0.7 (GjsnGrVar)
+I den gamle strukturen heter "hoved"-funksjonene NIRFig"Figurtype".R. I ny struktur genererer ikke "hoved"-funksjonen figuren, bare de beregnede aggregerte verdiene. Navnsettinga er derfor NIR"Figurtype".R
 
+Gammel  og ny versjon finnes i samme pakke. (Eks NIRFigAndel og NIRAndel)
+
+ 
 
 ## General functions
 Disse funksjonene hentes inn av "rapport"funksjonene.
@@ -57,14 +56,15 @@ Denne funksjonen vi bare fungere når den kjøres mot den definerte databasen.
 Preprosesserer data, dvs. legger på riktig format, endrer navn på noen variable, beregner nye varible.
 
 ### NIRVarTilrettelegg.R
-Tilrettelegger data.
+Tilrettelegger data. Basert på hvilken variabel man ønsker å se resultat for (valgtVar) gjøres nødvendige definisjoner for den valgte variabelen.
 
 ### NIRUtvalgEnh.R og NIRUtvalg.R
+Gjør utvalg for tilgjengelige utvalgsparametre. I ny versjon (NIRUtvalgEnh) gjøres også utvalg/definisjon av hvordan resultatet skal framstilles (bare egen enhet, egen mot resten av landet, osv.) I den gamle versjonen gjøres enhetsutvalg i "hoved"funksjonen.
 
 ### NIRFigSoyler.R
+Funksjon som genererer søylediagrammer.
 
-
-## Report functions
+## Funksjoner
  _R_-funksjonene i lista under kan generere ulike søylediagrammer (samt aggregerte data) som kan publiseres på 
  _Rapporteket_.
 
@@ -97,10 +97,12 @@ Søylediagram som viser andel av en valgt variabel per valgt gruppering (eks syk
 #                            outfile='', lagFig=1) 
 #```
 
-#### Analyser...
-For variables "AAis" and "FAis" an additional cathegory "None" was introduced
-at some point. In the above function "None" is recoded as "U" as requested by
-the registry during autumn 2015.
+## Analyser...
+Intensivregisteret har tre definerte kvalitetsindikatorer. Når det genereres figurer for disse, inkluderes ei rød linje som markerer målet  for kvalitetsindikatoren: 
+Reinnleggelser <4% (AndelerGrVar)
+Median respiratortid <2,5døgn (GjsnGrVar)
+SMR <0.7 (GjsnGrVar)
+
 
 
 

@@ -1,7 +1,7 @@
 Package: intensiv
 Type: Package
 Title: Resultatrapporter for Intensivregisteret
-Version: 1.0.1
+Version: 1.2.0
 Date: 2016-12-19
 Author: Authors@R: c(person("Olsen", "Lena", email = "Lena.Ringstad.Olsen@unn.no", role = c("cre", "aut"))
 Maintainer: Lena Ringstad Olsen <lena.olsen@skde.no>
@@ -13,7 +13,7 @@ Depends: R (>= 3.0.2), rapbase (>= 1.0.0)
 Imports:
   plyr,
   xtable
-RoxygenNote: 5.0.1
-Suggests: rmarkdown, knitr
+RoxygenNote: RoxygenNote: 5.0.1
+Suggests: rmarkdown, knitr,
+    testthat
 VignetteBuilder: knitr
-RoxygenNote: 5.0.1
