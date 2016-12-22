@@ -1,8 +1,8 @@
 # This is the user-interface definition for the 'report' Shiny web application
-# for 'Nakke'
+# for 'Intensiv'
 
 require(highcharter)
-data("RegData")
+data("AndelerGrVar")
 
 # not implemented just yet, wait until sample data without preprocessing
 if (1==0) {
