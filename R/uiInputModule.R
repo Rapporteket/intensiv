@@ -11,9 +11,9 @@ uiInputModule <- function(id, label = "Brukervalg") {
   # create namespace
   ns <- NS(id)
   
-  # make values and lables for reshID
-  reshList <-
-    setNames(as.list(unique(RegData$AVD_RESH)), unique(RegData$SykehusNavn))
+#   # make values and lables for reshID
+#   reshList <-
+#     setNames(as.list(unique(RegData$AVD_RESH)), unique(RegData$SykehusNavn))
   
   tagList(
     selectInput(ns("erMann"),
@@ -24,8 +24,7 @@ uiInputModule <- function(id, label = "Brukervalg") {
                 max = 130, value = c(0, 130)
     ),
     dateRangeInput(ns("periode"), start = "2012-01-01", end = Sys.Date(),
-                   label = "Periode", separator="til", language="nb"),
-    selectInput(ns("avdeling"), label = "Avdeling", reshList)
-    #downloadButton(ns("downloadData"), label = "Last ned data")
+                   label = "Periode", separator="til", language="nb")
+    
   )
 }
