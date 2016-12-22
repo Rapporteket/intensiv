@@ -10,7 +10,7 @@ shinyServer(function(input, output) {
   # reuse server module, but with different namespaces and per report user
   # controls outside namespace (if any)
   serverModuleFigAndeler <-
-    callModule(serverModule, "figAndeler", session = getDefaultReactiveDomain(),
+    callModule(serverModule, "figAndelerGrVar", session = getDefaultReactiveDomain(),
                valgtVar=reactive(input$andelerValgtVar)
     )
   
