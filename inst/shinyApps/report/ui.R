@@ -11,13 +11,10 @@ if (1==0) {
 
 shinyUI(
   navbarPage(title = "INTENSIVREGISTERET", theme = "bootstrap.css",
-             tabPanel("Andeler",
+             tabPanel("AndelerGrVar",
                       sidebarLayout(
                         sidebarPanel(
-                          selectInput("andelerValgtVar", "Variabel:",
-                                      valgtVarFigAndeler(),
-                                      selected = "Alder"),
-                          nakkeStandardInput("figAndeler"),
+                          uiInputModule("figAndelerGrVar"),
                           downloadButton("downloadData",
                                          label = "Last ned data")
                         ),
