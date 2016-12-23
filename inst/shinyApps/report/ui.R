@@ -27,6 +27,21 @@ shinyUI(
                           )
                         ))
                       )
+             ),
+             tabPanel("Andeler",
+                      sidebarLayout(
+                        sidebarPanel(
+                          uiInputModule("figAndeler")
+                        ),
+                        mainPanel(tabsetPanel(
+                          tabPanel("Figur",
+                                   highchartOutput("andelerPlot")
+                          ),
+                          tabPanel("Data",
+                                   DT::dataTableOutput("andelerTable")
+                          )
+                        ))
+                      )
              )
   )
 )
