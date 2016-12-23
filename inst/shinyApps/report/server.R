@@ -14,9 +14,15 @@ shinyServer(function(input, output) {
                session = getDefaultReactiveDomain()
     )
   
-
+  serverModuleFigAndeler <-
+    callModule(serverModule, "figAndeler",
+               session = getDefaultReactiveDomain()
+    )
+  
+  
   
   # return of report objects
+  
   output$andelerGrVarPlot <- renderHighchart({
     out <- serverModuleFigAndelerGrVar()
     return(out$plotObj)
@@ -39,4 +45,9 @@ shinyServer(function(input, output) {
       write.table(out$tableObj, file)
     }
   )
+  
+  output$andelerPlot <- renderHighchart({
+    reportObjects <- serverModuleFigAndeler()
+    return(reportObjects)
+  })
 })
