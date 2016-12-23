@@ -9,21 +9,21 @@ shinyServer(function(input, output) {
   
   # reuse server module, but with different namespaces and per report user
   # controls outside namespace (if any)
-  serverModuleFigAndeler <-
-    callModule(serverModule, "figAndelerGrVar", session = getDefaultReactiveDomain(),
-               valgtVar=reactive(input$andelerValgtVar)
+  serverModuleFigAndelerGrVar <-
+    callModule(serverModule, "figAndelerGrVar",
+               session = getDefaultReactiveDomain()
     )
   
 
   
   # return of report objects
-  output$andelerPlot <- renderHighchart({
-    out <- serverModuleFigAndeler()
+  output$andelerGrVarPlot <- renderHighchart({
+    out <- serverModuleFigAndelerGrVar()
     return(out$plotObj)
   })
   
-  output$andelerTable <- DT::renderDataTable(DT::datatable({
-    out <- serverModuleFigAndeler()
+  output$andelerGrVarTable <- DT::renderDataTable(DT::datatable({
+    out <- serverModuleFigAndelerGrVar()
     out$tableObj
   }, container = AndelerTableContainer(groupText = names(out$tableObj)[1],
                                        deptName = names(out$tableObj)[2]),
@@ -35,7 +35,7 @@ shinyServer(function(input, output) {
   output$downloadData <- downloadHandler(
     filename = "test.csv",
     content = function(file) {
-      out <- serverModuleFigAndeler()
+      out <- serverModuleFigAndelerGrVar()
       write.table(out$tableObj, file)
     }
   )
