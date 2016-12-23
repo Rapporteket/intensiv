@@ -2,7 +2,7 @@
 # for 'Intensiv'
 
 require(highcharter)
-data("AndelerGrVar")
+data("AndelerGrVarData")
 
 # not implemented just yet, wait until sample data without preprocessing
 if (1==0) {
@@ -20,10 +20,10 @@ shinyUI(
                         ),
                         mainPanel(tabsetPanel(
                           tabPanel("Figur",
-                                   highchartOutput("andelerPlot")
+                                   highchartOutput("andelerGrVarPlot")
                           ),
                           tabPanel("Data",
-                                   DT::dataTableOutput("andelerTable")
+                                   DT::dataTableOutput("andelerGrVarTable")
                           )
                         ))
                       )
