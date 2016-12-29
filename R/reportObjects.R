@@ -43,6 +43,10 @@ readmission72hours <-  function() {
   # get (static) data
   data("AndelerGrVarData")
   
+  # get actual color from name...
+  figProps <- rapbase::figtype(fargepalett=AndelerGrVarData$fargepalett)
+  farger <- figProps$UtFarger
+  
   # to use extra data in tooltips, make a data series from data frame
   df <- data.frame(y = as.vector(AndelerGrVarData$AggVerdier$Hoved),
                    N = as.vector(AndelerGrVarData$Ngr$Hoved),
@@ -54,6 +58,7 @@ readmission72hours <-  function() {
     hc_title(text = AndelerGrVarData$tittel) %>%
     hc_subtitle(text = AndelerGrVarData$utvalgTxt) %>%
     hc_xAxis(categories=AndelerGrVarData$grtxt,
+             labels=list(step=1),
              reversed = FALSE) %>%
     hc_yAxis(title = list(text=AndelerGrVarData$xAkseTxt),
              min = -0.01,
