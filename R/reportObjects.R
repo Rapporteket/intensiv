@@ -58,7 +58,7 @@ readmission72hours <-  function() {
   h1 <- highcharter::highchart() %>%
     hc_title(text = AndelerGrVarData$tittel) %>%
     hc_subtitle(text = AndelerGrVarData$utvalgTxt) %>%
-    hc_xAxis(categories=AndelerGrVarData$grtxt,
+    hc_xAxis(categories=names(AndelerGrVarData$Ngr$Hoved),
              labels=list(step=1),
              reversed = FALSE) %>%
     hc_yAxis(title = list(text=AndelerGrVarData$xAkseTxt),
@@ -85,7 +85,7 @@ readmission72hours <-  function() {
 #   )
   
   ## table
-  t1 <- data.frame(Enhet=AndelerGrVarData$grtxt,
+  t1 <- data.frame(Enhet=names(AndelerGrVarData$Ngr$Hoved),
                    Andel=as.vector(AndelerGrVarData$AggVerdier$Hoved),
                    N = as.vector(AndelerGrVarData$Ngr$Hoved),
                    stringsAsFactors = FALSE)
