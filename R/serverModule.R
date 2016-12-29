@@ -18,8 +18,6 @@ serverModule <- function(input, output, session) {
     plotObj <- reactive({
       readmission72hours()
     })
-    # empty for initial testing
-    tableObj <- list() 
   }
   
   if (sessionName == "figAndeler") {
