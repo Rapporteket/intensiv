@@ -3,7 +3,9 @@ Type: Package
 Title: Resultatrapporter for Intensivregisteret
 Version: 1.2.0
 Date: 2016-12-19
-Author: Authors@R: c(person("Olsen", "Lena", email = "Lena.Ringstad.Olsen@unn.no", role = c("cre", "aut"))
+Author: Authors@R: c(person("Olsen", "Lena", email = "Lena.Ringstad.Olsen@unn.no",
+  role = c("cre", "aut")), person("Edvardsen", "Are", email = "are.edvardsen@helse-
+    nord.no", role = c("aut")))
 Maintainer: Lena Ringstad Olsen <lena.olsen@skde.no>
 Description: Pakke for (automatisk) generering av resultater (figurer og samledokument) fra Norsk Intensivregister.  
 License: GPL2
