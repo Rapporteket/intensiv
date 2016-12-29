@@ -43,6 +43,7 @@ readmission72hours <-  function() {
   # get (static) data
   data("AndelerGrVarData")
   
+  ## hc
   # get actual color from name...
   figProps <- rapbase::figtype(fargepalett=AndelerGrVarData$fargepalett)
   farger <- figProps$UtFarger
@@ -82,7 +83,12 @@ readmission72hours <-  function() {
 #                       marker = list(enabled=FALSE),
 #                       enableMouseTracking = FALSE
 #   )
-  t1 <- list()
+  
+  ## table
+  t1 <- data.frame(Enhet=AndelerGrVarData$grtxt,
+                   Andel=as.vector(AndelerGrVarData$AggVerdier$Hoved),
+                   N = as.vector(AndelerGrVarData$Ngr$Hoved),
+                   stringsAsFactors = FALSE)
   
   list(plotObj=h1, tableObj=t1)
 }
