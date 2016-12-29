@@ -16,7 +16,7 @@ serverModule <- function(input, output, session) {
   
   if (sessionName == "figAndelerGrVar") {
     plotObj <- reactive({
-      emptyReport(Tittel = "Test1")
+      readmission72hours()
     })
     # empty for initial testing
     tableObj <- list() 
