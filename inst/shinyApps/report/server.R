@@ -31,8 +31,7 @@ shinyServer(function(input, output) {
   output$andelerGrVarTable <- DT::renderDataTable(DT::datatable({
     out <- serverModuleFigAndelerGrVar()
     out$tableObj
-  }, container = AndelerTableContainer(groupText = names(out$tableObj)[1],
-                                       deptName = names(out$tableObj)[2]),
+  }, 
   rownames = FALSE,
   options = list(processing = FALSE,
                  paging = FALSE,
