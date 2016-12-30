@@ -86,11 +86,13 @@ readmission72hours <-  function() {
 #   )
   
   ## table
-  t1 <- data.frame(Enhet=names(AndelerGrVarData$Ngr$Hoved),
+  t1 <- data.frame(Enhet=as.character(names(AndelerGrVarData$Ngr$Hoved)),
                    Andel=as.vector(AndelerGrVarData$AggVerdier$Hoved),
                    N = as.vector(AndelerGrVarData$Ngr$Hoved),
                    stringsAsFactors = FALSE)
-  t1 <- DT::datatable(t1)
+  t1 <- t1[order(-t1$Andel), ]
+  t1 <- DT::datatable(t1, options = list(dom='t', ordering=FALSE,
+                                         paging = FALSE))
   
   list(plotObj=h1, tableObj=t1)
 }
