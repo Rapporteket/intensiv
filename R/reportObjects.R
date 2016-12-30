@@ -167,13 +167,13 @@ gjsnGrVar <- function() {
   # add global score, ci as band defined i yAxis above
   obs <- length(GjsnGrVarData$Ngr$Hoved)
   h1 <- hc_add_series(h1,
-                      name = paste0(GjsnGrVarData$tittel, ", alle: ",
-                                    sprintf('%.1f', GjsnGrVarData$KImaal),
+                      name = paste0(GjsnGrVarData$tittel, ": ",
+                                    sprintf('%.1f', GjsnGrVarData$medKI),
                                     ", N: ", GjsnGrVarData$N$Hoved, ", KI: ",
                                     sprintf('%.1f', GjsnGrVarData$AggVerdier$KIHele[1]),
                                     " - ",
                                     sprintf('%.1f', GjsnGrVarData$AggVerdier$KIHele[2])),
-                      data = rep(GjsnGrVarData$KImaal, obs),
+                      data = rep(GjsnGrVarData$medKI, obs),
                       type = "line",
                       color = farger[2],
                       marker = list(enabled=FALSE),
