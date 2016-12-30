@@ -90,6 +90,7 @@ readmission72hours <-  function() {
                    Andel=as.vector(AndelerGrVarData$AggVerdier$Hoved),
                    N = as.vector(AndelerGrVarData$Ngr$Hoved),
                    stringsAsFactors = FALSE)
+  t1 <- DT::datatable(t1)
   
   list(plotObj=h1, tableObj=t1)
 }
