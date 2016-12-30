@@ -48,4 +48,10 @@ shinyServer(function(input, output) {
     out <- serverModuleGjsnGrVar()
     return(out$plotObj)
   })
+  
+  output$gjsnGrVarTable <- DT::renderDataTable({
+    out <- serverModuleGjsnGrVar()
+    return(out$tableObj$w1)
+  })
+  
 })
