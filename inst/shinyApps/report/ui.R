@@ -14,8 +14,8 @@ shinyUI(
              tabPanel("AndelerGrVar",
                       sidebarLayout(
                         sidebarPanel(
-                          uiInputModule("figAndelerGrVar"),
-                          downloadButton("downloadData",
+                          uiInputModule("andelerGrVar"),
+                          downloadButton("downloadDataAndelerGrVar",
                                          label = "Last ned data")
                         ),
                         mainPanel(tabsetPanel(
@@ -31,7 +31,7 @@ shinyUI(
              tabPanel("GjsnGrVar",
                       sidebarLayout(
                         sidebarPanel(
-                          uiInputModule("figGjsnGrVar")
+                          uiInputModule("gjsnGrVar")
                         ),
                         mainPanel(tabsetPanel(
                           tabPanel("Figur",
