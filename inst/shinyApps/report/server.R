@@ -2,6 +2,8 @@
 # 'intensiv'
 
 # load libs, scripts and data here, once
+library(shiny)
+library(DT)
 require(intensiv)
 require(highcharter)
 
