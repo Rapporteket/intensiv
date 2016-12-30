@@ -97,8 +97,8 @@ readmission72hours <-  function() {
                    row.names = NULL,
                    stringsAsFactors = FALSE)
   t1 <- t1[order(-t1$Andel), ]
-  w1 <- DT::datatable(t1, options = list(dom='t', ordering=FALSE,
-                                         paging = FALSE, rownames = FALSE))
+  w1 <- DT::datatable(t1, rownames = FALSE,
+                      options = list(dom='t', ordering=FALSE, paging=FALSE))
   tableObj = list(t1=t1, w1=w1)
   
   list(plotObj=h1, tableObj=tableObj)
