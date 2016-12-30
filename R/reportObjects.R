@@ -74,16 +74,20 @@ readmission72hours <-  function() {
                                  {point.N}<br/>')) %>%
     hc_exporting(enabled = TRUE)
   
-  # add global ratio, later then...
-#   h1 <- hc_add_series(h1, name = paste0("Hele landet (", sprintf('%.1f',
-#                                                                  AndelHele),
-#                                         " %), N=", N),
-#                       data = rep(AndelHele, length(GrNavnSort)),
-#                       type = "line",
-#                       color = farger[2],
-#                       marker = list(enabled=FALSE),
-#                       enableMouseTracking = FALSE
-#   )
+  # add global ratio
+  AggTot <- AndelerGrVarData$AggTot
+  N <- AndelerGrVarData$N$Hoved
+  obs <- length(AndelerGrVarData$Ngr$Hoved)
+  h1 <- hc_add_series(h1,
+                      name = paste0("Hele landet (",
+                                    sprintf('%.1f', AggTot),
+                                        " %), N=", N),
+                      data = rep(AggTot, obs),
+                      type = "line",
+                      color = farger[2],
+                      marker = list(enabled=FALSE),
+                      enableMouseTracking = FALSE
+  )
   
   ## table, data frame needed for download, widget for pres
   t1 <- data.frame(Enhet=names(AndelerGrVarData$Ngr$Hoved),
