@@ -56,11 +56,12 @@ readmission72hours <-  function() {
   names(ds) <- NULL
   
   h1 <- highcharter::highchart() %>%
+    hc_chart(height=800) %>%
     hc_title(text = AndelerGrVarData$tittel) %>%
     hc_subtitle(text = AndelerGrVarData$utvalgTxt) %>%
     hc_xAxis(categories=names(AndelerGrVarData$Ngr$Hoved),
              # show every category
-             #labels=list(step=1),
+             labels=list(step=1),
              reversed = FALSE) %>%
     hc_yAxis(title = list(text=AndelerGrVarData$xAkseTxt),
              min = -0.01,
