@@ -35,15 +35,6 @@ shinyServer(function(input, output) {
     return(out$tableObj$w1)
   })
   
-#   output$andelerGrVarTable <- DT::renderDataTable(DT::datatable({
-#     out <- serverModuleFigAndelerGrVar()
-#     out$tableObj
-#   }, 
-#   rownames = FALSE,
-#   options = list(processing = FALSE,
-#                  paging = FALSE,
-#                  searching = FALSE,
-#                  order = list())))
   
   output$downloadData <- downloadHandler(
     filename = "test.csv",
