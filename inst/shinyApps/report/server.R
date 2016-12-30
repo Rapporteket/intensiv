@@ -49,7 +49,7 @@ shinyServer(function(input, output) {
     filename = "test.csv",
     content = function(file) {
       out <- serverModuleFigAndelerGrVar()
-      write.table(out$tableObj$t1, file)
+      write.table(out$tableObj$t1, file, row.names = FALSE)
     }
   )
   
