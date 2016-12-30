@@ -85,14 +85,15 @@ readmission72hours <-  function() {
 #                       enableMouseTracking = FALSE
 #   )
   
-  ## table
+  ## table, data frame needed for download, widget for pres
   t1 <- data.frame(Enhet=names(AndelerGrVarData$Ngr$Hoved),
                    Andel=as.vector(AndelerGrVarData$AggVerdier$Hoved),
                    N = as.vector(AndelerGrVarData$Ngr$Hoved),
                    stringsAsFactors = FALSE)
   t1 <- t1[order(-t1$Andel), ]
-  t1 <- DT::datatable(t1, options = list(dom='t', ordering=FALSE,
+  w1 <- DT::datatable(t1, options = list(dom='t', ordering=FALSE,
                                          paging = FALSE))
+  tableObj = list(t1, w1)
   
-  list(plotObj=h1, tableObj=t1)
+  list(plotObj=h1, tableObj=tableObj)
 }
