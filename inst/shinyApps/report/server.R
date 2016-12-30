@@ -28,14 +28,20 @@ shinyServer(function(input, output) {
     return(out$plotObj)
   })
   
-  output$andelerGrVarTable <- DT::renderDataTable(DT::datatable({
+  output$andelerGrVarTable <- DT::renderDataTable({
     out <- serverModuleFigAndelerGrVar()
-    out$tableObj
-  }, 
-  rownames = FALSE,
-  options = list(processing = FALSE,
-                 paging = FALSE,
-                 searching = FALSE)))
+    return(out$tableObj)
+  })
+  
+#   output$andelerGrVarTable <- DT::renderDataTable(DT::datatable({
+#     out <- serverModuleFigAndelerGrVar()
+#     out$tableObj
+#   }, 
+#   rownames = FALSE,
+#   options = list(processing = FALSE,
+#                  paging = FALSE,
+#                  searching = FALSE,
+#                  order = list())))
   
   output$downloadData <- downloadHandler(
     filename = "test.csv",
