@@ -31,7 +31,9 @@ shinyUI(
              tabPanel("GjsnGrVar",
                       sidebarLayout(
                         sidebarPanel(
-                          uiInputModule("gjsnGrVar")
+                          uiInputModule("gjsnGrVar"),
+                          downloadButton("downloadDataGjsnGrVar",
+                                         label = "Last ned data")
                         ),
                         mainPanel(tabsetPanel(
                           tabPanel("Figur",
