@@ -20,9 +20,9 @@ serverModule <- function(input, output, session) {
     })
   }
   
-  if (sessionName == "figAndeler") {
+  if (sessionName == "gjsnGrVar") {
     plotObj <- reactive({
-      emptyHighchart(Tittel = "Test2")
+      gjsnGrVar()
     })
   }
   
