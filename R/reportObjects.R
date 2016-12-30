@@ -89,10 +89,11 @@ readmission72hours <-  function() {
   t1 <- data.frame(Enhet=names(AndelerGrVarData$Ngr$Hoved),
                    Andel=as.vector(AndelerGrVarData$AggVerdier$Hoved),
                    N = as.vector(AndelerGrVarData$Ngr$Hoved),
+                   row.names = NULL,
                    stringsAsFactors = FALSE)
   t1 <- t1[order(-t1$Andel), ]
   w1 <- DT::datatable(t1, options = list(dom='t', ordering=FALSE,
-                                         paging = FALSE))
+                                         paging = FALSE, rownames = FALSE))
   tableObj = list(t1=t1, w1=w1)
   
   list(plotObj=h1, tableObj=tableObj)
