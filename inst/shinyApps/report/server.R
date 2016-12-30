@@ -32,7 +32,7 @@ shinyServer(function(input, output) {
   
   output$andelerGrVarTable <- DT::renderDataTable({
     out <- serverModuleFigAndelerGrVar()
-    return(out$tableObj)
+    return(out$tableObj$w1)
   })
   
 #   output$andelerGrVarTable <- DT::renderDataTable(DT::datatable({
@@ -49,7 +49,7 @@ shinyServer(function(input, output) {
     filename = "test.csv",
     content = function(file) {
       out <- serverModuleFigAndelerGrVar()
-      write.table(out$tableObj, file)
+      write.table(out$tableObj$t1, file)
     }
   )
   
