@@ -86,7 +86,7 @@ readmission72hours <-  function() {
 #   )
   
   ## table
-  t1 <- data.frame(Enhet=as.character(names(AndelerGrVarData$Ngr$Hoved)),
+  t1 <- data.frame(Enhet=names(AndelerGrVarData$Ngr$Hoved),
                    Andel=as.vector(AndelerGrVarData$AggVerdier$Hoved),
                    N = as.vector(AndelerGrVarData$Ngr$Hoved),
                    stringsAsFactors = FALSE)
