@@ -28,17 +28,17 @@ shinyUI(
                         ))
                       )
              ),
-             tabPanel("Andeler",
+             tabPanel("GjsnGrVar",
                       sidebarLayout(
                         sidebarPanel(
-                          uiInputModule("figAndeler")
+                          uiInputModule("figGjsnGrVar")
                         ),
                         mainPanel(tabsetPanel(
                           tabPanel("Figur",
-                                   highchartOutput("andelerPlot")
+                                   highchartOutput("gjsnGrVarPlot")
                           ),
                           tabPanel("Data",
-                                   DT::dataTableOutput("andelerTable")
+                                   DT::dataTableOutput("gjsnGrVarTable")
                           )
                         ))
                       )
