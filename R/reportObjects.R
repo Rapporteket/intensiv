@@ -59,7 +59,8 @@ readmission72hours <-  function() {
     hc_title(text = AndelerGrVarData$tittel) %>%
     hc_subtitle(text = AndelerGrVarData$utvalgTxt) %>%
     hc_xAxis(categories=names(AndelerGrVarData$Ngr$Hoved),
-             labels=list(step=1),
+             # show every category
+             #labels=list(step=1),
              reversed = FALSE) %>%
     hc_yAxis(title = list(text=AndelerGrVarData$xAkseTxt),
              min = -0.01,
