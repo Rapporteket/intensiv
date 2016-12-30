@@ -46,7 +46,7 @@ readmission72hours <-  function() {
   ## hc
   # get actual color from name...
   figProps <- rapbase::figtype(fargepalett=AndelerGrVarData$fargepalett)
-  farger <- figProps$UtFarger
+  farger <- figProps$farger
   
   # to use extra data in tooltips, make a data series from data frame
   df <- data.frame(y = as.vector(AndelerGrVarData$AggVerdier$Hoved),
@@ -118,7 +118,7 @@ gjsnGrVar <- function() {
   
   # get actual color from name...
   figProps <- rapbase::figtype(fargepalett=GjsnGrVarData$fargepalett)
-  farger <- figProps$UtFarger
+  farger <- figProps$farger
   
   # make data series
   df <- data.frame(y = GjsnGrVarData$AggVerdier$Hoved,
@@ -179,7 +179,7 @@ gjsnGrVar <- function() {
                       marker = list(enabled=FALSE),
                       enableMouseTracking = FALSE)
   
-  #h1 <- hc_exporting(h1, enabled = TRUE)
+  h1 <- hc_exporting(h1, enabled = TRUE)
   #htmlwidgets::saveWidget(h1, "~/tmp/FromRShiny.html", selfcontained = FALSE)
   
   # make table objects
