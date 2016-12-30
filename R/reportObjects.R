@@ -169,7 +169,7 @@ gjsnGrVar <- function() {
   h1 <- hc_add_series(h1,
                       name = paste0(GjsnGrVarData$tittel, ", alle: ",
                                     sprintf('%.1f', GjsnGrVarData$KImaal),
-                                    ", N: ", N, ", KI: ",
+                                    ", N: ", GjsnGrVarData$N$Hoved, ", KI: ",
                                     sprintf('%.1f', GjsnGrVarData$AggVerdier$KIHele[1]),
                                     " - ",
                                     sprintf('%.1f', GjsnGrVarData$AggVerdier$KIHele[2])),
