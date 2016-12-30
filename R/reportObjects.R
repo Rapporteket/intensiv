@@ -111,7 +111,7 @@ readmission72hours <-  function() {
 #' 
 #' @export
 
-GjsnGrVar <- function() {
+gjsnGrVar <- function() {
   
   #get data
   data("GjsnGrVarData")
