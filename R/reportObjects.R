@@ -105,30 +105,43 @@ readmission72hours <-  function() {
 }
 
 
+#' Provider of report objects
+#' 
+#' Provide report object GjsnGrVar
+#' 
+#' @export
+
 GjsnGrVar <- function() {
   
   #get data
   data("GjsnGrVarData")
   
+  # get actual color from name...
+  figProps <- rapbase::figtype(fargepalett=GjsnGrVarData$fargepalett)
+  farger <- figProps$UtFarger
+  
   # make data series
-  df <- data.frame(y = Midt,
-                   N = Ngrtxt,
+  df <- data.frame(y = GjsnGrVarData$AggVerdier$Hoved,
+                   N = as.vector(GjsnGrVarData$Ngr$Hoved),
                    stringsAsFactors = FALSE)
   ds <- rlist::list.parse(df)
   names(ds) <- NULL
   
   h1 <- highcharter::highchart() %>%
-    hc_title(text = paste(tittel, "med 95% konfidensintervall")) %>%
-    hc_subtitle(text = utvalgTxt) %>%
-    hc_xAxis(categories = as.character(GrNavnSort),
+    hc_chart(height=800) %>%
+    hc_title(text = GjsnGrVarData$tittel) %>%
+    hc_subtitle(text = GjsnGrVarData$utvalgTxt) %>%
+    hc_xAxis(categories=names(GjsnGrVarData$Ngr$Hoved),
+             # show every category
+             labels=list(step=1),
              reversed = FALSE) %>%
-    hc_yAxis(title = list(text=xaksetxt),
+    hc_yAxis(title = list(text=GjsnGrVarData$xAkseTxt),
              min = -0.01,
              startOnTick = FALSE,
-             plotBands = list(from=KIHele[1],
-                              to=KIHele[2],
+             plotBands = list(from=GjsnGrVarData$AggVerdier$KIHele[1],
+                              to=GjsnGrVarData$AggVerdier$KIHele[2],
                               color=farger[4])) %>%
-    hc_add_series(name = deltittel,
+    hc_add_series(name = GjsnGrVarData$xAkseTxt,
                   data = ds,
                   type = "bar",
                   color = farger[3],
@@ -139,8 +152,8 @@ GjsnGrVar <- function() {
   
   
   # add groups ci
-  df <- data.frame(low = KIned,
-                   high = KIopp,
+  df <- data.frame(low = as.vector(GjsnGrVarData$AggVerdier$KIned),
+                   high = as.vector(GjsnGrVarData$AggVerdier$KIopp),
                    stringsAsFactors = FALSE)
   ds <- rlist::list.parse(df)
   names(ds) <- NULL
@@ -152,19 +165,22 @@ GjsnGrVar <- function() {
                       tooltip = list(pointFormat='<b>KI:</b> {point.low:.1f} - {point.high:.1f} <br/>'))
   
   # add global score, ci as band defined i yAxis above
-  h1 <- hc_add_series(h1, name = paste0(tittel, ", alle: ",
-                                        sprintf('%.1f',MidtHele),
-                                        ", N: ", N, ", KI: ",
-                                        sprintf('%.1f', KIHele[1]), " - ",
-                                        sprintf('%.1f', KIHele[2])),
-                      data = rep(MidtHele, length(GrNavnSort)),
+  obs <- length(GjsnGrVarData$Ngr$Hoved)
+  h1 <- hc_add_series(h1,
+                      name = paste0(GjsnGrVarData$tittel, ", alle: ",
+                                    sprintf('%.1f', GjsnGrVarData$KImaal),
+                                    ", N: ", N, ", KI: ",
+                                    sprintf('%.1f', GjsnGrVarData$AggVerdier$KIHele[1]),
+                                    " - ",
+                                    sprintf('%.1f', GjsnGrVarData$AggVerdier$KIHele[2])),
+                      data = rep(GjsnGrVarData$KImaal, obs),
                       type = "line",
                       color = farger[2],
                       marker = list(enabled=FALSE),
                       enableMouseTracking = FALSE)
   
-  h1 <- hc_exporting(h1, enabled = TRUE)
+  #h1 <- hc_exporting(h1, enabled = TRUE)
   #htmlwidgets::saveWidget(h1, "~/tmp/FromRShiny.html", selfcontained = FALSE)
   
-  return(h1)
+  list(plotObj=h1)
 }
