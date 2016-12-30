@@ -182,5 +182,20 @@ gjsnGrVar <- function() {
   #h1 <- hc_exporting(h1, enabled = TRUE)
   #htmlwidgets::saveWidget(h1, "~/tmp/FromRShiny.html", selfcontained = FALSE)
   
-  list(plotObj=h1)
+  # make table objects
+  t1 <- data.frame(Enhet=names(GjsnGrVarData$Ngr$Hoved),
+                   Verdi=as.vector(GjsnGrVarData$AggVerdier$Hoved),
+                   N = as.vector(GjsnGrVarData$Ngr$Hoved),
+                   KIned = as.vector(GjsnGrVarData$AggVerdier$KIned),
+                   KIopp = as.vector(GjsnGrVarData$AggVerdier$KIopp),
+                   row.names = NULL,
+                   stringsAsFactors = FALSE)
+  t1 <- t1[order(t1$Verdi), ]
+  
+  w1 <- DT::datatable(t1, rownames = FALSE,
+                      options = list(dom='t', ordering=FALSE, paging=FALSE))
+  
+  tableObj <- list(t1=t1, w1=w1)
+  
+  list(plotObj=h1, tableObj=tableObj)
 }
