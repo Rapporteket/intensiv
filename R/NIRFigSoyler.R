@@ -4,19 +4,11 @@
 #' varierer noe for ulike datatyper, dvs. den kan vise både fordelingsfigur, AggVerdier eller sentralmål for 
 #' gitt grupperingsvariabel, ...
 #' 
-#' #' Figurtypen som genereres er avhengig av valgtVar. Argumentet \emph{valgtVar} har følgende valgmuligheter:
-#'    \itemize{
-#'     \item alder: Pasientens alders 
-#'     \item SMR: Standardisert mortalitetsratio (Gir annen figurtype)
-#'     \item liggetid: Liggetid 
-#'     \item Nas: Skår for sykepleieraktiviteter. (Nursing Activities Score). Per døgn.
-#'     \item NEMS: Skår for ressursbruk per opphold. (Nine Equivalents of Nursing Manpower Use Score)
-#'     \item NEMS24: NEMS-skår per døgn. 
-#'     \item respiratortid: Tid tilbrakt i respirator
-#'     \item SAPSII: Skår for alvorlighetsgrad av sykdom.  (Simplified Acute Physiology Score II)
-#'    }
+#' Detajer: Her bør man liste opp hvilke variable funksjonen benytter.
+#'
 #' @inheritParams NIRAndeler
 #' @inheritParams NIRAndelerGrVar
+#' @inheritParams NIRGjsnGrVar
 #' @param valgtMaal 'Med' = median. Alt annet gir gjennomsnitt 
 #' @param AggVerdier Liste med AggVerdier i hver kategori (aldersgruppe, sykehus, ...). 
 #'                AggVerdier$Hoved er enten andelene for hele utvalget i hver kategori eller f.eks. egen enhet
@@ -27,6 +19,8 @@
 #' @param smltxt Tekststreng som angir hva vi evt. sammenlikner med. Benyttes også til å angi 
 #' 					gruppenavnet (i f.eks. tekstetikett) hvis det er gjort utvalg på f.eks. en sykehustype.
 #' @param N Totalantall angitt i N$Hoved og N$Rest
+#' @param Ngr Antall i hver gruppe
+#' @param KImaal Kvalitetsindikatormål
 #' @param retn Horisontale eller Vertikale søyler ('H', 'V')
 #' @param yAkseTxt Tekst på y-aksen
 #' @param utvalgTxt Tekst som angir hvilke utvalg som er gjort
@@ -38,8 +32,6 @@
 #' @param hovedgrTxt Angivelse av hovedgruppe, eks. eget sykehus
 #' @param fargepalett 'BlaaOff' 
 #' @param xAkseTxt tekst på x-aksen
-#'
-#' Detajer: Her bør man liste opp hvilke variable funksjonen benytter.
 #'
 #' @return Søylediagram med gjennomsnitt/median av valgt variabel for hvert sykehus
 #'

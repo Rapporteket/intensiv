@@ -34,8 +34,7 @@ NIRFigAndelTid <- function(RegData, valgtVar, datoFra='2011-01-01', datoTil='300
   }
   
   
-  RegData$Aar <- 1900 + strptime(RegData$Innleggelsestidspunkt, format="%Y")$year
-  RegData$Variabel <- 0
+  #RegData$Variabel <- 0
   
   
   #Når bare skal sammenlikne med sykehusgruppe eller region, eller ikke sammenlikne, 
