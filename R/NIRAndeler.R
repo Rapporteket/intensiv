@@ -72,7 +72,7 @@
 #' @export
 #'
 
-NIRAndeler  <- function(RegData, valgtVar, datoFra='2011-01-01', datoTil='3000-12-31', 
+NIRAndeler  <- function(RegData, valgtVar, datoFra='2011-01-01', datoTil='3000-12-31', aar=0, 
                         minald=0, maxald=130, erMann='',InnMaate='', dodInt='',outfile='', grType=99,  
                         preprosess=1, hentData=0, reshID, enhetsUtvalg=1, lagFig=1)	
       
@@ -96,7 +96,8 @@ NIRAndeler  <- function(RegData, valgtVar, datoFra='2011-01-01', datoTil='3000-1
             RegData <- NIRVarSpes$RegData
       
       
-      NIRUtvalg <- NIRUtvalgEnh(RegData=RegData, datoFra=datoFra, datoTil=datoTil, minald=minald, maxald=maxald, 
+      NIRUtvalg <- NIRUtvalgEnh(RegData=RegData, datoFra=datoFra, datoTil=datoTil, aar=aar, 
+                                minald=minald, maxald=maxald, 
                                 overfPas=overfPas, erMann=erMann, InnMaate=InnMaate, dodInt=dodInt, 
                                 reshID=reshID, enhetsUtvalg=enhetsUtvalg)
       RegData <- NIRUtvalg$RegData

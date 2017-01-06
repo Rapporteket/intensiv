@@ -7,8 +7,9 @@
 #'
 #' @export
 
-NIRUtvalgEnh <- function(RegData, datoFra, datoTil, minald=0, maxald=130, erMann='', InnMaate='', 
-                         grType=99, enhetsUtvalg=0, reshID=0, overfPas=99, dodInt='', fargepalett='BlaaOff')    
+NIRUtvalgEnh <- function(RegData, datoFra=0, datoTil=0, minald=0, maxald=130, erMann='', InnMaate='', 
+                         aar=0, grType=99, enhetsUtvalg=0, reshID=0, overfPas=99, dodInt='', 
+                         fargepalett='BlaaOff')    
 {
       
       # Definer intersect-operator
@@ -34,13 +35,17 @@ NIRUtvalgEnh <- function(RegData, datoFra, datoTil, minald=0, maxald=130, erMann
       
       
       Ninn <- dim(RegData)[1]
-      indAld <- which(RegData$Alder >= minald & RegData$Alder <= maxald)
-      indDato <- which(RegData$InnDato >= as.POSIXlt(datoFra) & RegData$InnDato <= as.POSIXlt(datoTil))
-      indKj <- if (erMann %in% 0:1) {which(RegData$erMann == erMann)} else {indKj <- 1:Ninn}
+      indAld <- if(minald>0 | maxald<130) {
+			which(RegData$Alder >= minald & RegData$Alder <= maxald)} else {1:Ninn}
+      indDato <- if(datoFra!=0 | datoTil!=0) {
+			which(RegData$InnDato >= as.POSIXlt(datoFra) & RegData$InnDato <= as.POSIXlt(datoTil))
+				} else {1:Ninn}
+      indAar <- if (aar[1] != '') {which(RegData$Aar %in% aar)} else {1:Ninn}
+      indKj <- if (erMann %in% 0:1) {which(RegData$erMann == erMann)} else {1:Ninn}
       indInnMaate <- if (InnMaate %in% c(0,6,8)) {which(RegData$InnMaate == InnMaate)
-      } else {indInnMaateUt <- 1:Ninn}
+            } else {1:Ninn}
       indDod <- if (dodInt %in% 0:1) {which(as.numeric(RegData$DischargedIntensiveStatus)==dodInt)
-      } else {indDod <- 1:Ninn}
+            } else {1:Ninn}
       indGrType <- if (grType %in% 1:3) {switch(grType,
                                                 '1' = which(RegData$ShType %in% 1:2),
                                                 '2' = which(RegData$ShType %in% 1:2),
@@ -60,11 +65,15 @@ NIRUtvalgEnh <- function(RegData, datoFra, datoTil, minald=0, maxald=130, erMann
       N <- dim(RegData)[1]	#N=0 gir feilmelding
       grTypetextstreng <- c('lokal/sentral', 'lokal/sentral', 'region')				
       if (grType %in% 1:3) {grTypeTxt <- grTypetextstreng[grType]} else {grTypeTxt <- 'alle '}
+   
       
       
-      utvalgTxt <- c(paste0(
+      
+      utvalgTxt <- c(
+            if(datoFra!=0 | datoTil!=0) {paste0(
             'Registreringsperiode: ', if (N>0) {min(RegData$InnDato, na.rm=T)} else {datoFra}, 
-            ' til ', if (N>0) {max(RegData$InnDato, na.rm=T)} else {datoTil}),
+            ' til ', if (N>0) {max(RegData$InnDato, na.rm=T)} else {datoTil})} else {NULL},
+            if (aar[1] > 0){paste0('Innleggelsesår: ', paste0(aar, collapse=', '))},
             if ((minald>0) | (maxald<130)) {
                   paste0('Pasienter fra ', if (N>0) {sprintf('%.1f',min(RegData$Alder, na.rm=T))} else {minald}, 
                         ' til ', if (N>0) {sprintf('%.1f',max(RegData$Alder, na.rm=T))} else {maxald}, ' år')},

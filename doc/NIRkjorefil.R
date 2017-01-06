@@ -42,6 +42,8 @@ RegData <- NIRdata
 #RegData <- NIRdata[sample(1:dim(NIRdata)[1],10000),]
 #save(RegData, file='C:/Registre/NIR/data/NIRdata10000.Rdata')
 load("C:/Registre/NIR/data/NIRdata10000.Rdata") #RegData
+load("C:/Registre/NIR/data/OffDataKvalInd.Rdata") #RegData
+RegData <- OffDataKvalInd
 
 #-------------------------------------- Parametre ----------------------------------------------------
 library(intensiv)
@@ -108,6 +110,9 @@ outfile <- '' #paste0(valgtVar, 'GrVar.png')
 NIRAndelerGrVar(RegData=RegData, valgtVar=valgtVar, minald=minald, maxald=maxald,  datoFra=datoFra, 
                 datoTil=datoTil, InnMaate=InnMaate, dodInt=dodInt,erMann=erMann, outfile=outfile, 
                 grType=grType, grVar=grVar, hentData=0, preprosess=1, lagFig=1)
+
+NIRAndelerGrVar(RegData=OffDataKvalInd, valgtVar='reinn', aar=2015, erMann='', outfile='', 
+               grVar='ShNavn', hentData=0, preprosess=0, lagFig=1)
 
 #NIRFigAndelerGrVar(RegData=RegData, valgtVar=valgtVar, minald=minald, maxald=maxald,  datoFra=datoFra, 
 #	datoTil=datoTil, InnMaate=InnMaate, dodInt=dodInt,erMann=erMann, outfile=outfile, 

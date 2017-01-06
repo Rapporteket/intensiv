@@ -48,14 +48,14 @@ NIRFigSoyler <- function(RegData, AggVerdier, AggTot=0, Ngr, tittel='mangler tit
 #Hvis for få observasjoner..
 
 if (dim(RegData)[1] < 10 | 
-		(length(which(RegData$ReshId == reshID))<5 & enhetsUtvalg %in% c(1,3))) {
+		(grVar=='' & length(which(RegData$ReshId == reshID))<5 & enhetsUtvalg %in% c(1,3))) {
 	#-----------Figur---------------------------------------
       FigTypUt <-figtype(outfile)  #FigTypUt <- figtype(outfile)
 	farger <- FigTypUt$farger
 	plot.new()
 	title(tittel)	#, line=-6)
 	legend('topleft',utvalgTxt, bty='n', cex=0.9, text.col=farger[1])
-	if (valgtMaal=='Med' & valgtVar=='SMR') {tekst <- 'Ugyldig parameterkombinasjon'
+	if (valgtMaal=='Med' & grepl('SMR', tittel)) {tekst <- 'Ugyldig parameterkombinasjon'   #valgtVar=='SMR'
 		} else {tekst <- 'For få registreringer'}
 	text(0.5, 0.6, tekst, cex=1.2)
 	if ( outfile != '') {dev.off()}

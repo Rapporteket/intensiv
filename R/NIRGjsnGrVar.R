@@ -29,9 +29,10 @@
 #' @export
 
 
-NIRGjsnGrVar <- function(RegData, valgtVar, valgtMaal='Gjsn', minald=0, maxald=130, datoFra='2011-01-01', 
-			datoTil='3000-01-01', grType=99, InnMaate=99, dodInt='', erMann='', preprosess=1, hentData=0, 
-			grVar='ShNavn', medKI=1, lagFig=1, outfile) {
+NIRGjsnGrVar <- function(RegData, valgtVar, preprosess=1, hentData=0, valgtMaal='Gjsn', 
+                  minald=0, maxald=130, datoFra='2011-01-01', datoTil='3000-01-01', aar=0,
+                  grType=99, InnMaate=99, dodInt='', erMann='', grVar='ShNavn', medKI=1, 
+                  lagFig=1, outfile) {
       
       
 if (hentData == 1) {		
@@ -48,7 +49,7 @@ NIRVarSpes <- NIRVarTilrettelegg(RegData=RegData, valgtVar=valgtVar)
 RegData <- NIRVarSpes$RegData
 
 #------- Gjøre utvalg
-NIRUtvalg <- NIRUtvalgEnh(RegData=RegData, datoFra=datoFra, datoTil=datoTil, minald=minald, maxald=maxald, 
+NIRUtvalg <- NIRUtvalgEnh(RegData=RegData, datoFra=datoFra, datoTil=datoTil, aar=aar, minald=minald, maxald=maxald, 
                           overfPas=overfPas, erMann=erMann, InnMaate=InnMaate, dodInt=dodInt, 
 						  grType=grType)
 RegData <- NIRUtvalg$RegData

@@ -27,8 +27,8 @@
 #' @return Søylediagram med AggVerdier av valgt variabel for hvert sykehus
 #'
 #' @export
-NIRAndelerGrVar <- function(RegData, valgtVar, minald=0, maxald=130, datoFra='2011-01-01', datoTil='3000-01-01', 
-                            grType=99, grVar='', InnMaate=99, dodInt='', erMann='', hentData=0, preprosess=1, 
+NIRAndelerGrVar <- function(RegData, valgtVar, datoFra=0, datoTil=0, aar=0,
+                            minald=0, maxald=130, grType=99, grVar='', InnMaate=99, dodInt='', erMann='', hentData=0, preprosess=1, 
                             outfile='', lagFig=1) 
       
                               
@@ -49,7 +49,7 @@ NIRAndelerGrVar <- function(RegData, valgtVar, minald=0, maxald=130, datoFra='20
       
       #------- Gjøre utvalg
       NIRUtvalg <- NIRUtvalgEnh(RegData=RegData, datoFra=datoFra, datoTil=datoTil, minald=minald, maxald=maxald, 
-                                overfPas=overfPas, erMann=erMann, InnMaate=InnMaate, dodInt=dodInt, grType=grType)
+                                aar=aar, overfPas=overfPas, erMann=erMann, InnMaate=InnMaate, dodInt=dodInt, grType=grType)
       RegData <- NIRUtvalg$RegData
       utvalgTxt <- NIRUtvalg$utvalgTxt
       
