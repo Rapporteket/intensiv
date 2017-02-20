@@ -1,4 +1,4 @@
-#' Søylediagram som viser AggVerdier av ulike variabler
+#' Funksjon som beregner aggregerte verdier (andeler) for ulike variabler/variabelkombinasjoner
 #'
 #' Denne funksjonen beregner AggVerdier (fordeling) av valgt variabel
 #' filtrert på de utvalg som er gjort. Kan trenge funksjonerne:

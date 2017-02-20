@@ -42,8 +42,12 @@ RegData <- NIRdata
 #RegData <- NIRdata[sample(1:dim(NIRdata)[1],10000),]
 #save(RegData, file='C:/Registre/NIR/data/NIRdata10000.Rdata')
 load("C:/Registre/NIR/data/NIRdata10000.Rdata") #RegData
-load("C:/Registre/NIR/data/OffDataKvalInd.Rdata") #RegData
+load("C:/Registre/NIR/data/OffDataKvalInd.Rdata") #RegData generert etter preprosess.
 RegData <- OffDataKvalInd
+#---------------------------------Lage KvalIndData-------------
+
+
+
 
 #-------------------------------------- Parametre ----------------------------------------------------
 library(intensiv)

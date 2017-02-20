@@ -1,0 +1,109 @@
+---
+title: "Offentlige data - når er data anonyme nok"
+author: "Lena Ringstad Olsen"
+date: "20 februar 2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(intensiv)
+
+```
+
+
+Vi ønsker å vurdere når data er "anonyme nok" til å kunne være offentlig tilgjengelig. En vanlig tommelfingerregel er å sensurere grupper hvor en unik kombinasjon av gitte variable er mindre enn 5. 
+
+
+Helseregisterloven:
+*Anonyme opplysninger: Opplysninger der navn, fødselsnummer og andre personentydige kjenntegn er fjernet, slik at opplysningene ikke lenger kan nyttes til en enkeltperson.*
+
+
+## Momenter
+###Bakveisidentifikasjon
+* Svært få eller ingen registre har 100% dekningsgrad. Det betyr at hvis man vet at en person i en viss alder har vært innlagt på et gitt sykehus og man i resultatene bare finner en person, likevel ikke kan være sikker på at opplysningene tilhører den aktuelle personen.
+
+
+* Det er ikke alltid sensur av grupper mindre enn 5 vil fortelle mindre om hendelsene/pasientene enn enkeltobservasjoner: Hvis vi har 10 registreringer og alle har samme resultat for en gitt variabel får vi akkurat samme informasjon om hver enkelt hendelse som hvis vi har bare en. 
+
+### Representerer opplysningene informasjon om personen?** * Kan vi for hver enkelt indikator gjør ei vurdering av om dette representerer en "reell" opplysning om personen. F.eks. hvis man ut fra dataene som presenteres har grunn til å anta at en person som man vet har vært innlagt med hjerneslag ikke fikk trombolyse innen 40 minutter. Kan vi påstå at dette ikke er ei sensitiv opplysning?
+
+
+
+```{r Eksempel, echo=FALSE}
+Sykehus = c('Sykheim', 'Friskheim','Kosheim')
+Aar <- 2013:2016
+Kjonn <- c('Mann','Kvinne')
+Var1 <- 1:200
+antReg <- 200
+EksData <- cbind(
+      Sykehus = sample(Sykehus, size=antReg, replace=T),
+      Aar = sample(Aar, size=antReg, replace=T),
+      Kjonn = sample(Kjonn, size=antReg, replace=T),
+      Var1 = sample(Var1, size=antReg, replace=T),
+      Var2 = round(runif(antReg),2)
+)
+
+ftable(data.frame(EksData[,c('Sykehus', 'Kjonn','Aar')]), row.names = F)
+
+```
+
+
+Intensivregisteret har definert tre kvalitetsindikatorer fra registeret:  
+* Reinnleggelse til intensiv innen 72 timar. Mål:  <4%  
+* Median respiratortid. Mål: <2,5døgn (Tilsvarer:Andel med respiratortid < 2,5 døgn. Mål: 50%)  
+* Standardisert mortalitetsratio (SMR). Mål: < 0,7  
+
+
+```{r EksFraIntensiv, echo=FALSE}
+load("C:/Registre/NIR/data/NIRdata10000.Rdata") #RegData
+RegData <- NIRPreprosess(RegData=RegData)	#, reshID=reshID)
+
+KvalIndVarBer <- c('ReAdmitted', 'Overf', 'SAPSII', 'SMR', 'respiratortid')
+KvalIndGrVar <- c('Aar', 'erMann', 'ShNavn', 'ShType')
+
+#Kvalitetsindikatorer, definisjon av datasett
+#Reinnleggelser
+             #Andel reinnlagte kun hvor dette er registrert. #Ja=1, nei=2, ukjent=9
+             RegData$ReinnNevner <- 0
+             RegData$ReinnNevner[which(RegData$ReAdmitted %in% 1:2)] <- 1
+             RegData$ReinnTeller <- 0
+             RegData$ReinnTeller[which(RegData$ReAdmitted == 1)] <- 1
+             tittel <-'Reinnleggelser på intensivavd. (innen 72t)'
+             sortAvtagendeReinn <- FALSE      #Rekkefølge
+             KImaalReinn <- 4  #Reinnleggelser <4% 
+
+KvalIndVarUt <- c('ReinnNevner', 'ReinnTeller')
+OffDataKvalInd <- RegData[which(RegData$Aar >= 2012) ,c(KvalIndGrVar,KvalIndVarUt)]
+#gr <- c(0, 18, 40,60,80,150)		
+#OffDataKvalInd$AldersGr <- cut(RegData$Alder, breaks=gr, include.lowest=TRUE, right=FALSE)	
+#levels(OffDataKvalInd$AldersGr) <- c('0-17','18-39','40-59','60-79','80+')
+
+test <- ftable(OffDataKvalInd[,c('erMann', 'ShNavn', 'Aar')])
+test2 <- aggregate(OffDataKvalInd$ShNavn, by=OffDataKvalInd[ ,c('ShNavn', 'Aar', 'erMann')], FUN=length)
+#test <- ftable(OffDataKvalInd[,c('AldersGr','erMann', 'ShNavn', 'Aar')])
+#Andel som mistes hvis tar bort <5: 
+ind_faa <- which(test2$x<5) #which(test<5 & test>0)
+#Andel av dataene som fjernes:
+#AndelBort <- length(ind_faa)/dim(OffDataKvalInd)[1]*100
+#ident_ut <-test2[ind_faa,c('ShNavn', 'Aar', 'erMann')]
+#ind_NA <- 0
+#for (k in 1:length(ind_faa)) {      #Tar ut de med mindre enn 5 obs.
+#      ind_NA <- c(which(OffDataKvalInd$ShNavn == ident_ut$ShNavn[k] &
+#                              OffDataKvalInd$Aar == ident_ut$Aar[k] &
+#                              OffDataKvalInd$erMann == ident_ut$erMann[k]),
+#                  ind_NA)
+#}
+#OffDataKvalInd[ind_NA,KvalInd] <- NA
+#Lagre beregnede data
+#if (lagreKvalIndData==1) {
+#      save(OffDataKvalInd, file='data/OffDataKvalInd.RData')
+#}
+
+```
+
+## Eksempel fra intensivregisteret
+```{r EksempelIntensiv}
+
+OffDataKvalInd[1:15,]
+```

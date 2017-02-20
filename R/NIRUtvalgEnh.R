@@ -52,11 +52,6 @@ NIRUtvalgEnh <- function(RegData, datoFra=0, datoTil=0, minald=0, maxald=130, er
                                                 '3' = which(RegData$ShType == 3))
       } else {indGrType <- 1:Ninn}
       
-      #indGrType <- if (grType %in% c('lokal','sentral','region')) {switch(grType,
-      #                    lokal = which(RegData$grType == 1),
-      #                    sentral = which(RegData$grType == 2),
-      #                    region = which(RegData$grType == 3))
-      #            } else {indGrType <- 1:Ninn}
       indMed <- indAld %i% indDato %i% indKj %i% indInnMaate %i% indDod %i% indGrType
       
       RegData <- RegData[indMed,]
@@ -129,6 +124,6 @@ NIRUtvalgEnh <- function(RegData, datoFra=0, datoTil=0, minald=0, maxald=130, er
       
       
       UtData <- list(RegData=RegData, utvalgTxt=utvalgTxt, fargepalett=fargepalett, ind=ind, 
-                     medSml=medSml, hovedgrTxt=hovedgrTxt,smltxt=smltxt, grTypeTxt=grTypeTxt)
+                     medSml=medSml, hovedgrTxt=hovedgrTxt,smltxt=smltxt) #, grTypeTxt=grTypeTxt)
       return(invisible(UtData)) 
 }

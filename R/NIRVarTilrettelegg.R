@@ -29,17 +29,7 @@
 #'	   \item 8: Egen region mot resten [NB: Mangler pt. variabel for region]
 #'    	}							
 #'    				
-#' @param RegData En dataramme med alle nødvendige variabler fra registeret
-#' @param valgtVar Hvilken variabel som skal visualiseres. Se \strong{Details} for oversikt.
-#' @param reshID Parameter følger fra innlogging helseregister.no og angir
-#'    hvilken enhet i spesialisthelsetjenesten brukeren tilhører
-#' @param enhetsUtvalg Gjør gruppeutvalg med eller uten sammenlikning. Se \strong{Details} for oversikt.
-#' @param preprosess Preprosesser data
-#'                 FALSE: Nei
-#'                 TRUE: Ja (Standard)
-#' @param hentData Gjør spørring mot database
-#'                 0: Nei, RegData gis som input til funksjonen (Standard)
-#'                 1: Ja
+#' @inheritParams NIRFigAndeler
 #'				
 #' @return Definisjon av valgt variabel.
 #'
@@ -151,7 +141,7 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar=''){
        grtxt <- c('Elektivt','Akutt med.', 'Akutt kir.') 
        xAkseTxt <- 'Innkomstmåte'
  }
- if (valgtVar == 'liggetid') { #Andeler #AndelerGrVar #GjsnGrVar
+ if (valgtVar == 'liggetid') { #Andeler #GjsnGrVar
             #Liggetid og respiratortid bare >0
             RegData$Variabel  <- as.numeric(RegData$liggetid)
             RegData <- RegData[which(RegData$Variabel>0), ] 
