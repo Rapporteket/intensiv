@@ -19,14 +19,18 @@ Helseregisterloven:
 *Anonyme opplysninger: Opplysninger der navn, fødselsnummer og andre personentydige kjenntegn er fjernet, slik at opplysningene ikke lenger kan nyttes til en enkeltperson.*
 
 
-## Momenter
+
 ###Bakveisidentifikasjon
 * Svært få eller ingen registre har 100% dekningsgrad. Det betyr at hvis man vet at en person i en viss alder har vært innlagt på et gitt sykehus og man i resultatene bare finner en person, likevel ikke kan være sikker på at opplysningene tilhører den aktuelle personen.
 
 
 * Det er ikke alltid sensur av grupper mindre enn 5 vil fortelle mindre om hendelsene/pasientene enn enkeltobservasjoner: Hvis vi har 10 registreringer og alle har samme resultat for en gitt variabel får vi akkurat samme informasjon om hver enkelt hendelse som hvis vi har bare en. 
 
-### Representerer opplysningene informasjon om personen?** * Kan vi for hver enkelt indikator gjør ei vurdering av om dette representerer en "reell" opplysning om personen. F.eks. hvis man ut fra dataene som presenteres har grunn til å anta at en person som man vet har vært innlagt med hjerneslag ikke fikk trombolyse innen 40 minutter. Kan vi påstå at dette ikke er ei sensitiv opplysning?
+* Kan vi for våre tilfeller (resultater fra kvalitetsregistre, evt. avgrensning til kvalitetsindikatorer for sykehus) definere hva som er naturlig at folk vet om en person.
+*Innleggelsesdato, alder, sykehus, kjønn, ...?*
+
+### Representerer opplysningene informasjon om personen?
+* Kan vi for hver enkelt indikator gjør ei vurdering av om dette representerer en "reell" opplysning om personen. F.eks. hvis man ut fra dataene som presenteres har grunn til å anta at en person som man vet har vært innlagt med hjerneslag ikke fikk trombolyse innen 40 minutter. Kan vi påstå at dette ikke er ei sensitiv opplysning?
 
 
 
@@ -44,23 +48,29 @@ EksData <- cbind(
       Var2 = round(runif(antReg),2)
 )
 
-ftable(data.frame(EksData[,c('Sykehus', 'Kjonn','Aar')]), row.names = F)
+#ftable(data.frame(EksData[,c('Sykehus', 'Kjonn','Aar')]), row.names = F)
 
 ```
 
+## Intensivregisteret
 
 Intensivregisteret har definert tre kvalitetsindikatorer fra registeret:  
 * Reinnleggelse til intensiv innen 72 timar. Mål:  <4%  
 * Median respiratortid. Mål: <2,5døgn (Tilsvarer:Andel med respiratortid < 2,5 døgn. Mål: 50%)  
 * Standardisert mortalitetsratio (SMR). Mål: < 0,7  
 
+Både reinnleggelse og respiratortid kan representeres som indikatorvariable. SMR er observert dødelighet (innen 30 dager) ift. estimert dødelighet (standardisert SAPSII-skår). Estimert dødelighet kan ikke representeres med en indikatorvariabel.
 
 ```{r EksFraIntensiv, echo=FALSE}
-load("C:/Registre/NIR/data/NIRdata10000.Rdata") #RegData
+rm(list=ls())
+#load("C:/Registre/NIR/data/NIRdata10000.Rdata") #RegData
+NIRdata <- read.table(file='C:/Registre/NIR/data/Main2016-11-28.csv', header=T, sep=';',encoding = 'UTF-8')
+RegData <- NIRdata
 RegData <- NIRPreprosess(RegData=RegData)	#, reshID=reshID)
 
 KvalIndVarBer <- c('ReAdmitted', 'Overf', 'SAPSII', 'SMR', 'respiratortid')
-KvalIndGrVar <- c('Aar', 'erMann', 'ShNavn', 'ShType')
+KvalIndGrVar <- c('ShNavn', 'Aar', 'erMann',  'ShType')
+'%i%' <- intersect
 
 #Kvalitetsindikatorer, definisjon av datasett
 #Reinnleggelser
@@ -72,8 +82,34 @@ KvalIndGrVar <- c('Aar', 'erMann', 'ShNavn', 'ShType')
              tittel <-'Reinnleggelser på intensivavd. (innen 72t)'
              sortAvtagendeReinn <- FALSE      #Rekkefølge
              KImaalReinn <- 4  #Reinnleggelser <4% 
+             
+#Respiratortid             
+            RegData$RespTidNevner  <- 0
+            RegData$RespTidNevner[which(as.numeric(RegData$respiratortid)>0)] <- 1 
+            RegData$RespTidTeller <- 0  
+            RegData$RespTidTeller[which(as.numeric(RegData$respiratortid)>2.5)] <- 1 
+            tittel <- 'Respiratortid'
+            KImaal <- 50 #Median respiratortid <2,5døgn, dvs. 50% av oppholdene under 2,5 døgn.
+            gr <- c(0, 1, 2, 3, 4, 5, 6, 7, 14, 1000)#c(0, exp(seq(0,log(30),length.out = 6)), 500),1)
+            RegData$VariabelGr <- cut(RegData$respiratortid, breaks=gr, include.lowest=TRUE, right=FALSE)  
+            xAkseTxt <- 'Respiratortid (døgn)'
+ 
+#SMR
+            #Tar ut reinnlagte på intensiv og overflyttede, samt de med SAPSII=0 (ikke scorede) 
+            #De under 18år tas ut i NIRutvalg
+            #(TransferredStatus: 1= ikke overført, 2= overført), 
+            #ReAdmitted: #1:Ja, 2:Nei, 3:Ukjent, -1:Ikke utfylt
+            indMed <- which(RegData$ReAdmitted==2) %i% which(RegData$Overf==1) %i% 
+                  which(as.numeric(RegData$SAPSII)>0) %i% which(as.numeric(RegData$Alder)>=18)
+            RegData$SMRNevner <- 0
+            RegData$SMRNevner[indMed] <- RegData$SMR[indMed] #Estimert dødelighet
+            RegData$Dod30 <- 0
+            RegData$SMRTeller[indMed] <- RegData$Dod30[indMed] #Observert dødelighet
+            #NB: Gjennomsnitt av teller deles på gjennomsnitt av nevner!!
+            xAkseTxt <- 'Observert / estimert dødelighet'
+            KImaal <- 0.7  #SMR <0.7 
 
-KvalIndVarUt <- c('ReinnNevner', 'ReinnTeller')
+KvalIndVarUt <- c('ReinnNevner', 'ReinnTeller', 'RespTidNevner','RespTidTeller', 'SMRNevner', 'SMRTeller')
 OffDataKvalInd <- RegData[which(RegData$Aar >= 2012) ,c(KvalIndGrVar,KvalIndVarUt)]
 #gr <- c(0, 18, 40,60,80,150)		
 #OffDataKvalInd$AldersGr <- cut(RegData$Alder, breaks=gr, include.lowest=TRUE, right=FALSE)	
@@ -84,6 +120,7 @@ test2 <- aggregate(OffDataKvalInd$ShNavn, by=OffDataKvalInd[ ,c('ShNavn', 'Aar',
 #test <- ftable(OffDataKvalInd[,c('AldersGr','erMann', 'ShNavn', 'Aar')])
 #Andel som mistes hvis tar bort <5: 
 ind_faa <- which(test2$x<5) #which(test<5 & test>0)
+#test2[ind_faa,]
 #Andel av dataene som fjernes:
 #AndelBort <- length(ind_faa)/dim(OffDataKvalInd)[1]*100
 #ident_ut <-test2[ind_faa,c('ShNavn', 'Aar', 'erMann')]
@@ -103,7 +140,9 @@ ind_faa <- which(test2$x<5) #which(test<5 & test>0)
 ```
 
 ## Eksempel fra intensivregisteret
+Intensivregisteret har `r dim(RegData)[1]` registreringer.
 ```{r EksempelIntensiv}
+test2[ind_faa,]
 
 OffDataKvalInd[1:15,]
 ```
