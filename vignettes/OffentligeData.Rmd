@@ -2,13 +2,14 @@
 title: "Offentlige data - når er data anonyme nok"
 author: "Lena Ringstad Olsen"
 date: "20 februar 2017"
-output: html_document
+output:
+  pdf_document: 
+    keep_tex: yes
+  html_document: default
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-library(intensiv)
-
 ```
 
 
@@ -20,7 +21,7 @@ Helseregisterloven:
 
 
 
-###Bakveisidentifikasjon
+## Bakveisidentifikasjon
 * Svært få eller ingen registre har 100% dekningsgrad. Det betyr at hvis man vet at en person i en viss alder har vært innlagt på et gitt sykehus og man i resultatene bare finner en person, likevel ikke kan være sikker på at opplysningene tilhører den aktuelle personen.
 
 
@@ -61,36 +62,42 @@ Intensivregisteret har definert tre kvalitetsindikatorer fra registeret:
 
 Både reinnleggelse og respiratortid kan representeres som indikatorvariable. SMR er observert dødelighet (innen 30 dager) ift. estimert dødelighet (standardisert SAPSII-skår). Estimert dødelighet kan ikke representeres med en indikatorvariabel.
 
+
 ```{r EksFraIntensiv, echo=FALSE}
 rm(list=ls())
-#load("C:/Registre/NIR/data/NIRdata10000.Rdata") #RegData
-NIRdata <- read.table(file='C:/Registre/NIR/data/Main2016-11-28.csv', header=T, sep=';',encoding = 'UTF-8')
-RegData <- NIRdata
-RegData <- NIRPreprosess(RegData=RegData)	#, reshID=reshID)
+library(intensiv)
 
-KvalIndVarBer <- c('ReAdmitted', 'Overf', 'SAPSII', 'SMR', 'respiratortid')
+#load("C:/Registre/NIR/data/NIRdata10000.Rdata") #RegData
+#NIRdata <- read.table(file='C:/Registre/NIR/data/Main2016-11-28.csv', header=T, sep=';',encoding = 'UTF-8')
+#RegData <- NIRdata
+#load("C:/Registre/NIR/data/NIRdata2016-11-28.Rdata") #RegData
+load("C:/Registre/NIR/data/NIRdata10000.Rdata") #RegData
+RegData <- NIRPreprosess(RegData=RegData)	#, reshID=reshID)
+RegData <- RegData[which(RegData$Aar >= 2012), ]
+
+KvalIndVar <- c('ReAdmitted', 'Overf', 'SAPSII', 'SMR', 'respiratortid')
 KvalIndGrVar <- c('ShNavn', 'Aar', 'erMann',  'ShType')
 '%i%' <- intersect
 
 #Kvalitetsindikatorer, definisjon av datasett
 #Reinnleggelser
              #Andel reinnlagte kun hvor dette er registrert. #Ja=1, nei=2, ukjent=9
-             RegData$ReinnNevner <- 0
-             RegData$ReinnNevner[which(RegData$ReAdmitted %in% 1:2)] <- 1
-             RegData$ReinnTeller <- 0
-             RegData$ReinnTeller[which(RegData$ReAdmitted == 1)] <- 1
+             RegData$ReinnN <- 0
+             RegData$ReinnN[which(RegData$ReAdmitted %in% 1:2)] <- 1
+             RegData$ReinnT <- 0
+             RegData$ReinnT[which(RegData$ReAdmitted == 1)] <- 1
              tittel <-'Reinnleggelser på intensivavd. (innen 72t)'
              sortAvtagendeReinn <- FALSE      #Rekkefølge
              KImaalReinn <- 4  #Reinnleggelser <4% 
              
 #Respiratortid             
-            RegData$RespTidNevner  <- 0
-            RegData$RespTidNevner[which(as.numeric(RegData$respiratortid)>0)] <- 1 
-            RegData$RespTidTeller <- 0  
-            RegData$RespTidTeller[which(as.numeric(RegData$respiratortid)>2.5)] <- 1 
+            RegData$RespN  <- 0
+            RegData$RespN[which(as.numeric(RegData$respiratortid)>0)] <- 1 
+            RegData$RespT <- 0  
+            RegData$RespT[which(as.numeric(RegData$respiratortid)>2.5)] <- 1 
             tittel <- 'Respiratortid'
             KImaal <- 50 #Median respiratortid <2,5døgn, dvs. 50% av oppholdene under 2,5 døgn.
-            gr <- c(0, 1, 2, 3, 4, 5, 6, 7, 14, 1000)#c(0, exp(seq(0,log(30),length.out = 6)), 500),1)
+            gr <- c(0,1, 2, 3, 4, 5, 6, 7, 14, 0100)#c(0, exp(seq(0,log(30),length.out = 6)), 500),1)
             RegData$VariabelGr <- cut(RegData$respiratortid, breaks=gr, include.lowest=TRUE, right=FALSE)  
             xAkseTxt <- 'Respiratortid (døgn)'
  
@@ -101,48 +108,74 @@ KvalIndGrVar <- c('ShNavn', 'Aar', 'erMann',  'ShType')
             #ReAdmitted: #1:Ja, 2:Nei, 3:Ukjent, -1:Ikke utfylt
             indMed <- which(RegData$ReAdmitted==2) %i% which(RegData$Overf==1) %i% 
                   which(as.numeric(RegData$SAPSII)>0) %i% which(as.numeric(RegData$Alder)>=18)
-            RegData$SMRNevner <- 0
-            RegData$SMRNevner[indMed] <- RegData$SMR[indMed] #Estimert dødelighet
-            RegData$Dod30 <- 0
-            RegData$SMRTeller[indMed] <- RegData$Dod30[indMed] #Observert dødelighet
+            RegData$SMRN <- 0
+            RegData$SMRN[indMed] <- RegData$SMR[indMed] #Estimert dødelighet
+            RegData$SMRT <- 0
+            RegData$SMRT[indMed] <- RegData$Dod30[indMed] #Observert dødelighet
             #NB: Gjennomsnitt av teller deles på gjennomsnitt av nevner!!
             xAkseTxt <- 'Observert / estimert dødelighet'
             KImaal <- 0.7  #SMR <0.7 
 
-KvalIndVarUt <- c('ReinnNevner', 'ReinnTeller', 'RespTidNevner','RespTidTeller', 'SMRNevner', 'SMRTeller')
-OffDataKvalInd <- RegData[which(RegData$Aar >= 2012) ,c(KvalIndGrVar,KvalIndVarUt)]
+KvalIndVarUt <- c('ReinnN', 'ReinnT', 'RespN','RespT', 'SMRN', 'SMRT')
+OffDataKvalInd <- RegData[ ,c(KvalIndGrVar,KvalIndVarUt)]
 #gr <- c(0, 18, 40,60,80,150)		
 #OffDataKvalInd$AldersGr <- cut(RegData$Alder, breaks=gr, include.lowest=TRUE, right=FALSE)	
 #levels(OffDataKvalInd$AldersGr) <- c('0-17','18-39','40-59','60-79','80+')
 
-test <- ftable(OffDataKvalInd[,c('erMann', 'ShNavn', 'Aar')])
-test2 <- aggregate(OffDataKvalInd$ShNavn, by=OffDataKvalInd[ ,c('ShNavn', 'Aar', 'erMann')], FUN=length)
-#test <- ftable(OffDataKvalInd[,c('AldersGr','erMann', 'ShNavn', 'Aar')])
-#Andel som mistes hvis tar bort <5: 
-ind_faa <- which(test2$x<5) #which(test<5 & test>0)
-#test2[ind_faa,]
-#Andel av dataene som fjernes:
-#AndelBort <- length(ind_faa)/dim(OffDataKvalInd)[1]*100
-#ident_ut <-test2[ind_faa,c('ShNavn', 'Aar', 'erMann')]
-#ind_NA <- 0
-#for (k in 1:length(ind_faa)) {      #Tar ut de med mindre enn 5 obs.
-#      ind_NA <- c(which(OffDataKvalInd$ShNavn == ident_ut$ShNavn[k] &
-#                              OffDataKvalInd$Aar == ident_ut$Aar[k] &
-#                              OffDataKvalInd$erMann == ident_ut$erMann[k]),
-#                  ind_NA)
-#}
-#OffDataKvalInd[ind_NA,KvalInd] <- NA
-#Lagre beregnede data
-#if (lagreKvalIndData==1) {
-#      save(OffDataKvalInd, file='data/OffDataKvalInd.RData')
-#}
-
 ```
 
-## Eksempel fra intensivregisteret
+## Eksempler fra intensivregisteret
+
 Intensivregisteret har `r dim(RegData)[1]` registreringer.
-```{r EksempelIntensiv}
-test2[ind_faa,]
+Det første eksemplet viser hvor raskt vi får grupper under 5 registereringer selv for et register med så mange registreringer. Vi har gruppert på sykehus, innleggelsesår og kjønn. Med 5 år, to kjønn og `r length(table(RegData$ShNavn))` enheter har vi et gjennomsnitt på `r round(dim(RegData)[1]/(5*2*length(table(RegData$ShNavn))))` observasjoner i hver gruppe. Likevel får vi noen grupper med under 5 observasjoner. For registre med færre observasjoner eller hvis vi ønsker å inkludere flere (grupperings-/utvalgs)variable, vil antall registreringer som må fjernes raskt øke.
 
-OffDataKvalInd[1:15,]
+*Skal også ha med eksempler på hvor stor andel av totalantallet som må fjernes*
+
+
+
+### Eksempler på hvor stor andel av totalantallet som mistes ved maskering
+
+```{r AndelFrafall, echo=FALSE}
+KvalIndGrVar <- c('erMann', 'ShNavn', 'Aar')
+Ngrense <- 5
+
+AndelMistet <- function (RegData, KvalIndGrVar, Ngrense){}                  
+
+#Tre grupperingsvariable: År, enhet, kjønn:
+test <- ftable(RegData[ ,KvalIndGrVar])
+test2 <- aggregate(RegData$ShNavn, by=RegData[ ,KvalIndGrVar], FUN=length)
+
+#Andel som mistes hvis tar bort <5: 
+ind_faa <- which(test2$x<Ngrense) 
+AndelBort <- length(ind_faa)/dim(OffDataKvalInd)[1]*100
+
+#ident_ut <-test2[ind_faa,KvalIndGrVar]
+
+ind_NA <- 0
+
+
 ```
+Vi ser på N<5 og N<3
+
+Gruppering                                | N<5 | N<3
+------------------------------------------|------|------|
+Enhet, år, kjønn:                         | `r round(AndelBort,1)` | 8|
+Enhet, år, kjønn, 10-årige aldersgrupper  | 3 |5|
+Enhet, måned, kjønn                       | 2|4|
+Enhet, år, kjønn, aldersgr., innmåte, død | 1|2|
+
+Med alder menes 10-årigealdersgrupper p
+
+
+
+
+```{r Eks1, echo=FALSE}
+print(test2[ind_faa,], row.names=FALSE)
+```
+Hvis en kvalitetsindikator er en andel, trenger man bare en indikatorvariabel for telleren og nevneren i kvalitetsindikatoren, samt variable man ønsker å gruppere på eller å gjøre utvalg for.
+I noen tilfeller er ikke kvalitetsindikatoren en andel og man da trenge selve målevariabelen for indikatoren. Nedenfor er et eksempel med data fra tre kvalitetsindikatorer fra intensivregisteret. ("xxT" betyr teller og 'xxN' nevner.) Dette er "hendelsesentydige" data og i slike tilfeller er det vanlig å fjerne alle rader hvor det er mindre enn 5 observasjoner. (Som vist i forrige eksempel). 
+
+```{r Eks2,echo=FALSE} 
+print(OffDataKvalInd[1:15,], row.names=FALSE)
+```
+
