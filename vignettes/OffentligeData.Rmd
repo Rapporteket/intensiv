@@ -132,6 +132,8 @@ Det første eksemplet viser hvor raskt vi får grupper under 5 registereringer s
 
 ### Eksempler på hvor stor andel av totalantallet som mistes ved maskering
 
+**Beskriv hvor mange enheter, gjennomsnittlig antall registreringer per enhet og år.**
+
 *Reidar: Hvilke utvalg/skala er det aktuelt å se på? *
 
 ```{r AndelFrafall, echo=FALSE}
