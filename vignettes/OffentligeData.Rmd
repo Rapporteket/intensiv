@@ -129,49 +129,59 @@ OffDataKvalInd <- RegData[ ,c(KvalIndGrVar,KvalIndVarUt)]
 Intensivregisteret har `r dim(RegData)[1]` registreringer.
 Det første eksemplet viser hvor raskt vi får grupper under 5 registereringer selv for et register med så mange registreringer. Vi har gruppert på sykehus, innleggelsesår og kjønn. Med 5 år, to kjønn og `r length(table(RegData$ShNavn))` enheter har vi et gjennomsnitt på `r round(dim(RegData)[1]/(5*2*length(table(RegData$ShNavn))))` observasjoner i hver gruppe. Likevel får vi noen grupper med under 5 observasjoner. For registre med færre observasjoner eller hvis vi ønsker å inkludere flere (grupperings-/utvalgs)variable, vil antall registreringer som må fjernes raskt øke.
 
-*Skal også ha med eksempler på hvor stor andel av totalantallet som må fjernes*
-
-
 
 ### Eksempler på hvor stor andel av totalantallet som mistes ved maskering
 
+*Reidar: Hvilke utvalg/skala er det aktuelt å se på? *
+
 ```{r AndelFrafall, echo=FALSE}
-KvalIndGrVar <- c('erMann', 'ShNavn', 'Aar')
-Ngrense <- 5
 
-AndelMistet <- function (RegData, KvalIndGrVar, Ngrense){}                  
+RegData$Mnd <- paste(RegData$InnDato$year-100,RegData$InnDato$mon+1, sep='.')
+RegData$Aldersgr <- cut(RegData$Alder, breaks=c(seq(0, 80, 20),150), include.lowest=TRUE, right=FALSE)	
 
-#Tre grupperingsvariable: År, enhet, kjønn:
+AndelMistet <- function (RegData, KvalIndGrVar, Ngrense) {                
+# Funksjon som beregner hvor stor andel av totalen vi mister ved sensurering av data.
+
 test <- ftable(RegData[ ,KvalIndGrVar])
 test2 <- aggregate(RegData$ShNavn, by=RegData[ ,KvalIndGrVar], FUN=length)
 
-#Andel som mistes hvis tar bort <5: 
+#Andel som mistes hvis tar bort <Ngrense: 
 ind_faa <- which(test2$x<Ngrense) 
-AndelBort <- length(ind_faa)/dim(OffDataKvalInd)[1]*100
+AndelBort <- round(length(ind_faa)/dim(RegData)[1]*100,1)
+ 
+return(sprintf("%.1f", AndelBort))
+}
 
-#ident_ut <-test2[ind_faa,KvalIndGrVar]
+KvalIndGrVar <- c('erMann', 'ShNavn', 'Aar', 'Aldersgr','InnMaate','DischargedIntensiveStatus')
 
-ind_NA <- 0
+#Enhet, år, kjønn:
+N5_3var <- AndelMistet(RegData = RegData, KvalIndGrVar = KvalIndGrVar[1:3], Ngrense = 5)
+N3_3var <- AndelMistet(RegData = RegData, KvalIndGrVar = KvalIndGrVar[1:3], Ngrense = 3)
+#Enhet, år, kjønn, 20-årige aldersgrupper:
+N5_4var <- AndelMistet(RegData = RegData, KvalIndGrVar = KvalIndGrVar[1:4], Ngrense = 5)
+N3_4var <- AndelMistet(RegData = RegData, KvalIndGrVar = KvalIndGrVar[1:4], Ngrense = 3)
+#Enhet, år, kjønn, aldersgr., innmåte, død:
+N5_6var <- AndelMistet(RegData = RegData, KvalIndGrVar = KvalIndGrVar, Ngrense = 5)
+N3_6var <- AndelMistet(RegData = RegData, KvalIndGrVar = KvalIndGrVar, Ngrense = 3)
+#Enhet, måned, kjønn:
+N5_Mnd2var <- AndelMistet(RegData = RegData[which(RegData$Aar=='2016'),], KvalIndGrVar = c('erMann', 'ShNavn', 'Mnd'), Ngrense = 5)
+N3_Mnd2var <- AndelMistet(RegData = RegData[which(RegData$Aar=='2016'),], KvalIndGrVar = c('erMann', 'ShNavn', 'Mnd'), Ngrense = 3)
 
 
 ```
 Vi ser på N<5 og N<3
 
-Gruppering                                | N<5 | N<3
-------------------------------------------|------|------|
-Enhet, år, kjønn:                         | `r round(AndelBort,1)` | 8|
-Enhet, år, kjønn, 10-årige aldersgrupper  | 3 |5|
-Enhet, måned, kjønn                       | 2|4|
-Enhet, år, kjønn, aldersgr., innmåte, død | 1|2|
+Gruppering                                | N<5           | N<3
+------------------------------------------|---------------|-----------  |
+Enhet, år, kjønn:                         | `r N5_3var`   |  `r N3_3var`|
+Enhet, år, kjønn, aldersgrupper           | `r N5_4var`   | `r N3_4var`|
+Enhet, år, kjønn, aldersgr., innmåte, død | `r N5_6var`   | `r N3_6var` |
+Enhet, måned, kjønn                       | `r N5_Mnd2var`| `r N3_Mnd2var` |
 
-Med alder menes 10-årigealdersgrupper p
-
-
+Aldersgruppene er 20-årige aldersgrupper.
 
 
-```{r Eks1, echo=FALSE}
-print(test2[ind_faa,], row.names=FALSE)
-```
+
 Hvis en kvalitetsindikator er en andel, trenger man bare en indikatorvariabel for telleren og nevneren i kvalitetsindikatoren, samt variable man ønsker å gruppere på eller å gjøre utvalg for.
 I noen tilfeller er ikke kvalitetsindikatoren en andel og man da trenge selve målevariabelen for indikatoren. Nedenfor er et eksempel med data fra tre kvalitetsindikatorer fra intensivregisteret. ("xxT" betyr teller og 'xxN' nevner.) Dette er "hendelsesentydige" data og i slike tilfeller er det vanlig å fjerne alle rader hvor det er mindre enn 5 observasjoner. (Som vist i forrige eksempel). 
 

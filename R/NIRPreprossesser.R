@@ -46,7 +46,9 @@ NIRPreprosess <- function(RegData=RegData, lagreKvalIndData=0)	#, reshID=reshID)
 	#RegData$InnDato <- strptime(RegData$DateAdmittedIntensive, format="%Y-%m-%d") # %H:%M:%S" )  #"%d.%m.%Y"	"%Y-%m-%d"
 	
 	# Nye variable:
-	RegData$Aar <- 1900 + strptime(RegData$Innleggelsestidspunkt, format="%Y")$year
+	RegData$Aar <- 1900 + RegData$InnDato$year #strptime(RegData$Innleggelsestidspunkt, format="%Y")$year
+	RegData$Mnd <- paste(RegData$InnDato$year-100,RegData$InnDato$mon+1, sep='.')
+	
 	#En "overlever": Person som er i live 30 dager etter innleggelse.
 	RegData$Dod30 <- 0
 	RegData$Dod30[which(difftime(as.Date(RegData$Morsdato, format="%Y-%m-%d %H:%M:%S"), 
