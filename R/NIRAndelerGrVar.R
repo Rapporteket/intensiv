@@ -16,7 +16,7 @@
 #'     \item innMaate: Hastegrad inn på intensiv (Elektivt, Akutt medisinsk, Akutt kirurgisk)
 #'		Dette valget viser en annen figurtype.
 #'     \item respStotte: Pasienter som har fått respiratorstøtte
-#'     \item reinn: Andel reinnlagte (kun hvor dette er registrert, dvs. fjerner ukjente)
+#'     \item reinn: Andel reinnlagte (fjerner ukjente) Kvalitetsindikator
 #'    }
 #' Funksjonen benytter funksjonene: NIRRegDataSQL, NIRPreprosess, NIRVarTilrettelegg, NIRUtvalgEnh
 #' og NIRFigSoyler
@@ -54,7 +54,8 @@ NIRAndelerGrVar <- function(RegData, valgtVar, datoFra=0, datoTil=0, aar=0,
       utvalgTxt <- NIRUtvalg$utvalgTxt
       
       
-      
+      #---------------Beregninger
+      # Variabelen Variabel er definert som indikatorvariabel for den valgte variabelen. 
       if (dim(RegData)[1] >= 0) {
             RegData <- RegData[which(RegData[ ,grVar] != ''),] #Tar ut registreringer uten grupperingsnavn
             RegData[ ,grVar] <- as.factor(RegData[ ,grVar])	#RegData$AvdID <- as.factor(RegData$AvdID)

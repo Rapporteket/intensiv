@@ -44,7 +44,15 @@ RegData <- NIRdata
 load("C:/Registre/NIR/data/NIRdata10000.Rdata") #RegData
 load("C:/Registre/NIR/data/OffDataKvalInd.Rdata") #RegData generert etter preprosess.
 RegData <- OffDataKvalInd
-#---------------------------------Lage KvalIndData-------------
+
+#-----------------------------------Datasett til kvalitetsindikatorer---------
+library(intensiv)
+valgtVar <- 'reinn'
+
+
+
+
+
 
 
 
@@ -199,5 +207,7 @@ for (valgtVar in c('alder', 'liggetid', 'respiratortid','NEMS' ,'SAPSII', 'SMR')
 Fordeling(RegData=RegData, valgtVar=valgtVar, minald=minald, maxald=maxald, grType=grType, 
           InnMaate=InnMaate, erMann=erMann, datoFra=datoFra, datoTil=datoTil, dodInt=dodInt, outfile=outfile) 
 #valgtVar in c('alder', 'liggetid', 'respiratortid', 'SAPSII', 'NEMS')) {
+
+
 
 

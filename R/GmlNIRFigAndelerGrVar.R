@@ -15,7 +15,7 @@
 #'     \item innMaate: Hastegrad inn på intensiv (Elektivt, Akutt medisinsk, Akutt kirurgisk)
 #'		Dette valget viser en annen figurtype.
 #'     \item respStotte: Pasienter som har fått respiratorstøtte
-#'     \item reinn: Andel reinnlagte (kun hvor dette er registrert, dvs. fjerner ukjente)
+#'     \item reinn: Andel reinnlagte (fjerner ukjente). Kvalitetsindikator
 #'    }
 #'
 #' @inheritParams NIRFigAndeler 

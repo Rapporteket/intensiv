@@ -18,7 +18,7 @@
 #'     \item Nas: Skår for sykepleieraktiviteter. (Nursing Activities Score). Per døgn.
 #'     \item NEMS: Skår for ressursbruk per opphold. (Nine Equivalents of Nursing Manpower Use Score)
 #'     \item NEMS24: NEMS-skår per døgn. 
-#'     \item respiratortid: Tid tilbrakt i respirator
+#'     \item respiratortid: Tid tilbrakt i respirator. Kvalitetsindikator
 #'     \item SAPSII: Skår for alvorlighetsgrad av sykdom.  (Simplified Acute Physiology Score II)
 #'    }
 #'
