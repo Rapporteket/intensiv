@@ -66,8 +66,7 @@ load('C:/Registre/NIR/data/RegData01reinn.RData')
 DataTilbake <- NIRAndelerGrVarOff(RegData=RegData, valgtVar=valgtVar, aar=aar, grType=grType, grVar='ShNavn', InnMaate=InnMaate, 
                                erMann=erMann, aldGr=aldGr, hentData=0, outfile='', lagFig=1) 
 
-DataTilbake <- NIRAndelerGrVarOff(RegData=RegData, grVar='ShNavn', valgtVar = 'reinn'
-                                  hentData=0, outfile='', lagFig=1) 
+DataTilbake <- NIRAndelerGrVarOff(RegData=RegData, hentData=0, outfile='', lagFig=1) 
 
 #-------------------------------------- Parametre ----------------------------------------------------
 library(intensiv)

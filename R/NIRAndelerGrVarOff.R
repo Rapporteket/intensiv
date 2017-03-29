@@ -30,7 +30,7 @@
 #' @return Søylediagram med AggVerdier av valgt variabel for hvert sykehus
 #'
 #' @export
-NIRAndelerGrVarOff <- function(RegData, valgtVar='reinn', aar=0, grType=99, grVar='', InnMaate=99, 
+NIRAndelerGrVarOff <- function(RegData, valgtVar='reinn', aar=0, grType=99, grVar='ShNavn', InnMaate=99, 
                                erMann='', aldGr=0, hentData=0, outfile='', lagFig=0)   
 {
       
