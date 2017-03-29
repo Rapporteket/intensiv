@@ -4,16 +4,24 @@
 \alias{NIRGjsnGrVar}
 \title{Søylediagram med gjennomsnitt/median for hver grupperingsenhet (sykehus, RHF, ...)}
 \usage{
-NIRGjsnGrVar(RegData, valgtVar, valgtMaal = "Gjsn", minald = 0,
-  maxald = 130, datoFra = "2011-01-01", datoTil = "3000-01-01",
-  grType = 99, InnMaate = 99, dodInt = "", erMann = "",
-  preprosess = 1, hentData = 0, grVar = "ShNavn", medKI = 1,
-  lagFig = 1, outfile)
+NIRGjsnGrVar(RegData, valgtVar, preprosess = 1, hentData = 0,
+  valgtMaal = "Gjsn", minald = 0, maxald = 130, datoFra = "2011-01-01",
+  datoTil = "3000-01-01", aar = 0, grType = 99, InnMaate = 99,
+  dodInt = "", erMann = "", grVar = "ShNavn", medKI = 1, lagFig = 1,
+  outfile)
 }
 \arguments{
 \item{RegData}{En dataramme med alle nødvendige variabler fra registeret}
 
 \item{valgtVar}{Hvilken variabel som skal visualiseres. Se \strong{Details} for oversikt.}
+
+\item{preprosess}{Preprosesser data
+FALSE: Nei
+TRUE: Ja (Standard)}
+
+\item{hentData}{Gjør spørring mot database
+0: Nei, RegData gis som input til funksjonen (Standard)
+1: Ja}
 
 \item{valgtMaal}{'Med' = median. Alt annet gir gjennomsnitt 
 
@@ -57,14 +65,6 @@ alle, standard (alle andre verdier)}
 0: Kvinner
 1: Menn}
 
-\item{preprosess}{Preprosesser data
-FALSE: Nei
-TRUE: Ja (Standard)}
-
-\item{hentData}{Gjør spørring mot database
-0: Nei, RegData gis som input til funksjonen (Standard)
-1: Ja}
-
 \item{outfile}{Navn på fil figuren skrives til. Standard: '' (Figur skrives
 til systemets standard utdataenhet (som regel skjerm))}
 }
@@ -79,4 +79,3 @@ Funksjonen er delvis skrevet for å kunne brukes til andre grupperingsvariable e
 \details{
 Detajer: Her bør man liste opp hvilke variable funksjonen benytter...
 }
-

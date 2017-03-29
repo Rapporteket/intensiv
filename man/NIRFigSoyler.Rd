@@ -5,8 +5,8 @@
 \title{Lager søylefigur}
 \usage{
 NIRFigSoyler(RegData, AggVerdier, AggTot = 0, Ngr,
-  tittel = "mangler tittel", smltxt, N, retn = "H", yAkseTxt = "",
-  utvalgTxt = "", grTypeTxt = "", soyletxt = "", grtxt, grtxt2,
+  tittel = "mangler tittel", smltxt = "", N, retn = "H", yAkseTxt = "",
+  utvalgTxt = "", grTypeTxt = "", soyletxt = "", grtxt, grtxt2 = "",
   hovedgrTxt = "", grVar = "", valgtMaal = "Andel", cexgr = 1,
   medSml = 0, fargepalett = "BlaaOff", xAkseTxt = "", medKI = 0,
   KImaal = NA, outfile = "")
@@ -41,7 +41,7 @@ gruppenavnet (i f.eks. tekstetikett) hvis det er gjort utvalg på f.eks. en syke
 
 \item{grtxt}{Navn på gruppene/kategoriene (Eks 40-50 år)}
 
-\item{grtxt2}{Evt. undertekst på kategoriene (Eks 28%)}
+\item{grtxt2}{Evt. undertekst på kategoriene (Eks 28pst)}
 
 \item{hovedgrTxt}{Angivelse av hovedgruppe, eks. eget sykehus}
 
@@ -71,4 +71,3 @@ gitt grupperingsvariabel, ...
 \details{
 Detajer: Her bør man liste opp hvilke variable funksjonen benytter.
 }
-

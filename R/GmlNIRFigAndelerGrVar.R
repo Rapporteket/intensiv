@@ -19,9 +19,6 @@
 #'    }
 #'
 #' @inheritParams NIRFigAndeler 
-
-
-#' @inheritParams NIRFigAndelerGrVar
 #' @param valgtVar Hvilken variabel som skal visualiseres
 #' @param grType Gjør gruppeutvalg for
 #'                 1 eller 2: lokal-/sentralsykehus

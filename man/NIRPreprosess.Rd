@@ -17,4 +17,3 @@ Denne funksjonen navner om variabler og beregner evt. nye.
 Funksjonen lager også et "offentlig" datasett som kan benyttes til beregning
 av kvalitetsindikatorer og som kan legges ved pakken
 }
-

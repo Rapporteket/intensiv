@@ -19,4 +19,3 @@ tableObj Table object
 \description{
 Provide report object fractions of readmittance within 72 hours
 }
-

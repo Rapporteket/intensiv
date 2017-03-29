@@ -45,4 +45,3 @@ UtData En liste bestående av det filtrerte datasettet, utvalgstekst for figur o
 \description{
 Funksjon som gjør utvalg av dataene, returnerer det filtrerte datasettet og utvalgsteksten.
 }
-

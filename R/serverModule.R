@@ -2,9 +2,9 @@
 #'
 #' nakkeStandard is the module server function for shiny Intensiv
 #'
-#' @param input
-#' @param output
-#' @param session
+#' @param input Aggregert informasjon inn
+#' @param output Figur ut
+#' @param session kjøring
 #' @return reportObjects list of objects returned from the module, typical
 #' plotObj and tableObj
 #' @export

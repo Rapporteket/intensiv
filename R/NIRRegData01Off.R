@@ -6,6 +6,8 @@
 #' 
 # Alternativt kan man lage et 01-datasett, men vi vil da trenge egen beregning for dette datasettet.
 # Enhet, RHF, sykehustype, kjønn, aldersgruppe, år, samt variable som inngår i kvalitetsindikatorene
+#' Funksjonen benytter funksjonene: NIRRegDataSQL, NIRPreprosess, NIRVarTilrettelegg, NIRUtvalgEnh
+#' og NIRFigSoyler
 #'
 #' Argumentet \emph{valgtVar} angir hvilken kvalitetsindikator har følgende valgmuligheter:
 #'    \itemize{
@@ -21,14 +23,12 @@
 #' @param tilleggsVar Variable som benyttes til filtrering eller gruppering av valgt variabel (valgtVar)
 #'  	Aktuelle valg: Aar, erMann, ShNavn, Mnd, 
 #' @inheritParams NIRAndeler
+#' @return Definisjon av valgt variabel.
+#'
+#' @export
 
-#' Funksjonen benytter funksjonene: NIRRegDataSQL, NIRPreprosess, NIRVarTilrettelegg, NIRUtvalgEnh
-#' og NIRFigSoyler
+RegData01Off <- function(RegData, valgtVar, datoFra='2016-01-01', tilleggsVar=0, hentData=0) {
 
-RegData01Off <- function(RegData, valgtVar, tilleggsVar=0, hentData=0) 
-
-tilleggsVar <- c('Aar', 'erMann', 'ShNavn', 'ShType') #, 'Alder')
-datoFra <- '2015-01-01'
 datoTil='3000-01-01'
 
       if (hentData == 1) {		
@@ -44,16 +44,18 @@ RegData <- NIRVarSpes$RegData
 #--------- Gjøre utvalg
 NIRUtvalg <- NIRUtvalgEnh(RegData=RegData, datoFra=datoFra, datoTil=datoTil)
 RegData <- NIRUtvalg$RegData[ ,c(tilleggsVar, 'Variabel')]
-#utvalgTxt <- NIRUtvalg$utvalgTxt
+utvalgTxt <- NIRUtvalg$utvalgTxt
 
 
 #---Aldersgrupper
 if ('Alder' %in% tilleggsVar) {
-      gr <- c(0, 18, 40,60,80,150)		
+      gr <- c(0, 18, 80,150)	#c(0, 18, 40,60,80,150) #	
+      grtxt <- c('0-17','18-79','80+') #c('0-17','18-39','40-59','60-79','80+') #
       RegData$AldersGr <- cut(RegData$Alder, breaks=gr, include.lowest=TRUE, right=FALSE)	
       levels(RegData$AldersGr) <- c('0-17','18-39','40-59','60-79','80+')
+      RegData <- RegData[ ,-which(names(RegData) == 'Alder')]
+      tilleggsVar <- replace(tilleggsVar, which(tilleggsVar == 'Alder'), 'AldersGr')
 }
-#RegData$lopenr <- 1:dim(RegData)[1]
 
 
 #---Fjerne registreringer hvor gruppering gir <5 observasjoner
@@ -61,29 +63,24 @@ Ngrense <- 5
 #test <- ftable(RegData[,tilleggsVar])
 test2 <- aggregate(RegData$ShNavn, by=RegData[ ,tilleggsVar], FUN=length)
 #Fjerne registreringer hvor gruppering gir <Ngrense: 
-ind_faa <- which(test2$x<Ngrense) #indekser i test2, ikke i datasettet
-AndelBortDum <- round(length(ind_faa)/dim(RegData)[1]*100,1)
+ind_faa <- which(test2$x < Ngrense) #indekser i test2, ikke i datasettet
+AndelBortDum <- round(sum(test2$x[ind_faa])/dim(RegData)[1]*100,1) 
 AndelBort <- sprintf("%.1f", AndelBortDum)
 ident_ut <-test2[ind_faa, tilleggsVar]
 
-#MULIG Å GJØRE PÅ DENNE MÅTEN...????
-#verdi <- c(-1,1:6)
-#txt <- c('None', 'SvaertBra', 'MegetBra', 'Bra', 'GanskeBra', 'Daarlig', 'IkkeRelevant')
-#mapping <- data.frame(verdi,txt)
-
-#PaarorData$Ny <- mapping$verdi[match(PaarorData$Gml, mapping$txt)]
-#PaarorData$Ny <- mapping$verdi[match(RegData[,tilleggsVar], ident_ut)]
+verdiGML <- ident_ut #matrise
+verdiNY <- 'sensurert'
+mapping <- data.frame(verdiGML,verdiNY)
+RegData$VarNY <- mapping$verdiNY[prodlim::row.match(RegData[, tilleggsVar], ident_ut)]
+RegData <- RegData[-which(RegData$VarNY == 'sensurert'),]
 
 
-#Må finne hvilke rader i RegData som skal ut.
-ind_NA <- 0
-for (k in 1:length(ind_faa)) {      #Tar ut de med mindre enn Ngrense obs.
-      ind_NA <- c(which(RegData$ShNavn == ident_ut$ShNavn[k] &
-                              RegData$Aar == ident_ut$Aar[k] &
-                              RegData$erMann == ident_ut$erMann[k]),
-                  ind_NA)
-}
-RegData[ind_NA,'Variabel'] <- NA
 #Lagre beregnede data
-filnavn <- paste0('data/RegData01', valgtVar, '.RData')
-      save(RegData, file=filnavn)
+#filnavn <- paste0('data/RegData01', valgtVar, '.RData')
+filnavn <- paste0('C:/Registre/NIR/data/RegData01', valgtVar, '.RData')
+
+tittel <- NIRVarSpes$tittel
+KImaal <- NIRVarSpes$KImaal #Mål for kvalitetsindikator
+utvalgsInfo <- c(paste0('Grunnlagsdata: ', utvalgTxt), paste0(AndelBort ,'% av totalen sensurert pga. grupper <5') )
+save(RegData, utvalgsInfo, tittel, KImaal, file=filnavn)
+}

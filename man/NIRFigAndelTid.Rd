@@ -72,4 +72,3 @@ Argumentet \emph{valgtVar} har følgende valgmuligheter:
     \item reinn: Andel reinnlagte (kun hvor dette er registrert, dvs. fjerner ukjente)
    }
 }
-

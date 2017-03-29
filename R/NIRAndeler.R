@@ -4,6 +4,9 @@
 #' filtrert på de utvalg som er gjort. Kan trenge funksjonerne:
 #' NIRUtvalgEnh (skal endre navn til NIRUtvalg når ferdig)
 #' NIRFigSoyler
+#' 
+#' Funksjonen benytter funksjonene: NIRRegDataSQL, NIRPreprosess, NIRVarTilrettelegg, NIRUtvalgEnh
+#' og NIRFigSoyler
 #'
 #' Argumentet \emph{valgtVar} har følgende valgmuligheter:
 #'    \itemize{
@@ -25,7 +28,7 @@
 #'     \item 5: Egen sykehustype mot resten av landet
 #'     \item 6: Egen enhet mot egen region [NB: Intensivregiisteret mangler pt. variabel for region]
 #'     \item 7: Egen region [NB: Mangler pt. variabel for region]
-#'	   \item 8: Egen region mot resten [NB: Mangler pt. variabel for region]
+#'	  \item 8: Egen region mot resten [NB: Mangler pt. variabel for region]
 #'    	}							
 #'    				
 #' @param RegData En dataramme med alle nødvendige variabler fra registeret
@@ -66,17 +69,14 @@
 #'                      3: regionsykehus
 #'                      99: alle (standard)
 #' @param lagFig Angir om figur skal lages eller ikke 0-ikke lag, 1-lag
-#'				
+#' 								
 #' @return Søylediagram (fordeling) av valgt variabel. De enkelte verdiene kan også sendes med.
 #'
 #' @export
-#'
 
-NIRAndeler  <- function(RegData, valgtVar, datoFra='2011-01-01', datoTil='3000-12-31', aar=0, 
+NIRAndeler  <- function(RegData, valgtVar, datoFra='2011-01-01', datoTil='3000-12-31', aar=0, overfPas=0,
                         minald=0, maxald=130, erMann='',InnMaate='', dodInt='',outfile='', grType=99,  
-                        preprosess=1, hentData=0, reshID, enhetsUtvalg=1, lagFig=1)	
-      
-{
+                        preprosess=1, hentData=0, reshID, enhetsUtvalg=1, lagFig=1)	{
       
       
       if (hentData == 1) {		
@@ -97,7 +97,7 @@ NIRAndeler  <- function(RegData, valgtVar, datoFra='2011-01-01', datoTil='3000-1
       
       
       NIRUtvalg <- NIRUtvalgEnh(RegData=RegData, datoFra=datoFra, datoTil=datoTil, aar=aar, 
-                                minald=minald, maxald=maxald, 
+                                minald=minald, maxald=maxald, overfPas = overfPas,
                                 overfPas=overfPas, erMann=erMann, InnMaate=InnMaate, dodInt=dodInt, 
                                 reshID=reshID, enhetsUtvalg=enhetsUtvalg)
       RegData <- NIRUtvalg$RegData

@@ -6,6 +6,13 @@
 \usage{
 serverModule(input, output, session)
 }
+\arguments{
+\item{input}{Aggregert informasjon inn}
+
+\item{output}{Figur ut}
+
+\item{session}{kjøring}
+}
 \value{
 reportObjects list of objects returned from the module, typical
 plotObj and tableObj
@@ -13,4 +20,3 @@ plotObj and tableObj
 \description{
 nakkeStandard is the module server function for shiny Intensiv
 }
-

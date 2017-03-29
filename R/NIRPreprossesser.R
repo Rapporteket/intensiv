@@ -48,6 +48,12 @@ NIRPreprosess <- function(RegData=RegData, lagreKvalIndData=0)	#, reshID=reshID)
 	# Nye variable:
 	RegData$Aar <- 1900 + RegData$InnDato$year #strptime(RegData$Innleggelsestidspunkt, format="%Y")$year
 	RegData$Mnd <- paste(RegData$InnDato$year-100,RegData$InnDato$mon+1, sep='.')
+	verdiGML <- 0:11
+	verdiNY <- c(1,1,1,2,2,2,3,3,3,4,4,4)
+	mapping <- data.frame(verdiGML,verdiNY)
+	RegData$Kvartal <- paste(RegData$InnDato$year-100, 
+	                         mapping$verdiNY[match(RegData$InnDato$mon, mapping$verdiGML)], sep='.')
+	
 	
 	#En "overlever": Person som er i live 30 dager etter innleggelse.
 	RegData$Dod30 <- 0
