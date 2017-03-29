@@ -149,7 +149,7 @@ test2 <- aggregate(RegData$ShNavn, by=RegData[ ,KvalIndGrVar], FUN=length)
 
 #Andel som mistes hvis tar bort <Ngrense: 
 ind_faa <- which(test2$x<Ngrense) 
-AndelBort <- round(length(ind_faa)/dim(RegData)[1]*100,1)
+AndelBort <- round(sum(test2$x)/dim(RegData)[1]*100,1)
  
 return(sprintf("%.1f", AndelBort))
 }

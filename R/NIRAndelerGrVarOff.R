@@ -30,12 +30,14 @@
 #' @return Søylediagram med AggVerdier av valgt variabel for hvert sykehus
 #'
 #' @export
-NIRAndelerGrVarOff <- function(RegData, valgtVar, aar=0, grType=99, grVar='', InnMaate=99, 
+NIRAndelerGrVarOff <- function(RegData, valgtVar='reinn', aar=0, grType=99, grVar='', InnMaate=99, 
                                erMann='', aldGr=0, hentData=0, outfile='', lagFig=0)   
 {
       
-      if (hentData == 1) {		
-            load('C:/Registre/NIR/data/RegData01reinn.RData') ##DENNE MÅ ENDRES NÅR VI FÅR DATA I PAKKEN!!
+      if (hentData == 1) {
+            ##DENNE MÅ ENDRES NÅR VI FÅR DATA I PAKKEN!!
+            filnavn <- paste0('C:/Registre/NIR/data/RegData01', valgtVar, '.RData')
+            load(filnavn) 
       }
       
       #------- Gjøre utvalg
@@ -94,22 +96,17 @@ NIRAndelerGrVarOff <- function(RegData, valgtVar, aar=0, grType=99, grVar='', In
                                retn='H', 
                                xAkseTxt=xAkseTxt, #NIRVarSpes$xAkseTxt,
                                KImaal = KImaal,
-                               grTypeTxt=NIRUtvalg$grTypeTxt,			 
-                               utvalgTxt=NIRUtvalg$utvalgTxt, 
+                               grTypeTxt='alle',			 
+                               utvalgTxt=utvalgTxt, 
                                fargepalett=NIRUtvalg$fargepalett)
-
-      #Lagre beregnede data
-      #if (hentData==1) {
-      #save(AndelerGrVarData, file='data/AndelerGrVarData.RData')
-      #}
       
-      #FigDataParam skal inn som enkeltparametre i funksjonskallet
+
       if (lagFig == 1) {
             cexgr <- 1-ifelse(AntGr>20, 0.25*AntGr/60, 0)
             NIRFigSoyler(RegData, AggVerdier=AggVerdier, AggTot=AndelHele, Ngr=Ngr,N=N, cexgr=cexgr, 
                          tittel=tittel, 
                          utvalgTxt=utvalgTxt, #yAkseTxt=yAkseTxt,
-                         grTypeTxt=NIRUtvalg$grTypeTxt,  fargepalett=NIRUtvalg$fargepalett, grtxt=GrNavnSort, 
+                         grTypeTxt=alle,  fargepalett=NIRUtvalg$fargepalett, grtxt=GrNavnSort, 
                          soyletxt=andeltxt,grVar=grVar, KImaal = KImaal, #medKI = medKI,
                          xAkseTxt=xAkseTxt, outfile=outfile)
       }
