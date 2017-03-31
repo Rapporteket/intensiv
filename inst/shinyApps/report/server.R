@@ -12,12 +12,12 @@ shinyServer(function(input, output) {
   # reuse server module, but with different namespaces and per report user
   # controls outside namespace (if any)
   serverModuleAndelerGrVar <-
-    callModule(serverModule, "andelerGrVar",
+    callModule(serverModule, "readmission72hours",
                session = getDefaultReactiveDomain()
     )
   
-  serverModuleGjsnGrVar <-
-    callModule(serverModule, "gjsnGrVar",
+  serverModuleReadmission72hours <-
+    callModule(serverModule, "readmission72hours",
                session = getDefaultReactiveDomain()
     )
   
@@ -25,21 +25,21 @@ shinyServer(function(input, output) {
   
   # return of report objects
   
-  output$andelerGrVarPlot <- renderHighchart({
-    out <- serverModuleAndelerGrVar()
+  output$readmission72hoursPlot <- renderHighchart({
+    out <- serverModuleReadmission72hours()
     return(out$plotObj)
   })
   
-  output$andelerGrVarTable <- DT::renderDataTable({
-    out <- serverModuleAndelerGrVar()
+  output$readmission72hoursTable <- DT::renderDataTable({
+    out <- serverModuleReadmission72hours()
     return(out$tableObj$w1)
   })
   
   
-  output$downloadDataAndelerGrVar <- downloadHandler(
+  output$downloadDataReadmission72hours <- downloadHandler(
     filename = "andelerGrVar.csv",
     content = function(file) {
-      out <- serverModuleAndelerGrVar()
+      out <- serverModuleReadmission72hours()
       write.table(out$tableObj$t1, file, row.names = FALSE)
     }
   )

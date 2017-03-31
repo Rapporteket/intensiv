@@ -14,16 +14,16 @@ shinyUI(
              tabPanel("Reinnleggelse innen 72 timer",
                       sidebarLayout(
                         sidebarPanel(
-                          uiInputModule("andelerGrVar"),
+                          uiInputModule("readmission72hours"),
                           downloadButton("downloadDataAndelerGrVar",
                                          label = "Last ned data")
                         ),
                         mainPanel(tabsetPanel(
                           tabPanel("Figur",
-                                   highchartOutput("andelerGrVarPlot")
+                                   highchartOutput("readmission72hoursPlot")
                           ),
                           tabPanel("Data",
-                                   DT::dataTableOutput("andelerGrVarTable")
+                                   DT::dataTableOutput("readmission72hoursTable")
                           )
                         ))
                       )
