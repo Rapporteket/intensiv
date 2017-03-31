@@ -67,7 +67,7 @@ readmission72hours <-  function() {
     hc_xAxis(categories=names(d$Ngr$Hoved),
              # show every category
              labels=list(step=1),
-             reversed = FALSE) %>%
+             reversed = TRUE) %>%
     hc_yAxis(title = list(text=d$xAkseTxt),
              min = -0.01,
              startOnTick = FALSE) %>%
