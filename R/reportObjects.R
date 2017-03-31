@@ -42,30 +42,33 @@ readmission72hours <-  function() {
   
   # get (static) data
   #data("AndelerGrVarData")
-  d <- NIRAndelerGrVarOff(RegData=RegData, grVar='ShNavn', hentData=0,
-                          outfile='', lagFig=0)
+  #data("RegData01reinn.RData")
+  d <- NIRAndelerGrVarOff(RegData = reinnData$RegData, grVar = 'ShNavn',
+                          hentData = 0, outfile = '', lagFig = 0,
+                          utvalgsInfo = reinnData$utvalgsInfo,
+                          tittel = reinnData$tittel, KImaal = reinnData$KImaal)
   
   ## hc
   # get actual color from name...
-  figProps <- rapbase::figtype(fargepalett=AndelerGrVarData$fargepalett)
+  figProps <- rapbase::figtype(fargepalett=d$fargepalett)
   farger <- figProps$farger
   
   # to use extra data in tooltips, make a data series from data frame
-  df <- data.frame(y = as.vector(AndelerGrVarData$AggVerdier$Hoved),
-                   N = as.vector(AndelerGrVarData$Ngr$Hoved),
+  df <- data.frame(y = as.vector(d$AggVerdier$Hoved),
+                   N = as.vector(d$Ngr$Hoved),
                    stringsAsFactors = FALSE)
   ds <- rlist::list.parse(df)
   names(ds) <- NULL
   
   h1 <- highcharter::highchart() %>%
     hc_chart(height=800) %>%
-    hc_title(text = AndelerGrVarData$tittel) %>%
-    hc_subtitle(text = AndelerGrVarData$utvalgTxt) %>%
-    hc_xAxis(categories=names(AndelerGrVarData$Ngr$Hoved),
+    hc_title(text = d$tittel) %>%
+    hc_subtitle(text = d$utvalgTxt) %>%
+    hc_xAxis(categories=names(d$Ngr$Hoved),
              # show every category
              labels=list(step=1),
              reversed = FALSE) %>%
-    hc_yAxis(title = list(text=AndelerGrVarData$xAkseTxt),
+    hc_yAxis(title = list(text=d$xAkseTxt),
              min = -0.01,
              startOnTick = FALSE) %>%
     hc_add_series(name = "Andeler",
@@ -78,9 +81,9 @@ readmission72hours <-  function() {
     hc_exporting(enabled = TRUE)
   
   # add global ratio
-  AggTot <- AndelerGrVarData$AggTot
-  N <- AndelerGrVarData$N$Hoved
-  obs <- length(AndelerGrVarData$Ngr$Hoved)
+  AggTot <- d$AggTot
+  N <- d$N$Hoved
+  obs <- length(d$Ngr$Hoved)
   h1 <- hc_add_series(h1,
                       name = paste0("Hele landet (",
                                     sprintf('%.1f', AggTot),
@@ -93,9 +96,9 @@ readmission72hours <-  function() {
   )
   
   ## table, data frame needed for download, widget for pres
-  t1 <- data.frame(Enhet=names(AndelerGrVarData$Ngr$Hoved),
-                   Andel=as.vector(AndelerGrVarData$AggVerdier$Hoved),
-                   N = as.vector(AndelerGrVarData$Ngr$Hoved),
+  t1 <- data.frame(Enhet=names(d$Ngr$Hoved),
+                   Andel=as.vector(d$AggVerdier$Hoved),
+                   N = as.vector(d$Ngr$Hoved),
                    row.names = NULL,
                    stringsAsFactors = FALSE)
   t1 <- t1[order(-t1$Andel), ]
