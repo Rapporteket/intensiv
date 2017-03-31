@@ -2,7 +2,7 @@
 # for 'Intensiv'
 
 require(highcharter)
-data("AndelerGrVarData")
+#data("AndelerGrVarData")
 
 # not implemented just yet, wait until sample data without preprocessing
 if (1==0) {
