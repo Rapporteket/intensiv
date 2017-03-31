@@ -42,6 +42,8 @@ readmission72hours <-  function() {
   
   # get (static) data
   #data("AndelerGrVarData")
+  d <- NIRAndelerGrVarOff(RegData=RegData, grVar='ShNavn', hentData=0,
+                          outfile='', lagFig=0)
   
   ## hc
   # get actual color from name...
