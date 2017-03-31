@@ -11,7 +11,7 @@ if (1==0) {
 
 shinyUI(
   navbarPage(title = "INTENSIVREGISTERET", theme = "bootstrap.css",
-             tabPanel("AndelerGrVar",
+             tabPanel("Reinnleggelse innen 72 timer",
                       sidebarLayout(
                         sidebarPanel(
                           uiInputModule("andelerGrVar"),
