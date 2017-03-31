@@ -14,7 +14,7 @@ serverModule <- function(input, output, session) {
   # namespace id comes with an extra '-name'. Remove it
   sessionName <- gsub("-name", "", sessionName)
   
-  if (sessionName == "andelerGrVar") {
+  if (sessionName == "readmission72hours") {
     plotObj <- reactive({
       readmission72hours()
     })
