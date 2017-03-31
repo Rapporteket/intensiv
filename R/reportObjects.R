@@ -41,7 +41,7 @@ emptyReport <- function(Tittel, utvalg = "", infoText = "Tomt...") {
 readmission72hours <-  function() {
   
   # get (static) data
-  data("AndelerGrVarData")
+  #data("AndelerGrVarData")
   
   ## hc
   # get actual color from name...
