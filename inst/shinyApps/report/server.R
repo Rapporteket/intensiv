@@ -11,17 +11,15 @@ shinyServer(function(input, output) {
   
   # reuse server module, but with different namespaces and per report user
   # controls outside namespace (if any)
-  serverModuleAndelerGrVar <-
-    callModule(serverModule, "readmission72hours",
-               session = getDefaultReactiveDomain()
-    )
-  
   serverModuleReadmission72hours <-
     callModule(serverModule, "readmission72hours",
                session = getDefaultReactiveDomain()
     )
   
-  
+  serverModuleGjsnGrVar <-
+    callModule(serverModule, "gjsnGrVar",
+               session = getDefaultReactiveDomain()
+    )
   
   # return of report objects
   
