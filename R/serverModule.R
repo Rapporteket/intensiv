@@ -15,18 +15,18 @@ serverModule <- function(input, output, session) {
   sessionName <- gsub("-name", "", sessionName)
   
   if (sessionName == "readmission72hours") {
-    plotObj <- reactive({
+    reportObj <- reactive({
       readmission72hours()
     })
   }
   
   if (sessionName == "gjsnGrVar") {
-    plotObj <- reactive({
+    reportObj <- reactive({
       gjsnGrVar()
     })
   }
   
   #reportObjects = list(plotObj=plotObj, tableObj=tableObj)
   
-  return(plotObj)
+  return(reportObj)
 }
