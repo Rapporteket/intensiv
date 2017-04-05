@@ -16,9 +16,9 @@ uiInputModule <- function(id, label = "Brukervalg") {
 #     setNames(as.list(unique(RegData$AVD_RESH)), unique(RegData$SykehusNavn))
   
   tagList(
-    selectInput(ns("erMann"),
-                label="Kjønn:",
-                c("Begge"=2, "Menn"=1, "Kvinner"=0)
+    selectInput(inputId = ns("erMann"),
+                label = "Kjønn:",
+                choices = c("Alle" = 2, "Menn" = 1, "Kvinner" = 0)
     ),
     sliderInput(ns("alder"), label = "Alder", min = 0,
                 max = 130, value = c(0, 130)
