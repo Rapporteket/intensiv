@@ -9,14 +9,15 @@
 #' plotObj and tableObj
 #' @export
 
-serverModule <- function(input, output, session) {
+serverModule <- function(input, output, session, erMann) {
   sessionName <- session$ns("name")
   # namespace id comes with an extra '-name'. Remove it
   sessionName <- gsub("-name", "", sessionName)
   
+  
   if (sessionName == "readmission72hours") {
     reportObj <- reactive({
-      readmission72hours()
+      readmission72hours(selectErMann = as.numeric(input$erMann))
     })
   }
   

@@ -38,12 +38,16 @@ emptyReport <- function(Tittel, utvalg = "", infoText = "Tomt...") {
 #' @return tableObj Table object
 #' @export
 
-readmission72hours <-  function() {
+readmission72hours <-  function(selectErMann) {
   
-  # get (static) data
-  #data("AndelerGrVarData")
-  #data("RegData01reinn.RData")
-  d <- NIRAndelerGrVarOff(RegData = reinnData$RegData, grVar = 'ShNavn',
+  # apply all filters for RegData and make
+  fRegData <- reinnData$RegData
+  if (selectErMann != 2) {
+    fRegData <- dplyr::filter(fRegData, erMann == selectErMann)
+  }
+  
+  # get (static) data, lazy loaded
+  d <- NIRAndelerGrVarOff(RegData = fRegData, grVar = 'ShNavn',
                           hentData = 0, outfile = '', lagFig = 0,
                           utvalgsInfo = reinnData$utvalgsInfo,
                           tittel = reinnData$tittel, KImaal = reinnData$KImaal)
