@@ -13,8 +13,9 @@ shinyServer(function(input, output) {
   # controls outside namespace (if any)
   serverModuleReadmission72hours <-
     callModule(serverModule, "readmission72hours",
-               session = getDefaultReactiveDomain(),
-               erMann = reactive(input$erMann)
+               session = getDefaultReactiveDomain()#,
+               #erMann = reactive(input$erMann),
+               
     )
   
   serverModuleGjsnGrVar <-
