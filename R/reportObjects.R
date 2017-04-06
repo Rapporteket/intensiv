@@ -38,13 +38,14 @@ emptyReport <- function(Tittel, utvalg = "", infoText = "Tomt...") {
 #' @return tableObj Table object
 #' @export
 
-readmission72hours <-  function(selectErMann) {
+readmission72hours <-  function(selectErMann, selectHospitalType) {
   
   # apply all filters for RegData and make
   fRegData <- reinnData$RegData
   if (selectErMann != 2) {
     fRegData <- dplyr::filter(fRegData, erMann == selectErMann)
   }
+  fRegData <- dplyr::filter(fRegData, ShType %in% selectHospitalType)
   
   # get (static) data, lazy loaded
   d <- NIRAndelerGrVarOff(RegData = fRegData, grVar = 'ShNavn',
