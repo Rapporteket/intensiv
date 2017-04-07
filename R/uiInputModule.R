@@ -27,9 +27,11 @@ uiInputModule <- function(id, label = "Brukervalg") {
                 selected = c(1, 2, 3),
                 multiple = TRUE
     ),
-    # selectInput(inputId = ns("hospital"),
-    #             label = "Sykehus:",
-    #             choices = dplyr::distinct(filter...)
+    selectInput(inputId = ns("hospital"),
+                label = "Sykehus:",
+                choices = dplyr::distinct(reinnData$RegData, ShNavn),
+                multiple = TRUE
+    ),
     sliderInput(ns("alder"), label = "Alder", min = 0,
                 max = 130, value = c(0, 130)
     ),
