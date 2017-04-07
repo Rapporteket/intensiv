@@ -38,80 +38,88 @@ emptyReport <- function(Tittel, utvalg = "", infoText = "Tomt...") {
 #' @return tableObj Table object
 #' @export
 
-readmission72hours <-  function(selectErMann, selectHospitalType) {
+readmission72hours <-  function(selectErMann, selectHospital) {
   
   # apply all filters for RegData and make
   fRegData <- reinnData$RegData
   if (selectErMann != 2) {
     fRegData <- dplyr::filter(fRegData, erMann == selectErMann)
   }
-  fRegData <- dplyr::filter(fRegData, ShType %in% selectHospitalType)
+  fRegData <- dplyr::filter(fRegData, ShNavn %in% selectHospital)
   
-  # get (static) data, lazy loaded
-  d <- NIRAndelerGrVarOff(RegData = fRegData, grVar = 'ShNavn',
-                          hentData = 0, outfile = '', lagFig = 0,
-                          utvalgsInfo = reinnData$utvalgsInfo,
-                          tittel = reinnData$tittel, KImaal = reinnData$KImaal)
   
-  ## hc
-  # get actual color from name...
-  figProps <- rapbase::figtype(fargepalett=d$fargepalett)
-  farger <- figProps$farger
   
-  # to use extra data in tooltips, make a data series from data frame
-  df <- data.frame(y = as.vector(d$AggVerdier$Hoved),
-                   N = as.vector(d$Ngr$Hoved),
-                   stringsAsFactors = FALSE)
-  ds <- rlist::list.parse(df)
-  names(ds) <- NULL
-  
-  h1 <- highcharter::highchart() %>%
-    hc_chart(height=800) %>%
-    hc_title(text = d$tittel) %>%
-    hc_subtitle(text = d$utvalgTxt) %>%
-    hc_xAxis(categories=names(d$Ngr$Hoved),
-             # show every category
-             labels=list(step=1),
-             reversed = TRUE) %>%
-    hc_yAxis(title = list(text=d$xAkseTxt),
-             min = -0.01,
-             startOnTick = FALSE) %>%
-    hc_add_series(name = "Andeler",
-                  data = ds,
-                  type = "bar",
-                  color = farger[3],
-                  tooltip = list(pointFormat='<b>Andel:</b>
+  # in case filtering makes empty data
+  if (is.data.frame(fRegData) && nrow(fRegData) == 0) {
+    emptyReport(Tittel = reinnData$tittel, infoText = "Ingen data")
+  } else {
+    # get (static) data, lazy loaded
+    d <- NIRAndelerGrVarOff(RegData = fRegData, grVar = 'ShNavn',
+                            hentData = 0, outfile = '', lagFig = 0,
+                            utvalgsInfo = reinnData$utvalgsInfo,
+                            tittel = reinnData$tittel,
+                            KImaal = reinnData$KImaal)
+    
+    ## hc
+    # get actual color from name...
+    figProps <- rapbase::figtype(fargepalett=d$fargepalett)
+    farger <- figProps$farger
+    
+    # to use extra data in tooltips, make a data series from data frame
+    df <- data.frame(y = as.vector(d$AggVerdier$Hoved),
+                     N = as.vector(d$Ngr$Hoved),
+                     stringsAsFactors = FALSE)
+    ds <- rlist::list.parse(df)
+    names(ds) <- NULL
+    
+    h1 <- highcharter::highchart() %>%
+      hc_chart(height=800) %>%
+      hc_title(text = d$tittel) %>%
+      hc_subtitle(text = d$utvalgTxt) %>%
+      hc_xAxis(categories=names(d$Ngr$Hoved),
+               # show every category
+               labels=list(step=1),
+               reversed = TRUE) %>%
+      hc_yAxis(title = list(text=d$xAkseTxt),
+               min = -0.01,
+               startOnTick = FALSE) %>%
+      hc_add_series(name = "Andeler",
+                    data = ds,
+                    type = "bar",
+                    color = farger[3],
+                    tooltip = list(pointFormat='<b>Andel:</b>
                                  {point.y:.1f}<br><b>N:</b>
                                  {point.N}<br/>')) %>%
-    hc_exporting(enabled = TRUE)
-  
-  # add global ratio
-  AggTot <- d$AggTot
-  N <- d$N$Hoved
-  obs <- length(d$Ngr$Hoved)
-  h1 <- hc_add_series(h1,
-                      name = paste0("Hele landet (",
-                                    sprintf('%.1f', AggTot),
-                                        " %), N=", N),
-                      data = rep(AggTot, obs),
-                      type = "line",
-                      color = farger[2],
-                      marker = list(enabled=FALSE),
-                      enableMouseTracking = FALSE
-  )
-  
-  ## table, data frame needed for download, widget for pres
-  t1 <- data.frame(Enhet=names(d$Ngr$Hoved),
-                   Andel=as.vector(d$AggVerdier$Hoved),
-                   N = as.vector(d$Ngr$Hoved),
-                   row.names = NULL,
-                   stringsAsFactors = FALSE)
-  t1 <- t1[order(-t1$Andel), ]
-  w1 <- DT::datatable(t1, rownames = FALSE,
-                      options = list(dom='t', ordering=FALSE, paging=FALSE))
-  tableObj = list(t1=t1, w1=w1)
-  
-  list(plotObj=h1, tableObj=tableObj)
+      hc_exporting(enabled = TRUE)
+    
+    # add global ratio
+    AggTot <- d$AggTot
+    N <- d$N$Hoved
+    obs <- length(d$Ngr$Hoved)
+    h1 <- hc_add_series(h1,
+                        name = paste0("Hele utvalget (",
+                                      sprintf('%.1f', AggTot),
+                                      " %), N=", N),
+                        data = rep(AggTot, obs),
+                        type = "line",
+                        color = farger[2],
+                        marker = list(enabled=FALSE),
+                        enableMouseTracking = FALSE
+    )
+    
+    ## table, data frame needed for download, widget for pres
+    t1 <- data.frame(Enhet=names(d$Ngr$Hoved),
+                     Andel=as.vector(d$AggVerdier$Hoved),
+                     N = as.vector(d$Ngr$Hoved),
+                     row.names = NULL,
+                     stringsAsFactors = FALSE)
+    t1 <- t1[order(-t1$Andel), ]
+    w1 <- DT::datatable(t1, rownames = FALSE,
+                        options = list(dom='t', ordering=FALSE, paging=FALSE))
+    tableObj = list(t1=t1, w1=w1)
+    
+    list(plotObj=h1, tableObj=tableObj)
+  }
 }
 
 
