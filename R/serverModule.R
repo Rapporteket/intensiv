@@ -38,8 +38,11 @@ serverModule <- function(input, output, session) {
   
   if (sessionName == "readmission72hours") {
     reportObj <- reactive({
-      readmission72hours(selectErMann = as.numeric(input$erMann),
-                         selectHospital = as.character(input$hospital))
+      readmission72hours(selectYear = as.numeric(input$year),
+                         selectQuarter = as.numeric(input$quarter),
+                         selectHospital = as.character(input$hospital),
+                         selectErMann = as.numeric(input$erMann),
+                         selectAgeGroup = as.character(input$ageGroup))
     })
   }
   
