@@ -22,30 +22,7 @@ shinyServer(function(input, output, session) {
     callModule(serverModule, "gjsnGrVar",
                session = getDefaultReactiveDomain()
     )
-  
-  # observe to catch changes in depending uc at client
-  hospitalType <- reactive({
-    if (is.null(input$hospitalType)) {
-      return(NULL)
-    } else {
-      return(input$hospitalType)
-    }
-  })
-  
-  observe({
-    h_type <- hospitalType()
-    print(h_type)
-    if (!is.null(h_type)) {
-      c_subset <- dplyr::filter(reinnData$RegData, ShType == h_type) %>% 
-        dplyr::distinct(ShNavn)
-      
-      print(c_subset)
-      
-      updateSelectInput(session, "hospital",
-                        choices = c_subset)
-    }
-    
-  })
+
   
   # return of report objects
   
