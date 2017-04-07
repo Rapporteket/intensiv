@@ -16,10 +16,16 @@ uiInputModule <- function(id, label = "Brukervalg") {
 #     setNames(as.list(unique(RegData$AVD_RESH)), unique(RegData$SykehusNavn))
   
   tagList(
-    selectInput(inputId = ns("erMann"),
-                label = "Kjønn:",
-                choices = c("Alle" = 2, "Menn" = 1, "Kvinner" = 0)
-    ),
+    selectInput(inputId = ns("year"), label = "År:",
+                choices = dplyr::distinct(reinnData$RegData, Aar)$Aar,
+                selected = dplyr::distinct(reinnData$RegData, Aar)$Aar,
+                multiple = TRUE
+                ),
+    selectInput(inputId = ns("quarter"), label = "Kvartal:",
+                choices = 1:4,
+                selected = 1:4,
+                multiple = TRUE
+                ),
     selectInput(inputId = ns("hospitalType"),
                 label = "Sykehustype:",
                 choices = c("Lokal" = 1, "Sentral" = 2,
@@ -33,11 +39,22 @@ uiInputModule <- function(id, label = "Brukervalg") {
                 selected = dplyr::distinct(reinnData$RegData, ShNavn)$ShNavn,
                 multiple = TRUE
     ),
-    sliderInput(ns("alder"), label = "Alder", min = 0,
-                max = 130, value = c(0, 130)
+    selectInput(inputId = ns("erMann"),
+                label = "Kjønn:",
+                choices = c("Alle" = 2, "Menn" = 1, "Kvinner" = 0)
     ),
-    dateRangeInput(ns("periode"), start = "2012-01-01", end = Sys.Date(),
-                   label = "Periode", separator="til", language="nb")
+    selectInput(inputId = ns("ageGroup"), label = "Aldersgruppe:",
+                choices = dplyr::distinct(reinnData$RegData,
+                                          AldersGr)$AldersGr,
+                selected = dplyr::distinct(reinnData$RegData,
+                                           AldersGr)$AldersGr,
+                multiple = TRUE
+                )
+    # sliderInput(ns("alder"), label = "Alder", min = 0,
+    #             max = 130, value = c(0, 130)
+    # ),
+    # dateRangeInput(ns("periode"), start = "2012-01-01", end = Sys.Date(),
+    #               label = "Periode", separator="til", language="nb")
     
   )
 }
