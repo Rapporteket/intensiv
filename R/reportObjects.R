@@ -38,14 +38,22 @@ emptyReport <- function(Tittel, utvalg = "", infoText = "Tomt...") {
 #' @return tableObj Table object
 #' @export
 
-readmission72hours <-  function(selectErMann, selectHospital) {
+readmission72hours <-  function(selectYear, selectQuarter, selectHospital,
+                                selectErMann, selectAgeGroup) {
+  
+  # first, make some sensibel value out of "Kvartal". Should be fixed in data
+  fRegData <- dplyr::mutate(reinnData$RegData,
+                            qNum = as.numeric(substr(Kvartal, nchar(Kvartal),
+                                                     nchar(Kvartal))))
   
   # apply all filters for RegData and make
-  fRegData <- reinnData$RegData
+  #fRegData <- reinnData$RegData
   if (selectErMann != 2) {
     fRegData <- dplyr::filter(fRegData, erMann == selectErMann)
   }
-  fRegData <- dplyr::filter(fRegData, ShNavn %in% selectHospital)
+  fRegData <- dplyr::filter(fRegData, ShNavn %in% selectHospital &
+                              Aar %in% selectYear & qNum %in% selectQuarter &
+                              AldersGr %in% selectAgeGroup)
   
   
   
