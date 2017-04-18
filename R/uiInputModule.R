@@ -11,10 +11,10 @@ uiInputModule <- function(id, label = "Brukervalg") {
   # create namespace
   ns <- NS(id)
   
-#   # make values and lables for reshID
-#   reshList <-
-#     setNames(as.list(unique(RegData$AVD_RESH)), unique(RegData$SykehusNavn))
-  
+  #   # make values and lables for reshID
+  hospital_names <- sort(dplyr::distinct(reinnData$RegData, ShNavn)$ShNavn)
+  age_groups <- sort(dplyr::distinct(reinnData$RegData, AldersGr)$AldersGr)
+
   tagList(
     selectInput(inputId = ns("year"), label = "År:",
                 choices = dplyr::distinct(reinnData$RegData, Aar)$Aar,
@@ -35,8 +35,8 @@ uiInputModule <- function(id, label = "Brukervalg") {
     ),
     selectInput(inputId = ns("hospital"),
                 label = "Sykehus:",
-                choices = dplyr::distinct(reinnData$RegData, ShNavn)$ShNavn,
-                selected = dplyr::distinct(reinnData$RegData, ShNavn)$ShNavn,
+                choices = hospital_names,
+                selected = hospital_names,
                 multiple = TRUE
     ),
     selectInput(inputId = ns("erMann"),
@@ -44,10 +44,8 @@ uiInputModule <- function(id, label = "Brukervalg") {
                 choices = c("Alle" = 2, "Menn" = 1, "Kvinner" = 0)
     ),
     selectInput(inputId = ns("ageGroup"), label = "Aldersgruppe:",
-                choices = dplyr::distinct(reinnData$RegData,
-                                          AldersGr)$AldersGr,
-                selected = dplyr::distinct(reinnData$RegData,
-                                           AldersGr)$AldersGr,
+                choices = age_groups,
+                selected = age_groups,
                 multiple = TRUE
                 )
     # sliderInput(ns("alder"), label = "Alder", min = 0,
