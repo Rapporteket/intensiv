@@ -11,14 +11,15 @@ uiInputModule <- function(id, label = "Brukervalg") {
   # create namespace
   ns <- NS(id)
   
-  #   # make values and lables for reshID
+  #   # make values and lables
+  years <- sort(dplyr::distinct(reinnData$RegData, Aar)$Aar)
   hospital_names <- sort(dplyr::distinct(reinnData$RegData, ShNavn)$ShNavn)
   age_groups <- sort(dplyr::distinct(reinnData$RegData, AldersGr)$AldersGr)
 
   tagList(
     selectInput(inputId = ns("year"), label = "År:",
-                choices = dplyr::distinct(reinnData$RegData, Aar)$Aar,
-                selected = dplyr::distinct(reinnData$RegData, Aar)$Aar,
+                choices = years,
+                selected = years,
                 multiple = TRUE
                 ),
     selectInput(inputId = ns("quarter"), label = "Kvartal:",
