@@ -28,10 +28,11 @@ serverModule <- function(input, output, session) {
     if (!is.null(h_type)) {
       c_subset <- dplyr::filter(reinnData$RegData, ShType == h_type) %>% 
         dplyr::distinct(ShNavn)
+      hospital_names <- sort(c_subset$ShNavn)
       
       updateSelectInput(session, "hospital",
-                        choices = c_subset$ShNavn,
-                        selected = c_subset$ShNavn)
+                        choices = hospital_names,
+                        selected = hospital_names)
     }
     
   })
