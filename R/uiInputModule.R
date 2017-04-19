@@ -14,7 +14,7 @@ uiInputModule <- function(id, label = "Brukervalg") {
   #   # make values and lables
   years <- sort(dplyr::distinct(reinnData$RegData, Aar)$Aar)
   hospital_names <- sort(dplyr::distinct(reinnData$RegData, ShNavn)$ShNavn)
-  age_groups <- sort(dplyr::distinct(reinnData$RegData, AldersGr)$AldersGr)
+  age_groups <- levels(reinnData$RegData$AldersGr)
 
   tagList(
     selectInput(inputId = ns("year"), label = "År:",
