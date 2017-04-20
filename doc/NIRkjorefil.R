@@ -37,9 +37,10 @@ texi2pdf(file='NIRSamleRapp.tex')
 #-------------------------------------LASTE DATA-----------------------------------------------
 rm(list=ls())
 
-#NIRdata <- read.table(file='C:/Registre/NIR/data/Main2017-03-29.csv', header=T, sep=';',encoding = 'UTF-8')
-#RegData <- NIRdata
-load("C:/Registre/NIR/data/Main2017-03-29.Rdata") #RegData generert etter preprosess.
+NIRdata <- read.table(file='C:/Registre/NIR/data/Main2017-03-29.csv', header=T, sep=';',encoding = 'UTF-8')
+RegData <- NIRdata
+#save(RegData, file='C:/Registre/NIR/data/Main2017-03-29.Rdata')
+load("C:/Registre/NIR/data/Main2017-03-29.Rdata") #RegData
 #RegData <- NIRdata[sample(1:dim(NIRdata)[1],10000),]
 #save(RegData, file='C:/Registre/NIR/data/NIRdata10000.Rdata')
 load("C:/Registre/NIR/data/NIRdata10000.Rdata") #RegData
@@ -48,8 +49,8 @@ load("C:/Registre/NIR/data/NIRdata10000.Rdata") #RegData
 library(intensiv)
 
 datoFra <- '2016-01-01'
-valgtVar <- 'respiratortid'  #reinn, respiratortid
 tilleggsVar <- c('Aar', 'Kvartal', 'erMann', 'ShNavn', 'ShType', 'Alder')
+valgtVar <- 'reinn'  #reinn, respiratortid
 RegData01Off(RegData, valgtVar=valgtVar, datoFra = datoFra, tilleggsVar=tilleggsVar, hentData=0)
 
 aar <- 0
@@ -59,9 +60,7 @@ InnMaate <- 99
 erMann <- '' 
 aldGr  <- 0
 
-
-#load('C:/ResultattjenesteGIT/intensiv/data/RegData01reinn.RData')
-load('C:/Registre/NIR/data/RegData01reinn.RData')
+load(paste0('C:/Registre/NIR/data/RegData01', valgtVar, '.Rdata'))
 
 DataTilbake <- NIRAndelerGrVarOff(RegData=RegData, valgtVar=valgtVar, aar=aar, grType=grType, grVar='ShNavn', InnMaate=InnMaate, 
                                erMann=erMann, aldGr=aldGr, hentData=0, outfile='', lagFig=1) 

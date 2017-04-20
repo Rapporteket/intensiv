@@ -80,7 +80,7 @@ NIRAndelerGrVarOff <- function(RegData, valgtVar='reinn', aar=0, grType=99,
       
       
       N = list(Hoved=N, Rest=0)
-      Ngr = list(Hoved=Ngr, Rest=0)
+      Ngr = list(Hoved=Ngr[sortInd], Rest=0)
       AggVerdier = list(Hoved=AndelerGrSort, Rest=0)
       xAkseTxt <- "Andel pasienter (%)"	#Denne kan avhenge av figurtype
       
