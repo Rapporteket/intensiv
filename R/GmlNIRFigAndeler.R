@@ -28,6 +28,13 @@
 #'    				
 #' @param RegData En dataramme med alle nødvendige variabler fra registeret
 #' @param valgtVar Hvilken variabel som skal visualiseres. Se \strong{Details} for oversikt.
+#' @param figurtype Hvilken figurtype som ønskes ut: 
+#'                 andel (fordelingsfigurer), 
+#'                 andelGrVar (andel i hver kategori av grupperingsvariabel, eks. sykehus), 
+#'                 andelTid (andel per tidsenhet, eks. år, måned), 
+#'                 andelPP (andel før og etter), 
+#'                 gjsnGrVar (sentralmål i hver kategori av grupperingsvariabel, eks. sykehus),
+#'                 gjsnTid (sentralmål per tidsenhet, eks. år, måned)
 #' @param datoFra Tidligste dato i utvalget (vises alltid i figuren).
 #' @param datoTil Seneste dato i utvalget (vises alltid i figuren).
 #' @param erMann Kjønn, standard: alt annet enn 0/1 gir begge kjønn

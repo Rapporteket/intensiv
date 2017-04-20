@@ -48,7 +48,7 @@ load("C:/Registre/NIR/data/NIRdata10000.Rdata") #RegData
 library(intensiv)
 
 datoFra <- '2016-01-01'
-valgtVar <- 'reinn'
+valgtVar <- 'respiratortid'  #reinn, respiratortid
 tilleggsVar <- c('Aar', 'Kvartal', 'erMann', 'ShNavn', 'ShType', 'Alder')
 RegData01Off(RegData, valgtVar=valgtVar, datoFra = datoFra, tilleggsVar=tilleggsVar, hentData=0)
 

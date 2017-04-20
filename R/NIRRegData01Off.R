@@ -38,7 +38,7 @@ datoTil='3000-01-01'
 RegData <- NIRPreprosess(RegData=RegData)	
 
 #------- Tilrettelegge variable
-NIRVarSpes <- NIRVarTilrettelegg(RegData=RegData, valgtVar=valgtVar)
+NIRVarSpes <- NIRVarTilrettelegg(RegData=RegData, valgtVar=valgtVar, figurtype='andelGrVar')
 RegData <- NIRVarSpes$RegData
 
 #--------- Gjøre utvalg
@@ -71,8 +71,8 @@ ident_ut <-test2[ind_faa, tilleggsVar]
 verdiGML <- ident_ut #matrise
 verdiNY <- 'sensurert'
 mapping <- data.frame(verdiGML,verdiNY)
-RegData$VarNY <- mapping$verdiNY[prodlim::row.match(RegData[, tilleggsVar], ident_ut)]
-RegData <- RegData[-which(RegData$VarNY == 'sensurert'),]
+RegData$VarSensur <- mapping$verdiNY[prodlim::row.match(RegData[, tilleggsVar], ident_ut)]
+RegData <- RegData[-which(RegData$VarSensur == 'sensurert'),-which(names(RegData) == 'VarSensur')]
 
 
 #Lagre beregnede data

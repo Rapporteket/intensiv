@@ -32,6 +32,13 @@
 #'    	}							
 #'    				
 #' @param RegData En dataramme med alle nødvendige variabler fra registeret
+#' @param figurtype Hvilken figurtype som ønskes ut: 
+#'                 andel (fordelingsfigurer), 
+#'                 andelGrVar (andel i hver kategori av grupperingsvariabel, eks. sykehus), 
+#'                 andelTid (andel per tidsenhet, eks. år, måned), 
+#'                 andelPP (andel før og etter), 
+#'                 gjsnGrVar (sentralmål i hver kategori av grupperingsvariabel, eks. sykehus),
+#'                 gjsnTid (sentralmål per tidsenhet, eks. år, måned)
 #' @param valgtVar Hvilken variabel som skal visualiseres. Se \strong{Details} for oversikt.
 #' @param datoFra Tidligste dato i utvalget (vises alltid i figuren).
 #' @param datoTil Seneste dato i utvalget (vises alltid i figuren).
@@ -76,7 +83,7 @@
 
 NIRAndeler  <- function(RegData, valgtVar, datoFra='2011-01-01', datoTil='3000-12-31', aar=0, overfPas=0,
                         minald=0, maxald=130, erMann='',InnMaate='', dodInt='',outfile='', grType=99,  
-                        preprosess=1, hentData=0, reshID, enhetsUtvalg=1, lagFig=1)	{
+                        preprosess=1, figurtype='andeler', hentData=0, reshID, enhetsUtvalg=1, lagFig=1)	{
       
       
       if (hentData == 1) {		
@@ -92,7 +99,7 @@ NIRAndeler  <- function(RegData, valgtVar, datoFra='2011-01-01', datoTil='3000-1
  #     "%i%" <- intersect
       #--------------- Definere variable ------------------------------
       
-      NIRVarSpes <- NIRVarTilrettelegg(RegData=RegData, valgtVar=valgtVar)
+      NIRVarSpes <- NIRVarTilrettelegg(RegData=RegData, valgtVar=valgtVar, figurtype=figurtype)
             RegData <- NIRVarSpes$RegData
       
       
