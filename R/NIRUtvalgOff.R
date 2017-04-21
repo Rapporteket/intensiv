@@ -33,8 +33,8 @@ NIRUtvalgOff <- function(RegData, aldGr=0, erMann='', InnMaate='',
       
       
       N <- dim(RegData)[1]	#N=0 gir feilmelding
-      grTypetextstreng <- c('lokal/sentral', 'lokal/sentral', 'region')				
-      if (grType %in% 1:3) {grTypeTxt <- grTypetextstreng[grType]} else {grTypeTxt <- 'alle '}
+      grTypetextstreng <- c('Alle lokal-/sentralsykeh.', 'Alle lokal-/sentralsykeh.', 'Alle regionsykehus')				
+      if (grType %in% 1:3) {grTypeTxt <- grTypetextstreng[grType]} else {grTypeTxt <- 'Hele landet'}
    
       
       
@@ -52,6 +52,6 @@ NIRUtvalgOff <- function(RegData, aldGr=0, erMann='', InnMaate='',
       
 
       UtData <- list(RegData=RegData, utvalgTxt=utvalgTxt, fargepalett=fargepalett, 
-                     hovedgrTxt='Hele landet',smltxt='') #, grTypeTxt=grTypeTxt)
+                     smltxt='', grTypeTxt=grTypeTxt) #hovedgrTxt='Hele landet',
       return(invisible(UtData)) 
 }

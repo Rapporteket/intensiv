@@ -46,7 +46,7 @@ NIRAndelerGrVarOff <- function(RegData, valgtVar='reinn', aar=0, grType=99,
       NIRUtvalg <- NIRUtvalgOff(RegData=RegData, aldGr=aldGr, aar=aar, erMann=erMann, 
                                 InnMaate=InnMaate, grType=grType)
       RegData <- NIRUtvalg$RegData
-      utvalgTxt <- c(utvalgsInfo, NIRUtvalg$utvalgTxt)
+      utvalgTxt <- NIRUtvalg$utvalgTxt #c(utvalgsInfo, )
       
       
       #---------------Beregninger
@@ -66,16 +66,16 @@ NIRAndelerGrVarOff <- function(RegData, valgtVar='reinn', aar=0, grType=99,
       
       if (sum(which(Ngr < Ngrense))>0) {indGrUt <- as.numeric(which(Ngr<Ngrense))} else {indGrUt <- 0}
       AndelerGr[indGrUt] <- NA #-0.0001
-      sortInd <- order(as.numeric(AndelerGr), na.last = FALSE) #decreasing=NIRVarSpes$sortAvtagende, 
-      
-      AndelerGrSort <- AndelerGr[sortInd]
       AndelHele <- sum(RegData$Variabel==1)/N*100	
       Ngrtxt <- as.character(Ngr)	#
       Ngrtxt[indGrUt] <- paste0('<', Ngrense) 
-      GrNavnSort <- paste0(names(Ngr)[sortInd], ' (',Ngrtxt[sortInd], ')')
-      
-      andeltxtUsort <- paste0(sprintf('%.1f',AndelerGr), ' %') 	
+      andeltxtUsort <- paste0(sprintf('%.1f',c(AndelerGr, AndelHele)), ' %') 	
       andeltxtUsort[indGrUt] <- ''
+      
+      sortInd <- order(c(as.numeric(AndelerGr), AndelHele), na.last = FALSE) #decreasing=NIRVarSpes$sortAvtagende, 
+
+      AndelerGrSort <- c(AndelerGr, AndelHele)[sortInd]
+      GrNavnSort <- paste0(c(names(Ngr), NIRUtvalg$grTypeTxt)[sortInd], ' (',c(Ngrtxt, N)[sortInd], ')')
       andeltxt <- andeltxtUsort[sortInd]
       
       

@@ -81,7 +81,10 @@ filnavn <- paste0('C:/Registre/NIR/data/RegData01', valgtVar, '.RData')
 
 tittel <- NIRVarSpes$tittel
 KImaal <- NIRVarSpes$KImaal #Mål for kvalitetsindikator
-utvalgsInfo <- paste0('Grunnlagsdata: ', utvalgTxt)
-andelFjernet <- paste0(AndelBort ,'% av totalen sensurert pga. grupper <5')
+utvalgsInfo <- utvalgTxt
+andelFjernet <- AndelBort 
+metainfo <- c('andelFjernet angir andelen data som sensureres pga. grupper med N<5',
+             'utvalgsInfo angir utvalget for grunnlagsdataene',
+             'KImaal angir målnivået for kvalitetsindikatoren') 
 save(RegData, utvalgsInfo, tittel, KImaal, andelFjernet, file=filnavn)
 }
