@@ -83,8 +83,15 @@ tittel <- NIRVarSpes$tittel
 KImaal <- NIRVarSpes$KImaal #Mål for kvalitetsindikator
 utvalgsInfo <- utvalgTxt
 andelFjernet <- AndelBort 
-metainfo <- c('andelFjernet angir andelen data som sensureres pga. grupper med N<5',
+metaInfo <- c('andelFjernet angir andelen data som sensureres pga. grupper med N<5',
              'utvalgsInfo angir utvalget for grunnlagsdataene',
              'KImaal angir målnivået for kvalitetsindikatoren') 
-save(RegData, utvalgsInfo, tittel, KImaal, andelFjernet, file=filnavn)
+NIR01data <- list(RegData=RegData, andelFjernet=andelFjernet, KImaal=KImaal, tittel=tittel, 
+                  utvalgsInfo=utvalgsInfo, metaInfo=metaInfo)
+#assign(paste0(valgtVar, 'Data'),alleData)
+#assign(paste0(valgtVar, 'Data'),list(RegData=RegData, andelFjernet=andelFjernet, KImaal=KImaal, tittel=tittel, 
+#                                     utvalgsInfo=utvalgsInfo, metaInfo=metaInfo))
+
+#save(assign(paste0(valgtVar, 'Data'), NIRKIdata), file=filnavn)
+save(NIR01data, file=filnavn)
 }
