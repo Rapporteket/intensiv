@@ -47,10 +47,6 @@ readmission72hours <-  function(selectYear, selectQuarter, selectHospital,
                                                      nchar(Kvartal))))
   
   # apply all filters for RegData and make
-  #fRegData <- reinnData$RegData
-  if (selectErMann != 2) {
-    fRegData <- dplyr::filter(fRegData, erMann == selectErMann)
-  }
   fRegData <- dplyr::filter(fRegData, ShNavn %in% selectHospital &
                               Aar %in% selectYear & qNum %in% selectQuarter &
                               AldersGr %in% selectAgeGroup)
@@ -63,6 +59,7 @@ readmission72hours <-  function(selectYear, selectQuarter, selectHospital,
   } else {
     # get (static) data, lazy loaded
     d <- NIRAndelerGrVarOff(RegData = fRegData, grVar = 'ShNavn',
+                            erMann = selectErMann,
                             hentData = 0, outfile = '', lagFig = 0,
                             utvalgsInfo = reinnData$utvalgsInfo,
                             tittel = reinnData$tittel,
@@ -85,6 +82,7 @@ readmission72hours <-  function(selectYear, selectQuarter, selectHospital,
       hc_title(text = d$tittel) %>%
       hc_subtitle(text = d$utvalgTxt) %>%
       hc_xAxis(categories=names(d$Ngr$Hoved),
+      #hc_xAxis(categories=d$grtxt,
                # show every category
                labels=list(step=1),
                reversed = TRUE) %>%
