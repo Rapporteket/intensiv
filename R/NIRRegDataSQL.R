@@ -60,7 +60,7 @@ NIRRegDataSQL <- function(datoFra = '2011-01-01', datoTil = '2099-01-01') {
 	TypeOfAdmission,
 	UrineOutput
 FROM
-	Main
+	MainFormDataContract
 WHERE cast(DateAdmittedIntensive as date) BETWEEN \'', datoFra, '\' AND \'', datoTil, '\'')
   #WHERE cast(DateAdmittedIntensive as date) >= \'', datoFra, '\' AND DateAdmittedIntensive <= \'', datoTil, '\'')  
   

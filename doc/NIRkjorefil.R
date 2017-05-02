@@ -50,7 +50,7 @@ library(intensiv)
 
 datoFra <- '2016-01-01'
 tilleggsVar <- c('Aar', 'Kvartal', 'erMann', 'ShNavn', 'ShType', 'Alder')
-valgtVar <- 'respiratortid'  #reinn, respiratortid
+valgtVar <- 'reinn'  #reinn, respiratortid
 RegData01Off(RegData, valgtVar=valgtVar, datoFra = datoFra, tilleggsVar=tilleggsVar, hentData=0)
 
 aar <- 0
