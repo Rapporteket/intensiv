@@ -8,7 +8,7 @@
 #' @export
 
 NIRUtvalg <- function(RegData, datoFra, datoTil, minald=0, maxald=130, erMann='', InnMaate='', 
-			grType=99, overfPas=99, dodInt='', fargepalett='BlaaOff')    
+			grType=99, dodInt='', fargepalett='BlaaOff')    #overfPas=99, 
 {
 
 # Definer intersect-operator

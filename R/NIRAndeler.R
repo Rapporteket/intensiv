@@ -104,9 +104,9 @@ NIRAndeler  <- function(RegData, valgtVar, datoFra='2011-01-01', datoTil='3000-1
       
       
       NIRUtvalg <- NIRUtvalgEnh(RegData=RegData, datoFra=datoFra, datoTil=datoTil, aar=aar, 
-                                minald=minald, maxald=maxald, overfPas = overfPas,
-                                overfPas=overfPas, erMann=erMann, InnMaate=InnMaate, dodInt=dodInt, 
-                                reshID=reshID, enhetsUtvalg=enhetsUtvalg)
+                                minald=minald, maxald=maxald, 
+                                erMann=erMann, InnMaate=InnMaate, dodInt=dodInt, 
+                                reshID=reshID, enhetsUtvalg=enhetsUtvalg) #overfPas = overfPas,
       RegData <- NIRUtvalg$RegData
       utvalgTxt <- NIRUtvalg$utvalgTxt
       

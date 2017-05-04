@@ -8,8 +8,8 @@
 #' @export
 
 NIRUtvalgEnh <- function(RegData, datoFra=0, datoTil=0, minald=0, maxald=130, erMann='', InnMaate='', 
-                         aar=0, grType=99, enhetsUtvalg=0, reshID=0, overfPas=99, dodInt='', 
-                         fargepalett='BlaaOff')    
+                         aar=0, grType=99, enhetsUtvalg=0, reshID=0,  dodInt='', fargepalett='BlaaOff')    
+      # overfPas=99,
 {
       
       # Definer intersect-operator
