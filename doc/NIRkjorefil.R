@@ -37,6 +37,7 @@ texi2pdf(file='NIRSamleRapp.tex')
 #-------------------------------------LASTE DATA-----------------------------------------------
 rm(list=ls())
 
+NIRdata <- read.table(file='C:/Registre/NIR/data/MainFormDataContract2017-04-28.csv', header=T, sep=';',encoding = 'UTF-8')
 NIRdata <- read.table(file='C:/Registre/NIR/data/Main2017-03-29.csv', header=T, sep=';',encoding = 'UTF-8')
 RegData <- NIRdata
 #save(RegData, file='C:/Registre/NIR/data/Main2017-03-29.Rdata')
