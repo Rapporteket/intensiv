@@ -47,7 +47,6 @@ NIRRegDataSQL <- function(datoFra = '2011-01-01', datoTil = '2099-01-01') {
 	Potassium,
 	ReAdmitted,
 	Respirator,
-	ReshId,
 	Saps2Score,
 	Saps2ScoreNumber,
 	SerumUreaOrBun,
@@ -58,6 +57,7 @@ NIRRegDataSQL <- function(datoFra = '2011-01-01', datoTil = '2099-01-01') {
 	Temperature,
 	TransferredStatus,
 	TypeOfAdmission,
+	UnitId,
 	UrineOutput
 FROM
 	MainFormDataContract

@@ -27,14 +27,15 @@ NIRPreprosess <- function(RegData=RegData, lagreKvalIndData=0)	#, reshID=reshID)
 # Endre variabelnavn:
 	#For enkelhetsskyld kalles Saps2Score som er Estimert mortalitet for SMR
 	names(RegData)[which(names(RegData) == 'DaysAdmittedIntensiv')] <- 'liggetid'
+	names(RegData)[which(names(RegData) == 'Nems')] <- 'NEMS'
+	names(RegData)[which(names(RegData) == 'PatientAge')] <- 'Alder'
+#	names(RegData)[which(names(RegData) == 'ReAdmitted')] <- 'Reinn'
 	names(RegData)[which(names(RegData) == 'Respirator')] <- 'respiratortid'
-	names(RegData)[which(names(RegData) == 'TransferredStatus')] <- 'Overf'
 	names(RegData)[which(names(RegData) == 'Saps2Score')] <- 'SMR' #Saps2Score er SAPS estimert mortalitet
 	names(RegData)[which(names(RegData) == 'Saps2ScoreNumber')] <- 'SAPSII'
+	names(RegData)[which(names(RegData) == 'TransferredStatus')] <- 'Overf'
 	names(RegData)[which(names(RegData) == 'TypeOfAdmission')] <- 'InnMaate'
-	names(RegData)[which(names(RegData) == 'Nems')] <- 'NEMS'
-#	names(RegData)[which(names(RegData) == 'ReAdmitted')] <- 'Reinn'
-	names(RegData)[which(names(RegData) == 'PatientAge')] <- 'Alder'
+	names(RegData)[which(names(RegData) == 'UnitId')] <- 'ReshId'
 	
 # Riktig format
 	RegData$ShNavn <- as.character(RegData$ShNavn)
