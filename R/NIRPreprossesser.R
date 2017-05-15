@@ -33,6 +33,7 @@ NIRPreprosess <- function(RegData=RegData)	#, reshID=reshID)
 	names(RegData)[which(names(RegData) == 'Nems')] <- 'NEMS'
 #	names(RegData)[which(names(RegData) == 'ReAdmitted')] <- 'Reinn'
 	names(RegData)[which(names(RegData) == 'PatientAge')] <- 'Alder'
+	names(RegData)[which(names(RegData) == 'UnitId')] <- 'ReshId'
 	
 # Riktig format
 	RegData$ShNavn <- as.character(RegData$ShNavn)
