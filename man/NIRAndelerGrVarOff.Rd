@@ -4,9 +4,10 @@
 \alias{NIRAndelerGrVarOff}
 \title{Søylediagram med AggVerdier for hver grupperingsenhet (sykehus, RHF, ...)}
 \usage{
-NIRAndelerGrVarOff(RegData, valgtVar, aar = 0, grType = 99, grVar = "",
-  InnMaate = 99, erMann = "", aldGr = 0, hentData = 0, outfile = "",
-  lagFig = 0)
+NIRAndelerGrVarOff(RegData, valgtVar = "reinn", aar = 0, grType = 99,
+  grVar = "ShNavn", InnMaate = 99, erMann = "", aldGr = 0,
+  hentData = 0, outfile = "", lagFig = 0, utvalgsInfo = "",
+  tittel = "", KImaal = 0)
 }
 \arguments{
 \item{RegData}{Anonymisert datasett}

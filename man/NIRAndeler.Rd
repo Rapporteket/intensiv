@@ -7,8 +7,8 @@
 NIRAndeler(RegData, valgtVar, datoFra = "2011-01-01",
   datoTil = "3000-12-31", aar = 0, overfPas = 0, minald = 0,
   maxald = 130, erMann = "", InnMaate = "", dodInt = "", outfile = "",
-  grType = 99, preprosess = 1, hentData = 0, reshID, enhetsUtvalg = 1,
-  lagFig = 1)
+  grType = 99, preprosess = 1, figurtype = "andeler", hentData = 0,
+  reshID, enhetsUtvalg = 1, lagFig = 1)
 }
 \arguments{
 \item{RegData}{En dataramme med alle nødvendige variabler fra registeret}
@@ -53,6 +53,14 @@ til systemets standard utdataenhet (som regel skjerm))}
 \item{preprosess}{Preprosesser data
 FALSE: Nei
 TRUE: Ja (Standard)}
+
+\item{figurtype}{Hvilken figurtype som ønskes ut: 
+andel (fordelingsfigurer), 
+andelGrVar (andel i hver kategori av grupperingsvariabel, eks. sykehus), 
+andelTid (andel per tidsenhet, eks. år, måned), 
+andelPP (andel før og etter), 
+gjsnGrVar (sentralmål i hver kategori av grupperingsvariabel, eks. sykehus),
+gjsnTid (sentralmål per tidsenhet, eks. år, måned)}
 
 \item{hentData}{Gjør spørring mot database
 0: Nei, RegData gis som input til funksjonen (Standard)

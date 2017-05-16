@@ -10,50 +10,10 @@ NIRFigGjsnTid(RegData, valgtVar, datoFra = "2011-01-01",
   enhetsUtvalg = 1, valgtMaal = "", preprosess = 1, hentData = 0)
 }
 \arguments{
-\item{RegData}{En dataramme med alle nødvendige variabler fra registeret}
-
 \item{valgtVar}{Hvilken variabel som skal visualiseres}
-
-\item{datoFra}{Tidligste dato i utvalget (vises alltid i figuren).}
-
-\item{datoTil}{Seneste dato i utvalget (vises alltid i figuren).}
-
-\item{minald}{Alder, fra og med (Standardverdi: 0)}
-
-\item{maxald}{Alder, til og med (Standardverdi: 130)}
-
-\item{erMann}{Kjønn, standard: alt annet enn 0/1 gir begge kjønn
-0: Kvinner
-1: Menn}
-
-\item{reshID}{Parameter følger fra innlogging helseregister.no og angir
-hvilken enhet i spesialisthelsetjenesten brukeren tilhører}
-
-\item{InnMaate}{0: Elektivt, 
-6: Akutt medisinsk, 
-8: Akutt kirurgisk, 
-standard: alle (alt unntatt 0,6,8 / ikke spesifisert)}
-
-\item{dodInt}{Levende/død ut fra intensiv. 
-0: i live, 
-1: død,   
-alle, standard (alle andre verdier)}
-
-\item{outfile}{Navn på fil figuren skrives til. Standard: '' (Figur skrives
-til systemets standard utdataenhet (som regel skjerm))}
-
-\item{enhetsUtvalg}{Gjør gruppeutvalg med eller uten sammenlikning. Se \strong{Details} for oversikt.}
 
 \item{valgtMaal}{'Gjsn': gir middelverdi (standard)
 'Med': gir median}
-
-\item{preprosess}{Preprosesser data
-FALSE: Nei
-TRUE: Ja (Standard)}
-
-\item{hentData}{Gjør spørring mot database
-0: Nei, RegData gis som input til funksjonen (Standard)
-1: Ja}
 }
 \value{
 Linjediagram som viser utvikling over tid for valgt variabel

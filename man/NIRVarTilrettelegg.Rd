@@ -4,12 +4,7 @@
 \alias{NIRVarTilrettelegg}
 \title{Funksjon for å tilrettelegge variable for beregning.}
 \usage{
-NIRVarTilrettelegg(RegData, valgtVar, grVar = "")
-}
-\arguments{
-\item{RegData}{En dataramme med alle nødvendige variabler fra registeret}
-
-\item{valgtVar}{Hvilken variabel som skal visualiseres. Se \strong{Details} for oversikt.}
+NIRVarTilrettelegg(RegData, valgtVar, grVar = "", figurtype = "andeler")
 }
 \value{
 Definisjon av valgt variabel.

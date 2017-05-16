@@ -77,7 +77,7 @@ RegData <- RegData[-which(RegData$VarSensur == 'sensurert'),-which(names(RegData
 
 #Lagre beregnede data
 #filnavn <- paste0('data/RegData01', valgtVar, '.RData')
-filnavn <- paste0('C:/Registre/NIR/data/RegData01', valgtVar, '.RData')
+filnavn <- paste0('C:/Registre/NIR/data/NIRdata01', valgtVar, '.RData')
 
 tittel <- NIRVarSpes$tittel
 KImaal <- NIRVarSpes$KImaal #Mål for kvalitetsindikator
@@ -86,12 +86,12 @@ andelFjernet <- AndelBort
 metaInfo <- c('andelFjernet angir andelen data som sensureres pga. grupper med N<5',
              'utvalgsInfo angir utvalget for grunnlagsdataene',
              'KImaal angir målnivået for kvalitetsindikatoren') 
-NIR01data <- list(RegData=RegData, andelFjernet=andelFjernet, KImaal=KImaal, tittel=tittel, 
+NIRdata01 <- list(NIRRegData01Off=RegData, andelFjernet=andelFjernet, KImaal=KImaal, tittel=tittel, 
                   utvalgsInfo=utvalgsInfo, metaInfo=metaInfo)
 #assign(paste0(valgtVar, 'Data'),alleData)
 #assign(paste0(valgtVar, 'Data'),list(RegData=RegData, andelFjernet=andelFjernet, KImaal=KImaal, tittel=tittel, 
 #                                     utvalgsInfo=utvalgsInfo, metaInfo=metaInfo))
 
 #save(assign(paste0(valgtVar, 'Data'), NIRKIdata), file=filnavn)
-save(NIR01data, file=filnavn)
+save(NIRdata01, file=filnavn)
 }

@@ -40,8 +40,8 @@ rm(list=ls())
 NIRdata <- read.table(file='C:/Registre/NIR/data/MainFormDataContract2017-04-28.csv', header=T, sep=';',encoding = 'UTF-8')
 #NIRdata <- read.table(file='C:/Registre/NIR/data/Main2017-03-29.csv', header=T, sep=';',encoding = 'UTF-8')
 RegData <- NIRdata
-#save(RegData, file='C:/Registre/NIR/data/Main2017-03-29.Rdata')
-load("C:/Registre/NIR/data/Main2017-03-29.Rdata") #RegData
+load("C:/Registre/NIR/data/MainFormDataContract2017-04-28.Rdata") #RegData
+#save(RegData, file='C:/Registre/NIR/data/MainFormDataContract2017-04-28.Rdata')
 #RegData <- NIRdata[sample(1:dim(NIRdata)[1],10000),]
 #save(RegData, file='C:/Registre/NIR/data/NIRdata10000.Rdata')
 load("C:/Registre/NIR/data/NIRdata10000.Rdata") #RegData
@@ -49,9 +49,9 @@ load("C:/Registre/NIR/data/NIRdata10000.Rdata") #RegData
 #-----------------------------------Datasett til kvalitetsindikatorer---------
 library(intensiv)
 
+valgtVar <- 'reinn'  #reinn, respiratortid
 datoFra <- '2016-01-01'
 tilleggsVar <- c('Aar', 'Kvartal', 'erMann', 'ShNavn', 'ShType', 'Alder')
-valgtVar <- 'reinn'  #reinn, respiratortid
 RegData01Off(RegData, valgtVar=valgtVar, datoFra = datoFra, tilleggsVar=tilleggsVar, hentData=0)
 
 aar <- 0
@@ -61,10 +61,10 @@ InnMaate <- 99
 erMann <- '' 
 aldGr  <- 0
 
-load(paste0('C:/Registre/NIR/data/RegData01', valgtVar, '.Rdata'))
+load(paste0('C:/Registre/NIR/data/NIRdata01', valgtVar, '.Rdata'))
 
-DataTilbake <- NIRAndelerGrVarOff(RegData=RegData, valgtVar=valgtVar, aar=aar, grType=grType, grVar='ShNavn', InnMaate=InnMaate, 
-                               erMann=erMann, aldGr=aldGr, hentData=0, outfile='', lagFig=1) 
+DataTilbake <- NIRAndelerGrVarOff(RegData=NIRdata01$NIRRegData01Off, valgtVar=valgtVar, aar=aar, grType=grType, grVar='ShNavn', 
+                                  InnMaate=InnMaate, erMann=erMann, aldGr=aldGr, hentData=0, outfile='', lagFig=1) 
 
 DataTilbake <- NIRAndelerGrVarOff(RegData=RegData, hentData=0, outfile='', lagFig=1) 
 

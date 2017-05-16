@@ -4,7 +4,8 @@
 \alias{readmission72hours}
 \title{Provider of report objects}
 \usage{
-readmission72hours()
+readmission72hours(selectYear, selectQuarter, selectHospital, selectErMann,
+  selectAgeGroup)
 }
 \arguments{
 \item{Tittel}{String Title to show in empty chart}

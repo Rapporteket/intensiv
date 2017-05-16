@@ -38,12 +38,12 @@ NIRAndelerGrVarOff <- function(RegData, valgtVar='reinn', aar=0, grType=99,
       
       if (hentData == 1) {
             ##DENNE MÅ ENDRES NÅR VI FÅR DATA I PAKKEN!!
-            filnavn <- paste0('C:/Registre/NIR/data/RegData01', valgtVar, '.RData')
+            filnavn <- paste0('C:/Registre/NIR/data/NIRdata01', valgtVar, '.RData')
             load(filnavn) 
       }
       
       #------- Gjøre utvalg
-      NIRUtvalg <- NIRUtvalgOff(RegData=RegData, aldGr=aldGr, aar=aar, erMann=erMann, 
+      NIRUtvalg <- NIRUtvalgOff(RegData=NIRdata01$NIRRegData01Off, aldGr=aldGr, aar=aar, erMann=erMann, 
                                 InnMaate=InnMaate, grType=grType)
       RegData <- NIRUtvalg$RegData
       utvalgTxt <- NIRUtvalg$utvalgTxt #c(utvalgsInfo, )
@@ -106,10 +106,10 @@ NIRAndelerGrVarOff <- function(RegData, valgtVar='reinn', aar=0, grType=99,
       if (lagFig == 1) {
             cexgr <- 1-ifelse(AntGr>20, 0.25*AntGr/60, 0)
             NIRFigSoyler(RegData, AggVerdier=AggVerdier, AggTot=AndelHele, Ngr=Ngr,N=N, cexgr=cexgr, 
-                         tittel=tittel, 
+                         tittel=NIRdata01$tittel, 
                          utvalgTxt=utvalgTxt, #yAkseTxt=yAkseTxt,
                          grTypeTxt=alle,  fargepalett=NIRUtvalg$fargepalett, grtxt=GrNavnSort, 
-                         soyletxt=andeltxt,grVar=grVar, KImaal = KImaal, #medKI = medKI,
+                         soyletxt=andeltxt,grVar=grVar, KImaal = NIRdata01$KImaal, #medKI = medKI,
                          xAkseTxt=xAkseTxt, outfile=outfile)
       }
       
