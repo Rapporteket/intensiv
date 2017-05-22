@@ -93,11 +93,11 @@ NIRAndelerGrVarOff <- function(RegData, valgtVar='reinn', aar=0, grType=99,
                                grtxt2='', 
                                soyletxt=andeltxt,
                                grtxt=GrNavnSort,
-                               tittel=tittel, 
+                               tittel=NIRdata01$tittel, 
                                #yAkseTxt=yAkseTxt, 
                                retn='H', 
                                xAkseTxt=xAkseTxt, #NIRVarSpes$xAkseTxt,
-                               KImaal = KImaal,
+                               KImaal = NIRdata01$KImaal,
                                grTypeTxt='alle',			 
                                utvalgTxt=utvalgTxt, 
                                fargepalett=NIRUtvalg$fargepalett)
@@ -107,10 +107,10 @@ NIRAndelerGrVarOff <- function(RegData, valgtVar='reinn', aar=0, grType=99,
             cexgr <- 1-ifelse(AntGr>20, 0.25*AntGr/60, 0)
             NIRFigSoyler(RegData, AggVerdier=AggVerdier, AggTot=AndelHele, Ngr=Ngr,N=N, cexgr=cexgr, 
                          tittel=NIRdata01$tittel, 
-                         utvalgTxt=utvalgTxt, #yAkseTxt=yAkseTxt,
+                         utvalgTxt=NIRdata01$utvalgsInfo, #yAkseTxt=yAkseTxt,
                          grTypeTxt=alle,  fargepalett=NIRUtvalg$fargepalett, grtxt=GrNavnSort, 
                          soyletxt=andeltxt,grVar=grVar, KImaal = NIRdata01$KImaal, #medKI = medKI,
-                         xAkseTxt=xAkseTxt, outfile=outfile)
+                         xAkseTxt=xAkseTxt, outfile='')
       }
       
       return(invisible(AndelerGrVarData))

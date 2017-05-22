@@ -9,7 +9,7 @@ output:
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = FALSE)
 ```
 
 
@@ -34,7 +34,6 @@ Helseregisterloven:
 * Kan vi for hver enkelt indikator gjør ei vurdering av om dette representerer en "reell" opplysning om personen. F.eks. hvis man ut fra dataene som presenteres har grunn til å anta at en person som man vet har vært innlagt med hjerneslag ikke fikk trombolyse innen 40 minutter. Kan vi påstå at dette ikke er ei sensitiv opplysning?
 
 
-
 ```{r Eksempel, echo=FALSE}
 Sykehus = c('Sykheim', 'Friskheim','Kosheim')
 Aar <- 2013:2016
@@ -53,6 +52,12 @@ EksData <- cbind(
 
 ```
 
+## Anonymisert datasett
+
+Det anonyme datasettet inneholder noenutvalgs-/grupperingsvariable, samt kvalitetsindikatoren det skal vises resultat for. Innholdet i kvalitetsindikatoren er kun 0 og 1-verdier. (Eks. 1 hvis reinnlagt, 0 hvis ikke).
+Datasettet inneholder  hendelsesentydige (et opphold er en hendelse) data, dvs. vi har ei rad for hver hendelse. Dette for at vi skal kunne gjøre ulike utvalg og grupperinger av dataene. Men alle rader som hvor ei gruppering på laveste nivå av utvalgs-/grupperingsvariablene gir færre enn 5 hendelser, er fjernet. Dette medfører at vi mister noen observasjoner slik at resultatene i grupper med høyere grad av aggregering blir påvirket. Hvor mye resultatet påvirkes, avhenger av hvor mye data vi må sensurere. Noe som igjen avhenger av hvor mange grupperinger man ønsker å kunne gjøre og hvor mang registreringer registeret inneholder.
+
+
 ## Intensivregisteret
 
 Intensivregisteret har definert tre kvalitetsindikatorer fra registeret:  
@@ -60,7 +65,20 @@ Intensivregisteret har definert tre kvalitetsindikatorer fra registeret:
 * Median respiratortid. Mål: <2,5døgn (Tilsvarer:Andel med respiratortid < 2,5 døgn. Mål: 50%)  
 * Standardisert mortalitetsratio (SMR). Mål: < 0,7  
 
-Både reinnleggelse og respiratortid kan representeres som indikatorvariable. SMR er observert dødelighet (innen 30 dager) ift. estimert dødelighet (standardisert SAPSII-skår). Estimert dødelighet kan ikke representeres med en indikatorvariabel.
+Både reinnleggelse og respiratortid kan representeres som indikatorvariable. SMR er observert dødelighet (innen 30 dager) ift. estimert dødelighet (standardisert SAPSII-skår). Estimert dødelighet kan ikke representeres med en indikatorvariabel. Variabelen SMR har ikke god nok kvalitet og vil derfor ikke bli benyttet som offentlig kvalitetsindikator.
+
+## Anonymisering, intensivregisteret
+Det er an akseptert tommelfingerregel at data kan betraktes som anonyme hvis enhver gruppering av dataene inneholder minst 4 overvasjoner.
+For intensivregisteret har vi valgt å benytte utvalgs-/grupperingsvariablene:
+* Enhet (sykehusavdeling/-enhet) 
+* Sykehustype (region- eller lokal-/sentralsykehus
+* Alder (aldersgrupper: 0-17, 18-39, 40-59, 60-79, 80+)
+* Kjønn (mann/kvinne)
+* År og kvartal (tidsangivelse for innleggelsestidspunkt)
+
+*NB: Registeret må gi tilbakemelding på om dette er de variablene vi skal gå for*
+
+
 
 
 ```{r EksFraIntensiv, echo=FALSE}
