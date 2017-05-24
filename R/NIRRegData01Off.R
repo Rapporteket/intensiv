@@ -27,9 +27,9 @@
 #'
 #' @export
 
-RegData01Off <- function(RegData, valgtVar, datoFra='2016-01-01', tilleggsVar=0, hentData=0) {
+RegData01Off <- function(RegData, valgtVar, datoFra='2016-01-01', datoTil='3000-01-01', tilleggsVar=0, hentData=0) {
 
-datoTil='3000-01-01'
+
 
       if (hentData == 1) {		
             RegData <- NIRRegDataSQL(datoFra, datoTil)
@@ -94,4 +94,5 @@ NIRdata01 <- list(NIRRegData01Off=RegData, andelFjernet=andelFjernet, KImaal=KIm
 
 #save(assign(paste0(valgtVar, 'Data'), NIRKIdata), file=filnavn)
 save(NIRdata01, file=filnavn)
+return(invisible(NIRdata01))
 }
