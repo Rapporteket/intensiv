@@ -4,44 +4,11 @@
 \alias{NIRUtvalgEnh}
 \title{Funksjon som gjør utvalg av dataene, returnerer det filtrerte datasettet og utvalgsteksten.}
 \usage{
-NIRUtvalgEnh(RegData, datoFra, datoTil, minald = 0, maxald = 130,
-  erMann = "", InnMaate = "", grType = 99, enhetsUtvalg = 0,
-  reshID = 0, overfPas = 99, dodInt = "", fargepalett = "BlaaOff")
+NIRUtvalgEnh(RegData, datoFra = 0, datoTil = 0, minald = 0,
+  maxald = 130, erMann = "", InnMaate = "", aar = 0, grType = 99,
+  enhetsUtvalg = 0, reshID = 0, dodInt = "", fargepalett = "BlaaOff")
 }
 \arguments{
-\item{RegData}{En dataramme med alle nødvendige variabler fra registeret}
-
-\item{datoFra}{Tidligste dato i utvalget (vises alltid i figuren).}
-
-\item{datoTil}{Seneste dato i utvalget (vises alltid i figuren).}
-
-\item{minald}{Alder, fra og med (Standardverdi: 0)}
-
-\item{maxald}{Alder, til og med (Standardverdi: 130)}
-
-\item{erMann}{Kjønn, standard: alt annet enn 0/1 gir begge kjønn
-0: Kvinner
-1: Menn}
-
-\item{InnMaate}{0: Elektivt, 
-6: Akutt medisinsk, 
-8: Akutt kirurgisk, 
-standard: alle (alt unntatt 0,6,8 / ikke spesifisert)}
-
-\item{enhetsUtvalg}{Gjør gruppeutvalg med eller uten sammenlikning. Se \strong{Details} for oversikt.}
-
-\item{reshID}{Parameter følger fra innlogging helseregister.no og angir
-hvilken enhet i spesialisthelsetjenesten brukeren tilhører}
-
-\item{overfPas}{Overført under pågående intensivbehandling? 
-1 = Pasienten er ikke overført
-2 = Pasienten er overført}
-
-\item{dodInt}{Levende/død ut fra intensiv. 
-0: i live, 
-1: død,   
-alle, standard (alle andre verdier)}
-
 \item{fargepalett}{Hvilken fargepalett skal brukes i figurer (Standard: BlaaRapp)}
 }
 \value{
@@ -50,4 +17,3 @@ UtData En liste bestående av det filtrerte datasettet, utvalgstekst for figur o
 \description{
 Funksjon som gjør utvalg av dataene, returnerer det filtrerte datasettet og utvalgsteksten.
 }
-

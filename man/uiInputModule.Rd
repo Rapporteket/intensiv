@@ -14,4 +14,3 @@ uiInputModule provides common ui uc for shiny intensiv
  @param label Label for this module
  @export
 }
-

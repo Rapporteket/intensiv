@@ -2,7 +2,7 @@
 # for 'Intensiv'
 
 require(highcharter)
-data("AndelerGrVarData")
+#data("AndelerGrVarData")
 
 # not implemented just yet, wait until sample data without preprocessing
 if (1==0) {
@@ -11,19 +11,19 @@ if (1==0) {
 
 shinyUI(
   navbarPage(title = "INTENSIVREGISTERET", theme = "bootstrap.css",
-             tabPanel("AndelerGrVar",
+             tabPanel("Reinnleggelse innen 72 timer",
                       sidebarLayout(
                         sidebarPanel(
-                          uiInputModule("andelerGrVar"),
+                          uiInputModule("readmission72hours"),
                           downloadButton("downloadDataAndelerGrVar",
                                          label = "Last ned data")
                         ),
                         mainPanel(tabsetPanel(
                           tabPanel("Figur",
-                                   highchartOutput("andelerGrVarPlot")
+                                   highchartOutput("readmission72hoursPlot")
                           ),
                           tabPanel("Data",
-                                   DT::dataTableOutput("andelerGrVarTable")
+                                   DT::dataTableOutput("readmission72hoursTable")
                           )
                         ))
                       )

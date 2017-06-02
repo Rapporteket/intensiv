@@ -2,12 +2,13 @@
 % Please edit documentation in R/NIRAndeler.R
 \name{NIRAndeler}
 \alias{NIRAndeler}
-\title{Søylediagram som viser AggVerdier av ulike variabler}
+\title{Funksjon som beregner aggregerte verdier (andeler) for ulike variabler/variabelkombinasjoner}
 \usage{
 NIRAndeler(RegData, valgtVar, datoFra = "2011-01-01",
-  datoTil = "3000-12-31", minald = 0, maxald = 130, erMann = "",
-  InnMaate = "", dodInt = "", outfile = "", grType = 99,
-  preprosess = 1, hentData = 0, reshID, enhetsUtvalg = 1, lagFig = 1)
+  datoTil = "3000-12-31", aar = 0, overfPas = 0, minald = 0,
+  maxald = 130, erMann = "", InnMaate = "", dodInt = "", outfile = "",
+  grType = 99, preprosess = 1, figurtype = "andeler", hentData = 0,
+  reshID, enhetsUtvalg = 1, lagFig = 1)
 }
 \arguments{
 \item{RegData}{En dataramme med alle nødvendige variabler fra registeret}
@@ -17,6 +18,10 @@ NIRAndeler(RegData, valgtVar, datoFra = "2011-01-01",
 \item{datoFra}{Tidligste dato i utvalget (vises alltid i figuren).}
 
 \item{datoTil}{Seneste dato i utvalget (vises alltid i figuren).}
+
+\item{overfPas}{Overført under pågående intensivbehandling? 
+1 = Pasienten er ikke overført
+2 = Pasienten er overført}
 
 \item{minald}{Alder, fra og med (Standardverdi: 0)}
 
@@ -49,6 +54,14 @@ til systemets standard utdataenhet (som regel skjerm))}
 FALSE: Nei
 TRUE: Ja (Standard)}
 
+\item{figurtype}{Hvilken figurtype som ønskes ut: 
+andel (fordelingsfigurer), 
+andelGrVar (andel i hver kategori av grupperingsvariabel, eks. sykehus), 
+andelTid (andel per tidsenhet, eks. år, måned), 
+andelPP (andel før og etter), 
+gjsnGrVar (sentralmål i hver kategori av grupperingsvariabel, eks. sykehus),
+gjsnTid (sentralmål per tidsenhet, eks. år, måned)}
+
 \item{hentData}{Gjør spørring mot database
 0: Nei, RegData gis som input til funksjonen (Standard)
 1: Ja}
@@ -59,10 +72,6 @@ hvilken enhet i spesialisthelsetjenesten brukeren tilhører}
 \item{enhetsUtvalg}{Gjør gruppeutvalg med eller uten sammenlikning. Se \strong{Details} for oversikt.}
 
 \item{lagFig}{Angir om figur skal lages eller ikke 0-ikke lag, 1-lag}
-
-\item{overfPas}{Overført under pågående intensivbehandling? 
-1 = Pasienten er ikke overført
-2 = Pasienten er overført}
 }
 \value{
 Søylediagram (fordeling) av valgt variabel. De enkelte verdiene kan også sendes med.
@@ -74,6 +83,9 @@ NIRUtvalgEnh (skal endre navn til NIRUtvalg når ferdig)
 NIRFigSoyler
 }
 \details{
+Funksjonen benytter funksjonene: NIRRegDataSQL, NIRPreprosess, NIRVarTilrettelegg, NIRUtvalgEnh
+og NIRFigSoyler
+
 Argumentet \emph{valgtVar} har følgende valgmuligheter:
    \itemize{
     \item alder: Aldersfordeling, 10-årige grupper 
@@ -94,7 +106,6 @@ Argumentet \emph{enhetsUtvalg} har følgende valgmuligheter:
     \item 5: Egen sykehustype mot resten av landet
     \item 6: Egen enhet mot egen region [NB: Intensivregiisteret mangler pt. variabel for region]
     \item 7: Egen region [NB: Mangler pt. variabel for region]
-   \item 8: Egen region mot resten [NB: Mangler pt. variabel for region]
+  \item 8: Egen region mot resten [NB: Mangler pt. variabel for region]
    	}
 }
-

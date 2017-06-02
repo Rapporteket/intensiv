@@ -19,38 +19,34 @@
 #'		Dette valget viser en annen figurtype.
 #'     \item respStotte: Pasienter som har fått respiratorstøtte
 #'     \item reinn: Andel reinnlagte (fjerner ukjente) Kvalitetsindikator
-#'    }
+#'    } valgtVar vil her bestemme hvilken vedlagt datafil som skal benyttes
 #' @inheritParams NIRAndeler
-#' 
+#' @param RegData Anonymisert datasett
+#' @param valgtVar Kvalitetsindikatoren det vises resultat for. Angir også i hvilken fil RegData er lagret. 
+#'
+#' @param hentData Angir om data skal hentes fra pakken. Filnavn er gitt ved 
+#' Filnavn gitt ved 'RegData01' + valgtVar + '.RData'
 #' 
 #' @return Søylediagram med AggVerdier av valgt variabel for hvert sykehus
 #'
 #' @export
-NIRAndelerGrVar <- function(RegData, valgtVar, datoFra=0, datoTil=0, aar=0, minald=0, maxald=130, 
-                            grType=99, grVar='', InnMaate=99, dodInt='', erMann='', hentData=0, preprosess=1, 
-                            outfile='', lagFig=1) 
-      
-                              
+NIRAndelerGrVarOff <- function(RegData, valgtVar='reinn', aar=0, grType=99,
+                               grVar='ShNavn', InnMaate=99, erMann='', aldGr=0,
+                               hentData=0, outfile='', lagFig=0,
+                               utvalgsInfo = "", tittel = "", KImaal = 0)   
 {
-      #NB: Tomme grVar fjernes så vurder om dette kan være standard...
-      if (hentData == 1) {		
-            RegData <- NIRRegDataSQL(datoFra, datoTil)
-      }
       
-      # Hvis RegData ikke har blitt preprosessert. (I samledokument gjøre dette i samledokumentet)
-      if (preprosess){
-            RegData <- NIRPreprosess(RegData=RegData)	#, reshID=reshID)
+      if (hentData == 1) {
+            ##DENNE MÅ ENDRES NÅR VI FÅR DATA I PAKKEN!!
+            filnavn <- paste0('C:/Registre/NIR/data/NIRdata01', valgtVar, '.RData')
+            load(filnavn) 
       }
-      
-      #------- Tilrettelegge variable
-      NIRVarSpes <- NIRVarTilrettelegg(RegData=RegData, valgtVar=valgtVar)
-      RegData <- NIRVarSpes$RegData
       
       #------- Gjøre utvalg
-      NIRUtvalg <- NIRUtvalgEnh(RegData=RegData, datoFra=datoFra, datoTil=datoTil, minald=minald, maxald=maxald, 
-                                aar=aar, overfPas=overfPas, erMann=erMann, InnMaate=InnMaate, dodInt=dodInt, grType=grType)
+      NIRUtvalg <- NIRUtvalgOff(RegData=NIRdata01$NIRRegData01Off, aldGr=aldGr, aar=aar, erMann=erMann, 
+                                InnMaate=InnMaate, grType=grType)
       RegData <- NIRUtvalg$RegData
-      utvalgTxt <- NIRUtvalg$utvalgTxt
+      utvalgTxt <- NIRUtvalg$utvalgTxt #c(utvalgsInfo, )
       
       
       #---------------Beregninger
@@ -70,21 +66,21 @@ NIRAndelerGrVar <- function(RegData, valgtVar, datoFra=0, datoTil=0, aar=0, mina
       
       if (sum(which(Ngr < Ngrense))>0) {indGrUt <- as.numeric(which(Ngr<Ngrense))} else {indGrUt <- 0}
       AndelerGr[indGrUt] <- NA #-0.0001
-      sortInd <- order(as.numeric(AndelerGr), decreasing=NIRVarSpes$sortAvtagende, na.last = FALSE) 
-      
-      AndelerGrSort <- AndelerGr[sortInd]
       AndelHele <- sum(RegData$Variabel==1)/N*100	
       Ngrtxt <- as.character(Ngr)	#
       Ngrtxt[indGrUt] <- paste0('<', Ngrense) 
-      GrNavnSort <- paste0(names(Ngr)[sortInd], ' (',Ngrtxt[sortInd], ')')
-      
-      andeltxtUsort <- paste0(sprintf('%.1f',AndelerGr), ' %') 	
+      andeltxtUsort <- paste0(sprintf('%.1f',c(AndelerGr, AndelHele)), ' %') 	
       andeltxtUsort[indGrUt] <- ''
+      
+      sortInd <- order(c(as.numeric(AndelerGr), AndelHele), na.last = FALSE) #decreasing=NIRVarSpes$sortAvtagende, 
+
+      AndelerGrSort <- c(AndelerGr, AndelHele)[sortInd]
+      GrNavnSort <- paste0(c(names(Ngr), NIRUtvalg$grTypeTxt)[sortInd], ' (',c(Ngrtxt, N)[sortInd], ')')
       andeltxt <- andeltxtUsort[sortInd]
       
       
       N = list(Hoved=N, Rest=0)
-      Ngr = list(Hoved=Ngr, Rest=0)
+      Ngr = list(Hoved=Ngr[sortInd], Rest=0)
       AggVerdier = list(Hoved=AndelerGrSort, Rest=0)
       xAkseTxt <- "Andel pasienter (%)"	#Denne kan avhenge av figurtype
       
@@ -97,31 +93,24 @@ NIRAndelerGrVar <- function(RegData, valgtVar, datoFra=0, datoTil=0, aar=0, mina
                                grtxt2='', 
                                soyletxt=andeltxt,
                                grtxt=GrNavnSort,
-                               tittel=NIRVarSpes$tittel, 
+                               tittel=NIRdata01$tittel, 
                                #yAkseTxt=yAkseTxt, 
                                retn='H', 
                                xAkseTxt=xAkseTxt, #NIRVarSpes$xAkseTxt,
-                               KImaal = NIRVarSpes$KImaal,
-                               grTypeTxt=NIRUtvalg$grTypeTxt,			 
-                               utvalgTxt=NIRUtvalg$utvalgTxt, 
-                               fargepalett=NIRUtvalg$fargepalett, 
-                               medSml=NIRUtvalg$medSml, 
-                               smltxt=NIRUtvalg$smltxt)
+                               KImaal = NIRdata01$KImaal,
+                               grTypeTxt='alle',			 
+                               utvalgTxt=utvalgTxt, 
+                               fargepalett=NIRUtvalg$fargepalett)
       
-      #Lagre beregnede data
-      #if (hentData==1) {
-      #save(AndelerGrVarData, file='data/AndelerGrVarData.RData')
-      #}
-      
-      #FigDataParam skal inn som enkeltparametre i funksjonskallet
+
       if (lagFig == 1) {
             cexgr <- 1-ifelse(AntGr>20, 0.25*AntGr/60, 0)
             NIRFigSoyler(RegData, AggVerdier=AggVerdier, AggTot=AndelHele, Ngr=Ngr,N=N, cexgr=cexgr, 
-                         tittel=NIRVarSpes$tittel, 
-                         smltxt=NIRUtvalg$smltxt, utvalgTxt=NIRUtvalg$utvalgTxt, #yAkseTxt=yAkseTxt,
-                         grTypeTxt=NIRUtvalg$grTypeTxt,  fargepalett=NIRUtvalg$fargepalett, grtxt=GrNavnSort, 
-                         soyletxt=andeltxt,grVar=grVar, KImaal = NIRVarSpes$KImaal, #medKI = medKI,
-                         medSml=NIRUtvalg$medSml, xAkseTxt=xAkseTxt, outfile=outfile)
+                         tittel=NIRdata01$tittel, 
+                         utvalgTxt=NIRdata01$utvalgsInfo, #yAkseTxt=yAkseTxt,
+                         grTypeTxt=alle,  fargepalett=NIRUtvalg$fargepalett, grtxt=GrNavnSort, 
+                         soyletxt=andeltxt,grVar=grVar, KImaal = NIRdata01$KImaal, #medKI = medKI,
+                         xAkseTxt=xAkseTxt, outfile='')
       }
       
       return(invisible(AndelerGrVarData))

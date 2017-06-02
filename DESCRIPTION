@@ -2,7 +2,7 @@ Package: intensiv
 Type: Package
 Title: Resultatrapporter for Intensivregisteret
 Version: 1.2.0
-Date: 2016-12-19
+Date: 2017-03-28
 Author: Authors@R: c(person("Olsen", "Lena", email =
     "Lena.Ringstad.Olsen@unn.no", role = c("cre", "aut")), person("Edvardsen",
     "Are", email = "are.edvardsen@helse- nord.no", role = c("aut")))
@@ -18,9 +18,10 @@ Depends:
 Imports:
     plyr,
     xtable
-RoxygenNote: 5.0.1
+RoxygenNote: 6.0.1
 Suggests:
     rmarkdown,
     knitr,
-    testthat
+    testthat, 
+    prodlim
 VignetteBuilder: knitr

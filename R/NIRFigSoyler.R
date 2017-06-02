@@ -28,7 +28,7 @@
 #' @param soyletxt Tekst PÅ hver søyle
 #' @param cexgr Skalering av gruppetekst (trenger mindre font når flere grupper)
 #' @param grtxt Navn på gruppene/kategoriene (Eks 40-50 år)
-#' @param grtxt2 Evt. undertekst på kategoriene (Eks 28%) 
+#' @param grtxt2 Evt. undertekst på kategoriene (Eks 28pst) 
 #' @param hovedgrTxt Angivelse av hovedgruppe, eks. eget sykehus
 #' @param fargepalett 'BlaaOff' 
 #' @param xAkseTxt tekst på x-aksen
@@ -38,8 +38,8 @@
 #' @export
 
 
-NIRFigSoyler <- function(RegData, AggVerdier, AggTot=0, Ngr, tittel='mangler tittel', smltxt, N, retn='H', 
-                         yAkseTxt='', utvalgTxt='', grTypeTxt='', soyletxt='', grtxt, grtxt2, hovedgrTxt='', 
+NIRFigSoyler <- function(RegData, AggVerdier, AggTot=0, Ngr, tittel='mangler tittel', smltxt='', N, retn='H', 
+                         yAkseTxt='', utvalgTxt='', grTypeTxt='', soyletxt='', grtxt, grtxt2='', hovedgrTxt='', 
                          grVar='', valgtMaal='Andel', cexgr=1, medSml=0, fargepalett='BlaaOff', xAkseTxt='', 
                          medKI=0, KImaal = NA, outfile='') { #Ngr=list(Hoved=0)
 
@@ -47,8 +47,9 @@ NIRFigSoyler <- function(RegData, AggVerdier, AggTot=0, Ngr, tittel='mangler tit
 #---------------------------------------FRA FIGANDELER, FigGjsnGrVar og FigAndelGrVar--------------------------
 #Hvis for få observasjoner..
 
-if (dim(RegData)[1] < 10 | 
-		(grVar=='' & length(which(RegData$ReshId == reshID))<5 & enhetsUtvalg %in% c(1,3))) {
+if (dim(RegData)[1] < 10 )
+    #|(grVar=='' & length(which(RegData$ReshId == reshID))<5 & enhetsUtvalg %in% c(1,3))) 
+    {
 	#-----------Figur---------------------------------------
       FigTypUt <-figtype(outfile)  #FigTypUt <- figtype(outfile)
 	farger <- FigTypUt$farger
@@ -69,7 +70,7 @@ if (dim(RegData)[1] < 10 |
 	FigTypUt <- figtype(outfile, height=hoyde, fargepalett=fargepalett)	
 	#Tilpasse marger for å kunne skrive utvalgsteksten
 	NutvTxt <- length(utvalgTxt)
-	vmarg <- switch(retn, V=0, H=max(0, strwidth(grtxt, units='figure', cex=cexgr)*0.75))
+	vmarg <- switch(retn, V=0, H=min(1,max(0, strwidth(grtxt, units='figure', cex=cexgr)*0.75)))
 	#NB: strwidth oppfører seg ulikt avh. av device...
 	par('fig'=c(vmarg, 1, 0, 1-0.02*(NutvTxt-1)))	#Har alltid datoutvalg med
 	

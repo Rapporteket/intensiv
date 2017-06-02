@@ -9,4 +9,3 @@ runShinyAppReports()
 \description{
 runShinyAppReports presents figs and stuff from the package in shiny
 }
-

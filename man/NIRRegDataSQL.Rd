@@ -6,15 +6,9 @@
 \usage{
 NIRRegDataSQL(datoFra = "2011-01-01", datoTil = "2099-01-01")
 }
-\arguments{
-\item{datoFra}{Tidligste dato i utvalget (vises alltid i figuren).}
-
-\item{datoTil}{Seneste dato i utvalget (vises alltid i figuren).}
-}
 \value{
 Henter dataramma RegData for Intensivregisteret
 }
 \description{
 Henter data for Intensivregisteret fra "staging"
 }
-

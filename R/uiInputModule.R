@@ -11,20 +11,49 @@ uiInputModule <- function(id, label = "Brukervalg") {
   # create namespace
   ns <- NS(id)
   
-#   # make values and lables for reshID
-#   reshList <-
-#     setNames(as.list(unique(RegData$AVD_RESH)), unique(RegData$SykehusNavn))
-  
+  #   # make values and lables
+  years <- sort(dplyr::distinct(reinnData$RegData, Aar)$Aar)
+  hospital_names <- sort(dplyr::distinct(reinnData$RegData, ShNavn)$ShNavn)
+  age_groups <- levels(reinnData$RegData$AldersGr)
+
   tagList(
-    selectInput(ns("erMann"),
-                label="Kjønn:",
-                c("Begge"=2, "Menn"=1, "Kvinner"=0)
+    selectInput(inputId = ns("year"), label = "År:",
+                choices = years,
+                selected = years,
+                multiple = TRUE
+                ),
+    selectInput(inputId = ns("quarter"), label = "Kvartal:",
+                choices = 1:4,
+                selected = 1:4,
+                multiple = TRUE
+                ),
+    selectInput(inputId = ns("hospitalType"),
+                label = "Sykehustype:",
+                choices = c("Lokal" = 1, "Sentral" = 2,
+                            "Regional" = 3),
+                selected = c(1, 2, 3),
+                multiple = TRUE
     ),
-    sliderInput(ns("alder"), label = "Alder", min = 0,
-                max = 130, value = c(0, 130)
+    selectInput(inputId = ns("hospital"),
+                label = "Sykehus:",
+                choices = hospital_names,
+                selected = hospital_names,
+                multiple = TRUE
     ),
-    dateRangeInput(ns("periode"), start = "2012-01-01", end = Sys.Date(),
-                   label = "Periode", separator="til", language="nb")
+    selectInput(inputId = ns("erMann"),
+                label = "Kjønn:",
+                choices = c("Alle" = 2, "Menn" = 1, "Kvinner" = 0)
+    ),
+    selectInput(inputId = ns("ageGroup"), label = "Aldersgruppe:",
+                choices = age_groups,
+                selected = age_groups,
+                multiple = TRUE
+                )
+    # sliderInput(ns("alder"), label = "Alder", min = 0,
+    #             max = 130, value = c(0, 130)
+    # ),
+    # dateRangeInput(ns("periode"), start = "2012-01-01", end = Sys.Date(),
+    #               label = "Periode", separator="til", language="nb")
     
   )
 }

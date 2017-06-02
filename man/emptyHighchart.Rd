@@ -17,4 +17,3 @@ h1 Highchart object
 \description{
 Provide Highchart object when no data
 }
-

@@ -14,4 +14,3 @@ AndelerTableContainer(groupText = "Gruppe", deptName = "ShusAvd")
 \description{
 Framework for table layout
 }
-

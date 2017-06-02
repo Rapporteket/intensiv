@@ -8,8 +8,8 @@
 #' @export
 
 NIRUtvalgEnh <- function(RegData, datoFra=0, datoTil=0, minald=0, maxald=130, erMann='', InnMaate='', 
-                         aar=0, grType=99, enhetsUtvalg=0, reshID=0, overfPas=99, dodInt='', 
-                         fargepalett='BlaaOff')    
+                         aar=0, grType=99, enhetsUtvalg=0, reshID=0,  dodInt='', fargepalett='BlaaOff')    
+      # overfPas=99,
 {
       
       # Definer intersect-operator
@@ -36,16 +36,16 @@ NIRUtvalgEnh <- function(RegData, datoFra=0, datoTil=0, minald=0, maxald=130, er
       
       Ninn <- dim(RegData)[1]
       indAld <- if(minald>0 | maxald<130) {
-			which(RegData$Alder >= minald & RegData$Alder <= maxald)} else {1:Ninn}
+            which(RegData$Alder >= minald & RegData$Alder <= maxald)} else {1:Ninn}
       indDato <- if(datoFra!=0 | datoTil!=0) {
-			which(RegData$InnDato >= as.POSIXlt(datoFra) & RegData$InnDato <= as.POSIXlt(datoTil))
-				} else {1:Ninn}
-      indAar <- if (aar[1] != '') {which(RegData$Aar %in% aar)} else {1:Ninn}
+            which(RegData$InnDato >= as.POSIXlt(datoFra) & RegData$InnDato <= as.POSIXlt(datoTil))
+      } else {1:Ninn}
+      indAar <- if (aar[1] != 0) {which(RegData$Aar %in% aar)} else {1:Ninn}
       indKj <- if (erMann %in% 0:1) {which(RegData$erMann == erMann)} else {1:Ninn}
       indInnMaate <- if (InnMaate %in% c(0,6,8)) {which(RegData$InnMaate == InnMaate)
-            } else {1:Ninn}
+      } else {1:Ninn}
       indDod <- if (dodInt %in% 0:1) {which(as.numeric(RegData$DischargedIntensiveStatus)==dodInt)
-            } else {1:Ninn}
+      } else {1:Ninn}
       indGrType <- if (grType %in% 1:3) {switch(grType,
                                                 '1' = which(RegData$ShType %in% 1:2),
                                                 '2' = which(RegData$ShType %in% 1:2),
@@ -60,18 +60,18 @@ NIRUtvalgEnh <- function(RegData, datoFra=0, datoTil=0, minald=0, maxald=130, er
       N <- dim(RegData)[1]	#N=0 gir feilmelding
       grTypetextstreng <- c('lokal/sentral', 'lokal/sentral', 'region')				
       if (grType %in% 1:3) {grTypeTxt <- grTypetextstreng[grType]} else {grTypeTxt <- 'alle '}
-   
+      
       
       
       
       utvalgTxt <- c(
             if(datoFra!=0 | datoTil!=0) {paste0(
-            'Registreringsperiode: ', if (N>0) {min(RegData$InnDato, na.rm=T)} else {datoFra}, 
-            ' til ', if (N>0) {max(RegData$InnDato, na.rm=T)} else {datoTil})} else {NULL},
+                  'Registreringsperiode: ', if (N>0) {min(RegData$InnDato, na.rm=T)} else {datoFra}, 
+                  ' til ', if (N>0) {max(RegData$InnDato, na.rm=T)} else {datoTil})} else {NULL},
             if (aar[1] > 0){paste0('Innleggelsesår: ', paste0(aar, collapse=', '))},
             if ((minald>0) | (maxald<130)) {
                   paste0('Pasienter fra ', if (N>0) {sprintf('%.1f',min(RegData$Alder, na.rm=T))} else {minald}, 
-                        ' til ', if (N>0) {sprintf('%.1f',max(RegData$Alder, na.rm=T))} else {maxald}, ' år')},
+                         ' til ', if (N>0) {sprintf('%.1f',max(RegData$Alder, na.rm=T))} else {maxald}, ' år')},
             if (erMann %in% 0:1) {paste0('Kjønn: ', c('Kvinner', 'Menn')[erMann+1])},
             if (InnMaate %in% c(0,6,8)) {paste('Innmåte: ', 
                                                c('Elektivt',0,0,0,0,0, 'Akutt medisinsk',0, 'Akutt kirurgi')[InnMaate+1], sep='')},
@@ -85,11 +85,11 @@ NIRUtvalgEnh <- function(RegData, datoFra=0, datoTil=0, minald=0, maxald=130, er
       if (enhetsUtvalg %in% c(1,2,3,6)) {	#Involverer egen enhet
             hovedgrTxt <- as.character(RegData$ShNavn[indEgen1]) } else {
                   hovedgrTxt <- switch(as.character(enhetsUtvalg), 	
-                                  '0' = 'Hele landet',
-                                  '4' = grTypetextstreng[RegData$ShType[indEgen1]],
-                                  '5' = grTypetextstreng[RegData$ShType[indEgen1]],
-                                  '7' = as.character(RegData$Region[indEgen1]),
-                                  '8' = as.character(RegData$Region[indEgen1]))
+                                       '0' = 'Hele landet',
+                                       '4' = grTypetextstreng[RegData$ShType[indEgen1]],
+                                       '5' = grTypetextstreng[RegData$ShType[indEgen1]],
+                                       '7' = as.character(RegData$Region[indEgen1]),
+                                       '8' = as.character(RegData$Region[indEgen1]))
             }
       
       

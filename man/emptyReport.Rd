@@ -19,4 +19,3 @@ tableObj Table object
 \description{
 Provide report object when no data (test replacement of NIRHighcharts)
 }
-

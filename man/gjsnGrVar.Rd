@@ -9,4 +9,3 @@ gjsnGrVar()
 \description{
 Provide report object GjsnGrVar
 }
-
