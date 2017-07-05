@@ -5,9 +5,10 @@
 \title{Søylediagram med AggVerdier for hver grupperingsenhet (sykehus, RHF, ...)}
 \usage{
 NIRAndelerGrVar(RegData, valgtVar, datoFra = 0, datoTil = 0, aar = 0,
-  minald = 0, maxald = 130, grType = 99, grVar = "", InnMaate = 99,
-  dodInt = "", erMann = "", hentData = 0, preprosess = 1,
-  outfile = "", lagFig = 1)
+  minald = 0, maxald = 130, aldGr = 0, grType = 99, grVar = "",
+  InnMaate = 99, dodInt = "", erMann = "", hentData = 0,
+  utvalgsInfo = "", tittel = "", sortAvtagende = TRUE, preprosess = 1,
+  outfile = "", lagFig = 1, offData = 0)
 }
 \arguments{
 \item{RegData}{En dataramme med alle nødvendige variabler fra registeret}
@@ -54,6 +55,16 @@ TRUE: Ja (Standard)}
 til systemets standard utdataenhet (som regel skjerm))}
 
 \item{lagFig}{Angir om figur skal lages eller ikke 0-ikke lag, 1-lag}
+
+\item{aldGr:}{Aldersgrupper. Brukes i offentliggjøringsfigurer}
+
+\item{tittel:}{Hvis vil angi tittel direkte}
+
+\item{utvalgsInfo:}{Hvis datafil lagret med utvalgsinfo}
+
+\item{offData:}{Hvis vi benytter anonymiserte 01-data til offentliggjøring.}
+
+\item{sortAvtagende:}{sortere søylene i figuren avtagende eller stigende.}
 }
 \value{
 Søylediagram med AggVerdier av valgt variabel for hvert sykehus
@@ -61,7 +72,8 @@ Søylediagram med AggVerdier av valgt variabel for hvert sykehus
 \description{
 Funksjon som genererer en figur med AggVerdier av en gitt variabel for ei valgt gruppering, 
 f.eks. enheter. I øyeblikket benytter funksjonen bare 'ShNavn' som grupperingsvariabel, men 
-andre valg kan lett inkluderes.
+andre valg kan lett inkluderes. Funksjonen er tilrettelagt for også å kunne benytte "01-data", 
+dvs. kodede, anonymiserte data som benyttes til offentlige kvalitetsindikatorer.
 }
 \details{
 Funksjonen benytter funksjonene: NIRRegDataSQL, NIRPreprosess, NIRVarTilrettelegg, NIRUtvalgEnh

@@ -6,10 +6,10 @@
 \usage{
 NIRFigTidAndel(RegData, AggVerdier, AggTot = 0, Ngr,
   tittel = "mangler tittel", smltxt = "", N, retn = "H", yAkseTxt = "",
-  utvalgTxt = "", grTypeTxt = "", grtxt, grtxt2 = "", hovedgrTxt = "",
-  grVar = "", valgtMaal = "Andel", cexgr = 1, medSml = 0,
-  fargepalett = "BlaaOff", xAkseTxt = "", medKI = 0, KImaal = NA,
-  outfile = "")
+  utvalgTxt = "", grTypeTxt = "", tidtxt, varTxt = "", grtxt2 = "",
+  hovedgrTxt = "", grVar = "", valgtMaal = "Andel", cexgr = 1,
+  medSml = 0, fargepalett = "BlaaOff", xAkseTxt = "", medKI = 0,
+  KImaal = NA, outfile = "")
 }
 \arguments{
 \item{RegData}{En dataramme med alle nødvendige variabler fra registeret}
@@ -37,8 +37,6 @@ gruppenavnet (i f.eks. tekstetikett) hvis det er gjort utvalg p? f.eks. en sykeh
 
 \item{grTypeTxt}{Tekst som angir}
 
-\item{grtxt}{Navn p? gruppene/kategoriene (Eks 40-50 ?r)}
-
 \item{grtxt2}{Evt. undertekst p? kategoriene (Eks 28pst)}
 
 \item{hovedgrTxt}{Angivelse av hovedgruppe, eks. eget sykehus}
@@ -57,6 +55,8 @@ gruppenavnet (i f.eks. tekstetikett) hvis det er gjort utvalg p? f.eks. en sykeh
 
 \item{outfile}{Navn på fil figuren skrives til. Standard: '' (Figur skrives
 til systemets standard utdataenhet (som regel skjerm))}
+
+\item{grtxt}{Navn p? gruppene/kategoriene (Eks 40-50 ?r)}
 }
 \value{
 S?ylediagram med gjennomsnitt/median av valgt variabel for hvert sykehus

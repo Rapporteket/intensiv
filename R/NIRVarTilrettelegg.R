@@ -29,7 +29,7 @@
 #'	   \item 8: Egen region mot resten [NB: Mangler pt. variabel for region]
 #'    	}							
 #'    				
-#' @inheritParams NIRFigAndeler
+#' @inheritParams NIRAndeler
 #'				
 #' @return Definisjon av valgt variabel.
 #'
@@ -196,7 +196,7 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler'
       }
        if (valgtVar=='reinn') { #AndelGrVar, AndelTid, GjsnGrVar
              #Andel reinnlagte kun hvor dette er registrert. #Ja=1, nei=2, ukjent=9
-             RegData <- RegData[which(RegData$ReAdmitted %in% 1:2), ]	#Tar bort ukjente
+             RegData <- RegData[which((RegData$ReAdmitted %in% 1:2) & (RegData$InnDato >= as.POSIXlt(datoFra))), ]	#Tar bort ukjente
              if (figurtype %in% c('andelGrVar', 'andelTid')) {
                    RegData$Variabel[which(RegData$ReAdmitted==1)] <- 1}  
              if (figurtype == 'gjsnGrVar') {RegData$Variabel <- RegData$ReAdmitted}  
@@ -207,15 +207,20 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler'
 	   
       if (valgtVar == 'respiratortid') { #Andeler #GjsnGrVar #AndelGrVar, GjsnTid
             RegData <- RegData[which(RegData$respiratortid>0), ] 
-            RegData$Variabel  <- as.numeric(RegData$respiratortid)      #GjsnGrVar
-            RegData$Variabel[which(RegData$respiratortid>2.5)] <- 1     #AndelGrVar
-            tittel <- 'Respiratortid'
+            if (figurtype %in% c('andeler', 'gjsnGrVar')) {
+                  RegData$Variabel  <- as.numeric(RegData$respiratortid)
+                  tittel <- 'Respiratortid'}      #Andeler, GjsnGrVar
+            if (figurtype %in% c('andelTid', 'andelGrVar')) {
+                  RegData$Variabel[which(RegData$respiratortid < 2.5)] <- 1
+                  tittel <- 'Respiratortid < 2.5 døgn'}     #AndelGrVar, AndelTid
+            
             gr <- c(0, 1, 2, 3, 4, 5, 6, 7, 14, 1000)#c(0, exp(seq(0,log(30),length.out = 6)), 500),1)
             RegData$VariabelGr <- cut(RegData$respiratortid, breaks=gr, include.lowest=TRUE, right=FALSE)  
             grtxt <- c('(0-1)','[1-2)','[2-3)','[3-4)','[4-5)','[5-6)','[6-7)','[7-14)','14+')
             xAkseTxt <- 'Respiratortid (døgn)'
             #KImaal <- 2.5 #Median respiratortid <2,5døgn 
-            KImaal <- 50 #Minst 50% med respiratortid <2,5døgn.
+            KImaal <- 50 #Over 50% med respiratortid <2,5døgn
+            sortAvtagende <- TRUE      #Rekkefølge
       } 
 
 

@@ -6,6 +6,19 @@
 \usage{
 NIRVarTilrettelegg(RegData, valgtVar, grVar = "", figurtype = "andeler")
 }
+\arguments{
+\item{RegData}{En dataramme med alle nødvendige variabler fra registeret}
+
+\item{valgtVar}{Hvilken variabel som skal visualiseres. Se \strong{Details} for oversikt.}
+
+\item{figurtype}{Hvilken figurtype som ønskes ut: 
+andel (fordelingsfigurer), 
+andelGrVar (andel i hver kategori av grupperingsvariabel, eks. sykehus), 
+andelTid (andel per tidsenhet, eks. år, måned), 
+andelPP (andel før og etter), 
+gjsnGrVar (sentralmål i hver kategori av grupperingsvariabel, eks. sykehus),
+gjsnTid (sentralmål per tidsenhet, eks. år, måned)}
+}
 \value{
 Definisjon av valgt variabel.
 }

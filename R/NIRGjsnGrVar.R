@@ -6,8 +6,8 @@
 #'
 #' Detajer: Her bør man liste opp hvilke variable funksjonen benytter...
 #'
-#' @inheritParams NIRFigAndeler
-#' @inheritParams NIRFigAndelerGrVar
+#' @inheritParams NIRAndeler
+#' @inheritParams NIRAndelerGrVar
 #' @param valgtMaal 'Med' = median. Alt annet gir gjennomsnitt 
 #'
 #' Argumentet \emph{valgtVar} har følgende valgmuligheter:

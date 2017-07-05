@@ -4,8 +4,8 @@
 \alias{RegData01Off}
 \title{Lager "anonymt" minimumsdatasett basert på rådata for å beregne kvalitetsindikatorer.}
 \usage{
-RegData01Off(RegData, valgtVar, datoFra = "2016-01-01", tilleggsVar = 0,
-  hentData = 0)
+RegData01Off(RegData, valgtVar, datoFra = "2016-01-01",
+  datoTil = "3000-01-01", tilleggsVar = 0, hentData = 0)
 }
 \arguments{
 \item{RegData}{En dataramme med alle nødvendige variabler fra registeret}
@@ -13,6 +13,8 @@ RegData01Off(RegData, valgtVar, datoFra = "2016-01-01", tilleggsVar = 0,
 \item{valgtVar}{Hvilken variabel som skal visualiseres. Se \strong{Details} for oversikt.}
 
 \item{datoFra}{Tidligste dato i utvalget (vises alltid i figuren).}
+
+\item{datoTil}{Seneste dato i utvalget (vises alltid i figuren).}
 
 \item{tilleggsVar}{Variable som benyttes til filtrering eller gruppering av valgt variabel (valgtVar)
 Aktuelle valg: Aar, erMann, ShNavn, Mnd,}

@@ -36,19 +36,21 @@ texi2pdf(file='NIRSamleRapp.tex')
 
 #-------------------------------------LASTE DATA-----------------------------------------------
 rm(list=ls())
-fil <- 'C:/Registre/NIR/data/MainFormDataContract2017-05-19'
+dato <- '2017-07-03'
+dataKat <- 'A:/Intensiv/'
+fil <- paste0(dataKat,'MainFormDataContract',dato)
 #NIRdata <- read.table(file=paste0(fil,'.csv'), header=T, sep=';',encoding = 'UTF-8')
 #RegData <- NIRdata
 load(paste0(fil,".Rdata")) #RegData
 #save(RegData, file=paste0(fil,'.Rdata'))
 #RegData <- NIRdata[sample(1:dim(NIRdata)[1],10000),]
-#save(RegData, file='C:/Registre/NIR/data/NIRdata10000.Rdata')
-load("C:/Registre/NIR/data/NIRdata10000.Rdata") #RegData, mai 2017
+#save(RegData, file=paste(dataKat,'NIRdata10000.Rdata'))
+load(paste(dataKat,"NIRdata10000.Rdata")) #RegData, mai 2017
 
-#-----------------------------------Datasett til kvalitetsindikatorer---------
+#-----------------------------------Lage datasett til kvalitetsindikatorer---------
 library(intensiv)
 
-valgtVar <- 'reinn'  #reinn, respiratortid
+valgtVar <- 'respiratortid'  #reinn, respiratortid
 datoFra <- '2016-01-01'
 tilleggsVar <- c('Aar', 'Kvartal', 'erMann', 'ShNavn', 'ShType', 'Alder')
 RegData01Off(RegData, valgtVar=valgtVar, datoFra = datoFra, tilleggsVar=tilleggsVar, hentData=0)
@@ -59,13 +61,13 @@ grVar <- 'ShNavn'
 InnMaate <- 99
 erMann <- '' 
 aldGr  <- 0
+#Laste offdata
+load(paste0(dataKat, 'NIRdata01', valgtVar, '.Rdata'))
+RegData <- NIRdata01$NIRRegData01Off
 
-load(paste0('C:/Registre/NIR/data/NIRdata01', valgtVar, '.Rdata'))
-
-DataTilbake <- NIRAndelerGrVarOff(RegData=NIRdata01$NIRRegData01Off, valgtVar=valgtVar, aar=aar, grType=grType, grVar='ShNavn', 
-                                  InnMaate=InnMaate, erMann=erMann, aldGr=aldGr, hentData=0, outfile='', lagFig=1) 
-
-DataTilbake <- NIRAndelerGrVarOff(RegData=RegData, hentData=0, outfile='', lagFig=1) 
+DataTilbake <- NIRAndelerGrVar(RegData=0, valgtVar=valgtVar, aar=aar, grType=grType, 
+                               grVar='ShNavn', InnMaate=InnMaate, erMann=erMann, hentData=0, outfile='', 
+                               lagFig=1, offData=1) #aldGr=aldGr, 
 
 #-------------------------------------- Parametre ----------------------------------------------------
 library(intensiv)
@@ -83,6 +85,7 @@ overfPas <- ''    #Overført under pågående intensivbehandling?	1 = Nei, 2 = J
 grType <- 99	#1/2: sentral/lokal, 3:regional, 99:'alle'
 grVar <- 'ShNavn'
 enhetsUtvalg <- 1	#0-5
+offData <- 1
 #Parameter for evt. kvalitetsmål? angis i Tilrettelegging
 
 #--------------------------------------- Ny struktur basert på grVar? ----------------------------------
@@ -110,10 +113,6 @@ Utdata <- NIRAndeler(RegData=RegData, valgtVar=valgtVar, minald=minald, maxald=m
                         datoTil=datoTil, InnMaate=InnMaate, dodInt=dodInt,erMann=erMann, outfile=outfile, 
                         hentData=0, preprosess=1, reshID=reshID, enhetsUtvalg=enhetsUtvalg, lagFig=1)
 
-#NIRFigAndeler(RegData=RegData, valgtVar=valgtVar, minald=minald, maxald=maxald,  datoFra=datoFra, 
-#	datoTil=datoTil, InnMaate=InnMaate, dodInt=dodInt,erMann=erMann, outfile=outfile, 
-#	hentData=0, preprosess=1, reshID=reshID, enhetsUtvalg=enhetsUtvalg)
-
 
 variable <- c('alder', 'liggetid', 'respiratortid',  'SAPSII', 'NEMS24', 'Nas24', 'InnMaate')
 for (valgtVar in variable) {
@@ -125,20 +124,15 @@ for (valgtVar in variable) {
 
 #--------------------------------------- AndelGrVar ----------------------------------
 grVar <- 'ShNavn'
-valgtVar <- 'reinn'	#alder_u18', 'alder_over80', 'dod30d', 'dodeIntensiv', 'innMaate', 
-                        #'respStotte', 'reinn
+valgtVar <- 'respiratortid'	#alder_u18', 'alder_over80', 'dod30d', 'dodeIntensiv', 'innMaate', 
+                        #respiratortid, 'respStotte', 'reinn
 outfile <- '' #paste0(valgtVar, 'GrVar.png')
+offData <- 1
 
 NIRAndelerGrVar(RegData=RegData, valgtVar=valgtVar, minald=minald, maxald=maxald,  datoFra=datoFra, 
-                datoTil=datoTil, InnMaate=InnMaate, dodInt=dodInt,erMann=erMann, outfile=outfile, 
-                grType=grType, grVar=grVar, hentData=0, preprosess=1, lagFig=1)
+                datoTil=datoTil, aar=0, InnMaate=InnMaate, dodInt=dodInt,erMann=erMann, outfile=outfile, 
+                grType=grType, grVar=grVar, hentData=0, preprosess=1, lagFig=1, offData = offData)
 
-NIRAndelerGrVar(RegData=OffDataKvalInd, valgtVar='reinn', aar=2015, erMann='', outfile='', 
-               grVar='ShNavn', hentData=0, preprosess=0, lagFig=1)
-
-#NIRFigAndelerGrVar(RegData=RegData, valgtVar=valgtVar, minald=minald, maxald=maxald,  datoFra=datoFra, 
-#	datoTil=datoTil, InnMaate=InnMaate, dodInt=dodInt,erMann=erMann, outfile=outfile, 
-#	grType=grType)
 variable <- c('alder_u18', 'alder_over80', 'dod30d', 'dodeIntensiv', #'innMaate', 
       'respStotte', 'reinn')
 for (valgtVar in variable) {
@@ -148,16 +142,15 @@ for (valgtVar in variable) {
 		                grType=grType, grVar=grVar, hentData=0, preprosess=1, lagFig=1)
                   }
 
-		
-		
 #---------------------AndelTid----------------------------------------------
-valgtVar <- 'respiratortidDod'	#'alder_u18', 'alder_over80', 'dod30d', 'dodeIntensiv', 'liggetidDod', 
-                        #'respiratortidDod', 'respStotte', 'reinn', 'SMR'
+valgtVar <- 'respiratortid'	#'alder_u18', 'alder_over80', 'dod30d', 'dodeIntensiv', 'liggetidDod', 
+                        #respiratortid, 'respiratortidDod', 'respStotte', 'reinn', 'SMR'
 outfile <- '' #paste0(valgtVar, '.png')
 
 NIRAndelTid(RegData=RegData, valgtVar=valgtVar, datoFra=datoFra, datoTil=datoTil, 
 		minald=minald, maxald=maxald, erMann=erMann,InnMaate=InnMaate, dodInt=dodInt, 
-		reshID, outfile=outfile, enhetsUtvalg=enhetsUtvalg)	
+		reshID, outfile=outfile, enhetsUtvalg=enhetsUtvalg, lagFig = 1, offData=1)	
+NIRAndelerGrVar(aar=0, grType=grType, )
 
 variable <- c('alder_u18', 'alder_over80', 'dod30d', 'dodeIntensiv', 'liggetidDod', 
               'respiratortidDod', 'respStotte', 'reinn', 'SMR')

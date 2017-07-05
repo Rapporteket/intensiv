@@ -15,42 +15,71 @@
 #'     \item reinn: Andel reinnlagte (kun hvor dette er registrert, dvs. fjerner ukjente)
 #'    }
 #'
-#' @inheritParams NIRFigAndeler 
+#' @inheritParams NIRAndeler 
 #'
 #' @return Figur som viser tidstrend, dvs. andel av valgt variabel for hvert år. 
 #'
 #' @export
 NIRAndelTid <- function(RegData, valgtVar, datoFra='2011-01-01', datoTil='3000-12-31', 
                         minald=0, maxald=130, erMann='', InnMaate='', dodInt='', reshID, outfile='', 
-                        enhetsUtvalg=1, preprosess=1, hentData=0, lagFig=1) {
+                        enhetsUtvalg=1, preprosess=1, hentData=0, lagFig=1, offData=0) {
   
   if (hentData == 1) {		
     RegData <- NIRRegDataSQL(datoFra, datoTil)
   }
-  
-  # Hvis RegData ikke har blitt preprosessert. (I samledokument gjøre dette i samledokumentet)
-  if (preprosess){
-    RegData <- NIRPreprosess(RegData=RegData)	#, reshID=reshID)
-  }
-  
-       #--------------- Definere variable ------------------------------
+       if (offData == 1) {
+            ##DENNE MÅ ENDRES NÅR VI FÅR DATA I PAKKEN!!
+            filnavn <- paste0('A:/Intensiv/NIRdata01', valgtVar, '.RData')
+            load(filnavn) 
+            RegData <- NIRdata01$NIRRegData01Off
+            utvalgsInfo <- NIRdata01$utvalgsInfo
+            KImaal <- NIRdata01$KImaal
+            sortAvtagende <- NIRdata01$sortAvtagende
+            tittel <- NIRdata01$tittel
+      }
+ 
+      # Preprosessering av data. I samledokument gjøre dette i samledokumentet. Off01-data er preprosessert.
+      if (offData==1) {preprosess <- 0}
+      if (preprosess==1){
+            RegData <- NIRPreprosess(RegData=RegData)	#, reshID=reshID)
+      }
       
-      NIRVarSpes <- NIRVarTilrettelegg(RegData=RegData, valgtVar=valgtVar, figurtype=figurtype)
-      RegData <- NIRVarSpes$RegData
+      #------- Tilrettelegge variable
+      varTxt <- ''
+      if (offData == 0) {
+            NIRVarSpes <- NIRVarTilrettelegg(RegData=RegData, valgtVar=valgtVar, figurtype = 'andelGrVar')
+            RegData <- NIRVarSpes$RegData
+            sortAvtagende <- NIRVarSpes$sortAvtagende
+            varTxt <- NIRVarSpes$varTxt
+            KImaal <- NIRVarSpes$KImaal
+            tittel <- NIRVarSpes$tittel
+      } 
       
       
-      NIRUtvalg <- NIRUtvalgEnh(RegData=RegData, datoFra=datoFra, datoTil=datoTil, #aar=aar, 
-                                minald=minald, maxald=maxald, 
-                                erMann=erMann, InnMaate=InnMaate, dodInt=dodInt, 
-                                reshID=reshID, enhetsUtvalg=enhetsUtvalg) #overfPas = overfPas,
+      #------- Gjøre utvalg
+      smltxt <- ''
+      medSml <- 0
+      
+      if (offData == 0) {
+            NIRUtvalg <- NIRUtvalgEnh(RegData=RegData, datoFra=datoFra, datoTil=datoTil, 
+                                      minald=minald, maxald=maxald, aar=aar, erMann=erMann, #overfPas=overfPas, 
+                                      InnMaate=InnMaate, dodInt=dodInt, grType=grType)
+            smltxt <- NIRUtvalg$smltxt
+            medSml=NIRUtvalg$medSml 
+            utvalgTxt <- NIRUtvalg$utvalgTxt
+			ind <- NIRUtvalg$ind
+      }				
+      if (offData == 1) {NIRUtvalg <- NIRUtvalgOff(RegData=NIRdata01$NIRRegData01Off, aldGr=aldGr, aar=aar, erMann=erMann, 
+                                                   InnMaate=InnMaate, grType=grType)
+      
+      utvalgTxt <- c(NIRUtvalg$utvalgsTxt, utvalgsInfo)
+	  ind <- list(Hoved = 1:dim(RegData)[1], Rest = NULL)
+      }
       RegData <- NIRUtvalg$RegData
-      utvalgTxt <- NIRUtvalg$utvalgTxt
-
    
     #--------------- Gjøre beregninger ------------------------------
       
     AggVerdier <- list(Hoved = 0, Rest =0)
-    ind <- NIRUtvalg$ind
     N <- list(Hoved = length(ind$Hoved), Rest =length(ind$Rest))
     
     tidtxt <- min(RegData$Aar):max(RegData$Aar)
@@ -78,31 +107,32 @@ if (valgtVar %in% c('liggetidDod','respiratortidDod')) {
     
  #grtxt <- paste0(rev(NIRVarSpes$grtxt), ' (', rev(sprintf('%.1f',AggVerdier$Hoved)), '%)') 
       grtxt2 <- paste0('(', sprintf('%.1f',AggVerdier$Hoved), '%)')
-      yAkseTxt='Andel pasienter (%)'
+      yAkseTxt <- ''
+      xAkseTxt='Andel pasienter (%)'
       
       FigDataParam <- list(AggVerdier=AggVerdier, N=N, 
                            Ngr=Ngr,	
-                           KImaal <- NIRVarSpes$KImaal,
+                           KImaal <- KImaal,
                            #soyletxt=soyletxt,
                            grtxt2=grtxt2, 
-                           varTxt=NIRVarSpes$varTxt,
+                           varTxt=varTxt,
                            tidtxt=tidtxt, #NIRVarSpes$grtxt,
-                           tittel=NIRVarSpes$tittel, 
-                           retn=NIRVarSpes$retn, 
-                           xAkseTxt=NIRVarSpes$xAkseTxt,
+                           tittel=tittel, 
+                           retn='V', 
+                           xAkseTxt=xAkseTxt,
                            yAkseTxt=yAkseTxt,
                            utvalgTxt=NIRUtvalg$utvalgTxt, 
                            fargepalett=NIRUtvalg$fargepalett, 
-                           medSml=NIRUtvalg$medSml,
+                           medSml=medSml,
                            hovedgrTxt=NIRUtvalg$hovedgrTxt,
                            smltxt=NIRUtvalg$smltxt)
       
   
       if (lagFig == 1) {
-            NIRFigTidAndel(RegData, AggVerdier, Ngr, tittel=NIRVarSpes$tittel, hovedgrTxt=NIRUtvalg$hovedgrTxt, 
-                         smltxt=NIRUtvalg$smltxt, Ngr = Ngr, KImaal <- NIRVarSpes$KImaal, N=N, retn='V', 
-                         utvalgTxt, tidtxt=tidtxt, varTxt=NIRVarSpes$varTxt, grtxt2=grtxt2, medSml=NIRUtvalg$medSml, 
-                         xAkseTxt=NIRVarSpes$xAkseTxt, yAkseTxt=yAkseTxt, 
+            NIRFigTidAndel(RegData, AggVerdier, Ngr, tittel=tittel, hovedgrTxt=NIRUtvalg$hovedgrTxt, 
+                         smltxt=NIRUtvalg$smltxt, Ngr = Ngr, KImaal <- KImaal, N=N, retn='V', 
+                         utvalgTxt, tidtxt=tidtxt, varTxt=varTxt, grtxt2=grtxt2, medSml=medSml, 
+                         xAkseTxt=xAkseTxt, yAkseTxt=yAkseTxt,
                          outfile=outfile)	
       }
 	

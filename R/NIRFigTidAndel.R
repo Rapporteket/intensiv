@@ -85,7 +85,11 @@ NIRFigTidAndel <- function(RegData, AggVerdier, AggTot=0, Ngr, tittel='mangler t
     text(tidtxt, AggVerdier$Hoved, pos=3, Ngr$Hoved, cex=0.9, col=fargeHoved)
     
     lines(tidtxt, AggVerdier$Rest, col=fargeRest, lwd=3)
-    points(tidtxt, AggVerdier$Rest, pch="'", cex=2, col=fargeRest)	#}
+    points(tidtxt, AggVerdier$Rest, pch="'", cex=2, col=fargeRest)
+    
+    #KImål
+    lines(tidtxt, KImaal, col= '#FF7260', lwd=3)
+    text(max(tidtxt), KImaal, pos=4, 'Mål', cex=0.9, col='#FF7260')
     
     Ttxt <- paste0('(Tall ved punktene angir antall ', varTxt, ')') 
     if (medSml == 1) { 

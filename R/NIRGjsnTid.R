@@ -23,7 +23,7 @@
 #'	   \item 8: Egen region mot resten [NB: Mangler pt. variabel for region]
 #'    	}							
 #'
-#' @inheritParams NIRFigAndeler 
+#' @inheritParams NIRAndeler 
 #' @param valgtMaal
 #'        'Gjsn': gir middelverdi (standard)
 #'        'Med': gir median

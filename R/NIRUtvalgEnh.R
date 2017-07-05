@@ -1,6 +1,6 @@
 #' Funksjon som gjør utvalg av dataene, returnerer det filtrerte datasettet og utvalgsteksten.
 #'
-#' @inheritParams NIRFigAndeler
+#' @inheritParams NIRAndeler
 #' @param fargepalett Hvilken fargepalett skal brukes i figurer (Standard: BlaaRapp)
 #'
 #' @return UtData En liste bestående av det filtrerte datasettet, utvalgstekst for figur og tekststreng som angir fargepalett
@@ -124,6 +124,6 @@ NIRUtvalgEnh <- function(RegData, datoFra=0, datoTil=0, minald=0, maxald=130, er
       
       
       UtData <- list(RegData=RegData, utvalgTxt=utvalgTxt, fargepalett=fargepalett, ind=ind, 
-                     medSml=medSml, hovedgrTxt=hovedgrTxt,smltxt=smltxt) #, grTypeTxt=grTypeTxt)
+                     medSml=medSml, hovedgrTxt=hovedgrTxt,smltxt=smltxt, grTypeTxt=grTypeTxt)
       return(invisible(UtData)) 
 }

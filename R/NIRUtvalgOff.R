@@ -1,6 +1,6 @@
 #' Funksjon som gjør utvalg av anonymiserte data, returnerer det filtrerte datasettet og utvalgsteksten.
 #'
-#' @inheritParams NIRFigAndeler
+#' @inheritParams NIRAndeler
 #' @param fargepalett Hvilken fargepalett skal brukes i figurer (Standard: BlaaRapp)
 #'
 #' @return UtData En liste bestående av det filtrerte datasettet, utvalgstekst for figur og tekststreng som angir fargepalett

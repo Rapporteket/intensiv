@@ -4,7 +4,7 @@
 #' Funksjonen lager også et "offentlig" datasett som kan benyttes til beregning
 #' av kvalitetsindikatorer og som kan legges ved pakken
 #'
-#' @inheritParams NIRFigAndeler
+#' @inheritParams NIRAndeler
 #'
 #' @return Data En liste med det filtrerte datasettet (og sykehusnavnet som tilsvarer reshID, ikke pt)
 #'
@@ -35,7 +35,7 @@ NIRPreprosess <- function(RegData=RegData, lagreKvalIndData=0)	#, reshID=reshID)
 	names(RegData)[which(names(RegData) == 'Saps2ScoreNumber')] <- 'SAPSII'
 	names(RegData)[which(names(RegData) == 'TransferredStatus')] <- 'Overf'
 	names(RegData)[which(names(RegData) == 'TypeOfAdmission')] <- 'InnMaate'
-	names(RegData)[which(names(RegData) == 'UnitId')] <- 'ReshId'
+	names(RegData)[which(names(RegData) == 'ReshID')] <- 'ReshId'
 	
 # Riktig format
 	RegData$ShNavn <- as.character(RegData$ShNavn)
