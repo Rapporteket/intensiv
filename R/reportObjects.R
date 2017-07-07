@@ -42,7 +42,7 @@ readmission72hours <-  function(selectYear, selectQuarter, selectHospital,
                                 selectErMann, selectAgeGroup) {
   
   # first, make some sensibel value out of "Kvartal". Should be fixed in data
-  fRegData <- dplyr::mutate(reinnData$RegData,
+  fRegData <- dplyr::mutate(NIRdata01$NIRRegData01Off,
                             qNum = as.numeric(substr(Kvartal, nchar(Kvartal),
                                                      nchar(Kvartal))))
   
@@ -55,14 +55,14 @@ readmission72hours <-  function(selectYear, selectQuarter, selectHospital,
   
   # in case filtering makes empty data
   if (is.data.frame(fRegData) && nrow(fRegData) == 0) {
-    emptyReport(Tittel = reinnData$tittel, infoText = "Ingen data")
+    emptyReport(Tittel = NIRdata01$tittel, infoText = "Ingen data")
   } else {
     # get (static) data, lazy loaded
     d <- NIRAndelerGrVar(RegData = fRegData, grVar = 'ShNavn',
                             erMann = selectErMann,
                             hentData = 0, outfile = '', lagFig = 0,
-                            utvalgsInfo = reinnData$utvalgsInfo,
-                            tittel = reinnData$tittel)
+                            utvalgsInfo = NIRdata01$utvalgsInfo,
+                            tittel = NIRdata01$tittel, offData = 1)
     
     ## hc
     # get actual color from name...

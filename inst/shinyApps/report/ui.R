@@ -14,7 +14,8 @@ shinyUI(
              tabPanel("Reinnleggelse innen 72 timer",
                       sidebarLayout(
                         sidebarPanel(
-                          uiInputModule("readmission72hours"),
+                          uiInputModule(id = "readmission72hours",
+                                        dat = NIRdata01$NIRRegData01Off),
                           downloadButton("downloadDataAndelerGrVar",
                                          label = "Last ned data")
                         ),
@@ -31,7 +32,8 @@ shinyUI(
              tabPanel("GjsnGrVar",
                       sidebarLayout(
                         sidebarPanel(
-                          uiInputModule("gjsnGrVar"),
+                          uiInputModule(id = "gjsnGrVar",
+                                        dat = NIRdata01$NIRRegData01Off),
                           downloadButton("downloadDataGjsnGrVar",
                                          label = "Last ned data")
                         ),
