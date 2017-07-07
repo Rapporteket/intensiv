@@ -62,7 +62,7 @@ readmission72hours <-  function(selectYear, selectQuarter, selectHospital,
                             erMann = selectErMann,
                             hentData = 0, outfile = '', lagFig = 0,
                             utvalgsInfo = reinnData$utvalgsInfo,
-                            tittel = reinnData$tittel)
+                            tittel = reinnData$tittel, offData = 1)
     
     ## hc
     # get actual color from name...
