@@ -15,7 +15,7 @@ shinyUI(
                       sidebarLayout(
                         sidebarPanel(
                           uiInputModule(id = "readmission72hours",
-                                        dat = NIRdata01$NIRRegData01Off),
+                                        dat = NIRdata01reinn$NIRRegData01Off),
                           downloadButton("downloadDataAndelerGrVar",
                                          label = "Last ned data")
                         ),
@@ -33,7 +33,7 @@ shinyUI(
                       sidebarLayout(
                         sidebarPanel(
                           uiInputModule(id = "gjsnGrVar",
-                                        dat = NIRdata01$NIRRegData01Off),
+                                        dat = NIRdata01reinn$NIRRegData01Off),
                           downloadButton("downloadDataGjsnGrVar",
                                          label = "Last ned data")
                         ),
