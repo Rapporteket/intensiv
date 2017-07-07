@@ -46,8 +46,9 @@ NIRAndelerGrVar <- function(RegData, valgtVar, datoFra=0, datoTil=0, aar=0,
       }
       if (offData == 1) {
             ##DENNE MÅ ENDRES NÅR VI FÅR DATA I PAKKEN!!
-            #filnavn <- paste0('A:/Intensiv/NIRdata01', valgtVar, '.RData')
-            #load(filnavn) 
+            filnavn <-  paste0('NIRdata01', valgtVar)
+            #assign('NIRdata01',filnavn)
+            RegData <- NIRdata01$NIRRegData01Off
             utvalgsInfo <- NIRdata01$utvalgsInfo
             KImaal <- NIRdata01$KImaal
             sortAvtagende <- NIRdata01$sortAvtagende
@@ -82,7 +83,7 @@ NIRAndelerGrVar <- function(RegData, valgtVar, datoFra=0, datoTil=0, aar=0,
             medSml=NIRUtvalg$medSml 
             utvalgTxt <- NIRUtvalg$utvalgTxt
       }				
-      if (offData == 1) {NIRUtvalg <- NIRUtvalgOff(RegData=NIRdata01$NIRRegData01Off, aldGr=aldGr, aar=aar, erMann=erMann, 
+      if (offData == 1) {NIRUtvalg <- NIRUtvalgOff(RegData=RegData, aldGr=aldGr, aar=aar, erMann=erMann, 
                                                    InnMaate=InnMaate, grType=grType)
       
       utvalgTxt <- c(NIRUtvalg$utvalgsTxt, utvalgsInfo     )

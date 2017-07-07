@@ -87,13 +87,22 @@ andelFjernet <- AndelBort
 metaInfo <- c('andelFjernet angir andelen data som sensureres pga. grupper med N<5',
              'utvalgsInfo angir utvalget for grunnlagsdataene',
              'KImaal angir målnivået for kvalitetsindikatoren') 
-NIRdata01 <- list(NIRRegData01Off=RegData, andelFjernet=andelFjernet, KImaal=KImaal, sortAvtagende=sortAvtagende,
+
+if (valgtVar == 'reinn') {
+      NIRdata01reinn <- list(NIRRegData01Off=RegData, andelFjernet=andelFjernet, KImaal=KImaal, sortAvtagende=sortAvtagende,
                   tittel=tittel, utvalgsInfo=utvalgsInfo, metaInfo=metaInfo)
+      save(NIRdata01reinn, file=filnavn)
+}
+if (valgtVar == 'respiratortid') {
+      NIRdata01respiratortid <- list(NIRRegData01Off=RegData, andelFjernet=andelFjernet, KImaal=KImaal, sortAvtagende=sortAvtagende,
+                             tittel=tittel, utvalgsInfo=utvalgsInfo, metaInfo=metaInfo)
+      save(NIRdata01respiratortid, file=filnavn)
+}
 #assign(paste0(valgtVar, 'Data'),alleData)
 #assign(paste0(valgtVar, 'Data'),list(RegData=RegData, andelFjernet=andelFjernet, KImaal=KImaal, tittel=tittel, 
 #                                     utvalgsInfo=utvalgsInfo, metaInfo=metaInfo))
 
 #save(assign(paste0(valgtVar, 'Data'), NIRKIdata), file=filnavn)
-save(NIRdata01, file=filnavn)
-return(invisible(NIRdata01))
+#save(NIRdata01, file=filnavn)
+#return(invisible(NIRdata01))
 }

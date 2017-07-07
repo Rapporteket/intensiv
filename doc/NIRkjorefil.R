@@ -50,7 +50,7 @@ load(paste(dataKat,"NIRdata10000.Rdata")) #RegData, mai 2017
 #-----------------------------------Lage datasett til kvalitetsindikatorer---------
 library(intensiv)
 
-valgtVar <- 'respiratortid'  #reinn, respiratortid
+valgtVar <- 'reinn'  #reinn, respiratortid
 datoFra <- '2016-01-01'
 tilleggsVar <- c('Aar', 'Kvartal', 'erMann', 'ShNavn', 'ShType', 'Alder')
 RegData01Off(RegData, valgtVar=valgtVar, datoFra = datoFra, tilleggsVar=tilleggsVar, hentData=0)
@@ -62,13 +62,20 @@ grVar <- 'ShNavn'
 InnMaate <- 99
 erMann <- '' 
 aldGr  <- 0
+tidsenhet <- 'Kvartal'
 valgtVar <- 'reinn'  #reinn, respiratortid
 #Laste offdata
 load(paste0(dataKat, 'NIRdata01', valgtVar, '.Rdata'))
+filnavn <- paste0('NIRdata01', valgtVar, '$NIRRegData01Off')
 
-DataTilbake <- NIRAndelerGrVar(RegData=NIRdata01$NIRRegData01Off, valgtVar=valgtVar, aar=aar, grType=grType, 
+DataTilbake <- NIRAndelerGrVar(RegData=filnavn, valgtVar=valgtVar, aar=aar, grType=grType, 
                                grVar='ShNavn', InnMaate=InnMaate, erMann=erMann, hentData=0, outfile='', 
                                lagFig=1, offData=1) #aldGr=aldGr, 
+
+DataTilbake <- NIRAndelTid(RegData=NIRdata01$NIRRegData01Off, valgtVar=valgtVar, datoFra=datoFra, datoTil=datoTil, 
+                           tidsenhet = tidsenhet,minald=minald, maxald=maxald, erMann=erMann,InnMaate=InnMaate, 
+                           dodInt=dodInt, reshID, outfile=outfile, enhetsUtvalg=enhetsUtvalg, lagFig = 1, offData=1)	
+#aar=0, grType=grType )
 
 #-------------------------------------- Parametre ----------------------------------------------------
 library(intensiv)
@@ -98,14 +105,6 @@ offData <- 0
 #Alle disse vises per sykehus for et gitt tidsintervall (siste 12 mnd?)
 #I tillegg kanskje vi skal vise utvikling over tid for valgt sykehus og sykehustype?
 
-#Forslag til def av grVar hvis IKKE kjernen skal være figurtypen
-grVar <- 
-#      0 - (Søyle) fordelingsfigur for den aktuelle variabelen.
-#      1 - (Søyle) fordelingsfigur for flere variable, dvs. andel av mange variable samlet.
-#      (med 0/1 erstatter grVar "flerevar")
-#      aar - AndelTid -> linjeplott
-#      shus - (Søyle) AndelerGrVar, GjsnGrVar - hvordan skille disse?
-      
 
 #--------------------------------------- Andeler ----------------------------------
 valgtVar <- 'Nas24'	#'alder', 'liggetid', 'respiratortid',  'SAPSII', 'NEMS24', 'Nas24', 'InnMaate'

@@ -81,7 +81,7 @@ NIRAndelTid <- function(RegData, valgtVar, datoFra='2011-01-01', datoTil='3000-1
       RegData <- NIRUtvalg$RegData
    
       #------------------------Klargjøre tidsenhet--------------
-      
+
       #Brukes til sortering
       RegData$TidsEnhet <- switch(tidsenhet,
                                   Aar = RegData$Aar-min(RegData$Aar)+1,
@@ -107,11 +107,8 @@ NIRAndelTid <- function(RegData, valgtVar, datoFra='2011-01-01', datoTil='3000-1
       
       #tidtxt <- min(RegData$Aar):max(RegData$Aar)
       #RegData$Aar <- factor(RegData$Aar, levels=tidtxt)
-      
-   
-   
-   
-    #--------------- Gjøre beregninger ------------------------------
+  
+#--------------- Gjøre beregninger ------------------------------
       
     AggVerdier <- list(Hoved = 0, Rest =0)
     N <- list(Hoved = length(ind$Hoved), Rest =length(ind$Rest))
@@ -139,9 +136,11 @@ if (valgtVar %in% c('liggetidDod','respiratortidDod')) {
     
  #grtxt <- paste0(rev(NIRVarSpes$grtxt), ' (', rev(sprintf('%.1f',AggVerdier$Hoved)), '%)') 
       grtxt2 <- paste0('(', sprintf('%.1f',AggVerdier$Hoved), '%)')
-      yAkseTxt <- ''
-      xAkseTxt='Andel pasienter (%)'
-      
+      yAkseTxt <- 'Andel (%)'
+      vektor <- c('Aar','Halvaar','Kvartal','Mnd')
+      xAkseTxt <- paste0(c('Innleggelsesår', 'Innleggelsesår', 'Innleggelseskvartal', 'Innleggelsesmåned')
+                         [which(tidsenhet==vektor)])
+
       FigDataParam <- list(AggVerdier=AggVerdier, N=N, 
                            Ngr=Ngr,	
                            KImaal <- KImaal,
