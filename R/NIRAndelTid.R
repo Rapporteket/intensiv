@@ -28,17 +28,14 @@ NIRAndelTid <- function(RegData, valgtVar, datoFra='2011-01-01', datoTil='3000-1
   if (hentData == 1) {		
     RegData <- NIRRegDataSQL(datoFra, datoTil)
   }
-       if (offData == 1) {
-            ##DENNE MÅ ENDRES NÅR VI FÅR DATA I PAKKEN!!
-            #filnavn <- paste0('A:/Intensiv/NIRdata01', valgtVar, '.RData')
-            #load(filnavn) 
-            RegData <- NIRdata01$NIRRegData01Off
-            utvalgsInfo <- NIRdata01$utvalgsInfo
-            KImaal <- NIRdata01$KImaal
-            sortAvtagende <- NIRdata01$sortAvtagende
-            tittel <- NIRdata01$tittel
+      if (offData == 1) {
+            utvalgsInfo <- RegData$utvalgsInfo
+            KImaal <- RegData$KImaal
+            sortAvtagende <- RegData$sortAvtagende
+            tittel <- RegData$tittel
+            RegData <- RegData$NIRRegData01Off
       }
- 
+      
       # Preprosessering av data. I samledokument gjøre dette i samledokumentet. Off01-data er preprosessert.
       if (offData==1) {preprosess <- 0}
       if (preprosess==1){
@@ -72,7 +69,7 @@ NIRAndelTid <- function(RegData, valgtVar, datoFra='2011-01-01', datoTil='3000-1
             utvalgTxt <- NIRUtvalg$utvalgTxt
 			ind <- NIRUtvalg$ind
       }				
-      if (offData == 1) {NIRUtvalg <- NIRUtvalgOff(RegData=NIRdata01$NIRRegData01Off, aldGr=aldGr, aar=aar, erMann=erMann, 
+      if (offData == 1) {NIRUtvalg <- NIRUtvalgOff(RegData=RegData, aldGr=aldGr, aar=aar, erMann=erMann, 
                                                    InnMaate=InnMaate, grType=grType)
       
       utvalgTxt <- c(NIRUtvalg$utvalgsTxt, utvalgsInfo)
