@@ -30,8 +30,8 @@ NIRAndelTid <- function(RegData, valgtVar, datoFra='2011-01-01', datoTil='3000-1
   }
        if (offData == 1) {
             ##DENNE MÅ ENDRES NÅR VI FÅR DATA I PAKKEN!!
-            filnavn <- paste0('A:/Intensiv/NIRdata01', valgtVar, '.RData')
-            load(filnavn) 
+            #filnavn <- paste0('A:/Intensiv/NIRdata01', valgtVar, '.RData')
+            #load(filnavn) 
             RegData <- NIRdata01$NIRRegData01Off
             utvalgsInfo <- NIRdata01$utvalgsInfo
             KImaal <- NIRdata01$KImaal
