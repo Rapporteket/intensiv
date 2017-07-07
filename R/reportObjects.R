@@ -39,30 +39,31 @@ emptyReport <- function(Tittel, utvalg = "", infoText = "Tomt...") {
 #' @export
 
 readmission72hours <-  function(selectYear, selectQuarter, selectHospital,
-                                selectErMann, selectAgeGroup) {
+                                selectHospitalType, selectErMann, selectAgeGroup) {
   
   # first, make some sensibel value out of "Kvartal". Should be fixed in data
-  fRegData <- dplyr::mutate(NIRdata01$NIRRegData01Off,
-                            qNum = as.numeric(substr(Kvartal, nchar(Kvartal),
-                                                     nchar(Kvartal))))
+  # fRegData <- dplyr::mutate(NIRdata01reinn$NIRRegData01Off,
+  #                           qNum = as.numeric(substr(Kvartal, nchar(Kvartal),
+  #                                                    nchar(Kvartal))))
+  
+  fRegData <- NIRdata01reinn$NIRRegData01Off
   
   # apply all filters for RegData and make
   fRegData <- dplyr::filter(fRegData, ShNavn %in% selectHospital &
                               Aar %in% selectYear & qNum %in% selectQuarter &
                               AldersGr %in% selectAgeGroup)
   
-  
+  # Here: replace NIRRegData01Off with fRegData, all to be sent into NirAnderleGrVar
   
   # in case filtering makes empty data
   if (is.data.frame(fRegData) && nrow(fRegData) == 0) {
-    emptyReport(Tittel = NIRdata01$tittel, infoText = "Ingen data")
+    emptyReport(Tittel = fRegData$tittel, infoText = "Ingen data")
   } else {
     # get (static) data, lazy loaded
-    d <- NIRAndelerGrVar(RegData = fRegData, grVar = 'ShNavn',
-                            erMann = selectErMann,
+    d <- NIRAndelerGrVar(RegData = fRegData, grVar = 'ShNavn', grType = selectHospitalType,
+                            erMann = selectErMann, valgtVar = 'reinn',
                             hentData = 0, outfile = '', lagFig = 0,
-                            utvalgsInfo = NIRdata01$utvalgsInfo,
-                            tittel = NIRdata01$tittel, offData = 1)
+                            offData = 1)
     
     ## hc
     # get actual color from name...
