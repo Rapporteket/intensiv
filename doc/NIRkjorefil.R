@@ -77,15 +77,16 @@ minald <- 0 #(standard: 0)
 maxald <- 130	#(standard: 130, må være større enn minald!)
 InnMaate <- '' #0-El, 6-Ak.m, 8-Ak.k, (alle - alt unntatt 0,6,8)
 valgtMaal = 'Gjsn' #'Med' = median. 'Gjsn' = gjennomsnitt. Alt annet gir gjennomsnitt
-datoFra <- '2012-01-01'	# standard: 0	format: YYYY-MM-DD. Kan spesifisere bare første del, eks. YYYY el. YYYY-MM. 
+datoFra <- '2015-01-01'	# standard: 0	format: YYYY-MM-DD. Kan spesifisere bare første del, eks. YYYY el. YYYY-MM. 
 datoTil <- '2017-12-31'	# standard: 3000
 dodInt <- ''	# 0-i live, 1 -død, standard: alle (alle andre verdier)
 erMann <- ''	#Kjønn: 0-kvinner, 1-menn, standard: alle (alle andre verdier)
 overfPas <- ''    #Overført under pågående intensivbehandling?	1 = Nei, 2 = Ja
 grType <- 99	#1/2: sentral/lokal, 3:regional, 99:'alle'
 grVar <- 'ShNavn'
+tidsenhet <- 'Mnd'
 enhetsUtvalg <- 1	#0-5
-offData <- 1
+offData <- 0
 #Parameter for evt. kvalitetsmål? angis i Tilrettelegging
 
 #--------------------------------------- Ny struktur basert på grVar? ----------------------------------
@@ -147,10 +148,10 @@ valgtVar <- 'respiratortid'	#'alder_u18', 'alder_over80', 'dod30d', 'dodeIntensi
                         #respiratortid, 'respiratortidDod', 'respStotte', 'reinn', 'SMR'
 outfile <- '' #paste0(valgtVar, '.png')
 
-NIRAndelTid(RegData=RegData, valgtVar=valgtVar, datoFra=datoFra, datoTil=datoTil, 
+NIRAndelTid(RegData=RegData, valgtVar=valgtVar, datoFra=datoFra, datoTil=datoTil, tidsenhet = 'Mnd',
 		minald=minald, maxald=maxald, erMann=erMann,InnMaate=InnMaate, dodInt=dodInt, 
-		reshID, outfile=outfile, enhetsUtvalg=enhetsUtvalg, lagFig = 1, offData=1)	
-NIRAndelerGrVar(aar=0, grType=grType, )
+		reshID, outfile=outfile, enhetsUtvalg=enhetsUtvalg, lagFig = 1, offData=offData)	
+#aar=0, grType=grType )
 
 variable <- c('alder_u18', 'alder_over80', 'dod30d', 'dodeIntensiv', 'liggetidDod', 
               'respiratortidDod', 'respStotte', 'reinn', 'SMR')

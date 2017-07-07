@@ -64,36 +64,38 @@ NIRFigTidAndel <- function(RegData, AggVerdier, AggTot=0, Ngr, tittel='mangler t
     hmarg <- 0.04+0.01*NutvTxt
     par('fig' = c(0,1,0,1-hmarg)) 
     cexleg <- 1	#St?rrelse p? legendtekst
-    ylabtext="Andel (%)"
-
+    ylabtext <- "Andel (%)"
+    xskala <- 1:length(tidtxt)
+    xmax <- max(xskala)
+      
     
     ymax <- min(119, 1.25*max(c(AggVerdier$Hoved, AggVerdier$Rest),na.rm=T))
-    plot(tidtxt, AggVerdier$Hoved,  font.main=1,  type='o', pch="'", col='white', #type='o', 
-         xlim= c(tidtxt[1], max(tidtxt)), xaxt='n', frame.plot = FALSE,  #xaxp=c(min(tidtxt), max(tidtxt),length(tidtxt)-1)
+    plot(xskala, AggVerdier$Hoved,  font.main=1,  type='o', pch="'", col='white', #type='o', 
+         xlim= c(0.9,xmax+0.1), xaxt='n', frame.plot = FALSE,  #xaxp=c(min(tidtxt), max(tidtxt),length(tidtxt)-1)
          cex=2, xlab='Innleggelsesår', ylab="Andel (%)", ylim=c(0,ymax), yaxs = 'i') 	
     
     #Legge på linjer i plottet. 
     grid(nx = NA, ny = NULL, col = farger[4], lty = "solid")
     
-    axis(side=1, at = tidtxt)	
+    axis(side=1, at = xskala, labels = tidtxt)
     
     title(tittel, line=1, font.main=1)
     
     
-    lines(tidtxt, AggVerdier$Hoved, col=fargeHoved, lwd=3)
-    points(tidtxt, AggVerdier$Hoved, pch="'", cex=2, col=fargeHoved)
-    text(tidtxt, AggVerdier$Hoved, pos=3, Ngr$Hoved, cex=0.9, col=fargeHoved)
+    lines(xskala, AggVerdier$Hoved, col=fargeHoved, lwd=3)
+    points(xskala, AggVerdier$Hoved, pch="'", cex=2, col=fargeHoved)
+    text(xskala, AggVerdier$Hoved, pos=3, Ngr$Hoved, cex=0.9, col=fargeHoved)
     
-    lines(tidtxt, AggVerdier$Rest, col=fargeRest, lwd=3)
-    points(tidtxt, AggVerdier$Rest, pch="'", cex=2, col=fargeRest)
+    lines(xskala, AggVerdier$Rest, col=fargeRest, lwd=3)
+    points(xskala, AggVerdier$Rest, pch="'", cex=2, col=fargeRest)
     
     #KImål
-    lines(tidtxt, KImaal, col= '#FF7260', lwd=3)
-    text(max(tidtxt), KImaal, pos=4, 'Mål', cex=0.9, col='#FF7260')
+    lines(xskala,rep(KImaal,length(xskala)), col= '#FF7260', lwd=3)
+    text(max(xskala), KImaal, pos=4, 'Mål', cex=0.9, col='#FF7260')
     
     Ttxt <- paste0('(Tall ved punktene angir antall ', varTxt, ')') 
     if (medSml == 1) { 
-      text(tidtxt, AggVerdier$Rest, pos=3, Ngr$Rest, cex=0.9, col=fargeRest)
+      text(xskala, AggVerdier$Rest, pos=3, Ngr$Rest, cex=0.9, col=fargeRest)
       legend('topleft', border=NA, c(paste0(hovedgrTxt, ' (N=', N$Hoved, ')'),
                                      paste0(smltxt, ' (N=', N$Rest, ')'), Ttxt), bty='n', ncol=1, cex=cexleg, 
              col=c(fargeHoved, fargeRest, NA), lwd=3)		

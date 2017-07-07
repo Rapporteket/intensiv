@@ -2,6 +2,7 @@
 
 export(AndelerTableContainer)
 export(NIRAndelTid)
+export(NIRAndelTidBack)
 export(NIRAndeler)
 export(NIRAndelerGrVar)
 export(NIRFigPrePost)
