@@ -46,8 +46,8 @@ NIRAndelerGrVar <- function(RegData, valgtVar, datoFra=0, datoTil=0, aar=0,
       }
       if (offData == 1) {
             ##DENNE MÅ ENDRES NÅR VI FÅR DATA I PAKKEN!!
-            filnavn <- paste0('A:/Intensiv/NIRdata01', valgtVar, '.RData')
-            load(filnavn) 
+            #filnavn <- paste0('A:/Intensiv/NIRdata01', valgtVar, '.RData')
+            #load(filnavn) 
             utvalgsInfo <- NIRdata01$utvalgsInfo
             KImaal <- NIRdata01$KImaal
             sortAvtagende <- NIRdata01$sortAvtagende

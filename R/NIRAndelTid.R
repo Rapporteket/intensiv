@@ -30,8 +30,8 @@ NIRAndelTid <- function(RegData, valgtVar, datoFra='2011-01-01', datoTil='3000-1
   }
        if (offData == 1) {
             ##DENNE MÅ ENDRES NÅR VI FÅR DATA I PAKKEN!!
-            filnavn <- paste0('A:/Intensiv/NIRdata01', valgtVar, '.RData')
-            load(filnavn) 
+            #filnavn <- paste0('A:/Intensiv/NIRdata01', valgtVar, '.RData')
+            #load(filnavn) 
             RegData <- NIRdata01$NIRRegData01Off
             utvalgsInfo <- NIRdata01$utvalgsInfo
             KImaal <- NIRdata01$KImaal
@@ -162,8 +162,8 @@ if (valgtVar %in% c('liggetidDod','respiratortidDod')) {
   
       if (lagFig == 1) {
             NIRFigTidAndel(RegData, AggVerdier, Ngr, tittel=tittel, hovedgrTxt=NIRUtvalg$hovedgrTxt, 
-                         smltxt=NIRUtvalg$smltxt, Ngr = Ngr, KImaal <- KImaal, N=N, retn='V', 
-                         utvalgTxt, tidtxt=tidtxt, varTxt=varTxt, grtxt2=grtxt2, medSml=medSml, 
+                         smltxt=NIRUtvalg$smltxt, Ngr = Ngr, KImaal = KImaal, N=N, retn='V', 
+                         utvalgTxt=utvalgTxt, tidtxt=tidtxt, varTxt=varTxt, grtxt2=grtxt2, medSml=medSml, 
                          xAkseTxt=xAkseTxt, yAkseTxt=yAkseTxt,
                          outfile=outfile)	
       }
