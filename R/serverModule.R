@@ -42,6 +42,7 @@ serverModule <- function(input, output, session) {
       readmission72hours(selectYear = as.numeric(input$year),
                          selectQuarter = as.numeric(input$quarter),
                          selectHospital = as.character(input$hospital),
+                         selectHospitalType = as.numeric(input$hospitalType),
                          selectErMann = as.numeric(input$erMann),
                          selectAgeGroup = as.character(input$ageGroup))
     })
