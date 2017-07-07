@@ -48,11 +48,11 @@ NIRAndelerGrVar <- function(RegData, valgtVar, datoFra=0, datoTil=0, aar=0,
             ##DENNE MÅ ENDRES NÅR VI FÅR DATA I PAKKEN!!
             filnavn <-  paste0('NIRdata01', valgtVar)
             #assign('NIRdata01',filnavn)
-            RegData <- RegData$NIRRegData01Off
             utvalgsInfo <- RegData$utvalgsInfo
             KImaal <- RegData$KImaal
             sortAvtagende <- RegData$sortAvtagende
             tittel <- RegData$tittel
+            RegData <- RegData$NIRRegData01Off
       }
       
       # Preprosessering av data. I samledokument gjøre dette i samledokumentet. Off01-data er preprosessert.

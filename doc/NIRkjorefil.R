@@ -65,14 +65,15 @@ aldGr  <- 0
 tidsenhet <- 'Kvartal'
 valgtVar <- 'reinn'  #reinn, respiratortid
 #Laste offdata
-load(paste0(dataKat, 'NIRdata01', valgtVar, '.Rdata'))
-filnavn <- paste0('NIRdata01', valgtVar, '$NIRRegData01Off')
+filnavn <- paste0('NIRdata01', valgtVar)
+load(paste0(dataKat, filnavn, '.Rdata'))
+RegData <- NIRdata01reinn
 
-DataTilbake <- NIRAndelerGrVar(RegData=filnavn, valgtVar=valgtVar, aar=aar, grType=grType, 
+DataTilbake <- NIRAndelerGrVar(RegData=RegData, valgtVar=valgtVar, aar=aar, grType=grType, 
                                grVar='ShNavn', InnMaate=InnMaate, erMann=erMann, hentData=0, outfile='', 
                                lagFig=1, offData=1) #aldGr=aldGr, 
 
-DataTilbake <- NIRAndelTid(RegData=NIRdata01$NIRRegData01Off, valgtVar=valgtVar, datoFra=datoFra, datoTil=datoTil, 
+DataTilbake <- NIRAndelTid(RegData=RegData, valgtVar=valgtVar, datoFra=datoFra, datoTil=datoTil, 
                            tidsenhet = tidsenhet,minald=minald, maxald=maxald, erMann=erMann,InnMaate=InnMaate, 
                            dodInt=dodInt, reshID, outfile=outfile, enhetsUtvalg=enhetsUtvalg, lagFig = 1, offData=1)	
 #aar=0, grType=grType )
