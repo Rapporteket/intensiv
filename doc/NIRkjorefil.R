@@ -55,17 +55,18 @@ datoFra <- '2016-01-01'
 tilleggsVar <- c('Aar', 'Kvartal', 'erMann', 'ShNavn', 'ShType', 'Alder')
 RegData01Off(RegData, valgtVar=valgtVar, datoFra = datoFra, tilleggsVar=tilleggsVar, hentData=0)
 
+#-------------------------------Resultater for off.kval.ind.----------------------------------------
 aar <- 0
 grType <- 99
 grVar <- 'ShNavn'
 InnMaate <- 99
 erMann <- '' 
 aldGr  <- 0
+valgtVar <- 'reinn'  #reinn, respiratortid
 #Laste offdata
 load(paste0(dataKat, 'NIRdata01', valgtVar, '.Rdata'))
-RegData <- NIRdata01$NIRRegData01Off
 
-DataTilbake <- NIRAndelerGrVar(RegData=0, valgtVar=valgtVar, aar=aar, grType=grType, 
+DataTilbake <- NIRAndelerGrVar(RegData=NIRdata01$NIRRegData01Off, valgtVar=valgtVar, aar=aar, grType=grType, 
                                grVar='ShNavn', InnMaate=InnMaate, erMann=erMann, hentData=0, outfile='', 
                                lagFig=1, offData=1) #aldGr=aldGr, 
 

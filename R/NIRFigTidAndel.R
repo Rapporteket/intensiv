@@ -37,9 +37,8 @@
 
 NIRFigTidAndel <- function(RegData, AggVerdier, AggTot=0, Ngr, tittel='mangler tittel', smltxt='', N, retn='H', 
                          yAkseTxt='', utvalgTxt='', grTypeTxt='', tidtxt, varTxt='', grtxt2='', hovedgrTxt='', 
-                         grVar='', valgtMaal='Andel', cexgr=1, medSml=0, fargepalett='BlaaOff', xAkseTxt='', 
-                         medKI=0, KImaal = NA, outfile='') { #Ngr=list(Hoved=0)
-
+                         valgtMaal='Andel', cexgr=1, medSml=0, fargepalett='BlaaOff', xAkseTxt='', 
+                         medKI=0, KImaal = NA, outfile='') { #Ngr=list(Hoved=0), grVar='', 
 
      	#-----------Figur---------------------------------------
   #Hvis for f? observasjoner..

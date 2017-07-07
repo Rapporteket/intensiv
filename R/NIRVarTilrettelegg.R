@@ -218,6 +218,7 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler'
             RegData$VariabelGr <- cut(RegData$respiratortid, breaks=gr, include.lowest=TRUE, right=FALSE)  
             grtxt <- c('(0-1)','[1-2)','[2-3)','[3-4)','[4-5)','[5-6)','[6-7)','[7-14)','14+')
             xAkseTxt <- 'Respiratortid (døgn)'
+            varTxt <- 'med resp.tid < 2,5 døgn'
             #KImaal <- 2.5 #Median respiratortid <2,5døgn 
             KImaal <- 50 #Over 50% med respiratortid <2,5døgn
             sortAvtagende <- TRUE      #Rekkefølge

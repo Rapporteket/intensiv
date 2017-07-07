@@ -162,8 +162,8 @@ if (valgtVar %in% c('liggetidDod','respiratortidDod')) {
   
       if (lagFig == 1) {
             NIRFigTidAndel(RegData, AggVerdier, Ngr, tittel=tittel, hovedgrTxt=NIRUtvalg$hovedgrTxt, 
-                         smltxt=NIRUtvalg$smltxt, Ngr = Ngr, KImaal <- KImaal, N=N, retn='V', 
-                         utvalgTxt, tidtxt=tidtxt, varTxt=varTxt, grtxt2=grtxt2, medSml=medSml, 
+                         smltxt=NIRUtvalg$smltxt, Ngr = Ngr, KImaal = KImaal, N=N, retn='V', 
+                         utvalgTxt=utvalgTxt, tidtxt=tidtxt, varTxt=varTxt, grtxt2=grtxt2, medSml=medSml, 
                          xAkseTxt=xAkseTxt, yAkseTxt=yAkseTxt,
                          outfile=outfile)	
       }
