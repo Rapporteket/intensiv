@@ -33,9 +33,9 @@
 #' @export
 NIRAndelerGrVar <- function(RegData, valgtVar, datoFra=0, datoTil=0, aar=0, 
                             minald=0, maxald=130, aldGr=0,
-                            grType=99, grVar='', InnMaate=99, dodInt='', erMann='', hentData=0, 
-                            utvalgsInfo = "", tittel = "", sortAvtagende=TRUE,
-                            preprosess=1, outfile='', lagFig=1, offData=0) 
+                            grType=99, grVar='', InnMaate=99, dodInt='', erMann='', hentData=0,
+                            preprosess=1, outfile='', lagFig=1, offData=0)
+                            #KImaal = NA, utvalgsInfo = "", tittel = "", sortAvtagende=TRUE,) 
       
       
       
@@ -48,11 +48,11 @@ NIRAndelerGrVar <- function(RegData, valgtVar, datoFra=0, datoTil=0, aar=0,
             ##DENNE MÅ ENDRES NÅR VI FÅR DATA I PAKKEN!!
             filnavn <-  paste0('NIRdata01', valgtVar)
             #assign('NIRdata01',filnavn)
-            RegData <- NIRdata01$NIRRegData01Off
-            utvalgsInfo <- NIRdata01$utvalgsInfo
-            KImaal <- NIRdata01$KImaal
-            sortAvtagende <- NIRdata01$sortAvtagende
-            tittel <- NIRdata01$tittel
+            RegData <- RegData$NIRRegData01Off
+            utvalgsInfo <- RegData$utvalgsInfo
+            KImaal <- RegData$KImaal
+            sortAvtagende <- RegData$sortAvtagende
+            tittel <- RegData$tittel
       }
       
       # Preprosessering av data. I samledokument gjøre dette i samledokumentet. Off01-data er preprosessert.
