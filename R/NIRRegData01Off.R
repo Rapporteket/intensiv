@@ -23,11 +23,13 @@
 #' @param tilleggsVar Variable som benyttes til filtrering eller gruppering av valgt variabel (valgtVar)
 #'  	Aktuelle valg: Aar, erMann, ShNavn, Mnd, 
 #' @inheritParams NIRAndeler
+#' @param rand 0-"ekte data", 1-tilfeldig resultat.
 #' @return Definisjon av valgt variabel.
 #'
 #' @export
 
-RegData01Off <- function(RegData, valgtVar, datoFra='2016-01-01', datoTil='3000-01-01', tilleggsVar=0, hentData=0) {
+RegData01Off <- function(RegData, valgtVar, datoFra='2016-01-01', datoTil='3000-01-01', tilleggsVar=0, hentData=0,
+                         rand=0) {
 
 
 
@@ -74,6 +76,9 @@ mapping <- data.frame(verdiGML,verdiNY)
 RegData$VarSensur <- mapping$verdiNY[prodlim::row.match(RegData[, tilleggsVar], ident_ut)]
 RegData <- RegData[-which(RegData$VarSensur == 'sensurert'),-which(names(RegData) == 'VarSensur')]
 
+#Lager tilfeldig resultat
+if (rand==1) {RegData$Variabel <- sample(RegData$Variabel,length(RegData$Variabel))}
+
 
 #Lagre beregnede data
 #filnavn <- paste0('data/RegData01', valgtVar, '.RData')
@@ -86,7 +91,8 @@ utvalgsInfo <- utvalgTxt
 andelFjernet <- AndelBort 
 metaInfo <- c('andelFjernet angir andelen data som sensureres pga. grupper med N<5',
              'utvalgsInfo angir utvalget for grunnlagsdataene',
-             'KImaal angir målnivået for kvalitetsindikatoren') 
+             'KImaal angir målnivået for kvalitetsindikatoren')
+if (rand==1) {metaInfo <- c(metaInfo,'Dataene er IKKE ekte data')}
 
 if (valgtVar == 'reinn') {
       NIRdata01reinn <- list(NIRRegData01Off=RegData, andelFjernet=andelFjernet, KImaal=KImaal, sortAvtagende=sortAvtagende,

@@ -53,7 +53,8 @@ library(intensiv)
 valgtVar <- 'reinn'  #reinn, respiratortid
 datoFra <- '2016-01-01'
 tilleggsVar <- c('Aar', 'Kvartal', 'erMann', 'ShNavn', 'ShType', 'Alder')
-RegData01Off(RegData, valgtVar=valgtVar, datoFra = datoFra, tilleggsVar=tilleggsVar, hentData=0)
+rand <- 1
+RegData01Off(RegData, valgtVar=valgtVar, datoFra = datoFra, tilleggsVar=tilleggsVar, hentData=0, rand=rand)
 
 #-------------------------------Resultater for off.kval.ind.----------------------------------------
 aar <- 0
@@ -63,11 +64,12 @@ InnMaate <- 99
 erMann <- '' 
 aldGr  <- 0
 tidsenhet <- 'Kvartal'
-valgtVar <- 'reinn'  #reinn, respiratortid
+outfile <- ''
+valgtVar <- 'respiratortid'  #reinn, respiratortid
 #Laste offdata
 filnavn <- paste0('NIRdata01', valgtVar)
 load(paste0(dataKat, filnavn, '.Rdata'))
-RegData <- NIRdata01reinn
+RegData <- NIRdata01respiratortid #NIRdata01reinn
 
 DataTilbake <- NIRAndelerGrVar(RegData=RegData, valgtVar=valgtVar, aar=aar, grType=grType, 
                                grVar='ShNavn', InnMaate=InnMaate, erMann=erMann, hentData=0, outfile='', 

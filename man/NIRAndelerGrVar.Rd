@@ -7,8 +7,7 @@
 NIRAndelerGrVar(RegData, valgtVar, datoFra = 0, datoTil = 0, aar = 0,
   minald = 0, maxald = 130, aldGr = 0, grType = 99, grVar = "",
   InnMaate = 99, dodInt = "", erMann = "", hentData = 0,
-  utvalgsInfo = "", tittel = "", sortAvtagende = TRUE, preprosess = 1,
-  outfile = "", lagFig = 1, offData = 0)
+  preprosess = 1, outfile = "", lagFig = 1, offData = 0)
 }
 \arguments{
 \item{RegData}{En dataramme med alle nødvendige variabler fra registeret}

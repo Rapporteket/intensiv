@@ -7,9 +7,9 @@
 NIRFigTidAndel(RegData, AggVerdier, AggTot = 0, Ngr,
   tittel = "mangler tittel", smltxt = "", N, retn = "H", yAkseTxt = "",
   utvalgTxt = "", grTypeTxt = "", tidtxt, varTxt = "", grtxt2 = "",
-  hovedgrTxt = "", grVar = "", valgtMaal = "Andel", cexgr = 1,
-  medSml = 0, fargepalett = "BlaaOff", xAkseTxt = "", medKI = 0,
-  KImaal = NA, outfile = "")
+  hovedgrTxt = "", valgtMaal = "Andel", cexgr = 1, medSml = 0,
+  fargepalett = "BlaaOff", xAkseTxt = "", medKI = 0, KImaal = NA,
+  outfile = "")
 }
 \arguments{
 \item{RegData}{En dataramme med alle nødvendige variabler fra registeret}
