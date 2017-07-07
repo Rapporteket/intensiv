@@ -58,12 +58,11 @@ readmission72hours <-  function(selectYear, selectQuarter, selectHospital,
     emptyReport(Tittel = reinnData$tittel, infoText = "Ingen data")
   } else {
     # get (static) data, lazy loaded
-    d <- NIRAndelerGrVarOff(RegData = fRegData, grVar = 'ShNavn',
+    d <- NIRAndelerGrVar(RegData = fRegData, grVar = 'ShNavn',
                             erMann = selectErMann,
                             hentData = 0, outfile = '', lagFig = 0,
                             utvalgsInfo = reinnData$utvalgsInfo,
-                            tittel = reinnData$tittel,
-                            KImaal = reinnData$KImaal)
+                            tittel = reinnData$tittel)
     
     ## hc
     # get actual color from name...
