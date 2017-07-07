@@ -15,7 +15,7 @@ NIRUtvalgOff <- function(RegData, aldGr=0, erMann='', InnMaate='',
       "%i%" <- intersect
       
       Ninn <- dim(RegData)[1]
-      indAld <- if(aldGr[1] != 0) {which(RegData$aldGr %in% aldGr) } else {1:Ninn}
+      indAld <- if(aldGr[1] != 0) {which(RegData$AldersGr %in% aldGr) } else {1:Ninn}
       indAar <- if (aar[1] != 0) {which(RegData$Aar %in% aar)} else {1:Ninn}
       #indKvart <- if (aar[1] != 0) {which(RegData$Kvartal %in% aar)} else {1:Ninn}
       indKj <- if (erMann %in% 0:1) {which(RegData$erMann == erMann)} else {1:Ninn}
