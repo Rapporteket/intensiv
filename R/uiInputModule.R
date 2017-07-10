@@ -31,8 +31,8 @@ uiInputModule <- function(id, dat, label = "Brukervalg") {
                 label = "Sykehustype:",
                 choices = c("Lokal/Sentral" = 1,
                             "Regional" = 3),
-                selected = c(1, 3),
-                multiple = TRUE
+                selected = 1,
+                multiple = FALSE
     ),
     selectInput(inputId = ns("hospital"),
                 label = "Sykehus:",
