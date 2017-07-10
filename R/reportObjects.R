@@ -50,20 +50,22 @@ readmission72hours <-  function(selectYear, selectQuarter, selectHospital,
   
   # apply all filters for RegData and make
   fRegData <- dplyr::filter(fRegData, ShNavn %in% selectHospital &
-                              Aar %in% selectYear & qNum %in% selectQuarter &
+                              Aar %in% selectYear & Kvartal %in% selectQuarter &
                               AldersGr %in% selectAgeGroup)
   
   # Here: replace NIRRegData01Off with fRegData, all to be sent into NirAnderleGrVar
+  RegData <- NIRdata01reinn
+  RegData$NIRRegData01Off <- fRegData
   
   # in case filtering makes empty data
   if (is.data.frame(fRegData) && nrow(fRegData) == 0) {
     emptyReport(Tittel = fRegData$tittel, infoText = "Ingen data")
   } else {
     # get (static) data, lazy loaded
-    d <- NIRAndelerGrVar(RegData = fRegData, grVar = 'ShNavn', grType = selectHospitalType,
-                            erMann = selectErMann, valgtVar = 'reinn',
-                            hentData = 0, outfile = '', lagFig = 0,
-                            offData = 1)
+    d <- NIRAndelerGrVar(RegData = RegData, grVar = 'ShNavn',
+                         grType = selectHospitalType, erMann = selectErMann,
+                         valgtVar = 'reinn', hentData = 0, outfile = '',
+                         lagFig = 0, offData = 1)
     
     ## hc
     # get actual color from name...
