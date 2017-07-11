@@ -58,18 +58,19 @@ RegData01Off(RegData, valgtVar=valgtVar, datoFra = datoFra, tilleggsVar=tilleggs
 
 #-------------------------------Resultater for off.kval.ind.----------------------------------------
 aar <- 0
-grType <- 99
+grType <- 1
 grVar <- 'ShNavn'
 InnMaate <- 99
-erMann <- '' 
+erMann <- 99 
 aldGr  <- 0
 tidsenhet <- 'Kvartal'
 outfile <- ''
-valgtVar <- 'respiratortid'  #reinn, respiratortid
+valgtVar <- 'reinn'  #reinn, respiratortid
 #Laste offdata
 filnavn <- paste0('NIRdata01', valgtVar)
 load(paste0(dataKat, filnavn, '.Rdata'))
-RegData <- NIRdata01respiratortid #NIRdata01reinn
+RegData <- NIRdata01reinn #NIRdata01reinn
+
 
 DataTilbake <- NIRAndelerGrVar(RegData=RegData, valgtVar=valgtVar, aar=aar, grType=grType, 
                                grVar='ShNavn', InnMaate=InnMaate, erMann=erMann, hentData=0, outfile='', 

@@ -107,7 +107,11 @@ if(N > 0) {Ngr <- table(RegData[ ,grVar])} else {Ngr <- 0}
 AntGr <- length(which(Ngr >= Ngrense))	#length(which(Midt>0))
 AndelHele <- sum(RegData$Variabel==1)/N*100	
 AndelerGr <- as.vector(table(RegData[which(RegData$Variabel==1) , grVar])/Ngr*100)	#round(100*Nvar/Ngr,2)
-if (offData==1) {AndelerGr <- c(AndelerGr, AndelHele)}
+if (offData==1) {
+      AndelerGr <- c(AndelerGr, AndelHele)
+      names(N) <- NIRUtvalg$grTypeTxt
+      Ngr <- c(Ngr, N)
+	 }
 
 if (sum(which(Ngr < Ngrense))>0) {indGrUt <- as.numeric(which(Ngr<Ngrense))} else {indGrUt <- 0}
 AndelerGr[indGrUt] <- NA #-0.0001
@@ -118,10 +122,11 @@ andeltxtUsort[indGrUt] <- ''
 
 sortInd <- order(as.numeric(AndelerGr), decreasing=sortAvtagende, na.last = FALSE) 
 AndelerGrSort <- AndelerGr[sortInd]
-GrNavnSort <- switch(offData,
-                     '0' = paste0(names(Ngr)[sortInd], ' (',Ngrtxt[sortInd], ')'),
-                     '1' = paste0(c(names(Ngr), NIRUtvalg$grTypeTxt)[sortInd], ' (',c(Ngrtxt, N)[sortInd], ')')
-)
+GrNavnSort <- paste0(names(Ngr)[sortInd], '(',Ngrtxt[sortInd], ')')
+#GrNavnSort <- switch(as.character(offData),
+#                     '0' = paste0(names(Ngr)[sortInd], '(',Ngrtxt[sortInd], ')'),
+#                     '1' = paste0(c(names(Ngr), NIRUtvalg$grTypeTxt)[sortInd], '(',c(Ngrtxt, N)[sortInd], ')')
+#                        )
 andeltxt <- andeltxtUsort[sortInd]
 
 
