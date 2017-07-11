@@ -196,7 +196,7 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler'
       }
        if (valgtVar=='reinn') { #AndelGrVar, AndelTid, GjsnGrVar
              #Andel reinnlagte kun hvor dette er registrert. #Ja=1, nei=2, ukjent=9
-             RegData <- RegData[which((RegData$ReAdmitted %in% 1:2) & (RegData$InnDato >= as.POSIXlt(datoFra))), ]	#Tar bort ukjente
+             RegData <- RegData[which((RegData$ReAdmitted %in% 1:2) & (RegData$InnDato >= as.POSIXlt('2016-01-01'))), ]	#Tar bort ukjente
              if (figurtype %in% c('andelGrVar', 'andelTid')) {
                    RegData$Variabel[which(RegData$ReAdmitted==1)] <- 1}  
              if (figurtype == 'gjsnGrVar') {RegData$Variabel <- RegData$ReAdmitted}  
@@ -206,7 +206,7 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler'
        }
 	   
       if (valgtVar == 'respiratortid') { #Andeler #GjsnGrVar #AndelGrVar, GjsnTid
-            RegData <- RegData[which(RegData$respiratortid>0), ] 
+            RegData <- RegData[which((RegData$respiratortid>0) & (RegData$InnDato>=as.POSIXlt('2016-01-01'))), ] 
             if (figurtype %in% c('andeler', 'gjsnGrVar')) {
                   RegData$Variabel  <- as.numeric(RegData$respiratortid)
                   tittel <- 'Respiratortid'}      #Andeler, GjsnGrVar

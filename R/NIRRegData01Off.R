@@ -54,7 +54,7 @@ if ('Alder' %in% tilleggsVar) {
       gr <- c(0, 18, 80,150)	#c(0, 18, 40,60,80,150) #	
       grtxt <- c('0-17','18-79','80+') #c('0-17','18-39','40-59','60-79','80+') #
       RegData$AldersGr <- cut(RegData$Alder, breaks=gr, include.lowest=TRUE, right=FALSE)	
-      levels(RegData$AldersGr) <- c('0-17','18-39','40-59','60-79','80+')
+      levels(RegData$AldersGr) <- c('0-17','18-79','80+')
       RegData <- RegData[ ,-which(names(RegData) == 'Alder')]
       tilleggsVar <- replace(tilleggsVar, which(tilleggsVar == 'Alder'), 'AldersGr')
 }
