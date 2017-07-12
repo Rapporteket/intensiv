@@ -41,10 +41,6 @@ emptyReport <- function(Tittel, utvalg = "", infoText = "Tomt...") {
 readmission72hours <-  function(selectYear, selectQuarter, selectHospital,
                                 selectHospitalType, selectErMann, selectAgeGroup) {
   
-  # first, make some sensibel value out of "Kvartal". Should be fixed in data
-  # fRegData <- dplyr::mutate(NIRdata01reinn$NIRRegData01Off,
-  #                           qNum = as.numeric(substr(Kvartal, nchar(Kvartal),
-  #                                                    nchar(Kvartal))))
   
   fRegData <- NIRdata01reinn$NIRRegData01Off
   
@@ -62,8 +58,7 @@ readmission72hours <-  function(selectYear, selectQuarter, selectHospital,
     emptyReport(Tittel = fRegData$tittel, infoText = "Ingen data")
   } else {
     # get (static) data, lazy loaded
-    d <- NIRAndelerGrVar(RegData = RegData, grVar = 'ShNavn',
-                         grType = selectHospitalType, erMann = selectErMann,
+    d <- NIRAndelerGrVar(RegData = RegData, grVar = 'ShNavn', erMann = selectErMann,
                          valgtVar = 'reinn', hentData = 0, outfile = '',
                          lagFig = 0, offData = 1)
     
@@ -111,6 +106,17 @@ readmission72hours <-  function(selectYear, selectQuarter, selectHospital,
                         data = rep(AggTot, obs),
                         type = "line",
                         color = farger[2],
+                        marker = list(enabled=FALSE),
+                        enableMouseTracking = FALSE
+    )
+    
+    # add target level
+    tl <- d$KImaal
+    h1 <- hc_add_series(h1,
+                        name = paste0("Målnivå (", sprintf('%.1f', tl), " %)"),
+                        data = rep(tl, obs),
+                        type = "line",
+                        color = "#FF7260",
                         marker = list(enabled=FALSE),
                         enableMouseTracking = FALSE
     )
