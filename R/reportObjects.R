@@ -76,9 +76,9 @@ readmission72hours <-  function(selectYear, selectQuarter, selectHospital,
     
     h1 <- highcharter::highchart() %>%
       hc_chart(height=800) %>%
-      hc_title(text = d$tittel) %>%
+      hc_title(text = paste0(d$tittel, ". ", NIRdata01reinn$metaInfo[4])) %>%
       hc_subtitle(text = d$utvalgTxt) %>%
-      hc_xAxis(categories=names(d$Ngr$Hoved),
+      hc_xAxis(categories=d$grtxt,
       #hc_xAxis(categories=d$grtxt,
                # show every category
                labels=list(step=1),
