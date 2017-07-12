@@ -28,7 +28,7 @@ serverModule <- function(input, output, session) {
     if (!is.null(h_type)) {
       # NB need a generic data set for uc-content
       d <- NIRdata01reinn$NIRRegData01Off
-      c_subset <- dplyr::filter(d, ShType == h_type) %>% 
+      c_subset <- dplyr::filter(d, ShType %in% h_type) %>% 
         dplyr::distinct(ShNavn)
       hospital_names <- sort(c_subset$ShNavn)
       
