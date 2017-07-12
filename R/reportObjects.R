@@ -92,7 +92,9 @@ readmission72hours <-  function(selectYear, selectQuarter, selectHospital,
                     color = farger[3],
                     tooltip = list(pointFormat='<b>Andel:</b>
                                  {point.y:.1f}<br><b>N:</b>
-                                 {point.N}<br/>')) %>%
+                                 {point.N}<br/>'),
+                    pointPadding = 0.001,
+                    zIndex = 2) %>%
       hc_exporting(enabled = TRUE)
     
     # add global ratio
