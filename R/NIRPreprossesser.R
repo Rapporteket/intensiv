@@ -38,7 +38,7 @@ NIRPreprosess <- function(RegData=RegData, lagreKvalIndData=0)	#, reshID=reshID)
 	names(RegData)[which(names(RegData) == 'ReshID')] <- 'ReshId'
 	
 # Riktig format
-	RegData$ShNavn <- as.character(RegData$ShNavn)
+	RegData$ShNavn <- trimws(as.character(RegData$ShNavn)) #Fjerner mellomrom (før) og etter navn
 
 	#Riktig format på datovariable:
 #	RegData <- RegData[which(RegData$DateAdmittedIntensive!=''),]	#Tar ut registreringer som ikke har innleggelsesdato

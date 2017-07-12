@@ -121,6 +121,8 @@ outfile <- '' #paste('Ford_',valgtVar, '.pdf', sep='')
 Utdata <- NIRAndeler(RegData=RegData, valgtVar=valgtVar, minald=minald, maxald=maxald,  datoFra=datoFra, 
                         datoTil=datoTil, InnMaate=InnMaate, dodInt=dodInt,erMann=erMann, outfile=outfile, 
                         hentData=0, preprosess=1, reshID=reshID, enhetsUtvalg=enhetsUtvalg, lagFig=1)
+#Ang jrxml, nye parametre:
+#           (aar=0, overfPas=0, grType=99,  figurtype='andeler', lagFig=1
 
 
 variable <- c('alder', 'liggetid', 'respiratortid',  'SAPSII', 'NEMS24', 'Nas24', 'InnMaate')
