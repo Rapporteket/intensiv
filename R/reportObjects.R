@@ -41,10 +41,6 @@ emptyReport <- function(Tittel, utvalg = "", infoText = "Tomt...") {
 readmission72hours <-  function(selectYear, selectQuarter, selectHospital,
                                 selectHospitalType, selectErMann, selectAgeGroup) {
   
-  # first, make some sensibel value out of "Kvartal". Should be fixed in data
-  # fRegData <- dplyr::mutate(NIRdata01reinn$NIRRegData01Off,
-  #                           qNum = as.numeric(substr(Kvartal, nchar(Kvartal),
-  #                                                    nchar(Kvartal))))
   
   fRegData <- NIRdata01reinn$NIRRegData01Off
   
@@ -62,8 +58,7 @@ readmission72hours <-  function(selectYear, selectQuarter, selectHospital,
     emptyReport(Tittel = fRegData$tittel, infoText = "Ingen data")
   } else {
     # get (static) data, lazy loaded
-    d <- NIRAndelerGrVar(RegData = RegData, grVar = 'ShNavn',
-                         grType = selectHospitalType, erMann = selectErMann,
+    d <- NIRAndelerGrVar(RegData = RegData, grVar = 'ShNavn', erMann = selectErMann,
                          valgtVar = 'reinn', hentData = 0, outfile = '',
                          lagFig = 0, offData = 1)
     
@@ -83,7 +78,7 @@ readmission72hours <-  function(selectYear, selectQuarter, selectHospital,
       hc_chart(height=800) %>%
       hc_title(text = d$tittel) %>%
       hc_subtitle(text = d$utvalgTxt) %>%
-      hc_xAxis(categories=names(d$Ngr$Hoved),
+      hc_xAxis(categories=d$grtxt,
       #hc_xAxis(categories=d$grtxt,
                # show every category
                labels=list(step=1),
@@ -94,10 +89,12 @@ readmission72hours <-  function(selectYear, selectQuarter, selectHospital,
       hc_add_series(name = "Andeler",
                     data = ds,
                     type = "bar",
-                    color = farger[3],
+                    color = hex_to_rgba(farger[3], alpha = 0.95),
                     tooltip = list(pointFormat='<b>Andel:</b>
                                  {point.y:.1f}<br><b>N:</b>
-                                 {point.N}<br/>')) %>%
+                                 {point.N}<br/>'),
+                    groupPadding = 0.05,
+                    zIndex = 2) %>%
       hc_exporting(enabled = TRUE)
     
     # add global ratio
@@ -111,6 +108,17 @@ readmission72hours <-  function(selectYear, selectQuarter, selectHospital,
                         data = rep(AggTot, obs),
                         type = "line",
                         color = farger[2],
+                        marker = list(enabled=FALSE),
+                        enableMouseTracking = FALSE
+    )
+    
+    # add target level
+    tl <- d$KImaal
+    h1 <- hc_add_series(h1,
+                        name = paste0("Målnivå (", sprintf('%.1f', tl), " %)"),
+                        data = rep(tl, obs),
+                        type = "line",
+                        color = "#FF7260",
                         marker = list(enabled=FALSE),
                         enableMouseTracking = FALSE
     )

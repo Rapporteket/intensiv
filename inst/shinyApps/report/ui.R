@@ -2,6 +2,7 @@
 # for 'Intensiv'
 
 require(highcharter)
+library(intensiv)
 #data("AndelerGrVarData")
 
 # not implemented just yet, wait until sample data without preprocessing
