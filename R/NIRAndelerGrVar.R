@@ -123,6 +123,7 @@ andeltxtUsort[indGrUt] <- ''
 sortInd <- order(as.numeric(AndelerGr), decreasing=sortAvtagende, na.last = FALSE) 
 AndelerGrSort <- AndelerGr[sortInd]
 GrNavnSort <- paste0(names(Ngr)[sortInd], '(',Ngrtxt[sortInd], ')')
+Ngr <- Ngr[sortInd]
 #GrNavnSort <- switch(as.character(offData),
 #                     '0' = paste0(names(Ngr)[sortInd], '(',Ngrtxt[sortInd], ')'),
 #                     '1' = paste0(c(names(Ngr), NIRUtvalg$grTypeTxt)[sortInd], '(',c(Ngrtxt, N)[sortInd], ')')

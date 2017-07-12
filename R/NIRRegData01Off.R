@@ -92,7 +92,9 @@ andelFjernet <- AndelBort
 metaInfo <- c('andelFjernet angir andelen data som sensureres pga. grupper med N<5',
              'utvalgsInfo angir utvalget for grunnlagsdataene',
              'KImaal angir målnivået for kvalitetsindikatoren')
-if (rand==1) {metaInfo <- c(metaInfo,'Dataene er IKKE ekte data')}
+if (rand==1) {
+      metaInfo <- c(metaInfo,'Dataene er IKKE ekte data')
+      tittel <- c(tittel, 'NB: Dataene er IKKE ekte') }
 
 if (valgtVar == 'reinn') {
       NIRdata01reinn <- list(NIRRegData01Off=RegData, andelFjernet=andelFjernet, KImaal=KImaal, sortAvtagende=sortAvtagende,

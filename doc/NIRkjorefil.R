@@ -50,17 +50,17 @@ load(paste0(dataKat,"NIRdata10000.Rdata")) #RegData, mai 2017
 #-----------------------------------Lage datasett til kvalitetsindikatorer---------
 library(intensiv)
 
-valgtVar <- 'respiratortid'  #reinn, respiratortid
+valgtVar <- 'reinn'  #reinn, respiratortid
 datoFra <- '2016-01-01'
 datoTil <- '2016-12-31'
 tilleggsVar <- c('Aar', 'Kvartal', 'erMann', 'ShNavn', 'ShType', 'Alder')
-rand <- 0
+rand <- 1
 RegData01Off(RegData, valgtVar=valgtVar, datoFra = datoFra, datoTil, tilleggsVar=tilleggsVar, 
              hentData=0, rand=rand)
 
 #-------------------------------Resultater for off.kval.ind.----------------------------------------
 aar <- 0
-grType <- 1
+grType <- 99
 grVar <- 'ShNavn'
 InnMaate <- 99
 erMann <- 99 
@@ -68,19 +68,21 @@ aldGr  <- 0
 tidsenhet <- 'Kvartal'
 outfile <- ''
 valgtVar <- 'reinn'  #reinn, respiratortid
+outfile <- paste0('OffRand', valgtVar, '.pdf')
 #Laste offdata
 filnavn <- paste0('NIRdata01', valgtVar)
 load(paste0(dataKat, filnavn, '.Rdata'))
-RegData <- NIRdata01reinn #NIRdata01reinn
+RegData <- NIRdata01reinn #NIRdata01respiratortid #NIRdata01reinn
 
 
 DataTilbake <- NIRAndelerGrVar(RegData=RegData, valgtVar=valgtVar, aar=aar, grType=grType, 
-                               grVar='ShNavn', InnMaate=InnMaate, erMann=erMann, hentData=0, outfile='', 
-                               lagFig=1, offData=1) #aldGr=aldGr, 
+                               grVar='ShNavn', InnMaate=InnMaate, erMann=erMann, hentData=0, 
+                               outfile=outfile, lagFig=1, offData=1) #aldGr=aldGr, 
 
 DataTilbake <- NIRAndelTid(RegData=RegData, valgtVar=valgtVar, datoFra=datoFra, datoTil=datoTil, 
                            tidsenhet = tidsenhet,minald=minald, maxald=maxald, erMann=erMann,InnMaate=InnMaate, 
-                           dodInt=dodInt, reshID, outfile=outfile, enhetsUtvalg=enhetsUtvalg, lagFig = 1, offData=1)	
+                           dodInt=dodInt, reshID, outfile=outfile, enhetsUtvalg=enhetsUtvalg, 
+                           lagFig = 1, offData=1)	
 #aar=0, grType=grType )
 
 #-------------------------------------- Parametre ----------------------------------------------------
@@ -91,8 +93,8 @@ minald <- 0 #(standard: 0)
 maxald <- 130	#(standard: 130, må være større enn minald!)
 InnMaate <- '' #0-El, 6-Ak.m, 8-Ak.k, (alle - alt unntatt 0,6,8)
 valgtMaal = 'Gjsn' #'Med' = median. 'Gjsn' = gjennomsnitt. Alt annet gir gjennomsnitt
-datoFra <- '2015-01-01'	# standard: 0	format: YYYY-MM-DD. Kan spesifisere bare første del, eks. YYYY el. YYYY-MM. 
-datoTil <- '2017-12-31'	# standard: 3000
+datoFra <- '2016-01-01'	# standard: 0	format: YYYY-MM-DD. Kan spesifisere bare første del, eks. YYYY el. YYYY-MM. 
+datoTil <- '2016-12-31'	# standard: 3000
 dodInt <- ''	# 0-i live, 1 -død, standard: alle (alle andre verdier)
 erMann <- ''	#Kjønn: 0-kvinner, 1-menn, standard: alle (alle andre verdier)
 overfPas <- ''    #Overført under pågående intensivbehandling?	1 = Nei, 2 = Ja
@@ -133,8 +135,8 @@ for (valgtVar in variable) {
 grVar <- 'ShNavn'
 valgtVar <- 'respiratortid'	#alder_u18', 'alder_over80', 'dod30d', 'dodeIntensiv', 'innMaate', 
                         #respiratortid, 'respStotte', 'reinn
-outfile <- '' #paste0(valgtVar, 'GrVar.png')
-offData <- 1
+outfile <- paste0(valgtVar, 'GrVar.pdf')
+offData <- 0
 
 NIRAndelerGrVar(RegData=RegData, valgtVar=valgtVar, minald=minald, maxald=maxald,  datoFra=datoFra, 
                 datoTil=datoTil, aar=0, InnMaate=InnMaate, dodInt=dodInt,erMann=erMann, outfile=outfile, 

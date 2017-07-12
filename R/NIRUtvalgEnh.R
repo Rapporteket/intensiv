@@ -121,7 +121,7 @@ NIRUtvalgEnh <- function(RegData, datoFra=0, datoTil=0, minald=0, maxald=130, er
       }								
       
       
-      
+      RegData$ShNavn <- as.factor(RegData$ShNavn)
       
       UtData <- list(RegData=RegData, utvalgTxt=utvalgTxt, fargepalett=fargepalett, ind=ind, 
                      medSml=medSml, hovedgrTxt=hovedgrTxt,smltxt=smltxt, grTypeTxt=grTypeTxt)

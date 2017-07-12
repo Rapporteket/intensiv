@@ -2,9 +2,11 @@
 title: "Offentlige data, intensivregisteret"
 author: "Lena Ringstad Olsen"
 date: "`r Sys.Date()`"
-output: 
-      html_document: 
+output_format: html_document
+output_file: 'C:/ResultattjenesteGIT/intensiv/vignettes/OffDataIntensiv.html'
 keep_tex: yes
+encoding: 'UTF-8'
+knit_root_dir: 'C:/ResultattjenesteGIT/intensiv'
 ---
 
 
@@ -22,9 +24,11 @@ Både reinnleggelse og respiratortid kan representeres som indikatorvariable (re
 
 ## Anonymisert datasett
 
+Et datasett er ikke anonymt hvis registreringene er bakeveisidentifiserbare, dvs. at man gjennom opplysningene som gis og kunnskap om den aktuelle personen, kan identifisere denne og skaffe seg nye opplysninger om personen. For at man skal få noen ny opplysning om en person, må man på forhånd vite at denne var innlagt på intensiv og at oppholdet er relevant for å bli med i kvalitetsindikatoren. Den nye personopplysninga vil da være om oppholdet oppfylte kvalitetsindikatoren eller ikke. F.eks. om personen ble reinnlagt eller ikke. Men selv om man tror man har identifisert en person, kan man ikke vite det sikkert om opplysninga gjelder den aktuelle personen siden registert ikke har 100% dekningsgrad.  
+
+Det er en akseptert tommelfingerregel at data kan betraktes som anonyme hvis enhver gruppering av dataene inneholder minst 4 overvasjoner. Tidligere var det akseptert å benytte minst 2 som nedre grense for at data skal være anonyme. Hvis alle personene i ei gruppe har samme resultat for den aktuelle variablene, får man samme informasjon om en enkeltperson uansett hvor mange det er i gruppa. 
 
 
-Det er en akseptert tommelfingerregel at data kan betraktes som anonyme hvis enhver gruppering av dataene inneholder minst 4 overvasjoner.
 Det anonyme datasettet inneholder noen utvalgs-/grupperingsvariable, samt kvalitetsindikatoren det skal vises resultat for. Innholdet i kvalitetsindikatoren er kun 0 og 1-verdier. (Eks. 1 hvis reinnlagt, 0 hvis ikke).
 Datasettet inneholder  hendelsesentydige data (ett opphold er en hendelse), dvs. vi har ei rad for hver hendelse. Dette for at vi skal kunne gjøre ulike utvalg og grupperinger av dataene. Alle rader hvor ei gruppering på laveste nivå av utvalgs-/grupperingsvariablene gir færre enn 5 hendelser, er fjernet fra datafila. Dette medfører at vi mister noen observasjoner. Hvor mye resultatet påvirkes av manglende observasjoner, avhenger av hvor mye data vi må sensurere. Hvor mye som må sensureres avhenger av størrelsen på registeret (totalt antall observasjoner) og hvor mange utvalgsparametre man ønsker.
 
@@ -38,6 +42,7 @@ dato <- '2017-07-03'
 dataKat <- 'A:/Intensiv/'
 fil <- paste0(dataKat,'MainFormDataContract',dato)
 load(paste0(fil,".Rdata")) #RegData
+RegDataRaa <- RegData
 
 #Lage og hente 01-datasett :
 valgtVar <- 'respiratortid'  #reinn, respiratortid
@@ -70,13 +75,14 @@ AntSh <- length(table(RegData$ShNavn))
 ## Sensurering
 
 I 2016 hadde Intensivregisteret `r dim(RegData)[1]` registreringer fordelt på `r AntSh` enheter.
-%Med 4 kvartal, tre aldersgrupper, to kjønn og `r AntSh` enheter har vi et gjennomsnitt på `r round(dim(RegData)[1]/(4*3*2*AntSh))` observasjoner i hver gruppe. 
+
+[//]: # Med 4 kvartal, tre aldersgrupper, to kjønn og `r AntSh` enheter har vi et gjennomsnitt på `r round(dim(RegData)[1]/(4*3*2*AntSh))` observasjoner i hver gruppe. 
 
 
 Eksemplet under viser hvor stor andel av registreringene vi må sensurere basert på hvor mange utvalgsparametre vi ønsker, og om vi baserer sensuren på <5 eller <3 registreringer i hver gruppe.
 Antall registreringer som må fjernes, øker raskt når vi inkluderer flere (grupperings-/utvalgs)variable.
 
-*Reidar: Hvilke utvalg/skala er det aktuelt å se på? *
+
 
 ```{r AndelFrafall, echo=FALSE}
 #tilleggsVar <- c('Aar', 'Kvartal', 'erMann', 'ShNavn', 'ShType', 'Alder')
@@ -129,12 +135,15 @@ Gruppering                                | N<5           | N<3
 ------------------------------------------|---------------|-----------  |
 Enhet, kjønn:                             | `r N5_3var`   | `r N3_3var`|
 Enhet, kjønn, aldersgrupper               | `r N5_4var`   | `r N3_4var`|
-Enhet, kjønn, aldersgr., innmåte, død     | `r N5_6var`   | `r N3_6var` |
+Enhet, kjønn, aldersgruppe, innmåte, død  | `r N5_6var`   | `r N3_6var` |
 Enhet, måned, kjønn                       | `r N5_Mnd2var`| `r N3_Mnd2var` |
-Enhet, kvartal, kjønn, aldersgr.          | `r N5_Kvartal2var`| `r N3_Kvartal2var` |
+Enhet, kvartal, kjønn, aldersgruppe       | `r N5_Kvartal2var`| `r N3_Kvartal2var` |
 
 
-## Anonymt datasett for kvalitetsindikatorene
+Vi ser at man mister relativt mye mer hvis man sensurerer alle grupper med <5 observasjoner, kontra å sensurere grupper med <3 observasjoner. Tidligere var det vanlig å sensurere <3.
+
+
+## Anonymt datasett og grad av sensur
 For intensivregisteret har vi valgt å benytte utvalgs-/grupperingsvariablene:
 
 * Enhet (sykehusavdeling/-enhet)
@@ -142,13 +151,41 @@ For intensivregisteret har vi valgt å benytte utvalgs-/grupperingsvariablene:
 * Alder (Tre aldersgrupper: 0-17, 18-79, 80+)
 * Kjønn (mann/kvinne)
 * År og kvartal (tidsangivelse for innleggelsestidspunkt)
-*(NB: Registeret må gi tilbakemelding på om dette er de utvalgsvariablene vi skal gå for)*
+
+*Reidar: Disse har jeg valgt, men du må si hvilke utvalg det er mest aktuelt å prioritere? *
 
 Alle registreringer som faller i ei gruppe hvor det blir <5 observasjoner i gruppa er sensurert F.eks. hvis utvalgskombinasjonen: Sykehus A, aldersgruppe 2, kvinne, 2.kvartal 2016 inneholder færre enn 5 observasjoner, sensureres alle observasjonene i denne gruppa. Som vi ser fra tabellen over, betyr det at `r N5_Kvartal2var` \% av registreringene er sensurert. Figurene under viser resultatene for kvalitetsindikatoren respiratortid for hhv fullstendig og sensurert datasett.
 
-```{r Figurer, echo=FALSE, fig.height=8, fig.width=6}
+Det er viktig å huske at graden av sensur vil være forskjellig for de ulike enhetene. Små enheter vil få sensurert relativt mer av sine opphold slik at resultatene for de små enhetene vil påvirkes mye mer enn for de store enhetene. Vi bør derfor ha en lav grense for hvor stor grad av sensur som er akseptabelt. I figurene under ser vi at f.eks. resultatet for Bærum endres fra 52,6% til 45,5%. Det betyr at med det fullstendige datasettet har de oppfylt målet for kvalitetsindikatoren (50%), mens i det sensurerte datasettet har de ikke det. 
+
+
+```{r FigRespTid, echo=FALSE, fig.height=8, fig.width=6}
 NIRAndelerGrVar(RegData=RegData, valgtVar = 'respiratortid', grVar='ShNavn',preprosess=0) #, outfile = 'AlleData.pdf'
 NIRAndelerGrVar(RegData=NIRdata01respiratortid, aar=2016, valgtVar = 'respiratortid', grVar='ShNavn', preprosess=0, offData = 1) #, outfile = 'SensurerteData.pdf'
 ```
 
+En kvalitetsindikator hvor hendelsene er relativt få (reinnleggelser) vil kunne påvirkes mer av sensur enn når hendelsene er hyppige (respiratortid < 2,5 døgn). Figuren under viser resultater for kvalitetsindikatoren reinnleggelse. Total andel sensur er lavere for reinnleggelse siden de aller fleste opphold kan vurderes for reinnleggelse og følgelig alle registreringer er med i totalantallet (N). Andelen sensur for reinnleggelse er `r round((14358-13841)/14358*100, 1)` \%.
+For Bodø ser vi at resultatet endres fra 6,4% reinnleggelse basert på det fullstendige datasettet, mens de har 10,7% reinnleggelse om vi ser på det sensurerte datasettet.
+
+
+```{r FigReinn, echo=FALSE, fig.height=8, fig.width=6}
+#Fullstendig datasett:
+NIRVarSpes <- NIRVarTilrettelegg(RegData=NIRUtvalg$RegData, valgtVar='reinn', figurtype = 'andelGrVar')
+dum <- NIRVarSpes$RegData
+NIRAndelerGrVar(RegData=NIRVarSpes$RegData, valgtVar = 'reinn', grVar='ShNavn',preprosess=0) #, outfile = 'AlleData.pdf'
+
+#Anonyme data:
+valgtVar <- 'reinn'  #reinn, respiratortid
+RegData01Off(RegDataRaa, valgtVar=valgtVar, datoFra = datoFra, datoTil, tilleggsVar=tilleggsVar, 
+             hentData=0, rand=0)
+load('A:/Intensiv/NIRdata01reinn.RData')
+#RegDataOff <- NIRdata01reinn$NIRRegData01Off
+NIRAndelerGrVar(RegData=NIRdata01reinn, aar=2016, valgtVar = 'reinn', grVar='ShNavn', preprosess=0, offData = 1) #, outfile = 'SensurerteData.pdf'
+```
+
+## Konklusjon
+
+Det er vanskelig å sette noen absolutt grense for hvor stort frafall som er akseptabelt i forhold til om man kan vise resultatene. Frafallet vil kunne påvirke ulikt fra gang til gang avhengig av innhold i dataene. Grensa bør settes lavt. Man bør også vurdere om det i det hele tatt er nødvendig å sensurere data. Subsidiært om det ikke holder å sensurere ved <3 observasjoner i ei gruppe.
+
+(Det vil også være mulig å ikke vise resultater for enkeltsykehus som får høy grad av sensur, men det er relativt arbeidskrevende...)
 
