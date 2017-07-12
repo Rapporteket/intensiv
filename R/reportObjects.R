@@ -89,11 +89,11 @@ readmission72hours <-  function(selectYear, selectQuarter, selectHospital,
       hc_add_series(name = "Andeler",
                     data = ds,
                     type = "bar",
-                    color = farger[3],
+                    color = hex_to_rgba(farger[3], alpha = 0.95),
                     tooltip = list(pointFormat='<b>Andel:</b>
                                  {point.y:.1f}<br><b>N:</b>
                                  {point.N}<br/>'),
-                    pointPadding = 0.001,
+                    groupPadding = 0.05,
                     zIndex = 2) %>%
       hc_exporting(enabled = TRUE)
     
