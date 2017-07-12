@@ -33,9 +33,9 @@ NIRUtvalgOff <- function(RegData, aldGr=0, erMann='', InnMaate='',
       
       
       N <- dim(RegData)[1]	#N=0 gir feilmelding
-      grTypetextstreng <- c('Alle lokal-/sentralsykeh.', 'Alle lokal-/sentralsykeh.', 'Alle regionsykehus')				
-      if (grType %in% 1:3) {grTypeTxt <- grTypetextstreng[grType]} else {grTypeTxt <- 'Hele landet'}
-   
+      grTypetextstreng <- c('lokal/sentral', 'lokal/sentral', 'region')				
+      if (grType %in% 1:3) {grTypeTxt <- grTypetextstreng[grType]} else {grTypeTxt <- 'alle '}
+      
       
       
       
