@@ -44,17 +44,19 @@ fil <- paste0(dataKat,'MainFormDataContract',dato)
 load(paste0(fil,".Rdata")) #RegData
 #save(RegData, file=paste0(fil,'.Rdata'))
 #RegData <- NIRdata[sample(1:dim(NIRdata)[1],10000),]
-#save(RegData, file=paste(dataKat,'NIRdata10000.Rdata'))
-load(paste(dataKat,"NIRdata10000.Rdata")) #RegData, mai 2017
+#save(RegData, file=paste0(dataKat,'NIRdata10000.Rdata'))
+load(paste0(dataKat,"NIRdata10000.Rdata")) #RegData, mai 2017
 
 #-----------------------------------Lage datasett til kvalitetsindikatorer---------
 library(intensiv)
 
-valgtVar <- 'reinn'  #reinn, respiratortid
+valgtVar <- 'respiratortid'  #reinn, respiratortid
 datoFra <- '2016-01-01'
+datoTil <- '2016-12-31'
 tilleggsVar <- c('Aar', 'Kvartal', 'erMann', 'ShNavn', 'ShType', 'Alder')
-rand <- 1
-RegData01Off(RegData, valgtVar=valgtVar, datoFra = datoFra, tilleggsVar=tilleggsVar, hentData=0, rand=rand)
+rand <- 0
+RegData01Off(RegData, valgtVar=valgtVar, datoFra = datoFra, datoTil, tilleggsVar=tilleggsVar, 
+             hentData=0, rand=rand)
 
 #-------------------------------Resultater for off.kval.ind.----------------------------------------
 aar <- 0
