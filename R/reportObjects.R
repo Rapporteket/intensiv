@@ -146,7 +146,7 @@ readmission72hours <-  function(selectYear, selectQuarter, selectHospital,
 #' @export
 
 gjsnGrVar <- function() {
-  
+    
   #get data
   data("GjsnGrVarData")
   
