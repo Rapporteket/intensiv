@@ -30,7 +30,7 @@ shinyUI(
                         ))
                       )
              ),
-             tabPanel("Respiratortid under...",
+             tabPanel("Respiratortid under 2,5 døgn",
                       sidebarLayout(
                         sidebarPanel(
                           uiInputModule(id = "gjsnGrVar",
