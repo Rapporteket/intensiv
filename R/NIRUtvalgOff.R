@@ -27,7 +27,7 @@ NIRUtvalgOff <- function(RegData, aldGr=0, erMann='', InnMaate='',
                                                 '3' = which(RegData$ShType == 3))
       } else {indGrType <- 1:Ninn}
       
-      indMed <- indAld %i% indKj %i% indGrType
+      indMed <- indAld %i% indKj %i% indGrType %i% indAar
       
       RegData <- RegData[indMed,]
       

@@ -152,7 +152,7 @@ NIRAndeler  <- function(RegData, valgtVar, datoFra='2011-01-01', datoTil='3000-1
                            retn=NIRVarSpes$retn, 
                            xAkseTxt=NIRVarSpes$xAkseTxt,
                            yAkseTxt=yAkseTxt,
-                           utvalgTxt=NIRUtvalg$utvalgTxt, 
+                           utvalgTxt=utvalgTxt, 
                            fargepalett=NIRUtvalg$fargepalett, 
                            medSml=NIRUtvalg$medSml,
                            hovedgrTxt=NIRUtvalg,
@@ -163,7 +163,7 @@ NIRAndeler  <- function(RegData, valgtVar, datoFra='2011-01-01', datoTil='3000-1
             #cexgr <- 1-ifelse(AntGr>20, 0.25*AntGr/60, 0)
             NIRFigSoyler(RegData, AggVerdier, Ngr, tittel=NIRVarSpes$tittel, hovedgrTxt=NIRUtvalg$hovedgrTxt, 
                          smltxt=NIRUtvalg$smltxt, Ngr = Ngr, KImaal <- NIRVarSpes$KImaal,
-                         N=N, retn='V', utvalgTxt, grtxt=NIRVarSpes$grtxt, grtxt2=grtxt2, medSml=NIRUtvalg$medSml, 
+                         N=N, retn='V', utvalgTxt=utvalgTxt, grtxt=NIRVarSpes$grtxt, grtxt2=grtxt2, medSml=NIRUtvalg$medSml, 
                          xAkseTxt=NIRVarSpes$xAkseTxt, yAkseTxt=yAkseTxt, 
                          outfile=outfile)	
             #ENDRE så figurparametrene skrives fullt ut i parameterkallet

@@ -63,12 +63,12 @@ aar <- 0
 grType <- 99
 grVar <- 'ShNavn'
 InnMaate <- 99
-erMann <- 99 
+erMann <- 0 
 aldGr  <- 0
 tidsenhet <- 'Kvartal'
 outfile <- ''
 valgtVar <- 'respiratortid'  #reinn, respiratortid
-outfile <- paste0('OffRand', valgtVar, '.pdf')
+outfile <- '' #paste0('OffRand', valgtVar, '.pdf')
 #Laste offdata
 filnavn <- paste0('NIRdata01', valgtVar)
 load(paste0(dataKat, filnavn, '.Rdata'))
@@ -115,7 +115,7 @@ offData <- 0
 
 
 #--------------------------------------- Andeler ----------------------------------
-valgtVar <- 'alder'	#'alder', 'liggetid', 'respiratortid',  'SAPSII', 'NEMS24', 'Nas24', 'InnMaate'
+valgtVar <- 'respiratortid'	#'alder', 'liggetid', 'respiratortid',  'SAPSII', 'NEMS24', 'Nas24', 'InnMaate'
 outfile <- '' #paste('Ford_',valgtVar, '.pdf', sep='')
 
 
@@ -142,7 +142,7 @@ for (valgtVar in variable) {
 grVar <- 'ShNavn'
 valgtVar <- 'respiratortid'	#alder_u18', 'alder_over80', 'dod30d', 'dodeIntensiv', 'innMaate', 
                         #respiratortid, 'respStotte', 'reinn
-outfile <- paste0(valgtVar, 'GrVar.pdf')
+outfile <- '' #paste0(valgtVar, 'GrVar.pdf')
 offData <- 0
 
 NIRAndelerGrVar(RegData=RegData, valgtVar=valgtVar, minald=minald, maxald=maxald,  datoFra=datoFra, 

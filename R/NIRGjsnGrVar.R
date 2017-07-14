@@ -50,8 +50,7 @@ RegData <- NIRVarSpes$RegData
 
 #------- Gjøre utvalg
 NIRUtvalg <- NIRUtvalgEnh(RegData=RegData, datoFra=datoFra, datoTil=datoTil, aar=aar, minald=minald, maxald=maxald, 
-                          overfPas=overfPas, erMann=erMann, InnMaate=InnMaate, dodInt=dodInt, 
-						  grType=grType)
+                          erMann=erMann, InnMaate=InnMaate, dodInt=dodInt, grType=grType) #overfPas=overfPas, 
 RegData <- NIRUtvalg$RegData
 utvalgTxt <- NIRUtvalg$utvalgTxt
 

@@ -83,11 +83,10 @@ NIRAndelerGrVar <- function(RegData, valgtVar, datoFra='2010-01-01', datoTil='30
             medSml=NIRUtvalg$medSml 
             utvalgTxt <- NIRUtvalg$utvalgTxt
       }				
-      if (offData == 1) {NIRUtvalg <- NIRUtvalgOff(RegData=RegData, aldGr=aldGr, aar=aar, erMann=erMann, 
-                                                   InnMaate=InnMaate, grType=grType)
-      
-      utvalgTxt <- c(NIRUtvalg$utvalgsTxt, utvalgsInfo     )
-      }
+      if (offData == 1) { NIRUtvalg <- NIRUtvalgOff(RegData=RegData, aldGr=aldGr, aar=aar, erMann=erMann, 
+                                                   InnMaate=InnMaate, grType=grType) 
+                          utvalgTxt <- NIRUtvalg$utvalgTxt #c(utvalgsInfo, 
+                        }
       RegData <- NIRUtvalg$RegData
 
       
@@ -122,7 +121,7 @@ andeltxtUsort[indGrUt] <- ''
 
 sortInd <- order(as.numeric(AndelerGr), decreasing=sortAvtagende, na.last = FALSE) 
 AndelerGrSort <- AndelerGr[sortInd]
-GrNavnSort <- paste0(names(Ngr)[sortInd], '(',Ngrtxt[sortInd], ')')
+GrNavnSort <- paste0(names(Ngr)[sortInd], ' (',Ngrtxt[sortInd], ')')
 Ngr <- Ngr[sortInd]
 #GrNavnSort <- switch(as.character(offData),
 #                     '0' = paste0(names(Ngr)[sortInd], '(',Ngrtxt[sortInd], ')'),
