@@ -177,10 +177,6 @@ GjsnGrVarData <- list(AggVerdier=AggVerdier, #Endres til Soyleverdi? Evt. AggVer
                          medSml=NIRUtvalg$medSml, 
                          smltxt=NIRUtvalg$smltxt)
 
-#Lagre beregnede data
-#if (hentData==1) {
-save(GjsnGrVarData, file='data/GjsnGrVarData.RData')
-#}
 
 #FigDataParam skal inn som enkeltparametre i funksjonskallet
 if (lagFig == 1) {
