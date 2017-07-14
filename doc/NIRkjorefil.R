@@ -45,12 +45,12 @@ load(paste0(fil,".Rdata")) #RegData
 #save(RegData, file=paste0(fil,'.Rdata'))
 #RegData <- NIRdata[sample(1:dim(NIRdata)[1],10000),]
 #save(RegData, file=paste0(dataKat,'NIRdata10000.Rdata'))
-load(paste0(dataKat,"NIRdata10000.Rdata")) #RegData, mai 2017
+load(paste0(dataKat,"NIRdata10000.Rdata")) #RegData, juli 2017
 
 #-----------------------------------Lage datasett til kvalitetsindikatorer---------
 library(intensiv)
 
-valgtVar <- 'reinn'  #reinn, respiratortid
+valgtVar <- 'respiratortid'  #reinn, respiratortid
 datoFra <- '2016-01-01'
 datoTil <- '2016-12-31'
 tilleggsVar <- c('Aar', 'Kvartal', 'erMann', 'ShNavn', 'ShType', 'Alder')
@@ -67,7 +67,7 @@ erMann <- 99
 aldGr  <- 0
 tidsenhet <- 'Kvartal'
 outfile <- ''
-valgtVar <- 'reinn'  #reinn, respiratortid
+valgtVar <- 'respiratortid'  #reinn, respiratortid
 outfile <- paste0('OffRand', valgtVar, '.pdf')
 #Laste offdata
 filnavn <- paste0('NIRdata01', valgtVar)
@@ -93,7 +93,7 @@ minald <- 0 #(standard: 0)
 maxald <- 130	#(standard: 130, må være større enn minald!)
 InnMaate <- '' #0-El, 6-Ak.m, 8-Ak.k, (alle - alt unntatt 0,6,8)
 valgtMaal = 'Gjsn' #'Med' = median. 'Gjsn' = gjennomsnitt. Alt annet gir gjennomsnitt
-datoFra <- '2016-01-01'	# standard: 0	format: YYYY-MM-DD. Kan spesifisere bare første del, eks. YYYY el. YYYY-MM. 
+datoFra <- '2011-01-01'	# standard: 0	format: YYYY-MM-DD. Kan spesifisere bare første del, eks. YYYY el. YYYY-MM. 
 datoTil <- '2016-12-31'	# standard: 3000
 dodInt <- ''	# 0-i live, 1 -død, standard: alle (alle andre verdier)
 erMann <- ''	#Kjønn: 0-kvinner, 1-menn, standard: alle (alle andre verdier)
@@ -119,7 +119,7 @@ valgtVar <- 'alder'	#'alder', 'liggetid', 'respiratortid',  'SAPSII', 'NEMS24', 
 outfile <- '' #paste('Ford_',valgtVar, '.pdf', sep='')
 
 
-NIRAndeler(RegData=RegData, valgtVar=valgtVar, minald=minald, maxald=maxald,  datoFra=datoFra, datoTil=datoTil, 
+Utdata <- NIRAndeler(RegData=RegData, valgtVar=valgtVar, minald=minald, maxald=maxald,  datoFra=datoFra, datoTil=datoTil, 
            InnMaate=InnMaate, dodInt=dodInt,erMann=erMann, outfile=outfile, preprosess=1, 
            reshID=reshID, enhetsUtvalg=enhetsUtvalg) #hentData=1, 
 

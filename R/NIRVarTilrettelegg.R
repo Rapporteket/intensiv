@@ -146,7 +146,7 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler'
 		#Liggetid og respiratortid bare >0
 		RegData$Variabel  <- as.numeric(RegData$liggetid)
 		RegData <- RegData[which(RegData$Variabel>0), ] 
-		tittel <- 'Liggedtid'
+		tittel <- 'Liggetid'
 		gr <- c(0, 1, 2, 3, 4, 5, 6, 7, 14, 1000)
 		RegData$VariabelGr <- cut(RegData$liggetid, breaks=gr, include.lowest=TRUE, right=FALSE)	
 		grtxt <- c('(0-1)','[1-2)','[2-3)','[3-4)','[4-5)','[5-6)','[6-7)','[7-14)','14+')
@@ -212,7 +212,7 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler'
                   tittel <- 'Respiratortid'}      #Andeler, GjsnGrVar
             if (figurtype %in% c('andelTid', 'andelGrVar')) {
                   RegData$Variabel[which(RegData$respiratortid < 2.5)] <- 1
-                  tittel <- 'Respiratortid < 2.5 døgn'}     #AndelGrVar, AndelTid
+                  tittel <- 'Respiratortid mindre enn 2,5 døgn'}     #AndelGrVar, AndelTid
             
             gr <- c(0, 1, 2, 3, 4, 5, 6, 7, 14, 1000)#c(0, exp(seq(0,log(30),length.out = 6)), 500),1)
             RegData$VariabelGr <- cut(RegData$respiratortid, breaks=gr, include.lowest=TRUE, right=FALSE)  
