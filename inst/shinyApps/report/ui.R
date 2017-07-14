@@ -30,11 +30,11 @@ shinyUI(
                         ))
                       )
              ),
-             tabPanel("GjsnGrVar",
+             tabPanel("Respiratortid under 2,5 døgn",
                       sidebarLayout(
                         sidebarPanel(
                           uiInputModule(id = "gjsnGrVar",
-                                        dat = NIRdata01reinn$NIRRegData01Off),
+                                        dat = NIRdata01respiratortid$NIRRegData01Off),
                           downloadButton("downloadDataGjsnGrVar",
                                          label = "Last ned data")
                         ),

@@ -30,6 +30,103 @@ emptyReport <- function(Tittel, utvalg = "", infoText = "Tomt...") {
 
 #' Provider of report objects
 #' 
+#' Provide report object for quality indicators
+#' 
+#' @param Tittel String Title to show in empty chart
+#' @param infoText String Text to shown in empty chart
+#' @return plotObj Highchart object
+#' @return tableObj Table object
+#' @export
+
+shinyReport <-  function(RegData, valgtVar, selectErMann) {
+  
+  # get (static) data, lazy loaded
+  d <- NIRAndelerGrVar(RegData = RegData, grVar = 'ShNavn', erMann = selectErMann,
+                       valgtVar = valgtVar, hentData = 0, outfile = '',
+                       lagFig = 0, offData = 1)
+  
+  ## hc
+  # get actual color from name...
+  figProps <- rapbase::figtype(fargepalett=d$fargepalett)
+  farger <- figProps$farger
+  
+  # to use extra data in tooltips, make a data series from data frame
+  df <- data.frame(y = as.vector(d$AggVerdier$Hoved),
+                   N = as.vector(d$Ngr$Hoved),
+                   stringsAsFactors = FALSE)
+  ds <- rlist::list.parse(df)
+  names(ds) <- NULL
+  
+  print(d$tittel)
+  
+  h1 <- highcharter::highchart() %>%
+    hc_chart(height=800) %>%
+    hc_title(text = paste(d$tittel, collapse = " ")) %>%
+    hc_subtitle(text = d$utvalgTxt) %>%
+    hc_xAxis(categories=d$grtxt,
+             #hc_xAxis(categories=d$grtxt,
+             # show every category
+             labels=list(step=1),
+             reversed = TRUE) %>%
+    hc_yAxis(title = list(text=d$xAkseTxt),
+             min = -0.01,
+             startOnTick = FALSE) %>%
+    hc_add_series(name = "Andeler",
+                  data = ds,
+                  type = "bar",
+                  color = hex_to_rgba(farger[3], alpha = 0.95),
+                  tooltip = list(pointFormat='<b>Andel:</b>
+                                   {point.y:.1f}<br><b>N:</b>
+                                   {point.N}<br/>'),
+                  groupPadding = 0.05,
+                  zIndex = 2) %>%
+    hc_exporting(enabled = TRUE)
+  
+  # add global ratio
+  AggTot <- d$AggTot
+  N <- d$N$Hoved
+  obs <- length(d$Ngr$Hoved)
+  h1 <- hc_add_series(h1,
+                      name = paste0("Hele utvalget (",
+                                    sprintf('%.1f', AggTot),
+                                    " %), N=", N),
+                      data = rep(AggTot, obs),
+                      type = "line",
+                      color = farger[2],
+                      marker = list(enabled=FALSE),
+                      enableMouseTracking = FALSE
+  )
+  
+  # add target level
+  tl <- d$KImaal
+  h1 <- hc_add_series(h1,
+                      name = paste0("Målnivå (", sprintf('%.1f', tl), " %)"),
+                      data = rep(tl, obs),
+                      type = "line",
+                      color = "#FF7260",
+                      marker = list(enabled=FALSE),
+                      enableMouseTracking = FALSE
+  )
+  
+  ## table, data frame needed for download, widget for pres
+  t1 <- data.frame(Enhet=names(d$Ngr$Hoved),
+                   Andel=as.vector(d$AggVerdier$Hoved),
+                   N = as.vector(d$Ngr$Hoved),
+                   row.names = NULL,
+                   stringsAsFactors = FALSE)
+  t1 <- t1[order(-t1$Andel), ]
+  w1 <- DT::datatable(t1, rownames = FALSE,
+                      options = list(dom='t', ordering=FALSE, paging=FALSE))
+  tableObj = list(t1=t1, w1=w1)
+  
+  list(plotObj=h1, tableObj=tableObj)
+}
+
+
+
+
+#' Provider of report objects
+#' 
 #' Provide report object fractions of readmittance within 72 hours
 #' 
 #' @param Tittel String Title to show in empty chart
@@ -146,7 +243,7 @@ readmission72hours <-  function(selectYear, selectQuarter, selectHospital,
 #' @export
 
 gjsnGrVar <- function() {
-  
+    
   #get data
   data("GjsnGrVarData")
   
