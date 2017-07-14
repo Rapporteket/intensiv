@@ -26,7 +26,7 @@ Både reinnleggelse og respiratortid kan representeres som indikatorvariable (re
 
 Et datasett er ikke anonymt hvis registreringene er bakeveisidentifiserbare, dvs. at man gjennom opplysningene som gis og kunnskap om den aktuelle personen, kan identifisere denne og skaffe seg nye opplysninger om personen. For at man skal få noen ny opplysning om en person, må man på forhånd vite at denne var innlagt på intensiv og at oppholdet er relevant for å bli med i kvalitetsindikatoren. Den nye personopplysninga vil da være om oppholdet oppfylte kvalitetsindikatoren eller ikke. F.eks. om personen ble reinnlagt eller ikke. Men selv om man tror man har identifisert en person, kan man ikke vite det sikkert om opplysninga gjelder den aktuelle personen siden registert ikke har 100% dekningsgrad.  
 
-Det er en akseptert tommelfingerregel at data kan betraktes som anonyme hvis enhver gruppering av dataene inneholder minst 4 overvasjoner. Tidligere var det akseptert å benytte minst 2 som nedre grense for at data skal være anonyme. Hvis alle personene i ei gruppe har samme resultat for den aktuelle variablene, får man samme informasjon om en enkeltperson uansett hvor mange det er i gruppa. 
+Det er en akseptert tommelfingerregel at data kan betraktes som anonyme hvis enhver gruppering av dataene inneholder minst 5 observasjoner. Tidligere var det akseptert å benytte minst 3 som nedre grense for at data skal være anonyme. Hvis alle personene i ei gruppe har samme resultat for den aktuelle variablene, får man samme informasjon om en enkeltperson uansett hvor mange det er i gruppa. 
 
 
 Det anonyme datasettet inneholder noen utvalgs-/grupperingsvariable, samt kvalitetsindikatoren det skal vises resultat for. Innholdet i kvalitetsindikatoren er kun 0 og 1-verdier. (Eks. 1 hvis reinnlagt, 0 hvis ikke).
@@ -60,12 +60,13 @@ RegDataOff <- NIRdata01respiratortid$NIRRegData01Off
 print(RegDataOff[sample(1:dim(RegDataOff)[1], 15),], row.names=FALSE)
 
 #Klargjøre RegData:
-RegData <- NIRPreprosess(RegData=RegData)	#, reshID=reshID)
+RegData <- NIRPreprosess(RegData=RegDataRaa)	#, reshID=reshID)
 NIRUtvalg <- NIRUtvalgEnh(RegData=RegData, datoFra=datoFra, datoTil=datoTil) 
-NIRVarSpes <- NIRVarTilrettelegg(RegData=NIRUtvalg$RegData, valgtVar=valgtVar, figurtype = 'andelGrVar')
+RegData2016 <- NIRUtvalg$RegData
+NIRVarSpes <- NIRVarTilrettelegg(RegData=RegData2016, valgtVar=valgtVar, figurtype = 'andelGrVar')
 RegData <- NIRVarSpes$RegData
 
-AntSh <- length(table(RegData$ShNavn))
+AntSh <- length(table(RegData2016$ShNavn))
 
 ```
 
@@ -74,12 +75,9 @@ AntSh <- length(table(RegData$ShNavn))
 
 ## Sensurering
 
-I 2016 hadde Intensivregisteret `r dim(RegData)[1]` registreringer fordelt på `r AntSh` enheter.
+I 2016 hadde Intensivregisteret `r dim(RegData2016)[1]` registreringer fordelt på `r AntSh` enheter. Totalantallet for de ulike kvalitetsindikator vil være ulikt siden ikke alle opphold er relevant for alle kvalitetsindikatorer. Eksempelvis er det totalt `r dim(RegData)[1]` opphold for 2016 som inngår i kvalitetsindikatoren reinnleggelse.
 
-[//]: # Med 4 kvartal, tre aldersgrupper, to kjønn og `r AntSh` enheter har vi et gjennomsnitt på `r round(dim(RegData)[1]/(4*3*2*AntSh))` observasjoner i hver gruppe. 
-
-
-Eksemplet under viser hvor stor andel av registreringene vi må sensurere basert på hvor mange utvalgsparametre vi ønsker, og om vi baserer sensuren på <5 eller <3 registreringer i hver gruppe.
+Eksemplet under viser hvor stor andel av registreringene vi må sensurere for kvalitetsindikatoren reinnleggelse basert på hvor mange utvalgsparametre vi ønsker, og om vi baserer sensuren på <5 eller <3 registreringer i hver gruppe.
 Antall registreringer som må fjernes, øker raskt når vi inkluderer flere (grupperings-/utvalgs)variable.
 
 
@@ -135,8 +133,8 @@ Gruppering                                | N<5           | N<3
 ------------------------------------------|---------------|-----------  |
 Enhet, kjønn:                             | `r N5_3var`   | `r N3_3var`|
 Enhet, kjønn, aldersgrupper               | `r N5_4var`   | `r N3_4var`|
-Enhet, kjønn, aldersgruppe, innmåte, død  | `r N5_6var`   | `r N3_6var` |
 Enhet, måned, kjønn                       | `r N5_Mnd2var`| `r N3_Mnd2var` |
+Enhet, kjønn, aldersgruppe, innmåte, død  | `r N5_6var`   | `r N3_6var` |
 Enhet, kvartal, kjønn, aldersgruppe       | `r N5_Kvartal2var`| `r N3_Kvartal2var` |
 
 
@@ -161,10 +159,10 @@ Det er viktig å huske at graden av sensur vil være forskjellig for de ulike en
 
 ```{r FigRespTid, echo=FALSE, fig.height=8, fig.width=6}
 NIRAndelerGrVar(RegData=RegData, valgtVar = 'respiratortid', grVar='ShNavn',preprosess=0) #, outfile = 'AlleData.pdf'
-NIRAndelerGrVar(RegData=NIRdata01respiratortid, aar=2016, valgtVar = 'respiratortid', grVar='ShNavn', preprosess=0, offData = 1) #, outfile = 'SensurerteData.pdf'
+DataTilbakeOffResp <- NIRAndelerGrVar(RegData=NIRdata01respiratortid, aar=2016, valgtVar = 'respiratortid', grVar='ShNavn', preprosess=0, offData = 1) #, outfile = 'SensurerteData.pdf'
 ```
 
-En kvalitetsindikator hvor hendelsene er relativt få (reinnleggelser) vil kunne påvirkes mer av sensur enn når hendelsene er hyppige (respiratortid < 2,5 døgn). Figuren under viser resultater for kvalitetsindikatoren reinnleggelse. Total andel sensur er lavere for reinnleggelse siden de aller fleste opphold kan vurderes for reinnleggelse og følgelig alle registreringer er med i totalantallet (N). Andelen sensur for reinnleggelse er `r round((14358-13841)/14358*100, 1)` \%.
+En kvalitetsindikator hvor hendelsene er relativt få (reinnleggelser) vil kunne påvirkes mer av sensur enn når hendelsene er hyppige (respiratortid < 2,5 døgn). Figuren under viser resultater for kvalitetsindikatoren reinnleggelse. Total andel sensur er lavere for reinnleggelse siden de aller fleste opphold kan vurderes for reinnleggelse og følgelig alle registreringer er med i totalantallet (N). Andelen sensur for reinnleggelse er `r NIRdata01reinn$andelFjernet` \%. 
 For Bodø ser vi at resultatet endres fra 6,4% reinnleggelse basert på det fullstendige datasettet, mens de har 10,7% reinnleggelse om vi ser på det sensurerte datasettet.
 
 

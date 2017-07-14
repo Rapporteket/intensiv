@@ -55,7 +55,7 @@ if (dim(RegData)[1] < 10 )
 	farger <- FigTypUt$farger
 	plot.new()
 	title(tittel)	#, line=-6)
-	legend('topleft',utvalgTxt, bty='n', cex=0.9, text.col=farger[1])
+	legend('topleft',legend=utvalgTxt, bty='n', cex=0.9, text.col=farger[1])
 	if (valgtMaal=='Med' & grepl('SMR', tittel)) {tekst <- 'Ugyldig parameterkombinasjon'   #valgtVar=='SMR'
 		} else {tekst <- 'For få registreringer'}
 	text(0.5, 0.6, tekst, cex=1.2)
@@ -189,11 +189,11 @@ if (retn == 'H') {
 		  
 		  if (medSml == 1) {
 				points(pos, as.numeric(AggVerdier$Rest), col=fargeRest,  cex=2, pch=18) #c("p","b","o"), 
-				legend('top', c(paste0(hovedgrTxt, ' (N=', N$Hoved,')'), paste0(smltxt, ' (N=', N$Rest,')')), 
+				legend('top', legend=c(paste0(hovedgrTxt, ' (N=', N$Hoved,')'), paste0(smltxt, ' (N=', N$Rest,')')), 
 					   border=c(fargeHoved,NA), col=c(fargeHoved,fargeRest), bty='n', pch=c(15,18), pt.cex=2, lty=c(NA,NA), 
 					   lwd=lwdRest, ncol=2, cex=cexleg)
 		  } else {	
-				legend('top', paste0(hovedgrTxt, ' (N=', N$Hoved,')'), 
+				legend('top', legend=paste0(hovedgrTxt, ' (N=', N$Hoved,')'), 
 					   border=NA, fill=fargeHoved, bty='n', ncol=1, cex=cexleg)
 		  }
 	} 

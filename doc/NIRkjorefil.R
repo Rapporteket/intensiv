@@ -115,12 +115,19 @@ offData <- 0
 
 
 #--------------------------------------- Andeler ----------------------------------
-valgtVar <- 'Nas24'	#'alder', 'liggetid', 'respiratortid',  'SAPSII', 'NEMS24', 'Nas24', 'InnMaate'
+valgtVar <- 'alder'	#'alder', 'liggetid', 'respiratortid',  'SAPSII', 'NEMS24', 'Nas24', 'InnMaate'
 outfile <- '' #paste('Ford_',valgtVar, '.pdf', sep='')
+
+
+NIRAndeler(RegData=RegData, valgtVar=valgtVar, minald=minald, maxald=maxald,  datoFra=datoFra, datoTil=datoTil, 
+           InnMaate=InnMaate, dodInt=dodInt,erMann=erMann, outfile=outfile, preprosess=1, 
+           reshID=reshID, enhetsUtvalg=enhetsUtvalg) #hentData=1, 
 
 Utdata <- NIRAndeler(RegData=RegData, valgtVar=valgtVar, minald=minald, maxald=maxald,  datoFra=datoFra, 
                         datoTil=datoTil, InnMaate=InnMaate, dodInt=dodInt,erMann=erMann, outfile=outfile, 
                         hentData=0, preprosess=1, reshID=reshID, enhetsUtvalg=enhetsUtvalg, lagFig=1)
+#Ang jrxml, nye parametre:
+#           (aar=0, overfPas=0, grType=99,  figurtype='andeler', lagFig=1
 
 
 variable <- c('alder', 'liggetid', 'respiratortid',  'SAPSII', 'NEMS24', 'Nas24', 'InnMaate')
