@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.2.0.final using JasperReports Library version 6.2.0  -->
-<!-- 2016-06-09T14:39:05 -->
+<!-- Created with Jaspersoft Studio version 6.4.0.final using JasperReports Library version 6.4.1  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="NIRFigAndelTid" language="groovy" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" scriptletClass="no.skde.report.nir.NirCommonScriptletRPackage" uuid="45fe8ce0-ff63-4edb-9fe2-e19b7f09ad23">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
@@ -25,10 +24,10 @@
 		<defaultValueExpression><![CDATA[$P{LoggedInUserAttribute_AVD_RESH}]]></defaultValueExpression>
 	</parameter>
 	<parameter name="rFunctionCallString" class="java.lang.String" isForPrompting="false">
-		<defaultValueExpression><![CDATA[new String("NIRFigAndelTid(RegData=0, valgtVar=valgtVar, datoFra=datoFra, datoTil=datoTil, minald=minald, maxald=maxald, erMann=erMann,InnMaate=InnMaate, dodInt='', preprosess=1, hentData=1, reshID=reshID, outfile=outfile, enhetsUtvalg=enhetsUtvalg)")]]></defaultValueExpression>
+		<defaultValueExpression><![CDATA[new String("NIRAndelTid(RegData=0, valgtVar=valgtVar, datoFra=datoFra, datoTil=datoTil, minald=minald, maxald=maxald, erMann=erMann,InnMaate=InnMaate, dodInt='', preprosess=1, hentData=1, reshID=reshID, outfile=outfile, enhetsUtvalg=enhetsUtvalg)")]]></defaultValueExpression>
 	</parameter>
 	<parameter name="reportName" class="java.lang.String" isForPrompting="false">
-		<defaultValueExpression><![CDATA[new String("NIRFigAndelTid")]]></defaultValueExpression>
+		<defaultValueExpression><![CDATA[new String("NIRAndelTid")]]></defaultValueExpression>
 	</parameter>
 	<parameter name="rPackageName" class="java.lang.String" isForPrompting="false">
 		<defaultValueExpression><![CDATA[new String("intensiv")]]></defaultValueExpression>

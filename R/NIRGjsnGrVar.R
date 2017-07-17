@@ -69,7 +69,7 @@ t1 <- switch(valgtMaal,
 			Gjsn = 'Gjennomsnittlig ')
 
 
-tittel <- c(paste0(t1, valgtVar, ', ', NIRUtvalg$grTypeTxt, 'sykehus')) 
+tittel <- paste0(t1, valgtVar, ', ', NIRUtvalg$grTypeTxt, 'sykehus')
 			
 if( valgtVar =='SMR') {tittel <- c(paste0('SMR, ', NIRUtvalg$grTypeTxt, 'sykehus'),
 								'(uten reinnlagte og overflyttede pasienter)')}

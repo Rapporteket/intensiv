@@ -94,7 +94,7 @@ maxald <- 130	#(standard: 130, må være større enn minald!)
 InnMaate <- '' #0-El, 6-Ak.m, 8-Ak.k, (alle - alt unntatt 0,6,8)
 valgtMaal = 'Gjsn' #'Med' = median. 'Gjsn' = gjennomsnitt. Alt annet gir gjennomsnitt
 datoFra <- '2011-01-01'	# standard: 0	format: YYYY-MM-DD. Kan spesifisere bare første del, eks. YYYY el. YYYY-MM. 
-datoTil <- '2016-12-31'	# standard: 3000
+datoTil <- '2017-12-31'	# standard: 3000
 dodInt <- ''	# 0-i live, 1 -død, standard: alle (alle andre verdier)
 erMann <- ''	#Kjønn: 0-kvinner, 1-menn, standard: alle (alle andre verdier)
 overfPas <- ''    #Overført under pågående intensivbehandling?	1 = Nei, 2 = Ja
@@ -159,11 +159,12 @@ for (valgtVar in variable) {
                   }
 
 #---------------------AndelTid----------------------------------------------
-valgtVar <- 'respiratortid'	#'alder_u18', 'alder_over80', 'dod30d', 'dodeIntensiv', 'liggetidDod', 
+tidsenhet <- 'Aar'
+valgtVar <- 'alder_u18'	#'alder_u18', 'alder_over80', 'dod30d', 'dodeIntensiv', 'liggetidDod', 
                         #respiratortid, 'respiratortidDod', 'respStotte', 'reinn', 'SMR'
 outfile <- '' #paste0(valgtVar, '.png')
 
-NIRAndelTid(RegData=RegData, valgtVar=valgtVar, datoFra=datoFra, datoTil=datoTil, tidsenhet = 'Mnd',
+NIRAndelTid(RegData=RegData, valgtVar=valgtVar, datoFra=datoFra, datoTil=datoTil, tidsenhet = tidsenhet,
 		minald=minald, maxald=maxald, erMann=erMann,InnMaate=InnMaate, dodInt=dodInt, 
 		reshID, outfile=outfile, enhetsUtvalg=enhetsUtvalg, lagFig = 1, offData=offData)	
 #aar=0, grType=grType )
@@ -201,8 +202,8 @@ for (valgtVar in variable) {
 
 #--------------------------------------- SENTRALMÅL per enhet----------------------------------
 
-valgtMaal <- 'Med'
-valgtVar <- 'respiratortid'	#'SMR', alder, liggetid, respiratortid,  SAPSII, 'NEMS', 'Nas'
+valgtMaal <- 'Gjsn'
+valgtVar <- 'SMR'	#'SMR', alder, liggetid, respiratortid,  SAPSII, 'NEMS', 'Nas24'
 outfile <- '' #paste0(valgtVar, 'MM.png')#,grType
 
 NIRGjsnGrVar(RegData=RegData, valgtVar=valgtVar, valgtMaal=valgtMaal, minald=minald, maxald=maxald, 

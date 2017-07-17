@@ -62,8 +62,8 @@ NIRAndelTid <- function(RegData, valgtVar, datoFra='2011-01-01', datoTil='3000-1
       if (offData == 0) {
             if (reshID==0) {enhetsUtvalg <- 0}
             NIRUtvalg <- NIRUtvalgEnh(RegData=RegData, datoFra=datoFra, datoTil=datoTil, 
-                                      minald=minald, maxald=maxald, erMann=erMann, #overfPas=overfPas, aar=0, 
-                                      InnMaate=InnMaate, dodInt=dodInt, grType=grType)
+                                      minald=minald, maxald=maxald, erMann=erMann, #aar=0, 
+                                      InnMaate=InnMaate, dodInt=dodInt) #, grType=grType
             smltxt <- NIRUtvalg$smltxt
             medSml=NIRUtvalg$medSml 
             utvalgTxt <- NIRUtvalg$utvalgTxt
