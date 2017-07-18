@@ -101,7 +101,7 @@ overfPas <- ''    #Overført under pågående intensivbehandling?	1 = Nei, 2 = J
 grType <- 99	#1/2: sentral/lokal, 3:regional, 99:'alle'
 grVar <- 'ShNavn'
 tidsenhet <- 'Mnd'
-enhetsUtvalg <- 1	#0-5
+enhetsUtvalg <- 3	#0-5
 offData <- 0
 #Parameter for evt. kvalitetsmål? angis i Tilrettelegging
 

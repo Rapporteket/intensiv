@@ -24,6 +24,7 @@
 #'    	}							
 #'
 #' @inheritParams NIRAndeler 
+#' @inheritParams NIRVarTilrettelegg
 #' @param valgtMaal
 #'        'Gjsn': gir middelverdi (standard)
 #'        'Med': gir median
@@ -48,7 +49,7 @@ NIRGjsnTid <- function(RegData, valgtVar, datoFra='2011-01-01', datoTil='3000-12
 
   #--------------- Definere variable ------------------------------
   
-  NIRVarSpes <- NIRVarTilrettelegg(RegData=RegData, valgtVar=valgtVar, figurtype=figurtype)
+  NIRVarSpes <- NIRVarTilrettelegg(RegData=RegData, valgtVar=valgtVar, figurtype='gjsnGrVar')
   RegData <- NIRVarSpes$RegData
   
   

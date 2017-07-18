@@ -30,6 +30,8 @@
 #'    	}							
 #'    				
 #' @inheritParams NIRAndeler
+#' @param figurtype Hvilken figurtype det skal tilrettelegges variable for: 
+#'                'andeler', 'andelGrVar', 'andelTid', 'gjsnGrVar', 'gjsnTid'
 #'				
 #' @return Definisjon av valgt variabel.
 #'
