@@ -33,7 +33,7 @@
 #' @return Linjediagram som viser utvikling over tid for valgt variabel
 #'
 #' @export
-NIRGjsnTid <- function(RegData, valgtVar, datoFra='2011-01-01', datoTil='3000-12-31', 
+NIRFigGjsnTid <- function(RegData, valgtVar, datoFra='2011-01-01', datoTil='3000-12-31', 
                     minald=0, maxald=130, erMann='', reshID, InnMaate='', dodInt='', tittel=1, 
                     outfile='',enhetsUtvalg=1, valgtMaal='', preprosess=1, hentData=0){
   

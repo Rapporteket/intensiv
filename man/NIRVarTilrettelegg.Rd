@@ -11,13 +11,8 @@ NIRVarTilrettelegg(RegData, valgtVar, grVar = "", figurtype = "andeler")
 
 \item{valgtVar}{Hvilken variabel som skal visualiseres. Se \strong{Details} for oversikt.}
 
-\item{figurtype}{Hvilken figurtype som ønskes ut: 
-andel (fordelingsfigurer), 
-andelGrVar (andel i hver kategori av grupperingsvariabel, eks. sykehus), 
-andelTid (andel per tidsenhet, eks. år, måned), 
-andelPP (andel før og etter), 
-gjsnGrVar (sentralmål i hver kategori av grupperingsvariabel, eks. sykehus),
-gjsnTid (sentralmål per tidsenhet, eks. år, måned)}
+\item{figurtype}{Hvilken figurtype det skal tilrettelegges variable for: 
+'andeler', 'andelGrVar', 'andelTid', 'gjsnGrVar', 'gjsnTid'}
 }
 \value{
 Definisjon av valgt variabel.

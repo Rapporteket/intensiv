@@ -179,7 +179,7 @@ for (valgtVar in variable){
 }
 
 #---------------------GjsnTid----------------------------------------------
-valgtVar <- 'respiratortid'	#'alder', 'liggetid', 'respiratortid', 'SAPSII', 
+valgtVar <- 'liggetid'	#'alder', 'liggetid', 'respiratortid', 'SAPSII', 
 outfile <- ''	#paste0(valgtVar, '.png')
 
 NIRGjsnTid(RegData=RegData, outfile=outfile, valgtVar=valgtVar, datoFra=datoFra, datoTil=datoTil, 
