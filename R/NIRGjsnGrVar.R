@@ -45,7 +45,7 @@ if (preprosess){
      }
 
 #------- Tilrettelegge variable
-NIRVarSpes <- NIRVarTilrettelegg(RegData=RegData, valgtVar=valgtVar)
+NIRVarSpes <- NIRVarTilrettelegg(RegData=RegData, valgtVar=valgtVar, figurtype = 'gjsnGrVar')
 RegData <- NIRVarSpes$RegData
 
 #------- Gjøre utvalg
@@ -69,7 +69,8 @@ t1 <- switch(valgtMaal,
 			Gjsn = 'Gjennomsnittlig ')
 
 
-tittel <- paste0(t1, valgtVar, ', ', NIRUtvalg$grTypeTxt, 'sykehus')
+#tittel <- paste0(t1, valgtVar, ', ', NIRUtvalg$grTypeTxt, 'sykehus')
+tittel <- paste0(t1, NIRVarSpes$tittel) 
 			
 if( valgtVar =='SMR') {tittel <- c(paste0('SMR, ', NIRUtvalg$grTypeTxt, 'sykehus'),
 								'(uten reinnlagte og overflyttede pasienter)')}

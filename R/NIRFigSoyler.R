@@ -40,7 +40,7 @@
 
 NIRFigSoyler <- function(RegData, AggVerdier, AggTot=0, Ngr, tittel='mangler tittel', smltxt='', N, retn='H', 
                          yAkseTxt='', utvalgTxt='', grTypeTxt='', soyletxt='', grtxt, grtxt2='', hovedgrTxt='', 
-                         grVar='', valgtMaal='Andel', cexgr=1, medSml=0, fargepalett='BlaaOff', xAkseTxt='', 
+                         grVar='', valgtMaal='Andel', figurtype='', cexgr=1, medSml=0, fargepalett='BlaaOff', xAkseTxt='', 
                          medKI=0, KImaal = NA, outfile='') { #Ngr=list(Hoved=0)
 
 
@@ -89,12 +89,12 @@ if (retn == 'H') {
       xmax <- max(c(AggVerdier$Hoved, AggVerdier$Rest),na.rm=T)*1.2
       xmax <- ifelse(valgtMaal=='Andel', min(xmax, 100), xmax) 	#100 som maks bare hvis andelsfigur..
 	  ymin <- 0.5/cexgr^4	#0.05*antGr #Fordi avstand til x-aksen av en eller annen grunn øker når antall sykehus øker
-	  ymax <- 0.2+1.2*length(AggVerdier$Hoved) #c(0.3/xkr^4,  0.3+1.25*length(Midt))
+	  ymax <- 0.4+1.2*length(AggVerdier$Hoved) #c(0.3/xkr^4,  0.3+1.25*length(Midt)), 0.2+1.2*length(AggVerdier$Hoved) 
 
 	  #Må def. pos først for å få strek for hele gruppa bak søylene
 	  ### reverserer for å slippe å gjøre det på konf.int
 	  pos <- rev(barplot(rev(as.numeric(AggVerdier$Hoved)), horiz=T, xlim=c(0,xmax), ylim=c(ymin, ymax), #, plot=FALSE)
-	                     xlab=xAkseTxt, border=NA, col.axis='white', col='white'))
+	                     xlab=xAkseTxt, border=NA, col=fargeHoved)) #, col.axis='white', col='white'))
 	  indOK <- which(AggVerdier$Hoved>=0)
 	  posOK <- pos[indOK]
 	  posOver <- max(pos)+0.35*log(max(pos))
@@ -137,7 +137,8 @@ if (retn == 'H') {
 	}
 	#------Tegnforklaring (legend)--------
 	if (valgtMaal %in% c('Gjsn', 'Med')) { #Sentralmålfigur
-	      if (medKI == 0) { #Hopper over hvis ikke valgtMaal er oppfylt
+#	if (figurtype %in% c('gjsnGrVar', 'gjsnTid')) { #Sentralmålfigur
+	  if (medKI == 0) { #Hopper over hvis ikke valgtMaal er oppfylt
 	            TXT <- paste0('totalt: ', sprintf('%.1f', AggTot), ', N=', N$Hoved)
       	      legend(xmax/4, posOver+posDiff, TXT, fill=NA,  border=NA, lwd=2.5, xpd=TRUE, #inset=c(-0.1,0),
       	             col=farger[1], cex=cexleg, seg.len=0.6, merge=TRUE, bty='n')
@@ -148,12 +149,15 @@ if (retn == 'H') {
       	      legend(xmax/4, posOver+2*posDiff, TXT, fill=c(NA, farger[3]),  border=NA, lwd=2.5,  #inset=c(-0.1,0),
       	             col=c(farger[1], farger[3]), cex=cexleg, seg.len=0.6, merge=TRUE, bty='n')
 	      }
-	} else { 
+	} 
+	  #else { 
+	  if (figurtype %in% c('andelGrVar', 'andelTid')) {
 	      legend(xmax/4, posOver+2.5*posDiff, paste0(grTypeTxt, 'sykehus: ', sprintf('%.1f', AggTot), '%, N=', N$Hoved),
 	             col=farger[1], border=NA, lwd=2.5, xpd=TRUE, bty='n', cex = cexleg) 
 	}
 	  #Fordelingsfigurer:
-	  if (grVar == '') {
+	  #if (grVar == '') {
+	  if (figurtype == 'andeler') {
       	  if (medSml == 1) { #Legge på prikker for sammenlikning
       	        legend('top', c(paste0(hovedgrTxt, ' (N=', N$Hoved,')'), paste0(smltxt, ' (N=', N$Rest,')')), 
       	               border=c(fargeHoved,NA), col=c(fargeHoved,fargeRest), bty='n', pch=c(15,18), pt.cex=2, 
@@ -167,12 +171,16 @@ if (retn == 'H') {
 
 
       #Legge på gruppe/søylenavn
-      mtext(at=pos+0.05, text=grtxt, side=2, las=1, cex=cexgr, adj=1, line=0.25) 
+      if (figurtype  == 'andeler') {
+            grtxt <- paste(grtxt, grtxt2, sep='\n')}
+     
+            mtext(at=pos+0.05, text=grtxt, side=2, las=1, cex=cexgr, adj=1, line=0.25) 
       
-      #Fordelingsfigurer:
+	  
+	  #Fordelingsfigurer:
       #if (grVar == '') {
       	if (medSml == 1) { #Legge på prikker for sammenlikning
-      		  points(as.numeric(rev(AggVerdier$Rest)), pos, col=fargeRest,  cex=2, pch=18) #c("p","b","o"), 
+      		  points(as.numeric(AggVerdier$Rest), pos, col=fargeRest,  cex=2, pch=18) #c("p","b","o"), 
       	}
        #}
       }		#Slutt horisontale søyler
@@ -180,7 +188,7 @@ if (retn == 'H') {
 	
 	
 	if (retn == 'V' ) {
-		  #Vertikale søyler eller linje
+		  #Vertikale søyler 
 		  ymax <- min(max(c(AggVerdier$Hoved, AggVerdier$Rest),na.rm=T)*1.25, 115)
 		  pos <- barplot(as.numeric(AggVerdier$Hoved), beside=TRUE, las=1, ylab=yAkseTxt,	
 						 sub=xAkseTxt,	col=fargeHoved, border='white', ylim=c(0, ymax))	

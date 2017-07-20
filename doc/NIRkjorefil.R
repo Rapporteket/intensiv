@@ -39,10 +39,11 @@ rm(list=ls())
 dato <- '2017-07-03'
 dataKat <- 'A:/Intensiv/'
 fil <- paste0(dataKat,'MainFormDataContract',dato)
-#NIRdata <- read.table(file=paste0(fil,'.csv'), header=T, sep=';',encoding = 'UTF-8')
+#NIRdata <- read.table(file=paste0(fil,'.csv'), header=T, stringsAsFactors=FALSE, sep=';',encoding = 'UTF-8')
 #RegData <- NIRdata
 load(paste0(fil,".Rdata")) #RegData
-#save(RegData, file=paste0(fil,'.Rdata'))
+#save(RegData, file=paste0(fil,'2014.Rdata'))
+#RegData <- RegData[which(as.POSIXlt(RegData$DateAdmittedIntensive, format="%Y-%m-%d")>= '2014-01-01'), ]
 #RegData <- NIRdata[sample(1:dim(NIRdata)[1],10000),]
 #save(RegData, file=paste0(dataKat,'NIRdata10000.Rdata'))
 load(paste0(dataKat,"NIRdata10000.Rdata")) #RegData, juli 2017
@@ -67,7 +68,7 @@ erMann <- 0
 aldGr  <- 0
 tidsenhet <- 'Kvartal'
 outfile <- ''
-valgtVar <- 'respiratortid'  #reinn, respiratortid
+valgtVar <- 'respiratortidInv'  #reinn, respiratortidInv
 outfile <- '' #paste0('OffRand', valgtVar, '.pdf')
 #Laste offdata
 filnavn <- paste0('NIRdata01', valgtVar)
@@ -85,6 +86,11 @@ DataTilbake <- NIRAndelTid(RegData=RegData, valgtVar=valgtVar, datoFra=datoFra, 
                            lagFig = 1, offData=1)	
 #aar=0, grType=grType )
 
+ind <- which(RegData$InvasivVentilation>0)
+Resp <- tapply(RegData$respiratortid[ind],RegData$Aar[ind], FUN=sum)
+Inv <- tapply(RegData$InvasivVentilation[ind],RegData$Aar[ind], FUN=sum)
+NonInv <- tapply(RegData$NonInvasivVentilation[ind],RegData$Aar[ind], FUN=sum)
+
 #-------------------------------------- Parametre ----------------------------------------------------
 library(intensiv)
 setwd("c:/ResultattjenesteGIT/Intensiv/")
@@ -95,13 +101,14 @@ InnMaate <- '' #0-El, 6-Ak.m, 8-Ak.k, (alle - alt unntatt 0,6,8)
 valgtMaal = 'Gjsn' #'Med' = median. 'Gjsn' = gjennomsnitt. Alt annet gir gjennomsnitt
 datoFra <- '2011-01-01'	# standard: 0	format: YYYY-MM-DD. Kan spesifisere bare første del, eks. YYYY el. YYYY-MM. 
 datoTil <- '2017-12-31'	# standard: 3000
+aar <- 0
 dodInt <- ''	# 0-i live, 1 -død, standard: alle (alle andre verdier)
 erMann <- ''	#Kjønn: 0-kvinner, 1-menn, standard: alle (alle andre verdier)
 overfPas <- ''    #Overført under pågående intensivbehandling?	1 = Nei, 2 = Ja
 grType <- 99	#1/2: sentral/lokal, 3:regional, 99:'alle'
 grVar <- 'ShNavn'
-tidsenhet <- 'Mnd'
-enhetsUtvalg <- 3	#0-5
+tidsenhet <- 'Aar'
+enhetsUtvalg <- 1	#0-5
 offData <- 0
 #Parameter for evt. kvalitetsmål? angis i Tilrettelegging
 
@@ -115,24 +122,21 @@ offData <- 0
 
 
 #--------------------------------------- Andeler ----------------------------------
-valgtVar <- 'respiratortid'	#'alder', 'liggetid', 'respiratortid',  'SAPSII', 'NEMS24', 'Nas24', 'InnMaate'
-outfile <- '' #paste('Ford_',valgtVar, '.pdf', sep='')
+valgtVar <- 'nyreBeh'	#'alder', 'liggetid', 'respiratortid',  'SAPSII', 'NEMS24', 'Nas24', 'InnMaate'
+                              #Nye: PrimaryReasonAdmitted, inklKrit, respiratortidNonInv, respiratortidInv
+                              #nyreBeh, nyreBehTid, ExtendedHemodynamicMonitoring, isolering, isoleringDogn
+outfile <- paste0('Ford_',valgtVar, '.pdf')
 
-
-Utdata <- NIRAndeler(RegData=RegData, valgtVar=valgtVar, minald=minald, maxald=maxald,  datoFra=datoFra, datoTil=datoTil, 
-           InnMaate=InnMaate, dodInt=dodInt,erMann=erMann, outfile=outfile, preprosess=1, 
-           reshID=reshID, enhetsUtvalg=enhetsUtvalg) #hentData=1, 
 
 Utdata <- NIRAndeler(RegData=RegData, valgtVar=valgtVar, minald=minald, maxald=maxald,  datoFra=datoFra, 
                         datoTil=datoTil, InnMaate=InnMaate, dodInt=dodInt,erMann=erMann, outfile=outfile, 
                         hentData=0, preprosess=1, reshID=reshID, enhetsUtvalg=enhetsUtvalg, lagFig=1)
-#Ang jrxml, nye parametre:
-#           (aar=0, overfPas=0, grType=99,  figurtype='andeler', lagFig=1
-
 
 variable <- c('alder', 'liggetid', 'respiratortid',  'SAPSII', 'NEMS24', 'Nas24', 'InnMaate')
+variable <- c('PrimaryReasonAdmitted', 'inklKrit', 'respiratortidNonInv', 'respiratortidInv', 'nyreBeh',
+              'nyreBehTid', 'ExtendedHemodynamicMonitoring', 'isolering', 'isoleringDogn')
 for (valgtVar in variable) {
-	outfile <- paste0(valgtVar, '_Ford.png')
+	outfile <- paste0(valgtVar, '_Ford.pdf')
 	NIRAndeler(RegData=RegData, valgtVar=valgtVar, minald=minald, maxald=maxald,  datoFra=datoFra, 
 	                     datoTil=datoTil, InnMaate=InnMaate, dodInt=dodInt,erMann=erMann, outfile=outfile, 
 	                     hentData=0, preprosess=1, reshID=reshID, enhetsUtvalg=enhetsUtvalg, lagFig=1)
@@ -140,8 +144,10 @@ for (valgtVar in variable) {
 
 #--------------------------------------- AndelGrVar ----------------------------------
 grVar <- 'ShNavn'
-valgtVar <- 'respiratortid'	#alder_u18', 'alder_over80', 'dod30d', 'dodeIntensiv', 'innMaate', 
+valgtVar <- 'isolering'	#alder_u18', 'alder_over80', 'dod30d', 'dodeIntensiv', 'innMaate', 
                         #respiratortid, 'respStotte', 'reinn
+                        #Nye: trakeostomi, trakAapen, respiratortidInv, nyreBeh, ExtendedHemodynamicMonitoring,
+                        #ExtendedHemodynamicMonitoringPA, isolering
 outfile <- '' #paste0(valgtVar, 'GrVar.pdf')
 offData <- 0
 
@@ -151,8 +157,10 @@ NIRAndelerGrVar(RegData=RegData, valgtVar=valgtVar, minald=minald, maxald=maxald
 
 variable <- c('alder_u18', 'alder_over80', 'dod30d', 'dodeIntensiv', #'innMaate', 
       'respStotte', 'reinn')
+variable <- c('trakeostomi', 'trakAapen', 'respiratortidInv', 'nyreBeh', 'ExtendedHemodynamicMonitoring',
+                        'ExtendedHemodynamicMonitoringPA', 'isolering')
 for (valgtVar in variable) {
-		outfile <- paste0(valgtVar, 'GrVar.png')
+		outfile <- paste0(valgtVar, 'PrSh.pdf')
 		NIRAndelerGrVar(RegData=RegData, valgtVar=valgtVar, minald=minald, maxald=maxald,  datoFra=datoFra, 
 		                datoTil=datoTil, InnMaate=InnMaate, dodInt=dodInt,erMann=erMann, outfile=outfile, 
 		                grType=grType, grVar=grVar, hentData=0, preprosess=1, lagFig=1)
@@ -160,9 +168,11 @@ for (valgtVar in variable) {
 
 #---------------------AndelTid----------------------------------------------
 tidsenhet <- 'Aar'
-valgtVar <- 'alder_u18'	#'alder_u18', 'alder_over80', 'dod30d', 'dodeIntensiv', 'liggetidDod', 
-                        #respiratortid, 'respiratortidDod', 'respStotte', 'reinn', 'SMR'
-outfile <- '' #paste0(valgtVar, '.png')
+valgtVar <- 'respiratortidInv'	#'alder_u18', 'alder_over80', 'dod30d', 'dodeIntensiv', 'liggetidDod', 
+                        #'respiratortidDod', 'respStotte', 'reinn', 'SMR'
+                        #'UT: respiratortid, 
+                        #Ny: respiratortidInv, 
+outfile <- paste0(valgtVar, '.pdf')
 
 NIRAndelTid(RegData=RegData, valgtVar=valgtVar, datoFra=datoFra, datoTil=datoTil, tidsenhet = tidsenhet,
 		minald=minald, maxald=maxald, erMann=erMann,InnMaate=InnMaate, dodInt=dodInt, 
@@ -179,10 +189,11 @@ for (valgtVar in variable){
 }
 
 #---------------------GjsnTid----------------------------------------------
-valgtVar <- 'liggetid'	#'alder', 'liggetid', 'respiratortid', 'SAPSII', 
-outfile <- ''	#paste0(valgtVar, '.png')
+valgtVar <- 'respiratortidInv'	#'alder', 'liggetid', 'respiratortid', 'SAPSII', 
+                        #Nye: respiratortidInv, respiratortidNonInv
+outfile <- paste0(valgtVar, 'GjsnTid.pdf')
 
-NIRGjsnTid(RegData=RegData, outfile=outfile, valgtVar=valgtVar, datoFra=datoFra, datoTil=datoTil, 
+NIRFigGjsnTid(RegData=RegData, outfile=outfile, valgtVar=valgtVar, datoFra=datoFra, datoTil=datoTil, 
                     erMann=erMann,minald=minald, maxald=maxald, InnMaate=InnMaate, dodInt=dodInt,
 		              valgtMaal=valgtMaal,tittel=1, enhetsUtvalg=enhetsUtvalg, reshID=reshID)
 
@@ -203,8 +214,9 @@ for (valgtVar in variable) {
 #--------------------------------------- SENTRALMÅL per enhet----------------------------------
 
 valgtMaal <- 'Gjsn'
-valgtVar <- 'SMR'	#'SMR', alder, liggetid, respiratortid,  SAPSII, 'NEMS', 'Nas24'
-outfile <- '' #paste0(valgtVar, 'MM.png')#,grType
+valgtVar <- 'respiratortidInv'	#'SMR', alder, liggetid, respiratortid,  SAPSII, 'NEMS', 'Nas24'
+                        #Nye: respiratortidInv, respiratortidNonInv
+outfile <- paste0(valgtVar, 'Gjsn.pdf')#,grType
 
 NIRGjsnGrVar(RegData=RegData, valgtVar=valgtVar, valgtMaal=valgtMaal, minald=minald, maxald=maxald, 
                 grType=grType, grVar=grVar, InnMaate=InnMaate, datoFra=datoFra, datoTil=datoTil, dodInt=dodInt, 

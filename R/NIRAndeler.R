@@ -11,12 +11,14 @@
 #' Argumentet \emph{valgtVar} har følgende valgmuligheter:
 #'    \itemize{
 #'     \item alder: Aldersfordeling, 10-årige grupper 
+#'     \item inklKrit: Andeler for de 5 inklusjonskriteriene
 #'     \item InnMaate: Hastegrad inn på intensiv (Elektivt, Akutt medisinsk, Akutt kirurgisk)
 #'     \item liggetid: Liggetid 
 #'     \item NEMS: Skår for ressursbruk. (Nine Equivalents of Nursing Manpower Use Score)
 #'     \item Nas: Skår for sykepleieraktiviteter. (Nursing Activities Score)
 #'     \item respiratortid: Tid tilbrakt i respirator
 #'     \item SAPSII: Skår for alvorlighetsgrad av sykdom.  (Simplified Acute Physiology Score II)
+#'     \item PrimaryReasonAdmitted: Hovedårsak til intensivopphold
 #'    }
 #' Argumentet \emph{enhetsUtvalg} har følgende valgmuligheter:
 #'    \itemize{
@@ -100,7 +102,8 @@ NIRAndeler  <- function(RegData, valgtVar, datoFra='2011-01-01', datoTil='3000-1
       #--------------- Definere variable ------------------------------
       
       NIRVarSpes <- NIRVarTilrettelegg(RegData=RegData, valgtVar=valgtVar, figurtype=figurtype)
-            RegData <- NIRVarSpes$RegData
+      RegData <- NIRVarSpes$RegData
+      flerevar <- NIRVarSpes$flerevar
       
       
       NIRUtvalg <- NIRUtvalgEnh(RegData=RegData, datoFra=datoFra, datoTil=datoTil, aar=aar, 
@@ -116,57 +119,84 @@ NIRAndeler  <- function(RegData, valgtVar, datoFra='2011-01-01', datoTil='3000-1
       #Gjør beregninger selv om det evt ikke skal vise figur ut. Trenger utdata.
       AggVerdier <- list(Hoved = 0, Rest =0)
       N <- list(Hoved = 0, Rest =0)
+      Nfig <- list(Hoved = 0, Rest =0) #figurtekst: N i legend
       Ngr <- list(Hoved = 0, Rest =0)
       ind <- NIRUtvalg$ind
+	  variable <- NIRVarSpes$variable
       
-      Ngr$Hoved <- switch(as.character(NIRVarSpes$flerevar), 
+      Ngr$Hoved <- switch(as.character(flerevar), 
                           '0' = table(RegData$VariabelGr[ind$Hoved]),
-                          '1' = colSums(sapply(RegData[ind$Hoved ,variable], as.numeric), na.rm=T))
-      N$Hoved <- switch(as.character(NIRVarSpes$flerevar), 
+                          # '1' = colSums(sapply(RegData[ind$Hoved ,variable], as.numeric), na.rm=T))
+                          '1' = apply(RegData[ind$Hoved,variable], MARGIN=2, 
+                                      FUN=function(x) sum(x == 1, na.rm=T)))
+      #N$ gjelder selv om totalutvalget er ulikt for de ulike variablene i flerevar
+     N$Hoved <- switch(as.character(flerevar), 
                         '0' = sum(Ngr$Hoved),	#length(ind$Hoved)- Kan inneholde NA
-                        '1' = length(ind$Hoved))
-      AggVerdier$Hoved <- 100*Ngr$Hoved/N$Hoved
+                  #      '1' = length(ind$Hoved)
+                        '1' = apply(RegData[ind$Hoved,variable], MARGIN=2, 
+                                 FUN=function(x) sum(x %in% 0:1, na.rm=T)))
+          AggVerdier$Hoved <- 100*Ngr$Hoved/N$Hoved
       
       if (NIRUtvalg$medSml==1) {
-            Ngr$Rest <- switch(as.character(NIRVarSpes$flerevar), 
+           Ngr$Rest <- switch(as.character(flerevar), 
                                '0' = table(RegData$VariabelGr[ind$Rest]),
-                               '1' = colSums(sapply(RegData[ind$Rest ,variable], as.numeric), na.rm=T))
-            N$Rest <- switch(as.character(NIRVarSpes$flerevar), 
-                             '0' = sum(Ngr$Rest),	#length(ind$Rest)- Kan inneholde NA
-                             '1' = length(ind$Rest))
+                              # '1' = colSums(sapply(RegData[ind$Rest ,variable], as.numeric), na.rm=T))
+                               '1' = apply(RegData[ind$Rest,variable], MARGIN=2, 
+                                           FUN=function(x) sum(x == 1, na.rm=T)))
+            N$Rest <- switch(as.character(flerevar), 
+                             '0' = sum(Ngr$Rest),	
+                             '1' = apply(RegData[ind$Rest,variable], MARGIN=2, 
+                                   FUN=function(x) sum(x %in% 0:1, na.rm=T)))
             AggVerdier$Rest <- 100*Ngr$Rest/N$Rest
       }
       
-      
-      #grtxt <- paste0(rev(NIRVarSpes$grtxt), ' (', rev(sprintf('%.1f',AggVerdier$Hoved)), '%)') 
+      if(flerevar==1) {
+            Nfig$Hoved <- ifelse(min(N$Hoved)==max(N$Hoved),
+                                 min(N$Hoved[1]), 
+                                 paste0(min(N$Hoved),'-',max(N$Hoved)))
+            Nfig$Rest <- ifelse(min(N$Rest)==max(N$Rest),
+                                min(N$Rest[1]), 
+                                paste0(min(N$Rest),'-',max(N$Rest)))
+      } else {
+            Nfig <- N}
+
       grtxt2 <- paste0('(', sprintf('%.1f',AggVerdier$Hoved), '%)')
-      yAkseTxt='Andel pasienter (%)'
+      xAkseTxt <- NIRVarSpes$xAkseTxt
+      yAkseTxt <- 'Andel pasienter (%)'
+      retn <- NIRVarSpes$retn
+      tittel <- NIRVarSpes$tittel
+      hovedgrTxt <- NIRUtvalg$hovedgrTxt
+      medSml <- NIRUtvalg$medSml
+      grtxt <- NIRVarSpes$grtxt
+      cexgr <- NIRVarSpes$cexgr
+      grTypeTxt <- NIRUtvalg$grTypeTxt
+      smltxt <- NIRUtvalg$smltxt
+      KImaal <- NIRVarSpes$KImaal
       
-      FigDataParam <- list(AggVerdier=AggVerdier, N=N, 
+      FigDataParam <- list(AggVerdier=AggVerdier, N=Nfig, 
                            Ngr=Ngr,	
                            KImaal <- NIRVarSpes$KImaal,
-                           #soyletxt=soyletxt,
                            grtxt2=grtxt2, 
-                           grtxt=NIRVarSpes$grtxt,
-                           tittel=NIRVarSpes$tittel, 
-                           retn=NIRVarSpes$retn, 
-                           xAkseTxt=NIRVarSpes$xAkseTxt,
+                           grtxt=grtxt,
+                           grTypeTxt=grTypeTxt,
+                           tittel=tittel, 
+                           retn=retn, 
+                           xAkseTxt=xAkseTxt,
                            yAkseTxt=yAkseTxt,
                            utvalgTxt=utvalgTxt, 
                            fargepalett=NIRUtvalg$fargepalett, 
-                           medSml=NIRUtvalg$medSml,
-                           hovedgrTxt=NIRUtvalg,
-                           smltxt=NIRUtvalg$smltxt)
+                           medSml=medSml,
+                           hovedgrTxt=hovedgrTxt,
+                           smltxt=smltxt)
       
       
       if (lagFig == 1) {
             #cexgr <- 1-ifelse(AntGr>20, 0.25*AntGr/60, 0)
-            NIRFigSoyler(RegData, AggVerdier, Ngr, tittel=NIRVarSpes$tittel, hovedgrTxt=NIRUtvalg$hovedgrTxt, 
-                         smltxt=NIRUtvalg$smltxt, Ngr = Ngr, KImaal <- NIRVarSpes$KImaal,
-                         N=N, retn='V', utvalgTxt=utvalgTxt, grtxt=NIRVarSpes$grtxt, grtxt2=grtxt2, medSml=NIRUtvalg$medSml, 
-                         xAkseTxt=NIRVarSpes$xAkseTxt, yAkseTxt=yAkseTxt, 
-                         outfile=outfile)	
-            #ENDRE så figurparametrene skrives fullt ut i parameterkallet
+            NIRFigSoyler(RegData, AggVerdier, Ngr, tittel=tittel, hovedgrTxt=hovedgrTxt, 
+                         smltxt=smltxt, grTypeTxt=grTypeTxt, Ngr = Ngr, KImaal=KImaal,
+                         N=Nfig, retn=retn, utvalgTxt=utvalgTxt, grtxt=grtxt, grtxt2=grtxt2, 
+                         medSml=medSml, cexgr=cexgr, xAkseTxt=xAkseTxt, yAkseTxt=yAkseTxt, 
+                         outfile=outfile, figurtype=figurtype)	
       }
       
       return(invisible(FigDataParam))

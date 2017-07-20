@@ -66,6 +66,20 @@ NIRPreprosess <- function(RegData=RegData, lagreKvalIndData=0)	#, reshID=reshID)
 	RegData$Dod30[which(difftime(as.Date(RegData$Morsdato, format="%Y-%m-%d %H:%M:%S"), 
 	                              as.Date(RegData$InnDato), units='days')< 30)] <- 1
 	
+	#Konvertere boolske variable fra tekst til boolske variable...
+	TilLogiskeVar <- function(Skjema){
+	      verdiGML <- c('True','False')
+	      verdiNY <- c(TRUE,FALSE)
+	      mapping <- data.frame(verdiGML,verdiNY)
+	      LogVar <- names(Skjema)[which(Skjema[1,] %in% verdiGML)]
+	      if (length(LogVar)>0) {
+      	      for (k in 1:length(LogVar)) {
+      	            Skjema[,LogVar[k]] <- mapping$verdiNY[match(Skjema[,LogVar[k]], mapping$verdiGML)]
+	      }}
+	      return(Skjema)
+	}
+	
+	RegData <- TilLogiskeVar(RegData)
 	
 	 
 return(invisible(RegData))

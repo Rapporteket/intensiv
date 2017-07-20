@@ -58,7 +58,7 @@ NIRUtvalgEnh <- function(RegData, datoFra=0, datoTil=0, minald=0, maxald=130, er
       
       
       N <- dim(RegData)[1]	#N=0 gir feilmelding
-      grTypetextstreng <- c('lokal-/sentral', 'lokal-/sentral', 'region')				
+      grTypetextstreng <- c('lokal-/sentralsykehus', 'lokal-/sentral', 'regionsykehus')				
       if (grType %in% 1:3) {grTypeTxt <- grTypetextstreng[grType]} else {grTypeTxt <- 'alle '}
       
       
@@ -108,7 +108,7 @@ NIRUtvalgEnh <- function(RegData, datoFra=0, datoTil=0, minald=0, maxald=130, er
                                             '8' = which(RegData$Region == RegData$Region[indEgen1]))}	#region
             smltxt <- switch(as.character(enhetsUtvalg),
                              '1' = 'landet forøvrig',
-                             '3' = paste0('andre ', grTypetextstreng[RegData$ShType[indEgen1]],'sykehus'),	#RegData inneh. kun egen shgruppe
+                             '3' = paste0('andre ', grTypetextstreng[RegData$ShType[indEgen1]]),	#RegData inneh. kun egen shgruppe
                              '5' = 'andre typer sykehus',
                              '6' = paste0(RegData$Region[indEgen1], ' forøvrig'),	#RegData inneh. kun egen region
                              '8' = 'andre regioner')

@@ -20,6 +20,7 @@
 #'		Dette valget viser en annen figurtype.
 #'     \item respStotte: Pasienter som har fått respiratorstøtte
 #'     \item reinn: Andel reinnlagte (fjerner ukjente) Kvalitetsindikator
+#'     \item Trakeostomi: Andel som har fått trakeostomi (kat 2 og 3)
 #'    }
 #' @inheritParams NIRAndeler
 #' @param aldGr: Aldersgrupper. Brukes i offentliggjøringsfigurer
@@ -166,7 +167,7 @@ if (lagFig == 1) {
       NIRFigSoyler(RegData, AggVerdier=AggVerdier, AggTot=AndelHele, Ngr=Ngr,N=N, cexgr=cexgr, 
                    tittel=tittel, smltxt=smltxt, utvalgTxt=utvalgTxt, #yAkseTxt=yAkseTxt,
                    grTypeTxt=NIRUtvalg$grTypeTxt,  fargepalett=NIRUtvalg$fargepalett, grtxt=GrNavnSort, 
-                   soyletxt=andeltxt,grVar=grVar, KImaal = KImaal, #medKI = medKI,
+                   soyletxt=andeltxt,grVar=grVar, KImaal = KImaal, figurtype = 'andelGrVar',#medKI = medKI,
                    medSml=medSml, xAkseTxt=xAkseTxt, outfile=outfile)
 }
 
