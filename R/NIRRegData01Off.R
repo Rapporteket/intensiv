@@ -80,9 +80,6 @@ RegData <- RegData[-which(RegData$VarSensur == 'sensurert'),-which(names(RegData
 if (rand==1) {RegData$Variabel <- sample(RegData$Variabel,length(RegData$Variabel))}
 
 
-#Lagre beregnede data
-#filnavn <- paste0('data/RegData01', valgtVar, '.RData')
-filnavn <- paste0('A:/Intensiv/NIRdata01', valgtVar, '.RData')
 
 tittel <- NIRVarSpes$tittel
 KImaal <- NIRVarSpes$KImaal #Mål for kvalitetsindikator
@@ -96,15 +93,19 @@ if (rand==1) {
       metaInfo <- c(metaInfo,'Dataene er IKKE ekte data')
       tittel <- c(tittel, 'NB: Dataene er IKKE ekte') }
 
+#Lagre beregnede data
+filnavn <- paste0('A:/Intensiv/NIRdata01', valgtVar, '.RData')
+#filPrefix <- 'A:/Intensiv/NIRdata01'
+
 if (valgtVar == 'reinn') {
       NIRdata01reinn <- list(NIRRegData01Off=RegData, andelFjernet=andelFjernet, KImaal=KImaal, sortAvtagende=sortAvtagende,
                   tittel=tittel, utvalgsInfo=utvalgsInfo, metaInfo=metaInfo)
-      save(NIRdata01reinn, file=filnavn)
+      save(NIRdata01reinn, file=filnavn) #paste0(filPrefix, 'reinn.RData'))
 }
-if (valgtVar == 'respiratortid') {
+if (valgtVar == 'respiratortidInv') {
       NIRdata01respiratortid <- list(NIRRegData01Off=RegData, andelFjernet=andelFjernet, KImaal=KImaal, sortAvtagende=sortAvtagende,
                              tittel=tittel, utvalgsInfo=utvalgsInfo, metaInfo=metaInfo)
-      save(NIRdata01respiratortid, file=filnavn)
+      save(NIRdata01respiratortid, file=filnavn) #paste0(filPrefix, 'respiratortid.RData'))
 }
 #assign(paste0(valgtVar, 'Data'),alleData)
 #assign(paste0(valgtVar, 'Data'),list(RegData=RegData, andelFjernet=andelFjernet, KImaal=KImaal, tittel=tittel, 

@@ -51,7 +51,7 @@ load(paste0(dataKat,"NIRdata10000.Rdata")) #RegData, juli 2017
 #-----------------------------------Lage datasett til kvalitetsindikatorer---------
 library(intensiv)
 
-valgtVar <- 'respiratortid'  #reinn, respiratortid
+valgtVar <- 'respiratortidInv'  #reinn, respiratortidInv
 datoFra <- '2016-01-01'
 datoTil <- '2016-12-31'
 tilleggsVar <- c('Aar', 'Kvartal', 'erMann', 'ShNavn', 'ShType', 'Alder')

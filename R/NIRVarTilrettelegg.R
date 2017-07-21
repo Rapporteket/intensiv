@@ -197,7 +197,7 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler'
       
       
       if (valgtVar == 'liggetid') { #Andeler #GjsnGrVar
-            #Liggetid og respiratortid bare >0
+            #Liggetid bare >0
             RegData$Variabel  <- as.numeric(RegData$liggetid)
             RegData <- RegData[which(RegData$Variabel>0), ] 
             tittel <- 'Liggetid'
