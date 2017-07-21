@@ -17,7 +17,7 @@ Intensivregisteret ønsker å offentliggjøre kvalitetsindikatorer fra registere
 
 Intensivregisteret har definert tre kvalitetsindikatorer fra registeret:  
 * Reinnleggelse til intensiv innen 72 timar. Mål:  <4%  
-* Median respiratortid. Mål: <2,5døgn (Tilsvarer:Andel med respiratortid < 2,5 døgn. Mål: >50%)  
+* Median respiratortid, invasiv respiratorstøtte. Mål: <2,5døgn (Tilsvarer:Andel med respiratortid < 2,5 døgn. Mål: >50%)  
 * Standardisert mortalitetsratio (SMR). Mål: < 0,7  
 
 Både reinnleggelse og respiratortid kan representeres som indikatorvariable (representeres med en 01-variabel). SMR er observert dødelighet (innen 30 dager) ift. estimert dødelighet (standardisert SAPSII-skår). Estimert dødelighet kan ikke representeres med en indikatorvariabel. Variabelen SMR har heller ikke god nok kvalitet, i følge registerledelsen, og vil derfor ikke bli benyttet som offentlig kvalitetsindikator.
@@ -45,7 +45,7 @@ load(paste0(fil,".Rdata")) #RegData
 RegDataRaa <- RegData
 
 #Lage og hente 01-datasett :
-valgtVar <- 'respiratortid'  #reinn, respiratortid
+valgtVar <- 'respiratortidInv'  #reinn, respiratortidInv
 datoFra <- '2016-01-01'
 datoTil <- '2016-12-31'
 tilleggsVar <- c('Aar', 'Kvartal', 'erMann', 'ShNavn', 'ShType', 'Alder')
@@ -55,8 +55,8 @@ RegData01Off(RegData, valgtVar=valgtVar, datoFra = datoFra, datoTil, tilleggsVar
 
 
 #data("NIRdata01respiratortid")
-load('A:/Intensiv/NIRdata01respiratortid.RData')
-RegDataOff <- NIRdata01respiratortid$NIRRegData01Off
+load('A:/Intensiv/NIRdata01respiratortidInv.RData')
+RegDataOff <- NIRdata01respiratortidInv$NIRRegData01Off
 print(RegDataOff[sample(1:dim(RegDataOff)[1], 15),], row.names=FALSE)
 
 #Klargjøre RegData:
@@ -140,6 +140,65 @@ Enhet, kvartal, kjønn, aldersgruppe       | `r N5_Kvartal2var`| `r N3_Kvartal2v
 
 Vi ser at man mister relativt mye mer hvis man sensurerer alle grupper med <5 observasjoner, kontra å sensurere grupper med <3 observasjoner. Tidligere var det vanlig å sensurere <3.
 
+Intensivregisteret har rundt 15000 registreringer i året. Det er andre registre som har nesten like mange avdelinger, men langt færre registreringer. (Eksempelvis Korsbånd med rundt 1700 registreringer.) I tabellen under har vi derfor gjort simuleringer for et register med 2000 registreringer og like mange avdelinger som intensivregisteret for å se på effenten av sensur.
+
+
+
+```{r AndelFrafallMindreReg, echo=FALSE}
+#tilleggsVar <- c('Aar', 'Kvartal', 'erMann', 'ShNavn', 'ShType', 'Alder')
+KvalIndGrVar <- c('Aar', 'Kvartal', 'Mnd', 'erMann', 'ShNavn', 'ShType', 'Alder')
+RegData2000 <- RegData[sample(1:dim(RegData2016)[1],2000), ]
+
+RegData2000$AldersGr <- cut(RegData2000$Alder, breaks=c(0, 18, 80,150), include.lowest=TRUE, right=FALSE)	
+
+AndelMistet <- function (RegData2000, KvalIndGrVar, Ngrense) {                
+      # Funksjon som beregner hvor stor andel av totalen vi mister ved sensurering av data.
+      
+      test2 <- aggregate(RegData2000$ShNavn, by=RegData2000[ ,KvalIndGrVar], FUN=length)
+      
+      #Andel som mistes hvis tar bort <Ngrense: 
+      ind_faa <- which(test2$x<Ngrense) 
+      AndelBort <- round(sum(test2$x[ind_faa])/dim(RegData2000)[1]*100,1)
+      
+      return(sprintf("%.1f", AndelBort))
+}
+
+
+KvalIndGrVar <- c('ShNavn', 'ShType', 'Aar', 'Kvartal', 'erMann',  
+                  'AldersGr', 'InnMaate', 'DischargedIntensiveStatus')
+
+#Enhet, år, kjønn:
+N5_3var2000 <- AndelMistet(RegData = RegData2000, KvalIndGrVar = c('ShNavn', 'erMann'), Ngrense = 5)
+N3_3var2000 <- AndelMistet(RegData = RegData2000, KvalIndGrVar = c('ShNavn', 'erMann'), Ngrense = 3)
+#Enhet, år, kjønn, tre aldersgrupper:
+N5_4var2000 <- AndelMistet(RegData = RegData2000, KvalIndGrVar = c('ShNavn', 'erMann',  'AldersGr'), 
+                       Ngrense = 5)
+N3_4var2000 <- AndelMistet(RegData = RegData2000, KvalIndGrVar = c('ShNavn', 'erMann',  'AldersGr'), 
+                       Ngrense = 3)
+#Enhet, år, kjønn, AldersGr., innmåte, død:
+N5_6var2000 <- AndelMistet(RegData = RegData2000, KvalIndGrVar = c('ShNavn', 'erMann',  'AldersGr', 
+                                                           'InnMaate', 'DischargedIntensiveStatus'), Ngrense = 5)
+N3_6var2000 <- AndelMistet(RegData = RegData2000, KvalIndGrVar = c('ShNavn', 'erMann',  'AldersGr', 
+                                                           'InnMaate', 'DischargedIntensiveStatus'), Ngrense = 3)
+#Enhet, måned, kjønn:
+N5_Mnd2var2000 <- AndelMistet(RegData = RegData2000, KvalIndGrVar = c('erMann', 'ShNavn', 'Mnd'), Ngrense = 5)
+N3_Mnd2var2000 <- AndelMistet(RegData = RegData2000, KvalIndGrVar = c('erMann', 'ShNavn', 'Mnd'), Ngrense = 3)
+
+#Enhet, måned, kjønn:
+N5_Kvartal2var2000 <- AndelMistet(RegData = RegData2000, KvalIndGrVar = c('erMann', 'ShNavn', 'Kvartal', 'AldersGr'), Ngrense = 5)
+N3_Kvartal2var2000 <- AndelMistet(RegData = RegData2000, KvalIndGrVar = c('erMann', 'ShNavn', 'Kvartal', 'AldersGr'), Ngrense = 3)
+
+
+```
+
+Gruppering                                | N<5           | N<3
+------------------------------------------|---------------|-----------  |
+Enhet, kjønn:                             | `r N5_3var2000`   | `r N3_3var2000`|
+Enhet, kjønn, aldersgrupper               | `r N5_4var2000`   | `r N3_4var2000`|
+Enhet, måned, kjønn                       | `r N5_Mnd2var2000`| `r N3_Mnd2var2000` |
+Enhet, kjønn, aldersgruppe, innmåte, død  | `r N5_6var2000`   | `r N3_6var2000` |
+Enhet, kvartal, kjønn, aldersgruppe       | `r N5_Kvartal2var2000`| `r N3_Kvartal2var2000` |
+
 
 ## Anonymt datasett og grad av sensur
 For intensivregisteret har vi valgt å benytte utvalgs-/grupperingsvariablene:
@@ -152,14 +211,14 @@ For intensivregisteret har vi valgt å benytte utvalgs-/grupperingsvariablene:
 
 *Reidar: Disse har jeg valgt, men du må si hvilke utvalg det er mest aktuelt å prioritere? *
 
-Alle registreringer som faller i ei gruppe hvor det blir <5 observasjoner i gruppa er sensurert F.eks. hvis utvalgskombinasjonen: Sykehus A, aldersgruppe 2, kvinne, 2.kvartal 2016 inneholder færre enn 5 observasjoner, sensureres alle observasjonene i denne gruppa. Som vi ser fra tabellen over, betyr det at `r N5_Kvartal2var` \% av registreringene er sensurert. Figurene under viser resultatene for kvalitetsindikatoren respiratortid for hhv fullstendig og sensurert datasett.
+Alle registreringer som faller i ei gruppe hvor det blir <5 observasjoner i gruppa er sensurert F.eks. hvis utvalgskombinasjonen: Sykehus A, aldersgruppe 2, kvinne, 2.kvartal 2016 inneholder færre enn 5 observasjoner, sensureres alle observasjonene i denne gruppa. Som vi ser fra tabellen med grad av sensur for intensivregisteret, betyr det at `r N5_Kvartal2var` \% av registreringene er sensurert. Figurene under viser resultatene for kvalitetsindikatoren respiratortid for hhv fullstendig og sensurert datasett.
 
 Det er viktig å huske at graden av sensur vil være forskjellig for de ulike enhetene. Små enheter vil få sensurert relativt mer av sine opphold slik at resultatene for de små enhetene vil påvirkes mye mer enn for de store enhetene. Vi bør derfor ha en lav grense for hvor stor grad av sensur som er akseptabelt. I figurene under ser vi at f.eks. resultatet for Bærum endres fra 52,6% til 45,5%. Det betyr at med det fullstendige datasettet har de oppfylt målet for kvalitetsindikatoren (50%), mens i det sensurerte datasettet har de ikke det. 
 
 
 ```{r FigRespTid, echo=FALSE, fig.height=8, fig.width=6}
-NIRAndelerGrVar(RegData=RegData, valgtVar = 'respiratortid', grVar='ShNavn',preprosess=0) #, outfile = 'AlleData.pdf'
-DataTilbakeOffResp <- NIRAndelerGrVar(RegData=NIRdata01respiratortid, aar=2016, valgtVar = 'respiratortid', grVar='ShNavn', preprosess=0, offData = 1) #, outfile = 'SensurerteData.pdf'
+NIRAndelerGrVar(RegData=RegData, valgtVar = 'respiratortidInv', grVar='ShNavn',preprosess=0) #, outfile = 'AlleData.pdf'
+DataTilbakeOffResp <- NIRAndelerGrVar(RegData=NIRdata01respiratortidInv, aar=2016, valgtVar = 'respiratortidInv', grVar='ShNavn', preprosess=0, offData = 1) #, outfile = 'SensurerteData.pdf'
 ```
 
 En kvalitetsindikator hvor hendelsene er relativt få (reinnleggelser) vil kunne påvirkes mer av sensur enn når hendelsene er hyppige (respiratortid < 2,5 døgn). Figuren under viser resultater for kvalitetsindikatoren reinnleggelse. Total andel sensur er lavere for reinnleggelse siden de aller fleste opphold kan vurderes for reinnleggelse og følgelig alle registreringer er med i totalantallet (N). Andelen sensur for reinnleggelse er `r NIRdata01reinn$andelFjernet` \%. 
@@ -173,7 +232,7 @@ dum <- NIRVarSpes$RegData
 NIRAndelerGrVar(RegData=NIRVarSpes$RegData, valgtVar = 'reinn', grVar='ShNavn',preprosess=0) #, outfile = 'AlleData.pdf'
 
 #Anonyme data:
-valgtVar <- 'reinn'  #reinn, respiratortid
+valgtVar <- 'reinn'  #reinn, respiratortidInv
 RegData01Off(RegDataRaa, valgtVar=valgtVar, datoFra = datoFra, datoTil, tilleggsVar=tilleggsVar, 
              hentData=0, rand=0)
 load('A:/Intensiv/NIRdata01reinn.RData')

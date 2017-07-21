@@ -17,7 +17,7 @@ NIRRegDataSQL <- function(datoFra = '2011-01-01', datoTil = '2099-01-01') {
   
   query <- paste0('SELECT
 	Bilirubin,
-BrainDamage,
+      BrainDamage,
       CerebralCirculationAbolished,
       CerebralCirculationAbolishedReasonForNo,
       ChronicDiseases,

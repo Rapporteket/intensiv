@@ -356,7 +356,7 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler'
             RegData$Variabel[which(RegData$MechanicalRespirator==1)] <- 1  
             varTxt <- 'pasienter med respiratorstøtte'
             tittel <-'Andel med respiratorstøtte'
-            sortAvtagende <- FALSE      #Rekkefølge
+            sortAvtagende <- TRUE      #Rekkefølge
       }
       if (valgtVar=='SAPSII') { #Andeler #GjsnGrVar
             #Tar ut SAPSII=0 (ikke scorede)

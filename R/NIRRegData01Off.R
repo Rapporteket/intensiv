@@ -103,9 +103,9 @@ if (valgtVar == 'reinn') {
       save(NIRdata01reinn, file=filnavn) #paste0(filPrefix, 'reinn.RData'))
 }
 if (valgtVar == 'respiratortidInv') {
-      NIRdata01respiratortid <- list(NIRRegData01Off=RegData, andelFjernet=andelFjernet, KImaal=KImaal, sortAvtagende=sortAvtagende,
+      NIRdata01respiratortidInv <- list(NIRRegData01Off=RegData, andelFjernet=andelFjernet, KImaal=KImaal, sortAvtagende=sortAvtagende,
                              tittel=tittel, utvalgsInfo=utvalgsInfo, metaInfo=metaInfo)
-      save(NIRdata01respiratortid, file=filnavn) #paste0(filPrefix, 'respiratortid.RData'))
+      save(NIRdata01respiratortidInv, file=filnavn) #paste0(filPrefix, 'respiratortid.RData'))
 }
 #assign(paste0(valgtVar, 'Data'),alleData)
 #assign(paste0(valgtVar, 'Data'),list(RegData=RegData, andelFjernet=andelFjernet, KImaal=KImaal, tittel=tittel, 
