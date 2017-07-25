@@ -153,18 +153,18 @@ if (retn == 'H') {
 	} 
 	  #else { 
 	  if (figurtype %in% c('andelGrVar', 'andelTid')) {
-	      legend(xmax/4, posOver+2.5*posDiff, paste0(grTypeTxt, 'sykehus: ', sprintf('%.1f', AggTot), '%, N=', N$Hoved),
+	      legend(xmax/4, posOver+2*posDiff, paste0(grTypeTxt, 'sykehus: ', sprintf('%.1f', AggTot), '%, N=', N$Hoved),
 	             col=farger[1], border=NA, lwd=2.5, xpd=TRUE, bty='n', cex = cexleg) 
 	}
 	  #Fordelingsfigurer:
 	  #if (grVar == '') {
 	  if (figurtype == 'andeler') {
       	  if (medSml == 1) { #Legge på prikker for sammenlikning
-      	        legend(xmax/4, posOver+posDiff, c(paste0(hovedgrTxt, ' (N=', N$Hoved,')'), paste0(smltxt, ' (N=', N$Rest,')')), 
+      	        legend(xmax/4, posOver+0.8*posDiff, c(paste0(hovedgrTxt, ' (N=', N$Hoved,')'), paste0(smltxt, ' (N=', N$Rest,')')), 
       	               border=c(fargeHoved,NA), col=c(fargeHoved,fargeRest), bty='n', pch=c(15,18), pt.cex=2, 
       	               lwd=lwdRest, lty=NA, ncol=1)
       	  } else {	
-      	        legend(xmax/4, posOver+posDiff, paste0(hovedgrTxt, ' (N=', N$Hoved,')'), 
+      	        legend(xmax/4, posOver+0.8*posDiff, paste0(hovedgrTxt, ' (N=', N$Hoved,')'), 
       	               border=NA, fill=fargeHoved, bty='n', ncol=1)
       	  }
 	  }
