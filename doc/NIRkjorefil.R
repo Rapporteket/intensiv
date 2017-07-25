@@ -127,10 +127,11 @@ offData <- 0
 
 
 #--------------------------------------- Andeler ----------------------------------
-valgtVar <- 'PrimaryReasonAdmitted'	#'alder', 'liggetid', 'respiratortid',  'SAPSII', 'NEMS24', 'Nas24', 'InnMaate'
+valgtVar <- 'spesTiltak'	#'alder', 'liggetid', 'respiratortid',  'SAPSII', 'NEMS24', 'Nas24', 'InnMaate'
                               #Nye: PrimaryReasonAdmitted, inklKrit, respiratortidNonInv, respiratortidInv
-                              #nyreBeh, nyreBehTid, ExtendedHemodynamicMonitoring, isolering, isoleringDogn
-outfile <- '' #paste0('Ford_',valgtVar, '.pdf')
+                              #nyreBeh, nyreBehTid, ExtendedHemodynamicMonitoring, isolering, isoleringDogn, 
+                              #spesTiltak
+outfile <- paste0(valgtVar,'_Ford', '.pdf')
 
 
 Utdata <- NIRAndeler(RegData=RegData, valgtVar=valgtVar, minald=minald, maxald=maxald,  datoFra=datoFra, 

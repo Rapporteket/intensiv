@@ -70,7 +70,7 @@ if (dim(RegData)[1] < 10 )
 	FigTypUt <- figtype(outfile, height=hoyde, fargepalett=fargepalett)	
 	#Tilpasse marger for å kunne skrive utvalgsteksten
 	NutvTxt <- length(utvalgTxt)
-	vmarg <- switch(retn, V=0.03, H=min(1,max(0, strwidth(grtxt, units='figure', cex=cexgr)*0.75)))
+	vmarg <- switch(retn, V=0.04, H=min(1,max(0, strwidth(grtxt, units='figure', cex=cexgr)*0.75)))
 	#NB: strwidth oppfører seg ulikt avh. av device...
 	par('fig'=c(vmarg, 1, 0, 1-0.02*(NutvTxt-1)))	#Har alltid datoutvalg med
 	
@@ -125,7 +125,7 @@ if (retn == 'H') {
 	      }
 	      barplot(rev(as.numeric(AggVerdier$Hoved)), horiz=TRUE, beside=TRUE, las=1, add=TRUE,
 	              col=fargeHoved, border=NA, cex.names=cexgr) #, xlim=c(0, xmax), ylim=c(ymin,ymax)
-	      soyleXpos <- 1.1*xmax*max(strwidth(soyletxt, units='figure')) # cex=cexgr
+	      soyleXpos <- 1.12*xmax*max(strwidth(soyletxt, units='figure')) # cex=cexgr
 	      text(x=soyleXpos, y=pos+0.1, soyletxt, las=1, cex=cexgr, adj=1, col=farger[1])	#AggVerdier, hvert sykehus
 	      }
 
@@ -195,13 +195,13 @@ if (retn == 'H') {
 						 sub=xAkseTxt,	col=fargeHoved, border='white', ylim=c(0, ymax))	
 		  mtext(at=pos, grtxt, side=1, las=1, cex=cexgr, adj=0.5, line=0.5)
 		  mtext(at=pos, grtxt2, side=1, las=1, cex=0.9*cexgr, adj=0.5, line=1.5, col=graa[2])
-		  mtext(at=0,  paste0(hovedgrTxt,':'), side=1, cex=0.9*cexgr, adj=0.9, line=1.5, col=graa[2])
+		  mtext(at=0,  paste0(hovedgrTxt,': '), side=1, cex=0.9*cexgr, adj=0.9, line=1.5, col=graa[2])
 		  #legend(x=0, y=-0.05*ymax, legend=paste0(hovedgrTxt,':'), col=fargeRest,pch=18,bty="n",ncol=2, cex=0.9*cexgr, xpd=TRUE) #pt.cex=0.7,
 		  
 		  if (medSml == 1) {
 		        grtxt3 <- paste0(sprintf('%.1f',AggVerdier$Rest), '%') #paste0('(', sprintf('%.1f',AggVerdier$Rest), '%)')
 		        mtext(at=pos, grtxt3, side=1, las=1, cex=0.9*cexgr, adj=0.5, line=2.5, col=graa[2])
-		        mtext(at=0,  paste0(smltxt,':'), side=1, cex=0.9*cexgr, adj=0.9, line=2.5, col=graa[2])
+		        mtext(at=0,  paste0(smltxt,': '), side=1, cex=0.9*cexgr, adj=0.9, line=2.5, col=graa[2])
 		        points(pos, as.numeric(AggVerdier$Rest), col=fargeRest,  cex=2, pch=18) #c("p","b","o"), 
 				legend('top', legend=c(paste0(hovedgrTxt, ' (N=', N$Hoved,')'), paste0(smltxt, ' (N=', N$Rest,')')), 
 					   border=c(fargeHoved,NA), col=c(fargeHoved,fargeRest), bty='n', pch=c(15,18), pt.cex=2, lty=c(NA,NA), 

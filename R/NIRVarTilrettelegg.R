@@ -462,8 +462,25 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler'
             #Beregne direkte:
             #apply(RegData[,variable], MARGIN=2, FUN=function(x) sum(x %in% 0:1))
       }
-      
-      
+      if (valgtVar == 'spesTiltak' ) {   # Andeler
+            #SpecialMeasures
+            tittel <- 'Spesielle tiltak/intervensjoner'
+            RegData <- RegData[which(RegData$InnDato>=as.POSIXlt('2016-01-01')), ] 
+            sortAvtagende <- T
+            retn <- 'H'
+            flerevar <- 1
+            variable <- c('TerapetiskHypotermi', 'EcmoEcla', 'Iabp', 'Impella', 'Icp', 'Oscillator', 'No', 
+                          'Leverdialyse', 'Hyperbar', 'Eeg')
+            #retn <- 'H'
+            grtxt <- c('Terapetisk hypotermi', 'ECMO/ECLA', 'IABP Aortaballongpumpe', 'Impella/VV-assist', 
+                       'ICP, intrakranielt trykk', 'Oscillator', 'NO-behandling', 
+                       'Leverdialyse', 'Hyperbar oksygenbeh.', 'Kontinuerlig EEG')
+            #ind01 <- which(RegData[ ,variable] != -1, arr.ind = T) #Alle ja/nei
+            ind1 <- which(RegData[ ,variable] == TRUE, arr.ind=T) #Ja i alle variable
+            RegData[ ,variable] <- 0
+            RegData[ ,variable][ind1] <- 1
+            xAkseTxt <- 'Andel opphold (%)'
+      }
       #if (valgtVar=='innMaate') {
       #	#Innleggelsesmåte. Genererer annen figurtype
       #      #0:Planlagt operasjon, 6:Akutt nonoperativ, 8:Akutt operasjon
