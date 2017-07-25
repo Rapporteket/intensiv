@@ -1,7 +1,12 @@
 #Til analysebok:
 #Liggetid og respiratortid for pasienter som ikke er overført mellom sykehus.
 
+#Alle off.farger:
 
+      #c6dbef #6baed6 #4292c6 #2171b5 #084594 #000059 #FF7260 #4D4D4D #737373 #A6A6A6 #DADADA
+blaa <- c('#084594','#2171b5','#4292c6','#6baed6','#c6dbef')  #Mørk til lys																# Fem blaatoner
+graa <- c('#4D4D4D','#737373','#A6A6A6','#DADADA')  #Mørk til lys          																# Fire graatoner
+kontrast <- '#FF7260'; moerkeblaa <- '#000059'                																# Spesialfarger
 
 #--------------------------------------Kvalitetskontroll - ikke operativ-----------------------------------
 rm(list=ls())
@@ -99,7 +104,7 @@ minald <- 0 #(standard: 0)
 maxald <- 130	#(standard: 130, må være større enn minald!)
 InnMaate <- '' #0-El, 6-Ak.m, 8-Ak.k, (alle - alt unntatt 0,6,8)
 valgtMaal = 'Gjsn' #'Med' = median. 'Gjsn' = gjennomsnitt. Alt annet gir gjennomsnitt
-datoFra <- '2011-01-01'	# standard: 0	format: YYYY-MM-DD. Kan spesifisere bare første del, eks. YYYY el. YYYY-MM. 
+datoFra <- '2015-01-01'	# standard: 0	format: YYYY-MM-DD. Kan spesifisere bare første del, eks. YYYY el. YYYY-MM. 
 datoTil <- '2017-12-31'	# standard: 3000
 aar <- 0
 dodInt <- ''	# 0-i live, 1 -død, standard: alle (alle andre verdier)
@@ -122,10 +127,10 @@ offData <- 0
 
 
 #--------------------------------------- Andeler ----------------------------------
-valgtVar <- 'nyreBeh'	#'alder', 'liggetid', 'respiratortid',  'SAPSII', 'NEMS24', 'Nas24', 'InnMaate'
+valgtVar <- 'PrimaryReasonAdmitted'	#'alder', 'liggetid', 'respiratortid',  'SAPSII', 'NEMS24', 'Nas24', 'InnMaate'
                               #Nye: PrimaryReasonAdmitted, inklKrit, respiratortidNonInv, respiratortidInv
                               #nyreBeh, nyreBehTid, ExtendedHemodynamicMonitoring, isolering, isoleringDogn
-outfile <- paste0('Ford_',valgtVar, '.pdf')
+outfile <- '' #paste0('Ford_',valgtVar, '.pdf')
 
 
 Utdata <- NIRAndeler(RegData=RegData, valgtVar=valgtVar, minald=minald, maxald=maxald,  datoFra=datoFra, 
@@ -144,7 +149,7 @@ for (valgtVar in variable) {
 
 #--------------------------------------- AndelGrVar ----------------------------------
 grVar <- 'ShNavn'
-valgtVar <- 'isolering'	#alder_u18', 'alder_over80', 'dod30d', 'dodeIntensiv', 'innMaate', 
+valgtVar <- 'ExtendedHemodynamicMonitoring'	#alder_u18', 'alder_over80', 'dod30d', 'dodeIntensiv', 'innMaate', 
                         #respiratortid, 'respStotte', 'reinn
                         #Nye: trakeostomi, trakAapen, respiratortidInv, nyreBeh, ExtendedHemodynamicMonitoring,
                         #ExtendedHemodynamicMonitoringPA, isolering
@@ -216,7 +221,7 @@ for (valgtVar in variable) {
 valgtMaal <- 'Gjsn'
 valgtVar <- 'respiratortidInv'	#'SMR', alder, liggetid, respiratortid,  SAPSII, 'NEMS', 'Nas24'
                         #Nye: respiratortidInv, respiratortidNonInv
-outfile <- paste0(valgtVar, 'Gjsn.pdf')#,grType
+outfile <- '' #paste0(valgtVar, 'Gjsn.pdf')#,grType
 
 NIRGjsnGrVar(RegData=RegData, valgtVar=valgtVar, valgtMaal=valgtMaal, minald=minald, maxald=maxald, 
                 grType=grType, grVar=grVar, InnMaate=InnMaate, datoFra=datoFra, datoTil=datoTil, dodInt=dodInt, 

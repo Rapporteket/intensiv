@@ -160,9 +160,12 @@ NIRAndeler  <- function(RegData, valgtVar, datoFra='2011-01-01', datoTil='3000-1
       } else {
             Nfig <- N}
 
-      grtxt2 <- paste0('(', sprintf('%.1f',AggVerdier$Hoved), '%)')
+      grtxt2 <- paste0(sprintf('%.1f',AggVerdier$Hoved), '%') #paste0('(', sprintf('%.1f',AggVerdier$Hoved), '%)')
+      
+      # grtxt2 <- paste0(paste0('(', sprintf('%.1f',Utdata$AggVerdier$Hoved), '%)'),
+#                       paste0('\n(', sprintf('%.1f',Utdata$AggVerdier$Rest), '%)'))
       xAkseTxt <- NIRVarSpes$xAkseTxt
-      yAkseTxt <- 'Andel pasienter (%)'
+      yAkseTxt <- 'Andel opphold (%)'
       retn <- NIRVarSpes$retn
       tittel <- NIRVarSpes$tittel
       hovedgrTxt <- NIRUtvalg$hovedgrTxt

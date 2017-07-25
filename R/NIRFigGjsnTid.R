@@ -120,6 +120,11 @@ Nrest <- tapply(RegData[ind$Rest ,'Variabel'], RegData[ind$Rest, 'Aar'], length)
 	}
 }
 
+t1 <- switch(valgtMaal,
+             Med = 'Median ',
+             Gjsn = 'Gjennomsnittlig ')
+tittel <- paste0(t1, NIRVarSpes$tittel) 
+
     #-----------Figur---------------------------------------
 if (length(ind$Hoved)<10 | ((medSml == 1) & (length(ind$Rest) < 10))) {
 figtype(outfile)
@@ -178,8 +183,8 @@ arrows(x0=Aartxt, y0=Midt-h, x1=Aartxt, length=0.08, code=2, angle=90,
 		y1=replace(Konf[1, ], ind, Midt[ind]-h), col=fargeHovedRes, lwd=1.5)
 arrows(x0=Aartxt, y0=Midt+h, x1=Aartxt, y1=replace(Konf[2, ], ind, Midt[ind]+h), 
 		length=0.08, code=2, angle=90, col=fargeHovedRes, lwd=1.5)
-	
-title(main=c(NIRVarSpes$tittel, NIRUtvalg$hovedgrTxt), font.main=1, line=1)
+
+title(main=c(tittel, NIRUtvalg$hovedgrTxt), font.main=1, line=1)
 #Tekst som angir hvilket utvalg som er gjort
 if (length(utvalgTxt)>0) {
 mtext(utvalgTxt, side=3, las=1, cex=0.9, adj=0, col=farger[1], line=c(3+0.8*((NutvTxt-1):0)))}

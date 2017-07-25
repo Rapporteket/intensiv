@@ -1,4 +1,4 @@
-#' Tidstrend av andel pasienter
+#' Tidstrend av andel opphold
 #'
 #' Denne funksjonen lager et søylediagram som viser andeler (fordeling) av valgt variabel
 #' filtrert på de utvalg som er gjort.

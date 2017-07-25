@@ -51,6 +51,7 @@ NIRAndelerGrVar <- function(RegData, valgtVar, datoFra='2010-01-01', datoTil='30
             #assign('NIRdata01',filnavn)
             utvalgsInfo <- RegData$utvalgsInfo
             KImaal <- RegData$KImaal
+            KImaaltxt <- RegData$KImaaltxt
             sortAvtagende <- RegData$sortAvtagende
             tittel <- RegData$tittel
             RegData <- RegData$NIRRegData01Off
@@ -68,6 +69,7 @@ NIRAndelerGrVar <- function(RegData, valgtVar, datoFra='2010-01-01', datoTil='30
             RegData <- NIRVarSpes$RegData
             sortAvtagende <- NIRVarSpes$sortAvtagende
             KImaal <- NIRVarSpes$KImaal
+            KImaaltxt <- NIRVarSpes$KImaaltxt
             tittel <- NIRVarSpes$tittel
       } 
       
@@ -134,7 +136,7 @@ andeltxt <- andeltxtUsort[sortInd]
 N = list(Hoved=N, Rest=0)
 Ngr = list(Hoved=Ngr, Rest=0)
 AggVerdier = list(Hoved=AndelerGrSort, Rest=0)
-xAkseTxt <- "Andel pasienter (%)"	#Denne kan avhenge av figurtype
+xAkseTxt <- "Andel opphold (%)"	#Denne kan avhenge av figurtype
 
 
 #Se NIRFigSoyler for forklaring av innhold i AndelerGrVarData
@@ -150,6 +152,7 @@ AndelerGrVarData <- list(AggVerdier=AggVerdier,
                          retn='H', 
                          xAkseTxt=xAkseTxt, #NIRVarSpes$xAkseTxt,
                          KImaal = KImaal,
+                         KImaaltxt = KImaaltxt,
                          grTypeTxt=NIRUtvalg$grTypeTxt,			 
                          utvalgTxt=utvalgTxt, 
                          fargepalett=NIRUtvalg$fargepalett, 
@@ -167,7 +170,7 @@ if (lagFig == 1) {
       NIRFigSoyler(RegData, AggVerdier=AggVerdier, AggTot=AndelHele, Ngr=Ngr,N=N, cexgr=cexgr, 
                    tittel=tittel, smltxt=smltxt, utvalgTxt=utvalgTxt, #yAkseTxt=yAkseTxt,
                    grTypeTxt=NIRUtvalg$grTypeTxt,  fargepalett=NIRUtvalg$fargepalett, grtxt=GrNavnSort, 
-                   soyletxt=andeltxt,grVar=grVar, KImaal = KImaal, figurtype = 'andelGrVar',#medKI = medKI,
+                   soyletxt=andeltxt,grVar=grVar, KImaal = KImaal, KImaaltxt = KImaaltxt, figurtype = 'andelGrVar',#medKI = medKI,
                    medSml=medSml, xAkseTxt=xAkseTxt, outfile=outfile)
 }
 
