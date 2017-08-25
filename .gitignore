@@ -7,3 +7,10 @@ Intensiv.Rproj
 NIRdata10000.Rdata
 FigNIRMeanMed_sql.R
 *.pdf
+*.lof
+*.lot
+*.toc
+*.aux
+*.log
+*.gz
+*.tex

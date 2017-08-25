@@ -2,9 +2,12 @@
 title: "Offentlige data, intensivregisteret"
 author: "Lena Ringstad Olsen"
 date: "`r Sys.Date()`"
-output_format: html_document
-output_file: 'C:/ResultattjenesteGIT/intensiv/vignettes/OffDataIntensiv.html'
-keep_tex: yes
+#output_format: pdf_document
+output_file: 'C:/ResultattjenesteGIT/intensiv/vignettes/OffDataIntensiv.pdf'
+output:
+  bookdown::pdf_document2: 
+      keep_tex: yes
+      fig_caption: true
 encoding: 'UTF-8'
 knit_root_dir: 'C:/ResultattjenesteGIT/intensiv'
 ---
@@ -213,11 +216,18 @@ For intensivregisteret har vi valgt å benytte utvalgs-/grupperingsvariablene:
 
 Alle registreringer som faller i ei gruppe hvor det blir <5 observasjoner i gruppa er sensurert F.eks. hvis utvalgskombinasjonen: Sykehus A, aldersgruppe 2, kvinne, 2.kvartal 2016 inneholder færre enn 5 observasjoner, sensureres alle observasjonene i denne gruppa. Som vi ser fra tabellen med grad av sensur for intensivregisteret, betyr det at `r N5_Kvartal2var` \% av registreringene er sensurert. Figurene under viser resultatene for kvalitetsindikatoren respiratortid for hhv fullstendig og sensurert datasett.
 
-Det er viktig å huske at graden av sensur vil være forskjellig for de ulike enhetene. Små enheter vil få sensurert relativt mer av sine opphold slik at resultatene for de små enhetene vil påvirkes mye mer enn for de store enhetene. Vi bør derfor ha en lav grense for hvor stor grad av sensur som er akseptabelt. I figurene under ser vi at f.eks. resultatet for Bærum endres fra 52,6% til 45,5%. Det betyr at med det fullstendige datasettet har de oppfylt målet for kvalitetsindikatoren (50%), mens i det sensurerte datasettet har de ikke det. 
+Det er viktig å huske at graden av sensur vil være forskjellig for de ulike enhetene. Små enheter vil få sensurert relativt mer av sine opphold slik at resultatene for de små enhetene vil påvirkes mye mer enn for de store enhetene. Vi bør derfor ha en lav grense for hvor stor grad av sensur som er akseptabelt. I figurene under ser vi at f.eks. resultatet for Bærum endres fra 52,6% til 45,5%. Det betyr at med det fullstendige datasettet har de oppfylt målet for kvalitetsindikatoren (50%), mens i det sensurerte datasettet har de ikke det. Figur \@ref(fig:FigRespTid)
 
 
-```{r FigRespTid, echo=FALSE, fig.height=8, fig.width=6}
+```{r FigRespTid, echo=FALSE, fig.height=8, fig.width=6, fig.keep='all', fig.cap="\\label{fig:fig1}This is a caption"}
 NIRAndelerGrVar(RegData=RegData, valgtVar = 'respiratortidInv', grVar='ShNavn',preprosess=0) #, outfile = 'AlleData.pdf'
+
+DataTilbakeOffResp <- NIRAndelerGrVar(RegData=NIRdata01respiratortidInv, aar=2016, valgtVar = 'respiratortidInv', grVar='ShNavn', preprosess=0, offData = 1) #, outfile = 'SensurerteData.pdf'
+#```
+
+#\pagebreak
+
+#```{r FigRespTidSensur, echo=FALSE, fig.height=8, fig.width=6}
 DataTilbakeOffResp <- NIRAndelerGrVar(RegData=NIRdata01respiratortidInv, aar=2016, valgtVar = 'respiratortidInv', grVar='ShNavn', preprosess=0, offData = 1) #, outfile = 'SensurerteData.pdf'
 ```
 

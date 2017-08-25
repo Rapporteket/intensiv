@@ -41,17 +41,18 @@ texi2pdf(file='NIRSamleRapp.tex')
 
 #-------------------------------------LASTE DATA-----------------------------------------------
 rm(list=ls())
-dato <- '2017-07-03'
+dato <- '2017-08-25'
 dataKat <- 'A:/Intensiv/'
 fil <- paste0(dataKat,'MainFormDataContract',dato)
 #NIRdata <- read.table(file=paste0(fil,'.csv'), header=T, stringsAsFactors=FALSE, sep=';',encoding = 'UTF-8')
 #RegData <- NIRdata
 load(paste0(fil,".Rdata")) #RegData
-#save(RegData, file=paste0(fil,'2014.Rdata'))
+save(RegData, file=paste0(fil,'.Rdata'))
 #RegData <- RegData[which(as.POSIXlt(RegData$DateAdmittedIntensive, format="%Y-%m-%d")>= '2014-01-01'), ]
 #RegData <- NIRdata[sample(1:dim(NIRdata)[1],10000),]
 #save(RegData, file=paste0(dataKat,'NIRdata10000.Rdata'))
 load(paste0(dataKat,"NIRdata10000.Rdata")) #RegData, juli 2017
+library(intensiv)
 
 #-----------------------------------Lage datasett til kvalitetsindikatorer---------
 library(intensiv)
