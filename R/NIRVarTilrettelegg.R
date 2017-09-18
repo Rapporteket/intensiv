@@ -381,7 +381,7 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler'
             #De under 18år tas ut i NIRutvalg
             #(TransferredStatus: 1= ikke overført, 2= overført), 
             #ReAdmitted: #1:Ja, 2:Nei, 3:Ukjent, -1:Ikke utfylt
-            minald <- max(18, minald) 
+            minald <- max(16, minald) 
             indMed <- which(RegData$ReAdmitted==2) %i% which(RegData$Overf==1) %i% 
                   which(as.numeric(RegData$SAPSII)>0)
             RegData <- RegData[indMed,]

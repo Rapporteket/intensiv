@@ -25,6 +25,7 @@ library(tools)	#texi2pdf
 setwd('C:/ResultattjenesteGIT/intensiv/inst/') 
 reshID <- 112044 #102090 Ahus, 112044 Haukeland
 #knit(input, output = NULL, tangle = FALSE, text = NULL, envir = parent.frame())
+NIRdata <- RegData
 knit('NIRSamleRapp.Rnw')
 texi2pdf(file='NIRSamleRapp.tex')
 
@@ -41,18 +42,20 @@ texi2pdf(file='NIRSamleRapp.tex')
 
 #-------------------------------------LASTE DATA-----------------------------------------------
 rm(list=ls())
-dato <- '2017-08-25'
+dato <- '2017-09-18'
 dataKat <- 'A:/Intensiv/'
 fil <- paste0(dataKat,'MainFormDataContract',dato)
 #NIRdata <- read.table(file=paste0(fil,'.csv'), header=T, stringsAsFactors=FALSE, sep=';',encoding = 'UTF-8')
 #RegData <- NIRdata
 load(paste0(fil,".Rdata")) #RegData
-save(RegData, file=paste0(fil,'.Rdata'))
+#save(RegData, file=paste0(fil,'.Rdata'))
 #RegData <- RegData[which(as.POSIXlt(RegData$DateAdmittedIntensive, format="%Y-%m-%d")>= '2014-01-01'), ]
 #RegData <- NIRdata[sample(1:dim(NIRdata)[1],10000),]
 #save(RegData, file=paste0(dataKat,'NIRdata10000.Rdata'))
 load(paste0(dataKat,"NIRdata10000.Rdata")) #RegData, juli 2017
 library(intensiv)
+
+
 
 #-----------------------------------Lage datasett til kvalitetsindikatorer---------
 library(intensiv)
@@ -66,6 +69,8 @@ RegData01Off(RegData, valgtVar=valgtVar, datoFra = datoFra, datoTil, tilleggsVar
              hentData=0, rand=rand)
 
 #-------------------------------Resultater for off.kval.ind.----------------------------------------
+datoFra <- '2011-01-01'
+datoTil <- '2016-12-31'
 aar <- 0
 grType <- 99
 grVar <- 'ShNavn'
@@ -105,7 +110,7 @@ minald <- 0 #(standard: 0)
 maxald <- 130	#(standard: 130, må være større enn minald!)
 InnMaate <- '' #0-El, 6-Ak.m, 8-Ak.k, (alle - alt unntatt 0,6,8)
 valgtMaal = 'Gjsn' #'Med' = median. 'Gjsn' = gjennomsnitt. Alt annet gir gjennomsnitt
-datoFra <- '2015-01-01'	# standard: 0	format: YYYY-MM-DD. Kan spesifisere bare første del, eks. YYYY el. YYYY-MM. 
+datoFra <- '2011-01-01'	# standard: 0	format: YYYY-MM-DD. Kan spesifisere bare første del, eks. YYYY el. YYYY-MM. 
 datoTil <- '2017-12-31'	# standard: 3000
 aar <- 0
 dodInt <- ''	# 0-i live, 1 -død, standard: alle (alle andre verdier)
@@ -221,7 +226,7 @@ for (valgtVar in variable) {
 #--------------------------------------- SENTRALMÅL per enhet----------------------------------
 
 valgtMaal <- 'Gjsn'
-valgtVar <- 'respiratortidInv'	#'SMR', alder, liggetid, respiratortid,  SAPSII, 'NEMS', 'Nas24'
+valgtVar <- 'alder'	#'SMR', alder, liggetid, respiratortid,  SAPSII, 'NEMS', 'Nas24'
                         #Nye: respiratortidInv, respiratortidNonInv
 outfile <- '' #paste0(valgtVar, 'Gjsn.pdf')#,grType
 
@@ -246,6 +251,20 @@ Fordeling(RegData=RegData, valgtVar=valgtVar, minald=minald, maxald=maxald, grTy
           InnMaate=InnMaate, erMann=erMann, datoFra=datoFra, datoTil=datoTil, dodInt=dodInt, outfile=outfile) 
 #valgtVar in c('alder', 'liggetid', 'respiratortid', 'SAPSII', 'NEMS')) {
 
+#-----------------------------------------TESTING--------------------------------
+#Sjekk av sammefallende sykehusnavn: 
+#names(table(RegData$PatientTransferredFromHospitalName))[is.na(match(names(table(RegData$PatientTransferredFromHospitalName)), 
+#                                                       names(table(RegData$ShNavn))))]
+#  [1] ""                      "Annet sykehus i Norge" "Haukel. Brannsk "      "RH Postop "            "RH Thorax 1 "         
+#[6] "RH Thorax 2 "          "St. Olav Barneint "    "St. Olav Thorax "      "Tromsø Postop "        "Utlandet" 
 
+From <- names(table(RegData$PatientTransferredFromHospital))
+To <- names(table(RegData$PatientTransferredToHospital))
+Resh <- names(table(RegData$ReshID))
+From[-c(0,which(From %in% Resh))]
+To[-c(0,which(To %in% Resh))]
 
-
+table(RegData$PatientTransferredFromHospital)[
+      which(names(table(RegData$PatientTransferredFromHospital)) %in% From[-which(From %in% c(0,Resh))])]
+table(RegData$PatientTransferredToHospital)[
+      which(names(table(RegData$PatientTransferredToHospital)) %in% To[-which(To %in% c(0,Resh))])]

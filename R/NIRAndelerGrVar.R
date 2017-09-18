@@ -34,7 +34,7 @@
 #' @export
 NIRAndelerGrVar <- function(RegData, valgtVar, datoFra='2010-01-01', datoTil='3000-01-01', aar=0, 
                             minald=0, maxald=130, aldGr=0,
-                            grType=99, grVar='', InnMaate=99, dodInt='', erMann='', hentData=0,
+                            grType=99, grVar='ShNavn', InnMaate=99, dodInt='', erMann='', hentData=0,
                             preprosess=1, outfile='', lagFig=1, offData=0)
                             #KImaal = NA, utvalgsInfo = "", tittel = "", sortAvtagende=TRUE,) 
       
@@ -105,7 +105,7 @@ if (dim(RegData)[1] >= 0) {
 
 Ngrense <- 10	
 N <- dim(RegData)[1]
-if(N > 0) {Ngr <- table(RegData[ ,grVar])} else {Ngr <- 0}
+#if(N > 0) {Ngr <- table(RegData[ ,grVar])} else {Ngr <- 0}
 AntGr <- length(which(Ngr >= Ngrense))	#length(which(Midt>0))
 AndelHele <- sum(RegData$Variabel==1)/N*100	
 AndelerGr <- as.vector(table(RegData[which(RegData$Variabel==1) , grVar])/Ngr*100)	#round(100*Nvar/Ngr,2)
