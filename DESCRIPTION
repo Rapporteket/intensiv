@@ -18,8 +18,6 @@ Depends:
 Imports:
     plyr,
     xtable
-Remotes:
-    Rapporteket/rapbase
 RoxygenNote: 6.0.1
 Suggests:
     rmarkdown,
