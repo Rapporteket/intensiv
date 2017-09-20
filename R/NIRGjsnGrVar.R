@@ -49,6 +49,7 @@ NIRVarSpes <- NIRVarTilrettelegg(RegData=RegData, valgtVar=valgtVar, figurtype =
 RegData <- NIRVarSpes$RegData
 
 #------- Gjøre utvalg
+minald <- max(NIRVarSpes$minald, minald)
 NIRUtvalg <- NIRUtvalgEnh(RegData=RegData, datoFra=datoFra, datoTil=datoTil, aar=aar, minald=minald, maxald=maxald, 
                           erMann=erMann, InnMaate=InnMaate, dodInt=dodInt, grType=grType) #overfPas=overfPas, 
 RegData <- NIRUtvalg$RegData

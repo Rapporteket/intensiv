@@ -7,9 +7,9 @@
 NIRFigSoyler(RegData, AggVerdier, AggTot = 0, Ngr,
   tittel = "mangler tittel", smltxt = "", N, retn = "H", yAkseTxt = "",
   utvalgTxt = "", grTypeTxt = "", soyletxt = "", grtxt, grtxt2 = "",
-  hovedgrTxt = "", grVar = "", valgtMaal = "Andel", cexgr = 1,
-  medSml = 0, fargepalett = "BlaaOff", xAkseTxt = "", medKI = 0,
-  KImaal = NA, outfile = "")
+  hovedgrTxt = "", grVar = "", valgtMaal = "Andel", figurtype = "",
+  cexgr = 1, medSml = 0, fargepalett = "BlaaOff", xAkseTxt = "",
+  medKI = 0, KImaal = NA, KImaaltxt = "", outfile = "")
 }
 \arguments{
 \item{RegData}{En dataramme med alle nødvendige variabler fra registeret}
@@ -46,6 +46,14 @@ gruppenavnet (i f.eks. tekstetikett) hvis det er gjort utvalg på f.eks. en syke
 \item{hovedgrTxt}{Angivelse av hovedgruppe, eks. eget sykehus}
 
 \item{valgtMaal}{'Med' = median. Alt annet gir gjennomsnitt}
+
+\item{figurtype}{Hvilken figurtype som ønskes ut: 
+andel (fordelingsfigurer), 
+andelGrVar (andel i hver kategori av grupperingsvariabel, eks. sykehus), 
+andelTid (andel per tidsenhet, eks. år, måned), 
+andelPP (andel før og etter), 
+gjsnGrVar (sentralmål i hver kategori av grupperingsvariabel, eks. sykehus),
+gjsnTid (sentralmål per tidsenhet, eks. år, måned)}
 
 \item{cexgr}{Skalering av gruppetekst (trenger mindre font når flere grupper)}
 

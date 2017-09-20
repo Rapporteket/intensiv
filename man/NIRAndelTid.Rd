@@ -2,7 +2,7 @@
 % Please edit documentation in R/NIRAndelTid.R
 \name{NIRAndelTid}
 \alias{NIRAndelTid}
-\title{Tidstrend av andel pasienter}
+\title{Tidstrend av andel opphold}
 \usage{
 NIRAndelTid(RegData, valgtVar, datoFra = "2011-01-01",
   datoTil = "3000-12-31", tidsenhet = "Aar", minald = 0, maxald = 130,

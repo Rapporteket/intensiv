@@ -63,6 +63,8 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler'
       strIfig <- ''		#cex
       sortAvtagende <- TRUE  #Sortering av resultater
       KImaal <- NA
+
+      minald <- 0
       tittel <- 'Mangler tittel' 
       variable <- 'Ingen'
       #deltittel <- ''
@@ -324,8 +326,10 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler'
       } 
       if (valgtVar == 'respiratortidInv') { #Andeler #GjsnGrVar #AndelGrVar, GjsnTid
             #InvasivVentilation (pusterør/åpnet lufterør)
-            RegData <- RegData[which((RegData$InvasivVentilation>0) & (RegData$InnDato>=as.POSIXlt('2015-01-01'))), ] 
-            
+            #ind <- intersect(
+             ind <- which((RegData$InvasivVentilation>0) & (RegData$InnDato>=as.POSIXlt('2015-01-01')))
+                    #     ,which(RegData$Overf ==1))
+            RegData <- RegData[ind,]
             if (figurtype %in% c('andeler', 'gjsnGrVar', 'gjsnTid')) {
                   RegData$Variabel  <- as.numeric(RegData$InvasivVentilation)
                   tittel <- 'invasiv ventilasjon'}      #Andeler, GjsnGrVar
@@ -333,7 +337,7 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler'
             if (figurtype %in% c('andelTid', 'andelGrVar')) {
                   RegData$Variabel[which(RegData$InvasivVentilation < 2.5)] <- 1
                   tittel <- 'Invasiv ventilasjon < 2,5 døgn'}     #AndelGrVar, AndelTid
-            gr <- c(0, 1, 2, 3, 4, 5, 6, 7, 14, 1000)#c(0, exp(seq(0,log(30),length.out = 6)), 500),1)
+            gr <- c(0, 1, 2, 3, 4, 5, 6, 7, 14, 1000) #c(0, exp(seq(0,log(30),length.out = 6)), 500),1)
             RegData$VariabelGr <- cut(RegData$InvasivVentilation, breaks=gr, include.lowest=TRUE, right=FALSE)  
             grtxt <- c('(0-1)','[1-2)','[2-3)','[3-4)','[4-5)','[5-6)','[6-7)','[7-14)','14+')
             xAkseTxt <- 'ventilasjonstid (døgn)'
@@ -493,7 +497,8 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler'
       
       
       
-      UtData <- list(RegData=RegData, grtxt=grtxt, cexgr=cexgr, varTxt=varTxt, xAkseTxt=xAkseTxt, KImaal=KImaal, retn=retn,
+      UtData <- list(RegData=RegData, minald=minald,
+                     grtxt=grtxt, cexgr=cexgr, varTxt=varTxt, xAkseTxt=xAkseTxt, KImaal=KImaal, retn=retn,
                      tittel=tittel, flerevar=flerevar, variable=variable, sortAvtagende=sortAvtagende)
       #RegData inneholder nå variablene 'Variabel' og 'VariabelGr'
       return(invisible(UtData)) 

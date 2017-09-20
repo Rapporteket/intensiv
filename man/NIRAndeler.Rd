@@ -89,12 +89,14 @@ og NIRFigSoyler
 Argumentet \emph{valgtVar} har følgende valgmuligheter:
    \itemize{
     \item alder: Aldersfordeling, 10-årige grupper 
+    \item inklKrit: Andeler for de 5 inklusjonskriteriene
     \item InnMaate: Hastegrad inn på intensiv (Elektivt, Akutt medisinsk, Akutt kirurgisk)
     \item liggetid: Liggetid 
     \item NEMS: Skår for ressursbruk. (Nine Equivalents of Nursing Manpower Use Score)
     \item Nas: Skår for sykepleieraktiviteter. (Nursing Activities Score)
     \item respiratortid: Tid tilbrakt i respirator
     \item SAPSII: Skår for alvorlighetsgrad av sykdom.  (Simplified Acute Physiology Score II)
+    \item PrimaryReasonAdmitted: Hovedårsak til intensivopphold
    }
 Argumentet \emph{enhetsUtvalg} har følgende valgmuligheter:
    \itemize{
