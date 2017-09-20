@@ -58,7 +58,10 @@ NIRPreprosess <- function(RegData=RegData, lagreKvalIndData=0)	#, reshID=reshID)
 	#RegData$Kvartal <- paste(RegData$InnDato$year-100, 
 	#                         mapping$verdiNY[match(RegData$InnDato$mon, mapping$verdiGML)], sep='.')
 	
-	
+	##Kode om  pasienter som er overført til/fra egen avdeling til "ikke-overført"
+	ind <- union(which(RegData$ReshId == RegData$PatientTransferredFromHospital),
+	             which(RegData$ReshId == RegData$PatientTransferredToHospital))
+	RegData$Overf[ind] <- 1
 	
 	
 	#En "overlever": Person som er i live 30 dager etter innleggelse.

@@ -123,6 +123,9 @@ enhetsUtvalg <- 1	#0-5
 offData <- 0
 #Parameter for evt. kvalitetsmål? angis i Tilrettelegging
 
+
+
+
 #--------------------------------------- Ny struktur basert på grVar? ----------------------------------
 #Prioriter kvalitetsindikatorene: reinn, SMR, median innleggelse (se årsrapport)
 #Median respiratortid < 2,5 døger -> Kan vi vise andel med respiratortid <2,5døgn og sette grense på 50%?
