@@ -398,7 +398,7 @@ xtable(tabTypeOpphShType, digits=1, align=c('l', rep('r', ncol(tabTypeOpphShType
 		caption='Prosentvis fordeling av type opphold for ulike sykehuskategorier',
 		label='tab:TypeOpphShType')
 
-dum <- NIRAndelerGrVar(RegData=NIRdata, valgtVar='innMaate', preprosess=0, hentData=0, grType=ShTypeEgen, datoFra=datoFra, 
+dum <- NIRFigInnMaate(RegData=NIRdata, valgtVar='innMaate', preprosess=0, hentData=0, grType=ShTypeEgen, datoFra=datoFra, 
 	datoTil=datoTil, outfile='FigTypeOpph.pdf') 
 @
 

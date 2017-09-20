@@ -87,12 +87,10 @@ Nshtxt[indShUt] <- paste0('N<', Ngrense)	#paste('N<', Ngrense,sep='')
 N <- dim(RegData)[1]
 
 
-if (valgtVar=='InnMaate') {
 	dataTab <- ftable(RegData[ ,c('ShNavn', valgtVar)])/rep(Nsh,3)*100
 	dataTab[indShUt,] <-NA 
 	sortInd <- order(dataTab[,2])
 	dataAlle <- table(RegData$Variabel)/N*100
-}
 ShNavnSort <- names(Nsh)[sortInd]	#c(names(Nsh)[sortInd],'')
 NshtxtSort <- Nshtxt[sortInd]
 
