@@ -47,7 +47,8 @@ NIRFigSoyler <- function(RegData, AggVerdier, AggTot=0, Ngr, tittel='mangler tit
 #---------------------------------------FRA FIGANDELER, FigGjsnGrVar og FigAndelGrVar--------------------------
 #Hvis for få observasjoner..
 
-if (dim(RegData)[1] < 10 )
+      if (N$Hoved < 5 | (dim(RegData)[1]-N$Hoved <5) )
+     #       if (dim(RegData)[1] < 10 | ((enhetsUtvalg %in% c(1,3)) & length(which(RegData$ReshId == reshID))<5) )
     #|(grVar=='' & length(which(RegData$ReshId == reshID))<5 & enhetsUtvalg %in% c(1,3))) 
     {
 	#-----------Figur---------------------------------------
@@ -57,7 +58,7 @@ if (dim(RegData)[1] < 10 )
 	title(tittel)	#, line=-6)
 	legend('topleft',legend=utvalgTxt, bty='n', cex=0.9, text.col=farger[1])
 	if (valgtMaal=='Med' & grepl('SMR', tittel)) {tekst <- 'Ugyldig parameterkombinasjon'   #valgtVar=='SMR'
-		} else {tekst <- 'For få registreringer'}
+		} else {tekst <- 'For få registreringer i egen eller sammenligningsgruppe'}
 	text(0.5, 0.6, tekst, cex=1.2)
 	if ( outfile != '') {dev.off()}
 	
@@ -125,7 +126,7 @@ if (retn == 'H') {
 	      }
 	      barplot(rev(as.numeric(AggVerdier$Hoved)), horiz=TRUE, beside=TRUE, las=1, add=TRUE,
 	              col=fargeHoved, border=NA, cex.names=cexgr) #, xlim=c(0, xmax), ylim=c(ymin,ymax)
-	      soyleXpos <- 1.12*xmax*max(strwidth(soyletxt, units='figure')) # cex=cexgr
+	      soyleXpos <- 1.14*xmax*max(strwidth(soyletxt, units='figure')) # cex=cexgr
 	      text(x=soyleXpos, y=pos+0.1, soyletxt, las=1, cex=cexgr, adj=1, col=farger[1])	#AggVerdier, hvert sykehus
 	      }
 
@@ -160,7 +161,7 @@ if (retn == 'H') {
 	  #if (grVar == '') {
 	  if (figurtype == 'andeler') {
       	  if (medSml == 1) { #Legge på prikker for sammenlikning
-      	        legend(xmax/4, posOver+0.8*posDiff, c(paste0(hovedgrTxt, ' (N=', N$Hoved,')'), paste0(smltxt, ' (N=', N$Rest,')')), 
+      	        legend(xmax/4, posOver+0.6*posDiff, c(paste0(hovedgrTxt, ' (N=', N$Hoved,')'), paste0(smltxt, ' (N=', N$Rest,')')), 
       	               border=c(fargeHoved,NA), col=c(fargeHoved,fargeRest), bty='n', pch=c(15,18), pt.cex=2, 
       	               lwd=lwdRest, lty=NA, ncol=1)
       	  } else {	
