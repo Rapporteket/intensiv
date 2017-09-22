@@ -313,7 +313,7 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler'
       } 
       if (valgtVar == 'respiratortidNonInv') { #andeler, gjsnGrVar, GjsnTid
             RegData <- RegData[which((RegData$NonInvasivVentilation>0) & (RegData$InnDato>=as.POSIXlt('2015-01-01'))), ] 
-            tittel <- 'Ventilasjonstid, åpen maske'
+            tittel <- 'Non-invasiv ventilasjon/maskeventilasjon'
             RegData$Variabel  <- as.numeric(RegData$NonInvasivVentilation)
             if (figurtype %in% c('gjsnGrVar', 'gjsnTid')) {
                   tittel <- 'ventilasjonstid, åpen maske'
@@ -367,11 +367,11 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler'
       }
       if (valgtVar=='SAPSII') { #Andeler #GjsnGrVar
             #Tar ut SAPSII=0 (ikke scorede)
-            #og de under 18år (tas ut i NIRutvalg)
+            #og de under 16år (tas ut i NIRutvalg)
             tittel <- 'Fordeling av SAPSII'
             if (figurtype %in% c('gjsnGrVar', 'gjsnTid')) {
                   tittel <- 'SAPSII' }
-            minald <- max(18, minald)     #Bare voksne skal skåres
+            minald <- max(16, minald)     #Bare voksne skal skåres
             RegData <- RegData[which(as.numeric(RegData$SAPSII) > 0), ]
             RegData$Variabel <- RegData$SAPSII
             gr <- c(seq(0, 100,10), 500) 
@@ -382,7 +382,7 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler'
       
       if (valgtVar == 'SMR') { #GjsnGrVar
             #Tar ut reinnlagte på intensiv og overflyttede, samt de med SAPSII=0 (ikke scorede) 
-            #De under 18år tas ut i NIRutvalg
+            #De under 16år tas ut i NIRutvalg
             #(TransferredStatus: 1= ikke overført, 2= overført), 
             #ReAdmitted: #1:Ja, 2:Nei, 3:Ukjent, -1:Ikke utfylt
             minald <- max(16, minald) 
