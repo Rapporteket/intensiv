@@ -47,7 +47,8 @@ NIRFigSoyler <- function(RegData, AggVerdier, AggTot=0, Ngr, tittel='mangler tit
 #---------------------------------------FRA FIGANDELER, FigGjsnGrVar og FigAndelGrVar--------------------------
 #Hvis for få observasjoner..
 
-      if (N$Hoved < 5 | ((enhetsUtvalg %in% c(1,3)) & length(which(RegData$ReshId == reshID))<5)) #(dim(RegData)[1]-N$Hoved <5) )
+      if ((N$Hoved < 5) | (dim(RegData)[1]<5))
+          #| ((enhetsUtvalg %in% c(1,3)) & length(which(RegData$ReshId == reshID))<5)) #(dim(RegData)[1]-N$Hoved <5) )
      #       if (dim(RegData)[1] < 10 | ((enhetsUtvalg %in% c(1,3)) & length(which(RegData$ReshId == reshID))<5) )
     #|(grVar=='' & length(which(RegData$ReshId == reshID))<5 & enhetsUtvalg %in% c(1,3))) 
     {
