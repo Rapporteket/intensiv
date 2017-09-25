@@ -70,7 +70,7 @@ RegData01Off(RegData, valgtVar=valgtVar, datoFra = datoFra, datoTil, tilleggsVar
 
 #-------------------------------Resultater for off.kval.ind.----------------------------------------
 datoFra <- '2011-01-01'
-datoTil <- '2016-12-31'
+datoTil <- '2017-12-31'
 aar <- 0
 grType <- 99
 grVar <- 'ShNavn'
@@ -183,11 +183,11 @@ for (valgtVar in variable) {
 
 #---------------------AndelTid----------------------------------------------
 tidsenhet <- 'Aar'
-valgtVar <- 'respiratortidInv'	#'alder_u18', 'alder_over80', 'dod30d', 'dodeIntensiv', 'liggetidDod', 
+valgtVar <- 'respiratortidInvMoverf'	#'alder_u18', 'alder_over80', 'dod30d', 'dodeIntensiv', 'liggetidDod', 
                         #'respiratortidDod', 'respStotte', 'reinn', 'SMR'
                         #'UT: respiratortid, 
-                        #Ny: respiratortidInv, 
-outfile <- paste0(valgtVar, '.pdf')
+                        #Ny: respiratortidInvMoverf, respiratortidInvUoverf
+outfile <- '' #paste0(valgtVar, '.pdf')
 
 NIRAndelTid(RegData=RegData, valgtVar=valgtVar, datoFra=datoFra, datoTil=datoTil, tidsenhet = tidsenhet,
 		minald=minald, maxald=maxald, erMann=erMann,InnMaate=InnMaate, dodInt=dodInt, 
