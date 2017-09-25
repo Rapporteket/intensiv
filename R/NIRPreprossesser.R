@@ -35,15 +35,8 @@ NIRPreprosess <- function(RegData=RegData, lagreKvalIndData=0)	#, reshID=reshID)
 	names(RegData)[which(names(RegData) == 'Saps2ScoreNumber')] <- 'SAPSII'
 	names(RegData)[which(names(RegData) == 'TransferredStatus')] <- 'Overf'
 	names(RegData)[which(names(RegData) == 'TypeOfAdmission')] <- 'InnMaate'
-<<<<<<< HEAD
-	names(RegData)[which(names(RegData) == 'Nems')] <- 'NEMS'
-#	names(RegData)[which(names(RegData) == 'ReAdmitted')] <- 'Reinn'
-	names(RegData)[which(names(RegData) == 'PatientAge')] <- 'Alder'
-	names(RegData)[which(names(RegData) == 'UnitId')] <- 'ReshId'
-=======
 	names(RegData)[which(names(RegData) == 'ReshID')] <- 'ReshId'
->>>>>>> rel
-	
+
 # Riktig format
 	RegData$ShNavn <- trimws(as.character(RegData$ShNavn)) #Fjerner mellomrom (før) og etter navn
 

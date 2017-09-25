@@ -17,54 +17,6 @@ NIRRegDataSQL <- function(datoFra = '2011-01-01', datoTil = '2099-01-01') {
   
   query <- paste0('SELECT
 	Bilirubin,
-<<<<<<< HEAD
-	BrainDamage,
-	CerebralCirculationAbolished, 
-	CerebralCirculationAbolishedReasonForNo,
-	ChronicDiseases,
-	DateAdmittedIntensive,
-	DateDischargedIntensive,
-	DaysAdmittedIntensiv,
-	DeadPatientDuring24Hours,
-	DischargedIntensiveStatus,
-	Glasgow,
-	Hco3,
-	HeartRate,
-	Leukocytes,
-	MechanicalRespirator,
-	MoreThan24Hours,
-	Morsdato,
-	MovedPatientToAnotherIntensivDuring24Hours,
-	MvOrCpap,
-	Nas,
-	Nems,
-	OrganDonationCompletedReasonForNoStatus,
-	OrganDonationCompletedStatus,
-	PatientAge,
-	PatientGender,
-    PasientGUID,
-	PatientTransferredFromHospital,
-	PatientTransferredToHospital,
-	Potassium,
-	ReAdmitted,
-	Respirator,
-	Saps2Score,
-	Saps2ScoreNumber,
-	SerumUreaOrBun,
-	ShNavn,
-	ShType,
-	Sodium,
-	SystolicBloodPressure,
-	Temperature,
-	TransferredStatus,
-	TypeOfAdmission,
-      UnitId,
-	UrineOutput
-FROM
-	MainFormDataContract
-WHERE cast(DateAdmittedIntensive as date) BETWEEN \'', datoFra, '\' AND \'', datoTil, '\'')
-#WHERE cast(DateAdmittedIntensive as date) >= \'', datoFra, '\' AND DateAdmittedIntensive <= \'', datoTil, '\'')
-=======
       BrainDamage,
       CerebralCirculationAbolished,
       CerebralCirculationAbolishedReasonForNo,
@@ -135,8 +87,7 @@ FROM
 	MainFormDataContract
 WHERE cast(DateAdmittedIntensive as date) BETWEEN \'', datoFra, '\' AND \'', datoTil, '\'')
   #WHERE cast(DateAdmittedIntensive as date) >= \'', datoFra, '\' AND DateAdmittedIntensive <= \'', datoTil, '\'')  
->>>>>>> rel
-  
+
   RegData <- rapbase::LoadRegData(registryName, query, dbType)
   
   return(RegData)
