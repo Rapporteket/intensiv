@@ -23,7 +23,8 @@
 #'	   \item 8: Egen region mot resten [NB: Mangler pt. variabel for region]
 #'    	}							
 #'
-#' @inheritParams NIRFigAndeler 
+#' @inheritParams NIRAndeler 
+#' @inheritParams NIRVarTilrettelegg
 #' @param valgtMaal
 #'        'Gjsn': gir middelverdi (standard)
 #'        'Med': gir median
@@ -45,127 +46,41 @@ NIRFigGjsnTid <- function(RegData, valgtVar, datoFra='2011-01-01', datoTil='3000
     RegData <- NIRPreprosess(RegData=RegData)	#, reshID=reshID)
   }
   
-RegData$Aar <- 1900 + strptime(RegData$InnDato, format="%Y")$year
-RegData$Variabel <- 0	
 
-#retn <- 'V'		#Vertikal som standard. 'H' angis evt. for enkeltvariable
-grtxt <- ''		#Spesifiseres for hver enkelt variabel
-grtxt2 <- ''	#Spesifiseres evt. for hver enkelt variabel
-subtxt <- ''	#Benevning
-flerevar <- 0
-antDes <- 1
-KIekstrem <- NULL
-
-
-#Når skal sammenlikne region - eller ikke sammenlikne, 
-#trengs ikke data for hele landet:
-reshID <- as.numeric(reshID)
-indEgen1 <- match(reshID, RegData$ReshId)
-if (enhetsUtvalg %in% c(2,3,4,6,7)) {	
-		RegData <- switch(as.character(enhetsUtvalg),
-						'2' = RegData[which(RegData$ReshId == reshID),],	#kun egen enhet
-						'3' = subset(RegData,ShType==ShType[indEgen1]),
-						'4' = RegData[which(RegData$ShType == RegData$ShType[indEgen1]),],	#kun egen shgruppe
-						'6' = RegData[which(RegData$Region == as.character(RegData$Region[indEgen1])),],	#sml region
-						'7' = RegData[which(RegData$Region == as.character(RegData$Region[indEgen1])),])	#kun egen region
-	}
-
-if (valgtVar=='alder') {
-  RegData <- RegData[which(RegData$Alder>=0), ]    #Tar bort alder<0
-  RegData$Variabel<-RegData$Alder  
-  TittelVar <- 'Alder'
-  ytxt1 <- 'alder (år)'
-}
-
-if (valgtVar=='liggetid') {
-  RegData <- RegData[which(RegData$liggetid>0), ]    #Tar bort liggetid<0 samt NA
-  RegData <- RegData[which(RegData$DischargedIntensiveStatus %in% 0:1), ]    #Tar bort ukjente  
-  RegData$Variabel<-RegData$liggetid  
-  TittelVar <- 'Liggetid'
-  ytxt1 <- 'liggetid'
-}
-
-if (valgtVar=='respiratortid') {
-  RegData <- RegData[which(RegData$respiratortid>0), ]    #Tar bort liggetid<0 samt NA
-  RegData <- RegData[which(RegData$DischargedIntensiveStatus %in% 0:1), ]    #Tar bort ukjente  
-  RegData$Variabel<-RegData$respiratortid
-  TittelVar <- 'Respiratortid'
-  ytxt1 <- 'respiratortid'
-}
-
-if (valgtVar=='SAPSII') {
-	minald <- max(18, minald)	#alder >= 18år. Tas ut i Utvalg
-  RegData <- RegData[which(as.numeric(RegData$SAPSII) > 0), ]
-  RegData$Variabel<-RegData$SAPSII
-  TittelVar <- 'SAPSII'
-  ytxt1 <- 'SAPSII'
-}
+  #--------------- Definere variable ------------------------------
+  
+  NIRVarSpes <- NIRVarTilrettelegg(RegData=RegData, valgtVar=valgtVar, figurtype='gjsnGrVar')
+  RegData <- NIRVarSpes$RegData
+  
+  
+  NIRUtvalg <- NIRUtvalgEnh(RegData=RegData, datoFra=datoFra, datoTil=datoTil, #aar=aar, 
+							minald=minald, maxald=maxald, 
+							erMann=erMann, InnMaate=InnMaate, dodInt=dodInt, 
+							reshID=reshID, enhetsUtvalg=enhetsUtvalg) #overfPas = overfPas,
+  RegData <- NIRUtvalg$RegData
+  utvalgTxt <- NIRUtvalg$utvalgTxt
+  medSml <- NIRUtvalg$medSml
 
 
-#Tar ut de med manglende registrering av valgt variabel og gjør utvalg
-NIRUtvalg <- NIRUtvalg(RegData=RegData, datoFra=datoFra, datoTil=datoTil, minald=minald, maxald=maxald, 
-                       erMann=erMann,InnMaate=InnMaate,dodInt=dodInt)
-RegData <- NIRUtvalg$RegData
-utvalgTxt <- NIRUtvalg$utvalgTxt
-
-
-if (valgtMaal=='Med') {
-  t1 <- 'Median ' } else {t1 <- 'Gjennomsnittlig '}
-
-tittel <- paste(t1, TittelVar, sep='') 
-	
-shTypetext <- c('lokale/sentrale', 'lokale/sentrale', 'regionale')				
-indEgen1 <- match(reshID, RegData$ReshId)
-if (enhetsUtvalg %in% c(1,2,3,6)) {	#Involverer egen enhet
-		shtxt <- as.character(RegData$ShNavn[indEgen1]) } else {
-		shtxt <- switch(as.character(enhetsUtvalg), 	
-			'0' = 'Hele landet',
-			'4' = shTypetext[RegData$ShType[indEgen1]],
-			'5' = shTypetext[RegData$ShType[indEgen1]],
-			'7' = as.character(RegData$Region[indEgen1]),
-			'8' = as.character(RegData$Region[indEgen1]))
-			}
-			
-if (enhetsUtvalg %in% c(0,2,4,7)) {		#Ikke sammenlikning
-			medSml <- 0
-			indHoved <- 1:dim(RegData)[1]	#Tidligere redusert datasettet for 2,4,7. (+ 3og6)
-			indRest <- NULL
-		} else {						#Skal gjøre sammenlikning
-			medSml <- 1
-			if (enhetsUtvalg %in% c(1,3,6)) {	#Involverer egen enhet
-				indHoved <-which(as.numeric(RegData$ReshId)==reshID) } else {
-				indHoved <- switch(as.character(enhetsUtvalg),
-						'5' = which(RegData$ShType == RegData$ShType[indEgen1]),	#shgr
-						'8' = which(RegData$Region == RegData$Region[indEgen1]))}	#region
-			smltxt <- switch(as.character(enhetsUtvalg),
-				'1' = 'landet forøvrig',
-				'3' = paste0('andre ', shTypetext[RegData$ShType[indEgen1]], 'sykehus'),	#RegData inneh. kun egen shgruppe
-				'5' = 'andre typer sykehus',
-				'6' = paste0(RegData$Region[indEgen1], ' forøvrig'),	#RegData inneh. kun egen region
-				'8' = 'andre regioner')
-			indRest <- switch(as.character(enhetsUtvalg),
-				'1' = which(as.numeric(RegData$ReshId) != reshID),
-				'3' = which(as.numeric(RegData$ReshId) != reshID),	#RegData inneh. kun egen shgruppe
-				'5' = which(RegData$ShType != RegData$ShType[indEgen1]),
-				'6' = which(as.numeric(RegData$ReshId)!=reshID),	#RegData inneh. kun egen region
-				'8' = which(RegData$Region != RegData$Region[indEgen1]))
-			}								
-
-			
-Tittel <-  c(tittel, shtxt)	#Hva er dette? 
-
-
-
+#--------------- Gjøre beregninger ------------------------------
+#  flerevar <- 0
+#  antDes <- 1
+  KIekstrem <- NULL
+  
+  
+AggVerdier <- list(Hoved = 0, Rest =0)
+ind <- NIRUtvalg$ind
+N <- list(Hoved = 0, Rest =0)
+Ngr <- list(Hoved = length(ind$Hoved), Rest =length(ind$Rest))
 
 Aartxt <- min(RegData$Aar):max(RegData$Aar)
 RegData$Aar <- factor(RegData$Aar, levels=Aartxt)
 AntAar <- length(Aartxt)
 
-
 #Resultat for hovedgruppe
-N <- tapply(RegData[indHoved ,'Variabel'], RegData[indHoved, 'Aar'], length)
+N <- tapply(RegData[ind$Hoved ,'Variabel'], RegData[ind$Hoved, 'Aar'], length)
 if (valgtMaal=='Med') {
-	MedIQR <- plot(RegData$Aar[indHoved],RegData$Variabel[indHoved],  notch=TRUE, plot=FALSE)
+	MedIQR <- plot(RegData$Aar[ind$Hoved],RegData$Variabel[ind$Hoved],  notch=TRUE, plot=FALSE)
 	Midt <- as.numeric(MedIQR$stats[3, ])	#as.numeric(MedIQR$stats[3, sortInd])
 	Konf <- MedIQR$conf
 	#Hvis vil bruke vanlige konf.int:
@@ -177,8 +92,8 @@ if (valgtMaal=='Med') {
 #and are said to be rather insensitive to the underlying distributions of the samples. The idea appears to be to give 
 #roughly a 95% confidence interval for the difference in two medians. 	
 } else {	#Gjennomsnitt blir standard.
-	Midt <- tapply(RegData[indHoved ,'Variabel'], RegData[indHoved, 'Aar'], mean)
-	SD <- tapply(RegData[indHoved ,'Variabel'], RegData[indHoved, 'Aar'], sd)
+	Midt <- tapply(RegData[ind$Hoved ,'Variabel'], RegData[ind$Hoved, 'Aar'], mean)
+	SD <- tapply(RegData[ind$Hoved ,'Variabel'], RegData[ind$Hoved, 'Aar'], sd)
 	Konf <- rbind(Midt - 2*SD/sqrt(N), Midt + 2*SD/sqrt(N))
 }
 
@@ -192,24 +107,29 @@ if (length(KIekstrem) == 0) {	#Hvis ikke KIekstrem definert i variabeldefinisjon
 MidtRest <- NULL
 KonfRest <- NULL
 if (medSml ==  1) {
-Nrest <- tapply(RegData[indRest ,'Variabel'], RegData[indRest, 'Aar'], length)
+Nrest <- tapply(RegData[ind$Rest ,'Variabel'], RegData[ind$Rest, 'Aar'], length)
 	if (valgtMaal=='Med') {
-		MedIQRrest <- plot(RegData$Aar[indRest],RegData$Variabel[indRest],  notch=TRUE, plot=FALSE)
+		MedIQRrest <- plot(RegData$Aar[ind$Rest],RegData$Variabel[ind$Rest],  notch=TRUE, plot=FALSE)
 		MidtRest <- as.numeric(MedIQRrest$stats[3, ])
 		KonfRest <- MedIQRrest$conf
 	} else {
-	MidtRest <- tapply(RegData[indRest,'Variabel'], RegData[indRest, 'Aar'], mean)	#indRest
-	SDRest <- tapply(RegData[indRest,'Variabel'], RegData[indRest, 'Aar'], sd)
-	Nrest <- tapply(RegData[indRest,'Variabel'], RegData[indRest, 'Aar'], length)
+	MidtRest <- tapply(RegData[ind$Rest,'Variabel'], RegData[ind$Rest, 'Aar'], mean)	#ind$Rest
+	SDRest <- tapply(RegData[ind$Rest,'Variabel'], RegData[ind$Rest, 'Aar'], sd)
+	Nrest <- tapply(RegData[ind$Rest,'Variabel'], RegData[ind$Rest, 'Aar'], length)
 	KonfRest <- rbind(MidtRest - 2*SDRest/sqrt(Nrest), MidtRest + 2*SDRest/sqrt(Nrest))
 	}
 }
 
+t1 <- switch(valgtMaal,
+             Med = 'Median ',
+             Gjsn = 'Gjennomsnittlig ')
+tittel <- paste0(t1, NIRVarSpes$tittel) 
+
     #-----------Figur---------------------------------------
-if (length(indHoved)<10 | ((medSml == 1) & (length(indRest) < 10))) {
+if (length(ind$Hoved)<10 | ((medSml == 1) & (length(ind$Rest) < 10))) {
 figtype(outfile)
 	plot.new()
-	title(main=Tittel)
+	title(main=tittel)
 	text(0.5, 0.65, 'Færre enn 10 registreringer i hoved-', cex=1.2)
 	text(0.55, 0.6, 'eller sammenlikningsgruppe', cex=1.2)
 #	text(0.5, 0.5, tekst,cex=1.5)	#, family="sans")
@@ -249,7 +169,7 @@ if (medSml==1) {
 		c(KonfRest[1,c(1,1:AntAar, AntAar)], KonfRest[2,c(AntAar,AntAar:1,1)]), 
 			col=fargeRestRes, border=NA)
 	legend('top', bty='n', fill=fargeRestRes, border=fargeRestRes, cex=cexgr,
-		paste('95% konfidensintervall for ', smltxt, ', N=', sum(Nrest, na.rm=T), sep=''))
+		paste('95% konfidensintervall for ', NIRUtvalg$smltxt, ', N=', sum(Nrest, na.rm=T), sep=''))
 }
 h <- strheight(1, cex=cexgr)*0.7	#,  units='figure',
 b <- 1.1*strwidth(max(N, na.rm=T), cex=cexgr)/2	#length(Aartxt)/30
@@ -263,8 +183,8 @@ arrows(x0=Aartxt, y0=Midt-h, x1=Aartxt, length=0.08, code=2, angle=90,
 		y1=replace(Konf[1, ], ind, Midt[ind]-h), col=fargeHovedRes, lwd=1.5)
 arrows(x0=Aartxt, y0=Midt+h, x1=Aartxt, y1=replace(Konf[2, ], ind, Midt[ind]+h), 
 		length=0.08, code=2, angle=90, col=fargeHovedRes, lwd=1.5)
-	
-title(main=Tittel, font.main=1, line=1)
+
+title(main=c(tittel, NIRUtvalg$hovedgrTxt), font.main=1, line=1)
 #Tekst som angir hvilket utvalg som er gjort
 if (length(utvalgTxt)>0) {
 mtext(utvalgTxt, side=3, las=1, cex=0.9, adj=0, col=farger[1], line=c(3+0.8*((NutvTxt-1):0)))}
@@ -273,8 +193,8 @@ if ( outfile != '') {dev.off()}
 
 ResData <- round(rbind(Midt, Konf, MidtRest, KonfRest), 1)
 rownames(ResData) <- c('Midt', 'KIned', 'KIopp', 'MidtRest', 'KIRestned', 'KIRestopp')[1:(3*(medSml+1))]
-UtData <- list(paste(toString(Tittel),'.', sep=''), ResData )
-names(UtData) <- c('Tittel', 'Data')
+UtData <- list(paste0(toString(NIRVarSpes$tittel),'.'), ResData )
+names(UtData) <- c('tittel', 'Data')
 return(invisible(UtData))
 
 }	#end if statement for 0 observations

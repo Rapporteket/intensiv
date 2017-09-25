@@ -4,34 +4,25 @@
 \alias{NIRVarTilrettelegg}
 \title{Funksjon for å tilrettelegge variable for beregning.}
 \usage{
-NIRVarTilrettelegg(RegData, valgtVar)
+NIRVarTilrettelegg(RegData, valgtVar, grVar = "", figurtype = "andeler")
 }
 \arguments{
 \item{RegData}{En dataramme med alle nødvendige variabler fra registeret}
 
 \item{valgtVar}{Hvilken variabel som skal visualiseres. Se \strong{Details} for oversikt.}
 
-\item{reshID}{Parameter følger fra innlogging helseregister.no og angir
-hvilken enhet i spesialisthelsetjenesten brukeren tilhører}
-
-\item{enhetsUtvalg}{Gjør gruppeutvalg med eller uten sammenlikning. Se \strong{Details} for oversikt.}
-
-\item{preprosess}{Preprosesser data
-FALSE: Nei
-TRUE: Ja (Standard)}
-
-\item{hentData}{Gjør spørring mot database
-0: Nei, RegData gis som input til funksjonen (Standard)
-1: Ja}
+\item{figurtype}{Hvilken figurtype det skal tilrettelegges variable for: 
+'andeler', 'andelGrVar', 'andelTid', 'gjsnGrVar', 'gjsnTid'}
 }
 \value{
 Definisjon av valgt variabel.
 }
 \description{
 Denne funksjonen gjør utvalg og tilrettelegger variable (gitt ved valgtVar) til videre bruk. 
-Videre bruk kan eksempelvis være beregning av andeler eller gjennomsnitt. 
+Videre bruk kan eksempelvis være beregning av AggVerdier eller gjennomsnitt. 
 Funksjonen gjør også filtreringer som å fjerne ugyldige verdier for den valgte variabelen, samt ta høyde for avhengigheter med
-andre variable. Det er også her man angir aksetekster og titler for den valgte variabelen.
+andre variable. Det er også her man angir aksetekster og titler for den valgte variabelen. 
+Her kan mye hentes til analysebok
 }
 \details{
 Argumentet \emph{valgtVar} har følgende valgmuligheter:
@@ -40,7 +31,7 @@ Argumentet \emph{valgtVar} har følgende valgmuligheter:
     \item InnMaate: Hastegrad inn på intensiv (Elektivt, Akutt medisinsk, Akutt kirurgisk)
     \item liggetid: Liggetid 
     \item NEMS: Skår for ressursbruk. (Nine Equivalents of Nursing Manpower Use Score)
-    \item Nas: Skår for sykepleieraktiviteter. (Nursing Activities Score)
+    \item Nas24: Skår for sykepleieraktiviteter. (Nursing Activities Score)
     \item respiratortid: Tid tilbrakt i respirator
     \item SAPSII: Skår for alvorlighetsgrad av sykdom.  (Simplified Acute Physiology Score II)
    }
@@ -57,4 +48,3 @@ Argumentet \emph{enhetsUtvalg} har følgende valgmuligheter:
    \item 8: Egen region mot resten [NB: Mangler pt. variabel for region]
    	}
 }
-

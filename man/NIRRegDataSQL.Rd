@@ -17,4 +17,3 @@ Henter dataramma RegData for Intensivregisteret
 \description{
 Henter data for Intensivregisteret fra "staging"
 }
-

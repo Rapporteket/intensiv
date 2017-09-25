@@ -4,7 +4,7 @@
 \alias{NIRPreprosess}
 \title{Preprosesser data fra Intensivregisteret}
 \usage{
-NIRPreprosess(RegData = RegData)
+NIRPreprosess(RegData = RegData, lagreKvalIndData = 0)
 }
 \arguments{
 \item{RegData}{En dataramme med alle nødvendige variabler fra registeret}
@@ -14,5 +14,6 @@ Data En liste med det filtrerte datasettet (og sykehusnavnet som tilsvarer reshI
 }
 \description{
 Denne funksjonen navner om variabler og beregner evt. nye.
+Funksjonen lager også et "offentlig" datasett som kan benyttes til beregning
+av kvalitetsindikatorer og som kan legges ved pakken
 }
-

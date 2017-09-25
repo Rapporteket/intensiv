@@ -2,39 +2,80 @@
 % Please edit documentation in R/NIRFigSoyler.R
 \name{NIRFigSoyler}
 \alias{NIRFigSoyler}
-\title{IKKE PÅBEGYNT....!!!}
+\title{Lager søylefigur}
 \usage{
-NIRFigSoyler(RegData, FigDataParam = "", outfile)
+NIRFigSoyler(RegData, AggVerdier, AggTot = 0, Ngr,
+  tittel = "mangler tittel", smltxt = "", N, retn = "H", yAkseTxt = "",
+  utvalgTxt = "", grTypeTxt = "", soyletxt = "", grtxt, grtxt2 = "",
+  hovedgrTxt = "", grVar = "", valgtMaal = "Andel", figurtype = "",
+  cexgr = 1, medSml = 0, fargepalett = "BlaaOff", xAkseTxt = "",
+  medKI = 0, KImaal = NA, KImaaltxt = "", outfile = "")
 }
 \arguments{
 \item{RegData}{En dataramme med alle nødvendige variabler fra registeret}
 
+\item{AggVerdier}{Liste med AggVerdier i hver kategori (aldersgruppe, sykehus, ...). 
+AggVerdier$Hoved er enten andelene for hele utvalget i hver kategori eller f.eks. egen enhet
+AggVerdier$Rest er andelene for gruppa det sammenlignes mot.}
+
+\item{AggTot}{Aggregert verdi for hele gruppa (ett tall)}
+
+\item{Ngr}{Antall i hver gruppe}
+
+\item{tittel}{Figurtittel}
+
+\item{smltxt}{Tekststreng som angir hva vi evt. sammenlikner med. Benyttes også til å angi 
+gruppenavnet (i f.eks. tekstetikett) hvis det er gjort utvalg på f.eks. en sykehustype.}
+
+\item{N}{Totalantall angitt i N$Hoved og N$Rest}
+
+\item{retn}{Horisontale eller Vertikale søyler ('H', 'V')}
+
+\item{yAkseTxt}{Tekst på y-aksen}
+
+\item{utvalgTxt}{Tekst som angir hvilke utvalg som er gjort}
+
+\item{grTypeTxt}{Tekst som angir}
+
+\item{soyletxt}{Tekst PÅ hver søyle}
+
+\item{grtxt}{Navn på gruppene/kategoriene (Eks 40-50 år)}
+
+\item{grtxt2}{Evt. undertekst på kategoriene (Eks 28pst)}
+
+\item{hovedgrTxt}{Angivelse av hovedgruppe, eks. eget sykehus}
+
+\item{valgtMaal}{'Med' = median. Alt annet gir gjennomsnitt}
+
+\item{figurtype}{Hvilken figurtype som ønskes ut: 
+andel (fordelingsfigurer), 
+andelGrVar (andel i hver kategori av grupperingsvariabel, eks. sykehus), 
+andelTid (andel per tidsenhet, eks. år, måned), 
+andelPP (andel før og etter), 
+gjsnGrVar (sentralmål i hver kategori av grupperingsvariabel, eks. sykehus),
+gjsnTid (sentralmål per tidsenhet, eks. år, måned)}
+
+\item{cexgr}{Skalering av gruppetekst (trenger mindre font når flere grupper)}
+
+\item{medSml}{Angir om vi skal gjøre sammenlikning eller ikke (verdier: 1/0)}
+
+\item{fargepalett}{'BlaaOff'}
+
+\item{xAkseTxt}{tekst på x-aksen}
+
+\item{KImaal}{Kvalitetsindikatormål}
+
 \item{outfile}{Navn på fil figuren skrives til. Standard: '' (Figur skrives
 til systemets standard utdataenhet (som regel skjerm))}
-
-\item{valgtMaal}{'Med' = median. Alt annet gir gjennomsnitt 
-
-Argumentet \emph{valgtVar} har følgende valgmuligheter:
-   \itemize{
-    \item alder: Pasientens alders 
-    \item SMR: Standardisert mortalitetsratio (Gir annen figurtype)
-    \item liggetid: Liggetid 
-    \item Nas: Skår for sykepleieraktiviteter. (Nursing Activities Score). Per døgn.
-    \item NEMS: Skår for ressursbruk per opphold. (Nine Equivalents of Nursing Manpower Use Score)
-    \item NEMS24: NEMS-skår per døgn. 
-    \item respiratortid: Tid tilbrakt i respirator
-    \item SAPSII: Skår for alvorlighetsgrad av sykdom.  (Simplified Acute Physiology Score II)
-   }
-
-Detajer: Her bør man liste opp hvilke variable funksjonen benytter.}
 }
 \value{
 Søylediagram med gjennomsnitt/median av valgt variabel for hvert sykehus
 }
 \description{
-bLA, BAL
+Funksjonen genererer søylediagram basert på data som leveres funksjonen. Søylediagrammenes utseende
+varierer noe for ulike datatyper, dvs. den kan vise både fordelingsfigur, AggVerdier eller sentralmål for 
+gitt grupperingsvariabel, ...
 }
 \details{
-Detajer: Her bør man liste opp hvilke variable funksjonen benytter...
+Detajer: Her bør man liste opp hvilke variable funksjonen benytter.
 }
-

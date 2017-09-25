@@ -37,7 +37,7 @@ standard: alle (alt unntatt 0,6,8 / ikke spesifisert)}
 \item{dodInt}{Levende/død ut fra intensiv. 
 0: i live, 
 1: død,   
-alle, standard (alle andre verdier)}
+alle: standard (alle andre verdier)}
 
 \item{outfile}{Navn på fil figuren skrives til. Standard: '' (Figur skrives
 til systemets standard utdataenhet (som regel skjerm))}
@@ -83,4 +83,3 @@ Argumentet \emph{enhetsUtvalg} har følgende valgmuligheter:
    \item 8: Egen region mot resten [NB: Mangler pt. variabel for region]
    	}
 }
-

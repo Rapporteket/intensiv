@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.2.0.final using JasperReports Library version 6.2.0  -->
-<!-- 2016-06-14T16:58:50 -->
+<!-- Created with Jaspersoft Studio version 6.4.0.final using JasperReports Library version 6.4.1  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="NIRFigGjsnGrVar" language="groovy" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" scriptletClass="no.skde.report.nir.NirCommonScriptletRPackage" uuid="45fe8ce0-ff63-4edb-9fe2-e19b7f09ad23">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
@@ -23,16 +22,16 @@
 		<defaultValueExpression><![CDATA[$P{LoggedInUserAttribute_AVD_RESH}]]></defaultValueExpression>
 	</parameter>
 	<parameter name="reportName" class="java.lang.String" isForPrompting="false">
-		<defaultValueExpression><![CDATA[new String("NIRFigGjsnGrVar")]]></defaultValueExpression>
+		<defaultValueExpression><![CDATA[new String("NIRGjsnGrVar")]]></defaultValueExpression>
 	</parameter>
 	<parameter name="rPackageName" class="java.lang.String" isForPrompting="false">
 		<defaultValueExpression><![CDATA[new String("intensiv")]]></defaultValueExpression>
 	</parameter>
 	<parameter name="rFunctionCallString" class="java.lang.String" isForPrompting="false">
-		<defaultValueExpression><![CDATA[new String("NIRFigGjsnGrVar(RegData=0, valgtVar='SMR', valgtMaal='', minald=minald, maxald=maxald, datoFra=datoFra, datoTil=datoTil, grType=grType, InnMaate=InnMaate, erMann=erMann, hentData=1, preprosess=1, outfile=outfile)")]]></defaultValueExpression>
+		<defaultValueExpression><![CDATA[new String("NIRGjsnGrVar(RegData=0, valgtVar='SMR', minald=minald, maxald=maxald, datoFra=datoFra, datoTil=datoTil, grType=grType, InnMaate=InnMaate, erMann=erMann, hentData=1, preprosess=1, outfile=outfile)")]]></defaultValueExpression>
 	</parameter>
 	<parameter name="beginDate" class="java.util.Date">
-		<defaultValueExpression><![CDATA[new SimpleDateFormat("yyyy-MM-dd").parse("2011-01-01")]]></defaultValueExpression>
+		<defaultValueExpression><![CDATA[new SimpleDateFormat("yyyy-MM-dd").parse("2016-01-01")]]></defaultValueExpression>
 	</parameter>
 	<parameter name="endDate" class="java.util.Date">
 		<defaultValueExpression><![CDATA[new Date()]]></defaultValueExpression>
