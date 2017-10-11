@@ -38,14 +38,9 @@ texi2pdf(file='NIRSamleRapp.tex')
 #}
 
 
-#Ta med med/uten overføringer som valg? JA
-
 #-------------------------------------LASTE DATA-----------------------------------------------
 rm(list=ls())
-<<<<<<< HEAD
 
-NIRdata <- read.table(file='C:/Registre/NIR/data/Main2016-11-28.csv', header=T, sep=';',encoding = 'UTF-8')
-=======
 dato <- '2017-09-18'
 dataKat <- 'A:/Intensiv/'
 fil <- paste0(dataKat,'MainFormDataContract',dato)
@@ -54,7 +49,6 @@ fil <- paste0(dataKat,'MainFormDataContract',dato)
 load(paste0(fil,".Rdata")) #RegData
 #save(RegData, file=paste0(fil,'.Rdata'))
 #RegData <- RegData[which(as.POSIXlt(RegData$DateAdmittedIntensive, format="%Y-%m-%d")>= '2014-01-01'), ]
->>>>>>> rel
 #RegData <- NIRdata[sample(1:dim(NIRdata)[1],10000),]
 #save(RegData, file=paste0(dataKat,'NIRdata10000.Rdata'))
 load(paste0(dataKat,"NIRdata10000.Rdata")) #RegData, juli 2017
