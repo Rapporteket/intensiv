@@ -36,7 +36,7 @@ NIRPreprosess <- function(RegData=RegData, lagreKvalIndData=0)	#, reshID=reshID)
 	names(RegData)[which(names(RegData) == 'TransferredStatus')] <- 'Overf'
 	names(RegData)[which(names(RegData) == 'TypeOfAdmission')] <- 'InnMaate'
 	names(RegData)[which(names(RegData) == 'ReshID')] <- 'ReshId'
-	
+
 # Riktig format
 	RegData$ShNavn <- trimws(as.character(RegData$ShNavn)) #Fjerner mellomrom (før) og etter navn
 

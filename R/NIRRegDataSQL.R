@@ -87,7 +87,7 @@ FROM
 	MainFormDataContract
 WHERE cast(DateAdmittedIntensive as date) BETWEEN \'', datoFra, '\' AND \'', datoTil, '\'')
   #WHERE cast(DateAdmittedIntensive as date) >= \'', datoFra, '\' AND DateAdmittedIntensive <= \'', datoTil, '\'')  
-  
+
   RegData <- rapbase::LoadRegData(registryName, query, dbType)
   
   return(RegData)
