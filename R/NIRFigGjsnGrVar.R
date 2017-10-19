@@ -158,6 +158,7 @@ AggVerdier <- list(Hoved=Midt, Rest=0, KIned=KIned, KIopp=KIopp, KIHele=KIHele)
 Ngr <- list(Hoved=Ngr[sortInd], Rest=0)
 AggTot <- MidtHele
 KImaal <- NIRVarSpes$KImaal
+KImaaltxt <- NIRVarSpes$KImaaltxt
 xAkseTxt <- NIRVarSpes$xAkseTxt
 grTypeTxt <- NIRUtvalg$grTypeTxt			
 utvalgTxt <- NIRUtvalg$utvalgTxt
@@ -191,7 +192,7 @@ GjsnGrVarData <- list(AggVerdier=AggVerdier, #Endres til Soyleverdi? Evt. AggVer
 
 #FigDataParam skal inn som enkeltparametre i funksjonskallet
 if (lagFig == 1) {
-      cexgr <- 1-ifelse(length(soyletxt)>20, 0.25*length(soyletxt)/60, 0)
+      cexgr <- 1-length(soyletxt)/200
       # NIRFigSoyler(RegData, AggVerdier=AggVerdier, AggTot=MidtHele, Ngr=Ngr, N=list(Hoved=N), cexgr=cexgr, 
       #              tittel=tittel, valgtMaal=valgtMaal,
       #              smltxt=NIRUtvalg$smltxt, yAkseTxt=yAkseTxt,utvalgTxt=NIRUtvalg$utvalgTxt, 
@@ -280,8 +281,6 @@ if (lagFig == 1) {
                                length=0.5/max(pos), code=2, angle=90, lwd=1, col=farger[1])
                   }
                   
-                  if (grVar %in% c('ShNavn')) {	#Må si noe om den "gamle figurtypen"
-                        #grtxt <- rev(grtxt)
                         grTypeTxt <- smltxt
                         mtext(at=posOver, paste0('(N)' ), side=2, las=1, cex=cexgr, adj=1, line=0.25)
                         #Linje for hele landet/utvalget:
@@ -295,12 +294,9 @@ if (lagFig == 1) {
                                 col=fargeHoved, border=NA, cex.names=cexgr) #, xlim=c(0, xmax), ylim=c(ymin,ymax)
                         soyleXpos <- 1.14*xmax*max(strwidth(soyletxt, units='figure')) # cex=cexgr
                         text(x=soyleXpos, y=pos+0.1, soyletxt, las=1, cex=cexgr, adj=1, col=farger[1])	#AggVerdier, hvert sykehus
-                  }
                   
                   
                   #------Tegnforklaring (legend)--------
-                  if (valgtMaal %in% c('Gjsn', 'Med')) { #Sentralmålfigur
-                        #	if (figurtype %in% c('gjsnGrVar', 'gjsnTid')) { #Sentralmålfigur
                         if (medKI == 0) { #Hopper over hvis ikke valgtMaal er oppfylt
                               TXT <- paste0('totalt: ', sprintf('%.1f', AggTot), ', N=', N$Hoved)
                               legend(xmax/4, posOver+posDiff, TXT, fill=NA,  border=NA, lwd=2.5, xpd=TRUE, #inset=c(-0.1,0),
@@ -309,10 +305,9 @@ if (lagFig == 1) {
                               TXT <- c(paste0('totalt: ', sprintf('%.1f', AggTot), ', N=', N$Hoved), 
                                        paste0('95% konf.int., ', grTypeTxt, 'sykehus (', 
                                               sprintf('%.1f', KIHele[1]), '-', sprintf('%.1f', KIHele[2]), ')'))
-                              legend(xmax/4, posOver+2*posDiff, TXT, fill=c(NA, farger[3]),  border=NA, lwd=2.5,  #inset=c(-0.1,0),
-                                     col=c(farger[1], farger[3]), cex=cexleg, seg.len=0.6, merge=TRUE, bty='n')
+                              legend(xmax/4, posOver, TXT, yjust=0.25, fill=c(NA, farger[3]),  border=NA, lwd=2.5,  #inset=c(-0.1,0),
+                                     col=c(farger[1], farger[3]), cex=cexleg, seg.len=0.6, merge=TRUE, bty='n') #+2*posDiff
                         }
-                  } 
                   
                   #Legge på gruppe/søylenavn
                   mtext(at=pos+0.05, text=grtxt, side=2, las=1, cex=cexgr, adj=1, line=0.25) 

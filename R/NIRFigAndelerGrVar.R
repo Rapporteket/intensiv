@@ -170,7 +170,7 @@ AndelerGrVarData <- list(AggVerdier=AggVerdier,
 
 #FigDataParam skal inn som enkeltparametre i funksjonskallet
 if (lagFig == 1) {
-      cexgr <- 1-ifelse(AntGr>20, 0.25*AntGr/60, 0)
+      cexgr <- 1 - AntGr/200
       fargepalett <- NIRUtvalg$fargepalett
 #      FigurAndelGrVar(RegData, AggVerdier=AggVerdier, AggTot=AndelHele, Ngr=Ngr,N=N, cexgr=cexgr, 
 #                   tittel=tittel, smltxt=smltxt, utvalgTxt=utvalgTxt, #yAkseTxt=yAkseTxt,
@@ -227,68 +227,66 @@ if (lagFig == 1) {
                   cexleg <- 0.9	#Størrelse på legendtekst
                   
                   
-                        #Definerer disse i beregningsfunksjonen?  
-                        xmax <- max(c(AggVerdier$Hoved, AggVerdier$Rest),na.rm=T)*1.2
-                        xmax <- ifelse(valgtMaal=='Andel', min(xmax, 100), xmax) 	#100 som maks bare hvis andelsfigur..
-                        ymin <- 0.3 #0.5/cexgr^4	#0.05*antGr #Fordi avstand til x-aksen av en eller annen grunn øker når antall sykehus øker
-                        ymax <- 0.4+1.25*length(AggVerdier$Hoved) #c(0.3/xkr^4,  0.3+1.25*length(Midt)), 0.2+1.2*length(AggVerdier$Hoved) 
-                        
-                        #Må def. pos først for å få strek for hele gruppa bak søylene
-                        ### reverserer for å slippe å gjøre det på konf.int
-                        pos <- rev(barplot(rev(as.numeric(AggVerdier$Hoved)), horiz=T, xlim=c(0,xmax), ylim=c(ymin, ymax), #, plot=FALSE)
-                                           xlab=xAkseTxt, border=NA, col=fargeHoved)) #, col.axis='white', col='white'))
-                        indOK <- which(AggVerdier$Hoved>=0)
-                        posOK <- pos[indOK]
-                        posOver <- max(pos)+0.35*log(max(pos))
-                        posDiff <- 1.2*(pos[1]-pos[2])
-                        posOK <- pos[indOK]
-                        minpos <- min(posOK)-0.7
-                        maxpos <- max(posOK)+0.7
-                        
-                        if (medKI == 1) {	
-                              #Legge på konf.int for hele populasjonen
-                              #options(warn=-1)	#Unngå melding om KI med lengde 0
-                              #OPPRINNELIG FOR GJSN, VIL OGSÅ INNFØRE FOR ANDELER
-                              KIHele <- AggVerdier$KIHele
-                              AntGr <- length(which(AggVerdier$Hoved>0))
-                              polygon(c(rep(KIHele[1],2), rep(KIHele[2],2)), col=farger[3], border=farger[3],
-                                      c(minpos, maxpos, maxpos, minpos))
-                              #Legge på konf.int for hver enkelt gruppe/sykehus
-                                    arrows(x0=AggVerdier$Hoved, y0=pos, x1=AggVerdier$KIopp, y1=pos, 
-                                           length=0.5/max(pos), code=2, angle=90, lwd=1, col=farger[1])
-                                    arrows(x0=AggVerdier$Hoved, y0=pos, x1=AggVerdier$KIned, y1=pos, 
-                                           length=0.5/max(pos), code=2, angle=90, lwd=1, col=farger[1])
+                  #Definerer disse i beregningsfunksjonen?  
+                  xmax <- max(c(AggVerdier$Hoved, AggVerdier$Rest),na.rm=T)*1.2
+                  xmax <- ifelse(valgtMaal=='Andel', min(xmax, 100), xmax) 	#100 som maks bare hvis andelsfigur..
+                  ymin <- 0.3 #0.5/cexgr^4	#0.05*antGr #Fordi avstand til x-aksen av en eller annen grunn øker når antall sykehus øker
+                  ymax <- 0.4+1.25*length(AggVerdier$Hoved) #c(0.3/xkr^4,  0.3+1.25*length(Midt)), 0.2+1.2*length(AggVerdier$Hoved) 
+                  
+                  #Må def. pos først for å få strek for hele gruppa bak søylene
+                  ### reverserer for å slippe å gjøre det på konf.int
+                  pos <- rev(barplot(rev(as.numeric(AggVerdier$Hoved)), horiz=T, xlim=c(0,xmax), ylim=c(ymin, ymax), #, plot=FALSE)
+                                     xlab=xAkseTxt, border=NA, col=fargeHoved)) #, col.axis='white', col='white'))
+                  indOK <- which(AggVerdier$Hoved>=0)
+                  posOK <- pos[indOK]
+                  posOver <- max(pos)+0.35*log(max(pos))
+                  posDiff <- 1.2*(pos[1]-pos[2])
+                  posOK <- pos[indOK]
+                  minpos <- min(posOK)-0.7
+                  maxpos <- max(posOK)+0.7
+                  
+                  if (medKI == 1) {	
+                        #Legge på konf.int for hele populasjonen
+                        #options(warn=-1)	#Unngå melding om KI med lengde 0
+                        #OPPRINNELIG FOR GJSN, VIL OGSÅ INNFØRE FOR ANDELER
+                        KIHele <- AggVerdier$KIHele
+                        AntGr <- length(which(AggVerdier$Hoved>0))
+                        polygon(c(rep(KIHele[1],2), rep(KIHele[2],2)), col=farger[3], border=farger[3],
+                                c(minpos, maxpos, maxpos, minpos))
+                        #Legge på konf.int for hver enkelt gruppe/sykehus
+                        arrows(x0=AggVerdier$Hoved, y0=pos, x1=AggVerdier$KIopp, y1=pos, 
+                               length=0.5/max(pos), code=2, angle=90, lwd=1, col=farger[1])
+                        arrows(x0=AggVerdier$Hoved, y0=pos, x1=AggVerdier$KIned, y1=pos, 
+                               length=0.5/max(pos), code=2, angle=90, lwd=1, col=farger[1])
+                  }
+                  
+                        #grtxt <- rev(grtxt)
+                        grTypeTxt <- smltxt
+                        mtext(at=posOver, paste0('(N)' ), side=2, las=1, cex=cexgr, adj=1, line=0.25)
+                        #Linje for hele landet/utvalget:
+                        lines(x=rep(AggTot, 2), y=c(minpos, maxpos), col=farger[1], lwd=2.5) #y=c(0, max(pos)+0.55), 
+                        #Linje for kvalitetsindikatormål:
+                        if (!is.na(KImaal)) { 
+                              lines(x=rep(KImaal, 2), y=c(minpos, maxpos), col= '#FF7260', lwd=2.5) #y=c(0, max(pos)+0.55), 
+                              text(x=KImaal, y=maxpos+0.6, paste0('Mål:', KImaaltxt), cex=0.9*cexgr, col= '#FF7260',adj=c(0.5,0)) 
                         }
-                        
-                        if (grVar %in% c('ShNavn')) {	#Må si noe om den "gamle figurtypen"
-                              #grtxt <- rev(grtxt)
-                              grTypeTxt <- smltxt
-                              mtext(at=posOver, paste0('(N)' ), side=2, las=1, cex=cexgr, adj=1, line=0.25)
-                              #Linje for hele landet/utvalget:
-                              lines(x=rep(AggTot, 2), y=c(minpos, maxpos), col=farger[1], lwd=2.5) #y=c(0, max(pos)+0.55), 
-                              #Linje for kvalitetsindikatormål:
-                              if (!is.na(KImaal)) { 
-                                    lines(x=rep(KImaal, 2), y=c(minpos, maxpos), col= '#FF7260', lwd=2.5) #y=c(0, max(pos)+0.55), 
-                                    text(x=KImaal, y=maxpos+0.6, paste0('Mål:', KImaaltxt), cex=0.9*cexgr, col= '#FF7260',adj=c(0.5,0)) 
-                              }
-                              barplot(rev(as.numeric(AggVerdier$Hoved)), horiz=TRUE, beside=TRUE, las=1, add=TRUE,
-                                      col=fargeHoved, border=NA, cex.names=cexgr) #, xlim=c(0, xmax), ylim=c(ymin,ymax)
-                              soyleXpos <- 1.14*xmax*max(strwidth(soyletxt, units='figure')) # cex=cexgr
-                              text(x=soyleXpos, y=pos+0.1, soyletxt, las=1, cex=cexgr, adj=1, col=farger[1])	#AggVerdier, hvert sykehus
-                        }
-                        
-                        
-                        #------Tegnforklaring (legend)--------
-                              legend(xmax/4, posOver+2*posDiff, paste0(grTypeTxt, 'sykehus: ', sprintf('%.1f', AggTot), '%, N=', N$Hoved),
-                                     col=farger[1], border=NA, lwd=2.5, xpd=TRUE, bty='n', cex = cexleg) 
+                        barplot(rev(as.numeric(AggVerdier$Hoved)), horiz=TRUE, beside=TRUE, las=1, add=TRUE,
+                                col=fargeHoved, border=NA, cex.names=cexgr) #, xlim=c(0, xmax), ylim=c(ymin,ymax)
+                        soyleXpos <- 1.14*xmax*max(strwidth(soyletxt, units='figure')) # cex=cexgr
+                        text(x=soyleXpos, y=pos+0.1, soyletxt, las=1, cex=cexgr, adj=1, col=farger[1])	#AggVerdier, hvert sykehus
 
-                        mtext(at=pos+0.05, text=grtxt, side=2, las=1, cex=cexgr, adj=1, line=0.25) 
-
-                        #Fordelingsfigurer:
-                        if (medSml == 1) { #Legge på prikker for sammenlikning
-                              points(as.numeric(AggVerdier$Rest), pos, col=fargeRest,  cex=2, pch=18) #c("p","b","o"), 
-                        }
-
+                  
+                  #------Tegnforklaring (legend)--------
+                  legend(xmax/4, posOver+2*posDiff, paste0(grTypeTxt, 'sykehus: ', sprintf('%.1f', AggTot), '%, N=', N$Hoved),
+                         col=farger[1], border=NA, lwd=2.5, xpd=TRUE, bty='n', cex = cexleg) 
+                  
+                  mtext(at=pos+0.05, text=grtxt, side=2, las=1, cex=cexgr, adj=1, line=0.25) 
+                  
+                  #Fordelingsfigurer:
+                  if (medSml == 1) { #Legge på prikker for sammenlikning
+                        points(as.numeric(AggVerdier$Rest), pos, col=fargeRest,  cex=2, pch=18) #c("p","b","o"), 
+                  }
+                  
                   title(tittel, line=1.5) #cex.main=1.3)
                   
                   #Tekst som angir hvilket utvalg som er gjort
@@ -300,8 +298,8 @@ if (lagFig == 1) {
                   if ( outfile != '') {dev.off()}
                   
             }  #Figur
-      }  #Figurfunksjon
- 
+}  #Figurfunksjon
+
 return(invisible(AndelerGrVarData))
 
 }

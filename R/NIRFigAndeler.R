@@ -85,7 +85,7 @@
 
 NIRFigAndeler  <- function(RegData, valgtVar, datoFra='2011-01-01', datoTil='3000-12-31', aar=0, overfPas=0,
                         minald=0, maxald=130, erMann='',InnMaate='', dodInt='',outfile='', grType=99,  
-                        preprosess=1, figurtype='andeler', hentData=0, reshID, enhetsUtvalg=1, lagFig=1)	{
+                        preprosess=1, hentData=0, reshID, enhetsUtvalg=1, lagFig=1)	{
       
       
       if (hentData == 1) {		
@@ -101,7 +101,7 @@ NIRFigAndeler  <- function(RegData, valgtVar, datoFra='2011-01-01', datoTil='300
  #     "%i%" <- intersect
       #--------------- Definere variable ------------------------------
       
-      NIRVarSpes <- NIRVarTilrettelegg(RegData=RegData, valgtVar=valgtVar, figurtype=figurtype)
+      NIRVarSpes <- NIRVarTilrettelegg(RegData=RegData, valgtVar=valgtVar, figurtype='andeler')
       RegData <- NIRVarSpes$RegData
       flerevar <- NIRVarSpes$flerevar
       
@@ -109,7 +109,7 @@ NIRFigAndeler  <- function(RegData, valgtVar, datoFra='2011-01-01', datoTil='300
       NIRUtvalg <- NIRUtvalgEnh(RegData=RegData, datoFra=datoFra, datoTil=datoTil, aar=aar, 
                                 minald=minald, maxald=maxald, 
                                 erMann=erMann, InnMaate=InnMaate, dodInt=dodInt, 
-                                reshID=reshID, enhetsUtvalg=enhetsUtvalg) #overfPas = overfPas,
+                                reshID=reshID, grType=grType, enhetsUtvalg=enhetsUtvalg) #overfPas = overfPas,
       RegData <- NIRUtvalg$RegData
       utvalgTxt <- NIRUtvalg$utvalgTxt
       
@@ -211,7 +211,7 @@ NIRFigAndeler  <- function(RegData, valgtVar, datoFra='2011-01-01', datoTil='300
             #---------------------------------------FRA FIGANDELER, FigGjsnGrVar og FigAndelGrVar--------------------------
             #Hvis for få observasjoner..
             
-            if ((N$Hoved < 5) | (dim(RegData)[1]<5))
+            if ((Nfig$Hoved < 5) | (dim(RegData)[1]<5))
                   #| ((enhetsUtvalg %in% c(1,3)) & length(which(RegData$ReshId == reshID))<5)) #(dim(RegData)[1]-N$Hoved <5) )
                   #       if (dim(RegData)[1] < 10 | ((enhetsUtvalg %in% c(1,3)) & length(which(RegData$ReshId == reshID))<5) )
                   #|(grVar=='' & length(which(RegData$ReshId == reshID))<5 & enhetsUtvalg %in% c(1,3))) 
@@ -251,7 +251,6 @@ NIRFigAndeler  <- function(RegData, valgtVar, datoFra='2011-01-01', datoTil='300
                   
                   
                   
-                  
                   #Horisontale søyler
                   if (retn == 'H') {
                         #Definerer disse i beregningsfunksjonen?  
@@ -262,8 +261,8 @@ NIRFigAndeler  <- function(RegData, valgtVar, datoFra='2011-01-01', datoTil='300
                         
                         #Må def. pos først for å få strek for hele gruppa bak søylene
                         ### reverserer for å slippe å gjøre det på konf.int
-                        pos <- rev(barplot(rev(as.numeric(AggVerdier$Hoved)), horiz=T, xlim=c(0,xmax), ylim=c(ymin, ymax), #, plot=FALSE)
-                                           xlab=xAkseTxt, border=NA, col=fargeHoved)) #, col.axis='white', col='white'))
+                        pos <- rev(barplot(rev(as.numeric(AggVerdier$Hoved)), xlim=c(0,xmax), ylim=c(ymin, ymax), #, plot=FALSE)
+                                           xlab=xAkseTxt, horiz=T, border=NA, col=fargeHoved)) #, col.axis='white', col='white'))
                         indOK <- which(AggVerdier$Hoved>=0)
                         posOK <- pos[indOK]
                         posOver <- max(pos)+0.35*log(max(pos))
@@ -273,16 +272,17 @@ NIRFigAndeler  <- function(RegData, valgtVar, datoFra='2011-01-01', datoTil='300
                         maxpos <- max(posOK)+0.7
                         
                         if (medSml == 1) { #Legge på prikker for sammenlikning
-                              legend(xmax/4, posOver+0.6*posDiff, c(paste0(hovedgrTxt, ' (N=', N$Hoved,')'), paste0(smltxt, ' (N=', N$Rest,')')), 
-                                     border=c(fargeHoved,NA), col=c(fargeHoved,fargeRest), bty='n', pch=c(15,18), pt.cex=2, 
-                                     lwd=lwdRest, lty=NA, ncol=1)
+                              legend(xmax/4, posOver+0.6*posDiff, 
+                                     c(paste0(hovedgrTxt, ' (N=', Nfig$Hoved,')'), paste0(smltxt, ' (N=', Nfig$Rest,')')), 
+                                     border=c(fargeHoved,NA), col=c(fargeHoved,fargeRest), bty='n', pch=c(15,18), 
+                                     pt.cex=2, lwd=lwdRest, lty=NA, ncol=1)
                         } else {	
-                              legend(xmax/4, posOver+0.8*posDiff, paste0(hovedgrTxt, ' (N=', N$Hoved,')'), 
+                              legend(xmax/4, posOver+0.8*posDiff, paste0(hovedgrTxt, ' (N=', Nfig$Hoved,')'), 
                                      border=NA, fill=fargeHoved, bty='n', ncol=1)
                         }
                         
                         #Legge på gruppe/søylenavn
-                        grtxt <- paste(grtxt, grtxt2, sep='\n')}
+                        grtxt <- paste(grtxt, grtxt2, sep='\n')
                   
                   mtext(at=pos+0.05, text=grtxt, side=2, las=1, cex=cexgr, adj=1, line=0.25) 
                   
@@ -301,20 +301,20 @@ NIRFigAndeler  <- function(RegData, valgtVar, datoFra='2011-01-01', datoTil='300
                   pos <- barplot(as.numeric(AggVerdier$Hoved), beside=TRUE, las=1, ylab=yAkseTxt,	
                                  sub=xAkseTxt,	col=fargeHoved, border='white', ylim=c(0, ymax))	
                   mtext(at=pos, grtxt, side=1, las=1, cex=cexgr, adj=0.5, line=0.5)
-                  mtext(at=pos, grtxt2, side=1, las=1, cex=0.9*cexgr, adj=0.5, line=1.5, col=graa[2])
-                  mtext(at=0,  paste0(hovedgrTxt,': '), side=1, cex=0.9*cexgr, adj=0.9, line=1.5, col=graa[2])
+                  mtext(at=pos, grtxt2, side=1, las=1, cex=0.8*cexgr, adj=0.5, line=1.5, col=graa[2])
+                  mtext(at=0,  paste0(hovedgrTxt,': '), side=1, cex=0.8*cexgr, adj=0.9, line=1.5, col=graa[2])
                   #legend(x=0, y=-0.05*ymax, legend=paste0(hovedgrTxt,':'), col=fargeRest,pch=18,bty="n",ncol=2, cex=0.9*cexgr, xpd=TRUE) #pt.cex=0.7,
                   
                   if (medSml == 1) {
                         grtxt3 <- paste0(sprintf('%.1f',AggVerdier$Rest), '%') #paste0('(', sprintf('%.1f',AggVerdier$Rest), '%)')
-                        mtext(at=pos, grtxt3, side=1, las=1, cex=0.9*cexgr, adj=0.5, line=2.5, col=graa[2])
-                        mtext(at=0,  paste0(smltxt,': '), side=1, cex=0.9*cexgr, adj=0.9, line=2.5, col=graa[2])
+                        mtext(at=pos, grtxt3, side=1, las=1, cex=0.8*cexgr, adj=0.5, line=2.5, col=graa[2])
+                        mtext(at=0,  paste0(smltxt,': '), side=1, cex=0.8*cexgr, adj=0.9, line=2.5, col=graa[2])
                         points(pos, as.numeric(AggVerdier$Rest), col=fargeRest,  cex=2, pch=18) #c("p","b","o"), 
-                        legend('top', legend=c(paste0(hovedgrTxt, ' (N=', N$Hoved,')'), paste0(smltxt, ' (N=', N$Rest,')')), 
+                        legend('top', legend=c(paste0(hovedgrTxt, ' (N=', Nfig$Hoved,')'), paste0(smltxt, ' (N=', Nfig$Rest,')')), 
                                border=c(fargeHoved,NA), col=c(fargeHoved,fargeRest), bty='n', pch=c(15,18), pt.cex=2, lty=c(NA,NA), 
                                lwd=lwdRest, ncol=2, cex=cexleg)
                   } else {	
-                        legend('top', legend=paste0(hovedgrTxt, ' (N=', N$Hoved,')'), 
+                        legend('top', legend=paste0(hovedgrTxt, ' (N=', Nfig$Hoved,')'), 
                                border=NA, fill=fargeHoved, bty='n', ncol=1, cex=cexleg)
                   }
             } 
@@ -328,7 +328,7 @@ NIRFigAndeler  <- function(RegData, valgtVar, datoFra='2011-01-01', datoTil='300
             
             par('fig'=c(0, 1, 0, 1)) 
             if ( outfile != '') {dev.off()}
-            
+            } #Nok observasjoner    
       }  #Figur
       
       

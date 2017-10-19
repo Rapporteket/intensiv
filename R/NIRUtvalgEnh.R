@@ -90,8 +90,8 @@ NIRUtvalgEnh <- function(RegData, datoFra=0, datoTil=0, minald=0, maxald=130, er
             hovedgrTxt <- as.character(RegData$ShNavn[indEgen1]) } else {
                   hovedgrTxt <- switch(as.character(enhetsUtvalg), 	
                                        '0' = 'Hele landet',
-                                       '4' = grTypetextstreng[RegData$ShType[indEgen1]],
-                                       '5' = grTypetextstreng[RegData$ShType[indEgen1]],
+                                       '4' = paste0(grTypetextstreng[RegData$ShType[indEgen1]], 'sykehus'),
+                                       '5' = paste0(grTypetextstreng[RegData$ShType[indEgen1]], 'sykehus'),
                                        '7' = as.character(RegData$Region[indEgen1]),
                                        '8' = as.character(RegData$Region[indEgen1]))
             }
@@ -112,7 +112,7 @@ NIRUtvalgEnh <- function(RegData, datoFra=0, datoTil=0, minald=0, maxald=130, er
                                             '8' = which(RegData$Region == RegData$Region[indEgen1]))}	#region
             smltxt <- switch(as.character(enhetsUtvalg),
                              '1' = 'landet forøvrig',
-                             '3' = paste0('andre ', grTypetextstreng[RegData$ShType[indEgen1]]),	#RegData inneh. kun egen shgruppe
+                             '3' = paste0('andre ', grTypetextstreng[RegData$ShType[indEgen1]], 'sykehus'),	#RegData inneh. kun egen shgruppe
                              '5' = 'andre typer sykehus',
                              '6' = paste0(RegData$Region[indEgen1], ' forøvrig'),	#RegData inneh. kun egen region
                              '8' = 'andre regioner')

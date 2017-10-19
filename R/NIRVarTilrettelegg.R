@@ -28,7 +28,7 @@
 #' @export
 #'
 
-NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler'){
+NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='andeler'){
       #, datoFra='2011-01-01', datoTil='3000-12-31', 
       #		minald=0, maxald=130, erMann='',InnMaate='', dodInt='',outfile='', 
       #		preprosess=1, hentData=0, reshID, enhetsUtvalg=1)	
@@ -53,6 +53,7 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler'
       strIfig <- ''		#cex
       sortAvtagende <- TRUE  #Sortering av resultater
       KImaal <- NA
+      KImaaltxt=''
 
       minald <- 0
       tittel <- 'Mangler tittel' 
@@ -93,7 +94,7 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler'
             tittel <- 'Alder ved innleggelse'
             if (figurtype %in% c('gjsnGrVar', 'gjsnTid')) {
                   tittel <- 'alder ved innleggelse'}
-            if (grVar == '') {	#Fordelingsfigur
+            if (figurtype == 'andeler') {	#Fordelingsfigur
                   gr <- c(seq(0, 100, 10),150)		
                   RegData$VariabelGr <- cut(RegData$Alder, breaks=gr, include.lowest=TRUE, right=FALSE)	
                   grtxt <- c('0-9','10-19','20-29','30-39','40-49','50-59','60-69','70-79','80-89','90-99','100+')
@@ -262,7 +263,7 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler'
             }
             grtxt <- c('Kontinuerlig \n(hemo-/dia-filtrasjon)', 'Intermitterende \n(hemodialyse)', 'Begge', 'Ukjent')
             retn <- 'H'
-            #xAkseTxt <- 'Andel (%)'
+            xAkseTxt <- 'Andel (%)'
       }
       
       
@@ -511,8 +512,8 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler'
       
       
       UtData <- list(RegData=RegData, minald=minald,
-                     grtxt=grtxt, cexgr=cexgr, varTxt=varTxt, xAkseTxt=xAkseTxt, KImaal=KImaal, retn=retn,
-                     tittel=tittel, flerevar=flerevar, variable=variable, sortAvtagende=sortAvtagende)
+                     grtxt=grtxt, cexgr=cexgr, varTxt=varTxt, xAkseTxt=xAkseTxt, KImaal=KImaal, KImaaltxt=KImaaltxt, 
+                     retn=retn,tittel=tittel, flerevar=flerevar, variable=variable, sortAvtagende=sortAvtagende)
       #RegData inneholder nå variablene 'Variabel' og 'VariabelGr'
       return(invisible(UtData)) 
       
