@@ -408,6 +408,8 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='an
             RegData$Variabel <- RegData$SMR
             xAkseTxt <- 'Observert / estimert dødelighet'
             KImaal <- 0.7  #SMR <0.7 
+            KImaaltxt <- '<0.7'
+            sortAvtagende <- FALSE
       }
       if (valgtVar == 'trakeostomi') { #andelGrVar 
             #-1: Velg verdi, 1 = Nei, 2 = Ja – perkutan teknikk på intensiv/oppv., 3 = Ja – åpen teknikk (operativ)

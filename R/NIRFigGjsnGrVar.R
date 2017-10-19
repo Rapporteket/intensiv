@@ -221,7 +221,7 @@ if (lagFig == 1) {
                   plot.new()
                   title(tittel)	#, line=-6)
                   legend('topleft',legend=utvalgTxt, bty='n', cex=0.9, text.col=farger[1])
-                  if (valgtMaal=='Med' & grepl('SMR', tittel)) {tekst <- 'Ugyldig parameterkombinasjon'   #valgtVar=='SMR'
+                  if (valgtMaal=='Med' & valgtVar =='SMR') {tekst <- 'Ugyldig parameterkombinasjon'   #valgtVar=='SMR'
                   } else {tekst <- 'For få registreringer i egen eller sammenligningsgruppe'}
                   text(0.5, 0.6, tekst, cex=1.2)
                   if ( outfile != '') {dev.off()}
@@ -267,23 +267,18 @@ if (lagFig == 1) {
                   minpos <- min(posOK)-0.7
                   maxpos <- max(posOK)+0.7
                   
-                  if (medKI == 1) {	
-                        #Legge på konf.int for hele populasjonen
-                        #options(warn=-1)	#Unngå melding om KI med lengde 0
-                        KIHele <- AggVerdier$KIHele
-                        AntGr <- length(which(AggVerdier$Hoved>0))
-                        polygon(c(rep(KIHele[1],2), rep(KIHele[2],2)), col=farger[3], border=farger[3],
-                                c(minpos, maxpos, maxpos, minpos))
-                        #Legge på konf.int for hver enkelt gruppe/sykehus
-                        arrows(x0=AggVerdier$Hoved, y0=pos, x1=AggVerdier$KIopp, y1=pos, 
-                               length=0.5/max(pos), code=2, angle=90, lwd=1, col=farger[1])
-                        arrows(x0=AggVerdier$Hoved, y0=pos, x1=AggVerdier$KIned, y1=pos, 
-                               length=0.5/max(pos), code=2, angle=90, lwd=1, col=farger[1])
-                  }
-                  
+                   
                         grTypeTxt <- smltxt
                         mtext(at=posOver, paste0('(N)' ), side=2, las=1, cex=cexgr, adj=1, line=0.25)
                         #Linje for hele landet/utvalget:
+                        if (medKI == 1) {	
+                              #Legge på konf.int for hele populasjonen
+                              #options(warn=-1)	#Unngå melding om KI med lengde 0
+                              KIHele <- AggVerdier$KIHele
+                              AntGr <- length(which(AggVerdier$Hoved>0))
+                              polygon(c(rep(KIHele[1],2), rep(KIHele[2],2)), col=farger[3], border=farger[3],
+                                      c(minpos, maxpos, maxpos, minpos))
+                        }
                         lines(x=rep(AggTot, 2), y=c(minpos, maxpos), col=farger[1], lwd=2.5) #y=c(0, max(pos)+0.55), 
                         #Linje for kvalitetsindikatormål:
                         if (!is.na(KImaal)) { 
@@ -294,7 +289,14 @@ if (lagFig == 1) {
                                 col=fargeHoved, border=NA, cex.names=cexgr) #, xlim=c(0, xmax), ylim=c(ymin,ymax)
                         soyleXpos <- 1.14*xmax*max(strwidth(soyletxt, units='figure')) # cex=cexgr
                         text(x=soyleXpos, y=pos+0.1, soyletxt, las=1, cex=cexgr, adj=1, col=farger[1])	#AggVerdier, hvert sykehus
-                  
+                        if (medKI == 1) {	
+                                    #Legge på konf.int for hver enkelt gruppe/sykehus
+                              arrows(x0=AggVerdier$Hoved, y0=pos, x1=AggVerdier$KIopp, y1=pos, 
+                                     length=0.5/max(pos), code=2, angle=90, lwd=1, col=farger[1])
+                              arrows(x0=AggVerdier$Hoved, y0=pos, x1=AggVerdier$KIned, y1=pos, 
+                                     length=0.5/max(pos), code=2, angle=90, lwd=1, col=farger[1])
+                        }
+                        
                   
                   #------Tegnforklaring (legend)--------
                         if (medKI == 0) { #Hopper over hvis ikke valgtMaal er oppfylt

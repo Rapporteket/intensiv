@@ -191,8 +191,8 @@ for (valgtVar in variable) {
 
 #---------------------AndelTid----------------------------------------------
 tidsenhet <- 'Aar'
-valgtVar <- 'respiratortidInvMoverf'	#'alder_u18', 'alder_over80', 'dod30d', 'dodeIntensiv', 'liggetidDod', 
-                        #'respiratortidDod', 'respStotte', 'reinn', 'SMR'
+valgtVar <- 'alder_over80'	#'alder_u18', 'alder_over80', 'dod30d', 'dodeIntensiv', 'liggetidDod', 
+                        #'respiratortidDod', 'respStotte', 'reinn',
                         #'UT: respiratortid, 
                         #Ny: respiratortidInvMoverf, respiratortidInvUoverf
 outfile <- '' #paste0(valgtVar, '.pdf')
@@ -236,17 +236,17 @@ for (valgtVar in variable) {
 
 #--------------------------------------- SENTRALMÅL per enhet----------------------------------
 
-valgtMaal <- 'Med'
-valgtVar <- 'respiratortidInvMoverf'	#'SMR', alder, liggetid, respiratortid,  SAPSII, 'NEMS', 'Nas24'
+valgtMaal <- 'Gjsn'
+valgtVar <- 'SMR'	#'SMR', alder, liggetid, respiratortid,  SAPSII, 'NEMS', 'Nas24'
                         #Nye: respiratortidInvMoverf, respiratortidInvUoverf, respiratortidNonInv
-grType <- 2
-outfile <- paste0(valgtVar, 'Respiratortid_sentr_Fig2aNy.pdf')#,grType
+grType <- 0
+outfile <- '' #paste0(valgtVar, 'Respiratortid_sentr_Fig2aNy.pdf')#,grType
 NIRFigGjsnGrVar(RegData=RegData, medKI = 1 ,valgtVar=valgtVar, valgtMaal=valgtMaal, minald=minald, maxald=maxald, 
              grType=grType, grVar=grVar, InnMaate=InnMaate, datoFra=datoFra, datoTil=datoTil, dodInt=dodInt, 
              erMann=erMann, outfile=outfile) 
-# NIRGjsnGrVar(RegData=RegData, valgtVar=valgtVar, valgtMaal=valgtMaal, minald=minald, maxald=maxald, 
-#              grType=grType, grVar=grVar, InnMaate=InnMaate, datoFra=datoFra, datoTil=datoTil, dodInt=dodInt, 
-#              erMann=erMann, outfile=outfile) 
+ # NIRGjsnGrVar(RegData=RegData, valgtVar=valgtVar, valgtMaal=valgtMaal, minald=minald, maxald=maxald, 
+ #              grType=grType, grVar=grVar, InnMaate=InnMaate, datoFra=datoFra, datoTil=datoTil, dodInt=dodInt, 
+ #              erMann=erMann, outfile=outfile) 
 
 
 for (valgtVar in c('alder', 'liggetid', 'respiratortid','NEMS' ,'SAPSII', 'SMR')){ # 
@@ -258,6 +258,29 @@ for (valgtVar in c('alder', 'liggetid', 'respiratortid','NEMS' ,'SAPSII', 'SMR')
        #               InnMaate=InnMaate, datoFra=datoFra, datoTil=datoTil, dodInt=dodInt, erMann=erMann, 
         #              outfile=outfile) 
 }
+
+
+#--------------------------------------OFFENTLIGGJØRING-------------------------------------
+
+
+NIRFigGjsnGrVar(RegData=RegData, valgtVar='respiratortidInvMoverf', datoFra='2016-01-01', 
+                datoTil='2016-12-31', grType=1, outfile='Respiratortid_loksent_Fig2aNy.pdf')
+NIRFigGjsnGrVar(RegData=RegData, valgtVar='respiratortidInvMoverf', datoFra='2016-01-01', 
+                                datoTil='2016-12-31', grType=3, outfile='Respiratortid_region_Fig2bNy.pdf')
+                                
+NIRFigAndelerGrVar(RegData=RegData, valgtVar='reinn', datoFra='2016-01-01', 
+                   datoTil='2016-12-31', grType=1, outfile='Reinnlegging_loksent_Fig3aNy.pdf')
+NIRFigAndelerGrVar(RegData=RegData, valgtVar='reinn', datoFra='2016-01-01', 
+                   datoTil='2016-12-31', grType=3, outfile='Reinnlegging_region_Fig3bNy.pdf')
+
+
+
+
+
+
+
+
+
 
 #--------------------------------------- FORDELING - tatt vekk ----------------------------------
 
