@@ -168,7 +168,7 @@ valgtVar <- 'reinn'	#alder_u18', 'alder_over80', 'dod30d', 'dodeIntensiv', 'innM
                         #respiratortid, 'respStotte', 'reinn
                         #Nye: trakeostomi, trakAapen, respiratortidInv, nyreBeh, ExtendedHemodynamicMonitoring,
                         #ExtendedHemodynamicMonitoringPA, isolering
-outfile <- paste0(valgtVar, 'Reinnlegging_region_Fig3bNy.pdf')
+outfile <- '' #paste0(valgtVar, 'Reinnlegging_region_Fig3bNy.pdf')
 
 #NIRAndelerGrVar(RegData=RegData, valgtVar=valgtVar, minald=minald, maxald=maxald,  datoFra=datoFra, 
 #                datoTil=datoTil, aar=0, InnMaate=InnMaate, dodInt=dodInt,erMann=erMann, outfile=outfile, 

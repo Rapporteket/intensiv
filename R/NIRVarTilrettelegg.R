@@ -288,6 +288,7 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='an
             tittel <-'Reinnleggelser på intensivavd. (innen 72t)'
             sortAvtagende <- FALSE      #Rekkefølge
             KImaal <- 4  #Reinnleggelser <4% 
+            KImaaltxt <- '<4'
       }
       
       if (valgtVar == 'respiratortid') { #andeler, gjsnGrVar, GjsnTid
