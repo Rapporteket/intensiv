@@ -236,7 +236,7 @@ NIRFigAndeler  <- function(RegData, valgtVar, datoFra='2011-01-01', datoTil='300
                   FigTypUt <- figtype(outfile, height=hoyde, fargepalett=fargepalett)	
                   #Tilpasse marger for å kunne skrive utvalgsteksten
                   NutvTxt <- length(utvalgTxt)
-                  vmarg <- switch(retn, V=0.04, H=min(1,max(0, strwidth(grtxt, units='figure', cex=cexgr)*0.75)))
+                  vmarg <- switch(retn, V=0.05, H=min(1,max(0, strwidth(grtxt, units='figure', cex=cexgr)*0.75)))
                   #NB: strwidth oppfører seg ulikt avh. av device...
                   par('fig'=c(vmarg, 1, 0, 1-0.02*(NutvTxt-1)))	#Har alltid datoutvalg med
                   
