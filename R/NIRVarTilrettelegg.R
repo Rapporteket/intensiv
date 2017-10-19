@@ -54,6 +54,7 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='an
       sortAvtagende <- TRUE  #Sortering av resultater
       KImaal <- NA
       KImaaltxt=''
+      varTxt <- 'hendelser'
 
       minald <- 0
       tittel <- 'Mangler tittel' 

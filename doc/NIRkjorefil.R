@@ -164,7 +164,7 @@ for (valgtVar in variable) {
 
 #--------------------------------------- AndelGrVar ----------------------------------
 grVar <- 'ShNavn'
-valgtVar <- 'reinn'	#alder_u18', 'alder_over80', 'dod30d', 'dodeIntensiv', 'innMaate', 
+valgtVar <- 'respiratortidInvMoverf'	#alder_u18', 'alder_over80', 'dod30d', 'dodeIntensiv', 'innMaate', 
                         #respiratortid, 'respStotte', 'reinn
                         #Nye: trakeostomi, trakAapen, respiratortidInv, nyreBeh, ExtendedHemodynamicMonitoring,
                         #ExtendedHemodynamicMonitoringPA, isolering
@@ -197,7 +197,7 @@ valgtVar <- 'respiratortidInvMoverf'	#'alder_u18', 'alder_over80', 'dod30d', 'do
                         #Ny: respiratortidInvMoverf, respiratortidInvUoverf
 outfile <- '' #paste0(valgtVar, '.pdf')
 
-NIRAndelTid(RegData=RegData, valgtVar=valgtVar, datoFra=datoFra, datoTil=datoTil, tidsenhet = tidsenhet,
+NIRFigAndelTid(RegData=RegData, valgtVar=valgtVar, datoFra=datoFra, datoTil='2017-12-01', tidsenhet = tidsenhet,
 		minald=minald, maxald=maxald, erMann=erMann,InnMaate=InnMaate, dodInt=dodInt, 
 		reshID, outfile=outfile, enhetsUtvalg=enhetsUtvalg, lagFig = 1, offData=offData)	
 #aar=0, grType=grType )
