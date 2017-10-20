@@ -276,7 +276,7 @@ if (lagFig == 1) {
 
                   
                   #------Tegnforklaring (legend)--------
-                  legend(xmax/4, posOver, yjust=0.1, col=farger[1], border=NA, lwd=2.5, xpd=TRUE, bty='n', 
+                  legend(xmax/4, posOver, yjust=0.15, col=farger[1], border=NA, lwd=2.5, xpd=TRUE, bty='n', 
                          paste0(grTypeTxt, 'sykehus: ', sprintf('%.1f', AggTot), '%, N=', N$Hoved), cex = cexleg) 
                   
                   mtext(at=pos+0.05, text=grtxt, side=2, las=1, cex=cexgr, adj=1, line=0.25) 
