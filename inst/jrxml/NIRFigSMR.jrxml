@@ -22,13 +22,13 @@
 		<defaultValueExpression><![CDATA[$P{LoggedInUserAttribute_AVD_RESH}]]></defaultValueExpression>
 	</parameter>
 	<parameter name="reportName" class="java.lang.String" isForPrompting="false">
-		<defaultValueExpression><![CDATA[new String("NIRGjsnGrVar")]]></defaultValueExpression>
+		<defaultValueExpression><![CDATA[new String("NIRFigGjsnGrVar")]]></defaultValueExpression>
 	</parameter>
 	<parameter name="rPackageName" class="java.lang.String" isForPrompting="false">
 		<defaultValueExpression><![CDATA[new String("intensiv")]]></defaultValueExpression>
 	</parameter>
 	<parameter name="rFunctionCallString" class="java.lang.String" isForPrompting="false">
-		<defaultValueExpression><![CDATA[new String("NIRGjsnGrVar(RegData=0, valgtVar='SMR', minald=minald, maxald=maxald, datoFra=datoFra, datoTil=datoTil, grType=grType, InnMaate=InnMaate, erMann=erMann, hentData=1, preprosess=1, outfile=outfile)")]]></defaultValueExpression>
+		<defaultValueExpression><![CDATA[new String("NIRFigGjsnGrVar(RegData=0, valgtVar='SMR', minald=minald, maxald=maxald, datoFra=datoFra, datoTil=datoTil, grType=grType, InnMaate=InnMaate, erMann=erMann, hentData=1, preprosess=1, outfile=outfile)")]]></defaultValueExpression>
 	</parameter>
 	<parameter name="beginDate" class="java.util.Date">
 		<defaultValueExpression><![CDATA[new SimpleDateFormat("yyyy-MM-dd").parse("2017-01-01")]]></defaultValueExpression>

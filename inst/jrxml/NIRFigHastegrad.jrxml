@@ -33,7 +33,7 @@
 		<defaultValueExpression><![CDATA[new String("NIRFigInnMaate(RegData=0, valgtVar='InnMaate', minald=minald, maxald=maxald, datoFra=datoFra, datoTil=datoTil, grType=grType, erMann=erMann, dodInt=dodInt, hentData=1, preprosess=1, outfile=outfile)")]]></defaultValueExpression>
 	</parameter>
 	<parameter name="beginDate" class="java.util.Date">
-		<defaultValueExpression><![CDATA[new SimpleDateFormat("yyyy-MM-dd").parse("2016-01-01")]]></defaultValueExpression>
+		<defaultValueExpression><![CDATA[new SimpleDateFormat("yyyy-MM-dd").parse("2017-01-01")]]></defaultValueExpression>
 	</parameter>
 	<parameter name="endDate" class="java.util.Date">
 		<defaultValueExpression><![CDATA[new Date()]]></defaultValueExpression>
