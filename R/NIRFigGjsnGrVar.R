@@ -307,7 +307,7 @@ if (lagFig == 1) {
                               TXT <- c(paste0('totalt: ', sprintf('%.1f', AggTot), ', N=', N$Hoved), 
                                        paste0('95% konf.int., ', grTypeTxt, 'sykehus (', 
                                               sprintf('%.1f', KIHele[1]), '-', sprintf('%.1f', KIHele[2]), ')'))
-                              legend(xmax/4, posOver, TXT, yjust=0.3, fill=c(NA, farger[3]),  border=NA, lwd=2.5,  #inset=c(-0.1,0),
+                              legend(xmax/4, posOver, TXT, yjust=0, fill=c(NA, farger[3]),  border=NA, lwd=2.5,  #inset=c(-0.1,0),
                                      col=c(farger[1], farger[3]), cex=cexleg, seg.len=0.6, merge=TRUE, bty='n') #+2*posDiff
                         }
                   
