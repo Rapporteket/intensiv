@@ -112,8 +112,8 @@ options(replace.assign=TRUE, width=90) #, warnings=FALSE, echo=FALSE, fig.align=
 
 
 
-\section{Informasjonsgrunnlag og ansvarsforhold}
-%\section*{Informasjonsgrunnlag og ansvarsforhold}
+%\section{Informasjonsgrunnlag og ansvarsforhold}
+\section*{Informasjonsgrunnlag og ansvarsforhold}
 
 Denne rapporten er fremstilt automatisk på grunnlag av en mal laget av
 Lena Ringstad Olsen ved Senter for Klinisk Dokumentasjon og Evaluering (SKDE) på oppdrag
@@ -141,7 +141,7 @@ og kan genereres av intensivregisterets databasebrukerne på \textit{helseregist
 
 <<LasteData, echo=FALSE, eval=T>>=
 if (!exists('NIRdata')){
-      NIRdata <- NIRRegDataSQL()
+      NIRdata <- NIRRegDataSQL(datoFra = '2011-01-01')
 }
 @
 
@@ -154,18 +154,20 @@ outfile <- ''
 figKrymp1 <- 0.7	#Skaleringsparameter for enkeltfigurer
 #s1 <- 0.8	#Skaleringsparameter for enkeltfigurer
 NIRdata <- NIRPreprosess(NIRdata)
+NIRdata <- NIRdata[which(NIRdata$InnDato>=datoFra), ]
 NIRdata$ShType[which(!(NIRdata$ShType %in% 1:3)) ] <- NA
 NIRdata$ShType[NIRdata$ShType ==2 ] <- 1	#Har nå kun type lokal/sentral og regional
 #NIRdata$ShType <- factor(NIRdata$ShType, levels=c(1,3))	#Lager krøll senere
-ShTypeTxt <- c('lokal/sentral','lokal/sentral', 'regional')
+ShTypeTxt <- c('lokal/sentral','lokal/sentral', 'region')
 ShTypeEgen <-NIRdata$ShType[match(reshID, NIRdata$ReshId)]
 ShTypeEgenTxt <- ShTypeTxt[ShTypeEgen]
 @
 
 <<'Variabeldef og datautvalg',echo=FALSE, eval=T>>=
 
-NIRutvalg <- NIRUtvalg(RegData=NIRdata, datoFra=datoFra, datoTil=datoTil, fargepalett='BlaaRapp')
-NIRdata <- NIRutvalg$RegData
+#NIRutvalg <- NIRUtvalgEnh(RegData=NIRdata, datoFra=datoFra, datoTil=datoTil, fargepalett='BlaaRapp')
+#NIRdata <- NIRutvalg$RegData
+
 #Tar ut registreringer som ikke har kjønn #og ugyldig ShType
 indMed <- which(NIRdata$erMann %in% 0:1) #%i% which(NIRdata$ShType %in% 1:3)
 NIRdata <- NIRdata[indMed, ]	
@@ -243,11 +245,11 @@ xtable(alderDIV, digits=1, align=c('l', rep('r', ncol(alderDIV))),
 		caption='Aldersfordeling (år)',
 		label='tab:Alderskarakteristikker')
 
-dum <- NIRFigAndeler(RegData=NIRdata, valgtVar='alder', preprosess=0, hentData=0, datoFra=datoFra, 
+dum <- NIRAndeler(RegData=NIRdata, valgtVar='alder', preprosess=0, hentData=0, datoFra=datoFra, 
 	datoTil=datoTil, enhetsUtvalg=1, reshID=reshID, outfile='FigAlderFord.pdf')
-dum <- NIRFigGjsnGrVar(RegData=NIRdata, valgtVar='alder', valgtMaal='', preprosess=0, hentData=0, 
+dum <- NIRGjsnGrVar(RegData=NIRdata, valgtVar='alder', valgtMaal='Gjsn', preprosess=0, hentData=0, 
                        grType=ShTypeEgen, datoFra=datoFra, datoTil=datoTil, outfile='FigAlderGjsn.pdf')
-dum <- NIRFigGjsnGrVar(RegData=NIRdata, valgtVar='alder', valgtMaal='Med', preprosess=0, hentData=0, 
+dum <- NIRGjsnGrVar(RegData=NIRdata, valgtVar='alder', valgtMaal='Med', preprosess=0, hentData=0, 
                        grType=ShTypeEgen, datoFra=datoFra, datoTil=datoTil, outfile='FigAlderMed.pdf')
 @
 
@@ -281,9 +283,9 @@ xtable(tabKjonnShType, digits=1, align=c('l', rep('r', ncol(tabKjonnShType))),
 		label='tab:KjonnShType')
 
 #, out.width='.6\\textwidth'
-dum <- NIRFigAndeler(RegData=NIRdata, valgtVar='alder', preprosess=0, hentData=0, erMann=0,
+dum <- NIRAndeler(RegData=NIRdata, valgtVar='alder', preprosess=0, hentData=0, erMann=0,
 	datoFra=datoFra, datoTil=datoTil, enhetsUtvalg=3, reshID=reshID, outfile='FigAlderK.pdf')
-dum <- NIRFigAndeler(RegData=NIRdata, valgtVar='alder', preprosess=0, hentData=0, erMann=1,
+dum <- NIRAndeler(RegData=NIRdata, valgtVar='alder', preprosess=0, hentData=0, erMann=1,
 	datoFra=datoFra, datoTil=datoTil, enhetsUtvalg=3, reshID=reshID, outfile='FigAlderM.pdf')
 @ 
 
@@ -322,12 +324,12 @@ xtable(tabLiggetidShType, digits=1, align=c('l', rep('r', ncol(tabLiggetidShType
 		caption='Prosentvis fordeling av liggetid.',
 		label='tab:LiggetidShType')
 		
-dum <- NIRFigAndeler(RegData=NIRdata, valgtVar='liggetid', preprosess=0, hentData=0, datoFra=datoFra, 
+dum <- NIRAndeler(RegData=NIRdata, valgtVar='liggetid', preprosess=0, hentData=0, datoFra=datoFra, 
 	datoTil=datoTil, enhetsUtvalg=1, reshID=reshID, outfile='FigLiggetidFordAlle.pdf')
 
-dum <- NIRFigGjsnGrVar(RegData=NIRdata, valgtVar='liggetid', valgtMaal='Mean', preprosess=0, hentData=0,  
+dum <- NIRGjsnGrVar(RegData=NIRdata, valgtVar='liggetid', valgtMaal='Gjsn', preprosess=0, hentData=0,  
 			grType=ShTypeEgen, datoFra=datoFra, datoTil=datoTil, outfile='FigLiggetidGjsn.pdf')
-dum <- NIRFigGjsnGrVar(RegData=NIRdata, valgtVar='liggetid', valgtMaal='Med', preprosess=0, hentData=0,  
+dum <- NIRGjsnGrVar(RegData=NIRdata, valgtVar='liggetid', valgtMaal='Med', preprosess=0, hentData=0,  
 			grType=ShTypeEgen, datoFra=datoFra, datoTil=datoTil, outfile='FigLiggetidMed.pdf')
 @
 
@@ -355,7 +357,7 @@ NregReinn <- length(which(NIRdata$ReAdmitted %in% 1:2))
 AndelReinnAlle <- round(100*length(which(NIRdata$ReAdmitted == 1))/length(which(NIRdata$ReAdmitted %in% 1:2)), 1)
 AndelReinnEgen <- round(100*length(which(NIRdataEget$ReAdmitted == 1))/length(which(NIRdataEget$ReAdmitted %in% 1:2)),1)
 
-dum <- NIRFigAndelerGrVar(RegData=NIRdata, valgtVar='reinn', preprosess=0, hentData=0, grType=ShTypeEgen, datoFra=datoFra, 
+dum <- NIRAndelerGrVar(RegData=NIRdata, valgtVar='reinn', preprosess=0, hentData=0, grType=ShTypeEgen, datoFra=datoFra, 
 	datoTil=datoTil, outfile='FigReinn.pdf') 
 @
 
@@ -396,7 +398,7 @@ xtable(tabTypeOpphShType, digits=1, align=c('l', rep('r', ncol(tabTypeOpphShType
 		caption='Prosentvis fordeling av type opphold for ulike sykehuskategorier',
 		label='tab:TypeOpphShType')
 
-dum <- NIRFigAndelerGrVar(RegData=NIRdata, valgtVar='innMaate', preprosess=0, hentData=0, grType=ShTypeEgen, datoFra=datoFra, 
+dum <- NIRFigInnMaate(RegData=NIRdata, valgtVar='InnMaate', preprosess=0, hentData=0, grType=ShTypeEgen, datoFra=datoFra, 
 	datoTil=datoTil, outfile='FigTypeOpph.pdf') 
 @
 
@@ -450,7 +452,7 @@ xtable(tabNEMSShType, digits=c(0,0,1,0,1,1), align=c('l', rep('r', ncol(tabNEMSS
 		caption='NEMS-poeng per døgn for ulike sykehuskategorier',
 		label='tab:NEMS')
 
-dum <- NIRFigGjsnGrVar(RegData=NIRdata, valgtVar='NEMS', valgtMaal='Mean', preprosess=0, hentData=0,  
+dum <- NIRGjsnGrVar(RegData=NIRdata, valgtVar='NEMS', valgtMaal='Gjsn', preprosess=0, hentData=0,  
 			grType=ShTypeEgen, datoFra=datoFra, datoTil=datoTil, outfile='FigNEMS.pdf')
 @
 
@@ -536,9 +538,9 @@ RespAlle <- round(summary(NIRdataUtv$respiratortid),1)
 
 tabRespShType <- rbind(
 	'Egen enhet' = c(RespEgen[4], RespEgen[3], AndelResp[1], paste(RespEgen[1],' - ',RespEgen[6], sep='')),	
-	'Lokal-/Sentralenheter' = c(RespLokSentr[4], RespLokSentr[3], AndelResp[2], paste(RespLokSentr[1],' - ',RespLokSentr[6], sep='')),
-	'Regionalenheter' = c(RespReg[4], RespReg[3], AndelResp[3], paste(RespReg[1],' - ',RespReg[6], sep='')),		
-	'Hele landet' = c(RespAlle[4], RespAlle[3], AndelResp[4], paste(RespAlle[1],' - ',RespAlle[6], sep=''))
+	'Lokal-/Sentralenheter' = c(RespLokSentr[4], RespLokSentr[3], AndelResp[2], paste0(RespLokSentr[1],' - ',RespLokSentr[6])),
+	'Regionalenheter' = c(RespReg[4], RespReg[3], AndelResp[3], paste0(RespReg[1],' - ',RespReg[6])),		
+	'Hele landet' = c(RespAlle[4], RespAlle[3], AndelResp[4], paste0(RespAlle[1],' - ',RespAlle[6]))
 					)
 colnames(tabRespShType) <- c('Gj.sn', 'Median', 'Andel(%)', 'Spredning')
 xtable(tabRespShType, digits=c(0,1,1,1,0), align=c('l', 'r','r','r','c'), 
@@ -547,25 +549,25 @@ xtable(tabRespShType, digits=c(0,1,1,1,0), align=c('l', 'r','r','r','c'),
 
 #dum <- Fordeling(RegData=NIRdata, valgtVar='respiratortid', grType=ShTypeEgen, 
 #	datoFra=datoFra, datoTil=datoTil, preprosess=0, hentData=0, outfile='FigResptidFord.pdf') 
-dum <- NIRFigAndeler(RegData=NIRdata, valgtVar='respiratortid', preprosess=0, hentData=0, datoFra=datoFra, 
+dum <- NIRAndeler(RegData=NIRdata, valgtVar='respiratortid', preprosess=0, hentData=0, datoFra=datoFra, 
 	datoTil=datoTil, enhetsUtvalg=3, reshID=reshID, outfile='FigResptidFord.pdf')
-dum <- NIRFigGjsnGrVar(RegData=NIRdata, valgtVar='respiratortid', valgtMaal='Mean', preprosess=0, hentData=0,  
+dum <- NIRGjsnGrVar(RegData=NIRdata, valgtVar='respiratortid', valgtMaal='Gjsn', preprosess=0, hentData=0,  
 		grType=ShTypeEgen, datoFra=datoFra, datoTil=datoTil, outfile='FigResptidGjsn.pdf') 
-dum <- NIRFigGjsnGrVar(RegData=NIRdata, valgtVar='respiratortid', valgtMaal='Med', preprosess=0, hentData=0,  
+dum <- NIRGjsnGrVar(RegData=NIRdata, valgtVar='respiratortid', valgtMaal='Med', preprosess=0, hentData=0,  
 		grType=ShTypeEgen, datoFra=datoFra, datoTil=datoTil, outfile='FigResptidMed.pdf') 
 @
 
 
 \begin{figure}[ht] 
 \centering \includegraphics[width= \Sexpr{figKrymp1}\textwidth]{FigResptidFord.pdf} 
-  \caption{Fordeling av respiratortid ved \Sexpr{paste(ShTypeEgenTxt,'sykehus', sep='')}}
+  \caption{Fordeling av respiratortid ved \Sexpr{paste0(ShTypeEgenTxt,'sykehus')}}
   \label{fig:ResptidFord}
 \end{figure}
 
 \begin{figure}[ht] 
 \centering \includegraphics[width= \Sexpr{figKrymp1}\textwidth]{FigResptidGjsn.pdf} 
 \centering \includegraphics[width= \Sexpr{figKrymp1}\textwidth]{FigResptidMed.pdf} 
- \caption{Gjennomsnittlig og median respiratortid ved \Sexpr{paste(ShTypeEgenTxt,'sykehus', sep='')}.}	
+ \caption{Gjennomsnittlig og median respiratortid ved \Sexpr{paste0(ShTypeEgenTxt,'sykehus')}.}	
   \label{fig:ResptidMM}
 \end{figure}
 
@@ -608,9 +610,9 @@ xtable(tabSAPSShType, digits=c(0,1,1,0,0), align=c('l','r','r','c','c'),
 
 #dum <- Fordeling(RegData=NIRdata, valgtVar='SAPSII', grType=ShTypeEgen, datoFra=datoFra, datoTil=datoTil, 
 #		preprosess=0, hentData=0, outfile='FigSAPSford.pdf') 
-dum <- NIRFigAndeler(RegData=NIRdata, valgtVar='SAPSII', preprosess=0, hentData=0, datoFra=datoFra, 
+dum <- NIRAndeler(RegData=NIRdata, valgtVar='SAPSII', preprosess=0, hentData=0, datoFra=datoFra, 
 	datoTil=datoTil, enhetsUtvalg=3, reshID=reshID, outfile='FigSAPSford.pdf')
-dum <- NIRFigGjsnGrVar(RegData=NIRdata, valgtVar='SAPSII', valgtMaal='Mean', preprosess=0, hentData=0,  
+dum <- NIRGjsnGrVar(RegData=NIRdata, valgtVar='SAPSII', valgtMaal='Gjsn', preprosess=0, hentData=0,  
 		grType=ShTypeEgen, datoFra=datoFra, datoTil=datoTil, outfile='FigSAPSgjsn.pdf') 
 @
 
@@ -693,7 +695,7 @@ da disse vil kunne utgjøre en markant feilkilde. Uansett må man tolke SMR-verd
 særleg med tanke på at det er stort innslag av «case mix».
 
 <<SMR, echo=FALSE, message=FALSE>>=
-dum <- NIRFigGjsnGrVar(RegData=NIRdata, valgtVar='SMR', valgtMaal='Mean', preprosess=0, hentData=0,  
+dum <- NIRGjsnGrVar(RegData=NIRdata, valgtVar='SMR', valgtMaal='Gjsn', preprosess=0, hentData=0,  
 		grType=ShTypeEgen, datoFra=datoFra, datoTil=datoTil, outfile='FigSMR.pdf') 
 @
 \begin{figure}[ht] 
@@ -749,7 +751,7 @@ xtable(tabDodInt, digits=c(0,rep(1,dim(tabDodInt)[2])), align=c('l',rep('r',dim(
 
 AndelRespStotte <- round(100*length(which(NIRdataUtv$respiratortid>0))/dim(NIRdataUtv)[1],1)
 
-dum <- NIRFigGjsnGrVar(RegData=NIRdata, valgtVar='liggetid', valgtMaal='Mean', preprosess=0, hentData=0, dodInt=1, 
+dum <- NIRGjsnGrVar(RegData=NIRdata, valgtVar='liggetid', valgtMaal='Gjsn', preprosess=0, hentData=0, dodInt=1, 
 		grType=ShTypeEgen, datoFra=datoFra, datoTil=datoTil, outfile='FigLiggetidDode.pdf') 	#LiggetidDodGjsn.pdf
 @
 

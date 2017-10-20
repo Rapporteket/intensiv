@@ -2,12 +2,60 @@
 % Please edit documentation in R/NIRAndelTid.R
 \name{NIRAndelTid}
 \alias{NIRAndelTid}
-\title{Tidstrend av andel pasienter}
+\title{Tidstrend av andel opphold}
 \usage{
 NIRAndelTid(RegData, valgtVar, datoFra = "2011-01-01",
-  datoTil = "3000-12-31", minald = 0, maxald = 130, erMann = "",
-  InnMaate = "", dodInt = "", reshID, outfile = "", enhetsUtvalg = 1,
-  preprosess = 1, hentData = 0)
+  datoTil = "3000-12-31", tidsenhet = "Aar", minald = 0, maxald = 130,
+  erMann = "", InnMaate = "", dodInt = "", reshID = 0, outfile = "",
+  enhetsUtvalg = 1, preprosess = 1, hentData = 0, lagFig = 1,
+  offData = 0)
+}
+\arguments{
+\item{RegData}{En dataramme med alle nødvendige variabler fra registeret}
+
+\item{valgtVar}{Hvilken variabel som skal visualiseres. Se \strong{Details} for oversikt.}
+
+\item{datoFra}{Tidligste dato i utvalget (vises alltid i figuren).}
+
+\item{datoTil}{Seneste dato i utvalget (vises alltid i figuren).}
+
+\item{tidsenhet}{Oppløsning på tidsaksen. Verdier: 'Aar' (standard), 'Halvaar', 'Kvartal','Mnd'}
+
+\item{minald}{Alder, fra og med (Standardverdi: 0)}
+
+\item{maxald}{Alder, til og med (Standardverdi: 130)}
+
+\item{erMann}{Kjønn, standard: alt annet enn 0/1 gir begge kjønn
+0: Kvinner
+1: Menn}
+
+\item{InnMaate}{0: Elektivt, 
+6: Akutt medisinsk, 
+8: Akutt kirurgisk, 
+standard: alle (alt unntatt 0,6,8 / ikke spesifisert)}
+
+\item{dodInt}{Levende/død ut fra intensiv. 
+0: i live, 
+1: død,   
+alle: standard (alle andre verdier)}
+
+\item{reshID}{Parameter følger fra innlogging helseregister.no og angir
+hvilken enhet i spesialisthelsetjenesten brukeren tilhører}
+
+\item{outfile}{Navn på fil figuren skrives til. Standard: '' (Figur skrives
+til systemets standard utdataenhet (som regel skjerm))}
+
+\item{enhetsUtvalg}{Gjør gruppeutvalg med eller uten sammenlikning. Se \strong{Details} for oversikt.}
+
+\item{preprosess}{Preprosesser data
+FALSE: Nei
+TRUE: Ja (Standard)}
+
+\item{hentData}{Gjør spørring mot database
+0: Nei, RegData gis som input til funksjonen (Standard)
+1: Ja}
+
+\item{lagFig}{Angir om figur skal lages eller ikke 0-ikke lag, 1-lag}
 }
 \value{
 Figur som viser tidstrend, dvs. andel av valgt variabel for hvert år.

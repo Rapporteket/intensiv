@@ -1,6 +1,6 @@
 #' Funksjon som gjør utvalg av dataene, returnerer det filtrerte datasettet og utvalgsteksten.
 #'
-#' @inheritParams NIRFigAndeler
+#' @inheritParams NIRAndeler
 #' @param fargepalett Hvilken fargepalett skal brukes i figurer (Standard: BlaaRapp)
 #'
 #' @return UtData En liste bestående av det filtrerte datasettet, utvalgstekst for figur og tekststreng som angir fargepalett
@@ -16,7 +16,7 @@ NIRUtvalgEnh <- function(RegData, datoFra=0, datoTil=0, minald=0, maxald=130, er
       "%i%" <- intersect
       
       dodInt <- as.numeric(dodInt)
-      
+      grType
       
       #Enhetsutvalg:
       #Når bare skal sammenlikne med sykehusgruppe eller region, eller ikke sammenlikne, 
@@ -32,9 +32,16 @@ NIRUtvalgEnh <- function(RegData, datoFra=0, datoTil=0, minald=0, maxald=130, er
                               '7' = RegData[which(RegData$Region == as.character(RegData$Region[indEgen1])),])	#kun egen region
       }
       
-      
-      
       Ninn <- dim(RegData)[1]
+      indGrType <- if (grType %in% 1:3) {switch(grType,
+                                                '1' = which(RegData$ShType %in% 1:2),
+                                                '2' = which(RegData$ShType %in% 1:2),
+                                                '3' = which(RegData$ShType == 3))
+                  } else {indGrType <- 1:Ninn}
+      
+      RegData <- RegData[indGrType,]
+      RegData$ShNavn <- as.factor(RegData$ShNavn)
+      
       indAld <- if(minald>0 | maxald<130) {
             which(RegData$Alder >= minald & RegData$Alder <= maxald)} else {1:Ninn}
       indDato <- if(datoFra!=0 | datoTil!=0) {
@@ -46,19 +53,16 @@ NIRUtvalgEnh <- function(RegData, datoFra=0, datoTil=0, minald=0, maxald=130, er
       } else {1:Ninn}
       indDod <- if (dodInt %in% 0:1) {which(as.numeric(RegData$DischargedIntensiveStatus)==dodInt)
       } else {1:Ninn}
-      indGrType <- if (grType %in% 1:3) {switch(grType,
-                                                '1' = which(RegData$ShType %in% 1:2),
-                                                '2' = which(RegData$ShType %in% 1:2),
-                                                '3' = which(RegData$ShType == 3))
-      } else {indGrType <- 1:Ninn}
       
-      indMed <- indAld %i% indDato %i% indKj %i% indInnMaate %i% indDod %i% indGrType
+      
+      indMed <- indAld %i% indDato %i% indKj %i% indInnMaate %i% indDod #%i% indGrType
       
       RegData <- RegData[indMed,]
       
       
       N <- dim(RegData)[1]	#N=0 gir feilmelding
-      grTypetextstreng <- c('lokal/sentral', 'lokal/sentral', 'region')				
+      #grTypetextstreng <- c('lokal-/sentralsykehus', 'lokal-/sentral', 'regionsykehus')				
+      grTypetextstreng <- c('lokal-/sentral', 'lokal-/sentral', 'region')				
       if (grType %in% 1:3) {grTypeTxt <- grTypetextstreng[grType]} else {grTypeTxt <- 'alle '}
       
       
@@ -86,8 +90,8 @@ NIRUtvalgEnh <- function(RegData, datoFra=0, datoTil=0, minald=0, maxald=130, er
             hovedgrTxt <- as.character(RegData$ShNavn[indEgen1]) } else {
                   hovedgrTxt <- switch(as.character(enhetsUtvalg), 	
                                        '0' = 'Hele landet',
-                                       '4' = grTypetextstreng[RegData$ShType[indEgen1]],
-                                       '5' = grTypetextstreng[RegData$ShType[indEgen1]],
+                                       '4' = paste0(grTypetextstreng[RegData$ShType[indEgen1]], 'sykehus'),
+                                       '5' = paste0(grTypetextstreng[RegData$ShType[indEgen1]], 'sykehus'),
                                        '7' = as.character(RegData$Region[indEgen1]),
                                        '8' = as.character(RegData$Region[indEgen1]))
             }
@@ -108,7 +112,7 @@ NIRUtvalgEnh <- function(RegData, datoFra=0, datoTil=0, minald=0, maxald=130, er
                                             '8' = which(RegData$Region == RegData$Region[indEgen1]))}	#region
             smltxt <- switch(as.character(enhetsUtvalg),
                              '1' = 'landet forøvrig',
-                             '3' = paste0('andre ', grTypetextstreng[RegData$ShType[indEgen1]]),	#RegData inneh. kun egen shgruppe
+                             '3' = paste0('andre ', grTypetextstreng[RegData$ShType[indEgen1]], 'sykehus'),	#RegData inneh. kun egen shgruppe
                              '5' = 'andre typer sykehus',
                              '6' = paste0(RegData$Region[indEgen1], ' forøvrig'),	#RegData inneh. kun egen region
                              '8' = 'andre regioner')
@@ -124,6 +128,6 @@ NIRUtvalgEnh <- function(RegData, datoFra=0, datoTil=0, minald=0, maxald=130, er
       
       
       UtData <- list(RegData=RegData, utvalgTxt=utvalgTxt, fargepalett=fargepalett, ind=ind, 
-                     medSml=medSml, hovedgrTxt=hovedgrTxt,smltxt=smltxt) #, grTypeTxt=grTypeTxt)
+                     medSml=medSml, smltxt=smltxt, hovedgrTxt=hovedgrTxt, grTypeTxt=grTypeTxt)
       return(invisible(UtData)) 
 }

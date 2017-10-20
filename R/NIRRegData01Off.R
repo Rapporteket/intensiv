@@ -23,11 +23,13 @@
 #' @param tilleggsVar Variable som benyttes til filtrering eller gruppering av valgt variabel (valgtVar)
 #'  	Aktuelle valg: Aar, erMann, ShNavn, Mnd, 
 #' @inheritParams NIRAndeler
+#' @param rand 0-"ekte data", 1-tilfeldig resultat.
 #' @return Definisjon av valgt variabel.
 #'
 #' @export
 
-RegData01Off <- function(RegData, valgtVar, datoFra='2016-01-01', datoTil='3000-01-01', tilleggsVar=0, hentData=0) {
+RegData01Off <- function(RegData, valgtVar, datoFra='2016-01-01', datoTil='3000-01-01', tilleggsVar=0, hentData=0,
+                         rand=0) {
 
 
 
@@ -52,7 +54,7 @@ if ('Alder' %in% tilleggsVar) {
       gr <- c(0, 18, 80,150)	#c(0, 18, 40,60,80,150) #	
       grtxt <- c('0-17','18-79','80+') #c('0-17','18-39','40-59','60-79','80+') #
       RegData$AldersGr <- cut(RegData$Alder, breaks=gr, include.lowest=TRUE, right=FALSE)	
-      levels(RegData$AldersGr) <- c('0-17','18-39','40-59','60-79','80+')
+      levels(RegData$AldersGr) <- c('0-17','18-79','80+')
       RegData <- RegData[ ,-which(names(RegData) == 'Alder')]
       tilleggsVar <- replace(tilleggsVar, which(tilleggsVar == 'Alder'), 'AldersGr')
 }
@@ -74,25 +76,42 @@ mapping <- data.frame(verdiGML,verdiNY)
 RegData$VarSensur <- mapping$verdiNY[prodlim::row.match(RegData[, tilleggsVar], ident_ut)]
 RegData <- RegData[-which(RegData$VarSensur == 'sensurert'),-which(names(RegData) == 'VarSensur')]
 
+#Lager tilfeldig resultat
+if (rand==1) {RegData$Variabel <- sample(RegData$Variabel,length(RegData$Variabel))}
 
-#Lagre beregnede data
-#filnavn <- paste0('data/RegData01', valgtVar, '.RData')
-filnavn <- paste0('C:/Registre/NIR/data/NIRdata01', valgtVar, '.RData')
+
 
 tittel <- NIRVarSpes$tittel
 KImaal <- NIRVarSpes$KImaal #Mål for kvalitetsindikator
+sortAvtagende <- NIRVarSpes$sortAvtagende #Sortering av kvalitetsindikator
 utvalgsInfo <- utvalgTxt
 andelFjernet <- AndelBort 
 metaInfo <- c('andelFjernet angir andelen data som sensureres pga. grupper med N<5',
              'utvalgsInfo angir utvalget for grunnlagsdataene',
-             'KImaal angir målnivået for kvalitetsindikatoren') 
-NIRdata01 <- list(NIRRegData01Off=RegData, andelFjernet=andelFjernet, KImaal=KImaal, tittel=tittel, 
-                  utvalgsInfo=utvalgsInfo, metaInfo=metaInfo)
+             'KImaal angir målnivået for kvalitetsindikatoren')
+if (rand==1) {
+      metaInfo <- c(metaInfo,'Dataene er IKKE ekte data')
+      tittel <- c(tittel, 'NB: Dataene er IKKE ekte') }
+
+#Lagre beregnede data
+filnavn <- paste0('A:/Intensiv/NIRdata01', valgtVar, '.RData')
+#filPrefix <- 'A:/Intensiv/NIRdata01'
+
+if (valgtVar == 'reinn') {
+      NIRdata01reinn <- list(NIRRegData01Off=RegData, andelFjernet=andelFjernet, KImaal=KImaal, sortAvtagende=sortAvtagende,
+                  tittel=tittel, utvalgsInfo=utvalgsInfo, metaInfo=metaInfo)
+      save(NIRdata01reinn, file=filnavn) #paste0(filPrefix, 'reinn.RData'))
+}
+if (valgtVar == 'respiratortidInv') {
+      NIRdata01respiratortidInv <- list(NIRRegData01Off=RegData, andelFjernet=andelFjernet, KImaal=KImaal, sortAvtagende=sortAvtagende,
+                             tittel=tittel, utvalgsInfo=utvalgsInfo, metaInfo=metaInfo)
+      save(NIRdata01respiratortidInv, file=filnavn) #paste0(filPrefix, 'respiratortid.RData'))
+}
 #assign(paste0(valgtVar, 'Data'),alleData)
 #assign(paste0(valgtVar, 'Data'),list(RegData=RegData, andelFjernet=andelFjernet, KImaal=KImaal, tittel=tittel, 
 #                                     utvalgsInfo=utvalgsInfo, metaInfo=metaInfo))
 
 #save(assign(paste0(valgtVar, 'Data'), NIRKIdata), file=filnavn)
-save(NIRdata01, file=filnavn)
-return(invisible(NIRdata01))
+#save(NIRdata01, file=filnavn)
+#return(invisible(NIRdata01))
 }

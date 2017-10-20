@@ -40,14 +40,16 @@
 
 NIRFigSoyler <- function(RegData, AggVerdier, AggTot=0, Ngr, tittel='mangler tittel', smltxt='', N, retn='H', 
                          yAkseTxt='', utvalgTxt='', grTypeTxt='', soyletxt='', grtxt, grtxt2='', hovedgrTxt='', 
-                         grVar='', valgtMaal='Andel', cexgr=1, medSml=0, fargepalett='BlaaOff', xAkseTxt='', 
-                         medKI=0, KImaal = NA, outfile='') { #Ngr=list(Hoved=0)
+                         grVar='', valgtMaal='Andel', figurtype='', cexgr=1, medSml=0, fargepalett='BlaaOff', xAkseTxt='', 
+                         medKI=0, KImaal = NA, KImaaltxt = '', outfile='') { #Ngr=list(Hoved=0)
 
 
 #---------------------------------------FRA FIGANDELER, FigGjsnGrVar og FigAndelGrVar--------------------------
 #Hvis for få observasjoner..
 
-if (dim(RegData)[1] < 10 )
+      if ((N$Hoved < 5) | (dim(RegData)[1]<5))
+          #| ((enhetsUtvalg %in% c(1,3)) & length(which(RegData$ReshId == reshID))<5)) #(dim(RegData)[1]-N$Hoved <5) )
+     #       if (dim(RegData)[1] < 10 | ((enhetsUtvalg %in% c(1,3)) & length(which(RegData$ReshId == reshID))<5) )
     #|(grVar=='' & length(which(RegData$ReshId == reshID))<5 & enhetsUtvalg %in% c(1,3))) 
     {
 	#-----------Figur---------------------------------------
@@ -55,9 +57,9 @@ if (dim(RegData)[1] < 10 )
 	farger <- FigTypUt$farger
 	plot.new()
 	title(tittel)	#, line=-6)
-	legend('topleft',utvalgTxt, bty='n', cex=0.9, text.col=farger[1])
+	legend('topleft',legend=utvalgTxt, bty='n', cex=0.9, text.col=farger[1])
 	if (valgtMaal=='Med' & grepl('SMR', tittel)) {tekst <- 'Ugyldig parameterkombinasjon'   #valgtVar=='SMR'
-		} else {tekst <- 'For få registreringer'}
+		} else {tekst <- 'For få registreringer i egen eller sammenligningsgruppe'}
 	text(0.5, 0.6, tekst, cex=1.2)
 	if ( outfile != '') {dev.off()}
 	
@@ -70,7 +72,7 @@ if (dim(RegData)[1] < 10 )
 	FigTypUt <- figtype(outfile, height=hoyde, fargepalett=fargepalett)	
 	#Tilpasse marger for å kunne skrive utvalgsteksten
 	NutvTxt <- length(utvalgTxt)
-	vmarg <- switch(retn, V=0, H=min(1,max(0, strwidth(grtxt, units='figure', cex=cexgr)*0.75)))
+	vmarg <- switch(retn, V=0.04, H=min(1,max(0, strwidth(grtxt, units='figure', cex=cexgr)*0.75)))
 	#NB: strwidth oppfører seg ulikt avh. av device...
 	par('fig'=c(vmarg, 1, 0, 1-0.02*(NutvTxt-1)))	#Har alltid datoutvalg med
 	
@@ -78,6 +80,7 @@ if (dim(RegData)[1] < 10 )
 	farger <- FigTypUt$farger
 	fargeHoved <- ifelse(grVar %in% c('ShNavn'), farger[4], farger[1])
 	fargeRest <- farger[3]
+	graa <- c('#4D4D4D','#737373','#A6A6A6','#DADADA')  #Mørk til lys          																# Fire graatoner
 	antGr <- length(grtxt)
 	lwdRest <- 3	#tykkelse på linja som repr. landet
 	cexleg <- 0.9	#Størrelse på legendtekst
@@ -88,13 +91,13 @@ if (retn == 'H') {
 	#Definerer disse i beregningsfunksjonen?  
       xmax <- max(c(AggVerdier$Hoved, AggVerdier$Rest),na.rm=T)*1.2
       xmax <- ifelse(valgtMaal=='Andel', min(xmax, 100), xmax) 	#100 som maks bare hvis andelsfigur..
-	  ymin <- 0.5/cexgr^4	#0.05*antGr #Fordi avstand til x-aksen av en eller annen grunn øker når antall sykehus øker
-	  ymax <- 0.2+1.2*length(AggVerdier$Hoved) #c(0.3/xkr^4,  0.3+1.25*length(Midt))
+	  ymin <- 0.3 #0.5/cexgr^4	#0.05*antGr #Fordi avstand til x-aksen av en eller annen grunn øker når antall sykehus øker
+	  ymax <- 0.4+1.25*length(AggVerdier$Hoved) #c(0.3/xkr^4,  0.3+1.25*length(Midt)), 0.2+1.2*length(AggVerdier$Hoved) 
 
 	  #Må def. pos først for å få strek for hele gruppa bak søylene
 	  ### reverserer for å slippe å gjøre det på konf.int
 	  pos <- rev(barplot(rev(as.numeric(AggVerdier$Hoved)), horiz=T, xlim=c(0,xmax), ylim=c(ymin, ymax), #, plot=FALSE)
-	                     xlab=xAkseTxt, border=NA, col.axis='white', col='white'))
+	                     xlab=xAkseTxt, border=NA, col=fargeHoved)) #, col.axis='white', col='white'))
 	  indOK <- which(AggVerdier$Hoved>=0)
 	  posOK <- pos[indOK]
 	  posOver <- max(pos)+0.35*log(max(pos))
@@ -120,11 +123,11 @@ if (retn == 'H') {
 	      #Linje for kvalitetsindikatormål:
 	      if (!is.na(KImaal)) { 
 	            lines(x=rep(KImaal, 2), y=c(minpos, maxpos), col= '#FF7260', lwd=2.5) #y=c(0, max(pos)+0.55), 
-	            text(x=KImaal, y=maxpos+0.6, 'Mål', cex=0.9*cexgr, col= '#FF7260',adj=c(0.5,0)) 
+	            text(x=KImaal, y=maxpos+0.6, paste0('Mål:', KImaaltxt), cex=0.9*cexgr, col= '#FF7260',adj=c(0.5,0)) 
 	      }
 	      barplot(rev(as.numeric(AggVerdier$Hoved)), horiz=TRUE, beside=TRUE, las=1, add=TRUE,
 	              col=fargeHoved, border=NA, cex.names=cexgr) #, xlim=c(0, xmax), ylim=c(ymin,ymax)
-	      soyleXpos <- 1.1*xmax*max(strwidth(soyletxt, units='figure')) # cex=cexgr
+	      soyleXpos <- 1.14*xmax*max(strwidth(soyletxt, units='figure')) # cex=cexgr
 	      text(x=soyleXpos, y=pos+0.1, soyletxt, las=1, cex=cexgr, adj=1, col=farger[1])	#AggVerdier, hvert sykehus
 	      }
 
@@ -137,7 +140,8 @@ if (retn == 'H') {
 	}
 	#------Tegnforklaring (legend)--------
 	if (valgtMaal %in% c('Gjsn', 'Med')) { #Sentralmålfigur
-	      if (medKI == 0) { #Hopper over hvis ikke valgtMaal er oppfylt
+#	if (figurtype %in% c('gjsnGrVar', 'gjsnTid')) { #Sentralmålfigur
+	  if (medKI == 0) { #Hopper over hvis ikke valgtMaal er oppfylt
 	            TXT <- paste0('totalt: ', sprintf('%.1f', AggTot), ', N=', N$Hoved)
       	      legend(xmax/4, posOver+posDiff, TXT, fill=NA,  border=NA, lwd=2.5, xpd=TRUE, #inset=c(-0.1,0),
       	             col=farger[1], cex=cexleg, seg.len=0.6, merge=TRUE, bty='n')
@@ -148,18 +152,21 @@ if (retn == 'H') {
       	      legend(xmax/4, posOver+2*posDiff, TXT, fill=c(NA, farger[3]),  border=NA, lwd=2.5,  #inset=c(-0.1,0),
       	             col=c(farger[1], farger[3]), cex=cexleg, seg.len=0.6, merge=TRUE, bty='n')
 	      }
-	} else { 
-	      legend(xmax/4, posOver+2.5*posDiff, paste0(grTypeTxt, 'sykehus: ', sprintf('%.1f', AggTot), '%, N=', N$Hoved),
+	} 
+	  #else { 
+	  if (figurtype %in% c('andelGrVar', 'andelTid')) {
+	      legend(xmax/4, posOver+2*posDiff, paste0(grTypeTxt, 'sykehus: ', sprintf('%.1f', AggTot), '%, N=', N$Hoved),
 	             col=farger[1], border=NA, lwd=2.5, xpd=TRUE, bty='n', cex = cexleg) 
 	}
 	  #Fordelingsfigurer:
-	  if (grVar == '') {
+	  #if (grVar == '') {
+	  if (figurtype == 'andeler') {
       	  if (medSml == 1) { #Legge på prikker for sammenlikning
-      	        legend('top', c(paste0(hovedgrTxt, ' (N=', N$Hoved,')'), paste0(smltxt, ' (N=', N$Rest,')')), 
+      	        legend(xmax/4, posOver+0.6*posDiff, c(paste0(hovedgrTxt, ' (N=', N$Hoved,')'), paste0(smltxt, ' (N=', N$Rest,')')), 
       	               border=c(fargeHoved,NA), col=c(fargeHoved,fargeRest), bty='n', pch=c(15,18), pt.cex=2, 
       	               lwd=lwdRest, lty=NA, ncol=1)
       	  } else {	
-      	        legend('top', paste0(hovedgrTxt, ' (N=', N$Hoved,')'), 
+      	        legend(xmax/4, posOver+0.8*posDiff, paste0(hovedgrTxt, ' (N=', N$Hoved,')'), 
       	               border=NA, fill=fargeHoved, bty='n', ncol=1)
       	  }
 	  }
@@ -167,12 +174,16 @@ if (retn == 'H') {
 
 
       #Legge på gruppe/søylenavn
-      mtext(at=pos+0.05, text=grtxt, side=2, las=1, cex=cexgr, adj=1, line=0.25) 
+      if (figurtype  == 'andeler') {
+            grtxt <- paste(grtxt, grtxt2, sep='\n')}
+     
+            mtext(at=pos+0.05, text=grtxt, side=2, las=1, cex=cexgr, adj=1, line=0.25) 
       
-      #Fordelingsfigurer:
+	  
+	  #Fordelingsfigurer:
       #if (grVar == '') {
       	if (medSml == 1) { #Legge på prikker for sammenlikning
-      		  points(as.numeric(rev(AggVerdier$Rest)), pos, col=fargeRest,  cex=2, pch=18) #c("p","b","o"), 
+      		  points(as.numeric(AggVerdier$Rest), pos, col=fargeRest,  cex=2, pch=18) #c("p","b","o"), 
       	}
        #}
       }		#Slutt horisontale søyler
@@ -180,20 +191,25 @@ if (retn == 'H') {
 	
 	
 	if (retn == 'V' ) {
-		  #Vertikale søyler eller linje
+		  #Vertikale søyler. Det er bare andeler som har vertikale søyler.
 		  ymax <- min(max(c(AggVerdier$Hoved, AggVerdier$Rest),na.rm=T)*1.25, 115)
 		  pos <- barplot(as.numeric(AggVerdier$Hoved), beside=TRUE, las=1, ylab=yAkseTxt,	
 						 sub=xAkseTxt,	col=fargeHoved, border='white', ylim=c(0, ymax))	
 		  mtext(at=pos, grtxt, side=1, las=1, cex=cexgr, adj=0.5, line=0.5)
-		  mtext(at=pos, grtxt2, side=1, las=1, cex=0.9*cexgr, adj=0.5, line=1.5)
+		  mtext(at=pos, grtxt2, side=1, las=1, cex=0.9*cexgr, adj=0.5, line=1.5, col=graa[2])
+		  mtext(at=0,  paste0(hovedgrTxt,': '), side=1, cex=0.9*cexgr, adj=0.9, line=1.5, col=graa[2])
+		  #legend(x=0, y=-0.05*ymax, legend=paste0(hovedgrTxt,':'), col=fargeRest,pch=18,bty="n",ncol=2, cex=0.9*cexgr, xpd=TRUE) #pt.cex=0.7,
 		  
 		  if (medSml == 1) {
-				points(pos, as.numeric(AggVerdier$Rest), col=fargeRest,  cex=2, pch=18) #c("p","b","o"), 
-				legend('top', c(paste0(hovedgrTxt, ' (N=', N$Hoved,')'), paste0(smltxt, ' (N=', N$Rest,')')), 
+		        grtxt3 <- paste0(sprintf('%.1f',AggVerdier$Rest), '%') #paste0('(', sprintf('%.1f',AggVerdier$Rest), '%)')
+		        mtext(at=pos, grtxt3, side=1, las=1, cex=0.9*cexgr, adj=0.5, line=2.5, col=graa[2])
+		        mtext(at=0,  paste0(smltxt,': '), side=1, cex=0.9*cexgr, adj=0.9, line=2.5, col=graa[2])
+		        points(pos, as.numeric(AggVerdier$Rest), col=fargeRest,  cex=2, pch=18) #c("p","b","o"), 
+				legend('top', legend=c(paste0(hovedgrTxt, ' (N=', N$Hoved,')'), paste0(smltxt, ' (N=', N$Rest,')')), 
 					   border=c(fargeHoved,NA), col=c(fargeHoved,fargeRest), bty='n', pch=c(15,18), pt.cex=2, lty=c(NA,NA), 
 					   lwd=lwdRest, ncol=2, cex=cexleg)
 		  } else {	
-				legend('top', paste0(hovedgrTxt, ' (N=', N$Hoved,')'), 
+				legend('top', legend=paste0(hovedgrTxt, ' (N=', N$Hoved,')'), 
 					   border=NA, fill=fargeHoved, bty='n', ncol=1, cex=cexleg)
 		  }
 	} 

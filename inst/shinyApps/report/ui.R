@@ -2,6 +2,7 @@
 # for 'Intensiv'
 
 require(highcharter)
+library(intensiv)
 #data("AndelerGrVarData")
 
 # not implemented just yet, wait until sample data without preprocessing
@@ -14,7 +15,8 @@ shinyUI(
              tabPanel("Reinnleggelse innen 72 timer",
                       sidebarLayout(
                         sidebarPanel(
-                          uiInputModule("readmission72hours"),
+                          uiInputModule(id = "readmission72hours",
+                                        dat = NIRdata01reinn$NIRRegData01Off),
                           downloadButton("downloadDataAndelerGrVar",
                                          label = "Last ned data")
                         ),
@@ -28,10 +30,11 @@ shinyUI(
                         ))
                       )
              ),
-             tabPanel("GjsnGrVar",
+             tabPanel("Respiratortid under 2,5 døgn",
                       sidebarLayout(
                         sidebarPanel(
-                          uiInputModule("gjsnGrVar"),
+                          uiInputModule(id = "gjsnGrVar",
+                                        dat = NIRdata01respiratortid$NIRRegData01Off),
                           downloadButton("downloadDataGjsnGrVar",
                                          label = "Last ned data")
                         ),

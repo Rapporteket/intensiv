@@ -1,6 +1,6 @@
 #' Funksjon som gjør utvalg av anonymiserte data, returnerer det filtrerte datasettet og utvalgsteksten.
 #'
-#' @inheritParams NIRFigAndeler
+#' @inheritParams NIRAndeler
 #' @param fargepalett Hvilken fargepalett skal brukes i figurer (Standard: BlaaRapp)
 #'
 #' @return UtData En liste bestående av det filtrerte datasettet, utvalgstekst for figur og tekststreng som angir fargepalett
@@ -15,7 +15,7 @@ NIRUtvalgOff <- function(RegData, aldGr=0, erMann='', InnMaate='',
       "%i%" <- intersect
       
       Ninn <- dim(RegData)[1]
-      indAld <- if(aldGr[1] != 0) {which(RegData$aldGr %in% aldGr) } else {1:Ninn}
+      indAld <- if(aldGr[1] != 0) {which(RegData$AldersGr %in% aldGr) } else {1:Ninn}
       indAar <- if (aar[1] != 0) {which(RegData$Aar %in% aar)} else {1:Ninn}
       #indKvart <- if (aar[1] != 0) {which(RegData$Kvartal %in% aar)} else {1:Ninn}
       indKj <- if (erMann %in% 0:1) {which(RegData$erMann == erMann)} else {1:Ninn}
@@ -27,15 +27,15 @@ NIRUtvalgOff <- function(RegData, aldGr=0, erMann='', InnMaate='',
                                                 '3' = which(RegData$ShType == 3))
       } else {indGrType <- 1:Ninn}
       
-      indMed <- indAld %i% indKj %i% indGrType
+      indMed <- indAld %i% indKj %i% indGrType %i% indAar
       
       RegData <- RegData[indMed,]
       
       
       N <- dim(RegData)[1]	#N=0 gir feilmelding
-      grTypetextstreng <- c('Alle lokal-/sentralsykeh.', 'Alle lokal-/sentralsykeh.', 'Alle regionsykehus')				
-      if (grType %in% 1:3) {grTypeTxt <- grTypetextstreng[grType]} else {grTypeTxt <- 'Hele landet'}
-   
+      grTypetextstreng <- c('lokal/sentral', 'lokal/sentral', 'region')				
+      if (grType %in% 1:3) {grTypeTxt <- grTypetextstreng[grType]} else {grTypeTxt <- 'alle '}
+      
       
       
       

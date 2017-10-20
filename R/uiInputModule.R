@@ -6,15 +6,15 @@
 #'  @param label Label for this module
 #'  @export
 
-uiInputModule <- function(id, label = "Brukervalg") {
+uiInputModule <- function(id, dat, label = "Brukervalg") {
   
   # create namespace
   ns <- NS(id)
   
-  #   # make values and lables
-  years <- sort(dplyr::distinct(reinnData$RegData, Aar)$Aar)
-  hospital_names <- sort(dplyr::distinct(reinnData$RegData, ShNavn)$ShNavn)
-  age_groups <- levels(reinnData$RegData$AldersGr)
+  # make values and lables
+  years <- sort(dplyr::distinct(dat, Aar)$Aar)
+  hospital_names <- sort(dplyr::distinct(dat, ShNavn)$ShNavn)
+  age_groups <- levels(dat$AldersGr)
 
   tagList(
     selectInput(inputId = ns("year"), label = "År:",
@@ -29,7 +29,8 @@ uiInputModule <- function(id, label = "Brukervalg") {
                 ),
     selectInput(inputId = ns("hospitalType"),
                 label = "Sykehustype:",
-                choices = c("Lokal" = 1, "Sentral" = 2,
+                choices = c("Lokal" = 1,
+                            "Sentral" = 2,
                             "Regional" = 3),
                 selected = c(1, 2, 3),
                 multiple = TRUE

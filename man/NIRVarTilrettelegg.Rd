@@ -4,7 +4,16 @@
 \alias{NIRVarTilrettelegg}
 \title{Funksjon for å tilrettelegge variable for beregning.}
 \usage{
-NIRVarTilrettelegg(RegData, valgtVar, grVar = "", figurtype = "andeler")
+NIRVarTilrettelegg(RegData, valgtVar, grVar = "ShNavn",
+  figurtype = "andeler")
+}
+\arguments{
+\item{RegData}{En dataramme med alle nødvendige variabler fra registeret}
+
+\item{valgtVar}{Hvilken variabel som skal visualiseres. Se \strong{Details} for oversikt.}
+
+\item{figurtype}{Hvilken figurtype det skal tilrettelegges variable for: 
+'andeler', 'andelGrVar', 'andelTid', 'gjsnGrVar', 'gjsnTid'}
 }
 \value{
 Definisjon av valgt variabel.
@@ -17,16 +26,6 @@ andre variable. Det er også her man angir aksetekster og titler for den valgte 
 Her kan mye hentes til analysebok
 }
 \details{
-Argumentet \emph{valgtVar} har følgende valgmuligheter:
-   \itemize{
-    \item alder: Aldersfordeling, 10-årige grupper 
-    \item InnMaate: Hastegrad inn på intensiv (Elektivt, Akutt medisinsk, Akutt kirurgisk)
-    \item liggetid: Liggetid 
-    \item NEMS: Skår for ressursbruk. (Nine Equivalents of Nursing Manpower Use Score)
-    \item Nas: Skår for sykepleieraktiviteter. (Nursing Activities Score)
-    \item respiratortid: Tid tilbrakt i respirator
-    \item SAPSII: Skår for alvorlighetsgrad av sykdom.  (Simplified Acute Physiology Score II)
-   }
 Argumentet \emph{enhetsUtvalg} har følgende valgmuligheter:
    \itemize{
     \item 0: Hele landet

@@ -8,6 +8,23 @@ NIRUtvalgOff(RegData, aldGr = 0, erMann = "", InnMaate = "", aar = 0,
   grType = 99, fargepalett = "BlaaOff")
 }
 \arguments{
+\item{RegData}{En dataramme med alle nødvendige variabler fra registeret}
+
+\item{erMann}{Kjønn, standard: alt annet enn 0/1 gir begge kjønn
+0: Kvinner
+1: Menn}
+
+\item{InnMaate}{0: Elektivt, 
+6: Akutt medisinsk, 
+8: Akutt kirurgisk, 
+standard: alle (alt unntatt 0,6,8 / ikke spesifisert)}
+
+\item{grType}{Gjør gruppeutvalg på sykehustype
+1: lokal-/sentralsykehus
+2: lokal-/sentralsykehus
+3: regionsykehus
+99: alle (standard)}
+
 \item{fargepalett}{Hvilken fargepalett skal brukes i figurer (Standard: BlaaRapp)}
 }
 \value{

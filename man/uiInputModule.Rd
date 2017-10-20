@@ -4,7 +4,7 @@
 \alias{uiInputModule}
 \title{Modulised UI for shiny}
 \usage{
-uiInputModule(id, label = "Brukervalg")
+uiInputModule(id, dat, label = "Brukervalg")
 }
 \description{
 uiInputModule provides common ui uc for shiny intensiv

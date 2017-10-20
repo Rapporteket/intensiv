@@ -6,8 +6,8 @@
 #'
 #' Detajer: Her bør man liste opp hvilke variable funksjonen benytter...
 #'
-#' @inheritParams NIRFigAndeler
-#' @inheritParams NIRFigAndelerGrVar
+#' @inheritParams NIRAndeler
+#' @inheritParams NIRAndelerGrVar
 #' @param valgtMaal 'Med' = median. Alt annet gir gjennomsnitt 
 #'
 #' Argumentet \emph{valgtVar} har følgende valgmuligheter:
@@ -45,13 +45,13 @@ if (preprosess){
      }
 
 #------- Tilrettelegge variable
-NIRVarSpes <- NIRVarTilrettelegg(RegData=RegData, valgtVar=valgtVar)
+NIRVarSpes <- NIRVarTilrettelegg(RegData=RegData, valgtVar=valgtVar, figurtype = 'gjsnGrVar')
 RegData <- NIRVarSpes$RegData
 
 #------- Gjøre utvalg
+minald <- max(NIRVarSpes$minald, minald)
 NIRUtvalg <- NIRUtvalgEnh(RegData=RegData, datoFra=datoFra, datoTil=datoTil, aar=aar, minald=minald, maxald=maxald, 
-                          overfPas=overfPas, erMann=erMann, InnMaate=InnMaate, dodInt=dodInt, 
-						  grType=grType)
+                          erMann=erMann, InnMaate=InnMaate, dodInt=dodInt, grType=grType) #overfPas=overfPas, 
 RegData <- NIRUtvalg$RegData
 utvalgTxt <- NIRUtvalg$utvalgTxt
 
@@ -70,7 +70,8 @@ t1 <- switch(valgtMaal,
 			Gjsn = 'Gjennomsnittlig ')
 
 
-tittel <- c(paste0(t1, valgtVar, ', ', NIRUtvalg$grTypeTxt, 'sykehus')) 
+#tittel <- paste0(t1, valgtVar, ', ', NIRUtvalg$grTypeTxt, 'sykehus')
+tittel <- paste0(t1, NIRVarSpes$tittel) 
 			
 if( valgtVar =='SMR') {tittel <- c(paste0('SMR, ', NIRUtvalg$grTypeTxt, 'sykehus'),
 								'(uten reinnlagte og overflyttede pasienter)')}
@@ -178,10 +179,6 @@ GjsnGrVarData <- list(AggVerdier=AggVerdier, #Endres til Soyleverdi? Evt. AggVer
                          medSml=NIRUtvalg$medSml, 
                          smltxt=NIRUtvalg$smltxt)
 
-#Lagre beregnede data
-#if (hentData==1) {
-save(GjsnGrVarData, file='data/GjsnGrVarData.RData')
-#}
 
 #FigDataParam skal inn som enkeltparametre i funksjonskallet
 if (lagFig == 1) {
