@@ -24,10 +24,10 @@
 		<defaultValueExpression><![CDATA[$P{LoggedInUserAttribute_AVD_RESH}]]></defaultValueExpression>
 	</parameter>
 	<parameter name="rFunctionCallString" class="java.lang.String" isForPrompting="false">
-		<defaultValueExpression><![CDATA[new String("NIRAndelTid(RegData=0, valgtVar=valgtVar, datoFra=datoFra, datoTil=datoTil, minald=minald, maxald=maxald, erMann=erMann,InnMaate=InnMaate, dodInt='', preprosess=1, hentData=1, reshID=reshID, outfile=outfile, enhetsUtvalg=enhetsUtvalg)")]]></defaultValueExpression>
+		<defaultValueExpression><![CDATA[new String("NIRFigAndelTid(RegData=0, valgtVar=valgtVar, datoFra=datoFra, datoTil=datoTil, minald=minald, maxald=maxald, erMann=erMann,InnMaate=InnMaate, dodInt='', preprosess=1, hentData=1, reshID=reshID, outfile=outfile, enhetsUtvalg=enhetsUtvalg)")]]></defaultValueExpression>
 	</parameter>
 	<parameter name="reportName" class="java.lang.String" isForPrompting="false">
-		<defaultValueExpression><![CDATA[new String("NIRAndelTid")]]></defaultValueExpression>
+		<defaultValueExpression><![CDATA[new String("NIRFigAndelTid")]]></defaultValueExpression>
 	</parameter>
 	<parameter name="rPackageName" class="java.lang.String" isForPrompting="false">
 		<defaultValueExpression><![CDATA[new String("intensiv")]]></defaultValueExpression>

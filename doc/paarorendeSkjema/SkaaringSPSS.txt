@@ -1,0 +1,170 @@
+*** PROGRAM:	Scoring the 24-item FS-ICU
+*** PURPOSE:	Recode, transform, and score the FS-ICU after initial data entry
+*** DATE:	1 July 2006
+*** AUTHOR:	Richard J. Wall, MD MPH
+		University of Washington, Seattle, WA
+		Box 359762
+		brickw@u.washington.edu 
+
+
+*** DESIGNATE MISSING VALUES AFTER YOUR INITIAL DATA ENTRY
+
+MISSING VALUES  dmagree dmansw dmcontrl dmdone dmhope dmincl dminfo dmsatis dmsupp dmthink dmtime fsagit fsbreat fscaref fscarep fschapl
+  fsconsis fscoor fsemot fsexpl fshon fsicuatm fsicusat fsicuwr fsinfo fsmdcare fsmdcom fsmsw fsneeds fspain fsques fsrncare
+  fsrncom fsspir (7 thru 8). 
+EXECUTE.
+
+
+*** RECODE DISCONTINUOUS VARIABLES TO CLARIFY "BEST" CHOICE
+
+RECODE dmtime  dmhope (1,5 = 1) (2,4=2) (else = copy)
+           INTO  dmtimer dmhoper.
+RECODE  dminfo (1,3=1) (else = copy)
+           INTO dminfor.
+RECODE dmthink dmansw (3=2) (else = copy)
+           INTO dmthkr dmanswr.
+
+VARIABLE LABELS   
+dmtimer  'dmtime recoded into Likert-3 scale'
+dmhoper  'dmhope recoded into Likert-3 scale'
+dminfor   'dminfo recoded into dichotomous scale'
+dmthkr 'dmthink recoded into dichotomous scale'
+dmanswr  'dmansw recoded into dichotomous scale'.
+
+VALUE labels    
+dmtimer    1 'involved far too late/early'   2 'involved little too late/early'   3 'involved just right'
+/dmhoper  1 'given no or too much hope'   2 'give little hope/a little too much hope'  3 'given right amount of hope'
+/dminfor    1 'too much/little information'  2 'just right amount of information'
+/dmthkr     1'needed more time to think' 2 'enough/more than enough time'  
+/dmanswr  1 'could have used more time'  2 'adequate/more than enough time'.
+MISSING VALUES  dmtimer dmhoper dminfor dmthkr dmanswr (7 thru 8).
+EXECUTE.
+
+
+**** TRANSFORM VARIABLES TO 0-100 SCALE, with 100 as "BEST"
+
+COMPUTE dmincls = ((dmincl - 1)/4) * 100.
+COMPUTE dmsupps = ((dmsupp - 1)/4) * 100.
+COMPUTE dmcntrls = ((dmcontrl - 1)/4) * 100.
+COMPUTE dmagrees = ((dmagree - 1)/4) * 100.
+COMPUTE dmdones = ((dmdone - 1)/4) * 100.
+COMPUTE dmsats = ((dmsatis - 1)/4) * 100.
+COMPUTE dmhopes = ((dmhoper-1)/2)*100.
+COMPUTE dmtimes = ((dmtimer - 1)/2)*100.
+COMPUTE dminfos = ((dminfor -1)/1)*100.
+COMPUTE dmthinks= ((dmthkr - 1)/1)*100.
+COMPUTE dmansws= ((dmanswr - 1)/1)*100.
+
+VARIABLE label  
+dmincls     'Feel included during decision-making, 0-100 scoring'
+dmsupps   'Feel supported during decision-making, 0-100 scoring'
+dmcntrls    'Feel control over patient care, 0-100 scoring'
+dmagrees  'Agreement within family regarding care, 0-100 scoring'
+dmdones   'Satisfaction with level of care, 0-100 scoring'
+dmsats      'Overall satisfaction with decision-making, 0-100 scoring'
+dmhopes   'Given right amount of hope for recovery, 0-100 scoring'
+dmtimes    'Involved at right time in decision-making process, 0-100 scoring'
+dminfos    'Received appropriate amount of information, 0-100 scoring'
+dmthinks   'Enough time to think about information, 0-100 scoring'
+dmansws  'Enough time to have questions answered, 0-100 scoring'.
+EXECUTE.
+
+VALUE label  
+dmincls 0 '0=very excluded'  25 '25=somewhat excluded'  50 '50=neither included or excluded'  75 '75=somewhat included'  100 '100=very included'  
+/dmsupps 0 '0=totally overwhelmed'  25 '25=slightly overwhelmed'  50 '50=neither'  75 '75=felt supported'  100 '100=very supported'
+/dmcntrls  0 '0=no control at all' 25 '25=little control'  50 '50=neither'  75 '75=some control'  100 '100=good control'
+/dmagrees 0 '0=severe family conflicts'   25 '25=some family conflicts'  50 '50=neither'   75 '75=some agreement'  100 '100strong agreement'
+/dmdones dmsats  0 '0=very dissatisfied'      25 '25=slightly dissatisfied'    50  '50=mostly satisfied' 75 '75=very satisfied'   100 '100=completely satisfied'
+/dmhopes  0 '0=no hope/too much hope'    50 '50=too little/bit too much'    100 '100=right amount of hope'
+/dmtimes   0 '0=too late/too early'    50 '50=a little too late/a little too early'   100 '100=involved at right time'
+/dminfos     0 '0=too much/too little information'  100 '100=just enough'
+/dmthinks    0 '0=needing more time'   100 '100=enough/more than enough'
+/dmansws    0 '0=needing more time'   100 '100=adequate/more than enough'.
+EXECUTE.
+
+
+
+*** REVERSE CODING SO THAT ITEMS ARE ORIENTED IN THE SAME DIRECTION AS THE REST OF INSTRUMENT
+*** THEN TRANSFORM VARIABLES TO 0-100 SCALE, with 100 as "BEST"
+
+COMPUTE fscareps = 100- (((fscarep - 1)/4)*100).
+COMPUTE fspains = 100- (((fspain - 1)/4)*100).
+COMPUTE fsbreats= 100- (((fsbreat - 1)/4)*100).
+COMPUTE fsagits = 100- (((fsagit - 1)/4)*100).
+COMPUTE fsneedss = 100- (((fsneeds - 1)/4)*100).
+COMPUTE fsemots = 100- (((fsemot - 1)/4)*100).
+COMPUTE fsspirs = 100- (((fsspir - 1)/4)*100).
+COMPUTE fscoors = 100- (((fscoor - 1)/4)*100).
+COMPUTE fscarefs = 100- (((fscaref - 1)/4)*100).
+COMPUTE fsrncars = 100- (((fsrncare - 1)/4)*100).
+COMPUTE fsrncoms = 100- (((fsrncom - 1)/4)*100).
+COMPUTE fsmdcars = 100- (((fsmdcare - 1)/4)*100).
+COMPUTE fsmdcoms = 100- (((fsmdcom - 1)/4)*100).
+COMPUTE fsmsws = 100- (((fsmsw - 1)/4)*100).
+COMPUTE fschapls = 100- (((fschapl - 1)/4)*100).
+COMPUTE fsicatms = 100- (((fsicuatm- 1)/4)*100).
+COMPUTE fsicuwrs = 100- (((fsicuwr - 1)/4)*100).
+COMPUTE fsicsats = 100- (((fsicusat - 1)/4)*100).
+COMPUTE fsquess = 100- (((fsques - 1)/4)*100).
+COMPUTE fsexpls = 100- (((fsexpl - 1)/4)*100).
+COMPUTE fshons = 100- (((fshon - 1)/4)*100).
+COMPUTE fsinfos = 100- (((fsinfo - 1)/4)*100).
+COMPUTE fsconss = 100- (((fsconsis - 1)/4)*100).
+EXECUTE.
+
+VARIABLE label  
+	fscareps 	'Courtesy, respect and compassion toward patient, 0-100 scoring'
+	/fspains 	'Symptom mgt: pain, 0-100 scoring'
+	/fsbreats 	'Symptom mgt: breathlessness, 0-100 scoring'
+	/fsagits   	'Symptom mgt: agitation, 0-100 scoring'
+	/fsneedss	'Staff showed interest in family needs, 0-100 scoring'
+	/fsemots  	'Family emotional support, 0-100 scoring'
+	/fsspirs   	 'Family spiritual support, 0-100 scoring'
+	/fscoors   	 'Teamwork and coordination of care, 0-100 scoring'
+	 /fscarefs  	 'Courtesy, respect, & compassion shown to family, 0-100 scoring'
+	 /fsrncars 	 'How well RN cared for pt-skill and competence, 0-100 scoring'
+      	/fsrncoms  	 'How often RN communicated about pts condition, 0-100 scoring'
+	 /fsmdcars  	 'How well MD cared for pt-skill and competence, 0-100 scoring'
+	 /fsmdcoms  	 'How often MD communicated about pts condition, 0-100 scoring'
+	 /fsmsws      	 'How well social worker assisted & supported, 0-100 scoring'
+	 /fschapls    	 'How well chaplain assisted & supported, 0-100 scoring'
+	 /fsicatms  	 'Atmosphere of ICU, 0-100 scoring'
+	/fsicuwrs     	 'Atmosphere of waiting room, 0-100 scoring'
+	/fsicsats    	 'Overall satisfaction with ICU experience, 0-100 scoring'
+	 /fsquess     	 'Willingness of staff to answer questions, 0-100 scoring'
+    	/fsexpls      	 'Staff provided understandable explanations, 0-100 scoring'
+	 /fshons    	 'Honesty of info, 0-100 scoring'
+	/fsinfos      	 'Completeness of info, 0-100 scoring'
+	 /fsconss  	 'Consistency of info from providers, 0-100 scoring'.
+
+
+VALUE labels  fscareps to fsconss  0 'poor'  25 'fair'   50 'good'   75 'very good'   100 'excellent'.
+EXECUTE.
+
+
+*** SCORE THE 24-ITEM FS-ICU
+*** CREATES 2 SUBSCALE SCORES (fscare, fsdm) AND A TOTAL SCORE (fstot)
+
+
+COMPUTE fscare  =
+MEAN.10 (fspains,  fscareps,  fsagits, fsbreats, fsneedss,  fsemots, fscoors,  
+                fscarefs,  fsrncars,  fsrncoms,  fsmdcars, fsicatms,  fsicuwrs, dmdones).
+
+COMPUTE fsdm  =
+MEAN.7 (fsmdcoms, fsquess,  fsexpls,  fshons,  fsinfos, fsconss, dmincls, dmsupps,  dmcntrls, dmansws).
+
+COMPUTE fstot =
+MEAN.17 (fspains, fscareps, fsagits, fsbreats, fsneedss,  fsemots, fscoors, fscarefs,  fsrncars, 
+                 fsrncoms,  fsmdcars, fsicatms, fsicuwrs, dmdones,fsmdcoms, fsquess,  fsexpls,  
+                fshons,  fsinfos, fsconss, dmincls, dmsupps,  dmcntrls, dmansws) .
+
+VARIABLE label   fscare  'Care subscale, 14 items, 0-100'
+fsdm  'Decision-making subscale, 10 items, 0-100'
+fstot 'FS-ICU Total, 24 items, 0-100'.
+VALUE label   fscare to fstot   0 'poorest'  100 'best'.
+EXECUTE.
+
+
+*** VIEW STATISTICS FOR THE FS-ICU SCORES
+
+Freq variables = fscare fsdm fstot  /statistics = all /histogram.

@@ -1,0 +1,37 @@
+<![CDATA[$P!{Query}]]>
+		
+create table DataKategorier select *, cast(ShusNr as char) as ShusNrKat, IF(ErMann=1,"Mann" ,"Kvinne") as Kjonn, cast(kat as char) as KatShusType from data
+
+http://172.19.15.124:8081/jasperserver-pro
+
+For å summere opp
+select 
+'aldergr1'=sum(case when alder between 1 and 5 then 1 else 0 end),
+'aldergr2'=sum(case when alder between 6 and 10 then 1 else 0 end)
+
+LAGE ny variabel:
+Select
+‘AlderGr’= case when alder between 1 and 5 then ‘1-5’
+                               when alder between 6 and 10 then ‘6-10’
+                               when alder between 11 and 15 then ’11-15’
+                               else ‘ugyldig’
+                               end
+From skjema…..
+Where
+Alder between 1  and 15
+
+select
+CASE month when "01" then "January"
+when "02" then "February"
+when "03" then "March"
+when "04" then "April"
+when "05" then "May"
+when "06" then "June"
+when "07" then "July"
+when "08" then "August"
+when "09" then "September"
+when "10" then "October"
+when "11" then "November"
+when "12" then "December"
+END
+from calendar where year = "2005" order by month 

@@ -15,13 +15,13 @@
 #'     \item reinn: Andel reinnlagte (kun hvor dette er registrert, dvs. fjerner ukjente)
 #'    }
 #'
-#' @inheritParams NIRAndeler 
+#' @inheritParams NIRFigAndeler 
 #' @param tidsenhet Oppløsning på tidsaksen. Verdier: 'Aar' (standard), 'Halvaar', 'Kvartal','Mnd'
 #'
 #' @return Figur som viser tidstrend, dvs. andel av valgt variabel for hvert år. 
 #'
 #' @export
-NIRAndelTid <- function(RegData, valgtVar, datoFra='2011-01-01', datoTil='3000-12-31', tidsenhet='Aar',
+NIRFigAndelTid <- function(RegData, valgtVar, datoFra='2011-01-01', datoTil='3000-12-31', tidsenhet='Aar',
                         minald=0, maxald=130, erMann='', InnMaate='', dodInt='', reshID=0, outfile='', 
                         enhetsUtvalg=1, preprosess=1, hentData=0, lagFig=1, offData=0) {
       
@@ -158,7 +158,7 @@ NIRAndelTid <- function(RegData, valgtVar, datoFra='2011-01-01', datoTil='3000-1
                            smltxt=NIRUtvalg$smltxt)
       
       
-      NIRFigTidAndel <- function(RegData, AggVerdier, AggTot=0, Ngr, tittel='mangler tittel', smltxt='', N, retn='H', 
+      FigAndelTid <- function(RegData, AggVerdier, AggTot=0, Ngr, tittel='mangler tittel', smltxt='', N, retn='H', 
                                  yAkseTxt='', utvalgTxt='', grTypeTxt='', tidtxt, varTxt='', grtxt2='', hovedgrTxt='', 
                                  valgtMaal='Andel', cexgr=1, medSml=0, fargepalett='BlaaOff', xAkseTxt='', 
                                  medKI=0, KImaal = NA, KImaaltxt = '', outfile='') { #Ngr=list(Hoved=0), grVar='', 
@@ -213,14 +213,14 @@ NIRAndelTid <- function(RegData, valgtVar, datoFra='2011-01-01', datoTil='3000-1
                   
                   #KImål
                   lines(xskala,rep(KImaal,length(xskala)), col= '#FF7260', lwd=3)
-                  text(max(xskala), KImaal, pos=4, 'Mål', cex=0.9, col='#FF7260')
+                  text(max(xskala), KImaal, pos=4, paste0('Mål:',KImaaltxt), cex=0.9, col='#FF7260')
                   
                   Ttxt <- paste0('(Tall ved punktene angir antall ', varTxt, ')') 
                   if (medSml == 1) { 
                         text(xskala, AggVerdier$Rest, pos=3, Ngr$Rest, cex=0.9, col=fargeRest)
                         legend('topleft', border=NA, c(paste0(hovedgrTxt, ' (N=', N$Hoved, ')'),
-                                                       paste0(smltxt, ' (N=', N$Rest, ')'), Ttxt), bty='n', ncol=1, cex=cexleg, 
-                               col=c(fargeHoved, fargeRest, NA), lwd=3)		
+                                                       paste0(smltxt, ' (N=', N$Rest, ')'), Ttxt), bty='n', ncol=1, 
+                               col=c(fargeHoved, fargeRest, NA), lwd=3, cex=cexleg)		
                   } else {
                         legend('top', c(paste0(hovedgrTxt, ' (N=', N$Hoved, ')'), Ttxt), 
                                col=c(fargeHoved, NA), lwd=3, bty='n')
@@ -237,7 +237,7 @@ NIRAndelTid <- function(RegData, valgtVar, datoFra='2011-01-01', datoTil='3000-1
       }
       
       if (lagFig == 1) {
-            NIRFigTidAndel(RegData, AggVerdier, Ngr, tittel=tittel, hovedgrTxt=NIRUtvalg$hovedgrTxt, 
+            FigAndelTid(RegData, AggVerdier, Ngr, tittel=tittel, hovedgrTxt=NIRUtvalg$hovedgrTxt, 
                            smltxt=NIRUtvalg$smltxt, Ngr = Ngr, KImaal = KImaal, KImaaltxt=KImaaltxt, N=N, retn='V', 
                            utvalgTxt=utvalgTxt, tidtxt=tidtxt, varTxt=varTxt, grtxt2=grtxt2, medSml=medSml, 
                            xAkseTxt=xAkseTxt, yAkseTxt=yAkseTxt,
