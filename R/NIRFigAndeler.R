@@ -254,7 +254,8 @@ NIRFigAndeler  <- function(RegData, valgtVar, datoFra='2011-01-01', datoTil='300
                   if (retn == 'H') {
                         #Definerer disse i beregningsfunksjonen?  
                         xmax <- max(c(AggVerdier$Hoved, AggVerdier$Rest),na.rm=T)*1.2
-                        xmax <- ifelse(valgtMaal=='Andel', min(xmax, 100), xmax) 	#100 som maks bare hvis andelsfigur..
+                        #xmax <- ifelse(valgtMaal=='Andel', min(xmax, 100), xmax) 	#100 som maks bare hvis andelsfigur..
+                        xmax <- min(xmax, 100)
                         ymin <- 0.3 #0.5/cexgr^4	#0.05*antGr #Fordi avstand til x-aksen av en eller annen grunn øker når antall sykehus øker
                         ymax <- 0.4+1.25*length(AggVerdier$Hoved) #c(0.3/xkr^4,  0.3+1.25*length(Midt)), 0.2+1.2*length(AggVerdier$Hoved) 
                         
