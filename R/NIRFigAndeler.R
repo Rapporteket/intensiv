@@ -222,8 +222,7 @@ NIRFigAndeler  <- function(RegData, valgtVar, datoFra='2011-01-01', datoTil='300
                   plot.new()
                   title(tittel)	#, line=-6)
                   legend('topleft',legend=utvalgTxt, bty='n', cex=0.9, text.col=farger[1])
-                  if (valgtMaal=='Med' & grepl('SMR', tittel)) {tekst <- 'Ugyldig parameterkombinasjon'   #valgtVar=='SMR'
-                  } else {tekst <- 'For få registreringer i egen eller sammenligningsgruppe'}
+                  tekst <- 'For få registreringer i egen eller sammenligningsgruppe'
                   text(0.5, 0.6, tekst, cex=1.2)
                   if ( outfile != '') {dev.off()}
                   
