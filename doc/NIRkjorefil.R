@@ -237,10 +237,10 @@ for (valgtVar in variable) {
 #--------------------------------------- SENTRALMÅL per enhet----------------------------------
 
 valgtMaal <- 'Gjsn'
-valgtVar <- 'SMR'	#'SMR', alder, liggetid, respiratortid,  SAPSII, 'NEMS', 'Nas24'
+valgtVar <- 'alder'	#'SMR', alder, liggetid, respiratortid,  SAPSII, 'NEMS', 'Nas24'
                         #Nye: respiratortidInvMoverf, respiratortidInvUoverf, respiratortidNonInv
-grType <- 0
-outfile <- '' #paste0(valgtVar, 'Respiratortid_sentr_Fig2aNy.pdf')#,grType
+grType <- 3
+outfile <- paste0(valgtVar, '_test.pdf')#,grType
 NIRFigGjsnGrVar(RegData=RegData, medKI = 1 ,valgtVar=valgtVar, valgtMaal=valgtMaal, minald=minald, maxald=maxald, 
              grType=grType, grVar=grVar, InnMaate=InnMaate, datoFra=datoFra, datoTil=datoTil, dodInt=dodInt, 
              erMann=erMann, outfile=outfile) 

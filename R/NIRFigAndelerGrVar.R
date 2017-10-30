@@ -276,7 +276,7 @@ if (lagFig == 1) {
 
                   
                   #------Tegnforklaring (legend)--------
-                  legend(xmax/4, posOver, yjust=0, col=farger[1], border=NA, lwd=2.5, xpd=TRUE, bty='n', 
+                  legend(xmax/4, posOver, yjust=0, col=farger[1], border=NA, lwd=2.5, xpd=TRUE, bty='n', #xpd=TRUE,
                          paste0(grTypeTxt, 'sykehus: ', sprintf('%.1f', AggTot), '%, N=', N$Hoved), cex = cexleg) 
                   
                   mtext(at=pos+0.05, text=grtxt, side=2, las=1, cex=cexgr, adj=1, line=0.25) 
@@ -294,6 +294,7 @@ if (lagFig == 1) {
                   mtext(utvalgTxt, side=3, las=1, cex=0.9, adj=0, col=farger[1], line=c(3+0.8*((NutvTxt-1):0)))
                   
                   par('fig'=c(0, 1, 0, 1)) 
+                  
                   if ( outfile != '') {dev.off()}
                   
             }  #Figur
