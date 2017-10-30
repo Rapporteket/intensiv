@@ -299,15 +299,15 @@ if (lagFig == 1) {
                         
                   
                   #------Tegnforklaring (legend)--------
-                        if (medKI == 0) { #Hopper over hvis ikke valgtMaal er oppfylt
+                        if (medKI == 0) { 
                               TXT <- paste0('totalt: ', sprintf('%.1f', AggTot), ', N=', N$Hoved)
-                              legend(xmax/4, posOver+posDiff, TXT, fill=NA,  border=NA, lwd=2.5, xpd=TRUE, #inset=c(-0.1,0),
+                              legend(xmax/4, posOver+posDiff, TXT, fill=NA,  border=NA, lwd=2.5,xpd=TRUE,
                                      col=farger[1], cex=cexleg, seg.len=0.6, merge=TRUE, bty='n')
                         } else {
                               TXT <- c(paste0('totalt: ', sprintf('%.1f', AggTot), ', N=', N$Hoved), 
                                        paste0('95% konf.int., ', grTypeTxt, 'sykehus (', 
                                               sprintf('%.1f', KIHele[1]), '-', sprintf('%.1f', KIHele[2]), ')'))
-                              legend(xmax/4, posOver, TXT, yjust=0.2, fill=c(NA, farger[3]),  border=NA, lwd=2.5,  #inset=c(-0.1,0),
+                              legend(xmax/4, posOver, TXT, yjust=0, xpd=TRUE, fill=c(NA, farger[3]),  border=NA, lwd=2.5,  #inset=c(-0.1,0),
                                      col=c(farger[1], farger[3]), cex=cexleg, seg.len=0.6, merge=TRUE, bty='n') #+2*posDiff
                         }
                   

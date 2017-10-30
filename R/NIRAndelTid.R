@@ -196,10 +196,10 @@ NIRAndelTid <- function(RegData, valgtVar, datoFra='2011-01-01', datoTil='3000-1
                        xlim= c(0.9,xmax+0.1), xaxt='n', frame.plot = FALSE,  #xaxp=c(min(tidtxt), max(tidtxt),length(tidtxt)-1)
                        cex=2, xlab='Innleggelsesår', ylab="Andel (%)", ylim=c(0,ymax), yaxs = 'i') 	
                   
+                  axis(side=1, at = xskala, labels = tidtxt)
+                  
                   #Legge på linjer i plottet. 
                   grid(nx = NA, ny = NULL, col = farger[4], lty = "solid")
-                  
-                  axis(side=1, at = xskala, labels = tidtxt)
                   
                   title(tittel, line=1, font.main=1)
                   
@@ -213,7 +213,7 @@ NIRAndelTid <- function(RegData, valgtVar, datoFra='2011-01-01', datoTil='3000-1
                   
                   #KImål
                   lines(xskala,rep(KImaal,length(xskala)), col= '#FF7260', lwd=3)
-                  text(max(xskala), KImaal, pos=4, 'Mål', cex=0.9, col='#FF7260')
+                  mtext(max(xskala), KImaal, pos=4, 'Mål', cex=0.9, col='#FF7260')
                   
                   Ttxt <- paste0('(Tall ved punktene angir antall ', varTxt, ')') 
                   if (medSml == 1) { 
