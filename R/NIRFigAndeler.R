@@ -83,9 +83,9 @@
 #'
 #' @export
 
-NIRFigAndeler  <- function(RegData, valgtVar, datoFra='2011-01-01', datoTil='3000-12-31', aar=0, overfPas=0,
+NIRFigAndeler  <- function(RegData=0, valgtVar='Alder', datoFra='2011-01-01', datoTil='3000-12-31', aar=0, overfPas=0,
                         minald=0, maxald=130, erMann='',InnMaate='', dodInt='',outfile='', grType=99,  
-                        preprosess=1, hentData=0, reshID, enhetsUtvalg=1, lagFig=1)	{
+                        preprosess=1, hentData=0, reshID=0, enhetsUtvalg=0, lagFig=1)	{
       
       
       if (hentData == 1) {		

@@ -503,7 +503,11 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='an
             RegData[ ,variable][ind1] <- 1
             xAkseTxt <- 'Andel opphold (%)'
       }
-      #if (valgtVar=='innMaate') {
+
+#---------------- PÅRØRENDESKJEMA----------------------------------
+      
+      
+            #if (valgtVar=='innMaate') {
       #	#Innleggelsesmåte. Genererer annen figurtype
       #      #0:Planlagt operasjon, 6:Akutt nonoperativ, 8:Akutt operasjon
       #      RegData$Variabel <- RegData$InnMaate	#Gir ikke mening i andelsberegning, men trenger å være tilgengelig.
