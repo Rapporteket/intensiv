@@ -233,13 +233,13 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='an
             RegData <- RegData[indMed, ]
             xAkseTxt <- 'NEMS/opphold'
       }
-      if (valgtVar=='NEMS24') { #Andeler, GjsnGrVar
+      if (valgtVar=='NEMS24') { #Andeler, GjsnGrVar, GjsnTid
             #Inkluderer: opphald lenger enn 24 timar og det faktisk er skåra NEMS-poeng.
             #Dvs. NEMS-poeng totalt/liggjedøger, altså NEMS/24 timar
             indMed <- which( (RegData$liggetid>=1) & (RegData$NEMS>1))	#NEMS=0 el 1 - ikke registrert.
             RegData <- RegData[indMed, ]
             RegData$Variabel <- RegData$NEMS/RegData$liggetid
-            tittel <- 'Fordeling av NEMS per døgn'  #Benyttes bare i Andeler
+            tittel <- 'NEMS per døgn'  #Benyttes bare i Andeler
             gr <- c(seq(0, 60,10), 500) 
             RegData$Variabel <- RegData$NEMS/RegData$liggetid  
             RegData$VariabelGr <- cut(RegData$Variabel, breaks=gr, include.lowest=TRUE, right=FALSE) 
@@ -503,7 +503,11 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='an
             RegData[ ,variable][ind1] <- 1
             xAkseTxt <- 'Andel opphold (%)'
       }
-      #if (valgtVar=='innMaate') {
+
+#---------------- PÅRØRENDESKJEMA----------------------------------
+      
+      
+            #if (valgtVar=='innMaate') {
       #	#Innleggelsesmåte. Genererer annen figurtype
       #      #0:Planlagt operasjon, 6:Akutt nonoperativ, 8:Akutt operasjon
       #      RegData$Variabel <- RegData$InnMaate	#Gir ikke mening i andelsberegning, men trenger å være tilgengelig.

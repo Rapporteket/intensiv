@@ -61,6 +61,8 @@ RegData <- merge(PaarorData[ ,-varUT], RegData[ ,hovedVar],
 #Fyrste måleperiode var pasientar innlagde 01.10.15-31.12.15 og andre 01.10.16-31.12.16.  
 #Basaldata gjeld altså data for alle opphald før 01.10.16, og kontroll etter intervensjon er 
 #data for alle opphald etter 01.10.16.
+#Dette må senere gjøres om til et brukervalg, dvs. at brukeren kan velge hvilke perioder 
+#som skal sammenlignes
 
 RegData$PrePost <- 0
 RegData$PrePost[as.POSIXlt(RegData$DateAdmittedIntensive) < as.POSIXlt('2016-10-01')] <- 1
@@ -158,7 +160,8 @@ valgtVar <- 'ForklaringForstaaelse'
 NIRFigPrePostPaaror  <- function(RegData, valgtVar, outfile='')	
 {
       
-      #--------HENT grtxt FRA KODEBOK   NIRkodebokPaarorSkjema.csv ? Manuelt først. Kjør løkke og spy ut resultater
+      #--------HENT grtxt FRA KODEBOK   NIRkodebokPaarorSkjema.csv ? 
+	  #Kjører nå Manuelt. Kjør løkke og spy ut resultater
       
       if (valgtVar %in% c(Del1[c(1:5,7:9,11:12)],Del2[2:5])) {
 	        # -1 = Velg verdi	1 = Fremragende	2 = Meget godt	3 = Godt	4 = Noenlunde	5 = Dårlig	6 = Ikke aktuelt

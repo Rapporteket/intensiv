@@ -137,11 +137,11 @@ NIRFigInnMaate (RegData=RegData, valgtVar='InnMaate', minald=0, maxald=130, dato
 
 
 #--------------------------------------- Andeler ----------------------------------
-valgtVar <- 'alder'	#'alder', 'liggetid', 'respiratortid',  'SAPSII', 'NEMS24', 'Nas24', 'InnMaate'
+valgtVar <- 'inklKrit'	#'alder', 'liggetid', 'respiratortid',  'SAPSII', 'NEMS24', 'Nas24', 'InnMaate'
                               #Nye: PrimaryReasonAdmitted, inklKrit, respiratortidNonInv, respiratortidInv
                               #nyreBeh, nyreBehTid, ExtendedHemodynamicMonitoring, isolering, isoleringDogn, 
                               #spesTiltak
-outfile <- paste0(valgtVar,'_Ford', '.png')
+outfile <- '' #paste0(valgtVar,'_Ford', '.png')
 grType <- 0
 enhetsUtvalg <- 3
 
@@ -191,11 +191,11 @@ for (valgtVar in variable) {
 
 #---------------------AndelTid----------------------------------------------
 tidsenhet <- 'Aar'
-valgtVar <- 'alder_over80'	#'alder_u18', 'alder_over80', 'dod30d', 'dodeIntensiv', 'liggetidDod', 
+valgtVar <- 'respiratortidInvMoverf'	#'alder_u18', 'alder_over80', 'dod30d', 'dodeIntensiv', 'liggetidDod', 
                         #'respiratortidDod', 'respStotte', 'reinn',
                         #'UT: respiratortid, 
                         #Ny: respiratortidInvMoverf, respiratortidInvUoverf
-outfile <- '' #paste0(valgtVar, '.pdf')
+outfile <- paste0(valgtVar, '.png')
 
 NIRFigAndelTid(RegData=RegData, valgtVar=valgtVar, datoFra=datoFra, datoTil='2017-12-01', tidsenhet = tidsenhet,
 		minald=minald, maxald=maxald, erMann=erMann,InnMaate=InnMaate, dodInt=dodInt, 
@@ -237,10 +237,10 @@ for (valgtVar in variable) {
 #--------------------------------------- SENTRALMÅL per enhet----------------------------------
 
 valgtMaal <- 'Gjsn'
-valgtVar <- 'SMR'	#'SMR', alder, liggetid, respiratortid,  SAPSII, 'NEMS', 'Nas24'
+valgtVar <- 'alder'	#'SMR', alder, liggetid, respiratortid,  SAPSII, 'NEMS', 'Nas24'
                         #Nye: respiratortidInvMoverf, respiratortidInvUoverf, respiratortidNonInv
-grType <- 0
-outfile <- '' #paste0(valgtVar, 'Respiratortid_sentr_Fig2aNy.pdf')#,grType
+grType <- 3
+outfile <- paste0(valgtVar, '_test.pdf')#,grType
 NIRFigGjsnGrVar(RegData=RegData, medKI = 1 ,valgtVar=valgtVar, valgtMaal=valgtMaal, minald=minald, maxald=maxald, 
              grType=grType, grVar=grVar, InnMaate=InnMaate, datoFra=datoFra, datoTil=datoTil, dodInt=dodInt, 
              erMann=erMann, outfile=outfile) 
