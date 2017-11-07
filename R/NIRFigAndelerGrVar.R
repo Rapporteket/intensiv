@@ -136,10 +136,21 @@ andeltxt <- andeltxtUsort[sortInd]
 N = list(Hoved=N, Rest=0)
 Ngr = list(Hoved=Ngr, Rest=0)
 AggVerdier = list(Hoved=AndelerGrSort, Rest=0)
-xAkseTxt <- "Andel opphold (%)"	#Denne kan avhenge av figurtype
+xAkseTxt <- "Andel opphold (%)"	
 grtxt <- GrNavnSort
 AggTot <- AndelHele
 soyletxt <- andeltxt
+
+#-----------------
+Nut <- length(indGrUt)
+indMed <- (Nut+1):length(sortInd)
+  KI <- 100*binomkonf(AndelerGrSort[indMed]/100*Ngr$Hoved[indMed], Ngr$Hoved[indMed], konfnivaa=0.95)
+  KIned <- c(rep(NA,Nut), KI[1,])
+  KIopp <- c(rep(NA,Nut), KI[2,])
+  KIHele <- 100*binomkonf(AndelHele/100*N$Hoved, N$Hoved, konfnivaa=0.95)
+  
+  #prop.test(x=as.numeric(AndelerGrSort[indMed]/100*Ngr$Hoved[indMed]), n=Ngr$Hoved[indMed])
+#-----------
 
 
 #Se NIRFigSoyler for forklaring av innhold i AndelerGrVarData
@@ -227,7 +238,7 @@ if (lagFig == 1) {
                   
                   
                   #Definerer disse i beregningsfunksjonen?  
-                  xmax <- max(c(AggVerdier$Hoved, AggVerdier$Rest),na.rm=T)*1.2
+                  xmax <- max(c(AggVerdier$Hoved, AggVerdier$Rest, KIopp),na.rm=T)*1.2
                   xmax <- min(xmax, 100) 	#100 som maks bare hvis andelsfigur..
                   ymin <- 0.3 #0.5/cexgr^4	#0.05*antGr #Fordi avstand til x-aksen av en eller annen grunn øker når antall sykehus øker
                   ymax <- 0.4+1.25*length(AggVerdier$Hoved) #c(0.3/xkr^4,  0.3+1.25*length(Midt)), 0.2+1.2*length(AggVerdier$Hoved) 
@@ -247,18 +258,11 @@ if (lagFig == 1) {
                   if (medKI == 1) {	
                         #Legge på konf.int for hele populasjonen
                         #options(warn=-1)	#Unngå melding om KI med lengde 0
-                        #OPPRINNELIG FOR GJSN, VIL OGSÅ INNFØRE FOR ANDELER
-                        KIHele <- AggVerdier$KIHele
+                        #KIHele <- AggVerdier$KIHele
                         AntGr <- length(which(AggVerdier$Hoved>0))
                         polygon(c(rep(KIHele[1],2), rep(KIHele[2],2)), col=farger[3], border=farger[3],
                                 c(minpos, maxpos, maxpos, minpos))
-                        #Legge på konf.int for hver enkelt gruppe/sykehus
-                        arrows(x0=AggVerdier$Hoved, y0=pos, x1=AggVerdier$KIopp, y1=pos, 
-                               length=0.5/max(pos), code=2, angle=90, lwd=1, col=farger[1])
-                        arrows(x0=AggVerdier$Hoved, y0=pos, x1=AggVerdier$KIned, y1=pos, 
-                               length=0.5/max(pos), code=2, angle=90, lwd=1, col=farger[1])
                   }
-                  
                         #grtxt <- rev(grtxt)
                         grTypeTxt <- smltxt
                         mtext(at=posOver, paste0('(N)' ), side=2, las=1, cex=cexgr, adj=1, line=0.25)
@@ -276,12 +280,32 @@ if (lagFig == 1) {
 
                   
                   #------Tegnforklaring (legend)--------
-                  legend(xmax/4, posOver, yjust=0, col=farger[1], border=NA, lwd=2.5, xpd=TRUE, bty='n', 
-                         paste0(grTypeTxt, 'sykehus: ', sprintf('%.1f', AggTot), '%, N=', N$Hoved), cex = cexleg) 
+                  #legend(xmax/4, posOver, yjust=0, col=farger[1], border=NA, lwd=2.5, xpd=TRUE, bty='n', 
+                   #      paste0(grTypeTxt, 'sykehus: ', sprintf('%.1f', AggTot), '%, N=', N$Hoved), cex = cexleg) 
                   
-                  mtext(at=pos+0.05, text=grtxt, side=2, las=1, cex=cexgr, adj=1, line=0.25) 
-                  
-                  #Fordelingsfigurer:
+                        if (medKI == 0) { 
+                              TXT <- paste0('totalt: ', sprintf('%.1f', AggTot), ', N=', N$Hoved)
+                              legend(xmax/4, posOver+posDiff, TXT, fill=NA,  border=NA, lwd=2.5, xpd=TRUE, #inset=c(-0.1,0),
+                                     col=farger[1], cex=cexleg, seg.len=0.6, merge=TRUE, bty='n')
+                        } else {
+                              TXT <- c(paste0('totalt: ', sprintf('%.1f', AggTot), ', N=', N$Hoved), 
+                                       paste0('95% konf.int., ', grTypeTxt, 'sykehus (', 
+                                              sprintf('%.1f', KIHele[1]), '-', sprintf('%.1f', KIHele[2]), ')'))
+                              legend(xmax/4, posOver, TXT, yjust=0.2, fill=c(NA, farger[3]),  border=NA, lwd=2.5,  #inset=c(-0.1,0),
+                                     col=c(farger[1], farger[3]), cex=cexleg, seg.len=0.6, merge=TRUE, bty='n') #+2*posDiff
+                        }
+
+				  mtext(at=pos+0.05, text=grtxt, side=2, las=1, cex=cexgr, adj=1, line=0.25) 
+				  if (medKI == 1) {	
+				    #Legge på konf.int for hver enkelt gruppe/sykehus
+				    options(warn=-1)	#Unngå melding om KI med lengde 0
+				    arrows(x0=AggVerdier$Hoved, y0=pos, x1=KIopp, y1=pos, 
+				           length=0.5/max(pos), code=2, angle=90, lwd=1, col=farger[1])
+				    arrows(x0=AggVerdier$Hoved, y0=pos, x1=KIned, y1=pos, 
+				           length=0.5/max(pos), code=2, angle=90, lwd=1, col=farger[1])
+				  }
+				  
+				          #Fordelingsfigurer: Aktuelt nå for året før.
                   if (medSml == 1) { #Legge på prikker for sammenlikning
                         points(as.numeric(AggVerdier$Rest), pos, col=fargeRest,  cex=2, pch=18) #c("p","b","o"), 
                   }

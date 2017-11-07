@@ -119,7 +119,7 @@ enhetsUtvalg <- 0	#0-5
 grVar <- 'ShNavn'
 tidsenhet <- 'Aar'
 enhetsUtvalg <- 0	#0-5
-medKI <- 0
+medKI <- 1
 offData <- 0
 #Parameter for evt. kvalitetsmål? angis i Tilrettelegging
 
@@ -176,7 +176,7 @@ outfile <- '' #paste0(valgtVar, 'Reinnlegging_region_Fig3bNy.pdf')
 
 NIRFigAndelerGrVar(RegData=RegData, valgtVar=valgtVar, minald=minald, maxald=maxald,  datoFra=datoFra, 
                 datoTil=datoTil, aar=0, InnMaate=InnMaate, dodInt=dodInt,erMann=erMann, outfile=outfile, 
-                grType=3, grVar=grVar, hentData=0, preprosess=1, lagFig=1, offData = offData)
+                grType=3, grVar=grVar, hentData=0, preprosess=1, lagFig=1, medKI=1,offData = offData)
 
 variable <- c('alder_u18', 'alder_over80', 'dod30d', 'dodeIntensiv', #'innMaate', 
       'respStotte', 'reinn')
@@ -264,14 +264,14 @@ for (valgtVar in c('alder', 'liggetid', 'respiratortid','NEMS' ,'SAPSII', 'SMR')
 
 
 NIRFigGjsnGrVar(RegData=RegData, valgtVar='respiratortidInvMoverf', datoFra='2016-01-01', 
-                datoTil='2016-12-31', grType=1, outfile='Respiratortid_loksent_Fig2aNy.pdf')
+                datoTil='2016-12-31', grType=1, outfile='Respiratortid_loksent_Fig2a.pdf')
 NIRFigGjsnGrVar(RegData=RegData, valgtVar='respiratortidInvMoverf', datoFra='2016-01-01', valgtMaal = 'Gjsn',
                                 datoTil='2016-12-31', grType=3, outfile='test.png') #Respiratortid_region_Fig2bNy.pdf')
                                 
-NIRFigAndelerGrVar(RegData=RegData, valgtVar='reinn', datoFra='2016-01-01', 
-                   datoTil='2016-12-31', grType=1, outfile='Reinnlegging_loksent_Fig3aNy.pdf')
-NIRFigAndelerGrVar(RegData=RegData, valgtVar='reinn', datoFra='2011-01-01', 
-                   datoTil='2017-12-31', grType=0, outfile='test.png') #Reinnlegging_region_Fig3bNy.pdf')
+NIRFigAndelerGrVar(RegData=RegData, valgtVar='reinn', datoFra='2016-01-01', medKI = 1,
+                   datoTil='2016-12-31', grType=1, outfile='Reinnlegging_loksent_Fig3aKonfInt.pdf')
+NIRFigAndelerGrVar(RegData=RegData, valgtVar='reinn', datoFra='2016-01-01', medKI = 1,
+                   datoTil='2016-12-31', grType=3, outfile='Reinnlegging_region_Fig3bKonfInt.pdf') #Reinnlegging_region_Fig3bNy.pdf')
 
 
 
