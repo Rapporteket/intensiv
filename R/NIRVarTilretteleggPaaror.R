@@ -82,13 +82,14 @@ NIRVarTilretteleggPaaror  <- function(RegData, valgtVar, grVar='ShNavn', figurty
             tittel <- 'Alder ved innleggelse'
             if (figurtype %in% c('gjsnGrVar', 'gjsnTid')) {
                   tittel <- 'alder ved innleggelse'}
-            if (figurtype == 'andeler') {	#Fordelingsfigur
-                  gr <- c(seq(0, 100, 10),150)		
-                  RegData$VariabelGr <- cut(RegData$Alder, breaks=gr, include.lowest=TRUE, right=FALSE)	
-                  grtxt <- c('0-9','10-19','20-29','30-39','40-49','50-59','60-69','70-79','80-89','90-99','100+')
-                  xAkseTxt <- 'Aldersgrupper (år)'}
             sortAvtagende <- FALSE
       }
+      
+#      '', 'BeslutningTot','FSICUtot'
+      if (valgtVar == 'OmsorgTot') {  #gjsnGrVar
+            RegData$Variabel  <- RegData$OmsorgTot
+            tittel <- c('Totalskår m.h.t. omsorg')
+      } 
       
       if (valgtVar == 'BehandlingHoeflighetRespektMedfoelelseSkaar') {  #gjsnGrVar
         RegData$Variabel  <- RegData$BehandlingHoeflighetRespektMedfoelelseSkaar
@@ -108,41 +109,41 @@ NIRVarTilretteleggPaaror  <- function(RegData, valgtVar, grVar='ShNavn', figurty
       # [7] "BeslutningsInvolveringSkaar"       "BeslutningsStoetteSkaar"           "BeslutningsKontrollSkaar"         
       # [10] "BeslutningsTidSkaar"               "LivsLengdeSkaar"                   "LivssluttKomforSkaar"      
       
-      tittel <- switch(valgtVar,
-                       
-                       BehandlingHoeflighetRespektMedfoelelse = ,
-                       SymptomSmerte = c('Hvor godt vurderte og behandlet intensivpersonalet ', 
-                                         'symptomene til pasienten med hensyn til smerte'),
-                       SymptomPustebesvaer = c('Hvor godt vurderte og behandlet intensivpersonalet ', 
-                                               'symptomene til pasienten med hensyn til pustebesvær'),
-                       SymptomUro = c('Hvor godt vurderte og behandlet intensivpersonalet ', 
-                                      'symptomene til pasienten med hensyn til uro'),
-                       BehandlingBesvarerBehov	= 'Hvor godt viste intensivpersonalet interesse for dine behov?',
-                       BehandlingBesvarerStoette = c('Hvor god var den følelsesmessige støtten', 
-                                                     'som du fikk av intensivpersonalet?'),
-                       BehandlingSamarbeid = c('Hvordan samarbeidet intensivpersonalet som ivaretok', 
-                                               'og behandlet pasienten?'),
-                       BehandlingBesvarerHoeflighetRespektMedfoelelse = c('Hvordan ble du møtt av intensivpersonalet', 
-                                                                          'med hensyn til høflighet, respekt og medfølelse?'),
-                       SykepleierOmsorg = 'Hvor godt synes du sykepleierne ivaretok pasienten?',
-                       SykepleierKommunikasjon = 'Hvor ofte snakket sykepleierne med deg om pasientens tilstand?',
-                       LegeBehandling = 'Hvor godt synes du legene ivaretok pasienten?',
-                       AtmosfaerenIntensivAvd = 'Atmosfæren i intensivavdelingen var:',
-                       AtmosfaerenPaaroerenderom = 'Atmosfæren på pårørenderommet/venterommet var:',
-                       OmfangetAvBehandlingen =	c('Hvor tilfreds var du med nivå eller omfang av', 
-                                                  'pleie og behandling som pasienten fikk på intensivavdelingen?'),
-                       LegeInformasjonFrekvens	= 'Hvor ofte snakket legene med deg om pasientens tilstand?',
-                       SvarPaaSpoersmaal	= 'Hvor villig var intensivpersonalet til å svare på dine spørsmål?',
-                       ForklaringForstaaelse = 'Hvor godt klarte intensivpersonalet å gi deg forklaringer som du forsto?',
-                       InformasjonsAerlighet = c('Hvor ærlig synes du informasjonen du fikk', 
-                                                 'om tilstanden til pasienten var?'),
-                       InformasjonOmForloep = c('Hvor godt ble du informert om hva som skjedde med pasienten', 
-                                                'og hvorfor ting ble gjort?'),
-                       InformasjonsOverensstemmelse = c('Hvor stor overensstemmelse var det i informasjonen', 
-                                                        'du fikk om tilstanden til pasienten?')
-      )
-      
-      
+      # tittel <- switch(valgtVar,
+      #                  
+      #                  BehandlingHoeflighetRespektMedfoelelse = ,
+      #                  SymptomSmerte = c('Hvor godt vurderte og behandlet intensivpersonalet ', 
+      #                                    'symptomene til pasienten med hensyn til smerte'),
+      #                  SymptomPustebesvaer = c('Hvor godt vurderte og behandlet intensivpersonalet ', 
+      #                                          'symptomene til pasienten med hensyn til pustebesvær'),
+      #                  SymptomUro = c('Hvor godt vurderte og behandlet intensivpersonalet ', 
+      #                                 'symptomene til pasienten med hensyn til uro'),
+      #                  BehandlingBesvarerBehov	= 'Hvor godt viste intensivpersonalet interesse for dine behov?',
+      #                  BehandlingBesvarerStoette = c('Hvor god var den følelsesmessige støtten', 
+      #                                                'som du fikk av intensivpersonalet?'),
+      #                  BehandlingSamarbeid = c('Hvordan samarbeidet intensivpersonalet som ivaretok', 
+      #                                          'og behandlet pasienten?'),
+      #                  BehandlingBesvarerHoeflighetRespektMedfoelelse = c('Hvordan ble du møtt av intensivpersonalet', 
+      #                                                                     'med hensyn til høflighet, respekt og medfølelse?'),
+      #                  SykepleierOmsorg = 'Hvor godt synes du sykepleierne ivaretok pasienten?',
+      #                  SykepleierKommunikasjon = 'Hvor ofte snakket sykepleierne med deg om pasientens tilstand?',
+      #                  LegeBehandling = 'Hvor godt synes du legene ivaretok pasienten?',
+      #                  AtmosfaerenIntensivAvd = 'Atmosfæren i intensivavdelingen var:',
+      #                  AtmosfaerenPaaroerenderom = 'Atmosfæren på pårørenderommet/venterommet var:',
+      #                  OmfangetAvBehandlingen =	c('Hvor tilfreds var du med nivå eller omfang av', 
+      #                                             'pleie og behandling som pasienten fikk på intensivavdelingen?'),
+      #                  LegeInformasjonFrekvens	= 'Hvor ofte snakket legene med deg om pasientens tilstand?',
+      #                  SvarPaaSpoersmaal	= 'Hvor villig var intensivpersonalet til å svare på dine spørsmål?',
+      #                  ForklaringForstaaelse = 'Hvor godt klarte intensivpersonalet å gi deg forklaringer som du forsto?',
+      #                  InformasjonsAerlighet = c('Hvor ærlig synes du informasjonen du fikk', 
+      #                                            'om tilstanden til pasienten var?'),
+      #                  InformasjonOmForloep = c('Hvor godt ble du informert om hva som skjedde med pasienten', 
+      #                                           'og hvorfor ting ble gjort?'),
+      #                  InformasjonsOverensstemmelse = c('Hvor stor overensstemmelse var det i informasjonen', 
+      #                                                   'du fikk om tilstanden til pasienten?')
+      # )
+      # 
+      # 
       
       if (valgtVar == 'BeslutningsInvolvering') { #Del2[7]
         #-1:5

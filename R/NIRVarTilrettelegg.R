@@ -19,7 +19,7 @@
 #'	   \item 8: Egen region mot resten [NB: Mangler pt. variabel for region]
 #'    	}							
 #'    				
-#' @inheritParams NIRAndeler
+#' @inheritParams NIRFigAndeler
 #' @param figurtype Hvilken figurtype det skal tilrettelegges variable for: 
 #'                'andeler', 'andelGrVar', 'andelTid', 'gjsnGrVar', 'gjsnTid'
 #'				
@@ -74,6 +74,15 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='an
       
       tittel <- '' #I AndelerGrVar og GjsnGrVar genereres tittel i beregningsfunksjonen
       #MANGER 'innMaate' !! Ikke tilrettelagt
+      
+      if (valgtVar == 'OmsorgTot') {  #gjsnGrVar
+            RegData$Variabel  <- RegData$OmsorgTot
+            tittel <- c('Totalskår m.h.t. omsorg')
+      } 
+      if (valgtVar == 'OmsorgTotEndr') {  #gjsnGrVar
+            RegData$Variabel  <- RegData$OmsorgTot
+            tittel <- c('Endring i totalskår m.h.t. omsorg')
+      } 
       
       if (valgtVar=='InnMaate') {
             tittel <- 'Fordeling av Innkomstmåte'   

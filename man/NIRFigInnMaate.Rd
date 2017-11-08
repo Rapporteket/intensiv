@@ -9,9 +9,8 @@ dvs. kodede, anonymiserte data som benyttes til offentlige kvalitetsindikatorer.
 \usage{
 NIRFigInnMaate(RegData, valgtVar = "InnMaate", datoFra = "2010-01-01",
   datoTil = "3000-01-01", aar = 0, minald = 0, maxald = 130,
-  aldGr = 0, grType = 99, grVar = "ShNavn", InnMaate = 99,
-  dodInt = "", erMann = "", hentData = 0, preprosess = 1,
-  outfile = "")
+  grType = 99, grVar = "ShNavn", InnMaate = 99, dodInt = "",
+  erMann = "", hentData = 0, preprosess = 1, outfile = "")
 }
 \arguments{
 \item{RegData}{En dataramme med alle nødvendige variabler fra registeret}

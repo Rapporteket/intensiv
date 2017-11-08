@@ -5,9 +5,9 @@
 \title{Utvikling over tid for gjennomsnitt/median av valgt variabel}
 \usage{
 NIRFigGjsnTid(RegData, valgtVar, datoFra = "2011-01-01",
-  datoTil = "3000-12-31", minald = 0, maxald = 130, erMann = "", reshID,
-  InnMaate = "", dodInt = "", tittel = 1, outfile = "",
-  enhetsUtvalg = 1, valgtMaal = "", preprosess = 1, hentData = 0)
+  datoTil = "3000-12-31", minald = 0, maxald = 130, erMann = "",
+  reshID = 0, InnMaate = "", dodInt = "", tittel = 1, outfile = "",
+  enhetsUtvalg = 0, valgtMaal = "", preprosess = 1, hentData = 0)
 }
 \arguments{
 \item{RegData}{En dataramme med alle nødvendige variabler fra registeret}
