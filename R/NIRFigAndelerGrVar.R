@@ -86,7 +86,7 @@ NIRFigAndelerGrVar <- function(RegData, valgtVar, datoFra='2010-01-01', datoTil=
             medSml=NIRUtvalg$medSml 
             utvalgTxt <- NIRUtvalg$utvalgTxt
       }				
-      if (offData == 1) { NIRUtvalg <- NIRUtvalgOff(RegData=RegData, aldGr=aldGr, aar=aar, erMann=erMann, 
+      if (offData == 1) { NIRUtvalg <- NIRUtvalgOff(RegData=RegData, aldGr=aldGr, aar=aar, erMann=erMann, #aldGr
                                                    InnMaate=InnMaate, grType=grType) 
                           utvalgTxt <- NIRUtvalg$utvalgTxt #c(utvalgsInfo, 
                         }

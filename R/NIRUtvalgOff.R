@@ -15,7 +15,7 @@ NIRUtvalgOff <- function(RegData, aldGr=0, erMann='', InnMaate='',
       "%i%" <- intersect
       
       Ninn <- dim(RegData)[1]
-      indAld <- if(aldGr[1] != 0) {which(RegData$AldersGr %in% aldGr) } else {1:Ninn}
+      indAld <- if(aldGr[1] != 0) {which(as.numeric(RegData$AldersGr) %in% aldGr) } else {1:Ninn}
       indAar <- if (aar[1] != 0) {which(RegData$Aar %in% aar)} else {1:Ninn}
       #indKvart <- if (aar[1] != 0) {which(RegData$Kvartal %in% aar)} else {1:Ninn}
       indKj <- if (erMann %in% 0:1) {which(RegData$erMann == erMann)} else {1:Ninn}
@@ -42,7 +42,7 @@ NIRUtvalgOff <- function(RegData, aldGr=0, erMann='', InnMaate='',
       utvalgTxt <- c(
             if (aar[1] > 0){paste0('Innleggelsesår: ', paste0(aar, collapse=', '))},
             if (aldGr[1] > 0) {
-                  paste0('Aldersgruppe: ', paste0(aldGr, collapse=', '))}, 
+                  paste0('Aldersgruppe: ', paste0(levels(RegData$AldersGr)[aldGr], collapse=', '), ' år')}, 
             if (erMann %in% 0:1) {paste0('Kjønn: ', c('Kvinner', 'Menn')[erMann+1])},
             if (InnMaate %in% c(0,6,8)) {paste('Innmåte: ', 
                                                c('Elektivt',0,0,0,0,0, 'Akutt medisinsk',0, 'Akutt kirurgi')[InnMaate+1], sep='')},

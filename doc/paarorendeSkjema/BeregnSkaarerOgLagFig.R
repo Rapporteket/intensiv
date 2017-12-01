@@ -196,7 +196,7 @@ NIRFigGjsnPaaror(RegData=RegData, valgtVar=valgtVar, outfile='')
 #RegData$PrePost
 valgtVar <- 'BehandlingHoeflighetRespektMedfoelelseSkaar'
 
-NIRFigGjsnPaaror(RegData=RegData, valgtVar=valgtVar, prePost=2, valgtMaal='Gjsn', outfile='')
+NIRFigGjsnPaaror(RegData=RegData, valgtVar=valgtVar, prePost=2, valgtMaal='Gjsn', outfile='EksempelGjsn.pdf')
 
             
 

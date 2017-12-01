@@ -75,9 +75,10 @@ grType <- 99
 grVar <- 'ShNavn'
 InnMaate <- 99
 aldGr  <- 0
+erMann <- 99
 tidsenhet <- 'Kvartal'
 outfile <- ''
-valgtVar <- 'respiratortidInv'  #reinn, respiratortidInv
+valgtVar <- 'reinn'  #reinn, respiratortidInv
 outfile <- '' #paste0('OffRand', valgtVar, '.pdf')
 #Laste offdata
 filnavn <- paste0('NIRdata01', valgtVar)
@@ -85,12 +86,12 @@ load(paste0(dataKat, filnavn, '.Rdata'))
 RegData <- NIRdata01reinn #NIRdata01respiratortid #NIRdata01reinn
 
 
-DataTilbake <- NIRAndelerGrVar(RegData=RegData, valgtVar=valgtVar, aar=aar, grType=grType, 
-                               grVar='ShNavn', InnMaate=InnMaate, erMann=erMann, hentData=0, 
-                               outfile=outfile, lagFig=1, offData=1) #aldGr=aldGr, 
+DataTilbake <- NIRFigAndelerGrVar(RegData=RegData, valgtVar=valgtVar, aar=aar, grType=grType, 
+                               grVar='ShNavn', InnMaate=InnMaate, hentData=0, aldGr=aldGr,
+                               outfile=outfile, lagFig=1, offData=1) # 
 
-DataTilbake <- NIRAndelTid(RegData=RegData, valgtVar=valgtVar, datoFra=datoFra, datoTil=datoTil, 
-                           tidsenhet = tidsenhet,minald=minald, maxald=maxald, erMann=erMann,InnMaate=InnMaate, 
+DataTilbake <- NIRFigAndelTid(RegData=RegData, valgtVar=valgtVar, datoFra=datoFra, datoTil=datoTil, 
+                           tidsenhet = tidsenhet,minald=minald, maxald=maxald, InnMaate=InnMaate, 
                            dodInt=dodInt, reshID, outfile=outfile, enhetsUtvalg=enhetsUtvalg, 
                            lagFig = 1, offData=1)	
 #aar=0, grType=grType )
