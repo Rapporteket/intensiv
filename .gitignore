@@ -10,6 +10,7 @@ FigNIRMeanMed_sql.R
 *.lof
 *.lot
 *.toc
+*.out
 *.aux
 *.log
 *.gz
@@ -18,4 +19,5 @@ FigNIRMeanMed_sql.R
 *.xlsx
 ~$NIRkodebok2016-06-01.xlsx
 ~$beidsplan, NIR.docx
+*.docx
 *.tmp

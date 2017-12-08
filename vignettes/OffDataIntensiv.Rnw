@@ -129,7 +129,7 @@ Det anonyme datasettet inneholder noen utvalgs-/grupperingsvariable, samt kvalit
 Datasettet inneholder  hendelsesentydige data (ett opphold er en hendelse), dvs. vi har ei rad for hver hendelse. Vi trenger hendelsesentydige data for at det interaktivt skal kunne genereres resultater for ulike utvalg og grupperinger av dataene. Alle rader hvor ei gruppering på laveste nivå av utvalgs-/grupperingsvariablene gir færre enn 5 hendelser, fjernes fra datafila. Dette medfører at vi mister noen observasjoner. Hvor mye resultatet påvirkes av manglende observasjoner, avhenger av hvor mye data vi må sensurere. Hvor mye som må sensureres avhenger av størrelsen på registeret (totalt antall observasjoner) og hvor mange utvalgsparametre man ønsker.
 
 Hvis en kvalitetsindikator er en andel, trenger man bare en indikatorvariabel for kvalitetsindikatoren, samt de variable man ønsker å gruppere på eller å gjøre utvalg for.
-Eksemplet under viser hendelsesentydige data for  en kvalitetsindikatorer fra intensivregisteret. Kvalitetsindikatoren er gitt i kolonna \textit{Variabel}.
+Eksemplet \ref{tab:Eksempeldata} viser hendelsesentydige data for  en kvalitetsindikatorer fra intensivregisteret. Kvalitetsindikatoren er gitt i kolonna \textit{Variabel}.
 
 <<'EksFraIntensiv', echo=FALSE, results='markup', message=FALSE>>=
 library(intensiv)
@@ -137,14 +137,14 @@ library(xtable)
 figKrymp1 <- 1 #0.95
 
 #load("A:/Intensiv/ NIRdata10000.Rdata") #RegData
-dato <- '2017-07-03'
+dato <- '2017-11-07'
 dataKat <- 'A:/Intensiv/'
 fil <- paste0(dataKat,'MainFormDataContract',dato)
 load(paste0(fil,".Rdata")) #RegData
 RegDataRaa <- RegData
 
 #Lage og hente 01-datasett :
-valgtVar <- 'respiratortidInv'  #reinn, respiratortidInv
+valgtVar <- 'respiratortidInvMoverf'  #reinn, respiratortidInvMoverf
 datoFra <- '2016-01-01'
 datoTil <- '2016-12-31'
 tilleggsVar <- c('Aar', 'Kvartal', 'erMann', 'ShNavn', 'ShType', 'Alder')
@@ -154,9 +154,7 @@ RegData01Off(RegData, valgtVar=valgtVar, datoFra = datoFra, datoTil, tilleggsVar
 
 
 #data("NIRdata01respiratortid")
-load('A:/Intensiv/NIRdata01respiratortidInv.RData')
-RegDataOff <- NIRdata01respiratortidInv$NIRRegData01Off
-print(RegDataOff[sample(1:dim(RegDataOff)[1], 15),], row.names = FALSE)
+load('A:/Intensiv/NIRdata01respiratortidInvMoverf.RData')
 
 #Klargjøre RegData:
 RegData <- NIRPreprosess(RegData=RegDataRaa)	#, reshID=reshID)
@@ -167,6 +165,12 @@ RegData <- NIRVarSpes$RegData
 
 AntSh <- length(table(RegData2016$ShNavn))
 
+
+RegDataOff <- NIRdata01respiratortidInv$NIRRegData01Off
+VisData <- as.matrix(RegDataOff[sample(1:dim(RegDataOff)[1], 15),])
+xtable(VisData, align = c('r','r','l','r','r','r','r'), 
+             caption = 'Datasett', 
+             label = 'tab:Eksempeldata')
 @
 
 
@@ -215,20 +219,20 @@ N5_6var <- AndelMistet(RegData = RegData, KvalIndGrVar = c('ShNavn', 'erMann',  
 N3_6var <- AndelMistet(RegData = RegData, KvalIndGrVar = c('ShNavn', 'erMann',  'AldersGr', 
                                                            'InnMaate', 'DischargedIntensiveStatus'), Ngrense = 3)
 #Enhet, måned, kjønn:
-N5_Mnd2var <- AndelMistet(RegData = RegData, KvalIndGrVar = c('erMann', 'ShNavn', 'Mnd'), Ngrense = 5)
-N3_Mnd2var <- AndelMistet(RegData = RegData, KvalIndGrVar = c('erMann', 'ShNavn', 'Mnd'), Ngrense = 3)
+N5_Mnd2var <- AndelMistet(RegData = RegData, KvalIndGrVar = c('AldersGr', 'ShNavn', 'Mnd'), Ngrense = 5)
+N3_Mnd2var <- AndelMistet(RegData = RegData, KvalIndGrVar = c('AldersGr', 'ShNavn', 'Mnd'), Ngrense = 3)
 
-#Enhet, måned, kjønn:
-N5_Kvartal2var <- AndelMistet(RegData = RegData, KvalIndGrVar = c('erMann', 'ShNavn', 'Kvartal', 'AldersGr'), Ngrense = 5)
-N3_Kvartal2var <- AndelMistet(RegData = RegData, KvalIndGrVar = c('erMann', 'ShNavn', 'Kvartal', 'AldersGr'), Ngrense = 3)
+#Enhet, måned, aldersgr:
+N5_Kvartal1var <- AndelMistet(RegData = RegData, KvalIndGrVar = c('ShNavn', 'Kvartal', 'AldersGr'), Ngrense = 5)
+N3_Kvartal1var <- AndelMistet(RegData = RegData, KvalIndGrVar = c('ShNavn', 'Kvartal', 'AldersGr'), Ngrense = 3)
 
 
 FrafallVSgruppering <- rbind(
       'Enhet, kjønn' = c(N5_3var, N3_3var),
       'Enhet, kjønn, aldersgrupper' = c(N5_4var, N3_4var),
-      'Enhet, måned, kjønn' = c(N5_Mnd2var, N3_Mnd2var),
+      'Enhet, måned, aldersgrupper' = c(N5_Mnd2var, N3_Mnd2var),
       'Enhet, kjønn, aldersgruppe, innmåte, død' = c(N5_6var, N3_6var),
-      'Enhet, kvartal, kjønn, aldersgruppe' = c(N5_Kvartal2var, N3_Kvartal2var)
+      'Enhet, kvartal, aldersgruppe' = c(N5_Kvartal1var, N3_Kvartal1var)
 )
 
 colnames(FrafallVSgruppering) <- c('N<5', 'N<3')
@@ -270,19 +274,19 @@ N5_6var2000 <- AndelMistet(RegData = RegData2000, KvalIndGrVar = c('ShNavn', 'er
 N3_6var2000 <- AndelMistet(RegData = RegData2000, KvalIndGrVar = c('ShNavn', 'erMann',  'AldersGr', 
                                                            'InnMaate', 'DischargedIntensiveStatus'), Ngrense = 3)
 #Enhet, måned, kjønn:
-N5_Mnd2var2000 <- AndelMistet(RegData = RegData2000, KvalIndGrVar = c('erMann', 'ShNavn', 'Mnd'), Ngrense = 5)
-N3_Mnd2var2000 <- AndelMistet(RegData = RegData2000, KvalIndGrVar = c('erMann', 'ShNavn', 'Mnd'), Ngrense = 3)
+N5_Mnd2var2000 <- AndelMistet(RegData = RegData2000, KvalIndGrVar = c('AldersGr', 'ShNavn', 'Mnd'), Ngrense = 5)
+N3_Mnd2var2000 <- AndelMistet(RegData = RegData2000, KvalIndGrVar = c('AldersGr', 'ShNavn', 'Mnd'), Ngrense = 3)
 
 #Enhet, måned, kjønn:
-N5_Kvartal2var2000 <- AndelMistet(RegData = RegData2000, KvalIndGrVar = c('erMann', 'ShNavn', 'Kvartal', 'AldersGr'), Ngrense = 5)
-N3_Kvartal2var2000 <- AndelMistet(RegData = RegData2000, KvalIndGrVar = c('erMann', 'ShNavn', 'Kvartal', 'AldersGr'), Ngrense = 3)
+N5_Kvartal1var2000 <- AndelMistet(RegData = RegData2000, KvalIndGrVar = c('ShNavn', 'Kvartal', 'AldersGr'), Ngrense = 5)
+N3_Kvartal1var2000 <- AndelMistet(RegData = RegData2000, KvalIndGrVar = c('ShNavn', 'Kvartal', 'AldersGr'), Ngrense = 3)
 
 FrafallVSgruppering2000 <- rbind(
       'Enhet, kjønn' = c(N5_3var2000, N3_3var2000),
       'Enhet, kjønn, aldersgrupper' = c(N5_4var2000, N3_4var2000),
-      'Enhet, måned, kjønn' = c(N5_Mnd2var2000, N3_Mnd2var2000),
+      'Enhet, måned, aldersgruppe' = c(N5_Mnd2var2000, N3_Mnd2var2000),
       'Enhet, kjønn, aldersgruppe, innmåte, død' = c(N5_6var2000, N3_6var2000),
-      'Enhet, kvartal, kjønn, aldersgruppe' = c(N5_Kvartal2var2000, N3_Kvartal2var2000)
+      'Enhet, kvartal, aldersgruppe' = c(N5_Kvartal1var2000, N3_Kvartal1var2000)
 )
 
 colnames(FrafallVSgruppering2000) <- c('N<5', 'N<3')
@@ -295,33 +299,29 @@ xtable(FrafallVSgruppering2000, digits = 1, align = c('l','r','r'),
 
 
 \subsection{Anonymt datasett og grad av sensur}
-For intensivregisteret har vi valgt å benytte utvalgs-/grupperingsvariablene:
+For intensivregisteret ønsker man å benytte utvalgs-/grupperingsvariablene:
 
 \begin{itemize}
 \item Enhet (sykehusavdeling/-enhet
 \item Sykehustype (region- eller lokal-/sentralsykehus
 \item Alder (Tre aldersgrupper: 0-17, 18-79, 80+)
-\item Kjønn (mann/kvinne)
 \item År og kvartal (tidsangivelse for innleggelsestidspunkt)
 \end{itemize}
 
-\textit{Reidar: Disse har jeg valgt, men du må si hvilke utvalg det er mest aktuelt å prioritere? Enhet må vi ha. Sykehustype lager ingen ekstra gruppering ift. antall. Jeg mener også vi må ha med kvartal for å kunne vise tidsaktuelle data.}
-\\
-
-Alle registreringer som faller i ei gruppe med færre enn 5 observasjoner i gruppa, er sensurert. F.eks. hvis utvalgskombinasjonen: Sykehus A, aldersgruppe 2, kvinne, 2.kvartal 2016 inneholder færre enn 5 observasjoner, sensureres alle observasjonene i denne gruppa. Som vi ser fra tabellen med grad av sensur for intensivregisteret (tabell \ref{tab:Frafall}), betyr det at \Sexpr{N5_Kvartal2var} \% av registreringene blir sensurert med de valgte grupperingsvariablene. 
+Alle registreringer som faller i ei gruppe med færre enn 5 observasjoner i gruppa, er sensurert. F.eks. hvis utvalgskombinasjonen: Sykehus A, aldersgruppe 2, 2.kvartal 2016 inneholder færre enn 5 observasjoner, sensureres alle observasjonene i denne gruppa. Som vi ser fra tabellen med grad av sensur for intensivregisteret (tabell \ref{tab:Frafall}), betyr det at \Sexpr{N5_Kvartal1var} \% av registreringene blir sensurert med de valgte grupperingsvariablene. 
 
 Det er viktig å huske at graden av sensur vil være forskjellig for de ulike enhetene. Små enheter vil få sensurert relativt mer av sine opphold slik at resultatene for de små enhetene vil påvirkes mye mer enn for de store enhetene. Vi bør derfor ha en lav grense for hvor stor grad av sensur som er akseptabelt. 
 
 
 
 <<'FigRespTid', echo=FALSE, fig.keep='all'>>= #fig.height=8, fig.width=6, 
-DataTilbakeResp <- NIRAndelerGrVar(RegData=RegData, valgtVar = 'respiratortidInv', grVar='ShNavn',preprosess=0, outfile = 'FigResp.pdf')
+DataTilbakeResp <- NIRAndelerGrVar(RegData=RegData, valgtVar = 'respiratortidInvMoverf', grVar='ShNavn',preprosess=0, outfile = 'FigResp.pdf')
 
 sykehus <- 'Ringerike' #
 indB <- which(names(DataTilbakeResp$Ngr$Hoved) == sykehus)
 RespRes <- sprintf('%.1f',DataTilbakeResp$AggVerdier$Hoved[indB])
 
-DataTilbakeRespOff <- NIRAndelerGrVar(RegData=NIRdata01respiratortidInv, aar=2016, valgtVar = 'respiratortidInv', grVar='ShNavn', preprosess=0, offData = 1, outfile = 'FigRespSens.pdf')
+DataTilbakeRespOff <- NIRAndelerGrVar(RegData=NIRdata01respiratortidInv, aar=2016, valgtVar = 'respiratortidInvMoverf', grVar='ShNavn', preprosess=0, offData = 1, outfile = 'FigRespSens.pdf')
 
 indB <- which(names(DataTilbakeRespOff$Ngr$Hoved) == sykehus)
 RespResOff <- sprintf('%.1f',DataTilbakeRespOff$AggVerdier$Hoved[indB])
@@ -356,7 +356,7 @@ indValgtSh <- which(names(DataTilbakeReinn$Ngr$Hoved) == sykehus)
 ReinnRes <- sprintf('%.1f',DataTilbakeReinn$AggVerdier$Hoved[indValgtSh])
 
 #Anonyme data:
-valgtVar <- 'reinn'  #reinn, respiratortidInv
+valgtVar <- 'reinn'  #reinn, respiratortidInvMoverf
 RegData01Off(RegDataRaa, valgtVar=valgtVar, datoFra = datoFra, datoTil, tilleggsVar=tilleggsVar, 
              hentData=0, rand=0)
 load('A:/Intensiv/NIRdata01reinn.RData')

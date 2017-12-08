@@ -29,6 +29,8 @@ NIRdata <- RegData
 knit('NIRSamleRapp.Rnw')
 texi2pdf(file='NIRSamleRapp.tex')
 
+knit('OffDataIntensiv.Rnw')
+texi2pdf(file='OffDataIntensiv.tex')
 
 #NIRSamleRapp for hver enkelt enhet (alle)
 #for (reshID in AlleResh ) {
@@ -41,7 +43,7 @@ texi2pdf(file='NIRSamleRapp.tex')
 #-------------------------------------LASTE DATA-----------------------------------------------
 rm(list=ls())
 
-dato <- '2017-09-18'
+dato <- '2017-11-07'
 dataKat <- 'A:/Intensiv/'
 fil <- paste0(dataKat,'MainFormDataContract',dato)
 #NIRdata <- read.table(file=paste0(fil,'.csv'), header=T, stringsAsFactors=FALSE, sep=';',encoding = 'UTF-8')
@@ -120,7 +122,7 @@ enhetsUtvalg <- 0	#0-5
 grVar <- 'ShNavn'
 tidsenhet <- 'Aar'
 enhetsUtvalg <- 0	#0-5
-medKI <- 1
+medKI <- 0
 offData <- 0
 #Parameter for evt. kvalitetsmål? angis i Tilrettelegging
 
@@ -177,7 +179,7 @@ outfile <- '' #paste0(valgtVar, 'Reinnlegging_region_Fig3bNy.pdf')
 
 NIRFigAndelerGrVar(RegData=RegData, valgtVar=valgtVar, minald=minald, maxald=maxald,  datoFra=datoFra, 
                 datoTil=datoTil, aar=0, InnMaate=InnMaate, dodInt=dodInt,erMann=erMann, outfile=outfile, 
-                grType=3, grVar=grVar, hentData=0, preprosess=1, lagFig=1, medKI=1,offData = offData)
+                grType=1, grVar=grVar, hentData=0, preprosess=1, lagFig=1, medKI=1,offData = offData)
 
 variable <- c('alder_u18', 'alder_over80', 'dod30d', 'dodeIntensiv', #'innMaate', 
       'respStotte', 'reinn')

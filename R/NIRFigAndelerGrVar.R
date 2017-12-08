@@ -280,20 +280,18 @@ if (lagFig == 1) {
 
                   
                   #------Tegnforklaring (legend)--------
-                  #legend(xmax/4, posOver, yjust=0, col=farger[1], border=NA, lwd=2.5, xpd=TRUE, bty='n', 
-                   #      paste0(grTypeTxt, 'sykehus: ', sprintf('%.1f', AggTot), '%, N=', N$Hoved), cex = cexleg) 
-                  legend(xmax/4, posOver, yjust=0, col=farger[1], border=NA, lwd=2.5, xpd=TRUE, bty='n', #xpd=TRUE,
-                         paste0(grTypeTxt, 'sykehus: ', sprintf('%.1f', AggTot), '%, N=', N$Hoved), cex = cexleg) 
+                  #legend(xmax/4, posOver, yjust=0, col=farger[1], border=NA, lwd=2.5, xpd=TRUE, bty='n', #xpd=TRUE,
+                  #       paste0(grTypeTxt, 'sykehus: ', sprintf('%.1f', AggTot), '%, N=', N$Hoved), cex = cexleg) 
                   
                   mtext(at=pos+0.05, text=grtxt, side=2, las=1, cex=cexgr, adj=1, line=0.25) 
-
+                        TXT <- paste0(grTypeTxt, 'sykehus: ', sprintf('%.1f', AggTot), '%, N=', N$Hoved) #paste0('totalt: ', sprintf('%.1f', AggTot), ', N=', N$Hoved)
+                        
                         if (medKI == 0) { 
-                              TXT <- paste0('totalt: ', sprintf('%.1f', AggTot), ', N=', N$Hoved)
                               legend(xmax/4, posOver+posDiff, TXT, fill=NA,  border=NA, lwd=2.5, xpd=TRUE, #inset=c(-0.1,0),
                                      col=farger[1], cex=cexleg, seg.len=0.6, merge=TRUE, bty='n')
                         } else {
-                              TXT <- c(paste0('totalt: ', sprintf('%.1f', AggTot), ', N=', N$Hoved), 
-                                       paste0('95% konf.int., ', grTypeTxt, 'sykehus (', 
+                              TXT <- c(TXT, 
+                                       paste0('95% konf.int., hele gruppa (',       #grTypeTxt, 'sykehus (', 
                                               sprintf('%.1f', KIHele[1]), '-', sprintf('%.1f', KIHele[2]), ')'))
                               legend(xmax/4, posOver, TXT, yjust=0.2, fill=c(NA, farger[3]),  border=NA, lwd=2.5,  #inset=c(-0.1,0),
                                      col=c(farger[1], farger[3]), cex=cexleg, seg.len=0.6, merge=TRUE, bty='n') #+2*posDiff
