@@ -112,7 +112,7 @@ maxald <- 130	#(standard: 130, må være større enn minald!)
 InnMaate <- '' #0-El, 6-Ak.m, 8-Ak.k, (alle - alt unntatt 0,6,8)
 valgtMaal = 'Gjsn' #'Med' = median. 'Gjsn' = gjennomsnitt. Alt annet gir gjennomsnitt
 datoFra <- '2016-01-01'	# standard: 0	format: YYYY-MM-DD. Kan spesifisere bare første del, eks. YYYY el. YYYY-MM. 
-datoTil <- '2016-12-31'	# standard: 3000
+datoTil <- '2018-12-31'	# standard: 3000
 aar <- 0
 dodInt <- ''	# 0-i live, 1 -død, standard: alle (alle andre verdier)
 erMann <- ''	#Kjønn: 0-kvinner, 1-menn, standard: alle (alle andre verdier)
@@ -193,16 +193,16 @@ for (valgtVar in variable) {
                   }
 
 #---------------------AndelTid----------------------------------------------
-tidsenhet <- 'Aar'
+tidsenhet <- 'Mnd'
 valgtVar <- 'respiratortidInvMoverf'	#'alder_u18', 'alder_over80', 'dod30d', 'dodeIntensiv', 'liggetidDod', 
                         #'respiratortidDod', 'respStotte', 'reinn',
                         #'UT: respiratortid, 
                         #Ny: respiratortidInvMoverf, respiratortidInvUoverf
-outfile <- paste0(valgtVar, '.png')
+outfile <- '' #paste0(valgtVar, '.png')
 
-NIRFigAndelTid(RegData=RegData, valgtVar=valgtVar, datoFra=datoFra, datoTil='2017-12-01', tidsenhet = tidsenhet,
+NIRFigAndelTid(RegData=RegData, valgtVar=valgtVar, datoFra=datoFra, datoTil=datoTil, tidsenhet = tidsenhet,
 		minald=minald, maxald=maxald, erMann=erMann,InnMaate=InnMaate, dodInt=dodInt, 
-		reshID, outfile=outfile, enhetsUtvalg=enhetsUtvalg, lagFig = 1, offData=offData)	
+		reshID, outfile=outfile, enhetsUtvalg=1, lagFig = 1, offData=offData)	
 #aar=0, grType=grType )
 
 variable <- c('alder_u18', 'alder_over80', 'dod30d', 'dodeIntensiv', 'liggetidDod', 
