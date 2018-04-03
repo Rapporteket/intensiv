@@ -1,6 +1,6 @@
 #' Tidstrend av andel opphold
 #'
-#' Denne funksjonen lager et søylediagram som viser andeler (fordeling) av valgt variabel
+#' Denne funksjonen lager et linjediagram som viser utvikling over tid  for andeler av valgt variabel,
 #' filtrert på de utvalg som er gjort.
 #'
 #' Argumentet \emph{valgtVar} har følgende valgmuligheter:
