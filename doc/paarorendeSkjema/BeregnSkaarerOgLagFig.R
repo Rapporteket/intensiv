@@ -45,7 +45,7 @@
 
 
 rm(list=ls())
-TestData <- read.table(file='A:/Intensiv/SpSkjemaTestData2018-04-03.csv', header=T, sep=';',encoding = 'UTF-8')
+TestData <- read.table(file='A:/Intensiv/SpSkjemaTestData2018-04-16TestAvTotSkaar.csv', header=T, sep=';',encoding = 'UTF-8')
 RegData <- TestData
 PaarorData <- read.table(file='A:/Intensiv/QuestionaryFormDataContract2017-09-18.csv', header=T, sep=';',encoding = 'UTF-8')
 load('A:/Intensiv/MainFormDataContract2017-09-18.Rdata') #read.table(file='C:/Registre/NIR/data/Main2017-03-20.csv', header=T, sep=';',encoding = 'UTF-8')
@@ -142,9 +142,9 @@ for (nr in 1:length(Spm)) { RegData[ ,Skaar[nr]] <-  mapvalues(RegData[ ,Spm[nr]
 #NB: Legg inn sjekk på om nok observasjoner
 #rowSums(is.na(RegData[ ,Del1Skaar])
 
-RegData$OmsorgTot <- rowMeans(RegData[ ,Del1Skaar])
-RegData$BeslutningTot <- rowMeans(RegData[ ,Del2Skaar[1:10]])
-RegData$FSICUtot <- rowMeans(RegData[ ,c(Del1Skaar, Del2Skaar[1:10])])
+RegData$OmsorgTot <- rowMeans(RegData[ ,Del1Skaar], na.rm = T)
+RegData$BeslutningTot <- rowMeans(RegData[ ,Del2Skaar[1:10]], na.rm = T)
+RegData$FSICUtot <- rowMeans(RegData[ ,c(Del1Skaar, Del2Skaar[1:10])], na.rm = T)
 
 write.table(RegData, file = 'A:/Intensiv/PaarorDataSkaar.csv', row.names=FALSE, sep = ';', fileEncoding = "UTF-8")
 
