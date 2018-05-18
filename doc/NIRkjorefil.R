@@ -43,7 +43,7 @@ texi2pdf(file='OffDataIntensiv.tex')
 #-------------------------------------LASTE DATA-----------------------------------------------
 rm(list=ls())
 
-dato <- '2017-11-07'
+dato <- '2018-05-16'
 dataKat <- 'A:/Intensiv/'
 fil <- paste0(dataKat,'MainFormDataContract',dato)
 #NIRdata <- read.table(file=paste0(fil,'.csv'), header=T, stringsAsFactors=FALSE, sep=';',encoding = 'UTF-8')
@@ -56,8 +56,14 @@ load(paste0(fil,".Rdata")) #RegData 2017-09-18
 load(paste0(dataKat,"NIRdata10000.Rdata")) #RegData, juli 2017
 library(intensiv)
 
-
-
+table(RegData$ShNavn, RegData$Aar)
+ind <- which(RegData$ShNavn == 'Kristiansand')
+table(RegData$ShNavn[ind], RegData$TransferredStatus[ind])
+reshID <- 114240
+RegData$PatientTransferredFromHospital[ind]
+table(RegData$PatientTransferredFromHospital)
+table(RegData$PatientTransferredFromHospitalName[ind])
+table(RegData$PatientTransferredToHospitalName[ind])
 #-----------------------------------Lage datasett til kvalitetsindikatorer---------
 library(intensiv)
 
@@ -111,8 +117,8 @@ minald <- 0 #(standard: 0)
 maxald <- 130	#(standard: 130, må være større enn minald!)
 InnMaate <- '' #0-El, 6-Ak.m, 8-Ak.k, (alle - alt unntatt 0,6,8)
 valgtMaal = 'Gjsn' #'Med' = median. 'Gjsn' = gjennomsnitt. Alt annet gir gjennomsnitt
-datoFra <- '2016-01-01'	# standard: 0	format: YYYY-MM-DD. Kan spesifisere bare første del, eks. YYYY el. YYYY-MM. 
-datoTil <- '2018-12-31'	# standard: 3000
+datoFra <- '2017-01-01'	# standard: 0	format: YYYY-MM-DD. Kan spesifisere bare første del, eks. YYYY el. YYYY-MM. 
+datoTil <- '2017-12-31'	# standard: 3000
 aar <- 0
 dodInt <- ''	# 0-i live, 1 -død, standard: alle (alle andre verdier)
 erMann <- ''	#Kjønn: 0-kvinner, 1-menn, standard: alle (alle andre verdier)
@@ -240,7 +246,7 @@ for (valgtVar in variable) {
 #--------------------------------------- SENTRALMÅL per enhet----------------------------------
 
 valgtMaal <- 'Gjsn'
-valgtVar <- 'alder'	#'SMR', alder, liggetid, respiratortid,  SAPSII, 'NEMS', 'Nas24'
+valgtVar <- 'SMR'	#'SMR', alder, liggetid, respiratortid,  SAPSII, 'NEMS', 'Nas24'
                         #Nye: respiratortidInvMoverf, respiratortidInvUoverf, respiratortidNonInv
 grType <- 3
 outfile <- paste0(valgtVar, '_test.pdf')#,grType

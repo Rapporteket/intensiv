@@ -290,7 +290,49 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='an
       }
       
       if (valgtVar=='reinn') { #AndelGrVar, AndelTid
-            #Andel reinnlagte kun hvor dette er registrert. #Ja=1, nei=2, ukjent=9
+            #Andel reinnlagte kun hvor dette er registrert. #Tidligere: Ja=1, nei=2, ukjent=9
+            #Endret til: -1 = Velg verdi, 1 = Ja, 2 = Nei, 3 = Ukjent
+            
+            #Det er mange feil i variabelen ReAdmitted. Beregner derfor reinnleggelse basert på 
+            #Innleggelsestidspunkt , DateDischargedIntensive og PasientGUID
+            #Løkke: For hver pasient som har flere opphold, sorter inn og uttid.
+            #Finne pasienter med mer enn ett opphold
+            TabAntOpph <- table(RegData$PasientGUID) #Tar relativt lang tid.
+            TabFlereOpph <- TabAntOpph[TabAntOpph>1]
+            indPasFlereOpph <- which(RegData$PasientGUID %in% names(TabFlereOpph))  #Tar relativt lang tid.
+                                           #Legge til variabel med hvor mange opphold disse har.
+            #Sjekke om forrige utskriving er <72t fra nåværende innleggelse.
+            #Mer rasjonelt: Sorter på PasientID. Differansen mellom ut og forrige inn<
+            #En pasient har 74 innleggelser
+                  # matrise <- matrix(sample(1:3,12, replace = T),4,3)
+                  # colnames(matrise) <- c('a','b','c')
+                  # matrise <- as.data.frame(matrise)
+                  # matrise[order(matrise$a, matrise$b, matrise$c), ]
+            #ind <- 10001:15000
+            Hjelpetab <- RegData[ ,c('PasientGUID','DateAdmittedIntensive','DateDischargedIntensive')]
+            HjelpetabSort <- Hjelpetab[order(Hjelpetab$PasientGUID, Hjelpetab$DateAdmittedIntensive, 
+                                              Hjelpetab$DateDischargedIntensive), ]
+            HjelpetabSort$AntOpph <- ave(HjelpetabSort$PasientGUID, HjelpetabSort$PasientGUID, FUN=length)
+            indPasFlereOpph <- which(HjelpetabSort$AntOpph>1)
+            HjelpetabSort$TidUtInn <- NA
+            HjelpetabSort$TidUtInn[indPasFlereOpph[2:Nsjekk]] <- 
+                   difftime(HjelpetabSort$DateAdmittedIntensive[indPasFlereOpph[2:Nsjekk]], 
+                            HjelpetabSort$DateDischargedIntensive[indPasFlereOpph[1:(Nsjekk-1)]], 
+                                                                           units = 'hour')
+            
+            HjelpetabSort[1:15,]
+            NB: Første rad for hver pasient skal ha TidUtInn NA.
+            # navn <- names(table(HjelpetabSort$PasientGUID)[table(HjelpetabSort$PasientGUID)>2])
+            # tilSjekk <- which(HjelpetabSort$PasientGUID %in% navn)
+            # Nsjekk <- length(tilSjekk)
+            # HjelpetabSort[tilSjekk, ]
+            # HjelpetabSort$TidUtInn <- NA
+            # HjelpetabSort$TidUtInn[2:Nsjekk] <- 
+            #       difftime(HjelpetabSort$DateAdmittedIntensive[tilSjekk[2:Nsjekk]], 
+            #                HjelpetabSort$DateDischargedIntensive[tilSjekk[1:(Nsjekk-1)]], 
+            #                                                               units = 'hour')
+            # RegData$Innleggelsestidspunkt
+            RegData$PasientGUID
             RegData <- RegData[which((RegData$ReAdmitted %in% 1:2) & (RegData$InnDato >= as.POSIXlt('2016-01-01'))), ]	#Tar bort ukjente
             if (figurtype %in% c('andelGrVar', 'andelTid')) {
                   RegData$Variabel[which(RegData$ReAdmitted==1)] <- 1}  
