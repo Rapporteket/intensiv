@@ -8,9 +8,9 @@ datoFra <- '2016-01-01'
 datoTil <- '2016-12-31'
 tilleggsVar <- c('Aar', 'Kvartal', 'ShNavn', 'ShType', 'Alder')
 rand <- 1
-RegData01Off(RegData, valgtVar=valgtVar, datoFra = datoFra, datoTil, tilleggsVar=tilleggsVar, 
-             hentData=0, rand=rand)
-
+#RegData01Off(RegData, valgtVar=valgtVar, datoFra = datoFra, datoTil, tilleggsVar=tilleggsVar, 
+#             hentData=0, rand=rand)
+"%i%" <- intersect
 
 
 

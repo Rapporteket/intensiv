@@ -65,7 +65,6 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='an
       #sende inn grupperingsvariabel og så gjøre beregninger. (Ulempe: Ekstra avhengigheter)
       #Sentralt spm: Hvor skal det avgjøres hvilken figurtype som vises???
       
-      
       #--------------- Definere variable ------------------------------
       #Variabeltyper: Numeriske, kategoriske, indikator
       # For hver valgtVar:
@@ -295,48 +294,45 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='an
             
             #Det er mange feil i variabelen ReAdmitted. Beregner derfor reinnleggelse basert på 
             #Innleggelsestidspunkt , DateDischargedIntensive og PasientGUID
-            #Løkke: For hver pasient som har flere opphold, sorter inn og uttid.
-            #Finne pasienter med mer enn ett opphold
-            TabAntOpph <- table(RegData$PasientGUID) #Tar relativt lang tid.
-            TabFlereOpph <- TabAntOpph[TabAntOpph>1]
-            indPasFlereOpph <- which(RegData$PasientGUID %in% names(TabFlereOpph))  #Tar relativt lang tid.
-                                           #Legge til variabel med hvor mange opphold disse har.
-            #Sjekke om forrige utskriving er <72t fra nåværende innleggelse.
-            #Mer rasjonelt: Sorter på PasientID. Differansen mellom ut og forrige inn<
-            #En pasient har 74 innleggelser
-                  # matrise <- matrix(sample(1:3,12, replace = T),4,3)
-                  # colnames(matrise) <- c('a','b','c')
-                  # matrise <- as.data.frame(matrise)
-                  # matrise[order(matrise$a, matrise$b, matrise$c), ]
-            #ind <- 10001:15000
-            Hjelpetab <- RegData[ ,c('PasientGUID','DateAdmittedIntensive','DateDischargedIntensive')]
-            HjelpetabSort <- Hjelpetab[order(Hjelpetab$PasientGUID, Hjelpetab$DateAdmittedIntensive, 
-                                              Hjelpetab$DateDischargedIntensive), ]
-            HjelpetabSort$AntOpph <- ave(HjelpetabSort$PasientGUID, HjelpetabSort$PasientGUID, FUN=length)
-            indPasFlereOpph <- which(HjelpetabSort$AntOpph>1)
-            HjelpetabSort$TidUtInn <- NA
-            HjelpetabSort$TidUtInn[indPasFlereOpph[2:Nsjekk]] <- 
-                   difftime(HjelpetabSort$DateAdmittedIntensive[indPasFlereOpph[2:Nsjekk]], 
-                            HjelpetabSort$DateDischargedIntensive[indPasFlereOpph[1:(Nsjekk-1)]], 
-                                                                           units = 'hour')
+            #RegData <- FinnReinnleggelser(RegData=RegData)
+            #FinnReinnleggelser <- function(RegData){
+                  TabAntOpph <- table(RegData$PasientGUID) #Tar relativt lang tid.
+                  TabFlereOpph <- TabAntOpph[TabAntOpph>1]
+                  indPasFlereOpph <- which(RegData$PasientGUID %in% names(TabFlereOpph))  #Tar relativt lang tid.
+                  Hjelpetab <- RegData #[ ,c('PasientGUID','DateAdmittedIntensive','DateDischargedIntensive', 'ReAdmitted')]
+                  RegDataSort <- Hjelpetab[order(Hjelpetab$PasientGUID, Hjelpetab$DateAdmittedIntensive, 
+                                                 Hjelpetab$DateDischargedIntensive), ]
+                  RegDataSort$AntOpph <- ave(RegDataSort$PasientGUID, RegDataSort$PasientGUID, FUN=length)
+                  RegDataSort$OpphNr <- ave(RegDataSort$PasientGUID, RegDataSort$PasientGUID, FUN=seq_along)
+                  indPasFlereOpph <- intersect(which(RegDataSort$AntOpph>1), which(RegDataSort$OpphNr>1))
+                  RegDataSort$TidUtInn <- NA
+                  RegDataSort$TidUtInn[indPasFlereOpph] <- 
+                        difftime(as.POSIXlt(RegDataSort$DateAdmittedIntensive[indPasFlereOpph], format="%Y-%m-%d %H:%M:%S"),
+                                 as.POSIXlt(RegDataSort$DateDischargedIntensive[indPasFlereOpph-1], format="%Y-%m-%d %H:%M:%S"),
+                                 units = 'hour')
+                  RegDataSort$Reinn <- 2 #Ikke reinnleggelse
+                  RegDataSort$Reinn[RegDataSort$TidUtInn<72 & RegDataSort$TidUtInn >= 0] <- 1 #Reinnleggelse
+                  #return{RegData}
+                  
+                  #Div testing:
+                  # indNeg <- which(RegDataSort$TidUtInn < 0)
+                  # TabDobbeltRegSjekk <- RegDataSort[sort(c(indNeg-1,indNeg)), ]
+                  # write.table(TabDobbeltRegSjekk, file='TabDobbeltRegSjekk.csv', row.names = F, sep = ';')
+                  # RegDataSort[1:20,]               
+                  # table(RegDataSort$ReAdmitted)
+                  # table(RegDataSort$Reinn)
+                  # RegDataSort$PasientGUID[1:20,]               
+                  # RegDataSort$TidUtInn[indNeg[1:5]]
+            #}
             
-            HjelpetabSort[1:15,]
-            NB: Første rad for hver pasient skal ha TidUtInn NA.
-            # navn <- names(table(HjelpetabSort$PasientGUID)[table(HjelpetabSort$PasientGUID)>2])
-            # tilSjekk <- which(HjelpetabSort$PasientGUID %in% navn)
-            # Nsjekk <- length(tilSjekk)
-            # HjelpetabSort[tilSjekk, ]
-            # HjelpetabSort$TidUtInn <- NA
-            # HjelpetabSort$TidUtInn[2:Nsjekk] <- 
-            #       difftime(HjelpetabSort$DateAdmittedIntensive[tilSjekk[2:Nsjekk]], 
-            #                HjelpetabSort$DateDischargedIntensive[tilSjekk[1:(Nsjekk-1)]], 
-            #                                                               units = 'hour')
-            # RegData$Innleggelsestidspunkt
-            RegData$PasientGUID
-            RegData <- RegData[which((RegData$ReAdmitted %in% 1:2) & (RegData$InnDato >= as.POSIXlt('2016-01-01'))), ]	#Tar bort ukjente
+            
+            
+            
+            
+            RegData <- RegData[which(RegData$InnDato >= as.POSIXlt('2016-01-01')), ]	
             if (figurtype %in% c('andelGrVar', 'andelTid')) {
-                  RegData$Variabel[which(RegData$ReAdmitted==1)] <- 1}  
-            if (figurtype == 'gjsnGrVar') {RegData$Variabel <- RegData$ReAdmitted}  
+                  RegData$Variabel[which(RegData$Reinn==1)] <- 1}  
+            if (figurtype == 'gjsnGrVar') {RegData$Variabel <- RegData$Reinn}  
             tittel <-'Reinnleggelser på intensivavd. (innen 72t)'
             sortAvtagende <- FALSE      #Rekkefølge
             KImaal <- 4  #Reinnleggelser <4% 
@@ -577,3 +573,5 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='an
       return(invisible(UtData)) 
       
 }
+
+#--------------------Hjelpefunksjoner----------------------

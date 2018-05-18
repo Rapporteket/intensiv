@@ -10,7 +10,7 @@ Maintainer: Lena Ringstad Olsen <lena.olsen@skde.no>
 Description: Pakke for (automatisk) generering av resultater (figurer og
     samledokument) fra Norsk Intensivregister.
 License: GPL2
-LazyData: TRUE
+LazyData: FALSE
 Encoding: UTF-8
 Depends:
     R (>= 3.0.2),
