@@ -2,7 +2,7 @@
 #'
 #' Henter data for Intensivregisteret fra "staging"
 #'
-#' @inheritParams NIRAndeler
+#' @inheritParams NIRFigAndeler
 #'
 #' @return Henter dataramma RegData for Intensivregisteret
 #' @export

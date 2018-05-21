@@ -4,7 +4,7 @@
 #' Funksjonen lager også et "offentlig" datasett som kan benyttes til beregning
 #' av kvalitetsindikatorer og som kan legges ved pakken
 #'
-#' @inheritParams NIRAndeler
+#' @inheritParams NIRFigAndeler
 #'
 #' @return Data En liste med det filtrerte datasettet (og sykehusnavnet som tilsvarer reshID, ikke pt)
 #'

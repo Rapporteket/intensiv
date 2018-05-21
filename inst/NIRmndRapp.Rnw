@@ -1,0 +1,304 @@
+\documentclass[presentation,xcolor=pdftex,dvipsnames,table]{beamer}
+\usetheme{Hannover}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[english, norsk]{babel}
+\usepackage{xspace}
+\usepackage{booktabs}
+\usepackage{rotating}
+\usepackage{graphicx}
+
+
+<<'initOpts',include=FALSE>>=
+knitr::opts_chunk$set(warnings=FALSE,echo=FALSE)
+knitr::opts_knit$set(root.dir = './')
+@
+
+<<'getData', include=FALSE>>=
+datoTil <- Sys.Date()
+dato <- as.POSIXlt(datoTil)
+#startOfMonth<- function(x) {as.Date(format(x, "%Y-%m-01")) }
+datoFra1Aar <- as.Date(paste0(1900+dato$year-1,'-', ifelse(dato$mon==11, 1, dato$mon+2), '-', '01'))
+#Ønsker eget datasett for forrige måned
+datoFraMnd <- dato - as.Date(paste0(1900+dato$year,'-', ifelse(dato$mon==11, 1, dato$mon+2), '-', '01'))
+#datoFra <- as.Date(paste0(1900+dato$year-1,'-', dato$mon+1, '-', '01'))
+#I månedsfigurene er datoFra automatisk satt til 13 mnd før dagens dato.
+
+if (!exists('RegData')){
+      RegData <- NIRRegDataSQL(datoFra = datoFra1Aar)
+}
+
+RegData <- NIRPreprosess(RegData=RegData)
+# Beregne reinnleggelser
+#source('R/NIRVarTilrettelegg.R')
+RegData <- FinnReinnleggelser(RegData)
+
+RegDataMnd <- 
+@
+
+
+<<'SetteParametre', include=FALSE>>=
+enhetsUtvalg <- 1 #SJEKK OM STANDARD
+tidsenhet <- 'Mnd'
+preprosess <- 0
+hentData <- 0
+
+shtxt <- switch(as.character(enhetsUtvalg),
+                     '0' = 'Hele landet',
+                     '1' = as.character(RegData$ShNavn[match(reshID, RegData$ReshId)]),
+                     '2' = as.character(RegData$ShNavn[match(reshID, RegData$ReshId)]))
+
+
+@
+
+\title[NIR\\\Sexpr{shtxt}]{\textit{Norsk intensivregister} \\
+MÅNEDSRAPPORT \\
+\Sexpr{shtxt}}
+\date{}
+
+
+
+\begin{document}
+\begin{tiny}
+
+\maketitle
+
+\begin{frame}[fragile] {Ansvar og bruk av data}
+Fagrådet i NIR er ansvarleg for alle vurderingar og tolkingar av data, og også feil i resultat som skuldast feil i datagrunnlaget. Den viktigaste feilkjelda i rapporten vil truleg vere ufullstendige datasett i mange av NIR-einingane – det vil seie at ikkje alle data er ferdigstilte for aktuell månad. Dette etterslepet vil variere markert både i tid og volum, og gjer at data blir meir eller mindre representative for dei ulike einingane.
+Rapporten inneheld berre anonymiserte samledata, ikkje data om einskildpersonar. I tilfelle der utvalet inneheld få registreringar som er kombinerte med til dømes demografiske data, kan det ikkje utelukkast at rapporterte data kan tilbakeførast til einskildpersonar. 
+
+Rapporten har difor usikkert datagrunnlag og er meint til intern bruk i einingane. NIR ber om at denne rapporten ikkje blir brukt offentleg i nokon samanheng eller blir offentleggjort på noko vis, av grunnar nemnde her.
+\end{frame}
+
+
+
+\begin{frame}[fragile] {Datagrunnlag}
+
+Denne rapporten er framstilt automatisk etter mal laga av Lena Ringstad Olsen ved Senter for Klinisk Dokumentasjon og Evaluering (SKDE) på oppdrag frå Norsk
+intensivregister (NIR). Alle resultat er baserte på data frå registeret og er gyldige per rapportdato for opphald som er ferdigstilte i MRS. Rapporten inneheld alle ferdigstilte opphald i MRS der innleggingstidspunktet på intensiv er i tidsrommet kl.00.00 den fyrste i aktuell månad til kl. 23.59 den siste i månaden. Månadsrapporten vil dermed ikkje innehalde data frå dei pasientane som vart innlagde før månadsskiftet og «ligg over» inn i den aktuelle månaden, men vil innehalde alle relevante data frå dei som vart innlagde i slutten av den aktuelle månaden og «ligg over» til neste månad, dersom opphaldet er ferdigstilt i MRS.
+
+Uttrekket blir gjort for kvar kalendermånad, med ein månads forseinking. Månadsrapport for januar vert sendt ut 1. mars, for februar 1. april osv. 
+\textbf{Ca 5\% ligger lengre enn to uker. Hva med å sende ut den 15. i hver måned og inkludere hele forrige måned?
+I noen figurer/tabeller bør vi vise data for et helt år, brutt ned i måneder. 
+Dermed blir det ikke så viktig med denne forsinkelsen og vi kan la de som er ajour får se alle sine data fra til i dag.}
+
+NIR-einingar som er ajour med registreringa, vil dermed kunne få nær fullstendige månadsrapportar. 
+
+Fjernes - ok?: Rapporten er laga ved hjelp av statistikkverktyet R, dokumentverktyet LATEX og rap-
+porteringsløysinga JasperReports. Rapporten kan også genererast av intensivregisteret sine databasebrukarar på helseregister.no. Denne tilleggsfunksjonen gjer at alle som ikkje er ajour nok med registreringa, likevel kan lage seg representative månadsrapportar når dei er ferdige med registreringa for ein månad.
+
+Erstattes med (forslag):
+Rapporten kan også hentast ved at ein loggar seg inn på Rapporteket-Intensiv, klikkar på "Månadsrapport". Det  
+gjer at alle som ikkje er ajour nok med registreringa, kan lage seg representative månadsrapportar når dei måtte ynskje..
+
+\end{frame}
+
+
+
+% \section{Pasientkarakteristika}
+
+\begin{frame}[fragile] {Oversikt for nn (NIR-eining)}
+
+Oversikt for nn (NIR-eining) som i samlerapport, men med tal på opphald, pasientar og døger for dei siste månadene (med siste månad som den rapporten primært gjeld)
+Ved nn er det registrert innleggingar for perioden ….. til …….åå
+jan 	feb 	mars 	april 	mai	 juni
+Ferdigstilte intensivopphald  33 	35 	18 	24 	19 	23
+Registrerte pasientar 
+Liggjetid (tal på intensivdøger) 
+
+\caption{Opphald, pasientar og liggjetid (intensivdøger)}
+\end{frame}
+
+\begin{frame}[fragile] {Registreringsforseinking}
+Har registeret en variabel som gjør at dette kan beregnes?
+(FirstTimeClosed)
+
+Median tid frå utskriving intensiv til ferdigstilling i MRS.
+\end{frame}
+
+
+\section{Pasientkarakteristika}
+
+
+
+\begin{frame}[fragile] {Alder}
+Alder Som tab. 2 i samlerapport, men med fire kolonner, der dei to siste er  resten av landet og eigen sjukehuskategori (region/lokal-sentral)
+Aktuell mnd.  	Siste 6 mnd.	Resten av landet Reg./Lok.-sentral            
+								siste 6 mnd.          siste 6 mnd.
+Minimum: 			16.0 		12.0		0.0		
+25% av pasientane <		58.0 		57.6		50.0
+Median: 			70.0 		69.6		66.0
+Gjennomsnitt: 		67.2 		66.9		60.6
+25% av pasientane >		81.0 		80,5		76.0
+Maksimum: 			100.0 		101.0		102.0
+Tal (\%) på pasientar < 16 år:  4 (12\%) (desse to siste er ikkje i samlerapporten)
+Tal på pasientar over 80 år	8 (24\%)
+
+\end{frame}
+
+<<'getData', include=FALSE>>=
+
+variable <- c('Alder')
+for (valgtVar in variable) {
+	outfile <- paste0(valgtVar, 'FordMnd', '.pdf')
+	NIRFigAndeler(RegData=RegData, valgtVar=valgtVar, datoFra=datoFra, reshID=reshID, 
+	               enhetsUtvalg=enhetsUtvalg, preprosess=0)
+}
+
+variable <- c('Opf0KomplBlodning', 'Opf0KomplUtstyr', 'Opf0KomplInfeksjon', 'Opf0KomplOrgan', 'Opf0Reoperasjon',
+              'Opf0AlvorlighetsGrad', 'KomplIntra', 'KomplPostop', 'OpAntibProfylakse',
+              'OpASA', 'OpBMI', 'Opf0Status')
+# for (valgtVar in variable) {
+# 	outfile <- paste0(valgtVar, '_', tidsenhet, '.pdf')
+# 	NGERFigAndelTid(RegData=RegData, datoFra=datoFra, valgtVar=valgtVar, datoTil=datoTil,
+#               reshID=reshID, enhetsUtvalg=enhetsUtvalg, outfile=outfile, MCEType = MCEType,
+#               tidsenhet=tidsenhet, preprosess=preprosess)
+# 			  }
+@
+
+\begin{frame}[fragile]
+\begin{figure}[ht]
+\centering
+\includegraphics[scale=0.35]{AlderFordMnd.pdf}
+\caption{Aldersfordeling, aktuell månad. (Viser no eit heilt år.) }
+\end{figure}
+\end{frame}
+
+\begin{frame}[fragile] {Kjønn}
+
+Kvinner(%) 	Menn(%)
+Eiga eining 				43.7 		56.3
+Eiga eining siste 6 mnd.		41.7		58.3
+Lokal-/Sentraleiningar siste 6 mnd.	43.1 		56.9
+Regionaleiningar siste 6 mnd.	39.1 		60.9
+Heile landet siste 6 mnd.		41.7 		58.3
+
+Tabell 3: Fordeling av kvinner og menn (som i samlerapport)
+
+\end{frame}
+
+\begin{frame}[fragile] {Liggjetid på intensiv}
+ 
+Liggjetida er den samla tida frå pasienten fysisk er komen til intensiv/overvakingsarealet
+ved innlegging, til pasienten fysisk forlet intensiv/overvakingsarealet ved utskriving.
+Liggjetida vil dermed inkludere tid pasienten måtte vere utanfor intensiv (røntgen, op-
+erasjon osv.). Liggjetida blir registrert i døger med ein desimal, dvs. timar/24.
+
+Gjennomsnitt 	Median
+Eiga eining 				3.7 		1.9
+Eiga eining siste 6 mnd.		3.8		2.0
+Lokal-/Sentraleiningar siste 6 mnd.	43.1 		56.9
+Regionaleiningar siste 6 mnd.	39.1 		60.9
+Heile landet siste 6 mnd.		41.7 		58.3
+
+Tabell 3: Gjennomsnittleg og median liggjetid.
+
+\end{frame}
+
+\begin{frame}[fragile] {Hovudårsak til intensivopphaldet}
+Hovudårsak til intensivopphaldet (mal av figur 1 i samlerapport)
+Histogram med vertikale søyler i% av total i dei 11 hovudkategoriane. Eiga avd. søyler, resten av landet prikkar
+11
+ 
+Figur 2: Hovudårsak til innlegging på intensiv (% per kategori) eiga avdeling og landet elles
+
+\end{frame}
+
+\begin{frame}[fragile] {NEMS-skåre}
+ (mal som i samlerapport)
+Totalt tal NEMS-poeng for opphaldet. Faste definisjonar (Miranda), NEMS skåra på pleiedøgeret.
+NB! Sidan det er stor variasjon i NEMS-skåre for korte opphald, avhengig av tal på timar
+som er rekna med før/etter pleiedøgeret, rapporterer vi her data per døger
+for opphald som har vart lenger enn 24 timar og der det faktisk er skåra NEMS-poeng.
+
+N 	Gj.sn/opph. 	Median/opph. 	Gj.sn/døger 	Median/døger
+Eiga eining 			1767 	124.5 		71 		37.5 		36.0
+Eiga eining siste 6 mnd.
+Lokal-/sentral siste 6 mnd.	38064 	136.2 		72 		31.1 		30.0
+Regionaleiningar siste 6 mnd. 	21134 	201.2 		105 		35.5 		34.7
+Heile landet siste 6 mnd.	77985 	159.4 		81 		32.7 		31.6
+
+Tabell 4: NEMS-poeng per døger for ulike sjukehuskategoriar
+
+\end{frame}
+
+\begin{frame}[fragile] {NAS-skåre}
+ (som i samlerapport)
+N Gj.sn/opph Med./opph Gj.sn/d_gn Med./d_gn
+Egen enhet 4 55.0 31 44.2 45.0
+Lokal-/Sentralenheter 5495 453.0 223 99.0 96.9
+Regionalenheter 15471 770.3 363 122.3 130.6
+Hele landet 20966 687.2 310 116.2 121.6
+Tabell 7: NAS-poeng for ulike sykehuskategorier.
+Maksimal sk_are er 177 per d_gn. Opphold med gjennomsnittlig sk_are over 177 per
+d_gn, er tatt vekk. Dette utgj_r 7765 opphold. Opphold uten NAS-sk_aring er ogs_a tatt
+bort, dvs. opphold under 8 timer og opphold med NAS=0. I alt gjenst_ar da 20966 opphold
+med gyldig NAS-skåare.
+
+\end{frame}
+
+\begin{frame}[fragile] {Respirasjonsstøtte}
+ (som i samlerapport)
+Respirasjonsstøtte (den tida pasienten har fått respirasjonsstøtte ut over
+O2-tilførsle i ope system_ (NIR sin mal). Resultata i tabell 5 omfattar berre pasientar som
+har fått respirasjonsstøtte.
+Respirasjonsstøtte varierer mykje mellom ulike intensivavsnitt. Den viktigaste grunnen er
+skilnader i sjølve pasientpopulasjonen («case mix»). I tillegg er tala påverka av ulik praksis når det gjeld sedasjon, respiratoravvenning og trakeotomi, og tilgang på andre
+spesialitetar (lunge, øyre-nese-hals, røntgen etc.). Lokal behandlingstradisjon er også ein faktor.
+
+ 
+Eiga eining aktuell månad	2.1 	0.5 	47.8 	0.1 - 155.4
+Eiga eining siste 6 mnd.
+Lokal-/sentral siste 6 mnd. 	3.1 	0.8 	52.	3 0 - 206
+Regionaleiningar siste 6 mnd. 	3.9 	1.2 	74.	1 0 - 168.3
+Heile landet siste 6 mnd. 	3.5 	1 6	0.1 	0 - 206
+
+Tabell 5: Antall døger med respirasjonsstøtte for eiga eining og ulike sjukehuskategoriar.
+
+\end{frame}
+
+\begin{frame}[fragile] {SAPS II (alvorsskåre)}
+
+Vi inkluderer kun opphald med SAPS-skåre >0 der pasienten var over 16 år.
+Dei viktigaste feilkjelder i SAPS II-skåren er korvidt pasientar som skal skårast (og berre dei)
+er skåra, om reinsing og siling av avviksverdiar er etablert for data som ikkje representerer
+pasienten sin tilstand, og om Glasgow Coma Score er einsarta skåra.
+
+ 
+
+Gj.sn Median 25-75prosentil Spreiing
+Eiga eining aktuell månad	41 	39 	29 - 50 		6 - 120
+Eiga eining siste 6 mnd.
+Lokal-/sentralein. siste 6 mnd 	37.4 	35 	25 - 47 		1 - 125
+Regionalenheter siste 6 mnd 	38.5 	36 	25 - 50 		1 - 128
+Hiele landet siste 6 mnd 	37.8 	35 	25 - 48 		1 - 128
+
+Tabell 6: SAPS-skåre for ulike sykehuskategorier.
+
+\end{frame}
+
+\begin{frame}[fragile] {Trakeostomiar og nyreerstattande behandling}
+Trakeostomi (%) 	Nyreerstatning (%)
+Eiga eining 				4 (%) 			2 (%)
+Eiga eining siste 6 mnd.		15			23
+Lokal-/Sentraleiningar siste 6 mnd.	 			
+Regionaleiningar siste 6 mnd.	 			
+Heile landet siste 6 mnd.		 			
+
+\caption{Opphald (\%) der det vart utført trakeostomi eller gjeve nyrerstattande behandling i 
+løpet av intensivopphaldet}
+
+\end{frame}
+
+\begin{frame}[fragile] {Datagrunnlag}
+\end{frame}
+
+
+
+
+
+
+
+\end{tiny}
+\end{document}

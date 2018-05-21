@@ -22,7 +22,7 @@
 #'    }
 #' @param tilleggsVar Variable som benyttes til filtrering eller gruppering av valgt variabel (valgtVar)
 #'  	Aktuelle valg: Aar, erMann, ShNavn, Mnd, 
-#' @inheritParams NIRAndeler
+#' @inheritParams NIRFigAndeler
 #' @param rand 0-"ekte data", 1-tilfeldig resultat.
 #' @return Definisjon av valgt variabel.
 #'

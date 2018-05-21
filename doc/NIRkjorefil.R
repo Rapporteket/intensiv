@@ -25,9 +25,13 @@ library(tools)	#texi2pdf
 setwd('C:/ResultattjenesteGIT/intensiv/inst/') 
 reshID <- 112044 #102090 Ahus, 112044 Haukeland
 #knit(input, output = NULL, tangle = FALSE, text = NULL, envir = parent.frame())
-NIRdata <- RegData
-knit('NIRSamleRapp.Rnw')
-texi2pdf(file='NIRSamleRapp.tex')
+# NIRdata <- RegData
+# knit('NIRSamleRapp.Rnw')
+# texi2pdf(file='NIRSamleRapp.tex')
+
+knit('NIRmndRapp.Rnw')
+texi2pdf(file='NIRmndRapp.tex')
+
 
 knit('OffDataIntensiv.Rnw')
 texi2pdf(file='OffDataIntensiv.tex')

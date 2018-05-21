@@ -9,7 +9,7 @@
 #' Figurtypen som genereres er avhengig av valgtVar. Ved valgtVar='InnMaate', får man ei oversikt oversikt
 #' over andel av innkomsttype ved hver enhet, dvs. ei fordeling av de tre innkomsttypene for hver enhet.
 #' For andre "valgtVar" viser figuren andel av den valgte variabelen for hver enhet.
-#' @inheritParams NIRAndeler
+#' @inheritParams NIRFigAndeler
 #' @param tittel: Hvis vil angi tittel direkte
 #' @param utvalgsInfo: Hvis datafil lagret med utvalgsinfo
 #' 

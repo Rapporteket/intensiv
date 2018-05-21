@@ -22,7 +22,7 @@
 #'     \item reinn: Andel reinnlagte (fjerner ukjente) Kvalitetsindikator
 #'     \item Trakeostomi: Andel som har fått trakeostomi (kat 2 og 3)
 #'    }
-#' @inheritParams NIRAndeler
+#' @inheritParams NIRFigAndeler
 #' @param aldGr: Aldersgrupper. Brukes i offentliggjøringsfigurer
 #' @param tittel: Hvis vil angi tittel direkte
 #' @param utvalgsInfo: Hvis datafil lagret med utvalgsinfo
