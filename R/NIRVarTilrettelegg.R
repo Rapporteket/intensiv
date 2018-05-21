@@ -453,7 +453,8 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='an
             #Skal ikke brukes: ReAdmitted: #1:Ja, 2:Nei, 3:Ukjent, -1:Ikke utfylt
             #Reinn: #1:Ja, 2:Nei, 3:Ukjent, -1:Ikke utfylt
             minald <- max(16, minald) 
-            indMed <- which((RegData$Overf==1) %i% which(as.numeric(RegData$SAPSII)>0))
+            indMed <- which(RegData$Overf==1) %i% which(as.numeric(RegData$SAPSII)>0) %i% 
+                  which(RegData$InnDato >= as.POSIXlt('2016-01-01'))
             RegData <- RegData[indMed,]
             RegData <- FinnReinnleggelser(RegData=RegData)
             RegData <- RegData[RegData$Reinn==2, ]
