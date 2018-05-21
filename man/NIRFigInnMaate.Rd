@@ -13,49 +13,6 @@ NIRFigInnMaate(RegData, valgtVar = "InnMaate", datoFra = "2010-01-01",
   erMann = "", hentData = 0, preprosess = 1, outfile = "")
 }
 \arguments{
-\item{RegData}{En dataramme med alle nødvendige variabler fra registeret}
-
-\item{valgtVar}{Hvilken variabel som skal visualiseres. Se \strong{Details} for oversikt.}
-
-\item{datoFra}{Tidligste dato i utvalget (vises alltid i figuren).}
-
-\item{datoTil}{Seneste dato i utvalget (vises alltid i figuren).}
-
-\item{minald}{Alder, fra og med (Standardverdi: 0)}
-
-\item{maxald}{Alder, til og med (Standardverdi: 130)}
-
-\item{grType}{Gjør gruppeutvalg på sykehustype
-1: lokal-/sentralsykehus
-2: lokal-/sentralsykehus
-3: regionsykehus
-99: alle (standard)}
-
-\item{InnMaate}{0: Elektivt, 
-6: Akutt medisinsk, 
-8: Akutt kirurgisk, 
-standard: alle (alt unntatt 0,6,8 / ikke spesifisert)}
-
-\item{dodInt}{Levende/død ut fra intensiv. 
-0: i live, 
-1: død,   
-alle: standard (alle andre verdier)}
-
-\item{erMann}{Kjønn, standard: alt annet enn 0/1 gir begge kjønn
-0: Kvinner
-1: Menn}
-
-\item{hentData}{Gjør spørring mot database
-0: Nei, RegData gis som input til funksjonen (Standard)
-1: Ja}
-
-\item{preprosess}{Preprosesser data
-FALSE: Nei
-TRUE: Ja (Standard)}
-
-\item{outfile}{Navn på fil figuren skrives til. Standard: '' (Figur skrives
-til systemets standard utdataenhet (som regel skjerm))}
-
 \item{tittel:}{Hvis vil angi tittel direkte}
 
 \item{utvalgsInfo:}{Hvis datafil lagret med utvalgsinfo}

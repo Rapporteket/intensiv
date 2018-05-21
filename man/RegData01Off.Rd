@@ -8,20 +8,8 @@ RegData01Off(RegData, valgtVar, datoFra = "2016-01-01",
   datoTil = "3000-01-01", tilleggsVar = 0, hentData = 0, rand = 0)
 }
 \arguments{
-\item{RegData}{En dataramme med alle nødvendige variabler fra registeret}
-
-\item{valgtVar}{Hvilken variabel som skal visualiseres. Se \strong{Details} for oversikt.}
-
-\item{datoFra}{Tidligste dato i utvalget (vises alltid i figuren).}
-
-\item{datoTil}{Seneste dato i utvalget (vises alltid i figuren).}
-
 \item{tilleggsVar}{Variable som benyttes til filtrering eller gruppering av valgt variabel (valgtVar)
 Aktuelle valg: Aar, erMann, ShNavn, Mnd,}
-
-\item{hentData}{Gjør spørring mot database
-0: Nei, RegData gis som input til funksjonen (Standard)
-1: Ja}
 
 \item{rand}{0-"ekte data", 1-tilfeldig resultat.}
 }

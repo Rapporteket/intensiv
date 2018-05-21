@@ -6,9 +6,6 @@
 \usage{
 NIRPreprosess(RegData = RegData, lagreKvalIndData = 0)
 }
-\arguments{
-\item{RegData}{En dataramme med alle nødvendige variabler fra registeret}
-}
 \value{
 Data En liste med det filtrerte datasettet (og sykehusnavnet som tilsvarer reshID, ikke pt)
 }

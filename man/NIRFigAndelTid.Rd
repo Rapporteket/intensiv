@@ -61,7 +61,7 @@ TRUE: Ja (Standard)}
 Figur som viser tidstrend, dvs. andel av valgt variabel for hvert år.
 }
 \description{
-Denne funksjonen lager et søylediagram som viser andeler (fordeling) av valgt variabel
+Denne funksjonen lager et linjediagram som viser utvikling over tid  for andeler av valgt variabel,
 filtrert på de utvalg som er gjort.
 }
 \details{
