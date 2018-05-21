@@ -71,19 +71,19 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='an
       
       
 #--------------------HJELPEFUNKSJONER-----------------------------
-      FinnReinnleggelser <- function(RegData){
-            #RegData må inneholde DateAdmittedIntensive, DateDischargedIntensive og PasientGUID
+      FinnReinnleggelser <- function(RegData, PasientID){
+            #RegData må inneholde DateAdmittedIntensive, DateDischargedIntensive og PasientID
             #SJEKK Bare innleggelser fra 2016 som skal ha reinnleggelse??
             #RegData <- RegData[
             #      as.POSIXlt(RegData$DateAdmittedIntensive, format="%Y-%m-%d %H:%M:%S") >= as.POSIXlt('2016-01-01'), ]
             
-            #TabAntOpph <- table(RegData$PasientGUID) #Tar relativt lang tid.
+            #TabAntOpph <- table(RegData$PasientID) #Tar relativt lang tid.
             #TabFlereOpph <- TabAntOpph[TabAntOpph>1]
-            #indPasFlereOpph <- which(RegData$PasientGUID %in% names(TabFlereOpph))  #Tar relativt lang tid.
-            RegDataSort <- RegData[order(RegData$PasientGUID, RegData$DateAdmittedIntensive,     #Denne tar mest tid
+            #indPasFlereOpph <- which(RegData$PasientID %in% names(TabFlereOpph))  #Tar relativt lang tid.
+            RegDataSort <- RegData[order(RegData$PasientID, RegData$DateAdmittedIntensive,     #Denne tar mest tid
                                          RegData$DateDischargedIntensive), ]
-            #RegDataSort$AntOpph <- ave(RegDataSort$PasientGUID, RegDataSort$PasientGUID, FUN=length)
-            RegDataSort$OpphNr <- ave(RegDataSort$PasientGUID, RegDataSort$PasientGUID, FUN=seq_along)
+            #RegDataSort$AntOpph <- ave(RegDataSort$PasientID, RegDataSort$PasientID, FUN=length)
+            RegDataSort$OpphNr <- ave(RegDataSort$PasientID, RegDataSort$PasientID, FUN=seq_along)
             indPasFlereOpph <- which(RegDataSort$OpphNr>1) #intersect(which(RegDataSort$AntOpph>1), which(RegDataSort$OpphNr>1))
             RegDataSort$TidUtInn <- NA
             RegDataSort$TidUtInn[indPasFlereOpph] <- 
@@ -102,7 +102,7 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='an
             # RegDataSort[1:20,]               
             # table(RegDataSort$ReAdmitted)
             # table(RegDataSort$Reinn)
-            # RegDataSort$PasientGUID[1:20,]               
+            # RegDataSort$PasientID[1:20,]               
             # RegDataSort$TidUtInn[indNeg[1:5]]
       }
       
@@ -327,9 +327,9 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='an
             #Endret til: -1 = Velg verdi, 1 = Ja, 2 = Nei, 3 = Ukjent
             
             #Det er mange feil i variabelen ReAdmitted. Beregner derfor reinnleggelse basert på 
-            #Innleggelsestidspunkt , DateDischargedIntensive og PasientGUID
+            #Innleggelsestidspunkt , DateDischargedIntensive og en PasientID
             RegData <- RegData[which(RegData$InnDato >= as.POSIXlt('2016-01-01')), ]	
-            RegData <- FinnReinnleggelser(RegData=RegData)
+            RegData <- FinnReinnleggelser(RegData=RegData, PasientID = PatientInRegistryGuid)
             if (figurtype %in% c('andelGrVar', 'andelTid')) {
                   RegData$Variabel[which(RegData$Reinn==1)] <- 1}  
             if (figurtype == 'gjsnGrVar') {RegData$Variabel <- RegData$Reinn}  
