@@ -106,11 +106,7 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='an
             # RegDataSort$TidUtInn[indNeg[1:5]]
       }
       
-system.time(RegDataNy <- FinnReinnleggelser(RegData=RegData))
-table(RegDataNy$Reinn)
-      
-      
-      
+
       
       if (valgtVar == 'OmsorgTot') {  #gjsnGrVar
             RegData$Variabel  <- RegData$OmsorgTot
