@@ -23,8 +23,11 @@
 #' @param figurtype Hvilken figurtype det skal tilrettelegges variable for: 
 #'                'andeler', 'andelGrVar', 'andelTid', 'gjsnGrVar', 'gjsnTid'
 #'				
-#' @return Definisjon av valgt variabel.
-#'
+#' @return Definisjon av valgt variabel, samt flere andre parametre som 
+#' tittel, xAkseTxt, sortAvtagende (standard: TRUE)
+#'       #Kan her definere opp alle aktuelle grupperingsvariable og deres tekst.
+#' Variabeltyper: Numeriske, kategoriske, indikator
+#' For hver valgtVar: Definer og gjør utvalg for variabelen
 #' @export
 #'
 
@@ -61,18 +64,53 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='an
       variable <- 'Ingen'
       #deltittel <- ''
       RegData$Variabel <- 0
-      #Kan her definere opp alle aktuelle grupperingsvariable og deres tekst, eller 
-      #sende inn grupperingsvariabel og så gjøre beregninger. (Ulempe: Ekstra avhengigheter)
-      #Sentralt spm: Hvor skal det avgjøres hvilken figurtype som vises???
-      
-      #--------------- Definere variable ------------------------------
-      #Variabeltyper: Numeriske, kategoriske, indikator
-      # For hver valgtVar:
-      # Definer og gjør utvalg for variabelen
-      # tittel, xAkseTxt, sortAvtagende (standard: TRUE)
       
       tittel <- '' #I AndelerGrVar og GjsnGrVar genereres tittel i beregningsfunksjonen
       #MANGER 'innMaate' !! Ikke tilrettelagt
+      
+      
+      
+#--------------------HJELPEFUNKSJONER-----------------------------
+      FinnReinnleggelser <- function(RegData){
+            #RegData må inneholde DateAdmittedIntensive, DateDischargedIntensive og PasientGUID
+            #SJEKK Bare innleggelser fra 2016 som skal ha reinnleggelse??
+            #RegData <- RegData[
+            #      as.POSIXlt(RegData$DateAdmittedIntensive, format="%Y-%m-%d %H:%M:%S") >= as.POSIXlt('2016-01-01'), ]
+            
+            #TabAntOpph <- table(RegData$PasientGUID) #Tar relativt lang tid.
+            #TabFlereOpph <- TabAntOpph[TabAntOpph>1]
+            #indPasFlereOpph <- which(RegData$PasientGUID %in% names(TabFlereOpph))  #Tar relativt lang tid.
+            RegDataSort <- RegData[order(RegData$PasientGUID, RegData$DateAdmittedIntensive,     #Denne tar mest tid
+                                         RegData$DateDischargedIntensive), ]
+            #RegDataSort$AntOpph <- ave(RegDataSort$PasientGUID, RegDataSort$PasientGUID, FUN=length)
+            RegDataSort$OpphNr <- ave(RegDataSort$PasientGUID, RegDataSort$PasientGUID, FUN=seq_along)
+            indPasFlereOpph <- which(RegDataSort$OpphNr>1) #intersect(which(RegDataSort$AntOpph>1), which(RegDataSort$OpphNr>1))
+            RegDataSort$TidUtInn <- NA
+            RegDataSort$TidUtInn[indPasFlereOpph] <- 
+                   difftime(as.POSIXlt(RegDataSort$DateAdmittedIntensive[indPasFlereOpph], format="%Y-%m-%d %H:%M:%S"),
+                            as.POSIXlt(RegDataSort$DateDischargedIntensive[indPasFlereOpph-1], format="%Y-%m-%d %H:%M:%S"),
+                            units = 'hour')
+            RegDataSort$Reinn <- 2 #Ikke reinnleggelse
+                  RegDataSort$Reinn[RegDataSort$TidUtInn<72 & RegDataSort$TidUtInn >= 0] <- 1 #Reinnleggelse
+            return(RegDataSort)
+            
+            #Div testing:
+            # indNeg <- which(RegDataSort$TidUtInn < 0)
+            # TabDobbeltRegSjekk <- RegDataSort[sort(c(indNeg-1,indNeg)), ]
+            # write.table(TabDobbeltRegSjekk, file='TabDobbeltRegSjekk.csv', row.names = F, sep = ';')
+            # write.table(RegDataSort, file='RegDataSort.csv', row.names = F, sep = ';')
+            # RegDataSort[1:20,]               
+            # table(RegDataSort$ReAdmitted)
+            # table(RegDataSort$Reinn)
+            # RegDataSort$PasientGUID[1:20,]               
+            # RegDataSort$TidUtInn[indNeg[1:5]]
+      }
+      
+system.time(RegDataNy <- FinnReinnleggelser(RegData=RegData))
+table(RegDataNy$Reinn)
+      
+      
+      
       
       if (valgtVar == 'OmsorgTot') {  #gjsnGrVar
             RegData$Variabel  <- RegData$OmsorgTot
@@ -294,42 +332,8 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='an
             
             #Det er mange feil i variabelen ReAdmitted. Beregner derfor reinnleggelse basert på 
             #Innleggelsestidspunkt , DateDischargedIntensive og PasientGUID
-            #RegData <- FinnReinnleggelser(RegData=RegData)
-            #FinnReinnleggelser <- function(RegData){
-                  TabAntOpph <- table(RegData$PasientGUID) #Tar relativt lang tid.
-                  TabFlereOpph <- TabAntOpph[TabAntOpph>1]
-                  indPasFlereOpph <- which(RegData$PasientGUID %in% names(TabFlereOpph))  #Tar relativt lang tid.
-                  Hjelpetab <- RegData #[ ,c('PasientGUID','DateAdmittedIntensive','DateDischargedIntensive', 'ReAdmitted')]
-                  RegDataSort <- Hjelpetab[order(Hjelpetab$PasientGUID, Hjelpetab$DateAdmittedIntensive, 
-                                                 Hjelpetab$DateDischargedIntensive), ]
-                  RegDataSort$AntOpph <- ave(RegDataSort$PasientGUID, RegDataSort$PasientGUID, FUN=length)
-                  RegDataSort$OpphNr <- ave(RegDataSort$PasientGUID, RegDataSort$PasientGUID, FUN=seq_along)
-                  indPasFlereOpph <- intersect(which(RegDataSort$AntOpph>1), which(RegDataSort$OpphNr>1))
-                  RegDataSort$TidUtInn <- NA
-                  RegDataSort$TidUtInn[indPasFlereOpph] <- 
-                        difftime(as.POSIXlt(RegDataSort$DateAdmittedIntensive[indPasFlereOpph], format="%Y-%m-%d %H:%M:%S"),
-                                 as.POSIXlt(RegDataSort$DateDischargedIntensive[indPasFlereOpph-1], format="%Y-%m-%d %H:%M:%S"),
-                                 units = 'hour')
-                  RegDataSort$Reinn <- 2 #Ikke reinnleggelse
-                  RegDataSort$Reinn[RegDataSort$TidUtInn<72 & RegDataSort$TidUtInn >= 0] <- 1 #Reinnleggelse
-                  #return{RegData}
-                  
-                  #Div testing:
-                  # indNeg <- which(RegDataSort$TidUtInn < 0)
-                  # TabDobbeltRegSjekk <- RegDataSort[sort(c(indNeg-1,indNeg)), ]
-                  # write.table(TabDobbeltRegSjekk, file='TabDobbeltRegSjekk.csv', row.names = F, sep = ';')
-                  # RegDataSort[1:20,]               
-                  # table(RegDataSort$ReAdmitted)
-                  # table(RegDataSort$Reinn)
-                  # RegDataSort$PasientGUID[1:20,]               
-                  # RegDataSort$TidUtInn[indNeg[1:5]]
-            #}
-            
-            
-            
-            
-            
             RegData <- RegData[which(RegData$InnDato >= as.POSIXlt('2016-01-01')), ]	
+            RegData <- FinnReinnleggelser(RegData=RegData)
             if (figurtype %in% c('andelGrVar', 'andelTid')) {
                   RegData$Variabel[which(RegData$Reinn==1)] <- 1}  
             if (figurtype == 'gjsnGrVar') {RegData$Variabel <- RegData$Reinn}  
@@ -447,11 +451,13 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='an
             #Tar ut reinnlagte på intensiv og overflyttede, samt de med SAPSII=0 (ikke scorede) 
             #De under 16år tas ut i NIRutvalg
             #(TransferredStatus: 1= ikke overført, 2= overført), 
-            #ReAdmitted: #1:Ja, 2:Nei, 3:Ukjent, -1:Ikke utfylt
+            #Skal ikke brukes: ReAdmitted: #1:Ja, 2:Nei, 3:Ukjent, -1:Ikke utfylt
+            #Reinn: #1:Ja, 2:Nei, 3:Ukjent, -1:Ikke utfylt
             minald <- max(16, minald) 
-            indMed <- which(RegData$ReAdmitted==2) %i% which(RegData$Overf==1) %i% 
-                  which(as.numeric(RegData$SAPSII)>0)
+            indMed <- which((RegData$Overf==1) %i% which(as.numeric(RegData$SAPSII)>0))
             RegData <- RegData[indMed,]
+            RegData <- FinnReinnleggelser(RegData=RegData)
+            RegData <- RegData[RegData$Reinn==2, ]
             RegData$Variabel <- RegData$SMR
             xAkseTxt <- 'Observert / estimert dødelighet'
             KImaal <- 0.7  #SMR <0.7 

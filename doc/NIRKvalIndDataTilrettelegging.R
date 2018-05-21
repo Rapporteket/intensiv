@@ -50,13 +50,31 @@ RegData$ShNavn <- trimws(as.character(RegData$ShNavn)) #Fjerner mellomrom (før)
 #-------'Reinnleggelser på intensivavd. (innen 72t)'
      #Andel reinnlagte kun hvor dette er registrert. #Ja=1, nei=2, ukjent=9
      #Kvalitetsindikatormål: < 4% (Reinnleggelser <4%)
-            
+ #Hjelpefunksjon:
+      FinnReinnleggelser <- function(RegData){
+            #RegData må inneholde DateAdmittedIntensive, DateDischargedIntensive og PasientGUID
+            RegDataSort <- RegData[order(RegData$PasientGUID, RegData$DateAdmittedIntensive,     #Denne tar mest tid
+                                         RegData$DateDischargedIntensive), ]
+            RegDataSort$OpphNr <- ave(RegDataSort$PasientGUID, RegDataSort$PasientGUID, FUN=seq_along)
+            indPasFlereOpph <- which(RegDataSort$OpphNr>1) #intersect(which(RegDataSort$AntOpph>1), which(RegDataSort$OpphNr>1))
+            RegDataSort$TidUtInn <- NA
+            RegDataSort$TidUtInn[indPasFlereOpph] <- 
+                   difftime(as.POSIXlt(RegDataSort$DateAdmittedIntensive[indPasFlereOpph], format="%Y-%m-%d %H:%M:%S"),
+                            as.POSIXlt(RegDataSort$DateDischargedIntensive[indPasFlereOpph-1], format="%Y-%m-%d %H:%M:%S"),
+                            units = 'hour')
+            RegDataSort$Reinn <- 2 #Ikke reinnleggelse
+                  RegDataSort$Reinn[RegDataSort$TidUtInn<72 & RegDataSort$TidUtInn >= 0] <- 1 #Reinnleggelse
+            return(RegDataSort)
+}
+ 
       #Last inn data på nytt
       #Gyldige registreringer:
-      RegData <- RegData[which((RegData$ReAdmitted %in% 1:2) & (RegData$InnDato >= as.POSIXlt('2016-01-01'))), ]	#Tar bort ukjente
-      #Lager indikatorvariabel: 
+      RegData <- RegData[which(RegData$InnDato >= as.POSIXlt('2016-01-01')), ]	#
+      #Beregner variabelen Reinn (feil i ReAdmitted)
+	  RegData <- FinnReinnleggelser(RegData=RegData)
+	  #Lager indikatorvariabel: 
       RegData$Variabel <- 0
-      RegData$Variabel[which(RegData$ReAdmitted==1)] <- 1
+	  RegData$Variabel[which(RegData$Reinn==1)] <- 1
       
       
 #-------------SMR--------------------
@@ -65,7 +83,7 @@ RegData$ShNavn <- trimws(as.character(RegData$ShNavn)) #Fjerner mellomrom (før)
             #(TransferredStatus: 1= ikke overført, 2= overført), 
             #ReAdmitted: #1:Ja, 2:Nei, 3:Ukjent, -1:Ikke utfylt
             
-            indMed <- which(RegData$ReAdmitted==2) %i% which(RegData$TransferredStatus==1) %i% 
+            indMed <- which(RegData$Reinn==2) %i% which(RegData$TransferredStatus==1) %i% 
             which(as.numeric(RegData$SAPSII)>0) %i% which(RegData$Alder>=16)
       RegData <- RegData[indMed,]
       xAkseTxt <- 'Observert / estimert dødelighet'
