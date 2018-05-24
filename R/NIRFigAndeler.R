@@ -34,6 +34,8 @@
 #'    	}							
 #'    				
 #' @param RegData En dataramme med alle nødvendige variabler fra registeret
+#' @inheritParams NIRUtvalgEnh
+#' @inheritParams NIRVarTilrettelegg
 #' @param figurtype Hvilken figurtype som ønskes ut: 
 #'                 andel (fordelingsfigurer), 
 #'                 andelGrVar (andel i hver kategori av grupperingsvariabel, eks. sykehus), 

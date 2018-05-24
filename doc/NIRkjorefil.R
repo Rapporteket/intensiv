@@ -55,7 +55,7 @@ dato <- '2018-05-21'
 dataKat <- 'A:/Intensiv/'
 fil <- paste0(dataKat,'MainFormDataContractTEST',dato)
 NIRdata <- read.table(file=paste0(fil,'.csv'), header=T, stringsAsFactors=FALSE, sep=';',encoding = 'UTF-8')
-#RegData <- NIRdata
+RegData <- NIRdata
 load(paste0(fil,".Rdata")) #RegData 2017-09-18
 #save(RegData, file=paste0(fil,'.Rdata'))
 #RegData <- RegData[which(as.POSIXlt(RegData$DateAdmittedIntensive, format="%Y-%m-%d")>= '2014-01-01'), ]
@@ -136,7 +136,7 @@ grType <- 99	#1/2: sentral/lokal, 3:regional, 99:'alle'
 enhetsUtvalg <- 0	#0-5
 grVar <- 'ShNavn'
 tidsenhet <- 'Mnd'
-enhetsUtvalg <- 0	#0-5
+enhetsUtvalg <- 4	#0-5
 medKI <- 0
 offData <- 0
 #Parameter for evt. kvalitetsmål? angis i Tilrettelegging
@@ -155,7 +155,7 @@ NIRFigInnMaate (RegData=RegData, valgtVar='InnMaate', minald=0, maxald=130, dato
 
 
 #--------------------------------------- Andeler ----------------------------------
-valgtVar <- 'inklKrit'	#'alder', 'liggetid', 'respiratortid',  'SAPSII', 'NEMS24', 'Nas24', 'InnMaate'
+valgtVar <- 'alder'	#'alder', 'liggetid', 'respiratortid',  'SAPSII', 'NEMS24', 'Nas24', 'InnMaate'
                               #Nye: PrimaryReasonAdmitted, inklKrit, respiratortidNonInv, respiratortidInv
                               #nyreBeh, nyreBehTid, ExtendedHemodynamicMonitoring, isolering, isoleringDogn, 
                               #spesTiltak
@@ -232,7 +232,7 @@ for (valgtVar in variable){
 
 #---------------------GjsnTid----------------------------------------------
 tidsenhet <- 'Mnd'
-enhetsUtvalg <- 1
+enhetsUtvalg <- 3
 valgtVar <- 'respiratortidInvMoverf'	#'alder', 'liggetid', 'respiratortid', 'SAPSII', 
                         #Nye: respiratortidInvMoverf, respiratortidInvUoverf, respiratortidNonInv
 outfile <- '' #paste0(valgtVar, 'GjsnTid.pdf')
