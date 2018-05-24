@@ -51,7 +51,7 @@ NIRFigAndelTid <- function(RegData, valgtVar, datoFra='2011-01-01', datoTil='300
             sortAvtagende <- NIRVarSpes$sortAvtagende
             varTxt <- NIRVarSpes$varTxt
             KImaal <- NIRVarSpes$KImaal
-            KImaaltxt <- NIRVarSpes$KImaaltxt
+            KImaaltxt <- ifelse(NIRVarSpes$KImaaltxt=='', '', paste0('Mål: ',KImaaltxt))
             tittel <- NIRVarSpes$tittel
       } 
       
@@ -79,89 +79,68 @@ NIRFigAndelTid <- function(RegData, valgtVar, datoFra='2011-01-01', datoTil='300
       RegData <- NIRUtvalg$RegData
       
       #------------------------Klargjøre tidsenhet--------------
-      
-      #Brukes til sortering
-      RegData$TidsEnhet <- switch(tidsenhet,
-                                  Aar = RegData$Aar-min(RegData$Aar)+1,
-                                  Mnd = RegData$Mnd-min(RegData$Mnd[RegData$Aar==min(RegData$Aar)])+1
-                                  +(RegData$Aar-min(RegData$Aar))*12,
-                                  Kvartal = RegData$Kvartal-min(RegData$Kvartal[RegData$Aar==min(RegData$Aar)])+1+
-                                        (RegData$Aar-min(RegData$Aar))*4,
-                                  Halvaar = RegData$Halvaar-min(RegData$Halvaar[RegData$Aar==min(RegData$Aar)])+1+
-                                        (RegData$Aar-min(RegData$Aar))*2
-      )
-      
-      tidtxt <- switch(tidsenhet,
-                       Mnd = paste(substr(RegData$Aar[match(1:max(RegData$TidsEnhet), RegData$TidsEnhet)], 3,4),
-                                   sprintf('%02.0f', RegData$Mnd[match(1:max(RegData$TidsEnhet), RegData$TidsEnhet)]), sep='.'),
-                       Kvartal = paste(substr(RegData$Aar[match(1:max(RegData$TidsEnhet), RegData$TidsEnhet)], 3,4),
-                                       sprintf('%01.0f', RegData$Kvartal[match(1:max(RegData$TidsEnhet), RegData$TidsEnhet)]), sep='-'),
-                       Halvaar = paste(substr(RegData$Aar[match(1:max(RegData$TidsEnhet), RegData$TidsEnhet)], 3,4),
-                                       sprintf('%01.0f', RegData$Halvaar[match(1:max(RegData$TidsEnhet), RegData$TidsEnhet)]), sep='-'),
-                       Aar = as.character(RegData$Aar[match(1:max(RegData$TidsEnhet), RegData$TidsEnhet)]))
-      
-      #RegData$TidsEnhet <- factor(RegData$TidsEnhet, levels=1:max(RegData$TidsEnhet))
-      RegData$TidsEnhet <- factor(RegData$TidsEnhet, levels=1:max(RegData$TidsEnhet)) #evt. levels=tidtxt
-      
-      #tidtxt <- min(RegData$Aar):max(RegData$Aar)
-      #RegData$Aar <- factor(RegData$Aar, levels=tidtxt)
-      
-      #--------------- Gjøre beregninger ------------------------------
-      
-      AggVerdier <- list(Hoved = 0, Rest =0)
-      N <- list(Hoved = length(ind$Hoved), Rest =length(ind$Rest))
-      
-      
-      NAarHoved <- tapply(RegData[ind$Hoved, 'Variabel'], RegData[ind$Hoved ,'TidsEnhet'], length) #Tot. ant. per år
-      NAarHendHoved <- tapply(RegData[ind$Hoved, 'Variabel'], RegData[ind$Hoved ,'TidsEnhet'],sum, na.rm=T) #Ant. hendelser per år
-      AggVerdier$Hoved <- NAarHendHoved/NAarHoved*100
-      NAarRest <- tapply(RegData$Variabel[ind$Rest], RegData$TidsEnhet[ind$Rest], length)	
-      NAarHendRest <- tapply(RegData$Variabel[ind$Rest], RegData$TidsEnhet[ind$Rest],sum, na.rm=T)
-      AggVerdier$Rest <- NAarHendRest/NAarRest*100
-      Ngr <- list(Hoved = NAarHendHoved, Rest = NAarHendRest)
-      
-      if (valgtVar %in% c('liggetidDod','respiratortidDod')) {
-            #Kommentar: for liggetid og respiratortid vises antall pasienter og ikke antall liggedøgn for døde
-            Ngr$Hoved<-tapply(RegData[ind$Hoved, 'DischargedIntensiveStatus'], RegData[ind$Hoved ,'TidsEnhet'],sum, na.rm=T)    #         liggetid i døgn, navnene blir litt villedende men enklest å gjøre dette på denne måten 
-            Ngr$Rest<- tapply(RegData$DischargedIntensiveStatus[ind$Rest], RegData$TidsEnhet[ind$Rest], sum)      
-            SUMAarHoved <- tapply(RegData[ind$Hoved, 'Variabel'], RegData[ind$Hoved ,'TidsEnhet'], sum,na.rm=T)
-            SUMAarHendHoved <- tapply(RegData[ind$Hoved, 'Variabel2'], RegData[ind$Hoved ,'TidsEnhet'],sum, na.rm=T)
-            AggVerdier$Hoved <- SUMAarHendHoved/SUMAarHoved*100
-            SUMAarRest <- tapply(RegData$Variabel[ind$Rest], RegData$TidsEnhet[ind$Rest], sum,na.rm=T)  
-            SUMAarHendRest <- tapply(RegData$Variabel2[ind$Rest], RegData$TidsEnhet[ind$Rest],sum, na.rm=T)
-            AggVerdier$Rest <- SUMAarHendRest/SUMAarRest*100
-      }  
-      
-      #grtxt <- paste0(rev(NIRVarSpes$grtxt), ' (', rev(sprintf('%.1f',AggVerdier$Hoved)), '%)') 
-      grtxt2 <- paste0('(', sprintf('%.1f',AggVerdier$Hoved), '%)')
-      yAkseTxt <- 'Andel (%)'
-      vektor <- c('Aar','Halvaar','Kvartal','Mnd')
-      xAkseTxt <- paste0(c('Innleggelsesår', 'Innleggelsesår', 'Innleggelseskvartal', 'Innleggelsesmåned')
-                         [which(tidsenhet==vektor)])
-      
-      FigDataParam <- list(AggVerdier=AggVerdier, N=N, 
-                           Ngr=Ngr,	
-                           KImaal <- KImaal,
-                           KImaaltxt <- KImaaltxt,
-                           #soyletxt=soyletxt,
-                           grtxt2=grtxt2, 
-                           varTxt=varTxt,
-                           tidtxt=tidtxt, #NIRVarSpes$grtxt,
-                           tittel=tittel, 
-                           retn='V', 
-                           xAkseTxt=xAkseTxt,
-                           yAkseTxt=yAkseTxt,
-                           utvalgTxt=NIRUtvalg$utvalgTxt, 
-                           fargepalett=NIRUtvalg$fargepalett, 
-                           medSml=medSml,
-                           hovedgrTxt=NIRUtvalg$hovedgrTxt,
-                           smltxt=NIRUtvalg$smltxt)
-      
-      
+      N <- list(Hoved = dim(RegData)[1], Rest=0)
+      if (N$Hoved>9) {
+            RegDataFunk <- SorterOgNavngiTidsEnhet(RegData=RegData, tidsenhet = tidsenhet)
+            RegData <- RegDataFunk$RegData
+            #tidtxt <- RegDataFunk$tidtxt
+            
+            #--------------- Gjøre beregninger ------------------------------
+            
+            AggVerdier <- list(Hoved = 0, Rest =0)
+            N <- list(Hoved = length(ind$Hoved), Rest =length(ind$Rest))
+            
+            
+            NAarHoved <- tapply(RegData[ind$Hoved, 'Variabel'], RegData[ind$Hoved ,'TidsEnhet'], length) #Tot. ant. per år
+            NAarHendHoved <- tapply(RegData[ind$Hoved, 'Variabel'], RegData[ind$Hoved ,'TidsEnhet'],sum, na.rm=T) #Ant. hendelser per år
+            AggVerdier$Hoved <- NAarHendHoved/NAarHoved*100
+            NAarRest <- tapply(RegData$Variabel[ind$Rest], RegData$TidsEnhet[ind$Rest], length)	
+            NAarHendRest <- tapply(RegData$Variabel[ind$Rest], RegData$TidsEnhet[ind$Rest],sum, na.rm=T)
+            AggVerdier$Rest <- NAarHendRest/NAarRest*100
+            Ngr <- list(Hoved = NAarHendHoved, Rest = NAarHendRest)
+            
+            if (valgtVar %in% c('liggetidDod','respiratortidDod')) {
+                  #Kommentar: for liggetid og respiratortid vises antall pasienter og ikke antall liggedøgn for døde
+                  Ngr$Hoved<-tapply(RegData[ind$Hoved, 'DischargedIntensiveStatus'], RegData[ind$Hoved ,'TidsEnhet'],sum, na.rm=T)    #         liggetid i døgn, navnene blir litt villedende men enklest å gjøre dette på denne måten 
+                  Ngr$Rest<- tapply(RegData$DischargedIntensiveStatus[ind$Rest], RegData$TidsEnhet[ind$Rest], sum)      
+                  SUMAarHoved <- tapply(RegData[ind$Hoved, 'Variabel'], RegData[ind$Hoved ,'TidsEnhet'], sum,na.rm=T)
+                  SUMAarHendHoved <- tapply(RegData[ind$Hoved, 'Variabel2'], RegData[ind$Hoved ,'TidsEnhet'],sum, na.rm=T)
+                  AggVerdier$Hoved <- SUMAarHendHoved/SUMAarHoved*100
+                  SUMAarRest <- tapply(RegData$Variabel[ind$Rest], RegData$TidsEnhet[ind$Rest], sum,na.rm=T)  
+                  SUMAarHendRest <- tapply(RegData$Variabel2[ind$Rest], RegData$TidsEnhet[ind$Rest],sum, na.rm=T)
+                  AggVerdier$Rest <- SUMAarHendRest/SUMAarRest*100
+            }  
+            
+            #grtxt <- paste0(rev(NIRVarSpes$grtxt), ' (', rev(sprintf('%.1f',AggVerdier$Hoved)), '%)') 
+            grtxt2 <- paste0('(', sprintf('%.1f',AggVerdier$Hoved), '%)')
+            yAkseTxt <- 'Andel (%)'
+            vektor <- c('Aar','Halvaar','Kvartal','Mnd')
+            xAkseTxt <- paste0(c('Innleggelsesår', 'Innleggelsesår', 'Innleggelseskvartal', 'Innleggelsesmåned')
+                               [which(tidsenhet==vektor)])
+            
+            FigDataParam <- list(AggVerdier=AggVerdier, N=N, 
+                                 Ngr=Ngr,	
+                                 KImaal <- KImaal,
+                                 KImaaltxt <- KImaaltxt,
+                                 #soyletxt=soyletxt,
+                                 grtxt2=grtxt2, 
+                                 varTxt=varTxt,
+                                 #tidtxt=tidtxt, #NIRVarSpes$grtxt,
+                                 tittel=tittel, 
+                                 retn='V', 
+                                 xAkseTxt=xAkseTxt,
+                                 yAkseTxt=yAkseTxt,
+                                 utvalgTxt=NIRUtvalg$utvalgTxt, 
+                                 fargepalett=NIRUtvalg$fargepalett, 
+                                 medSml=medSml,
+                                 hovedgrTxt=NIRUtvalg$hovedgrTxt,
+                                 smltxt=NIRUtvalg$smltxt)
+            
+      }
       FigAndelTid <- function(RegData, AggVerdier, AggTot=0, Ngr, tittel='mangler tittel', smltxt='', N, retn='H', 
-                                 yAkseTxt='', utvalgTxt='', grTypeTxt='', tidtxt, varTxt='', grtxt2='', hovedgrTxt='', 
-                                 valgtMaal='Andel', cexgr=1, medSml=0, fargepalett='BlaaOff', xAkseTxt='', 
-                                 medKI=0, KImaal = NA, KImaaltxt = '', outfile='') { #Ngr=list(Hoved=0), grVar='', 
+                              yAkseTxt='', utvalgTxt='', grTypeTxt='', varTxt='', grtxt2='', hovedgrTxt='', #tidtxt, 
+                              valgtMaal='Andel', cexgr=1, medSml=0, fargepalett='BlaaOff', xAkseTxt='', 
+                              medKI=0, KImaal = NA, KImaaltxt = '', outfile='') { #Ngr=list(Hoved=0), grVar='', 
             
             #-----------Figur---------------------------------------
             #Hvis for f? observasjoner..
@@ -187,7 +166,7 @@ NIRFigAndelTid <- function(RegData, valgtVar, datoFra='2011-01-01', datoTil='300
                   par('fig' = c(0,1,0,1-hmarg)) 
                   cexleg <- 1	#St?rrelse p? legendtekst
                   ylabtext <- "Andel (%)"
-                  xskala <- 1:length(tidtxt)
+                  xskala <- 1:length(levels(RegData$TidsEnhet)) #length(tidtxt)
                   xmax <- max(xskala)
                   
                   
@@ -199,7 +178,7 @@ NIRFigAndelTid <- function(RegData, valgtVar, datoFra='2011-01-01', datoTil='300
                   #Legge på linjer i plottet. 
                   grid(nx = NA, ny = NULL, col = farger[4], lty = "solid")
                   
-                  axis(side=1, at = xskala, labels = tidtxt)
+                  axis(side=1, at = xskala, labels = levels(RegData$TidsEnhet)) #tidtxt)
                   
                   title(tittel, line=1, font.main=1)
                   
@@ -213,7 +192,7 @@ NIRFigAndelTid <- function(RegData, valgtVar, datoFra='2011-01-01', datoTil='300
                   
                   #KImål
                   lines(xskala,rep(KImaal,length(xskala)), col= '#FF7260', lwd=3)
-                  mtext(text=paste0('Mål:',KImaaltxt), at=50, side=4, las=1, adj=1,  cex=0.9, col='#FF7260')
+                  mtext(text=KImaaltxt, at=50, side=4, las=1, adj=1,  cex=0.9, col='#FF7260')
                   #text(max(xskala), KImaal, pos=4, paste0('Mål:',KImaaltxt), cex=0.9, col='#FF7260')
                   
                   Ttxt <- paste0('(Tall ved punktene angir antall ', varTxt, ')') 
@@ -239,10 +218,10 @@ NIRFigAndelTid <- function(RegData, valgtVar, datoFra='2011-01-01', datoTil='300
       
       if (lagFig == 1) {
             FigAndelTid(RegData, AggVerdier, Ngr, tittel=tittel, hovedgrTxt=NIRUtvalg$hovedgrTxt, 
-                           smltxt=NIRUtvalg$smltxt, Ngr = Ngr, KImaal = KImaal, KImaaltxt=KImaaltxt, N=N, retn='V', 
-                           utvalgTxt=utvalgTxt, tidtxt=tidtxt, varTxt=varTxt, grtxt2=grtxt2, medSml=medSml, 
-                           xAkseTxt=xAkseTxt, yAkseTxt=yAkseTxt,
-                           outfile=outfile)	
+                        smltxt=NIRUtvalg$smltxt, Ngr = Ngr, KImaal = KImaal, KImaaltxt=KImaaltxt, N=N, retn='V', 
+                        utvalgTxt=utvalgTxt, varTxt=varTxt, grtxt2=grtxt2, medSml=medSml, #tidtxt=tidtxt, 
+                        xAkseTxt=xAkseTxt, yAkseTxt=yAkseTxt,
+                        outfile=outfile)	
       }
       
 }	#end function

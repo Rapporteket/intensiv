@@ -15,6 +15,10 @@ NIRPreprosess <- function(RegData=RegData, lagreKvalIndData=0)	#, reshID=reshID)
   #Kun ferdigstilte registreringer:
   # Rapporteket får kun levert ferdigstilte registreringer fra MRS/NHN.
 
+devtools::load_all(quiet = TRUE)
+#source('R/NIRhjelpefunksjoner.R', encoding = 'UTF-8')
+      #load_all(pkg = ".", reset = TRUE, recompile = FALSE, export_all = TRUE,
+      #          quiet = FALSE, create = NA)
   #Kjønn
   RegData$erMann <- NULL
   RegData$erMann[RegData$PatientGender == 'Female'] <- 0
@@ -41,7 +45,9 @@ NIRPreprosess <- function(RegData=RegData, lagreKvalIndData=0)	#, reshID=reshID)
 
 # Riktig format
 	RegData$ShNavn <- trimws(as.character(RegData$ShNavn)) #Fjerner mellomrom (før) og etter navn
-
+	RegData$ShType <- 
+	RegData$ShType[RegData$ShType ==2 ] <- 1	#Har nå kun type lokal/sentral og regional
+	
 	#Riktig format på datovariable:
 #	RegData <- RegData[which(RegData$DateAdmittedIntensive!=''),]	#Tar ut registreringer som ikke har innleggelsesdato
 	RegData$InnDato <- as.POSIXlt(RegData$DateAdmittedIntensive, format="%Y-%m-%d") 

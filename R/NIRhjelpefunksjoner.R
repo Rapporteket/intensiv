@@ -1,13 +1,25 @@
-#' Fil som inneholder hjelpefunksjoner. 
+# Må det kanskje komme en overornet tittel her?
+#---------------------------------------------
+
+#' Hjelpefunksjoner. Group of functions page title
+#' 
+#' Fil med div hjelpefunksjoner.Group of functions Description section
+#' 
+#' Detaljer. kommer senereGroup of functions Details paragraph.
 #'
+#' @section Finne reinnleggelser After function section:
+#' Despite its location, this actually comes after the function section.
+#' Fil som inneholder hjelpefunksjoner. 
 #' FinnReinnleggelser beregner reinnleggelser fra DateAdmittedIntensive og DateDischargedIntensive
+#' 
 #' @param RegData data
 #' @param PasientID Variabelen som angir pasientidentifikasjon
-#' 	
-#' @return Variabelen Reinn lagt til datasettet
-#' 
-#' @export
+# @inheritParams NIRFigAndeler
+#' @return Div hjelpefunksjoner
+#' @name hjelpeFunksjoner
+NULL
 
+#' @rdname hjelpeFunksjoner
 FinnReinnleggelser <- function(RegData, PasientID='PasientID'){
       #RegData må inneholde DateAdmittedIntensive, DateDischargedIntensive og PasientID
       #SJEKK Bare innleggelser fra 2016 som skal ha reinnleggelse??
@@ -43,4 +55,35 @@ FinnReinnleggelser <- function(RegData, PasientID='PasientID'){
       return(RegDataSort)
 }
 
-
+#' @section Tilrettelegge tidsenhetvariabel:
+#' Probably better if all sections come first, uless have one section per function. Makes it easier to
+#' see the information flow.
+#' @rdname hjelpeFunksjoner
+SorterOgNavngiTidsEnhet <- function(RegData, tidsenhet='Aar') {
+      #Lager sorteringsvariabel for tidsenhet:
+      RegData$TidsEnhetSort <- switch(tidsenhet,
+                                      Aar = RegData$Aar-min(RegData$Aar)+1,
+                                      Mnd = RegData$Mnd-min(RegData$Mnd[RegData$Aar==min(RegData$Aar)])+1
+                                      +(RegData$Aar-min(RegData$Aar))*12,
+                                      Kvartal = RegData$Kvartal-min(RegData$Kvartal[RegData$Aar==min(RegData$Aar)])+1+
+                                            (RegData$Aar-min(RegData$Aar))*4,
+                                      Halvaar = RegData$Halvaar-min(RegData$Halvaar[RegData$Aar==min(RegData$Aar)])+1+
+                                            (RegData$Aar-min(RegData$Aar))*2
+      )
+      
+      tidtxt <- switch(tidsenhet,
+                       Mnd = paste(substr(RegData$Aar[match(1:max(RegData$TidsEnhetSort), RegData$TidsEnhetSort)], 3,4),
+                                   sprintf('%02.0f', RegData$Mnd[match(1:max(RegData$TidsEnhetSort), RegData$TidsEnhetSort)]), sep='.'),
+                       Kvartal = paste(substr(RegData$Aar[match(1:max(RegData$TidsEnhetSort), RegData$TidsEnhetSort)], 3,4),
+                                       sprintf('%01.0f', RegData$Kvartal[match(1:max(RegData$TidsEnhetSort), RegData$TidsEnhetSort)]), sep='-'),
+                       Halvaar = paste(substr(RegData$Aar[match(1:max(RegData$TidsEnhetSort), RegData$TidsEnhetSort)], 3,4),
+                                       sprintf('%01.0f', RegData$Halvaar[match(1:max(RegData$TidsEnhetSort), RegData$TidsEnhetSort)]), sep='-'),
+                       Aar = as.character(RegData$Aar[match(1:max(RegData$TidsEnhetSort), RegData$TidsEnhetSort)]))
+      
+      RegData$TidsEnhetSort <- factor(RegData$TidsEnhetSort, levels=1:max(RegData$TidsEnhetSort))
+      RegData$TidsEnhet <- factor(RegData$TidsEnhetSort, ordered = TRUE, labels=tidtxt)
+      #RegData$TidsEnhet <- RegData$TidsEnhetSort
+      #levels(RegData$TidsEnhet) <- tidtxt
+      UtData <- list('RegData'=RegData, 'tidtxt'=tidtxt)
+      return(UtData)
+}

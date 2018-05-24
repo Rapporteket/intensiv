@@ -168,7 +168,7 @@ ShTypeEgenTxt <- ShTypeTxt[ShTypeEgen]
 #NIRutvalg <- NIRUtvalgEnh(RegData=NIRdata, datoFra=datoFra, datoTil=datoTil, fargepalett='BlaaRapp')
 #NIRdata <- NIRutvalg$RegData
 #Legger på riktig beregning av reinnleggelse (variabelen Reinn)
-RegData <- FinnReinnleggelser(RegData=RegData)
+NIRdata <- FinnReinnleggelser(RegData=NIRdata)
 #Tar ut registreringer som ikke har kjønn #og ugyldig ShType
 indMed <- which(NIRdata$erMann %in% 0:1) #%i% which(NIRdata$ShType %in% 1:3)
 NIRdata <- NIRdata[indMed, ]	

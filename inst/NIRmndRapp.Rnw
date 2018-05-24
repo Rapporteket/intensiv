@@ -13,44 +13,67 @@
 <<'initOpts',include=FALSE>>=
 knitr::opts_chunk$set(warnings=FALSE,echo=FALSE)
 knitr::opts_knit$set(root.dir = './')
+library(xtable)
 @
 
-<<'getData', include=FALSE>>=
+<<'hentDataOgTilrettelegg', include=FALSE>>=
+#startOfMonth<- function(x) {as.Date(format(x, "%Y-%m-01")) }
+
 datoTil <- Sys.Date()
 dato <- as.POSIXlt(datoTil)
-#startOfMonth<- function(x) {as.Date(format(x, "%Y-%m-01")) }
+#datoTil <- as.Date(format(datoTil, "%Y-%m-01"))
 datoFra1Aar <- as.Date(paste0(1900+dato$year-1,'-', ifelse(dato$mon==11, 1, dato$mon+2), '-', '01'))
+datoFra <- datoFra1Aar
 #Ønsker eget datasett for forrige måned
-datoFraMnd <- dato - as.Date(paste0(1900+dato$year,'-', ifelse(dato$mon==11, 1, dato$mon+2), '-', '01'))
+datoFraMnd <- as.Date(paste0(1900+dato$year,'-', ifelse(dato$mon==0, 11, dato$mon-1), '-', '01')) #dato - 
 #datoFra <- as.Date(paste0(1900+dato$year-1,'-', dato$mon+1, '-', '01'))
-#I månedsfigurene er datoFra automatisk satt til 13 mnd før dagens dato.
-
-if (!exists('RegData')){
-      RegData <- NIRRegDataSQL(datoFra = datoFra1Aar)
-}
-
-RegData <- NIRPreprosess(RegData=RegData)
-# Beregne reinnleggelser
-#source('R/NIRVarTilrettelegg.R')
-RegData <- FinnReinnleggelser(RegData)
-
-RegDataMnd <- 
-@
-
-
-<<'SetteParametre', include=FALSE>>=
-enhetsUtvalg <- 1 #SJEKK OM STANDARD
+#? I månedsfigurene er datoFra automatisk satt til 13 mnd før dagens dato.
+enhetsUtvalg <- 1 #SJEKK OM STANDARD. Nei 0 standard
 tidsenhet <- 'Mnd'
 preprosess <- 0
 hentData <- 0
 
+if (!exists('RegData')){
+      RegData <- NIRRegDataSQL(datoFra = datoFra1Aar)
+	  #RegData er data fra siste år.
+}
+
+RegData <- NIRPreprosess(RegData=RegData)
+NIRUtvalg <- NIRUtvalgEnh(RegData, datoFra = datoFra1Aar, datoTil = datoTil, enhetsUtvalg = enhetsUtvalg)
+#Fra NIRUTvalg: utvalgTxt, ind, medSml, smltxt, hovedgrTxt, grTypeTxt, RegData
+RegData <- NIRUtvalg$RegData
+shtxt <- NIRUtvalg$hovedgrTxt
+
+# Beregne reinnleggelser
+#source('R/NIRVarTilrettelegg.R')
+RegData <- FinnReinnleggelser(RegData)
+NIRdata <- RegData      #------------NBNBNB HUSK Å FJERNE
+#RegData6mnd <- 
+# Data fra 1.forrige måned fram til dagens dato
+ShTypeTxt <- c('lokal/sentral','lokal/sentral','region')
+ShTypeEgen <-RegData$ShType[match(reshID, RegData$ReshId)]
+ShTypeEgenTxt <- ShTypeTxt[ShTypeEgen] #Endret til to 
+
+N <- dim(RegData)[1]
+ind <- list(Eget = which(RegData$ReshId == reshID),
+			EgenShType = which(RegData$ShType == ShTypeEgen),
+			Alle = 1:N)
+
 shtxt <- switch(as.character(enhetsUtvalg),
                      '0' = 'Hele landet',
-                     '1' = as.character(RegData$ShNavn[match(reshID, RegData$ReshId)]),
-                     '2' = as.character(RegData$ShNavn[match(reshID, RegData$ReshId)]))
+                     '1' = as.character(RegData[ind$Eget[1],'ShNavn']),
+                     '2' = as.character(RegData[ind$Eget[1],'ShNavn']))
+
+RegDataEget <- RegData[ind$Eget, ]
+RegDataResten <- RegData[setdiff(1:N,ind$Eget), ]
+RegDataMnd <- RegData[which(as.Date(RegData$InnDato) >= datoFraMnd), ]
+
+Neget <- dim(RegDataEget)[1]
+tabKjPstEget <- round(table(RegDataEget$erMann)/Neget*100, digits=1)
 
 
 @
+
 
 \title[NIR\\\Sexpr{shtxt}]{\textit{Norsk intensivregister} \\
 MÅNEDSRAPPORT \\
@@ -72,6 +95,7 @@ Rapporten har difor usikkert datagrunnlag og er meint til intern bruk i einingan
 \end{frame}
 
 
+\section{Innhald}
 
 \begin{frame}[fragile] {Datagrunnlag}
 
@@ -94,24 +118,37 @@ gjer at alle som ikkje er ajour nok med registreringa, kan lage seg representati
 
 \end{frame}
 
-
-
-% \section{Pasientkarakteristika}
-
-\begin{frame}[fragile] {Oversikt for nn (NIR-eining)}
-
-Oversikt for nn (NIR-eining) som i samlerapport, men med tal på opphald, pasientar og døger for dei siste månadene (med siste månad som den rapporten primært gjeld)
-Ved nn er det registrert innleggingar for perioden ….. til …….åå
-jan 	feb 	mars 	april 	mai	 juni
-Ferdigstilte intensivopphald  33 	35 	18 	24 	19 	23
-Registrerte pasientar 
-Liggjetid (tal på intensivdøger) 
-
-\caption{Opphald, pasientar og liggjetid (intensivdøger)}
+\begin{frame}[fragile] {Innhaldforteikning}
+Figurar og tabellar
 \end{frame}
 
+
+\section{Registreringsoversikter}
+
+\begin{frame}[fragile] {Opphald, pasientar og liggjetid (intensivdøger)}
+
+NB: Må legge på navn på måneder.
+
+<<'TabReg', results='asis', echo=FALSE, eval=T>>=
+#For bare Eget sykehus
+tabAvdNEget <- rbind(
+	'Ferdigstilte intensivopphold' = table(RegDataEget$Mnd), #Neget,		
+	'Registrerte pasienter' = tapply(RegDataEget$PasientID, RegDataEget$Mnd, length),	
+	'Antall intensivdøgn' = round(as.numeric(tapply(RegDataEget$liggetid, RegDataEget$Mnd, sum)),0)	
+	#sum(RegDataEget$DaysAdmittedIntensiv, na.rm=T))
+	)
+#colnames(tabAvdNEget)[dim(tabAvdNEget)[2]]<- 'Totalt:'
+
+xtable(tabAvdNEget, digits=0, align=c('l', rep('r', ncol(tabAvdNEget))), 
+		caption=paste0('Antall opphold og liggedøgn, ', shtxt), label='tab:RegEget')
+
+@
+
+\end{frame}
+
+
 \begin{frame}[fragile] {Registreringsforseinking}
-Har registeret en variabel som gjør at dette kan beregnes?
+Registeret mangler variabel for å beregne dette.
 (FirstTimeClosed)
 
 Median tid frå utskriving intensiv til ferdigstilling i MRS.
@@ -137,13 +174,14 @@ Tal på pasientar over 80 år	8 (24\%)
 
 \end{frame}
 
-<<'getData', include=FALSE>>=
+<<'Figurer', include=FALSE>>=
 
-variable <- c('Alder')
+
+variable <- c('Alder', 'PrimaryReasonAdmitted')
 for (valgtVar in variable) {
 	outfile <- paste0(valgtVar, 'FordMnd', '.pdf')
-	NIRFigAndeler(RegData=RegData, valgtVar=valgtVar, datoFra=datoFra, reshID=reshID, 
-	               enhetsUtvalg=enhetsUtvalg, preprosess=0)
+	NIRFigAndeler(RegData=RegDataMnd, valgtVar=valgtVar, datoFra=datoFra, reshID=reshID, 
+	               enhetsUtvalg=enhetsUtvalg, preprosess=0, outfile = outfile)
 }
 
 variable <- c('Opf0KomplBlodning', 'Opf0KomplUtstyr', 'Opf0KomplInfeksjon', 'Opf0KomplOrgan', 'Opf0Reoperasjon',
@@ -165,9 +203,10 @@ variable <- c('Opf0KomplBlodning', 'Opf0KomplUtstyr', 'Opf0KomplInfeksjon', 'Opf
 \end{figure}
 \end{frame}
 
+
 \begin{frame}[fragile] {Kjønn}
 
-Kvinner(%) 	Menn(%)
+Kvinner(\%) 	Menn(\%)
 Eiga eining 				43.7 		56.3
 Eiga eining siste 6 mnd.		41.7		58.3
 Lokal-/Sentraleiningar siste 6 mnd.	43.1 		56.9
@@ -177,6 +216,7 @@ Heile landet siste 6 mnd.		41.7 		58.3
 Tabell 3: Fordeling av kvinner og menn (som i samlerapport)
 
 \end{frame}
+
 
 \begin{frame}[fragile] {Liggjetid på intensiv}
  
@@ -196,14 +236,16 @@ Tabell 3: Gjennomsnittleg og median liggjetid.
 
 \end{frame}
 
-\begin{frame}[fragile] {Hovudårsak til intensivopphaldet}
-Hovudårsak til intensivopphaldet (mal av figur 1 i samlerapport)
-Histogram med vertikale søyler i% av total i dei 11 hovudkategoriane. Eiga avd. søyler, resten av landet prikkar
-11
- 
-Figur 2: Hovudårsak til innlegging på intensiv (% per kategori) eiga avdeling og landet elles
 
+\begin{frame}[fragile] {Hovudårsak til intensivopphaldet}
+
+\begin{figure}[ht]
+\centering              
+\includegraphics[scale=0.35]{PrimaryReasonAdmittedFordMnd.pdf}
+\caption{Hovudårsak til innlegging på intensiv (prosent per kategori), eiga avdeling og landet elles }
+\end{figure}
 \end{frame}
+
 
 \begin{frame}[fragile] {NEMS-skåre}
  (mal som i samlerapport)
@@ -223,6 +265,7 @@ Tabell 4: NEMS-poeng per døger for ulike sjukehuskategoriar
 
 \end{frame}
 
+
 \begin{frame}[fragile] {NAS-skåre}
  (som i samlerapport)
 N Gj.sn/opph Med./opph Gj.sn/d_gn Med./d_gn
@@ -237,6 +280,7 @@ bort, dvs. opphold under 8 timer og opphold med NAS=0. I alt gjenst_ar da 20966 
 med gyldig NAS-skåare.
 
 \end{frame}
+
 
 \begin{frame}[fragile] {Respirasjonsstøtte}
  (som i samlerapport)
@@ -286,7 +330,7 @@ Lokal-/Sentraleiningar siste 6 mnd.
 Regionaleiningar siste 6 mnd.	 			
 Heile landet siste 6 mnd.		 			
 
-\caption{Opphald (\%) der det vart utført trakeostomi eller gjeve nyrerstattande behandling i 
+Opphald (\%) der det vart utført trakeostomi eller gjeve nyrerstattande behandling i 
 løpet av intensivopphaldet}
 
 \end{frame}
