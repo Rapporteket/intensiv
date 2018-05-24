@@ -8,7 +8,7 @@ Author: Authors@R: c(person("Olsen", "Lena", email =
     "Are", email = "are.edvardsen@helse- nord.no", role = c("aut")))
 Maintainer: Lena Ringstad Olsen <lena.olsen@skde.no>
 Description: Pakke for (automatisk) generering av resultater (figurer og
-    samledokument) fra Norsk Intensivregister.
+    samledokument) fra Norsk Intensivregister. 
 License: GPL2
 LazyData: FALSE
 Encoding: UTF-8
