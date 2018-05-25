@@ -15,7 +15,7 @@ NIRPreprosess <- function(RegData=RegData, lagreKvalIndData=0)	#, reshID=reshID)
   #Kun ferdigstilte registreringer:
   # Rapporteket får kun levert ferdigstilte registreringer fra MRS/NHN.
 
-devtools::load_all(quiet = TRUE)
+#devtools::load_all(quiet = TRUE)
 #source('R/NIRhjelpefunksjoner.R', encoding = 'UTF-8')
       #load_all(pkg = ".", reset = TRUE, recompile = FALSE, export_all = TRUE,
       #          quiet = FALSE, create = NA)

@@ -18,8 +18,9 @@
 #' @return Div hjelpefunksjoner
 #' @name hjelpeFunksjoner
 NULL
-
 #' @rdname hjelpeFunksjoner
+#' @export
+
 FinnReinnleggelser <- function(RegData, PasientID='PasientID'){
       #RegData må inneholde DateAdmittedIntensive, DateDischargedIntensive og PasientID
       #SJEKK Bare innleggelser fra 2016 som skal ha reinnleggelse??
@@ -59,6 +60,7 @@ FinnReinnleggelser <- function(RegData, PasientID='PasientID'){
 #' Probably better if all sections come first, uless have one section per function. Makes it easier to
 #' see the information flow.
 #' @rdname hjelpeFunksjoner
+#' @export
 SorterOgNavngiTidsEnhet <- function(RegData, tidsenhet='Aar') {
       #Lager sorteringsvariabel for tidsenhet:
       RegData$TidsEnhetSort <- switch(tidsenhet,

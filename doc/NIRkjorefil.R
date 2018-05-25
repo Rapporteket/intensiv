@@ -133,7 +133,7 @@ dodInt <- 9	# 0-i live, 1 -død, standard: alle (alle andre verdier)
 erMann <- ''	#Kjønn: 0-kvinner, 1-menn, standard: alle (alle andre verdier)
 overfPas <- ''    #Overført under pågående intensivbehandling?	1 = Nei, 2 = Ja
 grType <- 99	#1/2: sentral/lokal, 3:regional, 99:'alle'
-enhetsUtvalg <- 0	#0-5
+enhetsUtvalg <- 1	#0-5
 grVar <- 'ShNavn'
 tidsenhet <- 'Mnd'
 enhetsUtvalg <- 4	#0-5
