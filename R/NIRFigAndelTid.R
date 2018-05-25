@@ -51,7 +51,7 @@ NIRFigAndelTid <- function(RegData, valgtVar, datoFra='2011-01-01', datoTil='300
             sortAvtagende <- NIRVarSpes$sortAvtagende
             varTxt <- NIRVarSpes$varTxt
             KImaal <- NIRVarSpes$KImaal
-            KImaaltxt <- ifelse(NIRVarSpes$KImaaltxt=='', '', paste0('Mål: ',KImaaltxt))
+            KImaaltxt <- ifelse(NIRVarSpes$KImaaltxt=='', '', paste0('Mål: ',NIRVarSpes$KImaaltxt))
             tittel <- NIRVarSpes$tittel
       } 
       
@@ -192,7 +192,7 @@ NIRFigAndelTid <- function(RegData, valgtVar, datoFra='2011-01-01', datoTil='300
                   
                   #KImål
                   lines(xskala,rep(KImaal,length(xskala)), col= '#FF7260', lwd=3)
-                  mtext(text=KImaaltxt, at=50, side=4, las=1, adj=1,  cex=0.9, col='#FF7260')
+                  mtext(text=KImaaltxt, at=KImaal, side=4, las=1, adj=0.6,  cex=0.9, col='#FF7260')
                   #text(max(xskala), KImaal, pos=4, paste0('Mål:',KImaaltxt), cex=0.9, col='#FF7260')
                   
                   Ttxt <- paste0('(Tall ved punktene angir antall ', varTxt, ')') 

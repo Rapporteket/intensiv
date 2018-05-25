@@ -208,9 +208,9 @@ for (valgtVar in variable) {
                   }
 
 #---------------------AndelTid----------------------------------------------
-tidsenhet <- 'Kvartal'
+tidsenhet <- 'Mnd'
 enhetsUtvalg <- 2
-valgtVar <- 'respStotte'	#'alder_u18', 'alder_over80', 'dod30d', 'dodeIntensiv', 'liggetidDod', 
+valgtVar <- 'reinn'	#'alder_u18', 'alder_over80', 'dod30d', 'dodeIntensiv', 'liggetidDod', 
                         #'respiratortidDod', 'respStotte', 'reinn',
                         #'UT: respiratortid, 
                         #Ny: respiratortidInvMoverf, respiratortidInvUoverf
