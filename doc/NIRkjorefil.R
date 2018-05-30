@@ -64,6 +64,24 @@ load(paste0(fil,".Rdata")) #RegData 2017-09-18
 load(paste0("A:/Intensiv/NIRdata10000.Rdata")) #RegDataTEST, 21.mai 2018
 library(intensiv)
 
+load('A:/Intensiv/NIRdata10000.Rdata')
+# LagSyntetiskeData
+library(synthpop)
+library(dplyr)
+varBort <- c('FodselsDato', 'ForlopsID')
+ForlopsID <- RegData$ForlopsID
+RegData <- RegData[,-which(names(RegData) %in% varBort)]
+sykehus <- paste('Sykehus', LETTERS[1:10])
+mengdePasienter <- c(0.3, 4, 10, 3, 7, 5, 1, 8, 9.5, 6)
+RegData$SykehusNavn <- sample(sykehus, prob=mengdePasienter/sum(mengdePasienter), size=dim(RegData)[1], replace=T)
+RegDataSyn <- synthpop::syn(RegData, method = "sample", seed = 500) #Trekker med tilbakelegging
+RegData <- data.frame(RegDataSyn$syn, ForlopsID)
+write.table(RegData, file='C:/ResultattjenesteGIT/Nakke/data/NakkeRegDataTest.csv', sep = ';', row.names = F, col.names = T)
+save(RegData, file=paste0('C:/ResultattjenesteGIT/Nakke/data/NakkeRegDataSyn.RData'))
+load('C:/ResultattjenesteGIT/Nakke/data/NakkeRegDataSyn.Rdata')
+
+
+
 # Div sjekk
 table(RegData$ShNavn, RegData$Aar)
 ind <- which(RegData$ShNavn == 'Kristiansand')

@@ -50,7 +50,7 @@
 #'          0: Kvinner
 #'          1: Menn
 #' @param minald Alder, fra og med (Standardverdi: 0)
-#' @param maxald Alder, til og med (Standardverdi: 130)
+#' @param maxald Alder, til og med (Standardverdi: 110)
 #' @param outfile Navn på fil figuren skrives til. Standard: '' (Figur skrives
 #'    til systemets standard utdataenhet (som regel skjerm))
 #' @param reshID Parameter følger fra innlogging helseregister.no og angir
@@ -86,12 +86,12 @@
 #' @export
 
 NIRFigAndeler  <- function(RegData=0, valgtVar='Alder', datoFra='2011-01-01', datoTil='3000-12-31', aar=0, overfPas=0,
-                        minald=0, maxald=130, erMann='',InnMaate='', dodInt='',outfile='', grType=99,  
+                        minald=0, maxald=110, erMann='',InnMaate='', dodInt='',outfile='', grType=99,  
                         preprosess=1, hentData=0, reshID=0, enhetsUtvalg=0, lagFig=1)	{
       
       
       if (hentData == 1) {		
-            RegData <- NIRRegDataSQL(datoFra, datoTil) #minald=0, maxald=130, erMann='',InnMaate='', dodInt=''
+            RegData <- NIRRegDataSQL(datoFra, datoTil) #minald=0, maxald=110, erMann='',InnMaate='', dodInt=''
       }
       
       # Hvis RegData ikke har blitt preprosessert. (I samledokument gjøres dette i samledokumentet)
