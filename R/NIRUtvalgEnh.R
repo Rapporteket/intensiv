@@ -29,7 +29,7 @@ NIRUtvalgEnh <- function(RegData, datoFra=0, datoTil=0, minald=0, maxald=130, er
       "%i%" <- intersect
       
       dodInt <- as.numeric(dodInt)
-      grType
+      
       
       #Enhetsutvalg:
       #Når bare skal sammenlikne med sykehusgruppe eller region, eller ikke sammenlikne, 
@@ -110,7 +110,7 @@ NIRUtvalgEnh <- function(RegData, datoFra=0, datoTil=0, minald=0, maxald=130, er
             }
       
       
-      ind <- list(Hoved=0, Rest=0)
+      ind <- list(Hoved=0, Rest=0, ShType=0)
       smltxt <- grTypeTxt      #Før: ''
       if (enhetsUtvalg %in% c(0,2,4,7)) {		#Ikke sammenlikning
             medSml <- 0
@@ -136,6 +136,7 @@ NIRUtvalgEnh <- function(RegData, datoFra=0, datoTil=0, minald=0, maxald=130, er
                                '6' = which(as.numeric(RegData$ReshId)!=reshID),	#RegData inneh. kun egen region
                                '8' = which(RegData$Region != RegData$Region[indEgen1]))
       }								
+      ind$ShType =  which(RegData$ShType == RegData$ShType[indEgen1]) 
       
       
       

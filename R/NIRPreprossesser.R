@@ -40,8 +40,10 @@ NIRPreprosess <- function(RegData=RegData, lagreKvalIndData=0)	#, reshID=reshID)
 	names(RegData)[which(names(RegData) == 'TransferredStatus')] <- 'Overf'
 	names(RegData)[which(names(RegData) == 'TypeOfAdmission')] <- 'InnMaate'
 	names(RegData)[which(names(RegData) == 'ReshID')] <- 'ReshId'
-	names(RegData)[which(names(RegData) == 'PatientInRegistryGuid')] <- 'PasientID'
-	
+	#names(RegData)[which(names(RegData) == 'PatientInRegistryGuid')] <- 'PasientID'
+#Avvik ml. test og prod-data:
+	names(RegData)[
+	      names(RegData) %in% c('PatientInRegistryGuid', 'PasientGUID')] <- 'PasientID'
 
 # Riktig format
 	RegData$ShNavn <- trimws(as.character(RegData$ShNavn)) #Fjerner mellomrom (før) og etter navn

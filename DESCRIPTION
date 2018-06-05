@@ -17,11 +17,12 @@ Depends:
     rapbase (>= 1.0.0)
 Imports:
     plyr,
+    lubridate,
     xtable
 RoxygenNote: 6.0.1
 Suggests:
     rmarkdown,
     knitr,
     testthat, 
-    prodlim
+    prodlim,
 VignetteBuilder: knitr

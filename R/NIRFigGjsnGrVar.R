@@ -74,7 +74,7 @@ t1 <- switch(valgtMaal,
 tittel <- paste0(t1, NIRVarSpes$tittel) 
 			
 if( valgtVar =='SMR') {tittel <- c(paste0('SMR, ', NIRUtvalg$grTypeTxt, 'sykehus'),
-								'(uten reinnlagte og overflyttede pasienter)')}
+								'(uten reinnlagte pasienter)')}
 
 Ngrtxt <- paste0(' (', as.character(Ngr),')') 
 indGrUt <- which(Ngr < Ngrense)

@@ -9,7 +9,7 @@ graa <- c('#4D4D4D','#737373','#A6A6A6','#DADADA')  #Mørk til lys          				
 kontrast <- '#FF7260'; moerkeblaa <- '#000059'                																# Spesialfarger
 
 #--------------------------------------Kvalitetskontroll - ikke operativ-----------------------------------
-rm(list=ls())
+rm(list=ls()) 
 library(knitr)
 setwd('C:/registre/NIR/trunk/KvalKtrAvData') 
 
@@ -51,17 +51,18 @@ texi2pdf(file='OffDataIntensiv.tex')
 #-------------------------------------LASTE DATA-----------------------------------------------
 rm(list=ls())
 
-dato <- '2018-05-21'
+dato <- '2018-06-05'
 dataKat <- 'A:/Intensiv/'
-fil <- paste0(dataKat,'MainFormDataContractTEST',dato)
-NIRdata <- read.table(file=paste0(fil,'.csv'), header=T, stringsAsFactors=FALSE, sep=';',encoding = 'UTF-8')
-RegData <- NIRdata
-load(paste0(fil,".Rdata")) #RegData 2017-09-18
-#save(RegData, file=paste0(fil,'.Rdata'))
-#RegData <- RegData[which(as.POSIXlt(RegData$DateAdmittedIntensive, format="%Y-%m-%d")>= '2014-01-01'), ]
-#RegData <- NIRdata[sample(1:dim(NIRdata)[1],10000),]
-#save(RegData, file=paste0(dataKat,'NIRdata10000.Rdata'))
-load(paste0("A:/Intensiv/NIRdata10000.Rdata")) #RegDataTEST, 21.mai 2018
+fil <- paste0(dataKat,'MainFormDataContract',dato)
+#NIRdata <- read.table(file=paste0(fil,'.csv'), header=T, stringsAsFactors=FALSE, sep=';',encoding = 'UTF-8')
+#RegData <- NIRdata
+load(paste0(fil,".Rdata")) #RegData 2018-06-05
+# save(RegData, file=paste0(fil,'.Rdata'))
+# RegData <- RegData[which(
+#       as.POSIXlt(RegData$DateAdmittedIntensive, format="%Y-%m-%d")>= '2015-01-01'), ]
+# RegData <- NIRdata[sample(1:dim(NIRdata)[1],10000),]
+#save(RegData, file=paste0(dataKat,'NIRdata10000.Rdata')) 
+load(paste0("A:/Intensiv/NIRdata10000.Rdata")) #RegDataTEST, 2018-06-05
 library(intensiv)
 
 # Div sjekk
