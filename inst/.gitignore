@@ -6,3 +6,4 @@ unit.test.R
 *.tex
 *.toc
 *.lot
+*.nav
