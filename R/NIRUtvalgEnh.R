@@ -20,7 +20,7 @@
 #'
 #' @export
 
-NIRUtvalgEnh <- function(RegData, datoFra=0, datoTil=0, minald=0, maxald=130, erMann='', InnMaate='', 
+NIRUtvalgEnh <- function(RegData, datoFra=0, datoTil=0, minald=0, maxald=110, erMann='', InnMaate='', 
                          aar=0, grType=99, enhetsUtvalg=0, reshID=0,  dodInt='', fargepalett='BlaaOff')    
       # overfPas=99,
 {
@@ -55,7 +55,7 @@ NIRUtvalgEnh <- function(RegData, datoFra=0, datoTil=0, minald=0, maxald=130, er
       RegData <- RegData[indGrType,]
       RegData$ShNavn <- as.factor(RegData$ShNavn)
       
-      indAld <- if(minald>0 | maxald<130) {
+      indAld <- if(minald>0 | maxald<110) {
             which(RegData$Alder >= minald & RegData$Alder <= maxald)} else {1:Ninn}
       indDato <- if(datoFra!=0 | datoTil!=0) {
             which(RegData$InnDato >= as.POSIXlt(datoFra) & RegData$InnDato <= as.POSIXlt(datoTil))
@@ -86,7 +86,7 @@ NIRUtvalgEnh <- function(RegData, datoFra=0, datoTil=0, minald=0, maxald=130, er
                   'Registreringsperiode: ', if (N>0) {min(RegData$InnDato, na.rm=T)} else {datoFra}, 
                   ' til ', if (N>0) {max(RegData$InnDato, na.rm=T)} else {datoTil})} else {NULL},
             if (aar[1] > 0){paste0('Innleggelsesår: ', paste0(aar, collapse=', '))},
-            if ((minald>0) | (maxald<130)) {
+            if ((minald>0) | (maxald<110)) {
                   paste0('Pasienter fra ', if (N>0) {sprintf('%.1f',min(RegData$Alder, na.rm=T))} else {minald}, 
                          ' til ', if (N>0) {sprintf('%.1f',max(RegData$Alder, na.rm=T))} else {maxald}, ' år')},
             if (erMann %in% 0:1) {paste0('Kjønn: ', c('Kvinner', 'Menn')[erMann+1])},

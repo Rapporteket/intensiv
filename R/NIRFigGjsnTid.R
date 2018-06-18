@@ -34,7 +34,7 @@
 #'
 #' @export
 NIRFigGjsnTid <- function(RegData, valgtVar, datoFra='2011-01-01', datoTil='3000-12-31', tidsenhet='Aar',
-                    minald=0, maxald=130, erMann='', reshID=0, InnMaate='', dodInt='', tittel=1, 
+                    minald=0, maxald=110, erMann='', reshID=0, InnMaate='', dodInt='', tittel=1, 
                     outfile='',enhetsUtvalg=0, valgtMaal='', preprosess=1, hentData=0){
   
   if (hentData == 1) {		

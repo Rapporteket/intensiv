@@ -30,9 +30,9 @@
 
 
 NIRFigGjsnGrVar <- function(RegData, valgtVar, preprosess=1, hentData=0, valgtMaal='Gjsn', 
-                  minald=0, maxald=130, datoFra='2011-01-01', datoTil='3000-01-01', aar=0,
+                  minald=0, maxald=110, datoFra='2011-01-01', datoTil='3000-01-01', aar=0,
                   grType=99, InnMaate=99, dodInt='', erMann='', grVar='ShNavn', medKI=1, 
-                  lagFig=1, outfile) {
+                  lagFig=1, outfile='') {
       
       
 if (hentData == 1) {		

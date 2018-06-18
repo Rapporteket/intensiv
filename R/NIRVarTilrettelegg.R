@@ -33,7 +33,7 @@
 
 NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='andeler'){
       #, datoFra='2011-01-01', datoTil='3000-12-31', 
-      #		minald=0, maxald=130, erMann='',InnMaate='', dodInt='',outfile='', 
+      #		minald=0, maxald=110, erMann='',InnMaate='', dodInt='',outfile='', 
       #		preprosess=1, hentData=0, reshID, enhetsUtvalg=1)	
       
       

@@ -19,7 +19,7 @@
 
 
 NIRFigInnMaate <- function(RegData, valgtVar='InnMaate', datoFra='2010-01-01', datoTil='3000-01-01', aar=0, 
-                            minald=0, maxald=130, 
+                            minald=0, maxald=110, 
                             grType=99, grVar='ShNavn', InnMaate=99, dodInt='', erMann='', hentData=0,
                             preprosess=1, outfile='') 
 {
