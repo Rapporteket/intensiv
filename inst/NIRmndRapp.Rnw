@@ -1,4 +1,4 @@
-\documentclass[presentation,xcolor=pdftex,dvipsnames,table]{beamer}
+\documentclass[handout, xcolor=pdftex,dvipsnames,table]{beamer}  %presentation,
 \usetheme{Hannover}
 
 \usepackage[utf8]{inputenc}
@@ -142,7 +142,7 @@ xtable(tabAvdNEget, digits=0, align=c('l', rep('r', ncol(tabAvdNEget))),
 \end{frame}
 
 
-\begin{frame}[fragile] {Registreringsforseinking} {invisible}
+\begin{frame}[fragile] {Registreringsforseinking}<presentation:0 handout:0 beamer:0>
 Registeret mangler variabel for å beregne dette.
 (FirstTimeClosed)
 
@@ -157,8 +157,8 @@ Median tid frå utskriving intensiv til ferdigstilling i MRS.
 \begin{frame}[fragile] {Alder}
 Alder Som tab. 2 i samlerapport, men med fire kolonner, der dei to siste er  resten av landet og eigen sjukehuskategori (region/lokal-sentral)
 
-<<'Alder' >>=
-
+<<'Alder', results='asis' >>=
+#, echo=FALSE
 Under16aar <- function(RegData){
       Ant <- sum(RegData$Alder<16)
       Andel <- Ant/dim(RegData)[1]*100
@@ -218,15 +218,16 @@ for (valgtVar in variable) {
 @
 
 
-\begin{frame}[fragile] {Kjønn}
+\begin{frame}[fragile] {Kjønn} <beamer:0>
 
-<<TabKjonn, results='asis', echo=FALSE>>=
+<<TabKjonn, results='asis', echo=FALSE, eval=FALSE>>=
+
 #FRA SAMLERAPPORT
 tabKjonnShType <- round(100*rbind(
-	'Egen enhet' = table(NIRdataEget$erMann)/Neget,	
-	'Lokal-/Sentralenheter' = table(NIRdata[which(NIRdata$ShType==1), 'erMann'])/length(which(NIRdata$ShType==1)),	
-	'Regionalenheter' = table(NIRdata[which(NIRdata$ShType==3), 'erMann'])/length(which(NIRdata$ShType==3)),	
-	'Hele landet' = table(NIRdata$erMann)/N
+	'Egen enhet' = table(RegDataEget$erMann)/Neget,	
+	'Lokal-/Sentralenheter' = table(RegData[which(RegData$ShType==1), 'erMann'])/length(which(RegData$ShType==1)),	
+	'Regionalenheter' = table(RegData[which(RegData$ShType==3), 'erMann'])/length(which(RegData$ShType==3)),	
+	'Hele landet' = table(RegData$erMann)/N
 	),1)
 colnames(tabKjonnShType) <- c('Kvinner(%)', 'Menn(%)')
 xtable(tabKjonnShType, digits=1, align=c('l', rep('r', ncol(tabKjonnShType))), 
@@ -253,14 +254,35 @@ ved innlegging, til pasienten fysisk forlet intensiv/overvakingsarealet ved utsk
 Liggjetida vil dermed inkludere tid pasienten måtte vere utanfor intensiv (røntgen, op-
 erasjon osv.). Liggjetida blir registrert i døger med ein desimal, dvs. timar/24.
 
-Gjennomsnitt 	Median
-Eiga eining 				3.7 		1.9
-Eiga eining siste 6 mnd.		3.8		2.0
-Lokal-/Sentraleiningar siste 6 mnd.	43.1 		56.9
-Regionaleiningar siste 6 mnd.	39.1 		60.9
-Heile landet siste 6 mnd.		41.7 		58.3
+<<'TabLiggetid', results='asis', echo=FALSE>>=
+finnGjsnMedKj <- function(RegData){
+      Gjsn <- sprintf("%.1f", mean(RegData$liggetid, na.rm=T))
+      Med <- sprintf("%.1f", mean(RegData$liggetid, na.rm=T))
+      Kvinner <- sprintf("%.0f", 100*prop.table(table(RegData$erMann))[1])
+      Ut <- paste0(c(Gjsn, Med, Kvinner), c('', '', '%'))
+      #paste0(sprintf("%.1f %.1f %+.f", Gjsn, Med, Kvinner), '%')
+      }
 
-Tabell 3: Gjennomsnittleg og median liggjetid.
+liggetidKj <- rbind(
+      'Eigen, sist månad' = finnGjsnMedKj(RegDataEgetMnd),
+      'Eigen'= finnGjsnMedKj(RegDataEget),
+	'Resten av landet'= finnGjsnMedKj(RegDataResten),
+	'Eigen sjukehustype' = finnGjsnMedKj(RegDataShType))
+
+colnames(liggetidKj) <- c('Gj.snitt', 'Median', 'Kvinner')
+
+xtable(liggetidKj, digits=1, align=c('l', rep('r', ncol(liggetidKj))), 
+		caption='Liggjetid og andel kvinner',
+		label='tab:liggetidKj')
+		
+# dum <- NIRFigAndeler(RegData=NIRdata, valgtVar='liggetid', preprosess=0, hentData=0, 
+#datoFra=datoFra, datoTil=datoTil, enhetsUtvalg=1, reshID=reshID, outfile='FigLiggetidFordAlle.pdf')
+
+# dum <- NIRFigGjsnGrVar(RegData=NIRdata, valgtVar='liggetid', valgtMaal='Gjsn', 
+#preprosess=0, hentData=0,  grType=ShTypeEgen, datoFra=datoFra, datoTil=datoTil, outfile='FigLiggetidGjsn.pdf')
+# dum <- NIRFigGjsnGrVar(RegData=NIRdata, valgtVar='liggetid', valgtMaal='Med', preprosess=0, 
+#hentData=0,  grType=ShTypeEgen, datoFra=datoFra, datoTil=datoTil, outfile='FigLiggetidMed.pdf')
+@
 
 \end{frame}
 
@@ -270,7 +292,7 @@ Tabell 3: Gjennomsnittleg og median liggjetid.
 \begin{figure}[ht]
 \centering              
 \includegraphics[scale=0.35]{PrimaryReasonAdmittedFordMnd.pdf}
-\caption{Hovudårsak til innlegging på intensiv (prosent per kategori), eiga avdeling og landet elles }
+\caption{Hovudårsak til innlegging på intensiv (prosent per kategori) siste 6 månader, eiga avdeling og landet elles }
 \end{figure}
 \end{frame}
 
@@ -282,32 +304,38 @@ NB! Sidan det er stor variasjon i NEMS-skåre for korte opphald, avhengig av tal
 som er rekna med før/etter pleiedøgeret, rapporterer vi her data per døger
 for opphald som har vart lenger enn 24 timar og der det faktisk er skåra NEMS-poeng.
 
-N 	Gj.sn/opph. 	Median/opph. 	Gj.sn/døger 	Median/døger
-Eiga eining 			1767 	124.5 		71 		37.5 		36.0
-Eiga eining siste 6 mnd.
-Lokal-/sentral siste 6 mnd.	38064 	136.2 		72 		31.1 		30.0
-Regionaleiningar siste 6 mnd. 	21134 	201.2 		105 		35.5 		34.7
-Heile landet siste 6 mnd.	77985 	159.4 		81 		32.7 		31.6
+<<'NEMS', results='asis', echo=FALSE>>=
+finnGjsnMed <- function(variabel){
+      Gjsn <- sprintf("%.1f", mean(variabel, na.rm=T))
+      Med <- sprintf("%.1f", mean(variabel, na.rm=T))
+      Ut <- c(Gjsn, Med)
+      }
 
-Tabell 4: NEMS-poeng per døger for ulike sjukehuskategoriar
+finnGjsnMedNEMS <- function(RegData){
+      indNEMS <- which( (RegData$liggetid>=1) & (RegData$NEMS>1))	#NEMS=0 el 1 - ikke registrert.
+      RegData <- RegData[indNEMS, ]
+      RegData$NEMSd <- RegData$NEMS/RegData$liggetid
+      GM_NEMS <- finnGjsnMed(RegData$NEMS)
+      GM_NEMSd <- finnGjsnMed(RegData$NEMSd)
+      Antal <- dim(RegData)[1]
+      Ut <- c(GM_NEMS, GM_NEMSd, Antal)
+      }
+
+NEMStab <- rbind(
+      'Eigen, sist månad' = finnGjsnMedNEMS(RegDataEgetMnd),
+      'Eigen'= finnGjsnMedNEMS(RegDataEget),
+	'Resten av landet'= finnGjsnMedNEMS(RegDataResten),
+	'Eigen sjukehustype' = finnGjsnMedNEMS(RegDataShType))
+
+colnames(NEMStab) <- c('Gj.sn/opph', 'Median/opph','Gj.sn/døger', 'Median/døger', 'Antal')
+
+xtable(NEMStab, digits=1, align=c('l', rep('r', ncol(NEMStab))), 
+		caption='NEMS-poeng per opphald og døger for ulike sjukehuskategoriar. ',
+		label='tab:NEMStab')
+@
 
 \end{frame}
 
-
-\begin{frame}[fragile] {NAS-skåre}
- (som i samlerapport)
-N Gj.sn/opph Med./opph Gj.sn/d_gn Med./d_gn
-Egen enhet 4 55.0 31 44.2 45.0
-Lokal-/Sentralenheter 5495 453.0 223 99.0 96.9
-Regionalenheter 15471 770.3 363 122.3 130.6
-Hele landet 20966 687.2 310 116.2 121.6
-Tabell 7: NAS-poeng for ulike sykehuskategorier.
-Maksimal sk_are er 177 per d_gn. Opphold med gjennomsnittlig sk_are over 177 per
-d_gn, er tatt vekk. Dette utgj_r 7765 opphold. Opphold uten NAS-sk_aring er ogs_a tatt
-bort, dvs. opphold under 8 timer og opphold med NAS=0. I alt gjenst_ar da 20966 opphold
-med gyldig NAS-skåare.
-
-\end{frame}
 
 
 \begin{frame}[fragile] {Respirasjonsstøtte}
@@ -319,14 +347,36 @@ Respirasjonsstøtte varierer mykje mellom ulike intensivavsnitt. Den viktigaste 
 skilnader i sjølve pasientpopulasjonen («case mix»). I tillegg er tala påverka av ulik praksis når det gjeld sedasjon, respiratoravvenning og trakeotomi, og tilgang på andre
 spesialitetar (lunge, øyre-nese-hals, røntgen etc.). Lokal behandlingstradisjon er også ein faktor.
 
- 
-Eiga eining aktuell månad	2.1 	0.5 	47.8 	0.1 - 155.4
-Eiga eining siste 6 mnd.
-Lokal-/sentral siste 6 mnd. 	3.1 	0.8 	52.	3 0 - 206
-Regionaleiningar siste 6 mnd. 	3.9 	1.2 	74.	1 0 - 168.3
-Heile landet siste 6 mnd. 	3.5 	1 6	0.1 	0 - 206
+<<'TabResp', results='asis', echo=FALSE>>=
+#MechanicalRespirator==1		# De som har fått respirasjonsstøtte
+#evt. respiratortid>0
+#Gj.snitt, Median, % av opphold, Spredning, døgn(min,max) \
 
-Tabell 5: Antall døger med respirasjonsstøtte for eiga eining og ulike sjukehuskategoriar.
+finnDivRespMaal <- function(RegData){
+      indResp <- which(RegData$respiratortid>0)
+      Resp <- round(summary(RegData$respiratortid[indResp]),1)
+      Resp <- sprintf('%1.1f', summary(RegData$respiratortid[indResp]),1)
+      AndelResp <- paste0(round(100*sum(RegData$MechanicalRespirator==1)/dim(RegData)[1]),'%')
+      c(Resp[4], Resp[3], AndelResp[1], 
+        paste0(Resp[2],' - ',Resp[5]),
+        paste0(Resp[1],' - ',Resp[6])
+       )
+      }
+
+
+tabResp <- rbind(
+      'Eigen, sist månad' = finnDivRespMaal(RegDataEgetMnd),
+      'Eigen'= finnDivRespMaal(RegDataEget),
+	'Resten av landet'= finnDivRespMaal(RegDataResten),
+	'Eigen sjukehustype' = finnDivRespMaal(RegDataShType))
+				
+colnames(tabResp) <- c('Gj.sn', 'Median', 'Andel(%)', '25-75 prosentil', 'Spreiing')
+xtable(tabResp, align=c('l', 'r','r','r','c','c'), #digits=c(0,1,1,1,0), 
+		caption='Antall døger med respirasjonsstøtte for eiga eining og 
+       ulike sjukehuskategoriar siste 6 månader.',
+		label='tab:Resp')
+@
+ 
 
 \end{frame}
 
@@ -338,7 +388,30 @@ er skåra, om reinsing og siling av avviksverdiar er etablert for data som ikkje
 pasienten sin tilstand, og om Glasgow Coma Score er einsarta skåra.
 
  
+<<'SAPSII', results='asis', echo=FALSE>>=
+#Gj.snitt, Median, % av opphold, Spredning, døgn(min,max) \
 
+finnDivSAPSMaal <- function(RegData){
+      indSAPS <- which(as.numeric(RegData$SAPSII) > 0 & as.numeric(RegData$Alder) >= 18)
+      SAPS <- RegData$SAPSII[indSAPS]
+      SAPSmaal <- round(summary(SAPS))
+      c(Resp[4], Resp[3],  
+        paste0(Resp[2],' - ',Resp[5]),
+        paste0(Resp[1],' - ',Resp[6])
+       )
+}
+
+tabResp <- rbind(
+      'Eigen, sist månad' = finnDivSAPSMaal(RegDataEgetMnd),
+      'Eigen'= finnDivSAPSMaal(RegDataEget),
+	'Resten av landet'= finnDivSAPSMaal(RegDataResten),
+	'Eigen sjukehustype' = finnDivSAPSMaal(RegDataShType))
+				
+colnames(tabResp) <- c('Gj.sn', 'Median', '25-75 prosentil', 'Spreiing')
+xtable(tabResp, align=c('l', 'r','r','c','c'), #digits=c(0,1,1,1,0), 
+		caption='SAPS-skåre for eiga eining og ulike sjukehuskategoriar.',
+		label='tab:SAPSII')
+@
 Gj.sn Median 25-75prosentil Spreiing
 Eiga eining aktuell månad	41 	39 	29 - 50 		6 - 120
 Eiga eining siste 6 mnd.
@@ -349,27 +422,6 @@ Hiele landet siste 6 mnd 	37.8 	35 	25 - 48 		1 - 128
 Tabell 6: SAPS-skåre for ulike sykehuskategorier.
 
 \end{frame}
-
-\begin{frame}[fragile] {Trakeostomiar og nyreerstattande behandling}
-Trakeostomi (%) 	Nyreerstatning (%)
-Eiga eining 				4 (%) 			2 (%)
-Eiga eining siste 6 mnd.		15			23
-Lokal-/Sentraleiningar siste 6 mnd.	 			
-Regionaleiningar siste 6 mnd.	 			
-Heile landet siste 6 mnd.		 			
-
-Opphald (\%) der det vart utført trakeostomi eller gjeve nyrerstattande behandling i 
-løpet av intensivopphaldet}
-
-\end{frame}
-
-\begin{frame}[fragile] {Datagrunnlag}
-\end{frame}
-
-
-
-
-
 
 
 \end{tiny}
