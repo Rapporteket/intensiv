@@ -22,10 +22,12 @@ library(knitr)
 library(intensiv)
 library(tools)	#texi2pdf
 
-load(paste0("A:/Intensiv/NIRdata10000.Rdata")) #RegDataTEST, 21.mai 2018
-
+#load(paste0("A:/Intensiv/NIRdata10000.Rdata")) #RegDataTEST, 21.mai 2018
+load(paste0("A:/Intensiv/MainFormDataContract2018-06-19.Rdata")) #RegData 2018-06-18
+NIRdata <- RegData
+RegData <- NIRdata
 setwd('C:/ResultattjenesteGIT/intensiv/inst/') 
-reshID=109773 #Tromsø med int: 601302, Ullevål Kir int: 109773, 102090 Ahus, 112044 Haukeland
+reshID=112044 #Tromsø med int: 601302, Ullevål Kir int: 109773, 102090 Ahus, 112044 Haukeland, 102673 Ålesund Med
 knit('NIRmndRapp.Rnw', encoding = 'UTF-8')
 texi2pdf(file='NIRmndRapp.tex')
 
@@ -51,13 +53,13 @@ texi2pdf(file='OffDataIntensiv.tex')
 #-------------------------------------LASTE DATA-----------------------------------------------
 rm(list=ls())
 
-dato <- '2018-06-05'
-dataKat <- 'A:/Intensiv/'
+dato <- '2018-06-19' #MainFormDataContract2018-06-19
+dataKat <- 'A:/Intensiv/' 
 fil <- paste0(dataKat,'MainFormDataContract',dato)
 #NIRdata <- read.table(file=paste0(fil,'.csv'), header=T, stringsAsFactors=FALSE, sep=';',encoding = 'UTF-8')
 #RegData <- NIRdata
-load(paste0(fil,".Rdata")) #RegData 2018-06-05
-# save(RegData, file=paste0(fil,'.Rdata'))
+load(paste0(fil,".Rdata")) #RegData 2018-06-18
+#save(RegData, file=paste0(fil,'.Rdata'))
 # RegData <- RegData[which(
 #       as.POSIXlt(RegData$DateAdmittedIntensive, format="%Y-%m-%d")>= '2015-01-01'), ]
 # RegData <- NIRdata[sample(1:dim(NIRdata)[1],10000),]

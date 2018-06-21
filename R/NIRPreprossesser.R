@@ -20,9 +20,9 @@ NIRPreprosess <- function(RegData=RegData, lagreKvalIndData=0)	#, reshID=reshID)
       #load_all(pkg = ".", reset = TRUE, recompile = FALSE, export_all = TRUE,
       #          quiet = FALSE, create = NA)
   #Kjønn
-  RegData$erMann <- NULL
-  RegData$erMann[RegData$PatientGender == 'Female'] <- 0
-  RegData$erMann[RegData$PatientGender == 'Male'] <- 1
+  RegData$erMann <- RegData$PatientGender #1=Mann, 2=Kvinne, 0=Ukjent
+  RegData$erMann[RegData$PatientGender == 0] <- NA
+  RegData$erMann[RegData$PatientGender == 2] <- 0
   
   #Riktig navn på regions-variabel:
   #Mangler regionsvariabel!!!

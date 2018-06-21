@@ -101,20 +101,16 @@ Rapporten har difor usikkert datagrunnlag og er meint til intern bruk i einingan
 Denne rapporten er framstilt automatisk etter mal laga av Lena Ringstad Olsen ved Senter for Klinisk Dokumentasjon og Evaluering (SKDE) på oppdrag frå Norsk
 intensivregister (NIR). Alle resultat er baserte på data frå registeret og er gyldige per rapportdato for opphald som er ferdigstilte i MRS. Rapporten inneheld alle ferdigstilte opphald i MRS der innleggingstidspunktet på intensiv er i tidsrommet kl.00.00 den fyrste i aktuell månad til kl. 23.59 den siste i månaden. Månadsrapporten vil dermed ikkje innehalde data frå dei pasientane som vart innlagde før månadsskiftet og «ligg over» inn i den aktuelle månaden, men vil innehalde alle relevante data frå dei som vart innlagde i slutten av den aktuelle månaden og «ligg over» til neste månad, dersom opphaldet er ferdigstilt i MRS.
 
-Uttrekket blir gjort for kvar kalendermånad, med ein månads forseinking. Månadsrapport for januar vert sendt ut 1. mars, for februar 1. april osv. 
-\textbf{Ca 5\% ligger lengre enn to uker. Hva med å sende ut den 15. i hver måned og inkludere hele forrige måned?
-I noen figurer/tabeller bør vi vise data for et helt år, brutt ned i måneder. 
-Dermed blir det ikke så viktig med denne forsinkelsen og vi kan la de som er ajour får se alle sine data fra til i dag.}
+Uttrekket blir gjort for kvar kalendermånad, med ein månads forseinking. \textbf{Månadsrapport for januar vert sendt ut sist i februar, for februar sist i mars osv.} OK?
 
 NIR-einingar som er ajour med registreringa, vil dermed kunne få nær fullstendige månadsrapportar. 
-
 Rapporten kan også hentast ved at ein loggar seg inn på Rapporteket-Intensiv, klikkar på "Månadsrapport". Det  
 gjer at alle som ikkje er ajour nok med registreringa, kan lage seg representative månadsrapportar når dei måtte ynskje.
 
 \end{frame}
 
 \begin{frame}[fragile] {Innhaldforteikning}
-Figurar og tabellar
+Figurar og tabellar. Kommer.
 \end{frame}
 
 
@@ -122,7 +118,7 @@ Figurar og tabellar
 
 \begin{frame}[fragile] {Opphald, pasientar og liggjetid (intensivdøger)}
 
-NB: Må legge på navn på måneder.
+\textbf{NB: Lena skal sortere og legge på navn på måneder.}
 
 <<'TabReg', results='asis', echo=FALSE, eval=T>>=
 #For bare Eget sykehus
@@ -142,20 +138,18 @@ xtable(tabAvdNEget, digits=0, align=c('l', rep('r', ncol(tabAvdNEget))),
 \end{frame}
 
 
-\begin{frame}[fragile] {Registreringsforseinking}<presentation:0 handout:0 beamer:0>
-Registeret mangler variabel for å beregne dette.
-(FirstTimeClosed)
+\begin{frame}[fragile] {Registreringsforseinking}
 
 Median tid frå utskriving intensiv til ferdigstilling i MRS.
+Registeret mangler variabel for å beregne dette, så denne tas bort inntil videre.
+(FirstTimeClosed)
+
 \end{frame}
 
 
 \section{Pasientkarakteristika}
 
-
-
 \begin{frame}[fragile] {Alder}
-Alder Som tab. 2 i samlerapport, men med fire kolonner, der dei to siste er  resten av landet og eigen sjukehuskategori (region/lokal-sentral)
 
 <<'Alder', results='asis' >>=
 #, echo=FALSE
@@ -178,14 +172,14 @@ alderTabInnhold <- function(RegData){
       }
 
 alderDIV <- cbind(
-      'Sist månad' = alderTabInnhold(RegDataEgetMnd),
+      'Eigen, sist mnd.' = alderTabInnhold(RegDataEgetMnd),
       'Eigen'= alderTabInnhold(RegDataEget),
 	'Resten av landet'= alderTabInnhold(RegDataResten),
 	'Eigen sjukehustype' = alderTabInnhold(RegDataShType))
 rownames(alderDIV) <- c('Minimum:', 
-                        '25% av pasientene er under:', 
+                        '25% pasientar under:', 
                         'Median:','Gjennsomsnitt:',
-                        '25% av pasientene er over:', 
+                        '25% pasientar over:', 
                         'Maksimum:',
                         'Pasientar < 16 år', 
                         'Pasientar >= 80 år')
@@ -193,7 +187,7 @@ rownames(alderDIV) <- c('Minimum:',
 
 xtable(alderDIV, digits=1, align=c('l', rep('r', ncol(alderDIV))), 
 		caption='Alderseigenskapar',
-		label='tab:Alderskarakteristikker')
+		label='tab:Alderskarakteristikker, siste seks månader.')
 
 @
 
@@ -218,35 +212,6 @@ for (valgtVar in variable) {
 @
 
 
-\begin{frame}[fragile] {Kjønn} <beamer:0>
-
-<<TabKjonn, results='asis', echo=FALSE, eval=FALSE>>=
-
-#FRA SAMLERAPPORT
-tabKjonnShType <- round(100*rbind(
-	'Egen enhet' = table(RegDataEget$erMann)/Neget,	
-	'Lokal-/Sentralenheter' = table(RegData[which(RegData$ShType==1), 'erMann'])/length(which(RegData$ShType==1)),	
-	'Regionalenheter' = table(RegData[which(RegData$ShType==3), 'erMann'])/length(which(RegData$ShType==3)),	
-	'Hele landet' = table(RegData$erMann)/N
-	),1)
-colnames(tabKjonnShType) <- c('Kvinner(%)', 'Menn(%)')
-xtable(tabKjonnShType, digits=1, align=c('l', rep('r', ncol(tabKjonnShType))), 
-		caption='Fordeling av kvinner og menn',
-		label='tab:KjonnShType')
-@
-
-Kvinner(\%) 	Menn(\%)
-Eiga eining 				43.7 		56.3
-Eiga eining siste 6 mnd.		41.7		58.3
-Lokal-/Sentraleiningar siste 6 mnd.	43.1 		56.9
-Regionaleiningar siste 6 mnd.	39.1 		60.9
-Heile landet siste 6 mnd.		41.7 		58.3
-
-Tabell 3: Fordeling av kvinner og menn (som i samlerapport)
-
-\end{frame}
-
-
 \begin{frame}[fragile] {Liggjetid på intensiv}
  
 Liggjetida er den samla tida frå pasienten fysisk er komen til intensiv/overvakingsarealet
@@ -257,7 +222,7 @@ erasjon osv.). Liggjetida blir registrert i døger med ein desimal, dvs. timar/2
 <<'TabLiggetid', results='asis', echo=FALSE>>=
 finnGjsnMedKj <- function(RegData){
       Gjsn <- sprintf("%.1f", mean(RegData$liggetid, na.rm=T))
-      Med <- sprintf("%.1f", mean(RegData$liggetid, na.rm=T))
+      Med <- sprintf("%.1f", median(RegData$liggetid, na.rm=T))
       Kvinner <- sprintf("%.0f", 100*prop.table(table(RegData$erMann))[1])
       Ut <- paste0(c(Gjsn, Med, Kvinner), c('', '', '%'))
       #paste0(sprintf("%.1f %.1f %+.f", Gjsn, Med, Kvinner), '%')
@@ -292,13 +257,12 @@ xtable(liggetidKj, digits=1, align=c('l', rep('r', ncol(liggetidKj))),
 \begin{figure}[ht]
 \centering              
 \includegraphics[scale=0.35]{PrimaryReasonAdmittedFordMnd.pdf}
-\caption{Hovudårsak til innlegging på intensiv (prosent per kategori) siste 6 månader, eiga avdeling og landet elles }
+\caption{Hovudårsak til innlegging på intensiv (prosent per kategori) sist månad, eiga avdeling og landet elles. \textbf{Skal vi endre det til siste 6 mnd?} }
 \end{figure}
 \end{frame}
 
 
 \begin{frame}[fragile] {NEMS-skåre}
- (mal som i samlerapport)
 Totalt tal NEMS-poeng for opphaldet. Faste definisjonar (Miranda), NEMS skåra på pleiedøgeret.
 NB! Sidan det er stor variasjon i NEMS-skåre for korte opphald, avhengig av tal på timar
 som er rekna med før/etter pleiedøgeret, rapporterer vi her data per døger
@@ -307,7 +271,7 @@ for opphald som har vart lenger enn 24 timar og der det faktisk er skåra NEMS-p
 <<'NEMS', results='asis', echo=FALSE>>=
 finnGjsnMed <- function(variabel){
       Gjsn <- sprintf("%.1f", mean(variabel, na.rm=T))
-      Med <- sprintf("%.1f", mean(variabel, na.rm=T))
+      Med <- sprintf("%.1f", median(variabel, na.rm=T))
       Ut <- c(Gjsn, Med)
       }
 
@@ -330,7 +294,7 @@ NEMStab <- rbind(
 colnames(NEMStab) <- c('Gj.sn/opph', 'Median/opph','Gj.sn/døger', 'Median/døger', 'Antal')
 
 xtable(NEMStab, digits=1, align=c('l', rep('r', ncol(NEMStab))), 
-		caption='NEMS-poeng per opphald og døger for ulike sjukehuskategoriar. ',
+		caption='NEMS-poeng per opphald og døger for ulike sjukehuskategoriar, siste seks månader. ',
 		label='tab:NEMStab')
 @
 
@@ -339,10 +303,10 @@ xtable(NEMStab, digits=1, align=c('l', rep('r', ncol(NEMStab))),
 
 
 \begin{frame}[fragile] {Respirasjonsstøtte}
- (som i samlerapport)
+
 Respirasjonsstøtte (den tida pasienten har fått respirasjonsstøtte ut over
-O2-tilførsle i ope system_ (NIR sin mal). Resultata i tabell 5 omfattar berre pasientar som
-har fått respirasjonsstøtte.
+O2-tilførsle i ope system (NIR sin mal). Resultata i tabellen omfattar berre pasientar som
+har fått respirasjonsstøtte (respirasjonstid>0).
 Respirasjonsstøtte varierer mykje mellom ulike intensivavsnitt. Den viktigaste grunnen er
 skilnader i sjølve pasientpopulasjonen («case mix»). I tillegg er tala påverka av ulik praksis når det gjeld sedasjon, respiratoravvenning og trakeotomi, og tilgang på andre
 spesialitetar (lunge, øyre-nese-hals, røntgen etc.). Lokal behandlingstradisjon er også ein faktor.
@@ -395,9 +359,9 @@ finnDivSAPSMaal <- function(RegData){
       indSAPS <- which(as.numeric(RegData$SAPSII) > 0 & as.numeric(RegData$Alder) >= 18)
       SAPS <- RegData$SAPSII[indSAPS]
       SAPSmaal <- round(summary(SAPS))
-      c(Resp[4], Resp[3],  
-        paste0(Resp[2],' - ',Resp[5]),
-        paste0(Resp[1],' - ',Resp[6])
+      c(SAPSmaal[4], SAPSmaal[3],  
+        paste0(SAPSmaal[2],' - ',SAPSmaal[5]),
+        paste0(SAPSmaal[1],' - ',SAPSmaal[6])
        )
 }
 
@@ -409,20 +373,38 @@ tabResp <- rbind(
 				
 colnames(tabResp) <- c('Gj.sn', 'Median', '25-75 prosentil', 'Spreiing')
 xtable(tabResp, align=c('l', 'r','r','c','c'), #digits=c(0,1,1,1,0), 
-		caption='SAPS-skåre for eiga eining og ulike sjukehuskategoriar.',
+		caption='SAPS-skåre for eiga eining og ulike sjukehuskategoriar, siste seks månader.',
 		label='tab:SAPSII')
 @
-Gj.sn Median 25-75prosentil Spreiing
-Eiga eining aktuell månad	41 	39 	29 - 50 		6 - 120
-Eiga eining siste 6 mnd.
-Lokal-/sentralein. siste 6 mnd 	37.4 	35 	25 - 47 		1 - 125
-Regionalenheter siste 6 mnd 	38.5 	36 	25 - 50 		1 - 128
-Hiele landet siste 6 mnd 	37.8 	35 	25 - 48 		1 - 128
-
-Tabell 6: SAPS-skåre for ulike sykehuskategorier.
 
 \end{frame}
 
+\begin{frame}[fragile] {Dobbeltregistreringar}
+
+Feilsjekk, mulige dobbeltregistreringer:  
+
+<<'DblReg', results='asis', echo=FALSE>>=
+
+      RegDataSort <- RegData[order(RegData$PasientID, RegData$Innleggelsestidspunkt), 
+                             c('PasientID','Innleggelsestidspunkt', "SkjemaGUID")]
+      RegDataSort$OpphNr <- ave(RegDataSort[ ,'PasientID'], RegDataSort[ ,'PasientID'], FUN=seq_along)
+      indPasFlereOpph <- which(RegDataSort$OpphNr>1) 
+      RegDataSort$TidInn <- NA
+      RegDataSort$TidInn[indPasFlereOpph] <- 
+                        difftime(RegDataSort$Innleggelsestidspunkt[indPasFlereOpph], 
+                                 RegDataSort$Innleggelsestidspunkt[indPasFlereOpph-1], 
+                                 units = 'hour')
+
+      indDbl <- which(abs(RegDataSort$TidInn) <2 )
+      tabDbl <- RegDataSort[sort(c(indDbl, indDbl-1)), 
+                 c('PasientID','Innleggelsestidspunkt', "SkjemaGUID")]
+
+print(kable(tabDbl, row.names = FALSE))
+      #,caption='Sannsynlige dobbeltregistreringer.', label='tab:Dbl')
+
+@
+\end{frame}
 
 \end{tiny}
+
 \end{document}
