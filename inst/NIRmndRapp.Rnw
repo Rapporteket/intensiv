@@ -379,9 +379,8 @@ xtable(tabResp, align=c('l', 'r','r','c','c'), #digits=c(0,1,1,1,0),
 
 \end{frame}
 
-\begin{frame}[fragile] {Dobbeltregistreringar}
+\begin{frame}[fragile] {Moglege dobbeltregistreringar}
 
-Feilsjekk, mulige dobbeltregistreringer:  
 
 <<'DblReg', results='asis', echo=FALSE>>=
 
