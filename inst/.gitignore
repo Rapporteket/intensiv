@@ -8,3 +8,5 @@ unit.test.R
 *.lot
 *.nav
 NIRmndRapp.nav
+NIRmndRapp.snm
+NIRmndRapp.vrb

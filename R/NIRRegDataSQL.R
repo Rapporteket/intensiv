@@ -75,6 +75,7 @@ NIRRegDataSQL <- function(datoFra = '2011-01-01', datoTil = '2099-01-01') {
       SerumUreaOrBun,
       ShNavn,
       ShType,
+      SkjemaGUID,
       Sodium,
       SystolicBloodPressure,
       Temperature,

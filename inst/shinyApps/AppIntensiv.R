@@ -158,7 +158,7 @@ ui <- fluidPage( #"Hoved"Layout for alt som vises på skjermen
                  br(),
                  h2("Her kan det komme ei startside med de viktigste resultatene", align='center' ),
                  br()),
-        # tabPanel("Tabeller",
+        # tabPanel("Registreringsoversikter",
         #          h2("Antall registreringer per måned og avdeling"),
         #          #tableOutput("tabAvdMnd12"),
         #          br(),
