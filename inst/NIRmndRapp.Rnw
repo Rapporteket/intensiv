@@ -405,7 +405,7 @@ Registreringer kor same pasient har fått registrert to innleggingar med mindre 
       tabDbl <- RegDataSort[sort(c(indDbl, indDbl-1)), 
                  c('PasientID','Innleggelsestidspunkt', "SkjemaGUID")]
       
-
+library(knitr)
 dblTab <- kable(tabDbl, format='latex', row.names = FALSE) #, 
                 #caption='Registreringer kor same pasient har fått registrert to innleggingar med mindre enn 2 timars mellomrom.')
 #dblTab <- xtable(tabDbl, row.names = FALSE)
