@@ -387,6 +387,8 @@ xtable(tabResp, align=c('l', 'r','r','c','c'), #digits=c(0,1,1,1,0),
 
 Registreringer kor same pasient har fått registrert to innleggingar med mindre enn 2 timars mellomrom.
 
+
+
 <<'DblReg', results='asis', echo=FALSE>>=
 
       RegDataSort <- RegData[order(RegData$PasientID, RegData$Innleggelsestidspunkt), 
@@ -405,7 +407,8 @@ Registreringer kor same pasient har fått registrert to innleggingar med mindre 
 
 
 #print(
-dblTab <- kable(tabDbl, row.names = FALSE)
+dblTab <- kable(tabDbl, format='latex', row.names = FALSE)
+#dblTab <- xtable(tabDbl, row.names = FALSE)
       
 @
 
