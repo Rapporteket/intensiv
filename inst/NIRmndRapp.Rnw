@@ -388,7 +388,7 @@ xtable(tabResp, align=c('l', 'r','r','c','c'), #digits=c(0,1,1,1,0),
 Registreringer kor same pasient har fått registrert to innleggingar med mindre enn 2 timars mellomrom.
 
 
-
+%\resizebox{\textwidth}{!}{
 <<'DblReg', results='asis', echo=FALSE>>=
 
       RegDataSort <- RegData[order(RegData$PasientID, RegData$Innleggelsestidspunkt), 
@@ -404,16 +404,24 @@ Registreringer kor same pasient har fått registrert to innleggingar med mindre 
       indDbl <- which(abs(RegDataSort$TidInn) <2 )
       tabDbl <- RegDataSort[sort(c(indDbl, indDbl-1)), 
                  c('PasientID','Innleggelsestidspunkt', "SkjemaGUID")]
+      
 
-
-#print(
-dblTab <- kable(tabDbl, format='latex', row.names = FALSE)
+dblTab <- kable(tabDbl, format='latex', row.names = FALSE) #, 
+                #caption='Registreringer kor same pasient har fått registrert to innleggingar med mindre enn 2 timars mellomrom.')
 #dblTab <- xtable(tabDbl, row.names = FALSE)
       
 @
+%}
 
+%\resizebox{\textwidth}{!}{\Sexpr{dblTab}}
+\begin{table}
+\centering
+\resizebox{\textwidth}{!}{
+\Sexpr{dblTab}
+\caption{\label{tab:DblReg}Registreringer kor same pasient har fått registrert to innleggingar med mindre enn 2 timars mellomrom.}
+}
+\end{table}
 
-\resizebox{\textwidth}{!}{\Sexpr{dblTab}}
 
 \end{frame}
 
