@@ -55,11 +55,11 @@ RegData <- NIRUtvalg$RegData
 shtxt <- NIRUtvalg$hovedgrTxt
 ShTypeEgenTxt <- NIRUtvalg$grTypeTxt  #FIX!!!!!!!!!
 ind <- NIRUtvalg$ind
-
 N <- dim(RegData)[1]
-# ind <- list(Eget = which(RegData$ReshId == reshID),
-# 			EgenShType = which(RegData$ShType == ShTypeEgen),
-# 			Alle = 1:N)
+
+SortMnd <- SorterOgNavngiTidsEnhet(RegData, tidsenhet=tidsenhet)
+RegData <- SortMnd$RegData
+#tidtxt <- SortMnd$tidtxt
 
 RegDataEget <- RegData[ind$Hoved, ]
 RegDataEgetMnd <- RegDataEget[which(as.Date(RegDataEget$InnDato) >= datoFraMnd), ]
@@ -89,65 +89,69 @@ MÅNEDSRAPPORT \\
 \begin{frame}[fragile] {Ansvar og bruk av data}
 Fagrådet i NIR er ansvarleg for alle vurderingar og tolkingar av data, og også feil i resultat som skuldast feil i datagrunnlaget. Den viktigaste feilkjelda i rapporten vil truleg vere ufullstendige datasett i mange av NIR-einingane – det vil seie at ikkje alle data er ferdigstilte for aktuell månad. Dette etterslepet vil variere markert både i tid og volum, og gjer at data blir meir eller mindre representative for dei ulike einingane.
 Rapporten inneheld berre anonymiserte samledata, ikkje data om einskildpersonar. I tilfelle der utvalet inneheld få registreringar som er kombinerte med til dømes demografiske data, kan det ikkje utelukkast at rapporterte data kan tilbakeførast til einskildpersonar. 
-
 Rapporten har difor usikkert datagrunnlag og er meint til intern bruk i einingane. NIR ber om at denne rapporten ikkje blir brukt offentleg i nokon samanheng eller blir offentleggjort på noko vis, av grunnar nemnde her.
 \end{frame}
 
 
-\section{Innhald}
+%\section{Innhald}
 
 \begin{frame}[fragile] {Datagrunnlag}
 
 Denne rapporten er framstilt automatisk etter mal laga av Lena Ringstad Olsen ved Senter for Klinisk Dokumentasjon og Evaluering (SKDE) på oppdrag frå Norsk
-intensivregister (NIR). Alle resultat er baserte på data frå registeret og er gyldige per rapportdato for opphald som er ferdigstilte i MRS. Rapporten inneheld alle ferdigstilte opphald i MRS der innleggingstidspunktet på intensiv er i tidsrommet kl.00.00 den fyrste i aktuell månad til kl. 23.59 den siste i månaden. Månadsrapporten vil dermed ikkje innehalde data frå dei pasientane som vart innlagde før månadsskiftet og «ligg over» inn i den aktuelle månaden, men vil innehalde alle relevante data frå dei som vart innlagde i slutten av den aktuelle månaden og «ligg over» til neste månad, dersom opphaldet er ferdigstilt i MRS.
+intensivregister (NIR). Alle resultat er baserte på data frå registeret og er gyldige per rapportdato for opphald som er ferdigstilte i MRS. Rapporten inneheld alle ferdigstilte opphald i MRS der innleggingstidspunktet på intensiv er i tidsrommet kl.00.00 den fyrste i aktuell månad til kl. 23.59 den siste i månaden. \textit{Månadsrapporten vil dermed ikkje innehalde data frå dei pasientane som vart innlagde før månadsskiftet og «ligg over» inn i den aktuelle månaden, men vil innehalde alle relevante data frå dei som vart innlagde i slutten av den aktuelle månaden og «ligg over» til neste månad, dersom opphaldet er ferdigstilt i MRS.} Det siste er litt tungt (og for meg litt uklart). Holder det ikke å bare å si det som står før det i kursiv og det som står under? 
 
 Uttrekket blir gjort for kvar kalendermånad, med ein månads forseinking. \textbf{Månadsrapport for januar vert sendt ut sist i februar, for februar sist i mars osv.} OK?
 
-NIR-einingar som er ajour med registreringa, vil dermed kunne få nær fullstendige månadsrapportar. 
-Rapporten kan også hentast ved at ein loggar seg inn på Rapporteket-Intensiv, klikkar på "Månadsrapport". Det  
-gjer at alle som ikkje er ajour nok med registreringa, kan lage seg representative månadsrapportar når dei måtte ynskje.
+(\textbf{Fjernes?:} NIR-einingar som er ajour med registreringa, vil dermed kunne få nær fullstendige månadsrapportar. 
+Rapporten kan også hentast ved at ein loggar seg inn på Rapporteket-Intensiv, klikkar på "Månadsrapport". 
+Det gjer at alle (fjernes?: som ikkje er ajour nok med registreringa,) kan hente seg representative månadsrapportar når dei måtte ynskje.
 
 \end{frame}
 
 \begin{frame}[fragile] {Innhaldforteikning}
-Figurar og tabellar. Kommer.
+\normalsize{Figurar:} \\
+\begin{itemize}
+\item Hovudårsak til opphaldet
+\end{itemize}
+
+\normalsize{Tabellar:} 
+\begin{itemize}
+\item Opphald og liggedøger
+\item Alder
+\item Liggjetid
+\item NEMS-skåre
+\item Respirasjonsstøtte
+\item SAPS II
+\item Dobbeltregistreringar
+\end{itemize}
+
 \end{frame}
 
 
-\section{Registreringsoversikter}
+%\section{Registreringsoversikter}
 
 \begin{frame}[fragile] {Opphald, pasientar og liggjetid (intensivdøger)}
 
-\textbf{NB: Lena skal sortere og legge på navn på måneder.}
 
 <<'TabReg', results='asis', echo=FALSE, eval=T>>=
 #For bare Eget sykehus
 tabAvdNEget <- rbind(
-	'Ferdigstilte intensivopphold' = table(RegDataEget$Mnd), #Neget,		
-	'Registrerte pasienter' = tapply(RegDataEget$PasientID, RegDataEget$Mnd, length),	
-	'Antall intensivdøgn' = round(as.numeric(tapply(RegDataEget$liggetid, RegDataEget$Mnd, sum)),0)	
+	'Ferdigstilte intensivopphald' = table(RegDataEget$TidsEnhet), #Neget,		
+	'Registrerte pasientar' = tapply(RegDataEget$PasientID, RegDataEget$TidsEnhet, 
+	                                 FUN=function(x) length(unique(x))),	
+	'Antall intensivdøger' = round(as.numeric(tapply(RegDataEget$liggetid, RegDataEget$TidsEnhet, sum)),0)	
 	#sum(RegDataEget$DaysAdmittedIntensiv, na.rm=T))
 	)
-#colnames(tabAvdNEget)[dim(tabAvdNEget)[2]]<- 'Totalt:'
 
 xtable(tabAvdNEget, digits=0, align=c('l', rep('r', ncol(tabAvdNEget))), 
-		caption=paste0('Antall opphold og liggedøgn, ', shtxt), label='tab:RegEget')
+		caption=paste0('Antal opphald og liggedøger, ', shtxt), label='tab:RegEget')
 
 @
 
 \end{frame}
 
 
-\begin{frame}[fragile] {Registreringsforseinking}
-
-Median tid frå utskriving intensiv til ferdigstilling i MRS.
-Registeret mangler variabel for å beregne dette, så denne tas bort inntil videre.
-(FirstTimeClosed)
-
-\end{frame}
-
-
-\section{Pasientkarakteristika}
+%\section{Pasientkarakteristika}
 
 \begin{frame}[fragile] {Alder}
 
@@ -186,8 +190,8 @@ rownames(alderDIV) <- c('Minimum:',
 
 
 xtable(alderDIV, digits=1, align=c('l', rep('r', ncol(alderDIV))), 
-		caption='Alderseigenskapar',
-		label='tab:Alderskarakteristikker, siste seks månader.')
+		caption='Alderskarakteristikker, siste seks månader.',
+		label='tab:Alderseigenskapar')
 
 @
 
@@ -237,7 +241,7 @@ liggetidKj <- rbind(
 colnames(liggetidKj) <- c('Gj.snitt', 'Median', 'Kvinner')
 
 xtable(liggetidKj, digits=1, align=c('l', rep('r', ncol(liggetidKj))), 
-		caption='Liggjetid og andel kvinner',
+		caption='Liggjetid og andel kvinner, siste 6 månader.',
 		label='tab:liggetidKj')
 		
 # dum <- NIRFigAndeler(RegData=NIRdata, valgtVar='liggetid', preprosess=0, hentData=0, 
@@ -381,6 +385,7 @@ xtable(tabResp, align=c('l', 'r','r','c','c'), #digits=c(0,1,1,1,0),
 
 \begin{frame}[fragile] {Moglege dobbeltregistreringar}
 
+Registreringer kor same pasient har fått registrert to innleggingar med mindre enn 2 timars mellomrom.
 
 <<'DblReg', results='asis', echo=FALSE>>=
 
@@ -398,10 +403,15 @@ xtable(tabResp, align=c('l', 'r','r','c','c'), #digits=c(0,1,1,1,0),
       tabDbl <- RegDataSort[sort(c(indDbl, indDbl-1)), 
                  c('PasientID','Innleggelsestidspunkt', "SkjemaGUID")]
 
-print(kable(tabDbl, row.names = FALSE))
-      #,caption='Sannsynlige dobbeltregistreringer.', label='tab:Dbl')
 
+#print(
+dblTab <- kable(tabDbl, row.names = FALSE)
+      
 @
+
+
+\resizebox{\textwidth}{!}{\Sexpr{dblTab}}
+
 \end{frame}
 
 \end{tiny}
