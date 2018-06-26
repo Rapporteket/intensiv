@@ -16,11 +16,19 @@
 #'     \item alder_over80: Pasienter over 80 år (>=80)
 #'     \item dod30d: Pasienter som dør innen 30 dager etter innleggelse
 #'     \item dodeIntensiv: Pasienter som dør på intensivavdelinga. 
+#'     \item ExtendedHemodynamicMonitoring: Utvidet hemodyn. overvåkning
 #'     \item innMaate: Hastegrad inn på intensiv (Elektivt, Akutt medisinsk, Akutt kirurgisk)
 #'		Dette valget viser en annen figurtype.
-#'     \item respStotte: Pasienter som har fått respiratorstøtte
+#'	 \item isolering: Isolasjon av pasient
+#'	 \item liggetidDod: Liggetid, døde
+#'	 \item nyreBeh: Nyrebehandling
 #'     \item reinn: Andel reinnlagte (fjerner ukjente) Kvalitetsindikator
+#'     \item respStotte: Pasienter som har fått respiratorstøtte
+#'     \item respiratortidInvMoverf: Respiratortid, inv. < 2,5d m/overføringer
+#'     \item respiratortidInvUoverf: Respiratortid, inv. < 2,5d u/overføringer
+#'     \item respiratortidDod: Respiratortid, døde
 #'     \item Trakeostomi: Andel som har fått trakeostomi (kat 2 og 3)
+#'     \item trakAapen: Trakeostomi, åpen
 #'    }
 #' @inheritParams NIRFigAndeler
 #' @param aldGr: Aldersgrupper. Brukes i offentliggjøringsfigurer

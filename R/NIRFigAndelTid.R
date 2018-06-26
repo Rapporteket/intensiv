@@ -6,13 +6,20 @@
 #' Argumentet \emph{valgtVar} har følgende valgmuligheter:
 #'    \itemize{
 #'     \item alder_u18: Pasienter under 18 år 
-#'     \item alder_over80: Pasienter over 80 år  (>=80)
-#'     \item dod30d: Pasienter som dør innen 30 dager etter innleggelse #ut:dodeSykehus
+#'     \item alder_over80: Pasienter over 80 år (>=80)
+#'     \item dod30d: Pasienter som dør innen 30 dager etter innleggelse
 #'     \item dodeIntensiv: Pasienter som dør på intensivavdelinga. 
-#'	 \item liggetidDod: Andel av total liggetid brukt på de som dør på intensiv
-#'     \item respiratortidDod: Respiratortid brukt på de som dør på intensiv
+#'     \item ExtendedHemodynamicMonitoring: Utvidet hemodyn. overvåkning
+#'	 \item isolering: Isolasjon av pasient
+#'	 \item liggetidDod: Liggetid, døde
+#'	 \item nyreBeh: Nyrebehandling
+#'     \item reinn: Andel reinnlagte (fjerner ukjente) Kvalitetsindikator
 #'     \item respStotte: Pasienter som har fått respiratorstøtte
-#'     \item reinn: Andel reinnlagte (kun hvor dette er registrert, dvs. fjerner ukjente)
+#'     \item respiratortidInvMoverf: Respiratortid, inv. < 2,5d m/overføringer
+#'     \item respiratortidInvUoverf: Respiratortid, inv. < 2,5d u/overføringer
+#'     \item respiratortidDod: Respiratortid, døde
+#'     \item Trakeostomi: Andel som har fått trakeostomi (kat 2 og 3)
+#'     \item trakAapen: Trakeostomi, åpen
 #'    }
 #'
 #' @inheritParams NIRFigAndeler 
