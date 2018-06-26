@@ -140,15 +140,16 @@ og kan genereres av intensivregisterets databasebrukerne på \textit{helseregist
 
 
 <<LasteData, echo=FALSE, eval=T>>=
+datoFra <- '2016-01-01'	
+datoNorsk <- format.Date(datoFra, format='%d.%m%.%Y')
 if (!exists('NIRdata')){
-      NIRdata <- NIRRegDataSQL(datoFra = '2011-01-01')
+      NIRdata <- NIRRegDataSQL(datoFra = datoFra)
 }
 @
 
 <<FellesParam, echo=FALSE>>=
 library(xtable)
 '%i%' <- intersect
-datoFra <- '2011-01-01'	
 datoTil <- '3013-12-31'	#Parameteren brukes også i figurene.
 outfile <- ''
 figKrymp1 <- 0.7	#Skaleringsparameter for enkeltfigurer
@@ -198,7 +199,8 @@ tabKjPstEget <- round(table(NIRdataEget$erMann)/Neget*100, digits=1)
 
 \section{Innledning}
 NIR startet elektronisk registrering via helseregister.no fra og med 01.01.2011. 
-Denne samlerapporten er basert på alle opphold som er lagret og ferdigstilt i NIR fra oppstart inntil dagen før 
+Denne samlerapporten er basert på alle opphold som er lagret og ferdigstilt i NIR fra og med \Sexpr{datoFraNorsk} %oppstart 
+inntil dagen før 
 tidspunktet for rapportuttrekk (dvs. flere årganger for de fleste enheter). 
 For hele landet er det gjort registrering av innleggelser i perioden 
 \Sexpr{min(NIRdata$InnDato)} til \Sexpr{max(NIRdata$InnDato)}.
@@ -221,7 +223,7 @@ Den skal ikke offentliggjøres. NIR sentralt vil produsere årsrapport med samle
 #For bare Eget sykehus
 tabAvdNEget <- rbind(
 	'Ferdigstilte intensivopphold' = table(NIRdataEget$Aar), #Neget,		
-	'Registrerte pasienter' = table(aggregate(erMann~Aar+PasientGUID,data=NIRdataEget,length)$Aar),	#length(table(NIRdataEget$PasientId)),
+	'Registrerte pasienter' = table(aggregate(erMann~Aar+PasientID,data=NIRdataEget,length)$Aar),	#length(table(NIRdataEget$PasientId)),
 	'Antall intensivdøgn' = round(as.numeric(tapply(NIRdataEget$liggetid, NIRdataEget$Aar, sum)),0)	#sum(NIRdataEget$DaysAdmittedIntensiv, na.rm=T))
 	)
 #colnames(tabAvdNEget)[dim(tabAvdNEget)[2]]<- 'Totalt:'
@@ -669,7 +671,7 @@ for (k in 1:3) {
 	colnames(tabStatusUt) <- c('Antall', 'Fordeling(%)')
 	tabStatusUt <- xtable(tabStatusUt, digits=c(0,0,1), align=c('l','r','r'), 
 			caption=paste0('Status ved utskrivning, ', UtvTxt[k], '. NB: Tabellen er bare gyldig for t.o.m. desember 2015'),
-			label=paste('tab:StatusUt', k, sep=''))
+			label=paste0('tab:StatusUt', k))
 	print(tabStatusUt)
 }
 

@@ -340,7 +340,7 @@ tabResp <- rbind(
 				
 colnames(tabResp) <- c('Gj.sn', 'Median', 'Andel(%)', '25-75 prosentil', 'Spreiing')
 xtable(tabResp, align=c('l', 'r','r','r','c','c'), #digits=c(0,1,1,1,0), 
-		caption='Antall døger med respirasjonsstøtte for eiga eining og 
+		caption='Antal døger med respirasjonsstøtte for eiga eining og 
        ulike sjukehuskategoriar siste 6 månader.',
 		label='tab:Resp')
 @
