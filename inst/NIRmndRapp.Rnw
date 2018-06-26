@@ -136,10 +136,10 @@ Det gjer at alle (fjernes?: som ikkje er ajour nok med registreringa,) kan hente
 <<'TabReg', results='asis', echo=FALSE, eval=T>>=
 #For bare Eget sykehus
 tabAvdNEget <- rbind(
-	'Ferdigstilte intensivopphald' = table(RegDataEget$TidsEnhet), #Neget,		
+	'Ferdigstilte intensivopphald' = tapply(RegDataEget$PasientID, RegDataEget$TidsEnhet, FUN=length), #table(RegDataEget$TidsEnhet), #Neget,		
 	'Registrerte pasientar' = tapply(RegDataEget$PasientID, RegDataEget$TidsEnhet, 
 	                                 FUN=function(x) length(unique(x))),	
-	'Antall intensivdøger' = round(as.numeric(tapply(RegDataEget$liggetid, RegDataEget$TidsEnhet, sum)),0)	
+	'Antall intensivdøger' = round(as.numeric(tapply(RegDataEget$liggetid, RegDataEget$TidsEnhet, sum, na.rm=T)),0)	
 	#sum(RegDataEget$DaysAdmittedIntensiv, na.rm=T))
 	)
 
@@ -158,13 +158,13 @@ xtable(tabAvdNEget, digits=0, align=c('l', rep('r', ncol(tabAvdNEget))),
 <<'Alder', results='asis' >>=
 #, echo=FALSE
 Under16aar <- function(RegData){
-      Ant <- sum(RegData$Alder<16)
+      Ant <- sum(RegData$Alder<16, na.rm = T)
       Andel <- Ant/dim(RegData)[1]*100
       paste0(Ant, ' (',sprintf('%.1f',Andel),'%)')
       }
 
 Over80aar <- function(RegData){
-      Ant <- sum(RegData$Alder >= 80)
+      Ant <- sum(RegData$Alder >= 80, na.rm = T)
       Andel <- Ant/dim(RegData)[1]*100
       paste0(Ant, ' (',sprintf('%.1f',Andel),'%)')
       }
@@ -190,7 +190,7 @@ rownames(alderDIV) <- c('Minimum:',
 
 
 xtable(alderDIV, digits=1, align=c('l', rep('r', ncol(alderDIV))), 
-		caption='Alderskarakteristikker, siste seks månader.',
+		caption='Alderskarakteristikker (alder i år), siste seks månader.',
 		label='tab:Alderseigenskapar')
 
 @
