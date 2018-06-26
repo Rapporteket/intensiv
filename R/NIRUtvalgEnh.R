@@ -83,8 +83,8 @@ NIRUtvalgEnh <- function(RegData, datoFra=0, datoTil=0, minald=0, maxald=110, er
       
       utvalgTxt <- c(
             if(datoFra!=0 | datoTil!=0) {paste0(
-                  'Registreringsperiode: ', if (N>0) {min(RegData$InnDato, na.rm=T)} else {datoFra}, 
-                  ' til ', if (N>0) {max(RegData$InnDato, na.rm=T)} else {datoTil})} else {NULL},
+                  'Registreringsperiode: ', if (N>0) {min(as.Date(RegData$InnDato), na.rm=T)} else {datoFra}, 
+                  ' til ', if (N>0) {max(as.Date(RegData$InnDato), na.rm=T)} else {datoTil})} else {NULL},
             if (aar[1] > 0){paste0('Innleggelsesår: ', paste0(aar, collapse=', '))},
             if ((minald>0) | (maxald<110)) {
                   paste0('Pasienter fra ', if (N>0) {sprintf('%.1f',min(RegData$Alder, na.rm=T))} else {minald}, 
