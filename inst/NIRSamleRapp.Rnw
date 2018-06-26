@@ -141,7 +141,7 @@ og kan genereres av intensivregisterets databasebrukerne på \textit{helseregist
 
 <<LasteData, echo=FALSE, eval=T>>=
 datoFra <- '2016-01-01'	
-datoNorsk <- format.Date(datoFra, format='%d.%m%.%Y')
+datoFraNorsk <- format.Date(datoFra, format='%d.%m%.%Y')
 if (!exists('NIRdata')){
       NIRdata <- NIRRegDataSQL(datoFra = datoFra)
 }
