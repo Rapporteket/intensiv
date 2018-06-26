@@ -383,12 +383,12 @@ xtable(tabResp, align=c('l', 'r','r','c','c'), #digits=c(0,1,1,1,0),
 
 \end{frame}
 
+
 \begin{frame}[fragile] {Moglege dobbeltregistreringar}
 
-Registreringer kor same pasient har fått registrert to innleggingar med mindre enn 2 timars mellomrom.
+%Registreringer kor same pasient har fått registrert to innleggingar med mindre enn 2 timars mellomrom.
 
 
-%\resizebox{\textwidth}{!}{
 <<'DblReg', results='asis', echo=FALSE>>=
 
       RegDataSort <- RegData[order(RegData$PasientID, RegData$Innleggelsestidspunkt), 
@@ -411,15 +411,13 @@ dblTab <- kable(tabDbl, format='latex', row.names = FALSE) #,
 #dblTab <- xtable(tabDbl, row.names = FALSE)
       
 @
-%}
 
-%\resizebox{\textwidth}{!}{\Sexpr{dblTab}}
-\begin{table}
-\centering
+\begin{table}[h]
+%\centering
 \resizebox{\textwidth}{!}{
-\Sexpr{dblTab}
-\caption{\label{tab:DblReg}Registreringer kor same pasient har fått registrert to innleggingar med mindre enn 2 timars mellomrom.}
-}
+      \Sexpr{dblTab}}
+      \caption{Registreringer kor same pasient har fått registrert to innleggingar med mindre enn 2 timars mellomrom.}
+      \label{tab:DblReg}
 \end{table}
 
 
