@@ -200,7 +200,7 @@ tabKjPstEget <- round(table(NIRdataEget$erMann)/Neget*100, digits=1)
 \section{Innledning}
 NIR startet elektronisk registrering via helseregister.no fra og med 01.01.2011. 
 Denne samlerapporten er basert på alle opphold som er lagret og ferdigstilt i NIR fra 
-og med \Sexpr{datoFraNorsk} inntil dagen før 
+og med 01.01.2016 inntil dagen før 
 tidspunktet for rapportuttrekk (dvs. flere årganger for de fleste enheter). 
 For hele landet er det gjort registrering av innleggelser i perioden 
 \Sexpr{min(NIRdata$InnDato)} til \Sexpr{max(NIRdata$InnDato)}.
