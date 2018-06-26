@@ -173,7 +173,7 @@ NIRdata <- FinnReinnleggelser(RegData=NIRdata)
 #Tar ut registreringer som ikke har kjønn #og ugyldig ShType
 indMed <- which(NIRdata$erMann %in% 0:1) #%i% which(NIRdata$ShType %in% 1:3)
 NIRdata <- NIRdata[indMed, ]	
-NIRdata$Aar <- as.factor(NIRdata$InnDato$year+1900)
+NIRdata$Aar <- as.factor(NIRdata$Innleggelsestidspunkt$year+1900)
 N <- dim(NIRdata)[1]
 #names(NIRdata)[which(names(NIRdata) == 'PasientId')] <- 'PID'
 LiggeGr <- c(-0.001, 1, 7, 14, 1000)	#<24t, 1-7døgn, 7-14døgn, >14døgn
