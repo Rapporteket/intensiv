@@ -19,6 +19,9 @@
 #'     \item NEMS: Skår for ressursbruk per opphold. (Nine Equivalents of Nursing Manpower Use Score)
 #'     \item NEMS24: NEMS-skår per døgn. 
 #'     \item respiratortid: Tid tilbrakt i respirator
+#'     \item respiratortidNonInv: Respiratortid, ikke-invasiv
+#'     \item respiratortidInvMoverf: Respiratortid, invasiv m/overf.
+#'     \item respiratortidInvUoverf: Respiratortid, invasiv u/overf.
 #'     \item SAPSII: Skår for alvorlighetsgrad av sykdom.  (Simplified Acute Physiology Score II)
 #'    }
 #'

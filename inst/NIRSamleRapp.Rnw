@@ -263,9 +263,9 @@ dum <- NIRFigGjsnGrVar(RegData=NIRdata, valgtVar='alder', valgtMaal='Med', prepr
 
 
 \begin{figure}[ht] 
-\centering \includegraphics[width= \Sexpr{figKrymp1}\textwidth]{FigAlderGjsn.pdf} 
+%\centering \includegraphics[width= \Sexpr{figKrymp1}\textwidth]{FigAlderGjsn.pdf} 
 \centering \includegraphics[width= \Sexpr{figKrymp1}\textwidth]{FigAlderMed.pdf} 
- \caption{Gjennomsnitt og median alder ved \Sexpr{paste0(ShTypeEgenTxt,'sykehus.')}}	
+ \caption{Median alder ved \Sexpr{paste0(ShTypeEgenTxt,'sykehus.')}}	
  
   \label{fig:Alder}
 \end{figure}
@@ -296,7 +296,7 @@ dum <- NIRFigAndeler(RegData=NIRdata, valgtVar='alder', preprosess=0, hentData=0
 \centering \includegraphics[width= \Sexpr{figKrymp1}\textwidth]{FigAlderK.pdf} 
 \centering \includegraphics[width= \Sexpr{figKrymp1}\textwidth]{FigAlderM.pdf} 
  \caption{Aldersfordelig blant hhv. kvinner og menn ved \Sexpr{shtxt} mot 
-	\Sexpr{paste(ShTypeEgenTxt,'sykehus', sep='')} forøvrig.}	
+	\Sexpr{paste0(ShTypeEgenTxt,'sykehus')} forøvrig.}	
   \label{fig:AlderKM}
 \end{figure}
 
@@ -316,22 +316,32 @@ tabLiggLokSentr <- table(NIRdata[which(NIRdata$ShType==1), 'LiggetidGr'])
 tabLiggReg <- table(NIRdata[which(NIRdata$ShType==3), 'LiggetidGr'])
 tabLiggAlle <- table(NIRdata$LiggetidGr)
 
-tabLiggetidShType <- round(100*rbind(
-#	'Egen enhet' = tabLiggEget/sum(tabLiggEget),	
-	'Lokal-/sentralenheter' = tabLiggLokSentr/sum(tabLiggLokSentr),		
-	'Regionalenheter' = tabLiggReg/sum(tabLiggReg),		
-	'Hele landet' = tabLiggAlle/sum(tabLiggAlle)
-		),1)
-colnames(tabLiggetidShType) <- c('<24t', '1-7døgn', '7-14døgn', '>14døgn')
-xtable(tabLiggetidShType, digits=1, align=c('l', rep('r', ncol(tabLiggetidShType))), 
-		caption='Prosentvis fordeling av liggetid.',
-		label='tab:LiggetidShType')
-		
-dum <- NIRFigAndeler(RegData=NIRdata, valgtVar='liggetid', preprosess=0, hentData=0, datoFra=datoFra, 
-	datoTil=datoTil, enhetsUtvalg=1, reshID=reshID, outfile='FigLiggetidFordAlle.pdf')
+# tabLiggetidShType <- round(100*rbind(
+# #	'Egen enhet' = tabLiggEget/sum(tabLiggEget),	
+# 	'Lokal-/sentralenheter' = tabLiggLokSentr/sum(tabLiggLokSentr),		
+# 	'Regionalenheter' = tabLiggReg/sum(tabLiggReg),		
+# 	'Hele landet' = tabLiggAlle/sum(tabLiggAlle)
+# 		),1)
+# colnames(tabLiggetidShType) <- c('<24t', '1-7døgn', '7-14døgn', '>14døgn')
+# xtable(tabLiggetidShType, digits=1, align=c('l', rep('r', ncol(tabLiggetidShType))), 
+# 		caption='Prosentvis fordeling av liggetid.',
+# 		label='tab:LiggetidShType')
+	
+liggetidDIV <- cbind('Egen enhet'= summary(NIRdataEget$liggetid)[1:6],
+			'Resten av landet'= summary(NIRdataResten$liggetid)[1:6])
+rownames(liggetidDIV) <- c('Minimum:', '25% av pasientene er under:', 'Median:','Gjennsomsnitt:',
+		'25% av pasientene er over:', 'Maksimum:')
 
-dum <- NIRFigGjsnGrVar(RegData=NIRdata, valgtVar='liggetid', valgtMaal='Gjsn', preprosess=0, hentData=0,  
-			grType=ShTypeEgen, datoFra=datoFra, datoTil=datoTil, outfile='FigLiggetidGjsn.pdf')
+
+xtable(liggetidDIV, digits=1, align=c('l', rep('r', ncol(liggetidDIV))), 
+		caption='Liggetidskarakteristikker',
+		label='tab:Liggetidskarakteristikker')
+	
+dum <- NIRFigAndeler(RegData=NIRdata, valgtVar='liggetid', preprosess=0, hentData=0, datoFra=datoFra, 
+	datoTil=datoTil, enhetsUtvalg=3, reshID=reshID, outfile='FigLiggetidFordAlle.pdf')
+
+#dum <- NIRFigGjsnGrVar(RegData=NIRdata, valgtVar='liggetid', valgtMaal='Gjsn', preprosess=0, hentData=0,  
+#			grType=ShTypeEgen, datoFra=datoFra, datoTil=datoTil, outfile='FigLiggetidGjsn.pdf')
 dum <- NIRFigGjsnGrVar(RegData=NIRdata, valgtVar='liggetid', valgtMaal='Med', preprosess=0, hentData=0,  
 			grType=ShTypeEgen, datoFra=datoFra, datoTil=datoTil, outfile='FigLiggetidMed.pdf')
 @
@@ -344,9 +354,9 @@ dum <- NIRFigGjsnGrVar(RegData=NIRdata, valgtVar='liggetid', valgtMaal='Med', pr
 \end{figure}
 
 \begin{figure}[ht] 
-\centering \includegraphics[width= \Sexpr{figKrymp1}\textwidth]{FigLiggetidGjsn.pdf} 
+%\centering \includegraphics[width= \Sexpr{figKrymp1}\textwidth]{FigLiggetidGjsn.pdf} 
 \centering \includegraphics[width= \Sexpr{figKrymp1}\textwidth]{FigLiggetidMed.pdf} 
- \caption{Gjennomsnittlig og median liggetid ved \Sexpr{paste(ShTypeEgenTxt,'sykehus', sep='')}.}	
+ \caption{Median liggetid ved \Sexpr{paste0(ShTypeEgenTxt,'sykehus')}.}	
   \label{fig:LiggetidMM}
 \end{figure}
 
@@ -366,7 +376,7 @@ dum <- NIRFigAndelerGrVar(RegData=NIRdata, valgtVar='reinn', preprosess=0, hentD
 
 Reinnleggelse er i registeret definert som nytt intensivopphold under samme sykehusopphold. 
 Internasjonalt er det blitt mer vanlig å definere reinnleggelse som nytt intensivopphold 
-i løpet av 48 timer (ESICM Guidelines).
+i løpet av 72 timer (ESICM Guidelines).
 For hele landet er det \Sexpr{NregReinn} opphold med registrerte data på reinnleggelse. 
 Reinnleggelser utgjør \Sexpr{AndelReinnAlle}\% av alle opphold. 
 Ved \Sexpr{shtxt} utgjør reinnleggelser \Sexpr{AndelReinnEgen}\% av oppholdene.
@@ -455,13 +465,13 @@ xtable(tabNEMSShType, digits=c(0,0,1,0,1,1), align=c('l', rep('r', ncol(tabNEMSS
 		caption='NEMS-poeng per døgn for ulike sykehuskategorier',
 		label='tab:NEMS')
 
-dum <- NIRFigGjsnGrVar(RegData=NIRdata, valgtVar='NEMS', valgtMaal='Gjsn', preprosess=0, hentData=0,  
+dum <- NIRFigGjsnGrVar(RegData=NIRdata, valgtVar='NEMS', valgtMaal='Med', preprosess=0, hentData=0,  
 			grType=ShTypeEgen, datoFra=datoFra, datoTil=datoTil, outfile='FigNEMS.pdf')
 @
 
 \begin{figure}[ht] 
 \centering \includegraphics[width= \Sexpr{figKrymp1}\textwidth]{FigNEMS.pdf} 
-    \caption{Gjennomsnittlig NEMS per døgn for \Sexpr{paste(ShTypeEgenTxt,'sykehus.', sep='')}}
+    \caption{Median NEMS per døgn for \Sexpr{paste0(ShTypeEgenTxt,'sykehus.')}}
 	\label{fig:NEMS}
 \end{figure}
 
@@ -568,9 +578,9 @@ dum <- NIRFigGjsnGrVar(RegData=NIRdata, valgtVar='respiratortid', valgtMaal='Med
 \end{figure}
 
 \begin{figure}[ht] 
-\centering \includegraphics[width= \Sexpr{figKrymp1}\textwidth]{FigResptidGjsn.pdf} 
+%\centering \includegraphics[width= \Sexpr{figKrymp1}\textwidth]{FigResptidGjsn.pdf} 
 \centering \includegraphics[width= \Sexpr{figKrymp1}\textwidth]{FigResptidMed.pdf} 
- \caption{Gjennomsnittlig og median respiratortid ved \Sexpr{paste0(ShTypeEgenTxt,'sykehus')}.}	
+ \caption{Median respiratortid ved \Sexpr{paste0(ShTypeEgenTxt,'sykehus')}.}	
   \label{fig:ResptidMM}
 \end{figure}
 
@@ -615,8 +625,8 @@ xtable(tabSAPSShType, digits=c(0,1,1,0,0), align=c('l','r','r','c','c'),
 #		preprosess=0, hentData=0, outfile='FigSAPSford.pdf') 
 dum <- NIRFigAndeler(RegData=NIRdata, valgtVar='SAPSII', preprosess=0, hentData=0, datoFra=datoFra, 
 	datoTil=datoTil, enhetsUtvalg=3, reshID=reshID, outfile='FigSAPSford.pdf')
-dum <- NIRFigGjsnGrVar(RegData=NIRdata, valgtVar='SAPSII', valgtMaal='Gjsn', preprosess=0, hentData=0,  
-		grType=ShTypeEgen, datoFra=datoFra, datoTil=datoTil, outfile='FigSAPSgjsn.pdf') 
+dum <- NIRFigGjsnGrVar(RegData=NIRdata, valgtVar='SAPSII', valgtMaal='Med', preprosess=0, hentData=0,  
+		grType=ShTypeEgen, datoFra=datoFra, datoTil=datoTil, outfile='FigSAPSmed.pdf') 
 @
 
 SAPS II: Totalt er \Sexpr{length(indEgenUtv)} opphold er skåret for \Sexpr{shtxt}.
@@ -626,8 +636,8 @@ SAPSII for \Sexpr{ShTypeEgenTxt}sykehus.
 
 \begin{figure}[ht] 
 \centering \includegraphics[width= \Sexpr{figKrymp1}\textwidth]{FigSAPSford.pdf} 
-\centering \includegraphics[width= \Sexpr{figKrymp1}\textwidth]{FigSAPSgjsn.pdf} 
- \caption{Fordeling av SAPS II og gjennomsnittlig SAPS II ved \Sexpr{paste(ShTypeEgenTxt,'sykehus.', sep='')}.}	
+\centering \includegraphics[width= \Sexpr{figKrymp1}\textwidth]{FigSAPSmed.pdf} 
+ \caption{Fordeling av SAPS II og median SAPS II ved \Sexpr{paste0(ShTypeEgenTxt,'sykehus.')}.}	
   \label{fig:SAPSII}
 \end{figure}
 
@@ -685,16 +695,18 @@ vitalstatus for pasienten ved utskrivning både fra intensiv og sykehus.
 NB! Vitalstatus er bare registrert for siste opphold ved reinnleggelser, 
 og bare siste opphold vil derfor være med i denne sammenhengen. 
 \par
-SMR er observert mortalitet delt på SAPS II-estimert mortalitet. 
+SMR er observert 30-dagers mortalitet delt på SAPS II-estimert mortalitet for opphold 
+der pasienten faktisk er SAPS II-skåret. 
 SMR $<$1 vil derfor tyde på bedre overlevelse enn man skulle forvente ut fra SAPS-skåre, 
 mens en verdi $>$1 tyder på lavere overlevelse enn man skulle forvente.
 SAPS II en gammel skåre, og det er skjedd mange endringer i intensivmedisinen etter at SAPS ble konstruert. 
 Dette gjør seg blant annet utslag i dårlig kalibrering, slik at gjennomsnittet er langt under 1. 
-For reinnlagte pasienter er SMR bare knyttet til status ut sykehus ved siste opphold (f.eks. 
+
+For reinnlagte er SMR kun knyttet til 30-dagers mortalitet ved første opphold (f.eks. 
 vil en pasient som er reinnlagt på intensiv to ganger og så dør under siste opphold, 
 bli rapportert som ett dødsfall med én SAPS II-skåre, ikke som to levende og en død). 
-Pasienter som er overflyttet under pågående intensivbehandling er ikke med i SMR-grunnlaget, 
-da disse vil kunne utgjøre en markant feilkilde. Uansett må man tolke SMR-verdiene varsomt, 
+
+Man må tolke SMR-verdiene varsomt, 
 særleg med tanke på at det er stort innslag av «case mix».
 
 <<SMR, echo=FALSE, message=FALSE>>=
@@ -754,7 +766,7 @@ xtable(tabDodInt, digits=c(0,rep(1,dim(tabDodInt)[2])), align=c('l',rep('r',dim(
 
 AndelRespStotte <- round(100*length(which(NIRdataUtv$respiratortid>0))/dim(NIRdataUtv)[1],1)
 
-dum <- NIRFigGjsnGrVar(RegData=NIRdata, valgtVar='liggetid', valgtMaal='Gjsn', preprosess=0, hentData=0, dodInt=1, 
+dum <- NIRFigGjsnGrVar(RegData=NIRdata, valgtVar='liggetid', valgtMaal='Med', preprosess=0, hentData=0, dodInt=1, 
 		grType=ShTypeEgen, datoFra=datoFra, datoTil=datoTil, outfile='FigLiggetidDode.pdf') 	#LiggetidDodGjsn.pdf
 @
 
@@ -767,7 +779,7 @@ Av de som døde på intensiv, hadde \Sexpr{AndelRespStotte} \% fått respirasjon
 
 \begin{figure}[ht] 
 \centering \includegraphics[width= \Sexpr{figKrymp1}\textwidth]{FigLiggetidDode.pdf} 
-  \caption{Gjennomsnittlig liggetid på intensiv for ikke-overlevere, \Sexpr{paste0(ShTypeEgenTxt,'sykehus.')}}
+  \caption{Median liggetid på intensiv for ikke-overlevere, \Sexpr{paste0(ShTypeEgenTxt,'sykehus.')}}
   \label{fig:FigLiggetidDode}
 \end{figure}
 

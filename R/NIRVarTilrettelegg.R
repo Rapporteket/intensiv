@@ -420,7 +420,7 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='an
             RegData <- FinnReinnleggelser(RegData=RegData)
             RegData <- RegData[RegData$Reinn==2, ]
             RegData$Variabel <- RegData$SMR
-            xAkseTxt <- 'Observert / estimert dødelighet'
+            xAkseTxt <- 'Observert 30-dagers dødelighet/ estimert dødelighet'
             KImaal <- 0.7  #SMR <0.7 
             KImaaltxt <- '<0.7'
             sortAvtagende <- FALSE

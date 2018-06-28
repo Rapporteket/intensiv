@@ -129,7 +129,7 @@ ui <- fluidPage( #"Hoved"Layout for alt som vises på skjermen
         #'input.ark === "Fordelinger" || input.ark === "Andeler" ',
         selectInput(inputId = "valgtVarGjsn", label="Velg variabel",
                     choices = c('Alder' = 'alder',
-                            	'Liggetid' = 'liggetid',
+                                'Liggetid' = 'liggetid',
                                 'Nas-skår (sykepleierakt.)' = 'Nas24',
                                 'NEMS-skår (ressursbruk)' = 'NEMS24',
                                 'NEMS-skår per opphold' = 'NEMS',

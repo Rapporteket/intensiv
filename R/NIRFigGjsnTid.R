@@ -5,9 +5,16 @@
 #'
 #' Argumentet \emph{valgtVar} har følgende valgmuligheter:
 #'    \itemize{
-#'     \item alder: Pasientens alder
+#'     \item alder: Pasientens alders 
+#'     \item SMR: Standardisert mortalitetsratio (Gir annen figurtype)
 #'     \item liggetid: Liggetid 
+#'     \item Nas: Skår for sykepleieraktiviteter. (Nursing Activities Score). Per døgn.
+#'     \item NEMS: Skår for ressursbruk per opphold. (Nine Equivalents of Nursing Manpower Use Score)
+#'     \item NEMS24: NEMS-skår per døgn. 
 #'     \item respiratortid: Tid tilbrakt i respirator
+#'     \item respiratortidNonInv: Respiratortid, ikke-invasiv
+#'     \item respiratortidInvMoverf: Respiratortid, invasiv m/overf.
+#'     \item respiratortidInvUoverf: Respiratortid, invasiv u/overf.
 #'     \item SAPSII: Skår for alvorlighetsgrad av sykdom.  (Simplified Acute Physiology Score II)
 #'    }
 #' Argumentet \emph{enhetsUtvalg} har følgende valgmuligheter:

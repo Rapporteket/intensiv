@@ -22,7 +22,9 @@ library(lubridate)
 
 dato <- as.POSIXlt(Sys.Date())
 datoTil <- as.Date(format(dato, "%Y-%m-01"))-1 #Til siste i forrige måned
-
+mndTxt <- c('januar', 'februar', 'mars', 'april', 'mai', 'juni', 'juli', 'august', 
+                   'september', 'oktober', 'november', 'desember')
+rappMnd <- paste0(mndTxt[dato$mon+1], ' ', dato$year+1900)
 #som <- function(x) {as.Date(format(x, "%Y-%m-01"))}
 #dato <- as.POSIXlt(datoTil)
 
@@ -73,22 +75,21 @@ tabKjPstEget <- round(table(RegDataEget$erMann)/Neget*100, digits=1)
 
 @
 
-
-\title[NIR\\\Sexpr{shtxt}]{\textit{Norsk intensivregister} \\
-MÅNEDSRAPPORT \\
-\Sexpr{shtxt}}
-\date{}
-
-
-
 \begin{document}
+
+\title[NIR\\\Sexpr{shtxt} \\\today]{\textit{Norsk intensivregister} \\
+Månadsrapport, \Sexpr{rappMnd} \\
+\Sexpr{shtxt} }
+%{\today}\\[2cm] % Date, change the \today to a set date if you want to be precise \date{}
+
+
 \begin{tiny}
 
 \maketitle
 
 \begin{frame}[fragile] {Ansvar og bruk av data}
 Fagrådet i NIR er ansvarleg for alle vurderingar og tolkingar av data, og også feil i resultat som skuldast feil i datagrunnlaget. Den viktigaste feilkjelda i rapporten vil truleg vere ufullstendige datasett i mange av NIR-einingane – det vil seie at ikkje alle data er ferdigstilte for aktuell månad. Dette etterslepet vil variere markert både i tid og volum, og gjer at data blir meir eller mindre representative for dei ulike einingane.
-Rapporten inneheld berre anonymiserte samledata, ikkje data om einskildpersonar. I tilfelle der utvalet inneheld få registreringar som er kombinerte med til dømes demografiske data, kan det ikkje utelukkast at rapporterte data kan tilbakeførast til einskildpersonar. 
+Rapporten inneheld anonymiserte samledata. I tilfelle der utvalet inneheld få registreringar som er kombinerte med til dømes demografiske data, kan det ikkje utelukkast at rapporterte data kan tilbakeførast til einskildpersonar. 
 Rapporten har difor usikkert datagrunnlag og er meint til intern bruk i einingane. NIR ber om at denne rapporten ikkje blir brukt offentleg i nokon samanheng eller blir offentleggjort på noko vis, av grunnar nemnde her.
 \end{frame}
 
@@ -98,27 +99,21 @@ Rapporten har difor usikkert datagrunnlag og er meint til intern bruk i einingan
 \begin{frame}[fragile] {Datagrunnlag}
 
 Denne rapporten er framstilt automatisk etter mal laga av Lena Ringstad Olsen ved Senter for Klinisk Dokumentasjon og Evaluering (SKDE) på oppdrag frå Norsk
-intensivregister (NIR). Alle resultat er baserte på data frå registeret og er gyldige per rapportdato for opphald som er ferdigstilte i MRS. Rapporten inneheld alle ferdigstilte opphald i MRS der innleggingstidspunktet på intensiv er i tidsrommet kl.00.00 den fyrste i aktuell månad til kl. 23.59 den siste i månaden. \textit{Månadsrapporten vil dermed ikkje innehalde data frå dei pasientane som vart innlagde før månadsskiftet og «ligg over» inn i den aktuelle månaden, men vil innehalde alle relevante data frå dei som vart innlagde i slutten av den aktuelle månaden og «ligg over» til neste månad, dersom opphaldet er ferdigstilt i MRS.} Det siste er litt tungt (og for meg litt uklart). Holder det ikke å bare å si det som står før det i kursiv og det som står under? 
-
-Uttrekket blir gjort for kvar kalendermånad, med ein månads forseinking. \textbf{Månadsrapport for januar vert sendt ut sist i februar, for februar sist i mars osv.} OK?
-
-(\textbf{Fjernes?:} NIR-einingar som er ajour med registreringa, vil dermed kunne få nær fullstendige månadsrapportar. 
+intensivregister (NIR). Alle resultat er baserte på data frå registeret og er gyldige per rapportdato for opphald som er ferdigstilte i MRS. Rapporten inneheld alle ferdigstilte opphald i MRS der innleggingstidspunktet på intensiv er i tidsrommet kl.00.00 den fyrste i aktuell månad til kl. 23.59 den siste i månaden. 
+Uttrekket blir gjort for kvar kalendermånad, med ein knapp månads forseinking. Månadsrapport for januar vert sendt ut sist i februar, for februar sist i mars osv.
+NIR-einingar som er ajour med registreringa, vil dermed kunne få nær fullstendige månadsrapportar. 
 Rapporten kan også hentast ved at ein loggar seg inn på Rapporteket-Intensiv, klikkar på "Månadsrapport". 
-Det gjer at alle (fjernes?: som ikkje er ajour nok med registreringa,) kan hente seg representative månadsrapportar når dei måtte ynskje.
+Det gjer at alle kan hente seg representative månadsrapportar når dei måtte ynskje. I Rapporteket kan ein óg finne mange fleire figurar og tabeller, og gjere endringar i tidsintervall og samanlikningsgrunnlag
 
 \end{frame}
 
-\begin{frame}[fragile] {Innhaldforteikning}
-\normalsize{Figurar:} \\
-\begin{itemize}
-\item Hovudårsak til opphaldet
-\end{itemize}
+\begin{frame}[fragile] {Innhald}
 
-\normalsize{Tabellar:} 
 \begin{itemize}
 \item Opphald og liggedøger
 \item Alder
 \item Liggjetid
+\item Hovudårsak til opphaldet
 \item NEMS-skåre
 \item Respirasjonsstøtte
 \item SAPS II
@@ -130,7 +125,7 @@ Det gjer at alle (fjernes?: som ikkje er ajour nok med registreringa,) kan hente
 
 %\section{Registreringsoversikter}
 
-\begin{frame}[fragile] {Opphald, pasientar og liggjetid (intensivdøger)}
+\begin{frame}[fragile] {Belegg}
 
 
 <<'TabReg', results='asis', echo=FALSE, eval=T>>=
@@ -190,7 +185,7 @@ rownames(alderDIV) <- c('Minimum:',
 
 
 xtable(alderDIV, digits=1, align=c('l', rep('r', ncol(alderDIV))), 
-		caption='Alderskarakteristikker (alder i år), siste seks månader.',
+		caption='Alderskarakteristikkar (alder i år), siste seks månader.',
 		label='tab:Alderseigenskapar')
 
 @
@@ -203,7 +198,7 @@ xtable(alderDIV, digits=1, align=c('l', rep('r', ncol(alderDIV))),
 variable <- c('PrimaryReasonAdmitted')
 for (valgtVar in variable) {
 	outfile <- paste0(valgtVar, 'FordMnd', '.pdf')
-	NIRFigAndeler(RegData=RegDataMnd, valgtVar=valgtVar, datoFra=datoFra, reshID=reshID, 
+	NIRFigAndeler(RegData=RegData, valgtVar=valgtVar, datoFra=datoFra, reshID=reshID, 
 	               enhetsUtvalg=enhetsUtvalg, preprosess=0, outfile = outfile)
 }
 
@@ -221,7 +216,7 @@ for (valgtVar in variable) {
 Liggjetida er den samla tida frå pasienten fysisk er komen til intensiv/overvakingsarealet
 ved innlegging, til pasienten fysisk forlet intensiv/overvakingsarealet ved utskriving.
 Liggjetida vil dermed inkludere tid pasienten måtte vere utanfor intensiv (røntgen, op-
-erasjon osv.). Liggjetida blir registrert i døger med ein desimal, dvs. timar/24.
+erasjon osv.). 
 
 <<'TabLiggetid', results='asis', echo=FALSE>>=
 finnGjsnMedKj <- function(RegData){
@@ -241,7 +236,7 @@ liggetidKj <- rbind(
 colnames(liggetidKj) <- c('Gj.snitt', 'Median', 'Kvinner')
 
 xtable(liggetidKj, digits=1, align=c('l', rep('r', ncol(liggetidKj))), 
-		caption='Liggjetid og andel kvinner, siste 6 månader.',
+		caption='Liggjedøger og andel kvinner, siste 6 månader.',
 		label='tab:liggetidKj')
 		
 # dum <- NIRFigAndeler(RegData=NIRdata, valgtVar='liggetid', preprosess=0, hentData=0, 
@@ -261,14 +256,14 @@ xtable(liggetidKj, digits=1, align=c('l', rep('r', ncol(liggetidKj))),
 \begin{figure}[ht]
 \centering              
 \includegraphics[scale=0.35]{PrimaryReasonAdmittedFordMnd.pdf}
-\caption{Hovudårsak til innlegging på intensiv (prosent per kategori) sist månad, eiga avdeling og landet elles. \textbf{Skal vi endre det til siste 6 mnd?} }
+\caption{Hovudårsak til innlegging på intensiv (prosent per kategori) sist månad, eiga avdeling og landet elles.}
 \end{figure}
 \end{frame}
 
 
 \begin{frame}[fragile] {NEMS-skåre}
 Totalt tal NEMS-poeng for opphaldet. Faste definisjonar (Miranda), NEMS skåra på pleiedøgeret.
-NB! Sidan det er stor variasjon i NEMS-skåre for korte opphald, avhengig av tal på timar
+Sidan det er stor variasjon i NEMS-skåre for korte opphald, avhengig av tal på timar
 som er rekna med før/etter pleiedøgeret, rapporterer vi her data per døger
 for opphald som har vart lenger enn 24 timar og der det faktisk er skåra NEMS-poeng.
 
@@ -286,7 +281,7 @@ finnGjsnMedNEMS <- function(RegData){
       GM_NEMS <- finnGjsnMed(RegData$NEMS)
       GM_NEMSd <- finnGjsnMed(RegData$NEMSd)
       Antal <- dim(RegData)[1]
-      Ut <- c(GM_NEMS, GM_NEMSd, Antal)
+      Ut <- c(GM_NEMS, GM_NEMSd[2:1], Antal)
       }
 
 NEMStab <- rbind(
@@ -295,7 +290,7 @@ NEMStab <- rbind(
 	'Resten av landet'= finnGjsnMedNEMS(RegDataResten),
 	'Eigen sjukehustype' = finnGjsnMedNEMS(RegDataShType))
 
-colnames(NEMStab) <- c('Gj.sn/opph', 'Median/opph','Gj.sn/døger', 'Median/døger', 'Antal')
+colnames(NEMStab) <- c('Gj.sn/opph', 'Median/opph','Median/døger', 'Gj.sn/døger', 'Antal')
 
 xtable(NEMStab, digits=1, align=c('l', rep('r', ncol(NEMStab))), 
 		caption='NEMS-poeng per opphald og døger for ulike sjukehuskategoriar, siste seks månader. ',
@@ -308,11 +303,11 @@ xtable(NEMStab, digits=1, align=c('l', rep('r', ncol(NEMStab))),
 
 \begin{frame}[fragile] {Respirasjonsstøtte}
 
-Respirasjonsstøtte (den tida pasienten har fått respirasjonsstøtte ut over
+Respirasjonsstøtte er antall døger pasienten har fått respirasjonsstøtte ut over
 O2-tilførsle i ope system (NIR sin mal). Resultata i tabellen omfattar berre pasientar som
 har fått respirasjonsstøtte (respirasjonstid>0).
 Respirasjonsstøtte varierer mykje mellom ulike intensivavsnitt. Den viktigaste grunnen er
-skilnader i sjølve pasientpopulasjonen («case mix»). I tillegg er tala påverka av ulik praksis når det gjeld sedasjon, respiratoravvenning og trakeotomi, og tilgang på andre
+skilnader i sjølve pasientpopulasjonen. I tillegg er tala påverka av ulik praksis når det gjeld sedasjon, respiratoravvenning og trakeotomi, og tilgang på andre
 spesialitetar (lunge, øyre-nese-hals, røntgen etc.). Lokal behandlingstradisjon er også ein faktor.
 
 <<'TabResp', results='asis', echo=FALSE>>=
@@ -338,10 +333,9 @@ tabResp <- rbind(
 	'Resten av landet'= finnDivRespMaal(RegDataResten),
 	'Eigen sjukehustype' = finnDivRespMaal(RegDataShType))
 				
-colnames(tabResp) <- c('Gj.sn', 'Median', 'Andel(%)', '25-75 prosentil', 'Spreiing')
+colnames(tabResp) <- c('Gj.sn', 'Median', 'Andel(%)', '25-75 prosentil', 'Min-maks')
 xtable(tabResp, align=c('l', 'r','r','r','c','c'), #digits=c(0,1,1,1,0), 
-		caption='Antal døger med respirasjonsstøtte for eiga eining og 
-       ulike sjukehuskategoriar siste 6 månader.',
+		caption='Antal døger med respirasjonsstøtte, siste 6 månader.',
 		label='tab:Resp')
 @
  
@@ -375,7 +369,7 @@ tabResp <- rbind(
 	'Resten av landet'= finnDivSAPSMaal(RegDataResten),
 	'Eigen sjukehustype' = finnDivSAPSMaal(RegDataShType))
 				
-colnames(tabResp) <- c('Gj.sn', 'Median', '25-75 prosentil', 'Spreiing')
+colnames(tabResp) <- c('Gj.sn', 'Median', '25-75 prosentil', 'Min-maks')
 xtable(tabResp, align=c('l', 'r','r','c','c'), #digits=c(0,1,1,1,0), 
 		caption='SAPS-skåre for eiga eining og ulike sjukehuskategoriar, siste seks månader.',
 		label='tab:SAPSII')
