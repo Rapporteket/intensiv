@@ -24,7 +24,7 @@ dato <- as.POSIXlt(Sys.Date())
 datoTil <- as.Date(format(dato, "%Y-%m-01"))-1 #Til siste i forrige måned
 mndTxt <- c('januar', 'februar', 'mars', 'april', 'mai', 'juni', 'juli', 'august', 
                    'september', 'oktober', 'november', 'desember')
-rappMnd <- paste0(mndTxt[dato$mon+1], ' ', dato$year+1900)
+rappMnd <- paste0(mndTxt[ifelse(dato$mon==0, 12, dato$mon)], ' ', dato$year+1900)
 #som <- function(x) {as.Date(format(x, "%Y-%m-01"))}
 #dato <- as.POSIXlt(datoTil)
 
@@ -81,16 +81,19 @@ tabKjPstEget <- round(table(RegDataEget$erMann)/Neget*100, digits=1)
 Månadsrapport, \Sexpr{rappMnd} \\
 \Sexpr{shtxt} }
 %{\today}\\[2cm] % Date, change the \today to a set date if you want to be precise \date{}
+\maketitle
 
 
 \begin{tiny}
 
-\maketitle
-
 \begin{frame}[fragile] {Ansvar og bruk av data}
+
 Fagrådet i NIR er ansvarleg for alle vurderingar og tolkingar av data, og også feil i resultat som skuldast feil i datagrunnlaget. Den viktigaste feilkjelda i rapporten vil truleg vere ufullstendige datasett i mange av NIR-einingane – det vil seie at ikkje alle data er ferdigstilte for aktuell månad. Dette etterslepet vil variere markert både i tid og volum, og gjer at data blir meir eller mindre representative for dei ulike einingane.
+Rapporten har difor usikkert datagrunnlag og er meint til internt bruk i einingane. 
 Rapporten inneheld anonymiserte samledata. I tilfelle der utvalet inneheld få registreringar som er kombinerte med til dømes demografiske data, kan det ikkje utelukkast at rapporterte data kan tilbakeførast til einskildpersonar. 
-Rapporten har difor usikkert datagrunnlag og er meint til intern bruk i einingane. NIR ber om at denne rapporten ikkje blir brukt offentleg i nokon samanheng eller blir offentleggjort på noko vis, av grunnar nemnde her.
+
+\textbf{Av grunnane over, ber NIR om at denne rapporten ikkje blir brukt offentleg i nokon samanheng eller blir offentleggjort på noko vis.}
+
 \end{frame}
 
 
@@ -98,28 +101,34 @@ Rapporten har difor usikkert datagrunnlag og er meint til intern bruk i einingan
 
 \begin{frame}[fragile] {Datagrunnlag}
 
-Denne rapporten er framstilt automatisk etter mal laga av Lena Ringstad Olsen ved Senter for Klinisk Dokumentasjon og Evaluering (SKDE) på oppdrag frå Norsk
-intensivregister (NIR). Alle resultat er baserte på data frå registeret og er gyldige per rapportdato for opphald som er ferdigstilte i MRS. Rapporten inneheld alle ferdigstilte opphald i MRS der innleggingstidspunktet på intensiv er i tidsrommet kl.00.00 den fyrste i aktuell månad til kl. 23.59 den siste i månaden. 
+Denne rapporten er utarbeidet på oppdrag frå Norsk
+intensivregister (NIR) og genereres automatisk frå Rapporteket. 
+Alle resultat er baserte på data frå registeret og er gyldige per rapportdato for opphald som er ferdigstilte i MRS. For \Sexpr{shtxt} er siste ferdigstilte innleggingsdato 
+\Sexpr{format.Date(max(RegDataEget$InnDato), format='%d.%m%.%Y')}.
+Rapporten inneheld alle ferdigstilte opphald i MRS der 
+innleggingstidspunktet på intensiv er i tidsrommet kl.00.00 den fyrste i aktuell månad til kl. 23.59 den siste i månaden. 
 Uttrekket blir gjort for kvar kalendermånad, med ein knapp månads forseinking. Månadsrapport for januar vert sendt ut sist i februar, for februar sist i mars osv.
 NIR-einingar som er ajour med registreringa, vil dermed kunne få nær fullstendige månadsrapportar. 
-Rapporten kan også hentast ved at ein loggar seg inn på Rapporteket-Intensiv, klikkar på "Månadsrapport". 
-Det gjer at alle kan hente seg representative månadsrapportar når dei måtte ynskje. I Rapporteket kan ein óg finne mange fleire figurar og tabeller, og gjere endringar i tidsintervall og samanlikningsgrunnlag
+\par
+
+Denne rapporten kan óg hentast ved at ein loggar seg inn på Rapporteket-Intensiv og klikkar på "Månedsrapport". 
+Det gjer at alle kan hente seg representative månadsrapportar når dei måtte ynskje. I Rapporteket kan ein óg finne mange fleire figurar og tabeller, og gjere endringar i tidsintervall og samanlikningsgrunnlag.
 
 \end{frame}
 
 \begin{frame}[fragile] {Innhald}
-
+\small{
 \begin{itemize}
 \item Opphald og liggedøger
 \item Alder
-\item Liggjetid
+\item Liggetid
 \item Hovudårsak til opphaldet
 \item NEMS-skåre
 \item Respirasjonsstøtte
 \item SAPS II
 \item Dobbeltregistreringar
 \end{itemize}
-
+}
 \end{frame}
 
 
@@ -139,7 +148,7 @@ tabAvdNEget <- rbind(
 	)
 
 xtable(tabAvdNEget, digits=0, align=c('l', rep('r', ncol(tabAvdNEget))), 
-		caption=paste0('Antal opphald og liggedøger, ', shtxt), label='tab:RegEget')
+		caption=paste0('Antal opphald og liggedøger, ', shtxt,'.'), label='tab:RegEget')
 
 @
 
@@ -176,17 +185,17 @@ alderDIV <- cbind(
 	'Resten av landet'= alderTabInnhold(RegDataResten),
 	'Eigen sjukehustype' = alderTabInnhold(RegDataShType))
 rownames(alderDIV) <- c('Minimum:', 
-                        '25% pasientar under:', 
-                        'Median:','Gjennsomsnitt:',
-                        '25% pasientar over:', 
+                        '25 \\% pasientar under:', 
+                        'Median:','Gjennomsnitt:',
+                        '25 \\% pasientar over:', 
                         'Maksimum:',
-                        'Pasientar < 16 år', 
-                        'Pasientar >= 80 år')
+                        'Pasientar \\textless 16 år', 
+                        'Pasientar $\\leqslant $ 80 år')
 
 
-xtable(alderDIV, digits=1, align=c('l', rep('r', ncol(alderDIV))), 
+print(xtable(alderDIV, digits=1, align=c('l', rep('r', ncol(alderDIV))), 
 		caption='Alderskarakteristikkar (alder i år), siste seks månader.',
-		label='tab:Alderseigenskapar')
+		label='tab:Alderseigenskapar'), sanitize.rownames.function = identity)
 
 @
 
@@ -211,12 +220,12 @@ for (valgtVar in variable) {
 @
 
 
-\begin{frame}[fragile] {Liggjetid på intensiv}
+\begin{frame}[fragile] {Liggetid på intensiv}
  
-Liggjetida er den samla tida frå pasienten fysisk er komen til intensiv/overvakingsarealet
+Liggetida er den samla tida frå pasienten fysisk er komen til intensiv/overvakingsarealet
 ved innlegging, til pasienten fysisk forlet intensiv/overvakingsarealet ved utskriving.
-Liggjetida vil dermed inkludere tid pasienten måtte vere utanfor intensiv (røntgen, op-
-erasjon osv.). 
+Liggetida vil dermed inkludere tid pasienten måtte vere utanfor intensiv (røntgen, 
+operasjon osv.). 
 
 <<'TabLiggetid', results='asis', echo=FALSE>>=
 finnGjsnMedKj <- function(RegData){
@@ -236,7 +245,7 @@ liggetidKj <- rbind(
 colnames(liggetidKj) <- c('Gj.snitt', 'Median', 'Kvinner')
 
 xtable(liggetidKj, digits=1, align=c('l', rep('r', ncol(liggetidKj))), 
-		caption='Liggjedøger og andel kvinner, siste 6 månader.',
+		caption='Liggedøger og andel kvinner, siste 6 månader.',
 		label='tab:liggetidKj')
 		
 # dum <- NIRFigAndeler(RegData=NIRdata, valgtVar='liggetid', preprosess=0, hentData=0, 
@@ -256,7 +265,7 @@ xtable(liggetidKj, digits=1, align=c('l', rep('r', ncol(liggetidKj))),
 \begin{figure}[ht]
 \centering              
 \includegraphics[scale=0.35]{PrimaryReasonAdmittedFordMnd.pdf}
-\caption{Hovudårsak til innlegging på intensiv (prosent per kategori) sist månad, eiga avdeling og landet elles.}
+\caption{Hovudårsak til innlegging på intensiv (prosent per kategori) siste seks månader, eiga avdeling og landet elles.}
 \end{figure}
 \end{frame}
 
@@ -269,9 +278,9 @@ for opphald som har vart lenger enn 24 timar og der det faktisk er skåra NEMS-p
 
 <<'NEMS', results='asis', echo=FALSE>>=
 finnGjsnMed <- function(variabel){
-      Gjsn <- sprintf("%.1f", mean(variabel, na.rm=T))
+      #Gjsn <- sprintf("%.1f", mean(variabel, na.rm=T))
       Med <- sprintf("%.1f", median(variabel, na.rm=T))
-      Ut <- c(Gjsn, Med)
+      #Ut <- c(Gjsn, Med)
       }
 
 finnGjsnMedNEMS <- function(RegData){
@@ -281,7 +290,7 @@ finnGjsnMedNEMS <- function(RegData){
       GM_NEMS <- finnGjsnMed(RegData$NEMS)
       GM_NEMSd <- finnGjsnMed(RegData$NEMSd)
       Antal <- dim(RegData)[1]
-      Ut <- c(GM_NEMS, GM_NEMSd[2:1], Antal)
+      Ut <- c(GM_NEMS, GM_NEMSd, Antal)
       }
 
 NEMStab <- rbind(
@@ -290,7 +299,9 @@ NEMStab <- rbind(
 	'Resten av landet'= finnGjsnMedNEMS(RegDataResten),
 	'Eigen sjukehustype' = finnGjsnMedNEMS(RegDataShType))
 
-colnames(NEMStab) <- c('Gj.sn/opph', 'Median/opph','Median/døger', 'Gj.sn/døger', 'Antal')
+colnames(NEMStab) <- c('Median/opph.','Median/døger', 'Antal')
+            #c('Gj.sn/opph', 'Median/opph','Median/døger', 'Gj.sn/døger', 'Antal')
+
 
 xtable(NEMStab, digits=1, align=c('l', rep('r', ncol(NEMStab))), 
 		caption='NEMS-poeng per opphald og døger for ulike sjukehuskategoriar, siste seks månader. ',
@@ -344,7 +355,7 @@ xtable(tabResp, align=c('l', 'r','r','r','c','c'), #digits=c(0,1,1,1,0),
 
 \begin{frame}[fragile] {SAPS II (alvorsskåre)}
 
-Vi inkluderer kun opphald med SAPS-skåre >0 der pasienten var over 16 år.
+Vi inkluderer kun opphald med SAPS-skåre $>$0 der pasienten var over 16 år.
 Dei viktigaste feilkjelder i SAPS II-skåren er korvidt pasientar som skal skårast (og berre dei)
 er skåra, om reinsing og siling av avviksverdiar er etablert for data som ikkje representerer
 pasienten sin tilstand, og om Glasgow Coma Score er einsarta skåra.

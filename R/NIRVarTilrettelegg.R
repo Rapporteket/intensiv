@@ -291,12 +291,15 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='an
             
             #Det er mange feil i variabelen ReAdmitted. Beregner derfor reinnleggelse basert på 
             #Innleggelsestidspunkt , DateDischargedIntensive og en PasientID
-            RegData <- RegData[which(RegData$InnDato >= as.POSIXlt('2016-01-01')), ]	
+            #29.06.18: Filtrer på kun ikke-overflyttede. (1= ikke overført, 2= overført)
+            RegData <- RegData[which(RegData$InnDato >= as.POSIXlt('2016-01-01')) & 
+                                     which(RegData$Overf==1), ]	
             RegData <- FinnReinnleggelser(RegData=RegData, PasientID = 'PasientID')
             if (figurtype %in% c('andelGrVar', 'andelTid')) {
                   RegData$Variabel[which(RegData$Reinn==1)] <- 1}  
             if (figurtype == 'gjsnGrVar') {RegData$Variabel <- RegData$Reinn}  
-            tittel <-'Reinnleggelser på intensivavd. (innen 72t)'
+            tittel <-c('Reinnleggelser på intensivavd. (innen 72t)',
+                       'uten overflyttede pasienter')
             sortAvtagende <- FALSE      #Rekkefølge
             KImaal <- 4  #Reinnleggelser <4% 
             KImaaltxt <- '<4'

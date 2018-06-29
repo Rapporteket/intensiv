@@ -31,7 +31,6 @@ reshID=112044 #Tromsø med int: 601302, Ullevål Kir int: 109773, 102090 Ahus, 1
 knit('NIRmndRapp.Rnw', encoding = 'UTF-8')
 texi2pdf(file='NIRmndRapp.tex')
 
-
 #knit(input, output = NULL, tangle = FALSE, text = NULL, envir = parent.frame())
 # NIRdata <- RegData
 knit('NIRSamleRapp.Rnw')

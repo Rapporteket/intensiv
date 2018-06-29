@@ -140,7 +140,8 @@ og kan genereres av intensivregisterets databasebrukerne på \textit{helseregist
 
 
 <<LasteData, echo=FALSE, eval=T>>=
-datoFra <- '2016-01-01'	
+datoFra <- '2017-01-01'	
+fraAar <- '2017'
 datoFraNorsk <- format.Date(datoFra, format='%d.%m%.%Y')
 if (!exists('NIRdata')){
       NIRdata <- NIRRegDataSQL(datoFra = datoFra)
@@ -216,8 +217,9 @@ Den skal ikke offentliggjøres. NIR sentralt vil produsere årsrapport med samle
 
 \clearpage
 \section{Oversikt for \Sexpr{shtxt} }
- Ved \Sexpr{shtxt} er det registrert innleggelser for perioden \Sexpr{min(NIRdataEget$InnDato)} 
- til \Sexpr{max(NIRdataEget$InnDato)}.
+
+ Tabell \ref{tab:RegEget} viser innleggelser ved \Sexpr{shtxt} for perioden 
+ \Sexpr{min(NIRdataEget$InnDato)} til \Sexpr{max(NIRdataEget$InnDato)}.
 
 <<'TabReg', results='asis', echo=FALSE, eval=T>>=
 #For bare Eget sykehus
@@ -377,13 +379,14 @@ dum <- NIRFigAndelerGrVar(RegData=NIRdata, valgtVar='reinn', preprosess=0, hentD
 Reinnleggelse er i registeret definert som nytt intensivopphold under samme sykehusopphold. 
 Internasjonalt er det blitt mer vanlig å definere reinnleggelse som nytt intensivopphold 
 i løpet av 72 timer (ESICM Guidelines).
-For hele landet er det \Sexpr{NregReinn} opphold med registrerte data på reinnleggelse. 
-Reinnleggelser utgjør \Sexpr{AndelReinnAlle}\% av alle opphold. 
+For hele landet er det \Sexpr{NregReinn} opphold med registrerte data på reinnleggelse siden 
+\Sexpr{datoFra}. 
+Reinnleggelser utgjør \Sexpr{AndelReinnAlle}\% av alle opphold (inkludert overflyttede). 
 Ved \Sexpr{shtxt} utgjør reinnleggelser \Sexpr{AndelReinnEgen}\% av oppholdene.
 
 \begin{figure}[ht] 
   \centering \includegraphics[width= \Sexpr{figKrymp1}\textwidth]{FigReinn.pdf} 
-  \caption{Andel reinnleggelser for alle \Sexpr{paste(ShTypeEgenTxt,'sykehus', sep='')}}
+  \caption{Andel reinnleggelser for alle \Sexpr{paste0(ShTypeEgenTxt,'sykehus')}}
   \label{fig:ReinnEgen}
 \end{figure}
 
@@ -555,7 +558,7 @@ tabRespShType <- rbind(
 	'Regionalenheter' = c(RespReg[4], RespReg[3], AndelResp[3], paste0(RespReg[1],' - ',RespReg[6])),		
 	'Hele landet' = c(RespAlle[4], RespAlle[3], AndelResp[4], paste0(RespAlle[1],' - ',RespAlle[6]))
 					)
-colnames(tabRespShType) <- c('Gj.sn', 'Median', 'Andel(%)', 'Spredning')
+colnames(tabRespShType) <- c('Gj.sn', 'Median', 'Andel(%)', 'Min-maks')
 xtable(tabRespShType, digits=c(0,1,1,1,0), align=c('l', 'r','r','r','c'), 
 		caption='Antall døgn med respirasjonsstøtte for ulike sykehuskategorier.',
 		label='tab:Resp')
@@ -616,7 +619,7 @@ tabSAPSShType <- rbind(
 	'Hele landet' = c(SAPSAlle[4], SAPSAlle[3], paste0(SAPSAlle[2],' - ',SAPSAlle[5]),
 			paste0(SAPSAlle[1],' - ',SAPSAlle[6]))
 					)
-colnames(tabSAPSShType) <- c('Gj.sn', 'Median', '25-75prosentil', 'Spredning')
+colnames(tabSAPSShType) <- c('Gj.sn', 'Median', '25-75prosentil', 'Min-maks')
 xtable(tabSAPSShType, digits=c(0,1,1,0,0), align=c('l','r','r','c','c'), 
 		caption='SAPS-skåre for ulike sykehuskategorier.',
 		label='tab:SAPSII')
@@ -768,6 +771,10 @@ AndelRespStotte <- round(100*length(which(NIRdataUtv$respiratortid>0))/dim(NIRda
 
 dum <- NIRFigGjsnGrVar(RegData=NIRdata, valgtVar='liggetid', valgtMaal='Med', preprosess=0, hentData=0, dodInt=1, 
 		grType=ShTypeEgen, datoFra=datoFra, datoTil=datoTil, outfile='FigLiggetidDode.pdf') 	#LiggetidDodGjsn.pdf
+
+dum <- NIRFigAndelerGrVar(RegData=NIRdata, valgtVar='dodeIntensiv', preprosess=0, hentData=0, grType=ShTypeEgen, 
+                          datoFra=datoFra, datoTil=datoTil, outfile='FigDodInt.pdf') 
+
 @
 
 Gjennomsnittlig og median liggetid på landsbasis for de som dør på intensiv er henholdsvis 
@@ -775,11 +782,10 @@ Gjennomsnittlig og median liggetid på landsbasis for de som dør på intensiv e
 Av de som døde på intensiv, hadde \Sexpr{AndelRespStotte} \% fått respirasjonsstøtte.
 
 
-
-
 \begin{figure}[ht] 
+\centering \includegraphics[width= \Sexpr{figKrymp1}\textwidth]{FigDodInt.pdf} 
 \centering \includegraphics[width= \Sexpr{figKrymp1}\textwidth]{FigLiggetidDode.pdf} 
-  \caption{Median liggetid på intensiv for ikke-overlevere, \Sexpr{paste0(ShTypeEgenTxt,'sykehus.')}}
+  \caption{Andel som dør på intensiv og median liggetid på intensiv for disse, \Sexpr{paste0(ShTypeEgenTxt,'sykehus.')}}
   \label{fig:FigLiggetidDode}
 \end{figure}
 
