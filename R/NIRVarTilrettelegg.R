@@ -276,7 +276,7 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='an
       if (valgtVar == 'nyreBehTid' ) {   # Andeler, 
             RegData$Variabel <- RegData$KontinuerligDays + RegData$IntermitterendeDays 
             RegData <- RegData[which(RegData$InnDato>=as.POSIXlt('2015-01-01')), ] 
-            RegData <- RegData[which((RegData$KidneyReplacingTreatment == 1) & (RegData$Variabel>0)), ]   
+            RegData <- RegData[which(RegData$KidneyReplacingTreatment == 1) %i% which(RegData$Variabel>0), ]   
             xAkseTxt <- 'døgn'	
             tittel <- 'Fordeling av antall døgn (heltall) med registrert nyreerstattende behandling'
             gr <- c(1, 2, 3, 4, 5, 6, 7, 14, 1000)
@@ -292,7 +292,7 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='an
             #Det er mange feil i variabelen ReAdmitted. Beregner derfor reinnleggelse basert på 
             #Innleggelsestidspunkt , DateDischargedIntensive og en PasientID
             #29.06.18: Filtrer på kun ikke-overflyttede. (1= ikke overført, 2= overført)
-            RegData <- RegData[which(RegData$InnDato >= as.POSIXlt('2016-01-01')) & 
+            RegData <- RegData[which(RegData$InnDato >= as.POSIXlt('2016-01-01')) %i% 
                                      which(RegData$Overf==1), ]	
             RegData <- FinnReinnleggelser(RegData=RegData, PasientID = 'PasientID')
             if (figurtype %in% c('andelGrVar', 'andelTid')) {
@@ -318,7 +318,8 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='an
             sortAvtagende <- TRUE      #Rekkefølge
       } 
       if (valgtVar == 'respiratortidNonInv') { #andeler, gjsnGrVar, GjsnTid
-            RegData <- RegData[which((RegData$NonInvasivVentilation>0) & (RegData$InnDato>=as.POSIXlt('2015-01-01'))), ] 
+            RegData <- RegData[which(RegData$NonInvasivVentilation>0) %i% 
+                                     which(RegData$InnDato>=as.POSIXlt('2015-01-01')), ] 
             tittel <- 'Non-invasiv ventilasjon/maskeventilasjon'
             RegData$Variabel  <- as.numeric(RegData$NonInvasivVentilation)
             if (figurtype %in% c('gjsnGrVar', 'gjsnTid')) {
@@ -333,7 +334,7 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='an
       if (valgtVar == 'respiratortidInvMoverf') { #Andeler #GjsnGrVar #AndelGrVar, GjsnTid
             #InvasivVentilation (pusterør/åpnet lufterør)
             #ind <- intersect(
-             ind <- which((RegData$InvasivVentilation>0) & (RegData$InnDato>=as.POSIXlt('2015-01-01')))
+             ind <- which(RegData$InvasivVentilation>0) %i%  which(RegData$InnDato>=as.POSIXlt('2015-01-01'))
                     #     ,which(RegData$Overf ==1))
             RegData <- RegData[ind,]
             if (figurtype %in% c('andeler', 'gjsnGrVar', 'gjsnTid')) {
@@ -356,8 +357,8 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='an
       if (valgtVar == 'respiratortidInvUoverf') { #Andeler #GjsnGrVar #AndelGrVar, GjsnTid
             #InvasivVentilation (pusterør/åpnet lufterør), uten overførte pasienter
             
-            ind <- intersect(which((RegData$InvasivVentilation>0) & (RegData$InnDato>=as.POSIXlt('2015-01-01')))
-                 ,which(RegData$Overf ==1))
+            ind <- which(RegData$InvasivVentilation>0) %i% 
+                                   which(RegData$InnDato>=as.POSIXlt('2015-01-01')) %i% which(RegData$Overf ==1)
             RegData <- RegData[ind,]
             if (figurtype %in% c('andeler', 'gjsnGrVar', 'gjsnTid')) {
                   RegData$Variabel  <- as.numeric(RegData$InvasivVentilation)
@@ -431,16 +432,16 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='an
       if (valgtVar == 'trakeostomi') { #andelGrVar 
             #-1: Velg verdi, 1 = Nei, 2 = Ja – perkutan teknikk på intensiv/oppv., 3 = Ja – åpen teknikk (operativ)
             
-            RegData <- RegData[which((RegData$Trakeostomi %in% 1:3) 
-                                     & (RegData$InnDato >= as.POSIXlt('2016-01-01'))), ] #Innført ila 2015
+            RegData <- RegData[which(RegData$Trakeostomi %in% 1:3) 
+                                     %i% which(RegData$InnDato >= as.POSIXlt('2016-01-01')), ] #Innført ila 2015
             retn <- 'H'
             tittel <- 'Trakeostomi utført'
             RegData$Variabel[which(RegData$Trakeostomi %in% 2:3)] <- 1
             cexgr <- 0.9
       } 
       if (valgtVar == 'trakAapen') { #andelGrVar 
-            RegData <- RegData[which((RegData$Trakeostomi %in% 2:3) 
-                                     & (RegData$InnDato >= as.POSIXlt('2016-01-01'))), ] #Innført ila 2015
+            RegData <- RegData[which(RegData$Trakeostomi %in% 2:3) 
+                                     %i%  which(RegData$InnDato >= as.POSIXlt('2016-01-01')), ] #Innført ila 2015
             retn <- 'H'
             tittel <- 'Andel opphold med trakeostomi lagt under oppholdet'
             RegData$Variabel[which(RegData$Trakeostomi == 3)] <- 1
@@ -462,8 +463,8 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='an
             #                       4:Nevrologisk svikt, 5:Sepsis, 6:Skade/traume, 7:Metabolsk/intoksikasjon, 8:Hematologisk svikt, 
             #                       9:Nyresvikt, 10:Postoperativt, 11:Annet
             gr <- 1:11
-            RegData <- RegData[which((RegData$PrimaryReasonAdmitted %in% gr) 
-                                     & (RegData$InnDato >= as.POSIXlt('2016-01-01'))), ] #Innført ila 2015
+            RegData <- RegData[which(RegData$PrimaryReasonAdmitted %in% gr) 
+                                     %i% which(RegData$InnDato >= as.POSIXlt('2016-01-01')), ] #Innført ila 2015
             retn <- 'H'
             tittel <- 'Primærårsak til intensivoppholdet'
             RegData$VariabelGr <- factor(RegData$PrimaryReasonAdmitted, levels=gr)

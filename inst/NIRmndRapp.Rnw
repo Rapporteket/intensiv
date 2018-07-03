@@ -104,7 +104,7 @@ Rapporten inneheld anonymiserte samledata. I tilfelle der utvalet inneheld få r
 
 \begin{frame}[fragile] {Datagrunnlag}
 
-Denne rapporten er utarbeidet på oppdrag frå Norsk intensivregister (NIR) og genereres automatisk
+Denne rapporten er utarbeidd på oppdrag frå Norsk intensivregister (NIR) og genereres automatisk
 frå Rapporteket. Alle resultat er baserte på data frå registeret og er gyldige per rapportdato for
 opphald som er ferdigstilte i MRS. Uttrekket blir gjort for kvar kalendermånad, med ein knapp månads forseinking. Månadsrapport for januar vert sendt ut sist i februar, for februar sist i mars osv. Rapporten inneheld alle ferdigstilte opphald i MRS der innleggingstidspunktet på intensiv er i tidsrommet kl.00.00 den fyrste i aktuell månad til kl. 23.59 den siste i månaden.
 

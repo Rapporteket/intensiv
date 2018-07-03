@@ -33,8 +33,8 @@ texi2pdf(file='NIRmndRapp.tex')
 
 #knit(input, output = NULL, tangle = FALSE, text = NULL, envir = parent.frame())
 # NIRdata <- RegData
-knit('NIRSamleRapp.Rnw')
-texi2pdf(file='NIRSamleRapp.tex')
+#knit('NIRSamleRapp.Rnw')
+#texi2pdf(file='NIRSamleRapp.tex')
 
 
 

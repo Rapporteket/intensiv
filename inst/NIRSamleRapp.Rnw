@@ -299,7 +299,7 @@ dum <- NIRFigAndeler(RegData=NIRdata, valgtVar='alder', preprosess=0, hentData=0
 \centering \includegraphics[width= \Sexpr{figKrymp1}\textwidth]{FigAlderK.pdf} 
 \centering \includegraphics[width= \Sexpr{figKrymp1}\textwidth]{FigAlderM.pdf} 
  \caption{Aldersfordelig blant hhv. kvinner og menn ved \Sexpr{shtxt} mot 
-	\Sexpr{paste0(ShTypeEgenTxt,'sykehus')} forøvrig.}	
+	\Sexpr{paste0(ShTypeEgenTxt,'sykehus')} for øvrig.}	
   \label{fig:AlderKM}
 \end{figure}
 
@@ -332,12 +332,12 @@ osv.). Liggetiden blir registrert i døgn med en desimal, dvs. timer/24.
 	
 liggetidDIV <- cbind('Egen enhet'= summary(NIRdataEget$liggetid)[1:6],
 			'Andre, egen sykehustype'= summary(NIRdataRestShType$liggetid)[1:6])
-rownames(liggetidDIV) <- c('Minimum:', '25% av pasientene er under:', 'Median:','Gjennsomsnitt:',
-		'25% av pasientene er over:', 'Maksimum:')
+rownames(liggetidDIV) <- c('Minimum:', '25% av pasientene ligger under:', 'Median:','Gjennsomsnitt:',
+		'25% av pasientene ligger over:', 'Maksimum:')
 
 
 xtable(liggetidDIV, digits=1, align=c('l', rep('r', ncol(liggetidDIV))), 
-		caption='Liggetidskarakteristikker',
+		caption='Liggetidskarakteristikker (døgn)',
 		label='tab:Liggetidskarakteristikker')
 	
 dum <- NIRFigAndeler(RegData=NIRdata, valgtVar='liggetid', preprosess=0, hentData=0, datoFra=datoFra, 
