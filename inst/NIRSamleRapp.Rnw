@@ -192,6 +192,7 @@ ind <- list(Eget = which(NIRdata$ReshId == reshID),
 shtxt <- as.character(NIRdata[which(NIRdata$ReshId == reshID),'ShNavn'])[1]
 NIRdataEget <- NIRdata[ind$Eget, ]
 NIRdataResten <- NIRdata[setdiff(1:N,ind$Eget), ]
+NIRdataRestShType <- NIRdata[setdiff(ind$EgenShType,ind$Eget), ]
 Neget <- dim(NIRdataEget)[1]
 tabKjPstEget <- round(table(NIRdataEget$erMann)/Neget*100, digits=1)
 #ShTypeEgen <- as.character(NIRdata[which(NIRdata$ReshId == reshID),'ShTypeTxt'])[1]
@@ -199,13 +200,13 @@ tabKjPstEget <- round(table(NIRdataEget$erMann)/Neget*100, digits=1)
 @
 
 \section{Innledning}
-NIR startet elektronisk registrering via helseregister.no fra og med 01.01.2011. 
+NIR startet elektronisk registrering via helseregister.no fra og med 1. januar 2011. 
 Denne samlerapporten er basert på alle opphold som er lagret og ferdigstilt i NIR fra 
-og med 01.01.2016 inntil dagen før 
+og med \Sexpr{datoFra} inntil dagen før 
 tidspunktet for rapportuttrekk (dvs. flere årganger for de fleste enheter). 
 For hele landet er det gjort registrering av innleggelser i perioden 
 \Sexpr{min(NIRdata$InnDato)} til \Sexpr{max(NIRdata$InnDato)}.
-Kvinner og menn utgjorde hhv. \Sexpr{tabKjPst[1]}\% og \Sexpr{tabKjPst[2]}\% av innleggelsene.
+Kvinner og menn utgjorde hhv. \Sexpr{tabKjPst[1]} \% og \Sexpr{tabKjPst[2]} \% av innleggelsene.
 \par
 De færreste sykehus/avdelinger er helt ajour med sine registreringer, og etterslepet varierer i tid. 
 Det vil derfor være variabelt i hvilken grad data er representative for de ulike avdelingene. 
@@ -241,7 +242,7 @@ xtable(tabAvdNEget, digits=0, align=c('l', rep('r', ncol(tabAvdNEget))),
 
 <<'TabAlder', results='asis', echo=FALSE, eval=T>>=
 alderDIV <- cbind('Egen enhet'= summary(NIRdataEget$Alder)[1:6],
-			'Resten av landet'= summary(NIRdataResten$Alder)[1:6])
+			'Andre, egen sykehustype'= summary(NIRdataRestShType$Alder)[1:6])
 rownames(alderDIV) <- c('Minimum:', '25% av pasientene er under:', 'Median:','Gjennsomsnitt:',
 		'25% av pasientene er over:', 'Maksimum:')
 
@@ -251,7 +252,7 @@ xtable(alderDIV, digits=1, align=c('l', rep('r', ncol(alderDIV))),
 		label='tab:Alderskarakteristikker')
 
 dum <- NIRFigAndeler(RegData=NIRdata, valgtVar='alder', preprosess=0, hentData=0, datoFra=datoFra, 
-	datoTil=datoTil, enhetsUtvalg=1, reshID=reshID, outfile='FigAlderFord.pdf')
+	datoTil=datoTil, enhetsUtvalg=3, reshID=reshID, outfile='FigAlderFord.pdf')
 dum <- NIRFigGjsnGrVar(RegData=NIRdata, valgtVar='alder', valgtMaal='Gjsn', preprosess=0, hentData=0, 
                        grType=ShTypeEgen, datoFra=datoFra, datoTil=datoTil, outfile='FigAlderGjsn.pdf')
 dum <- NIRFigGjsnGrVar(RegData=NIRdata, valgtVar='alder', valgtMaal='Med', preprosess=0, hentData=0, 
@@ -313,10 +314,10 @@ osv.). Liggetiden blir registrert i døgn med en desimal, dvs. timer/24.
 
 <<'TabLiggetid', results='asis', echo=FALSE>>=
 #1,2,3 = lokal, regional, sentral
-tabLiggEget <- table(NIRdataEget$LiggetidGr)
-tabLiggLokSentr <- table(NIRdata[which(NIRdata$ShType==1), 'LiggetidGr'])
-tabLiggReg <- table(NIRdata[which(NIRdata$ShType==3), 'LiggetidGr'])
-tabLiggAlle <- table(NIRdata$LiggetidGr)
+#tabLiggEget <- table(NIRdataEget$LiggetidGr)
+#tabLiggLokSentr <- table(NIRdata[which(NIRdata$ShType==1), 'LiggetidGr'])
+#tabLiggReg <- table(NIRdata[which(NIRdata$ShType==3), 'LiggetidGr'])
+#tabLiggAlle <- table(NIRdata$LiggetidGr)
 
 # tabLiggetidShType <- round(100*rbind(
 # #	'Egen enhet' = tabLiggEget/sum(tabLiggEget),	
@@ -330,7 +331,7 @@ tabLiggAlle <- table(NIRdata$LiggetidGr)
 # 		label='tab:LiggetidShType')
 	
 liggetidDIV <- cbind('Egen enhet'= summary(NIRdataEget$liggetid)[1:6],
-			'Resten av landet'= summary(NIRdataResten$liggetid)[1:6])
+			'Andre, egen sykehustype'= summary(NIRdataRestShType$liggetid)[1:6])
 rownames(liggetidDIV) <- c('Minimum:', '25% av pasientene er under:', 'Median:','Gjennsomsnitt:',
 		'25% av pasientene er over:', 'Maksimum:')
 
@@ -381,8 +382,8 @@ Internasjonalt er det blitt mer vanlig å definere reinnleggelse som nytt intens
 i løpet av 72 timer (ESICM Guidelines).
 For hele landet er det \Sexpr{NregReinn} opphold med registrerte data på reinnleggelse siden 
 \Sexpr{datoFra}. 
-Reinnleggelser utgjør \Sexpr{AndelReinnAlle}\% av alle opphold (inkludert overflyttede). 
-Ved \Sexpr{shtxt} utgjør reinnleggelser \Sexpr{AndelReinnEgen}\% av oppholdene.
+Reinnleggelser utgjør \Sexpr{AndelReinnAlle} \% av alle opphold (inkludert overflyttede). 
+Ved \Sexpr{shtxt} utgjør reinnleggelser \Sexpr{AndelReinnEgen} \% av oppholdene.
 
 \begin{figure}[ht] 
   \centering \includegraphics[width= \Sexpr{figKrymp1}\textwidth]{FigReinn.pdf} 
@@ -693,24 +694,16 @@ for (k in 1:3) {
 \clearpage
 \subsection{Standardisert mortalitetsratio (SMR)}
 
-Mortalitet gjelder opphold der pasienten faktisk er SAPS II- skåret, og der vi i tillegg kjenner 
-vitalstatus for pasienten ved utskrivning både fra intensiv og sykehus.
-NB! Vitalstatus er bare registrert for siste opphold ved reinnleggelser, 
-og bare siste opphold vil derfor være med i denne sammenhengen. 
-\par
-SMR er observert 30-dagers mortalitet delt på SAPS II-estimert mortalitet for opphold 
-der pasienten faktisk er SAPS II-skåret. 
+Mortalitet gjelder opphold der pasienten faktisk er SAPS II- skåret. 
+SMR er observert 30-dagers mortalitet delt på SAPS II-estimert mortalitet. 
 SMR $<$1 vil derfor tyde på bedre overlevelse enn man skulle forvente ut fra SAPS-skåre, 
 mens en verdi $>$1 tyder på lavere overlevelse enn man skulle forvente.
 SAPS II en gammel skåre, og det er skjedd mange endringer i intensivmedisinen etter at SAPS ble konstruert. 
 Dette gjør seg blant annet utslag i dårlig kalibrering, slik at gjennomsnittet er langt under 1. 
 
-For reinnlagte er SMR kun knyttet til 30-dagers mortalitet ved første opphold (f.eks. 
-vil en pasient som er reinnlagt på intensiv to ganger og så dør under siste opphold, 
-bli rapportert som ett dødsfall med én SAPS II-skåre, ikke som to levende og en død). 
-
-Man må tolke SMR-verdiene varsomt, 
-særleg med tanke på at det er stort innslag av «case mix».
+For reinnlagte er SMR kun knyttet til 30-dagers mortalitet ved første opphold. 
+Man må tolke SMR-verdien varsomt, særlig med tanke på at det kan være stor forskjell 
+i pasientsammensetningen på ulike avdelinger.
 
 <<SMR, echo=FALSE, message=FALSE>>=
 dum <- NIRFigGjsnGrVar(RegData=NIRdata, valgtVar='SMR', valgtMaal='Gjsn', preprosess=0, hentData=0,  

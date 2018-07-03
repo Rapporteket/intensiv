@@ -150,6 +150,12 @@ tabAvdNEget <- rbind(
 	#sum(RegDataEget$DaysAdmittedIntensiv, na.rm=T))
 	)
 
+overskr <- dimnames(tabAvdNEget)[[2]]
+aar <- substr(overskr, 1,2)
+mnd <- as.numeric(substr(overskr, 4,5))
+mndTxt <- c('jan', 'feb', 'mar', 'apr', 'mai', 'jun', 'jul', 'aug', 'sep', 'okt', 'nov', 'des') 
+colnames(tabAvdNEget) <- paste0(mndTxt[mnd], aar)
+
 xtable(tabAvdNEget, digits=0, align=c('l', rep('r', ncol(tabAvdNEget))), 
 		caption=paste0('Antal opphald og liggedøger, ', shtxt,'.'), label='tab:RegEget')
 
@@ -269,7 +275,7 @@ xtable(liggetidKj, digits=1, align=c('l', rep('r', ncol(liggetidKj))),
 \centering              
 \includegraphics[scale=0.35]{PrimaryReasonAdmittedFordMnd.pdf}
 \caption{Hovudårsak til innlegging på intensiv (prosent per kategori) siste seks månader, eiga avdeling og 
-\Sexpr{paste0(ShTypeEgenTxt,'sykehus')} forøvrig.
+\Sexpr{paste0(ShTypeEgenTxt,'sjukehus')} forøvrig.}
 \end{figure}
 \end{frame}
 

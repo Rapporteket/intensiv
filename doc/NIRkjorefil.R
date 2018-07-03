@@ -16,7 +16,7 @@ setwd('C:/registre/NIR/trunk/KvalKtrAvData')
 aggregate(NIRdata$PatientInRegistryKey, by=list(NIRdata$ShNavn, NIRdata$ShTypeTxt), FUN=length)
 aggregate(NIRdata$DaysAdmittedIntensiv, by=list(NIRdata$ShNavn, NIRdata$ShTypeTxt), FUN=length)
 
-#--------------------------------------SAMLERAPPORT-----------------------------------
+#--------------------------------------SAMLERAPPORT/MndRapp-----------------------------------
 rm(list=ls())
 library(knitr)
 library(intensiv)
@@ -33,8 +33,8 @@ texi2pdf(file='NIRmndRapp.tex')
 
 #knit(input, output = NULL, tangle = FALSE, text = NULL, envir = parent.frame())
 # NIRdata <- RegData
-#knit('NIRSamleRapp.Rnw')
-# texi2pdf(file='NIRSamleRapp.tex')
+knit('NIRSamleRapp.Rnw')
+texi2pdf(file='NIRSamleRapp.tex')
 
 
 
