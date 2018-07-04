@@ -61,7 +61,7 @@
 				<textElement textAlignment="Center">
 					<font size="20"/>
 				</textElement>
-				<text><![CDATA[Månedsrapport fra Norsk Intensivregsiter]]></text>
+				<text><![CDATA[Månedsrapport fra Norsk Intensivregister]]></text>
 			</staticText>
 		</band>
 	</title>
