@@ -36,7 +36,6 @@ datoFra <- datoFra6mnd
 #Ønsker eget datasett for forrige måned
 datoFraMnd <- as.Date(paste0(1900+dato$year,'-', ifelse(dato$mon==0, 11, dato$mon), '-', '01')) #dato - 
 
-enhetsUtvalg <- 1 #SJEKK OM STANDARD. Nei 0 standard
 tidsenhet <- 'Mnd'
 preprosess <- 0
 hentData <- 0
@@ -48,12 +47,12 @@ if (!exists('RegData')){
 
 RegData <- NIRPreprosess(RegData=RegData)
 RegData <- FinnReinnleggelser(RegData) # Beregne reinnleggelser
-RegData1aar <- RegData
+#RegData1aar <- RegData
 
 #RegData endres til 6 mnd:
 grType <- RegData$ShType[match(reshID, RegData$ReshId)]
 NIRUtvalg <- NIRUtvalgEnh(RegData, reshID = reshID, datoFra = datoFra6mnd, datoTil = datoTil, 
-                          enhetsUtvalg =3, grType = grType)
+                          enhetsUtvalg =1)
 #Fra NIRUTvalg: utvalgTxt, ind, medSml, smltxt, hovedgrTxt, grTypeTxt, RegData
 RegData <- NIRUtvalg$RegData
 shtxt <- NIRUtvalg$hovedgrTxt

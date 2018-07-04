@@ -205,7 +205,7 @@ Denne samlerapporten er basert på alle opphold som er lagret og ferdigstilt i N
 og med \Sexpr{datoFra} inntil dagen før 
 tidspunktet for rapportuttrekk (dvs. flere årganger for de fleste enheter). 
 For hele landet er det gjort registrering av innleggelser i perioden 
-\Sexpr{min(NIRdata$InnDato)} til \Sexpr{max(NIRdata$InnDato)}.
+\Sexpr{min(as.Date(NIRdata$InnDato))} til \Sexpr{max(as.Date(NIRdata$InnDato))}.
 Kvinner og menn utgjorde hhv. \Sexpr{tabKjPst[1]} \% og \Sexpr{tabKjPst[2]} \% av innleggelsene.
 \par
 De færreste sykehus/avdelinger er helt ajour med sine registreringer, og etterslepet varierer i tid. 
@@ -220,7 +220,7 @@ Den skal ikke offentliggjøres. NIR sentralt vil produsere årsrapport med samle
 \section{Oversikt for \Sexpr{shtxt} }
 
  Tabell \ref{tab:RegEget} viser innleggelser ved \Sexpr{shtxt} for perioden 
- \Sexpr{min(NIRdataEget$InnDato)} til \Sexpr{max(NIRdataEget$InnDato)}.
+ \Sexpr{as.Date(min(NIRdataEget$InnDato))} til \Sexpr{as.Date(max(NIRdataEget$InnDato))}.
 
 <<'TabReg', results='asis', echo=FALSE, eval=T>>=
 #For bare Eget sykehus
