@@ -11,14 +11,23 @@
 #' Argumentet \emph{valgtVar} har følgende valgmuligheter:
 #'    \itemize{
 #'     \item alder: Aldersfordeling, 10-årige grupper 
+#'     \item ExtendedHemodynamicMonitoring: Hemodynamisk overvåkn.
 #'     \item inklKrit: Andeler for de 5 inklusjonskriteriene
 #'     \item InnMaate: Hastegrad inn på intensiv (Elektivt, Akutt medisinsk, Akutt kirurgisk)
+#'     \item isolering: Isolasjon, type
+#'     \item isoleringDogn Isolasjon, varighet
 #'     \item liggetid: Liggetid 
 #'     \item NEMS: Skår for ressursbruk. (Nine Equivalents of Nursing Manpower Use Score)
 #'     \item Nas: Skår for sykepleieraktiviteter. (Nursing Activities Score)
-#'     \item respiratortid: Tid tilbrakt i respirator
-#'     \item SAPSII: Skår for alvorlighetsgrad av sykdom.  (Simplified Acute Physiology Score II)
+#'     \item nyreBeh: Nyrebeh., type
+#'     \item nyreBehTid: Nyrebeh., varighet
 #'     \item PrimaryReasonAdmitted: Hovedårsak til intensivopphold
+#'     \item respiratortid: Tid tilbrakt i respirator
+#'     \item respiratortidNonInv: Respiratortid, ikke-invasiv
+#'     \item respiratortidInvMoverf: Respiratortid, invasiv m/overf.
+#'     \item respiratortidInvUoverf: Respiratortid, invasiv u/overf.
+#'     \item SAPSII: Skår for alvorlighetsgrad av sykdom.  (Simplified Acute Physiology Score II)
+#'     \item spesTiltak: Spesielle tiltak
 #'    }
 #' Argumentet \emph{enhetsUtvalg} har følgende valgmuligheter:
 #'    \itemize{
@@ -34,6 +43,8 @@
 #'    	}							
 #'    				
 #' @param RegData En dataramme med alle nødvendige variabler fra registeret
+#' @inheritParams NIRUtvalgEnh
+#' @inheritParams NIRVarTilrettelegg
 #' @param figurtype Hvilken figurtype som ønskes ut: 
 #'                 andel (fordelingsfigurer), 
 #'                 andelGrVar (andel i hver kategori av grupperingsvariabel, eks. sykehus), 
@@ -48,7 +59,7 @@
 #'          0: Kvinner
 #'          1: Menn
 #' @param minald Alder, fra og med (Standardverdi: 0)
-#' @param maxald Alder, til og med (Standardverdi: 130)
+#' @param maxald Alder, til og med (Standardverdi: 110)
 #' @param outfile Navn på fil figuren skrives til. Standard: '' (Figur skrives
 #'    til systemets standard utdataenhet (som regel skjerm))
 #' @param reshID Parameter følger fra innlogging helseregister.no og angir
@@ -83,13 +94,13 @@
 #'
 #' @export
 
-NIRFigAndeler  <- function(RegData, valgtVar, datoFra='2011-01-01', datoTil='3000-12-31', aar=0, overfPas=0,
-                        minald=0, maxald=130, erMann='',InnMaate='', dodInt='',outfile='', grType=99,  
-                        preprosess=1, hentData=0, reshID, enhetsUtvalg=1, lagFig=1)	{
+NIRFigAndeler  <- function(RegData=0, valgtVar='Alder', datoFra='2011-01-01', datoTil='3000-12-31', aar=0, overfPas=0,
+                        minald=0, maxald=110, erMann='',InnMaate='', dodInt='',outfile='', grType=99,  
+                        preprosess=1, hentData=0, reshID=0, enhetsUtvalg=0, lagFig=1)	{
       
       
       if (hentData == 1) {		
-            RegData <- NIRRegDataSQL(datoFra, datoTil) #minald=0, maxald=130, erMann='',InnMaate='', dodInt=''
+            RegData <- NIRRegDataSQL(datoFra, datoTil) #minald=0, maxald=110, erMann='',InnMaate='', dodInt=''
       }
       
       # Hvis RegData ikke har blitt preprosessert. (I samledokument gjøres dette i samledokumentet)

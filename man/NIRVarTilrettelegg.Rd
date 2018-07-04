@@ -16,7 +16,11 @@ NIRVarTilrettelegg(RegData, valgtVar, grVar = "ShNavn",
 'andeler', 'andelGrVar', 'andelTid', 'gjsnGrVar', 'gjsnTid'}
 }
 \value{
-Definisjon av valgt variabel.
+Definisjon av valgt variabel, samt flere andre parametre som 
+tittel, xAkseTxt, sortAvtagende (standard: TRUE)
+      #Kan her definere opp alle aktuelle grupperingsvariable og deres tekst.
+Variabeltyper: Numeriske, kategoriske, indikator
+For hver valgtVar: Definer og gjør utvalg for variabelen
 }
 \description{
 Denne funksjonen gjør utvalg og tilrettelegger variable (gitt ved valgtVar) til videre bruk. 

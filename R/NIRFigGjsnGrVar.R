@@ -6,8 +6,8 @@
 #'
 #' Detajer: Her bør man liste opp hvilke variable funksjonen benytter...
 #'
-#' @inheritParams NIRAndeler
-#' @inheritParams NIRAndelerGrVar
+#' @inheritParams NIRFigAndeler
+#' @inheritParams NIRFigAndelerGrVar
 #' @param valgtMaal 'Med' = median. Alt annet gir gjennomsnitt 
 #'
 #' Argumentet \emph{valgtVar} har følgende valgmuligheter:
@@ -19,6 +19,9 @@
 #'     \item NEMS: Skår for ressursbruk per opphold. (Nine Equivalents of Nursing Manpower Use Score)
 #'     \item NEMS24: NEMS-skår per døgn. 
 #'     \item respiratortid: Tid tilbrakt i respirator
+#'     \item respiratortidNonInv: Respiratortid, ikke-invasiv
+#'     \item respiratortidInvMoverf: Respiratortid, invasiv m/overf.
+#'     \item respiratortidInvUoverf: Respiratortid, invasiv u/overf.
 #'     \item SAPSII: Skår for alvorlighetsgrad av sykdom.  (Simplified Acute Physiology Score II)
 #'    }
 #'
@@ -30,9 +33,9 @@
 
 
 NIRFigGjsnGrVar <- function(RegData, valgtVar, preprosess=1, hentData=0, valgtMaal='Gjsn', 
-                  minald=0, maxald=130, datoFra='2011-01-01', datoTil='3000-01-01', aar=0,
+                  minald=0, maxald=110, datoFra='2011-01-01', datoTil='3000-01-01', aar=0,
                   grType=99, InnMaate=99, dodInt='', erMann='', grVar='ShNavn', medKI=1, 
-                  lagFig=1, outfile) {
+                  lagFig=1, outfile='') {
       
       
 if (hentData == 1) {		
@@ -74,7 +77,7 @@ t1 <- switch(valgtMaal,
 tittel <- paste0(t1, NIRVarSpes$tittel) 
 			
 if( valgtVar =='SMR') {tittel <- c(paste0('SMR, ', NIRUtvalg$grTypeTxt, 'sykehus'),
-								'(uten reinnlagte og overflyttede pasienter)')}
+								'(uten reinnlagte pasienter)')}
 
 Ngrtxt <- paste0(' (', as.character(Ngr),')') 
 indGrUt <- which(Ngr < Ngrense)

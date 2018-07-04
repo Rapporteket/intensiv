@@ -1,0 +1,442 @@
+\documentclass[handout, xcolor=pdftex,dvipsnames,table]{beamer}  %presentation,
+\usetheme{Hannover}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[english, norsk]{babel}
+\usepackage{xspace}
+\usepackage{booktabs}
+\usepackage{rotating}
+\usepackage{graphicx}
+
+
+<<'initOpts',include=FALSE>>=
+knitr::opts_chunk$set(warnings=FALSE,echo=FALSE)
+knitr::opts_knit$set(root.dir = './')
+library(xtable)
+library(lubridate)
+@
+
+<<'hentDataOgTilrettelegg', include=FALSE>>=
+#startOfMonth<- function(x) {as.Date(format(x, "%Y-%m-01")) }
+
+dato <- as.POSIXlt(Sys.Date())
+datoTil <- as.Date(format(dato, "%Y-%m-01"))-1 #Til siste i forrige måned
+mndTxt <- c('januar', 'februar', 'mars', 'april', 'mai', 'juni', 'juli', 'august', 
+                   'september', 'oktober', 'november', 'desember')
+rappMnd <- paste0(mndTxt[ifelse(dato$mon==0, 12, dato$mon)], ' ', dato$year+1900)
+#som <- function(x) {as.Date(format(x, "%Y-%m-01"))}
+#dato <- as.POSIXlt(datoTil)
+
+datoFra1Aar <- as.Date(paste0(1900+dato$year-1,'-', ifelse(dato$mon==11, 1, dato$mon+2), '-', '01'))
+#Siste 6 måneder:
+datoFra6mnd <- paste0(substr(as.character(dato %m-% months(6, abbreviate=FALSE)),1, 8),'01')  #benytter lubridate
+      
+datoFra <- datoFra6mnd
+#Ønsker eget datasett for forrige måned
+datoFraMnd <- as.Date(paste0(1900+dato$year,'-', ifelse(dato$mon==0, 11, dato$mon), '-', '01')) #dato - 
+
+tidsenhet <- 'Mnd'
+preprosess <- 0
+hentData <- 0
+
+if (!exists('RegData')){
+      RegData <- NIRRegDataSQL(datoFra = datoFra1Aar, datoTil = datoTil)
+	  #RegData er data fra siste år.
+}
+
+RegData <- NIRPreprosess(RegData=RegData)
+RegData <- FinnReinnleggelser(RegData) # Beregne reinnleggelser
+#RegData1aar <- RegData
+
+#RegData endres til 6 mnd:
+grType <- RegData$ShType[match(reshID, RegData$ReshId)]
+NIRUtvalg <- NIRUtvalgEnh(RegData, reshID = reshID, datoFra = datoFra6mnd, datoTil = datoTil, 
+                          enhetsUtvalg =1)
+#Fra NIRUTvalg: utvalgTxt, ind, medSml, smltxt, hovedgrTxt, grTypeTxt, RegData
+RegData <- NIRUtvalg$RegData
+shtxt <- NIRUtvalg$hovedgrTxt
+ShTypeEgenTxt <- NIRUtvalg$grTypeTxt  #FIX!!!!!!!!!
+ind <- NIRUtvalg$ind
+N <- dim(RegData)[1]
+
+SortMnd <- SorterOgNavngiTidsEnhet(RegData, tidsenhet=tidsenhet)
+RegData <- SortMnd$RegData
+#tidtxt <- SortMnd$tidtxt
+
+RegDataEget <- RegData[ind$Hoved, ]
+RegDataEgetMnd <- RegDataEget[which(as.Date(RegDataEget$InnDato) >= datoFraMnd), ]
+RegDataShType <- RegData[ind$ShType,] #NB: velger alle
+RegDataResten <- RegData[setdiff(1:N,ind$Hoved), ]
+RegDataMnd <- RegData[which(as.Date(RegData$InnDato) >= datoFraMnd), ]
+
+maxDatoEget <- format.Date(max(RegDataEget$InnDato), format='%d.%m%.%Y')
+Neget <- dim(RegDataEget)[1]
+tabKjPstEget <- round(table(RegDataEget$erMann)/Neget*100, digits=1)
+
+
+@
+
+\begin{document}
+
+\title[NIR\\\Sexpr{shtxt} \\\today]{\textit{Norsk intensivregister} \\
+Månadsrapport, \Sexpr{rappMnd} \\
+\Sexpr{shtxt} }
+%{\today}\\[2cm] % Date, change the \today to a set date if you want to be precise \date{}
+\maketitle
+
+
+\begin{tiny}
+
+\begin{frame}[fragile] {Ansvar og bruk av data}
+
+Fagrådet i NIR er ansvarleg for alle vurderingar og tolkingar av data, og også feil i resultat som skuldast feil i datagrunnlaget. Den viktigaste feilkjelda i rapporten vil truleg vere ufullstendige datasett i mange av NIR-einingane – det vil seie at ikkje alle data er ferdigstilte for aktuell månad. Dette etterslepet vil variere markert både i tid og volum, og gjer at data blir meir eller mindre representative for dei ulike einingane.
+Rapporten har difor usikkert datagrunnlag og er meint til internt bruk i einingane. 
+Rapporten inneheld anonymiserte samledata. I tilfelle der utvalet inneheld få registreringar som er kombinerte med til dømes demografiske data, kan det ikkje utelukkast at rapporterte data kan tilbakeførast til einskildpersonar. 
+
+\textit{\textbf{Av grunnane over, ber NIR om at denne rapporten ikkje blir brukt offentleg i nokon samanheng eller blir offentleggjort på noko vis.}}
+
+\end{frame}
+
+
+%\section{Innhald}
+
+\begin{frame}[fragile] {Datagrunnlag}
+
+Denne rapporten er utarbeidd på oppdrag frå Norsk intensivregister (NIR) og genereres automatisk
+frå Rapporteket. Alle resultat er baserte på data frå registeret og er gyldige per rapportdato for
+opphald som er ferdigstilte i MRS. Uttrekket blir gjort for kvar kalendermånad, med ein knapp månads forseinking. Månadsrapport for januar vert sendt ut sist i februar, for februar sist i mars osv. Rapporten inneheld alle ferdigstilte opphald i MRS der innleggingstidspunktet på intensiv er i tidsrommet kl.00.00 den fyrste i aktuell månad til kl. 23.59 den siste i månaden.
+
+For \Sexpr{shtxt} er siste ferdigstilte innleggingsdato i denne rapporten
+\Sexpr{maxDatoEget}.
+NIR-einingar som er ajour med registreringa, vil dermed kunne få nær fullstendige månadsrapportar. 
+\par
+
+Denne rapporten kan óg hentast ved at ein loggar seg inn på Rapporteket-Intensiv og klikkar på "Månedsrapport". Det gjer at alle kan hente seg representative månadsrapportar når dei måtte
+ynskje. I Rapporteket kan ein óg  finne mange fleire figurar og tabellar, og gjere endringar i tidsintervall og samanlikningsgrunnlag.
+ 
+
+\end{frame}
+
+\begin{frame}[fragile] {Innhald}
+\small{
+\begin{itemize}
+\item Opphald og liggedøger
+\item Alder
+\item Liggetid
+\item Hovudårsak til opphaldet
+\item NEMS-skåre
+\item Respirasjonsstøtte
+\item SAPS II
+\item Dobbeltregistreringar
+\end{itemize}
+}
+\end{frame}
+
+
+%\section{Registreringsoversikter}
+
+\begin{frame}[fragile] {Belegg}
+
+
+<<'TabReg', results='asis', echo=FALSE, eval=T>>=
+#For bare Eget sykehus
+tabAvdNEget <- rbind(
+	'Ferdigstilte intensivopphald' = tapply(RegDataEget$PasientID, RegDataEget$TidsEnhet, FUN=length), #table(RegDataEget$TidsEnhet), #Neget,		
+	'Registrerte pasientar' = tapply(RegDataEget$PasientID, RegDataEget$TidsEnhet, 
+	                                 FUN=function(x) length(unique(x))),	
+	'Antall intensivdøger' = round(as.numeric(tapply(RegDataEget$liggetid, RegDataEget$TidsEnhet, sum, na.rm=T)),0)	
+	#sum(RegDataEget$DaysAdmittedIntensiv, na.rm=T))
+	)
+
+overskr <- dimnames(tabAvdNEget)[[2]]
+aar <- substr(overskr, 1,2)
+mnd <- as.numeric(substr(overskr, 4,5))
+mndTxt <- c('jan', 'feb', 'mar', 'apr', 'mai', 'jun', 'jul', 'aug', 'sep', 'okt', 'nov', 'des') 
+colnames(tabAvdNEget) <- paste0(mndTxt[mnd], aar)
+
+xtable(tabAvdNEget, digits=0, align=c('l', rep('r', ncol(tabAvdNEget))), 
+		caption=paste0('Antal opphald og liggedøger, ', shtxt,'.'), label='tab:RegEget')
+
+@
+
+\end{frame}
+
+
+%\section{Pasientkarakteristika}
+
+\begin{frame}[fragile] {Alder}
+
+<<'Alder', results='asis' >>=
+#, echo=FALSE
+Under16aar <- function(RegData){
+      Ant <- sum(RegData$Alder<16, na.rm = T)
+      Andel <- Ant/dim(RegData)[1]*100
+      paste0(Ant, ' (',sprintf('%.1f',Andel),'%)')
+      }
+
+Over80aar <- function(RegData){
+      Ant <- sum(RegData$Alder >= 80, na.rm = T)
+      Andel <- Ant/dim(RegData)[1]*100
+      paste0(Ant, ' (',sprintf('%.1f',Andel),'%)')
+      }
+
+alderTabInnhold <- function(RegData){
+           c(sprintf('%.1f', summary(RegData$Alder)[1:6]),
+             Under16aar(RegData),
+             Over80aar(RegData))
+      }
+
+alderDIV <- cbind(
+      'Eigen, sist mnd.' = alderTabInnhold(RegDataEgetMnd),
+      'Eigen'= alderTabInnhold(RegDataEget),
+	'Resten av landet'= alderTabInnhold(RegDataResten),
+	'Eigen sjukehustype' = alderTabInnhold(RegDataShType))
+rownames(alderDIV) <- c('Minimum:', 
+                        '25 \\% pasientar under:', 
+                        'Median:','Gjennomsnitt:',
+                        '25 \\% pasientar over:', 
+                        'Maksimum:',
+                        'Pasientar \\textless 16 år', 
+                        'Pasientar $\\leqslant $ 80 år')
+
+
+print(xtable(alderDIV, digits=1, align=c('l', rep('r', ncol(alderDIV))), 
+		caption='Alderskarakteristikkar (alder i år), siste seks månader.',
+		label='tab:Alderseigenskapar'), sanitize.rownames.function = identity)
+
+@
+
+\end{frame}
+
+<<'Figurer', include=FALSE>>=
+
+
+variable <- c('PrimaryReasonAdmitted')
+for (valgtVar in variable) {
+	outfile <- paste0(valgtVar, 'FordMnd', '.pdf')
+	NIRFigAndeler(RegData=RegData, valgtVar=valgtVar, datoFra=datoFra, reshID=reshID, 
+	               enhetsUtvalg=3, preprosess=0, outfile = outfile)
+}
+
+# for (valgtVar in variable) {
+# 	outfile <- paste0(valgtVar, '_', tidsenhet, '.pdf')
+# 	NGERFigAndelTid(RegData=RegData, datoFra=datoFra, valgtVar=valgtVar, datoTil=datoTil,
+#               reshID=reshID, enhetsUtvalg=enhetsUtvalg, outfile=outfile, MCEType = MCEType,
+#               tidsenhet=tidsenhet, preprosess=preprosess)
+# 			  }
+@
+
+
+\begin{frame}[fragile] {Liggetid på intensiv}
+ 
+Liggetida er den samla tida frå pasienten fysisk er komen til intensiv/overvakingsarealet
+ved innlegging, til pasienten fysisk forlet intensiv/overvakingsarealet ved utskriving.
+Liggetida vil dermed inkludere tid pasienten måtte vere utanfor intensiv (røntgen, 
+operasjon osv.). 
+
+<<'TabLiggetid', results='asis', echo=FALSE>>=
+finnGjsnMedKj <- function(RegData){
+      Gjsn <- sprintf("%.1f", mean(RegData$liggetid, na.rm=T))
+      Med <- sprintf("%.1f", median(RegData$liggetid, na.rm=T))
+      Kvinner <- sprintf("%.0f", 100*prop.table(table(RegData$erMann))[1])
+      Ut <- paste0(c(Gjsn, Med, Kvinner), c('', '', '%'))
+      #paste0(sprintf("%.1f %.1f %+.f", Gjsn, Med, Kvinner), '%')
+      }
+
+liggetidKj <- rbind(
+      'Eigen, sist månad' = finnGjsnMedKj(RegDataEgetMnd),
+      'Eigen'= finnGjsnMedKj(RegDataEget),
+	'Resten av landet'= finnGjsnMedKj(RegDataResten),
+	'Eigen sjukehustype' = finnGjsnMedKj(RegDataShType))
+
+colnames(liggetidKj) <- c('Gj.snitt', 'Median', 'Kvinner')
+
+xtable(liggetidKj, digits=1, align=c('l', rep('r', ncol(liggetidKj))), 
+		caption='Liggedøger og andel kvinner, siste 6 månader.',
+		label='tab:liggetidKj')
+		
+# dum <- NIRFigAndeler(RegData=NIRdata, valgtVar='liggetid', preprosess=0, hentData=0, 
+#datoFra=datoFra, datoTil=datoTil, enhetsUtvalg=1, reshID=reshID, outfile='FigLiggetidFordAlle.pdf')
+
+# dum <- NIRFigGjsnGrVar(RegData=NIRdata, valgtVar='liggetid', valgtMaal='Gjsn', 
+#preprosess=0, hentData=0,  grType=ShTypeEgen, datoFra=datoFra, datoTil=datoTil, outfile='FigLiggetidGjsn.pdf')
+# dum <- NIRFigGjsnGrVar(RegData=NIRdata, valgtVar='liggetid', valgtMaal='Med', preprosess=0, 
+#hentData=0,  grType=ShTypeEgen, datoFra=datoFra, datoTil=datoTil, outfile='FigLiggetidMed.pdf')
+@
+
+\end{frame}
+
+
+\begin{frame}[fragile] {Hovudårsak til intensivopphaldet}
+
+\begin{figure}[ht]
+\centering              
+\includegraphics[scale=0.35]{PrimaryReasonAdmittedFordMnd.pdf}
+\caption{Hovudårsak til innlegging på intensiv (prosent per kategori) siste seks månader, eiga avdeling og 
+\Sexpr{paste0(ShTypeEgenTxt,'sjukehus')} forøvrig.}
+\end{figure}
+\end{frame}
+
+
+\begin{frame}[fragile] {NEMS-skåre}
+Totalt tal NEMS-poeng for opphaldet. Faste definisjonar (Miranda), NEMS skåra på pleiedøgeret.
+Sidan det er stor variasjon i NEMS-skåre for korte opphald, avhengig av tal på timar
+som er rekna med før/etter pleiedøgeret, rapporterer vi her data per døger
+for opphald som har vart lenger enn 24 timar og der det faktisk er skåra NEMS-poeng.
+
+<<'NEMS', results='asis', echo=FALSE>>=
+finnGjsnMed <- function(variabel){
+      #Gjsn <- sprintf("%.1f", mean(variabel, na.rm=T))
+      Med <- sprintf("%.1f", median(variabel, na.rm=T))
+      #Ut <- c(Gjsn, Med)
+      }
+
+finnGjsnMedNEMS <- function(RegData){
+      indNEMS <- which( (RegData$liggetid>=1) & (RegData$NEMS>1))	#NEMS=0 el 1 - ikke registrert.
+      RegData <- RegData[indNEMS, ]
+      RegData$NEMSd <- RegData$NEMS/RegData$liggetid
+      GM_NEMS <- finnGjsnMed(RegData$NEMS)
+      GM_NEMSd <- finnGjsnMed(RegData$NEMSd)
+      Antal <- dim(RegData)[1]
+      Ut <- c(GM_NEMS, GM_NEMSd, Antal)
+      }
+
+NEMStab <- rbind(
+      'Eigen, sist månad' = finnGjsnMedNEMS(RegDataEgetMnd),
+      'Eigen'= finnGjsnMedNEMS(RegDataEget),
+	'Resten av landet'= finnGjsnMedNEMS(RegDataResten),
+	'Eigen sjukehustype' = finnGjsnMedNEMS(RegDataShType))
+
+colnames(NEMStab) <- c('Median/opph.','Median/døger', 'Antal')
+            #c('Gj.sn/opph', 'Median/opph','Median/døger', 'Gj.sn/døger', 'Antal')
+
+
+xtable(NEMStab, digits=1, align=c('l', rep('r', ncol(NEMStab))), 
+		caption='NEMS-poeng per opphald og døger for ulike sjukehuskategoriar, siste seks månader. ',
+		label='tab:NEMStab')
+@
+
+\end{frame}
+
+
+
+\begin{frame}[fragile] {Respirasjonsstøtte}
+
+Respirasjonsstøtte er antall døger pasienten har fått respirasjonsstøtte ut over
+O2-tilførsle i ope system (NIR sin mal). Resultata i tabellen omfattar berre pasientar som
+har fått respirasjonsstøtte (respirasjonstid>0).
+Respirasjonsstøtte varierer mykje mellom ulike intensivavsnitt. Den viktigaste grunnen er
+skilnader i sjølve pasientpopulasjonen. I tillegg er tala påverka av ulik praksis når det gjeld sedasjon, respiratoravvenning og trakeotomi, og tilgang på andre
+spesialitetar (lunge, øyre-nese-hals, røntgen etc.). Lokal behandlingstradisjon er også ein faktor.
+
+<<'TabResp', results='asis', echo=FALSE>>=
+#MechanicalRespirator==1		# De som har fått respirasjonsstøtte
+#evt. respiratortid>0
+#Gj.snitt, Median, % av opphold, Spredning, døgn(min,max) \
+
+finnDivRespMaal <- function(RegData){
+      indResp <- which(RegData$respiratortid>0)
+      Resp <- round(summary(RegData$respiratortid[indResp]),1)
+      Resp <- sprintf('%1.1f', summary(RegData$respiratortid[indResp]),1)
+      AndelResp <- paste0(round(100*sum(RegData$MechanicalRespirator==1)/dim(RegData)[1]),'%')
+      c(Resp[4], Resp[3], AndelResp[1], 
+        paste0(Resp[2],' - ',Resp[5]),
+        paste0(Resp[1],' - ',Resp[6])
+       )
+      }
+
+
+tabResp <- rbind(
+      'Eigen, sist månad' = finnDivRespMaal(RegDataEgetMnd),
+      'Eigen'= finnDivRespMaal(RegDataEget),
+	'Resten av landet'= finnDivRespMaal(RegDataResten),
+	'Eigen sjukehustype' = finnDivRespMaal(RegDataShType))
+				
+colnames(tabResp) <- c('Gj.sn', 'Median', 'Andel(%)', '25-75 prosentil', 'Min-maks')
+xtable(tabResp, align=c('l', 'r','r','r','c','c'), #digits=c(0,1,1,1,0), 
+		caption='Antal døger med respirasjonsstøtte, siste 6 månader.',
+		label='tab:Resp')
+@
+ 
+
+\end{frame}
+
+\begin{frame}[fragile] {SAPS II (alvorsskåre)}
+
+Vi inkluderer kun opphald med SAPS-skåre $>$0 der pasienten var over 16 år.
+Dei viktigaste feilkjelder i SAPS II-skåren er korvidt pasientar som skal skårast (og berre dei)
+er skåra, om reinsing og siling av avviksverdiar er etablert for data som ikkje representerer
+pasienten sin tilstand, og om Glasgow Coma Score er einsarta skåra.
+
+ 
+<<'SAPSII', results='asis', echo=FALSE>>=
+#Gj.snitt, Median, % av opphold, Spredning, døgn(min,max) \
+
+finnDivSAPSMaal <- function(RegData){
+      indSAPS <- which(as.numeric(RegData$SAPSII) > 0 & as.numeric(RegData$Alder) >= 18)
+      SAPS <- RegData$SAPSII[indSAPS]
+      SAPSmaal <- round(summary(SAPS))
+      c(SAPSmaal[4], SAPSmaal[3],  
+        paste0(SAPSmaal[2],' - ',SAPSmaal[5]),
+        paste0(SAPSmaal[1],' - ',SAPSmaal[6])
+       )
+}
+
+tabResp <- rbind(
+      'Eigen, sist månad' = finnDivSAPSMaal(RegDataEgetMnd),
+      'Eigen'= finnDivSAPSMaal(RegDataEget),
+	'Resten av landet'= finnDivSAPSMaal(RegDataResten),
+	'Eigen sjukehustype' = finnDivSAPSMaal(RegDataShType))
+				
+colnames(tabResp) <- c('Gj.sn', 'Median', '25-75 prosentil', 'Min-maks')
+xtable(tabResp, align=c('l', 'r','r','c','c'), #digits=c(0,1,1,1,0), 
+		caption='SAPS-skåre for eiga eining og ulike sjukehuskategoriar, siste seks månader.',
+		label='tab:SAPSII')
+@
+
+\end{frame}
+
+
+\begin{frame}[fragile] {Moglege dobbeltregistreringar}
+
+%Registreringer kor same pasient har fått registrert to innleggingar med mindre enn 2 timars mellomrom.
+
+
+<<'DblReg', results='asis', echo=FALSE>>=
+
+      RegDataSort <- RegData[order(RegData$PasientID, RegData$Innleggelsestidspunkt), 
+                             c('PasientID','Innleggelsestidspunkt', "SkjemaGUID")]
+      RegDataSort$OpphNr <- ave(RegDataSort[ ,'PasientID'], RegDataSort[ ,'PasientID'], FUN=seq_along)
+      indPasFlereOpph <- which(RegDataSort$OpphNr>1) 
+      RegDataSort$TidInn <- NA
+      RegDataSort$TidInn[indPasFlereOpph] <- 
+                        difftime(RegDataSort$Innleggelsestidspunkt[indPasFlereOpph], 
+                                 RegDataSort$Innleggelsestidspunkt[indPasFlereOpph-1], 
+                                 units = 'hour')
+
+      indDbl <- which(abs(RegDataSort$TidInn) <2 )
+      tabDbl <- RegDataSort[sort(c(indDbl, indDbl-1)), 
+                 c('PasientID','Innleggelsestidspunkt', "SkjemaGUID")]
+      
+library(knitr)
+dblTab <- kable(tabDbl, format='latex', row.names = FALSE) #, 
+                #caption='Registreringer kor same pasient har fått registrert to innleggingar med mindre enn 2 timars mellomrom.')
+#dblTab <- xtable(tabDbl, row.names = FALSE)
+      
+@
+
+\begin{table}[h]
+%\centering
+\resizebox{\textwidth}{!}{
+      \Sexpr{dblTab}}
+      \caption{Registreringer kor same pasient har fått registrert to innleggingar med mindre enn 2 timars mellomrom.}
+      \label{tab:DblReg}
+\end{table}
+
+
+\end{frame}
+
+\end{tiny}
+
+\end{document}

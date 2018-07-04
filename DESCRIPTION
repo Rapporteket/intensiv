@@ -1,27 +1,28 @@
 Package: intensiv
 Type: Package
 Title: Resultatrapporter for Intensivregisteret
-Version: 1.2.0
-Date: 2017-07-14
+Version: 1.3.0
+Date: 2018-06-01
 Author: Authors@R: c(person("Olsen", "Lena", email =
     "Lena.Ringstad.Olsen@unn.no", role = c("cre", "aut")), person("Edvardsen",
     "Are", email = "are.edvardsen@helse- nord.no", role = c("aut")))
 Maintainer: Lena Ringstad Olsen <lena.olsen@skde.no>
 Description: Pakke for (automatisk) generering av resultater (figurer og
-    samledokument) fra Norsk Intensivregister.
+    samledokument) fra Norsk Intensivregister. 
 License: GPL2
-LazyData: TRUE
+LazyData: FALSE
 Encoding: UTF-8
 Depends:
     R (>= 3.0.2),
     rapbase (>= 1.0.0)
 Imports:
     plyr,
+    lubridate,
     xtable
 RoxygenNote: 6.0.1
 Suggests:
     rmarkdown,
     knitr,
     testthat, 
-    prodlim
+    prodlim,
 VignetteBuilder: knitr

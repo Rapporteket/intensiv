@@ -50,5 +50,16 @@ alle: standard (alle andre verdier)}
 UtData En liste bestående av det filtrerte datasettet, utvalgstekst for figur og tekststreng som angir fargepalett
 }
 \description{
-Funksjon som gjør utvalg av dataene, returnerer det filtrerte datasettet og utvalgsteksten.
+Argumentet \emph{enhetsUtvalg} har følgende valgmuligheter:
+   \itemize{
+    \item 0: Hele landet
+    \item 1: Egen enhet mot resten av landet (Standard)
+    \item 2: Egen enhet
+    \item 3: Egen enhet mot egen sykehustype
+    \item 4: Egen sykehustype
+    \item 5: Egen sykehustype mot resten av landet
+    \item 6: Egen enhet mot egen region [NB: Intensivregiisteret mangler pt. variabel for region]
+    \item 7: Egen region [NB: Mangler pt. variabel for region]
+  \item 8: Egen region mot resten [NB: Mangler pt. variabel for region]
+   	}
 }

@@ -4,7 +4,7 @@
 #' Funksjonen lager også et "offentlig" datasett som kan benyttes til beregning
 #' av kvalitetsindikatorer og som kan legges ved pakken
 #'
-#' @inheritParams NIRAndeler
+#' @inheritParams NIRFigAndeler
 #'
 #' @return Data En liste med det filtrerte datasettet (og sykehusnavnet som tilsvarer reshID, ikke pt)
 #'
@@ -15,10 +15,14 @@ NIRPreprosess <- function(RegData=RegData, lagreKvalIndData=0)	#, reshID=reshID)
   #Kun ferdigstilte registreringer:
   # Rapporteket får kun levert ferdigstilte registreringer fra MRS/NHN.
 
+#devtools::load_all(quiet = TRUE)
+#source('R/NIRhjelpefunksjoner.R', encoding = 'UTF-8')
+      #load_all(pkg = ".", reset = TRUE, recompile = FALSE, export_all = TRUE,
+      #          quiet = FALSE, create = NA)
   #Kjønn
-  RegData$erMann <- NULL
-  RegData$erMann[RegData$PatientGender == 'Female'] <- 0
-  RegData$erMann[RegData$PatientGender == 'Male'] <- 1
+  RegData$erMann <- RegData$PatientGender #1=Mann, 2=Kvinne, 0=Ukjent
+  RegData$erMann[RegData$PatientGender == 0] <- NA
+  RegData$erMann[RegData$PatientGender == 2] <- 0
   
   #Riktig navn på regions-variabel:
   #Mangler regionsvariabel!!!
@@ -36,10 +40,15 @@ NIRPreprosess <- function(RegData=RegData, lagreKvalIndData=0)	#, reshID=reshID)
 	names(RegData)[which(names(RegData) == 'TransferredStatus')] <- 'Overf'
 	names(RegData)[which(names(RegData) == 'TypeOfAdmission')] <- 'InnMaate'
 	names(RegData)[which(names(RegData) == 'ReshID')] <- 'ReshId'
+	#names(RegData)[which(names(RegData) == 'PatientInRegistryGuid')] <- 'PasientID'
+#Avvik ml. test og prod-data:
+	names(RegData)[
+	      names(RegData) %in% c('PatientInRegistryGuid', 'PasientGUID')] <- 'PasientID'
 
 # Riktig format
 	RegData$ShNavn <- trimws(as.character(RegData$ShNavn)) #Fjerner mellomrom (før) og etter navn
-
+	RegData$ShType[RegData$ShType ==2 ] <- 1	#Har nå kun type lokal/sentral og regional
+	
 	#Riktig format på datovariable:
 #	RegData <- RegData[which(RegData$DateAdmittedIntensive!=''),]	#Tar ut registreringer som ikke har innleggelsesdato
 	RegData$InnDato <- as.POSIXlt(RegData$DateAdmittedIntensive, format="%Y-%m-%d") 
@@ -47,10 +56,10 @@ NIRPreprosess <- function(RegData=RegData, lagreKvalIndData=0)	#, reshID=reshID)
 	#RegData$InnDato <- strptime(RegData$DateAdmittedIntensive, format="%Y-%m-%d") # %H:%M:%S" )  #"%d.%m.%Y"	"%Y-%m-%d"
 	
 	# Nye variable:
-	RegData$Mnd <- RegData$InnDato$mon +1
+	RegData$Mnd <- RegData$Innleggelsestidspunkt$mon +1
 	RegData$Kvartal <- ceiling(RegData$Mnd/3)
 	RegData$Halvaar <- ceiling(RegData$Mnd/6)
-	RegData$Aar <- 1900 + RegData$InnDato$year #strptime(RegData$Innleggelsestidspunkt, format="%Y")$year
+	RegData$Aar <- 1900 + RegData$Innleggelsestidspunkt$year #strptime(RegData$Innleggelsestidspunkt, format="%Y")$year
 	#RegData$Mnd <- paste(RegData$InnDato$year-100,RegData$InnDato$mon+1, sep='.')
 	#verdiGML <- 0:11
 	#verdiNY <- c(1,1,1,2,2,2,3,3,3,4,4,4)

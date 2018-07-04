@@ -2,7 +2,7 @@
 #'
 #' Henter data for Intensivregisteret fra "staging"
 #'
-#' @inheritParams NIRAndeler
+#' @inheritParams NIRFigAndeler
 #'
 #' @return Henter dataramma RegData for Intensivregisteret
 #' @export
@@ -58,7 +58,9 @@ NIRRegDataSQL <- function(datoFra = '2011-01-01', datoTil = '2099-01-01') {
       OrganDonationCompletedReasonForNoStatus,
       OrganDonationCompletedStatus,
       Oscillator,
-      PasientGUID,
+      -- PasientGUID,
+      PatientInRegistryGuid,
+      -- PatientInRegistryGUID,
       PatientAge,
       PatientGender,
       PatientTransferredFromHospital,
@@ -73,6 +75,7 @@ NIRRegDataSQL <- function(datoFra = '2011-01-01', datoTil = '2099-01-01') {
       SerumUreaOrBun,
       ShNavn,
       ShType,
+      SkjemaGUID,
       Sodium,
       SystolicBloodPressure,
       Temperature,

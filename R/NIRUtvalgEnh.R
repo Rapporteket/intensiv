@@ -1,13 +1,26 @@
 #' Funksjon som gjør utvalg av dataene, returnerer det filtrerte datasettet og utvalgsteksten.
 #'
-#' @inheritParams NIRAndeler
+#' Argumentet \emph{enhetsUtvalg} har følgende valgmuligheter:
+#'    \itemize{
+#'     \item 0: Hele landet
+#'     \item 1: Egen enhet mot resten av landet (Standard)
+#'     \item 2: Egen enhet
+#'     \item 3: Egen enhet mot egen sykehustype
+#'     \item 4: Egen sykehustype
+#'     \item 5: Egen sykehustype mot resten av landet
+#'     \item 6: Egen enhet mot egen region [NB: Intensivregiisteret mangler pt. variabel for region]
+#'     \item 7: Egen region [NB: Mangler pt. variabel for region]
+#'	  \item 8: Egen region mot resten [NB: Mangler pt. variabel for region]
+#'    	}							
+#'    				
+#' @inheritParams NIRFigAndeler
 #' @param fargepalett Hvilken fargepalett skal brukes i figurer (Standard: BlaaRapp)
 #'
 #' @return UtData En liste bestående av det filtrerte datasettet, utvalgstekst for figur og tekststreng som angir fargepalett
 #'
 #' @export
 
-NIRUtvalgEnh <- function(RegData, datoFra=0, datoTil=0, minald=0, maxald=130, erMann='', InnMaate='', 
+NIRUtvalgEnh <- function(RegData, datoFra=0, datoTil=0, minald=0, maxald=110, erMann='', InnMaate='', 
                          aar=0, grType=99, enhetsUtvalg=0, reshID=0,  dodInt='', fargepalett='BlaaOff')    
       # overfPas=99,
 {
@@ -16,7 +29,7 @@ NIRUtvalgEnh <- function(RegData, datoFra=0, datoTil=0, minald=0, maxald=130, er
       "%i%" <- intersect
       
       dodInt <- as.numeric(dodInt)
-      grType
+      
       
       #Enhetsutvalg:
       #Når bare skal sammenlikne med sykehusgruppe eller region, eller ikke sammenlikne, 
@@ -42,7 +55,7 @@ NIRUtvalgEnh <- function(RegData, datoFra=0, datoTil=0, minald=0, maxald=130, er
       RegData <- RegData[indGrType,]
       RegData$ShNavn <- as.factor(RegData$ShNavn)
       
-      indAld <- if(minald>0 | maxald<130) {
+      indAld <- if(minald>0 | maxald<110) {
             which(RegData$Alder >= minald & RegData$Alder <= maxald)} else {1:Ninn}
       indDato <- if(datoFra!=0 | datoTil!=0) {
             which(RegData$InnDato >= as.POSIXlt(datoFra) & RegData$InnDato <= as.POSIXlt(datoTil))
@@ -70,10 +83,10 @@ NIRUtvalgEnh <- function(RegData, datoFra=0, datoTil=0, minald=0, maxald=130, er
       
       utvalgTxt <- c(
             if(datoFra!=0 | datoTil!=0) {paste0(
-                  'Registreringsperiode: ', if (N>0) {min(RegData$InnDato, na.rm=T)} else {datoFra}, 
-                  ' til ', if (N>0) {max(RegData$InnDato, na.rm=T)} else {datoTil})} else {NULL},
+                  'Registreringsperiode: ', if (N>0) {min(as.Date(RegData$InnDato), na.rm=T)} else {datoFra}, 
+                  ' til ', if (N>0) {max(as.Date(RegData$InnDato), na.rm=T)} else {datoTil})} else {NULL},
             if (aar[1] > 0){paste0('Innleggelsesår: ', paste0(aar, collapse=', '))},
-            if ((minald>0) | (maxald<130)) {
+            if ((minald>0) | (maxald<110)) {
                   paste0('Pasienter fra ', if (N>0) {sprintf('%.1f',min(RegData$Alder, na.rm=T))} else {minald}, 
                          ' til ', if (N>0) {sprintf('%.1f',max(RegData$Alder, na.rm=T))} else {maxald}, ' år')},
             if (erMann %in% 0:1) {paste0('Kjønn: ', c('Kvinner', 'Menn')[erMann+1])},
@@ -97,7 +110,7 @@ NIRUtvalgEnh <- function(RegData, datoFra=0, datoTil=0, minald=0, maxald=130, er
             }
       
       
-      ind <- list(Hoved=0, Rest=0)
+      ind <- list(Hoved=0, Rest=0, ShType=0)
       smltxt <- grTypeTxt      #Før: ''
       if (enhetsUtvalg %in% c(0,2,4,7)) {		#Ikke sammenlikning
             medSml <- 0
@@ -123,11 +136,12 @@ NIRUtvalgEnh <- function(RegData, datoFra=0, datoTil=0, minald=0, maxald=130, er
                                '6' = which(as.numeric(RegData$ReshId)!=reshID),	#RegData inneh. kun egen region
                                '8' = which(RegData$Region != RegData$Region[indEgen1]))
       }								
+      ind$ShType =  which(RegData$ShType == RegData$ShType[indEgen1]) 
       
       
       
       
-      UtData <- list(RegData=RegData, utvalgTxt=utvalgTxt, fargepalett=fargepalett, ind=ind, 
-                     medSml=medSml, smltxt=smltxt, hovedgrTxt=hovedgrTxt, grTypeTxt=grTypeTxt)
+      UtData <- list(utvalgTxt=utvalgTxt, fargepalett=fargepalett, ind=ind, medSml=medSml, 
+                     smltxt=smltxt, hovedgrTxt=hovedgrTxt, grTypeTxt=grTypeTxt, RegData=RegData)
       return(invisible(UtData)) 
 }

@@ -5,9 +5,16 @@
 #'
 #' Argumentet \emph{valgtVar} har følgende valgmuligheter:
 #'    \itemize{
-#'     \item alder: Pasientens alder
+#'     \item alder: Pasientens alders 
+#'     \item SMR: Standardisert mortalitetsratio (Gir annen figurtype)
 #'     \item liggetid: Liggetid 
+#'     \item Nas: Skår for sykepleieraktiviteter. (Nursing Activities Score). Per døgn.
+#'     \item NEMS: Skår for ressursbruk per opphold. (Nine Equivalents of Nursing Manpower Use Score)
+#'     \item NEMS24: NEMS-skår per døgn. 
 #'     \item respiratortid: Tid tilbrakt i respirator
+#'     \item respiratortidNonInv: Respiratortid, ikke-invasiv
+#'     \item respiratortidInvMoverf: Respiratortid, invasiv m/overf.
+#'     \item respiratortidInvUoverf: Respiratortid, invasiv u/overf.
 #'     \item SAPSII: Skår for alvorlighetsgrad av sykdom.  (Simplified Acute Physiology Score II)
 #'    }
 #' Argumentet \emph{enhetsUtvalg} har følgende valgmuligheter:
@@ -23,7 +30,7 @@
 #'	   \item 8: Egen region mot resten [NB: Mangler pt. variabel for region]
 #'    	}							
 #'
-#' @inheritParams NIRAndeler 
+#' @inheritParams NIRFigAndeler 
 #' @inheritParams NIRVarTilrettelegg
 #' @param valgtMaal
 #'        'Gjsn': gir middelverdi (standard)
@@ -33,9 +40,9 @@
 #' @return Linjediagram som viser utvikling over tid for valgt variabel
 #'
 #' @export
-NIRFigGjsnTid <- function(RegData, valgtVar, datoFra='2011-01-01', datoTil='3000-12-31', 
-                    minald=0, maxald=130, erMann='', reshID, InnMaate='', dodInt='', tittel=1, 
-                    outfile='',enhetsUtvalg=1, valgtMaal='', preprosess=1, hentData=0){
+NIRFigGjsnTid <- function(RegData, valgtVar, datoFra='2011-01-01', datoTil='3000-12-31', tidsenhet='Aar',
+                    minald=0, maxald=110, erMann='', reshID=0, InnMaate='', dodInt='', tittel=1, 
+                    outfile='',enhetsUtvalg=0, valgtMaal='', preprosess=1, hentData=0){
   
   if (hentData == 1) {		
     RegData <- NIRRegDataSQL(datoFra, datoTil)
@@ -60,27 +67,33 @@ NIRFigGjsnTid <- function(RegData, valgtVar, datoFra='2011-01-01', datoTil='3000
   RegData <- NIRUtvalg$RegData
   utvalgTxt <- NIRUtvalg$utvalgTxt
   medSml <- NIRUtvalg$medSml
-
-
+#------------------------Klargjøre tidsenhet--------------
+  N <- list(Hoved = dim(RegData)[1], Rest=0)
+  #N <- list(Hoved = 0, Rest =0)
+  if (N$Hoved>9) {
+            RegDataFunk <- SorterOgNavngiTidsEnhet(RegData=RegData, tidsenhet = tidsenhet)
+            RegData <- RegDataFunk$RegData
+            #tidtxt <- RegDataFunk$tidtxt
+            tidNum <- as.numeric(levels(RegData$TidsEnhetSort))
+            AntTidsenh <- length(tidNum)
+            
 #--------------- Gjøre beregninger ------------------------------
-#  flerevar <- 0
-#  antDes <- 1
-  KIekstrem <- NULL
-  
-  
+KIekstrem <- NULL
+
 AggVerdier <- list(Hoved = 0, Rest =0)
 ind <- NIRUtvalg$ind
-N <- list(Hoved = 0, Rest =0)
 Ngr <- list(Hoved = length(ind$Hoved), Rest =length(ind$Rest))
 
-Aartxt <- min(RegData$Aar):max(RegData$Aar)
-RegData$Aar <- factor(RegData$Aar, levels=Aartxt)
-AntAar <- length(Aartxt)
+#tidtxt <- min(RegData$Aar):max(RegData$Aar)
+#Erstattes av TidsEnhet: RegData$Aar <- factor(RegData$Aar, levels=tidtxt)
+#Aartxt <- min(RegData$Aar):max(RegData$Aar)
+#RegData$Aar <- factor(RegData$Aar, levels=Aartxt)
+#AntTidsenh <- length(Aartxt)
 
 #Resultat for hovedgruppe
-N <- tapply(RegData[ind$Hoved ,'Variabel'], RegData[ind$Hoved, 'Aar'], length)
+N <- tapply(RegData[ind$Hoved ,'Variabel'], RegData[ind$Hoved, 'TidsEnhet'], length)
 if (valgtMaal=='Med') {
-	MedIQR <- plot(RegData$Aar[ind$Hoved],RegData$Variabel[ind$Hoved],  notch=TRUE, plot=FALSE)
+	MedIQR <- plot(RegData$TidsEnhet[ind$Hoved],RegData$Variabel[ind$Hoved],  notch=TRUE, plot=FALSE)
 	Midt <- as.numeric(MedIQR$stats[3, ])	#as.numeric(MedIQR$stats[3, sortInd])
 	Konf <- MedIQR$conf
 	#Hvis vil bruke vanlige konf.int:
@@ -92,8 +105,8 @@ if (valgtMaal=='Med') {
 #and are said to be rather insensitive to the underlying distributions of the samples. The idea appears to be to give 
 #roughly a 95% confidence interval for the difference in two medians. 	
 } else {	#Gjennomsnitt blir standard.
-	Midt <- tapply(RegData[ind$Hoved ,'Variabel'], RegData[ind$Hoved, 'Aar'], mean)
-	SD <- tapply(RegData[ind$Hoved ,'Variabel'], RegData[ind$Hoved, 'Aar'], sd)
+	Midt <- tapply(RegData[ind$Hoved ,'Variabel'], RegData[ind$Hoved, 'TidsEnhet'], mean)
+	SD <- tapply(RegData[ind$Hoved ,'Variabel'], RegData[ind$Hoved, 'TidsEnhet'], sd)
 	Konf <- rbind(Midt - 2*SD/sqrt(N), Midt + 2*SD/sqrt(N))
 }
 
@@ -107,19 +120,20 @@ if (length(KIekstrem) == 0) {	#Hvis ikke KIekstrem definert i variabeldefinisjon
 MidtRest <- NULL
 KonfRest <- NULL
 if (medSml ==  1) {
-Nrest <- tapply(RegData[ind$Rest ,'Variabel'], RegData[ind$Rest, 'Aar'], length)
+Nrest <- tapply(RegData[ind$Rest ,'Variabel'], RegData[ind$Rest, 'TidsEnhet'], length)
 	if (valgtMaal=='Med') {
-		MedIQRrest <- plot(RegData$Aar[ind$Rest],RegData$Variabel[ind$Rest],  notch=TRUE, plot=FALSE)
+		MedIQRrest <- plot(RegData$TidsEnhet[ind$Rest],RegData$Variabel[ind$Rest],  notch=TRUE, plot=FALSE)
 		MidtRest <- as.numeric(MedIQRrest$stats[3, ])
 		KonfRest <- MedIQRrest$conf
 	} else {
-	MidtRest <- tapply(RegData[ind$Rest,'Variabel'], RegData[ind$Rest, 'Aar'], mean)	#ind$Rest
-	SDRest <- tapply(RegData[ind$Rest,'Variabel'], RegData[ind$Rest, 'Aar'], sd)
-	Nrest <- tapply(RegData[ind$Rest,'Variabel'], RegData[ind$Rest, 'Aar'], length)
+	MidtRest <- tapply(RegData[ind$Rest,'Variabel'], RegData[ind$Rest, 'TidsEnhet'], mean)	#ind$Rest
+	SDRest <- tapply(RegData[ind$Rest,'Variabel'], RegData[ind$Rest, 'TidsEnhet'], sd)
+	Nrest <- tapply(RegData[ind$Rest,'Variabel'], RegData[ind$Rest, 'TidsEnhet'], length)
 	KonfRest <- rbind(MidtRest - 2*SDRest/sqrt(Nrest), MidtRest + 2*SDRest/sqrt(Nrest))
 	}
 }
 
+}
 t1 <- switch(valgtMaal,
              Med = 'Median ',
              Gjsn = 'Gjennomsnittlig ')
@@ -136,8 +150,8 @@ figtype(outfile)
 	if ( outfile != '') {dev.off()}
 } else {
 
-xmin <- Aartxt[1]-0.5
-xmax <- max(Aartxt)+0.5
+xmin <- min(tidNum)-0.5
+xmax <- max(tidNum)+0.5
 cexgr <- 0.9	#Kan endres for enkeltvariable
 ymin <- 0.9*min(KonfRest, Konf, na.rm=TRUE)	#ymin1 - 2*h
 ymax <- 1.1*max(KonfRest, Konf, na.rm=TRUE)	#ymax1 + 2*h
@@ -153,35 +167,37 @@ par('fig'=c(0, 1, 0, 1-0.02*(max((NutvTxt-1),0))))
 farger <- FigTypUt$farger
 fargeHovedRes <- farger[1]
 fargeRestRes <- farger[4]
-
-plot(Aartxt, Midt, xlim= c(xmin, xmax), ylim=c(ymin, ymax), type='n', frame.plot=FALSE, #ylim=c(ymin-0.05*ymax, ymax),
+# 
+plot(tidNum,Midt, xlim= c(xmin, xmax), ylim=c(ymin, ymax), type='n', frame.plot=FALSE, #ylim=c(ymin-0.05*ymax, ymax),
 		#cex=0.8, cex.lab=0.9, cex.axis=0.9,	
 		ylab=c(ytxt,'med 95% konfidensintervall'), 
 		xlab='Innleggelsesår', xaxt='n', 
 		sub='(Tall i boksene angir antall innleggelser)', cex.sub=cexgr)	#, axes=F)
-axis(side=1, at = Aartxt)	
+axis(side=1, at = tidNum, labels = levels(RegData$TidsEnhet))	
 #Sammenlikning:
 if (medSml==1) {
-#	polygon( c(Aartxt, Aartxt[AntAar:1]), c(KonfRest[1,], KonfRest[2,AntAar:1]), 
-#			col=fargeRestRes, border=NA)
-	polygon( c(Aartxt[1]-0.01,Aartxt, Aartxt[AntAar]+0.012, 
-				Aartxt[AntAar]+0.012, Aartxt[AntAar:1], Aartxt[1]-0.01), 
-		c(KonfRest[1,c(1,1:AntAar, AntAar)], KonfRest[2,c(AntAar,AntAar:1,1)]), 
+      # polygon( c(tidtxt[1]-0.01,tidtxt, tidtxt[AntTidsenh]+0.012, 
+      #            tidtxt[AntTidsenh]+0.012, tidtxt[AntTidsenh:1], tidtxt[1]-0.01), 
+      #          c(KonfRest[1,c(1,1:AntTidsenh, AntTidsenh)], KonfRest[2,c(AntTidsenh,AntTidsenh:1,1)]), 
+      #          col=fargeRestRes, border=NA)
+      polygon( c(tidNum[1]-0.01,tidNum, tidNum[AntTidsenh]+0.012, 
+				tidNum[AntTidsenh]+0.012, tidNum[AntTidsenh:1], tidNum[1]-0.01), 
+		c(KonfRest[1,c(1,1:AntTidsenh, AntTidsenh)], KonfRest[2,c(AntTidsenh,AntTidsenh:1,1)]), 
 			col=fargeRestRes, border=NA)
 	legend('top', bty='n', fill=fargeRestRes, border=fargeRestRes, cex=cexgr,
-		paste('95% konfidensintervall for ', NIRUtvalg$smltxt, ', N=', sum(Nrest, na.rm=T), sep=''))
+		paste0('95% konfidensintervall for ', NIRUtvalg$smltxt, ', N=', sum(Nrest, na.rm=T)))
 }
 h <- strheight(1, cex=cexgr)*0.7	#,  units='figure',
-b <- 1.1*strwidth(max(N, na.rm=T), cex=cexgr)/2	#length(Aartxt)/30
-rect(Aartxt-b, Midt-h, Aartxt+b, Midt+h, border = fargeHovedRes, lwd=1)	#border=farger[4], col=farger[4]
-text(Aartxt, Midt, N, col=fargeHovedRes, cex=cexgr) 	
+b <- 1.1*strwidth(max(N, na.rm=T), cex=cexgr)/2	#length(tidNum)/30
+rect(tidNum-b, Midt-h, tidNum+b, Midt+h, border = fargeHovedRes, lwd=1)	#border=farger[4], col=farger[4]
+text(tidNum, Midt, N, col=fargeHovedRes, cex=cexgr) 	
 
 #Konfidensintervall:
 ind <- which(Konf[1, ] > Midt-h) #Konfidensintervall som er tilnærmet 0
 options('warn'=-1)
-arrows(x0=Aartxt, y0=Midt-h, x1=Aartxt, length=0.08, code=2, angle=90, 
+arrows(x0=tidNum, y0=Midt-h, x1=tidNum, length=0.08, code=2, angle=90, 
 		y1=replace(Konf[1, ], ind, Midt[ind]-h), col=fargeHovedRes, lwd=1.5)
-arrows(x0=Aartxt, y0=Midt+h, x1=Aartxt, y1=replace(Konf[2, ], ind, Midt[ind]+h), 
+arrows(x0=tidNum, y0=Midt+h, x1=tidNum, y1=replace(Konf[2, ], ind, Midt[ind]+h), 
 		length=0.08, code=2, angle=90, col=fargeHovedRes, lwd=1.5)
 
 title(main=c(tittel, NIRUtvalg$hovedgrTxt), font.main=1, line=1)

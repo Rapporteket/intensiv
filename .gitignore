@@ -10,13 +10,22 @@ FigNIRMeanMed_sql.R
 *.lof
 *.lot
 *.toc
+*.out
 *.aux
 *.log
-*.gz
+*.nav
+*.aux
 *.tex
+*.nav
+*.snm
+*.vrb
+*.gz
 *.csv
 *.xlsx
+<<<<<<< HEAD
 ~$NIRkodebok2016-06-01.xlsx
+=======
+>>>>>>> rel
 *.docx
 *.tmp
 

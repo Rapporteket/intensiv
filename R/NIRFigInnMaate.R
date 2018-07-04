@@ -9,7 +9,7 @@
 #' Figurtypen som genereres er avhengig av valgtVar. Ved valgtVar='InnMaate', får man ei oversikt oversikt
 #' over andel av innkomsttype ved hver enhet, dvs. ei fordeling av de tre innkomsttypene for hver enhet.
 #' For andre "valgtVar" viser figuren andel av den valgte variabelen for hver enhet.
-#' @inheritParams NIRAndeler
+#' @inheritParams NIRFigAndeler
 #' @param tittel: Hvis vil angi tittel direkte
 #' @param utvalgsInfo: Hvis datafil lagret med utvalgsinfo
 #' 
@@ -19,7 +19,7 @@
 
 
 NIRFigInnMaate <- function(RegData, valgtVar='InnMaate', datoFra='2010-01-01', datoTil='3000-01-01', aar=0, 
-                            minald=0, maxald=130, aldGr=0,
+                            minald=0, maxald=110, 
                             grType=99, grVar='ShNavn', InnMaate=99, dodInt='', erMann='', hentData=0,
                             preprosess=1, outfile='') 
 {

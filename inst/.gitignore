@@ -6,3 +6,7 @@ unit.test.R
 *.tex
 *.toc
 *.lot
+*.nav
+NIRmndRapp.nav
+NIRmndRapp.snm
+NIRmndRapp.vrb
