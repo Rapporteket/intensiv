@@ -24,7 +24,11 @@ NIRUtvalgEnh <- function(RegData, datoFra=0, datoTil=0, minald=0, maxald=110, er
                          aar=0, grType=99, enhetsUtvalg=0, reshID=0,  dodInt='', fargepalett='BlaaOff')    
       # overfPas=99,
 {
+      #OffAlleFarger <- c('#c6dbef', '#6baed6', '#4292c6', '#2171b5', '#084594', '#000059', '#FF7260', '#4D4D4D', '#737373', '#A6A6A6', '#DADADA')
+      #BlaaOff = OffAlleFarger[rev(c(1,2,4,5))]
       
+      
+       
       # Definer intersect-operator
       "%i%" <- intersect
       

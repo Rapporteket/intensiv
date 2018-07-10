@@ -167,7 +167,7 @@ ui <- fluidPage( #"Hoved"Layout for alt som vises på skjermen
 
     # Vise det vi har valgt...
     column(width = 7, #mainPanel(
-      tabsetPanel( #
+      tabsetPanel( #position = 'below',  #
         id='ark',
 
         tabPanel("Viktigste resultater",
@@ -175,8 +175,8 @@ ui <- fluidPage( #"Hoved"Layout for alt som vises på skjermen
                    #column(width=5,
                  h2("Månedsrapport"), #),
                    #column(width=2,
-                 downloadButton(outputId = 'mndRapp.pdf', label='FUNKER pt IKKE', class = "butt"),
-                 tags$head(tags$style(".butt{background-color:#6baed6;} .butt{color: white;}")), # background color and font color
+                 #downloadButton(outputId = 'mndRapp.pdf', label='FUNKER pt IKKE', class = "butt"),
+                 #tags$head(tags$style(".butt{background-color:#6baed6;} .butt{color: white;}")), # background color and font color
                    #)),
                  br(),
                  br(),
@@ -196,7 +196,7 @@ ui <- fluidPage( #"Hoved"Layout for alt som vises på skjermen
         #          h2("Antall registreringer per år og avdeling, siste 5 år"),
         #          #tableOutput("tabAvdNAar5")
         # ),
-        tabPanel("Fordelinger",
+               tabPanel("Fordelinger", width = 3,
                  h3("Fordeling av valgt variabel"),
                  h5("Hvilken variabel man ønsker å se resultater for, velges fra rullegardinmenyen
                     til venstre. Man kan også gjøre ulike filtreringer."),
@@ -224,13 +224,17 @@ ui <- fluidPage( #"Hoved"Layout for alt som vises på skjermen
                br(),
                h3('SMR: Standardisert mortalitetsratio (GjsnGrVar-gir annen figurtype)'),
                h3('Type opphold = innMaate'),
-               h3("Antall opphold per sykehus og år"),
-               h3("Antall opphold per sykehus og mnd, siste 12 mnd. "),
-               h3("Pasienter utskrevet mellom 17:00 og 08:00"),
-               h3("\"Månedlig oversikt:\" Div. nøkkeltall for egen avd/hele landet, siste 12 måneder"),
-               h3('Overflyttinger mellom sykehus/avd.'),
-               h3('Potensielle donorer'),
-               h3('Påvist opphevet sirkulasjon- organdonasjoner og grunn til ikke gjennomført'),
+               h3("Resultater fra pårørendeskjema"),
+               h3("HN-IKT-rapporter:"),
+               h3("1. Antall opphold + pasienter per sykehus og år"),
+               h3("2. Antall opphold + pasienter per sykehus og mnd, siste 12 mnd. "),
+               h3("3. Dobbeltregistreringar"),
+               h3("4. \"Månedlig oversikt:\" Div. nøkkeltall for egen avd/hele landet, siste 12 måneder"),
+               h3("5. Pasienter utskrevet mellom 17:00 og 08:00, helligdager beh. som vanlige dager"),
+               h3('6. Potensielle donorer'),
+               h3('7. Påvist opphevet sirkulasjon- organdonasjoner og grunn til ikke gjennomført'),
+               h3('8. Overflyttinger mellom sykehus/avd.'),
+               h3("9. Fordelinger alder og kjønn"),
                br())
       )
 #    )
