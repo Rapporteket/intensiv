@@ -20,21 +20,21 @@ library(lubridate)
 <<'hentDataOgTilrettelegg', include=FALSE>>=
 #startOfMonth<- function(x) {as.Date(format(x, "%Y-%m-01")) }
 
-dato <- as.POSIXlt(Sys.Date())
+dato <- as.POSIXlt(Sys.Date(), tz='UTC')
 datoTil <- as.Date(format(dato, "%Y-%m-01"))-1 #Til siste i forrige måned
 mndTxt <- c('januar', 'februar', 'mars', 'april', 'mai', 'juni', 'juli', 'august', 
                    'september', 'oktober', 'november', 'desember')
 rappMnd <- paste0(mndTxt[ifelse(dato$mon==0, 12, dato$mon)], ' ', dato$year+1900)
-#som <- function(x) {as.Date(format(x, "%Y-%m-01"))}
-#dato <- as.POSIXlt(datoTil)
+#som <- function(x) {as.Date(format(x, "%Y-%m-01"), tz='UTC')}
+#dato <- as.POSIXlt(datoTil, tz='UTC')
 
-datoFra1Aar <- as.Date(paste0(1900+dato$year-1,'-', ifelse(dato$mon==11, 1, dato$mon+2), '-', '01'))
+datoFra1Aar <- as.Date(paste0(1900+dato$year-1,'-', ifelse(dato$mon==11, 1, dato$mon+2), '-', '01'), tz='UTC')
 #Siste 6 måneder:
 datoFra6mnd <- paste0(substr(as.character(dato %m-% months(6, abbreviate=FALSE)),1, 8),'01')  #benytter lubridate
       
 datoFra <- datoFra6mnd
 #Ønsker eget datasett for forrige måned
-datoFraMnd <- as.Date(paste0(1900+dato$year,'-', ifelse(dato$mon==0, 11, dato$mon), '-', '01')) #dato - 
+datoFraMnd <- as.Date(paste0(1900+dato$year,'-', ifelse(dato$mon==0, 11, dato$mon), '-', '01'), tz='UTC') #dato - 
 
 tidsenhet <- 'Mnd'
 preprosess <- 0
@@ -65,12 +65,12 @@ RegData <- SortMnd$RegData
 #tidtxt <- SortMnd$tidtxt
 
 RegDataEget <- RegData[ind$Hoved, ]
-RegDataEgetMnd <- RegDataEget[which(as.Date(RegDataEget$InnDato) >= datoFraMnd), ]
+RegDataEgetMnd <- RegDataEget[which(as.Date(RegDataEget$InnDato, tz='UTC') >= datoFraMnd), ]
 RegDataShType <- RegData[ind$ShType,] #NB: velger alle
 RegDataResten <- RegData[setdiff(1:N,ind$Hoved), ]
-RegDataMnd <- RegData[which(as.Date(RegData$InnDato) >= datoFraMnd), ]
+RegDataMnd <- RegData[which(as.Date(RegData$InnDato, tz='UTC') >= datoFraMnd), ]
 
-maxDatoEget <- format.Date(max(RegDataEget$InnDato), format='%d.%m%.%Y')
+maxDatoEget <- format.Date(max(RegDataEget$InnDato), format='%d.%m%.%Y', tz='UTC')
 Neget <- dim(RegDataEget)[1]
 tabKjPstEget <- round(table(RegDataEget$erMann)/Neget*100, digits=1)
 

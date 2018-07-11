@@ -62,7 +62,7 @@ NIRUtvalgEnh <- function(RegData, datoFra=0, datoTil=0, minald=0, maxald=110, er
       indAld <- if(minald>0 | maxald<110) {
             which(RegData$Alder >= minald & RegData$Alder <= maxald)} else {1:Ninn}
       indDato <- if(datoFra!=0 | datoTil!=0) {
-            which(RegData$InnDato >= as.POSIXlt(datoFra) & RegData$InnDato <= as.POSIXlt(datoTil))
+            which(RegData$InnDato >= as.POSIXlt(datoFra, tz= 'UTC') & RegData$InnDato <= as.POSIXlt(datoTil, tz= 'UTC'))
       } else {1:Ninn}
       indAar <- if (aar[1] != 0) {which(RegData$Aar %in% aar)} else {1:Ninn}
       indKj <- if (erMann %in% 0:1) {which(RegData$erMann == erMann)} else {1:Ninn}
