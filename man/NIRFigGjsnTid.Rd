@@ -5,7 +5,7 @@
 \title{Utvikling over tid for gjennomsnitt/median av valgt variabel}
 \usage{
 NIRFigGjsnTid(RegData, valgtVar, datoFra = "2011-01-01",
-  datoTil = "3000-12-31", tidsenhet = "Aar", minald = 0, maxald = 130,
+  datoTil = "3000-12-31", tidsenhet = "Aar", minald = 0, maxald = 110,
   erMann = "", reshID = 0, InnMaate = "", dodInt = "", tittel = 1,
   outfile = "", enhetsUtvalg = 0, valgtMaal = "", preprosess = 1,
   hentData = 0)
@@ -21,7 +21,7 @@ NIRFigGjsnTid(RegData, valgtVar, datoFra = "2011-01-01",
 
 \item{minald}{Alder, fra og med (Standardverdi: 0)}
 
-\item{maxald}{Alder, til og med (Standardverdi: 130)}
+\item{maxald}{Alder, til og med (Standardverdi: 110)}
 
 \item{erMann}{Kjønn, standard: alt annet enn 0/1 gir begge kjønn
 0: Kvinner
@@ -66,9 +66,16 @@ I bakgrunn vises konfidensintervall for det man har valt å sammenlikne med.
 \details{
 Argumentet \emph{valgtVar} har følgende valgmuligheter:
    \itemize{
-    \item alder: Pasientens alder
+    \item alder: Pasientens alders 
+    \item SMR: Standardisert mortalitetsratio (Gir annen figurtype)
     \item liggetid: Liggetid 
+    \item Nas: Skår for sykepleieraktiviteter. (Nursing Activities Score). Per døgn.
+    \item NEMS: Skår for ressursbruk per opphold. (Nine Equivalents of Nursing Manpower Use Score)
+    \item NEMS24: NEMS-skår per døgn. 
     \item respiratortid: Tid tilbrakt i respirator
+    \item respiratortidNonInv: Respiratortid, ikke-invasiv
+    \item respiratortidInvMoverf: Respiratortid, invasiv m/overf.
+    \item respiratortidInvUoverf: Respiratortid, invasiv u/overf.
     \item SAPSII: Skår for alvorlighetsgrad av sykdom.  (Simplified Acute Physiology Score II)
    }
 Argumentet \emph{enhetsUtvalg} har følgende valgmuligheter:

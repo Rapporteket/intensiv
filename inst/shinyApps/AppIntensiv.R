@@ -27,6 +27,10 @@ library(knitr)
 #
 # }
 
+#ARBEIDSPLAN:
+#Skill  ut brukerkontroller i egen funksjon
+#omorganiser slik at alt som skal på samme side kommer sammen
+
 
 # Define UI for application that draws figures
 ui <- fluidPage( #"Hoved"Layout for alt som vises på skjermen
@@ -49,39 +53,12 @@ ui <- fluidPage( #"Hoved"Layout for alt som vises på skjermen
 
       conditionalPanel( #Denne skal bare vises for figursamlinger
         'input.ark == "Fordelinger"',
-        #'input.ark === "Fordelinger" || input.ark === "Sykehusvise andeler" ',
-        AppNIRbrukervalg(inputId = "valgtVar", label="Velg variabel"),
-        # selectInput(inputId = "valgtVar", label="Velg variabel",
-        #             choices = c('Alder' = 'alder', 
-        #                         'Innkomstmåte' = 'InnMaate',
-        #                         'Hemodynamisk overvåkn.' = 'ExtendedHemodynamicMonitoring',
-        #                         'Inklusjonskriterier' = 'inklKrit',
-        #                         'Isolasjon, type' = 'isolering',
-        #                         'Isolasjon, varighet' = 'isoleringDogn',
-        #                         'Liggetid' = 'liggetid',
-        #                         'Nas-skår (sykepleierakt.)' = 'Nas24',
-        #                         'NEMS-skår (ressursbruk)' = 'NEMS24',
-        #                         'Nyrebeh., type' = 'nyreBeh',
-        #                         'Nyrebeh., varighet' = 'nyreBehTid',
-        #                         'Primærårsak' = 'PrimaryReasonAdmitted',
-        #                         'Respiratortid' = 'respiratortid',
-        #                         'Respiratortid, ikke-invasiv' = 'respiratortidNonInv',
-        #                         'Respiratortid, invasiv m/overf.' = 'respiratortidInvMoverf',
-        #                         'Respiratortid, invasiv u/overf.' = 'respiratortidInvUoverf',
-        #                         'SAPSII-skår (alvorlighet av sykd.)' = 'SAPSII',
-        #                         'Spesielle tiltak' = 'spesTiltak')
-        # ),
-        dateRangeInput(inputId = 'datovalg', start = "2017-01-01", end = Sys.Date(),
-                       label = "Tidsperiode", separator="t.o.m.", language="nb"),
-        selectInput(inputId = "erMann", label="Kjønn",
-                    choices = c("Begge"=2, "Menn"=1, "Kvinner"=0)
-        ),
-        sliderInput(inputId="alder", label = "Alder", min = 0,
-                    max = 110, value = c(0, 110)
-        ),
-        selectInput(inputId = 'enhetsUtvalg', label='Egen enhet og/eller landet',
-                    choices = c("Egen mot resten av landet"=1, "Hele landet"=0, "Egen enhet"=2)
-        )
+       AppNIRbrukervalg(inputId = "valgtVar", label="Velg variabel")
+       #AppNIRbrukervalg(inputId = "datovalg", label="Tidsperiode")
+       #AppNIRbrukervalg(inputId = "erMann", label="Kjønn"),
+       #AppNIRbrukervalg(inputId = "alder", label='Alder'),
+       #AppNIRbrukervalg(inputId = "enhetsUtvalg", label='Egen enhet og/eller landet')
+       
         #sliderInput(inputId="aar", label = "Årstall", min = 2012,  #min(RegData$Aar),
         #           max = as.numeric(format(Sys.Date(), '%Y')), value = )
       ),

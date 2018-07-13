@@ -6,7 +6,7 @@
 \usage{
 NIRFigAndeler(RegData = 0, valgtVar = "Alder", datoFra = "2011-01-01",
   datoTil = "3000-12-31", aar = 0, overfPas = 0, minald = 0,
-  maxald = 130, erMann = "", InnMaate = "", dodInt = "", outfile = "",
+  maxald = 110, erMann = "", InnMaate = "", dodInt = "", outfile = "",
   grType = 99, preprosess = 1, hentData = 0, reshID = 0,
   enhetsUtvalg = 0, lagFig = 1)
 }
@@ -25,7 +25,7 @@ NIRFigAndeler(RegData = 0, valgtVar = "Alder", datoFra = "2011-01-01",
 
 \item{minald}{Alder, fra og med (Standardverdi: 0)}
 
-\item{maxald}{Alder, til og med (Standardverdi: 130)}
+\item{maxald}{Alder, til og med (Standardverdi: 110)}
 
 \item{erMann}{Kjønn, standard: alt annet enn 0/1 gir begge kjønn
 0: Kvinner
@@ -89,14 +89,23 @@ og NIRFigSoyler
 Argumentet \emph{valgtVar} har følgende valgmuligheter:
    \itemize{
     \item alder: Aldersfordeling, 10-årige grupper 
+    \item ExtendedHemodynamicMonitoring: Hemodynamisk overvåkn.
     \item inklKrit: Andeler for de 5 inklusjonskriteriene
     \item InnMaate: Hastegrad inn på intensiv (Elektivt, Akutt medisinsk, Akutt kirurgisk)
+    \item isolering: Isolasjon, type
+    \item isoleringDogn Isolasjon, varighet
     \item liggetid: Liggetid 
     \item NEMS: Skår for ressursbruk. (Nine Equivalents of Nursing Manpower Use Score)
     \item Nas: Skår for sykepleieraktiviteter. (Nursing Activities Score)
-    \item respiratortid: Tid tilbrakt i respirator
-    \item SAPSII: Skår for alvorlighetsgrad av sykdom.  (Simplified Acute Physiology Score II)
+    \item nyreBeh: Nyrebeh., type
+    \item nyreBehTid: Nyrebeh., varighet
     \item PrimaryReasonAdmitted: Hovedårsak til intensivopphold
+    \item respiratortid: Tid tilbrakt i respirator
+    \item respiratortidNonInv: Respiratortid, ikke-invasiv
+    \item respiratortidInvMoverf: Respiratortid, invasiv m/overf.
+    \item respiratortidInvUoverf: Respiratortid, invasiv u/overf.
+    \item SAPSII: Skår for alvorlighetsgrad av sykdom.  (Simplified Acute Physiology Score II)
+    \item spesTiltak: Spesielle tiltak
    }
 Argumentet \emph{enhetsUtvalg} har følgende valgmuligheter:
    \itemize{

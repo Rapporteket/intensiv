@@ -5,10 +5,10 @@
 \title{Søylediagram med gjennomsnitt/median for hver grupperingsenhet (sykehus, RHF, ...)}
 \usage{
 NIRFigGjsnGrVar(RegData, valgtVar, preprosess = 1, hentData = 0,
-  valgtMaal = "Gjsn", minald = 0, maxald = 130, datoFra = "2011-01-01",
+  valgtMaal = "Gjsn", minald = 0, maxald = 110, datoFra = "2011-01-01",
   datoTil = "3000-01-01", aar = 0, grType = 99, InnMaate = 99,
   dodInt = "", erMann = "", grVar = "ShNavn", medKI = 1, lagFig = 1,
-  outfile)
+  outfile = "")
 }
 \arguments{
 \item{RegData}{En dataramme med alle nødvendige variabler fra registeret}
@@ -34,6 +34,9 @@ Argumentet \emph{valgtVar} har følgende valgmuligheter:
     \item NEMS: Skår for ressursbruk per opphold. (Nine Equivalents of Nursing Manpower Use Score)
     \item NEMS24: NEMS-skår per døgn. 
     \item respiratortid: Tid tilbrakt i respirator
+    \item respiratortidNonInv: Respiratortid, ikke-invasiv
+    \item respiratortidInvMoverf: Respiratortid, invasiv m/overf.
+    \item respiratortidInvUoverf: Respiratortid, invasiv u/overf.
     \item SAPSII: Skår for alvorlighetsgrad av sykdom.  (Simplified Acute Physiology Score II)
    }
 
@@ -41,7 +44,7 @@ Detajer: Her bør man liste opp hvilke variable funksjonen benytter.}
 
 \item{minald}{Alder, fra og med (Standardverdi: 0)}
 
-\item{maxald}{Alder, til og med (Standardverdi: 130)}
+\item{maxald}{Alder, til og med (Standardverdi: 110)}
 
 \item{datoFra}{Tidligste dato i utvalget (vises alltid i figuren).}
 

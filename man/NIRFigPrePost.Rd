@@ -5,7 +5,7 @@
 \title{Søylediagram som fordeling av valgt variabel, målt både før og etter hjerneslaget}
 \usage{
 NIRFigPrePost(RegData, valgtVar, datoFra = "2012-04-01",
-  datoTil = "2050-12-31", minald = 0, maxald = 130, erMann = "",
+  datoTil = "2050-12-31", minald = 0, maxald = 110, erMann = "",
   diagnose = "", innl4t = "", NIHSSinn = "", outfile = "", reshID,
   enhetsUtvalg = 1, preprosess = 1, hentData = 0)
 }
@@ -24,7 +24,7 @@ Forflytning: Evne til forflytning før innleggelse og 3 mnd etter slaget}
 
 \item{minald}{Alder, fra og med (Standardverdi: 0)}
 
-\item{maxald}{Alder, til og med (Standardverdi: 130)}
+\item{maxald}{Alder, til og med (Standardverdi: 110)}
 
 \item{erMann}{Kjønn, standard: alt annet enn 0/1 gir begge kjønn
 0: Kvinner

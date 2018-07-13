@@ -8,7 +8,7 @@ andre valg kan lett inkluderes. Funksjonen er tilrettelagt for også å kunne be
 dvs. kodede, anonymiserte data som benyttes til offentlige kvalitetsindikatorer.}
 \usage{
 NIRFigInnMaate(RegData, valgtVar = "InnMaate", datoFra = "2010-01-01",
-  datoTil = "3000-01-01", aar = 0, minald = 0, maxald = 130,
+  datoTil = "3000-01-01", aar = 0, minald = 0, maxald = 110,
   grType = 99, grVar = "ShNavn", InnMaate = 99, dodInt = "",
   erMann = "", hentData = 0, preprosess = 1, outfile = "")
 }
@@ -23,7 +23,7 @@ NIRFigInnMaate(RegData, valgtVar = "InnMaate", datoFra = "2010-01-01",
 
 \item{minald}{Alder, fra og med (Standardverdi: 0)}
 
-\item{maxald}{Alder, til og med (Standardverdi: 130)}
+\item{maxald}{Alder, til og med (Standardverdi: 110)}
 
 \item{grType}{Gjør gruppeutvalg på sykehustype
 1: lokal-/sentralsykehus

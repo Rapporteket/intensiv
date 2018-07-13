@@ -5,7 +5,7 @@
 \title{Tidstrend av andel opphold}
 \usage{
 NIRFigAndelTid(RegData, valgtVar, datoFra = "2011-01-01",
-  datoTil = "3000-12-31", tidsenhet = "Aar", minald = 0, maxald = 130,
+  datoTil = "3000-12-31", tidsenhet = "Aar", minald = 0, maxald = 110,
   erMann = "", InnMaate = "", dodInt = "", reshID = 0, outfile = "",
   enhetsUtvalg = 1, preprosess = 1, hentData = 0, lagFig = 1,
   offData = 0)
@@ -23,7 +23,7 @@ NIRFigAndelTid(RegData, valgtVar, datoFra = "2011-01-01",
 
 \item{minald}{Alder, fra og med (Standardverdi: 0)}
 
-\item{maxald}{Alder, til og med (Standardverdi: 130)}
+\item{maxald}{Alder, til og med (Standardverdi: 110)}
 
 \item{erMann}{Kjønn, standard: alt annet enn 0/1 gir begge kjønn
 0: Kvinner
@@ -68,12 +68,19 @@ filtrert på de utvalg som er gjort.
 Argumentet \emph{valgtVar} har følgende valgmuligheter:
    \itemize{
     \item alder_u18: Pasienter under 18 år 
-    \item alder_over80: Pasienter over 80 år  (>=80)
-    \item dod30d: Pasienter som dør innen 30 dager etter innleggelse #ut:dodeSykehus
+    \item alder_over80: Pasienter over 80 år (>=80)
+    \item dod30d: Pasienter som dør innen 30 dager etter innleggelse
     \item dodeIntensiv: Pasienter som dør på intensivavdelinga. 
- \item liggetidDod: Andel av total liggetid brukt på de som dør på intensiv
-    \item respiratortidDod: Respiratortid brukt på de som dør på intensiv
+    \item ExtendedHemodynamicMonitoring: Utvidet hemodyn. overvåkning
+ \item isolering: Isolasjon av pasient
+ \item liggetidDod: Liggetid, døde
+ \item nyreBeh: Nyrebehandling
+    \item reinn: Andel reinnlagte (fjerner ukjente) Kvalitetsindikator
     \item respStotte: Pasienter som har fått respiratorstøtte
-    \item reinn: Andel reinnlagte (kun hvor dette er registrert, dvs. fjerner ukjente)
+    \item respiratortidInvMoverf: Respiratortid, inv. < 2,5d m/overføringer
+    \item respiratortidInvUoverf: Respiratortid, inv. < 2,5d u/overføringer
+    \item respiratortidDod: Respiratortid, døde
+    \item Trakeostomi: Andel som har fått trakeostomi (kat 2 og 3)
+    \item trakAapen: Trakeostomi, åpen
    }
 }

@@ -1,22 +1,19 @@
 #' Funksjon som inneholder alle brukervalg for Intensivregisteret 
 #'
 #' Denne funksjonen beregner ikke noe. :-|
+#' 
+#' Mer info?
 #'
-#'  @param RegData En dataramme med alle nødvendige variabler fra registeret
 #'  @param id namespace for this module
 #'  @param label Label for this module
-#' 								
-#' @return Søylediagram (fordeling) av valgt variabel. De enkelte verdiene kan også sendes med.
+#' @return Visning av brukervalg
 #'
 #' @export
-
 AppNIRbrukervalg  <- function(inputId = 'type valg', label = "Brukervalg") { #id - hvis skal bruke namespace, dat, 
-      #'
-      #' uiInputModule provides common ui uc for shiny intensiv
-      #'
-      #'  @export
-      
-      uiInputModule <- 
+
+#Ser ut til at denne må deles opp i flere funksjoner elller...      
+            #  @param RegData En dataramme med alle nødvendige variabler fra registeret
+      #uiInputModule <- 
             
             # create namespace
             #ns <- NS(id)
@@ -31,8 +28,7 @@ AppNIRbrukervalg  <- function(inputId = 'type valg', label = "Brukervalg") { #id
                   #             selected = years,
                   #             multiple = TRUE
                   # ),
-                  'input.ark == "Fordelinger"',
-                  #'input.ark === "Fordelinger" || input.ark === "Sykehusvise andeler" ',
+                 # input.ark == "Fordelinger"',
                   
                   selectInput(inputId = "valgtVar", label="Velg variabel",
                               choices = c('Alder' = 'alder', 
