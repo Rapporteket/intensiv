@@ -89,3 +89,16 @@ SorterOgNavngiTidsEnhet <- function(RegData, tidsenhet='Aar') {
       UtData <- list('RegData'=RegData, 'tidtxt'=tidtxt)
       return(UtData)
 }
+lageTulleData <- function(RegData, varBort='ShNavn', antSh=27) {
+      #FUNKER IKKE !!!
+      library(synthpop)
+      library(dplyr)
+      #ForlopsID <- RegData$ForlopsID
+      
+      RegData <- RegData[,-which(names(RegData) %in% varBort)]
+      sykehus <- paste('Sykehus', LETTERS[1:antSh])
+      fordelingPasienter <- sample(1:antSh,antSh)
+      RegData$SykehusNavn <- sample(sykehus, prob=fordelingPasienter/sum(fordelingPasienter), size=dim(RegData)[1], replace=T)
+      RegDataSyn <- synthpop::syn(RegData, method = "sample", seed = 500) #Trekker med tilbakelegging
+      RegData <- data.frame(RegDataSyn$syn) # FÅR feilmld...
+}
