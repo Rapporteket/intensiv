@@ -70,7 +70,7 @@ RegDataShType <- RegData[ind$ShType,] #NB: velger alle
 RegDataResten <- RegData[setdiff(1:N,ind$Hoved), ]
 RegDataMnd <- RegData[which(as.Date(RegData$InnDato, tz='UTC') >= datoFraMnd), ]
 
-maxDatoEget <- format.Date(max(RegDataEget$InnDato), format='%d.%m%.%Y', tz='UTC')
+maxDatoEget <- format.Date(max(RegDataEget$InnDato), format='%d.%m.%Y', tz='UTC')
 Neget <- dim(RegDataEget)[1]
 tabKjPstEget <- round(table(RegDataEget$erMann)/Neget*100, digits=1)
 
@@ -430,7 +430,8 @@ dblTab <- kable(tabDbl, format='latex', row.names = FALSE) #,
 %\centering
 \resizebox{\textwidth}{!}{
       \Sexpr{dblTab}}
-      \caption{Registreringer kor same pasient har fått registrert to innleggingar med mindre enn 2 timars mellomrom.}
+      \caption{Registreringer kor same pasient har fått registrert to innleggingar med mindre enn 2 timars mellomrom,
+      siste seks månader.}
       \label{tab:DblReg}
 \end{table}
 
