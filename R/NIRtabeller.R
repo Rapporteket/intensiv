@@ -37,8 +37,8 @@ tabAntOpphSh12mnd <- function(RegData, datoTil){
       RegData$Mnd <- as.yearmon(RegData$InnDato)
       datoFraMnd <- as.Date(paste0(1900+datoTil$year,'-', ifelse(datoTil$mon==0, 11, datoTil$mon), '-', '01')) #dato - 
       datoFra12 <- as.Date(paste0(as.numeric(substr(datoTil,1,4))-1, substr(datoTil,5,8), '01'), tz='UTC')
-      RegData12mnd <- RegData[RegData$InnDato < as.POSIXlt(datoTil, tz='UTC')
-                              & RegData$InnDato > as.POSIXlt(datoFra12, tz='UTC'), ]
+      RegData12mnd <- RegData[RegData$InnDato < as.Date(datoTil, tz='UTC')
+                              & RegData$InnDato > as.Date(datoFra12, tz='UTC'), ]
       tabAvd12mnd <- addmargins(table(RegData12mnd[, c('ShNavn', 'Mnd')]))
       colnames(tabAvd12mnd) <- substring(colnames(tabAvd12mnd),1,3)
       xtable::xtable(tabAvd12mnd)
