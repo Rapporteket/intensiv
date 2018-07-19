@@ -133,7 +133,7 @@ NIRFigAndeler  <- function(RegData=0, valgtVar='Alder', datoFra='2011-01-01', da
       Nfig <- list(Hoved = 0, Rest =0) #figurtekst: N i legend
       Ngr <- list(Hoved = 0, Rest =0)
       ind <- NIRUtvalg$ind
-	  variable <- NIRVarSpes$variable
+	variable <- NIRVarSpes$variable
       
       Ngr$Hoved <- switch(as.character(flerevar), 
                           '0' = table(RegData$VariabelGr[ind$Hoved]),

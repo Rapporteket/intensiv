@@ -5,7 +5,7 @@
 \title{Søylediagram med AggVerdier for hver grupperingsenhet (sykehus, RHF, ...)}
 \usage{
 NIRFigAndelerGrVar(RegData, valgtVar, datoFra = "2010-01-01",
-  datoTil = "3000-01-01", aar = 0, minald = 0, maxald = 130,
+  datoTil = "3000-01-01", aar = 0, minald = 0, maxald = 110,
   aldGr = 0, medKI = 0, grType = 99, grVar = "ShNavn", InnMaate = 99,
   dodInt = "", erMann = "", hentData = 0, preprosess = 1,
   outfile = "", lagFig = 1, offData = 0)
@@ -21,7 +21,7 @@ NIRFigAndelerGrVar(RegData, valgtVar, datoFra = "2010-01-01",
 
 \item{minald}{Alder, fra og med (Standardverdi: 0)}
 
-\item{maxald}{Alder, til og med (Standardverdi: 130)}
+\item{maxald}{Alder, til og med (Standardverdi: 110)}
 
 \item{grType}{Gjør gruppeutvalg på sykehustype
 1: lokal-/sentralsykehus
@@ -87,10 +87,18 @@ Argumentet \emph{valgtVar} har følgende valgmuligheter:
     \item alder_over80: Pasienter over 80 år (>=80)
     \item dod30d: Pasienter som dør innen 30 dager etter innleggelse
     \item dodeIntensiv: Pasienter som dør på intensivavdelinga. 
+    \item ExtendedHemodynamicMonitoring: Utvidet hemodyn. overvåkning
     \item innMaate: Hastegrad inn på intensiv (Elektivt, Akutt medisinsk, Akutt kirurgisk)
 	Dette valget viser en annen figurtype.
-    \item respStotte: Pasienter som har fått respiratorstøtte
+ \item isolering: Isolasjon av pasient
+ \item liggetidDod: Liggetid, døde
+ \item nyreBeh: Nyrebehandling
     \item reinn: Andel reinnlagte (fjerner ukjente) Kvalitetsindikator
+    \item respStotte: Pasienter som har fått respiratorstøtte
+    \item respiratortidInvMoverf: Respiratortid, inv. < 2,5d m/overføringer
+    \item respiratortidInvUoverf: Respiratortid, inv. < 2,5d u/overføringer
+    \item respiratortidDod: Respiratortid, døde
     \item Trakeostomi: Andel som har fått trakeostomi (kat 2 og 3)
+    \item trakAapen: Trakeostomi, åpen
    }
 }

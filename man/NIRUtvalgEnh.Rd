@@ -5,7 +5,7 @@
 \title{Funksjon som gjør utvalg av dataene, returnerer det filtrerte datasettet og utvalgsteksten.}
 \usage{
 NIRUtvalgEnh(RegData, datoFra = 0, datoTil = 0, minald = 0,
-  maxald = 130, erMann = "", InnMaate = "", aar = 0, grType = 99,
+  maxald = 110, erMann = "", InnMaate = "", aar = 0, grType = 99,
   enhetsUtvalg = 0, reshID = 0, dodInt = "", fargepalett = "BlaaOff")
 }
 \arguments{
@@ -17,7 +17,7 @@ NIRUtvalgEnh(RegData, datoFra = 0, datoTil = 0, minald = 0,
 
 \item{minald}{Alder, fra og med (Standardverdi: 0)}
 
-\item{maxald}{Alder, til og med (Standardverdi: 130)}
+\item{maxald}{Alder, til og med (Standardverdi: 110)}
 
 \item{erMann}{Kjønn, standard: alt annet enn 0/1 gir begge kjønn
 0: Kvinner

@@ -246,7 +246,7 @@ if (lagFig == 1) {
                   
                   
                   #Definerer disse i beregningsfunksjonen?  
-                  xmax <- max(c(AggVerdier$Hoved, AggVerdier$Rest, KIopp),na.rm=T)*1.2
+                  xmax <- max(c(AggVerdier$Hoved, AggVerdier$Rest, ifelse(medKI==1, KIopp,0)),na.rm=T)*1.2
                   xmax <- min(xmax, 100) 	#100 som maks bare hvis andelsfigur..
                   ymin <- 0.3 #0.5/cexgr^4	#0.05*antGr #Fordi avstand til x-aksen av en eller annen grunn øker når antall sykehus øker
                   ymax <- 0.4+1.25*length(AggVerdier$Hoved) #c(0.3/xkr^4,  0.3+1.25*length(Midt)), 0.2+1.2*length(AggVerdier$Hoved) 

@@ -27,10 +27,6 @@ library(knitr)
 #
 # }
 
-#ARBEIDSPLAN:
-#Skill  ut brukerkontroller i egen funksjon
-#omorganiser slik at alt som skal på samme side kommer sammen
-
 
 # Define UI for application that draws figures
 ui <- fluidPage( #"Hoved"Layout for alt som vises på skjermen
@@ -53,12 +49,39 @@ ui <- fluidPage( #"Hoved"Layout for alt som vises på skjermen
 
       conditionalPanel( #Denne skal bare vises for figursamlinger
         'input.ark == "Fordelinger"',
-       AppNIRbrukervalg(inputId = "valgtVar", label="Velg variabel")
-       #AppNIRbrukervalg(inputId = "datovalg", label="Tidsperiode")
-       #AppNIRbrukervalg(inputId = "erMann", label="Kjønn"),
-       #AppNIRbrukervalg(inputId = "alder", label='Alder'),
-       #AppNIRbrukervalg(inputId = "enhetsUtvalg", label='Egen enhet og/eller landet')
-       
+        #'input.ark === "Fordelinger" || input.ark === "Sykehusvise andeler" ',
+
+        selectInput(inputId = "valgtVar", label="Velg variabel",
+                    choices = c('Alder' = 'alder', 
+                                'Innkomstmåte' = 'InnMaate',
+                                'Hemodynamisk overvåkn.' = 'ExtendedHemodynamicMonitoring',
+                                'Inklusjonskriterier' = 'inklKrit',
+                                'Isolasjon, type' = 'isolering',
+                                'Isolasjon, varighet' = 'isoleringDogn',
+                                'Liggetid' = 'liggetid',
+                                'Nas-skår (sykepleierakt.)' = 'Nas24',
+                                'NEMS-skår (ressursbruk)' = 'NEMS24',
+                                'Nyrebeh., type' = 'nyreBeh',
+                                'Nyrebeh., varighet' = 'nyreBehTid',
+                                'Primærårsak' = 'PrimaryReasonAdmitted',
+                                'Respiratortid' = 'respiratortid',
+                                'Respiratortid, ikke-invasiv' = 'respiratortidNonInv',
+                                'Respiratortid, invasiv m/overf.' = 'respiratortidInvMoverf',
+                                'Respiratortid, invasiv u/overf.' = 'respiratortidInvUoverf',
+                                'SAPSII-skår (alvorlighet av sykd.)' = 'SAPSII',
+                                'Spesielle tiltak' = 'spesTiltak')
+        ),
+        dateRangeInput(inputId = 'datovalg', start = "2017-01-01", end = Sys.Date(),
+                       label = "Tidsperiode", separator="t.o.m.", language="nb"),
+        selectInput(inputId = "erMann", label="Kjønn",
+                    choices = c("Begge"=2, "Menn"=1, "Kvinner"=0)
+        ),
+        sliderInput(inputId="alder", label = "Alder", min = 0,
+                    max = 110, value = c(0, 110)
+        ),
+        selectInput(inputId = 'enhetsUtvalg', label='Egen enhet og/eller landet',
+                    choices = c("Egen mot resten av landet"=1, "Hele landet"=0, "Egen enhet"=2)
+        )
         #sliderInput(inputId="aar", label = "Årstall", min = 2012,  #min(RegData$Aar),
         #           max = as.numeric(format(Sys.Date(), '%Y')), value = )
       ),
@@ -140,26 +163,7 @@ ui <- fluidPage( #"Hoved"Layout for alt som vises på skjermen
 	), #sidebarPanel/kolonna til venstre
 
 
-#Eksempel fra Are:
-# navbarPage(title = "INTENSIVREGISTERET", theme = "bootstrap.css",
-#            tabPanel("Reinnleggelse innen 72 timer",
-#                     sidebarLayout(
-#                           sidebarPanel(
-#                                 uiInputModule(id = "readmission72hours",
-#                                               dat = NIRdata01reinn$NIRRegData01Off),
-#                                 downloadButton("downloadDataAndelerGrVar",
-#                                                label = "Last ned data")
-#                           ),
-#                           mainPanel(tabsetPanel(
-#                                 tabPanel("Figur",
-#                                          highchartOutput("readmission72hoursPlot")
-#                                 ),
-#                                 tabPanel("Data",
-#                                          DT::dataTableOutput("readmission72hoursTable")
-#                                 )
-#                           ))
-#                     )
-#            ),
+
 
     # Vise det vi har valgt...
     column(width = 7, #mainPanel(
@@ -261,7 +265,18 @@ server <- function(input, output) {
   reshIDdummy <- 109773 #Tromsø med.int
 
 
-  
+  #  texfil <- knitr::knit(system.file('NIRMndRapp.Rnw', package='Nakke'), encoding = 'UTF-8')
+  #  texi2pdf(system.file(texfil, package='Nakke'),clean = TRUE) #"NakkeMndRapp.tex"
+
+
+
+  #Felles reaktive tabeller
+  #   reactive({
+  #   SkjemaData <- SkjemaData[which(SkjemaData$SkjemaStatus == input$status), ]
+  #   SkjemaData12mnd <- SkjemaData[as.POSIXlt(SkjemaData$HovedDato, format="%Y-%m-%d") > as.POSIXlt(datoFra12), ]
+  #
+  # })
+
   output$tabAvdMnd12 <- renderTable({
     datoFra12 <- as.Date(paste0(as.numeric(substr(input$datoTil,1,4))-1, substr(input$datoTil,5,8), '01'))
     SkjemaData12mnd <- SkjemaData[SkjemaData$InnDato < as.POSIXlt(input$datoTil)

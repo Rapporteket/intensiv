@@ -37,8 +37,8 @@ FinnReinnleggelser <- function(RegData, PasientID='PasientID'){
       indPasFlereOpph <- which(RegDataSort$OpphNr>1) #intersect(which(RegDataSort$AntOpph>1), which(RegDataSort$OpphNr>1))
       RegDataSort$TidUtInn <- NA
       RegDataSort$TidUtInn[indPasFlereOpph] <- 
-            difftime(as.POSIXlt(RegDataSort$DateAdmittedIntensive[indPasFlereOpph], format="%Y-%m-%d %H:%M:%S"),
-                     as.POSIXlt(RegDataSort$DateDischargedIntensive[indPasFlereOpph-1], format="%Y-%m-%d %H:%M:%S"),
+            difftime(as.POSIXlt(RegDataSort$DateAdmittedIntensive[indPasFlereOpph], tz= 'UTC', format="%Y-%m-%d %H:%M:%S"),
+                     as.POSIXlt(RegDataSort$DateDischargedIntensive[indPasFlereOpph-1], tz= 'UTC', format="%Y-%m-%d %H:%M:%S"),
                      units = 'hour')
       RegDataSort$Reinn <- 2 #Ikke reinnleggelse
       RegDataSort$Reinn[RegDataSort$TidUtInn<72 & RegDataSort$TidUtInn >= 0] <- 1 #Reinnleggelse
@@ -88,4 +88,17 @@ SorterOgNavngiTidsEnhet <- function(RegData, tidsenhet='Aar') {
       #levels(RegData$TidsEnhet) <- tidtxt
       UtData <- list('RegData'=RegData, 'tidtxt'=tidtxt)
       return(UtData)
+}
+lageTulleData <- function(RegData, varBort='ShNavn', antSh=27) {
+      #FUNKER IKKE !!!
+      library(synthpop)
+      library(dplyr)
+      #ForlopsID <- RegData$ForlopsID
+      
+      RegData <- RegData[,-which(names(RegData) %in% varBort)]
+      sykehus <- paste('Sykehus', LETTERS[1:antSh])
+      fordelingPasienter <- sample(1:antSh,antSh)
+      RegData$SykehusNavn <- sample(sykehus, prob=fordelingPasienter/sum(fordelingPasienter), size=dim(RegData)[1], replace=T)
+      RegDataSyn <- synthpop::syn(RegData, method = "sample", seed = 500) #Trekker med tilbakelegging
+      RegData <- data.frame(RegDataSyn$syn) # FÅR feilmld...
 }

@@ -5,7 +5,7 @@
 
 runShinyAppReports <- function() {
   
-  appName <- "report"
+  appName <- "Are/report"
   appsDirectoryName <- "shinyApps"
   packageName <- "intensiv"
   
