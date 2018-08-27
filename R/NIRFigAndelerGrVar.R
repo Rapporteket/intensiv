@@ -150,12 +150,20 @@ AggTot <- AndelHele
 soyletxt <- andeltxt
 
 #-----------------
+
 Nut <- length(indGrUt)
-indMed <- (Nut+1):length(sortInd)
-  KI <- 100*binomkonf(AndelerGrSort[indMed]/100*Ngr$Hoved[indMed], Ngr$Hoved[indMed], konfnivaa=0.95)
-  KIned <- c(rep(NA,Nut), KI[1,])
-  KIopp <- c(rep(NA,Nut), KI[2,])
-  KIHele <- 100*binomkonf(AndelHele/100*N$Hoved, N$Hoved, konfnivaa=0.95)
+if (medKI==1) {
+      KIHele <- 100*binomkonf(AndelHele/100*N$Hoved, N$Hoved, konfnivaa=0.95)
+      KI <- NA
+      KIned <- NA
+      KIopp <- NA
+      if (Nut> length(sortInd)) {
+        indMed <- (Nut+1):length(sortInd)
+        KI <- 100*binomkonf(AndelerGrSort[indMed]/100*Ngr$Hoved[indMed], Ngr$Hoved[indMed], konfnivaa=0.95)
+        KIned <- c(rep(NA,Nut), KI[1,])
+        KIopp <- c(rep(NA,Nut), KI[2,])
+      }
+}
   
   #prop.test(x=as.numeric(AndelerGrSort[indMed]/100*Ngr$Hoved[indMed]), n=Ngr$Hoved[indMed])
 #-----------
