@@ -153,7 +153,7 @@ dodInt <- 9	# 0-i live, 1 -død, standard: alle (alle andre verdier)
 erMann <- ''	#Kjønn: 0-kvinner, 1-menn, standard: alle (alle andre verdier)
 overfPas <- ''    #Overført under pågående intensivbehandling?	1 = Nei, 2 = Ja
 grType <- 99	#1/2: sentral/lokal, 3:regional, 99:'alle'
-enhetsUtvalg <- 0	#0-5
+enhetsUtvalg <- 3	#0-5
 grVar <- 'ShNavn'
 tidsenhet <- 'Mnd'
 medKI <- 0
@@ -180,7 +180,7 @@ valgtVar <- 'OrganDonationCompletedReasonForNoStatus'	#'alder', 'liggetid', 'res
                               #spesTiltak
                               #Nye, aug-18: CerebralCirculationAbolishedReasonForNo, OrganDonationCompletedReasonForNoStatus
 
-outfile <- '' #paste0(valgtVar,'_Ford', '.png')
+outfile <- paste0(valgtVar,'_Ford', '.png')
 #grType <- 0
 #enhetsUtvalg <- 0
 
@@ -208,7 +208,7 @@ valgtVar <- 'OrganDonationCompletedCirc'	#alder_u18', 'alder_over80', 'dod30d', 
                         #trakeostomi, trakAapen, respiratortidInv, nyreBeh, ExtendedHemodynamicMonitoring,
                         #ExtendedHemodynamicMonitoringPA, isolering
                         #Nye, aug-18: OrganDonationCompletedStatus, OrganDonationCompletedCirc
-outfile <- paste0(valgtVar, '_sh.pdf')
+outfile <- paste0(valgtVar, '_shNY.png')
 
 NIRFigAndelerGrVar(RegData=RegData, valgtVar=valgtVar, minald=minald, maxald=maxald,  datoFra=datoFra, 
                 datoTil=datoTil, aar=0, InnMaate=InnMaate, dodInt=dodInt,erMann=erMann, outfile=outfile, 

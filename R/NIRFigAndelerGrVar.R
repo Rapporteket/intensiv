@@ -291,8 +291,8 @@ if (lagFig == 1) {
                         }
                         barplot(rev(as.numeric(AggVerdier$Hoved)), horiz=TRUE, beside=TRUE, las=1, add=TRUE,
                                 col=fargeHoved, border=NA, cex.names=cexgr) #, xlim=c(0, xmax), ylim=c(ymin,ymax)
-                        soyleXpos <- 1.14*xmax*max(strwidth(soyletxt, units='figure')) # cex=cexgr
-                        text(x=soyleXpos, y=pos+0.1, soyletxt, las=1, cex=cexgr, adj=1, col=farger[1])	#AggVerdier, hvert sykehus
+                        soyleXpos <- 1.14*xmax*max(strwidth(soyletxt, units='figure', cex=cexgr)) # cex=cexgr
+                        text(x=soyleXpos, y=pos+0.1, soyletxt, las=1, cex=0.9*cexgr, adj=1, col=farger[1])	#AggVerdier, hvert sykehus
 
                   
                   #------Tegnforklaring (legend)--------
