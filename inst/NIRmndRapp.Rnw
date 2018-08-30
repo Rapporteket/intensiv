@@ -51,12 +51,12 @@ RegData <- FinnReinnleggelser(RegData) # Beregne reinnleggelser
 
 #RegData endres til 6 mnd:
 grType <- RegData$ShType[match(reshID, RegData$ReshId)]
-NIRUtvalg <- NIRUtvalgEnh(RegData, reshID = reshID, datoFra = datoFra6mnd, datoTil = datoTil, 
-                          enhetsUtvalg =1)
+NIRUtvalg <- NIRUtvalgEnh(RegData, reshID = reshID, datoFra = datoFra6mnd, 
+                          datoTil = datoTil, enhetsUtvalg =1)
 #Fra NIRUTvalg: utvalgTxt, ind, medSml, smltxt, hovedgrTxt, grTypeTxt, RegData
 RegData <- NIRUtvalg$RegData
 shtxt <- NIRUtvalg$hovedgrTxt
-ShTypeEgenTxt <- NIRUtvalg$grTypeTxt  #FIX!!!!!!!!!
+ShTypeEgenTxt <- NIRUtvalg$grTypeTxt 
 ind <- NIRUtvalg$ind
 N <- dim(RegData)[1]
 
@@ -103,13 +103,14 @@ Rapporten inneheld anonymiserte samledata. I tilfelle der utvalet inneheld få r
 
 \begin{frame}[fragile] {Datagrunnlag}
 
-Denne rapporten er utarbeidd på oppdrag frå Norsk intensivregister (NIR) og genereres automatisk
+Denne rapporten er utarbeidd på oppdrag frå Norsk intensivregister (NIR) og vert generert automatisk
 frå Rapporteket. Alle resultat er baserte på data frå registeret og er gyldige per rapportdato for
-opphald som er ferdigstilte i MRS. Uttrekket blir gjort for kvar kalendermånad, med ein knapp månads forseinking. Månadsrapport for januar vert sendt ut sist i februar, for februar sist i mars osv. Rapporten inneheld alle ferdigstilte opphald i MRS der innleggingstidspunktet på intensiv er i tidsrommet kl.00.00 den fyrste i aktuell månad til kl. 23.59 den siste i månaden.
+opphald som er ferdigstilte i MRS. Uttrekket blir gjort for kvar kalendermånad, med ein knapp månads forseinking. Månadsrapport for januar vert sendt ut sist i februar, for februar sist i mars osv. Rapporten inneheld alle ferdigstilte opphald i MRS der innleggingstidspunktet på intensiv er i tidsrommet kl.00.00 den fyrste i aktuell månad til kl. 23.59 den siste i månaden. NIR-einingar
+som er ajour med registreringa, vil dermed kunne få nær fullstendige månadsrapportar
+
 
 For \Sexpr{shtxt} er siste ferdigstilte innleggingsdato i denne rapporten
 \Sexpr{maxDatoEget}.
-NIR-einingar som er ajour med registreringa, vil dermed kunne få nær fullstendige månadsrapportar. 
 \par
 
 Denne rapporten kan óg hentast ved at ein loggar seg inn på Rapporteket-Intensiv og klikkar på "Månedsrapport". Det gjer at alle kan hente seg representative månadsrapportar når dei måtte
@@ -198,7 +199,7 @@ rownames(alderDIV) <- c('Minimum:',
                         '25 \\% pasientar over:', 
                         'Maksimum:',
                         'Pasientar \\textless 16 år', 
-                        'Pasientar $\\leqslant $ 80 år')
+                        'Pasientar $\\geq $ 80 år')
 
 
 print(xtable(alderDIV, digits=1, align=c('l', rep('r', ncol(alderDIV))), 
@@ -231,7 +232,7 @@ for (valgtVar in variable) {
 \begin{frame}[fragile] {Liggetid på intensiv}
  
 Liggetida er den samla tida frå pasienten fysisk er komen til intensiv/overvakingsarealet
-ved innlegging, til pasienten fysisk forlet intensiv/overvakingsarealet ved utskriving.
+ved innlegging, til pasienten fysisk forlet intensiv/overvakingsarealet ved utskriving i live eller døyr på intensiv.
 Liggetida vil dermed inkludere tid pasienten måtte vere utanfor intensiv (røntgen, 
 operasjon osv.). 
 
@@ -273,8 +274,7 @@ xtable(liggetidKj, digits=1, align=c('l', rep('r', ncol(liggetidKj))),
 \begin{figure}[ht]
 \centering              
 \includegraphics[scale=0.35]{PrimaryReasonAdmittedFordMnd.pdf}
-\caption{Hovudårsak til innlegging på intensiv (prosent per kategori) siste seks månader, eiga avdeling og 
-\Sexpr{paste0(ShTypeEgenTxt,'sjukehus')} forøvrig.}
+\caption{Hovudårsak til innlegging på intensiv (prosent per kategori) siste seks månader, eiga avdeling og alle andre \Sexpr{ShTypeEgenTxt}sjukehus.}
 \end{figure}
 \end{frame}
 

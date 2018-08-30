@@ -40,23 +40,24 @@ NIRUtvalgEnh <- function(RegData, datoFra=0, datoTil=0, minald=0, maxald=110, er
       #trengs ikke data for hele landet:
       reshID <- as.numeric(reshID)
       indEgen1 <- match(reshID, RegData$ReshId)
+      grTypeEgen <- RegData$ShType[indEgen1]
       if (enhetsUtvalg %in% c(2,3,4,6,7)) {	
             RegData <- switch(as.character(enhetsUtvalg),
                               '2' = RegData[which(RegData$ReshId == reshID),],	#kun egen enhet
-                              '3' = subset(RegData,ShType==ShType[indEgen1]),
-                              '4' = RegData[which(RegData$ShType == RegData$ShType[indEgen1]),],	#kun egen shgruppe
+                              '3' = subset(RegData,ShType==grTypeEgen),
+                              '4' = RegData[which(RegData$ShType == grTypeEgen),],	#kun egen shgruppe
                               '6' = RegData[which(RegData$Region == as.character(RegData$Region[indEgen1])),],	#sml region
                               '7' = RegData[which(RegData$Region == as.character(RegData$Region[indEgen1])),])	#kun egen region
       }
       
       Ninn <- dim(RegData)[1]
-      indGrType <- if (grType %in% 1:3) {switch(grType,
+      #if (enhetsUtvalg %in% 3:4) {grType <- RegData$ShType[indEgen1]}
+      indGrType <- switch(grTypeEgen, #if (grType %in% 1:3) {switch(grType,
                                                 '1' = which(RegData$ShType %in% 1:2),
                                                 '2' = which(RegData$ShType %in% 1:2),
                                                 '3' = which(RegData$ShType == 3))
-                  } else {indGrType <- 1:Ninn}
-      
-      RegData <- RegData[indGrType,]
+                  #} else {indGrType <- 1:Ninn}
+      if (grType %in% 1:3) {RegData <- RegData[indGrType,]} #For utvalg ved visning av flere sykehus
       RegData$ShNavn <- as.factor(RegData$ShNavn)
       
       indAld <- if(minald>0 | maxald<110) {
@@ -80,8 +81,8 @@ NIRUtvalgEnh <- function(RegData, datoFra=0, datoTil=0, minald=0, maxald=110, er
       N <- dim(RegData)[1]	#N=0 gir feilmelding
       #grTypetextstreng <- c('lokal-/sentralsykehus', 'lokal-/sentral', 'regionsykehus')				
       grTypetextstreng <- c('lokal-/sentral', 'lokal-/sentral', 'region')				
-      if (grType %in% 1:3) {grTypeTxt <- grTypetextstreng[grType]} else {grTypeTxt <- 'alle '}
-      
+      #if (grType %in% 1:3) {grTypeTxt <- grTypetextstreng[grType]} else {grTypeTxt <- 'alle '}
+      grTypeTxt <- grTypetextstreng[grTypeEgen]
       
       
       
@@ -115,7 +116,7 @@ NIRUtvalgEnh <- function(RegData, datoFra=0, datoTil=0, minald=0, maxald=110, er
       
       
       ind <- list(Hoved=0, Rest=0, ShType=0)
-      smltxt <- grTypeTxt      #Før: ''
+      smltxt <- '' #grTypeTxt      #Før: ''
       if (enhetsUtvalg %in% c(0,2,4,7)) {		#Ikke sammenlikning
             medSml <- 0
             ind$Hoved <- 1:dim(RegData)[1]	#Tidligere redusert datasettet for 2,4,7. (+ 3og6)

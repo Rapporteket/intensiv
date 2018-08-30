@@ -23,9 +23,7 @@ library(intensiv)
 library(tools)	#texi2pdf
 
 #load(paste0("A:/Intensiv/NIRdata10000.Rdata")) #RegDataTEST, 21.mai 2018
-load(paste0("A:/Intensiv/MainFormDataContract2018-06-19.Rdata")) #RegData 2018-06-18
-NIRdata <- RegData
-RegData <- NIRdata
+load(paste0("A:/Intensiv/MainFormDataContract2018-08-30.Rdata")) #RegData 2018-06-18
 setwd('C:/ResultattjenesteGIT/intensiv/inst/') 
 reshID=112044 #Tromsø med int: 601302, Ullevål Kir int: 109773, 102090 Ahus, 112044 Haukeland, 102673 Ålesund Med
 knit('NIRmndRapp.Rnw', encoding = 'UTF-8')
@@ -52,7 +50,7 @@ texi2pdf(file='OffDataIntensiv.tex')
 #-------------------------------------LASTE DATA-----------------------------------------------
 rm(list=ls())
 
-dato <- '2018-06-19' #MainFormDataContract2018-06-19
+dato <- '2018-08-30' #MainFormDataContract2018-06-19
 dataKat <- 'A:/Intensiv/' 
 fil <- paste0(dataKat,'MainFormDataContract',dato)
 #NIRdata <- read.table(file=paste0(fil,'.csv'), header=T, stringsAsFactors=FALSE, sep=';',encoding = 'UTF-8')
@@ -61,7 +59,7 @@ load(paste0(fil,".Rdata")) #RegData 2018-06-18
 #save(RegData, file=paste0(fil,'.Rdata'))
 # RegData <- RegData[which(
 #       as.POSIXlt(RegData$DateAdmittedIntensive, format="%Y-%m-%d")>= '2015-01-01'), ]
-# RegData <- NIRdata[sample(1:dim(NIRdata)[1],10000),]
+#RegData <- RegData[sample(1:dim(RegData)[1],10000),]
 #save(RegData, file=paste0(dataKat,'NIRdata10000.Rdata')) 
 load(paste0("A:/Intensiv/NIRdata10000.Rdata")) #RegDataTEST, 2018-06-05
 library(intensiv)
@@ -208,7 +206,7 @@ valgtVar <- 'OrganDonationCompletedCirc'	#alder_u18', 'alder_over80', 'dod30d', 
                         #trakeostomi, trakAapen, respiratortidInv, nyreBeh, ExtendedHemodynamicMonitoring,
                         #ExtendedHemodynamicMonitoringPA, isolering
                         #Nye, aug-18: OrganDonationCompletedStatus, OrganDonationCompletedCirc
-outfile <- paste0(valgtVar, '_shNY.png')
+outfile <- paste0(valgtVar, '_shNY.pdf')
 
 NIRFigAndelerGrVar(RegData=RegData, valgtVar=valgtVar, minald=minald, maxald=maxald,  datoFra=datoFra, 
                 datoTil=datoTil, aar=0, InnMaate=InnMaate, dodInt=dodInt,erMann=erMann, outfile=outfile, 
