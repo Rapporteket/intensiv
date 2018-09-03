@@ -405,7 +405,7 @@ xtable(tabResp, align=c('l', 'r','r','c','c'), #digits=c(0,1,1,1,0),
 
 <<'DblReg', results='asis', echo=FALSE>>=
 
-      RegDataSort <- RegData[order(RegData$PasientID, RegData$Innleggelsestidspunkt), 
+      RegDataSort <- RegDataEget[order(RegDataEget$PasientID, RegDataEget$Innleggelsestidspunkt), 
                              c('PasientID','Innleggelsestidspunkt', "SkjemaGUID")]
       RegDataSort$OpphNr <- ave(RegDataSort[ ,'PasientID'], RegDataSort[ ,'PasientID'], FUN=seq_along)
       indPasFlereOpph <- which(RegDataSort$OpphNr>1) 
