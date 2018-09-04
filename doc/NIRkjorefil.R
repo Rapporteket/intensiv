@@ -50,7 +50,7 @@ texi2pdf(file='OffDataIntensiv.tex')
 #-------------------------------------LASTE DATA-----------------------------------------------
 rm(list=ls())
 
-dato <- '2018-08-30' #MainFormDataContract2018-06-19
+dato <- '2018-09-03' #MainFormDataContract2018-06-19
 dataKat <- 'A:/Intensiv/' 
 fil <- paste0(dataKat,'MainFormDataContract',dato)
 #NIRdata <- read.table(file=paste0(fil,'.csv'), header=T, stringsAsFactors=FALSE, sep=';',encoding = 'UTF-8')
@@ -64,7 +64,6 @@ load(paste0(fil,".Rdata")) #RegData 2018-06-18
 load(paste0("A:/Intensiv/NIRdata10000.Rdata")) #RegDataTEST, 2018-06-05
 library(intensiv)
 
-load('A:/Intensiv/NIRdata10000.Rdata')
 # LagSyntetiskeData
 library(synthpop)
 library(dplyr)
@@ -139,7 +138,7 @@ NonInv <- tapply(RegData$NonInvasivVentilation[ind],RegData$Aar[ind], FUN=sum)
 #-------------------------------------- Parametre ----------------------------------------------------
 library(intensiv)
 setwd("c:/ResultattjenesteGIT/Intensiv/")
-reshID=109773 #Tromsø med int: 601302, Ullevål Kir int: 109773
+reshID=112044 #109773 #Tromsø med int: 601302, Ullevål Kir int: 109773
 minald <- 0 #(standard: 0)
 maxald <- 130	#(standard: 130, må være større enn minald!)
 InnMaate <- '' #0-El, 6-Ak.m, 8-Ak.k, (alle - alt unntatt 0,6,8)
@@ -150,8 +149,8 @@ aar <- 0
 dodInt <- 9	# 0-i live, 1 -død, standard: alle (alle andre verdier)
 erMann <- ''	#Kjønn: 0-kvinner, 1-menn, standard: alle (alle andre verdier)
 overfPas <- ''    #Overført under pågående intensivbehandling?	1 = Nei, 2 = Ja
-grType <- 99	#1/2: sentral/lokal, 3:regional, 99:'alle'
-enhetsUtvalg <- 3	#0-5
+grType <- 1	#1/2: sentral/lokal, 3:regional, 99:'alle'
+enhetsUtvalg <- 0	#0-5
 grVar <- 'ShNavn'
 tidsenhet <- 'Mnd'
 medKI <- 0
@@ -172,19 +171,19 @@ NIRFigInnMaate (RegData=RegData, valgtVar='InnMaate', minald=0, maxald=130, dato
 
 
 #--------------------------------------- Andeler ----------------------------------
-valgtVar <- 'OrganDonationCompletedReasonForNoStatus'	#'alder', 'liggetid', 'respiratortid',  'SAPSII', 'NEMS24', 'Nas24', 'InnMaate'
+valgtVar <- 'alder'	#'alder', 'liggetid', 'respiratortid',  'SAPSII', 'NEMS24', 'Nas24', 'InnMaate'
                               #Nye: PrimaryReasonAdmitted, inklKrit, respiratortidNonInv, respiratortidInv
                               #nyreBeh, nyreBehTid, ExtendedHemodynamicMonitoring, isolering, isoleringDogn, 
                               #spesTiltak
                               #Nye, aug-18: CerebralCirculationAbolishedReasonForNo, OrganDonationCompletedReasonForNoStatus
 
-outfile <- paste0(valgtVar,'_Ford', '.png')
+outfile <- '' #paste0(valgtVar,'_Ford', '.png')
 #grType <- 0
 #enhetsUtvalg <- 0
 
 NIRFigAndeler(RegData=RegData, valgtVar=valgtVar, minald=minald, maxald=maxald,  datoFra=datoFra, 
                      datoTil=datoTil, grType=grType, InnMaate=InnMaate, dodInt=dodInt,erMann=erMann, outfile=outfile, 
-                     hentData=0, preprosess=1, reshID=reshID, enhetsUtvalg=enhetsUtvalg, lagFig=1)
+                     hentData=0, preprosess=1, reshID=reshID, enhetsUtvalg=3, lagFig=1)
 # Utdata <- NIRAndeler(RegData=RegData, valgtVar=valgtVar, minald=minald, maxald=maxald,  datoFra=datoFra, 
 #                         datoTil=datoTil, InnMaate=InnMaate, dodInt=dodInt,erMann=erMann, outfile=outfile, 
 #                         hentData=0, preprosess=1, reshID=reshID, enhetsUtvalg=enhetsUtvalg, lagFig=1)
@@ -201,16 +200,16 @@ for (valgtVar in variable) {
 
 #--------------------------------------- AndelGrVar ----------------------------------
 grVar <- 'ShNavn'
-valgtVar <- 'OrganDonationCompletedCirc'	#alder_u18', 'alder_over80', 'dod30d', 'dodeIntensiv', 'innMaate', 
+valgtVar <- 'alder_over80'	#alder_u18', 'alder_over80', 'dod30d', 'dodeIntensiv', 'innMaate', 
                         #respiratortid, 'respStotte', 'reinn
                         #trakeostomi, trakAapen, respiratortidInv, nyreBeh, ExtendedHemodynamicMonitoring,
                         #ExtendedHemodynamicMonitoringPA, isolering
                         #Nye, aug-18: OrganDonationCompletedStatus, OrganDonationCompletedCirc
-outfile <- paste0(valgtVar, '_shNY.pdf')
+outfile <- '' #paste0(valgtVar, '_shNY.pdf')
 
 NIRFigAndelerGrVar(RegData=RegData, valgtVar=valgtVar, minald=minald, maxald=maxald,  datoFra=datoFra, 
                 datoTil=datoTil, aar=0, InnMaate=InnMaate, dodInt=dodInt,erMann=erMann, outfile=outfile, 
-                grType=grType, grVar=grVar, hentData=0, preprosess=1, lagFig=1, medKI=1,offData = offData)
+                grType=3, grVar=grVar, hentData=0, preprosess=1, lagFig=1, medKI=1,offData = offData)
 
 #NIRAndelerGrVar(RegData=RegData, valgtVar=valgtVar, minald=minald, maxald=maxald,  datoFra=datoFra, 
 #                datoTil=datoTil, aar=0, InnMaate=InnMaate, dodInt=dodInt,erMann=erMann, outfile=outfile, 

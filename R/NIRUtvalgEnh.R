@@ -52,7 +52,7 @@ NIRUtvalgEnh <- function(RegData, datoFra=0, datoTil=0, minald=0, maxald=110, er
       
       Ninn <- dim(RegData)[1]
       #if (enhetsUtvalg %in% 3:4) {grType <- RegData$ShType[indEgen1]}
-      indGrType <- switch(grTypeEgen, #if (grType %in% 1:3) {switch(grType,
+      indGrType <- switch(grType, #if (grType %in% 1:3) {switch(grType,
                                                 '1' = which(RegData$ShType %in% 1:2),
                                                 '2' = which(RegData$ShType %in% 1:2),
                                                 '3' = which(RegData$ShType == 3))
@@ -115,7 +115,7 @@ NIRUtvalgEnh <- function(RegData, datoFra=0, datoTil=0, minald=0, maxald=110, er
             }
       
       
-      ind <- list(Hoved=0, Rest=0, ShType=0)
+      ind <- list(Hoved=0, Rest=0, ShTypeEgen=0)
       smltxt <- '' #grTypeTxt      #Før: ''
       if (enhetsUtvalg %in% c(0,2,4,7)) {		#Ikke sammenlikning
             medSml <- 0
@@ -141,7 +141,7 @@ NIRUtvalgEnh <- function(RegData, datoFra=0, datoTil=0, minald=0, maxald=110, er
                                '6' = which(as.numeric(RegData$ReshId)!=reshID),	#RegData inneh. kun egen region
                                '8' = which(RegData$Region != RegData$Region[indEgen1]))
       }								
-      ind$ShType =  which(RegData$ShType == RegData$ShType[indEgen1]) 
+      ind$ShTypeEgen =  which(RegData$ShType == RegData$ShType[indEgen1]) #Funker ikke hvis gjort utvalg på annen sykehustype
       
       
       
