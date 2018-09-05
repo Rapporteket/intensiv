@@ -7,7 +7,7 @@ datoFra <- '2012-01-01'
 datoTil <- '2017-12-31'	#
 #RegData <- read.table('A:/Intensiv/MainFormDataContract2017-11-07.csv', sep=';', stringsAsFactors=FALSE, 
 #                      header=T, encoding = 'UTF-8')	
-load(paste0("NIRaarsrapp2017.Rdata")) 
+load("A:/Intensiv/NIRaarsrapp2017.Rdata") 
 setwd('C:/ResultattjenesteGIT/intensiv/aarsrappOff/')
 
 datoFra1aar <- '2017-01-01'
@@ -109,12 +109,12 @@ NIRFigGjsnGrVar(RegData=RegData, valgtVar='liggetid', valgtMaal=valgtMaal, dodIn
 
 
 NIRFigGjsnGrVar(RegData=RegData, valgtVar='respiratortidInvMoverf', datoFra=datoFra1aar, 
-                datoTil='2016-12-31', grType=1, outfile='Respiratortid_loksent.pdf')
+                datoTil=datoTil, grType=1, outfile='Respiratortid_loksent.pdf')
 NIRFigGjsnGrVar(RegData=RegData, valgtVar='respiratortidInvMoverf', datoFra=datoFra1aar, valgtMaal = 'Gjsn',
-                datoTil='2016-12-31', grType=3, outfile='test.png') #Respiratortid_region_Fig2bNy.pdf')
+                datoTil=datoTil, grType=3, outfile='test.png') #Respiratortid_region_Fig2bNy.pdf')
 
 NIRFigAndelerGrVar(RegData=RegData, valgtVar='reinn', datoFra=datoFra1aar, 
-                   datoTil='2016-12-31', grType=1, outfile='Reinnlegging_loksent.pdf')
+                   datoTil=datoTil, grType=1, outfile='Reinnlegging_loksent.pdf')
 
 
 

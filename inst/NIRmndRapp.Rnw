@@ -66,7 +66,7 @@ RegData <- SortMnd$RegData
 
 RegDataEget <- RegData[ind$Hoved, ]
 RegDataEgetMnd <- RegDataEget[which(as.Date(RegDataEget$InnDato, tz='UTC') >= datoFraMnd), ]
-RegDataShType <- RegData[ind$ShTypeEgen,] #NB: velger alle
+RegDataShType <- RegData[ind$ShTypeEgen,] 
 RegDataResten <- RegData[setdiff(1:N,ind$Hoved), ]
 RegDataMnd <- RegData[which(as.Date(RegData$InnDato, tz='UTC') >= datoFraMnd), ]
 

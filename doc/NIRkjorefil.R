@@ -159,7 +159,7 @@ offData <- 0
 
 
 NIRFigInnMaate (RegData=RegData, valgtVar='InnMaate', minald=0, maxald=130, datoTil = datoTil,
-                           grType=99, grVar='ShNavn', InnMaate=99, dodInt='', outfile='')
+                           grType=3, grVar='ShNavn', InnMaate=99, dodInt='', outfile='')
 
 #--------------------------------------- Ny struktur basert på grVar? ----------------------------------
 #Prioriter kvalitetsindikatorene: reinn, SMR, median innleggelse (se årsrapport)
@@ -209,7 +209,7 @@ outfile <- '' #paste0(valgtVar, '_shNY.pdf')
 
 NIRFigAndelerGrVar(RegData=RegData, valgtVar=valgtVar, minald=minald, maxald=maxald,  datoFra=datoFra, 
                 datoTil=datoTil, aar=0, InnMaate=InnMaate, dodInt=dodInt,erMann=erMann, outfile=outfile, 
-                grType=3, grVar=grVar, hentData=0, preprosess=1, lagFig=1, medKI=1,offData = offData)
+                grType=1, grVar=grVar, hentData=0, preprosess=1, lagFig=1, medKI=1,offData = offData)
 
 #NIRAndelerGrVar(RegData=RegData, valgtVar=valgtVar, minald=minald, maxald=maxald,  datoFra=datoFra, 
 #                datoTil=datoTil, aar=0, InnMaate=InnMaate, dodInt=dodInt,erMann=erMann, outfile=outfile, 
@@ -280,8 +280,8 @@ for (valgtVar in variable) {
 valgtMaal <- 'Gjsn'
 valgtVar <- 'SMR'	#'SMR', alder, liggetid, respiratortid,  SAPSII, 'NEMS', 'Nas24'
                         #Nye: respiratortidInvMoverf, respiratortidInvUoverf, respiratortidNonInv
-grType <- 3
-outfile <- paste0(valgtVar, '_test.pdf')#,grType
+grType <- 1
+outfile <- '' #paste0(valgtVar, '_test.pdf')#,grType
 NIRFigGjsnGrVar(RegData=RegData, medKI = 1 ,valgtVar=valgtVar, valgtMaal=valgtMaal, minald=minald, maxald=maxald, 
              grType=grType, grVar=grVar, InnMaate=InnMaate, datoFra=datoFra, datoTil=datoTil, dodInt=dodInt, 
              erMann=erMann, outfile=outfile) 
