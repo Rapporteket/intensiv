@@ -303,7 +303,7 @@ if (lagFig == 1) {
                   
                   #------Tegnforklaring (legend)--------
                         if (medKI == 0) { 
-                              TXT <- paste0('totalt: ', sprintf('%.1f', AggTot), ', N=', N$Hoved)
+                              TXT <- paste0(grTypeTxt, 'sykehus', sprintf('%.1f', AggTot), ', N=', N$Hoved)
                               legend(xmax/4, posOver+posDiff, TXT, fill=NA,  border=NA, lwd=2.5,xpd=TRUE,
                                      col=farger[1], cex=cexleg, seg.len=0.6, merge=TRUE, bty='n')
                         } else {
