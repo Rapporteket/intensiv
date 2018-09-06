@@ -50,7 +50,7 @@ texi2pdf(file='OffDataIntensiv.tex')
 #-------------------------------------LASTE DATA-----------------------------------------------
 rm(list=ls())
 
-dato <- '2018-09-03' #MainFormDataContract2018-06-19
+dato <- '2018-08-30' #MainFormDataContract2018-06-19
 dataKat <- 'A:/Intensiv/' 
 fil <- paste0(dataKat,'MainFormDataContract',dato)
 #NIRdata <- read.table(file=paste0(fil,'.csv'), header=T, stringsAsFactors=FALSE, sep=';',encoding = 'UTF-8')

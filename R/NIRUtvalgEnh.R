@@ -81,8 +81,8 @@ NIRUtvalgEnh <- function(RegData, datoFra=0, datoTil=0, minald=0, maxald=110, er
       N <- dim(RegData)[1]	#N=0 gir feilmelding
       #grTypetextstreng <- c('lokal-/sentralsykehus', 'lokal-/sentral', 'regionsykehus')				
       grTypetextstreng <- c('lokal-/sentral', 'lokal-/sentral', 'region')				
-      #if (grType %in% 1:3) {grTypeTxt <- grTypetextstreng[grType]} else {grTypeTxt <- 'alle '}
-      grTypeTxt <- grTypetextstreng[grTypeEgen]
+      if (grType %in% 1:3) {grTypeTxt <- grTypetextstreng[grType]} else {grTypeTxt <- 'alle '}
+      #grTypeTxtEgen <- grTypetextstreng[grTypeEgen]
       
       
       

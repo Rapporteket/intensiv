@@ -300,7 +300,7 @@ if (lagFig == 1) {
                   #       paste0(grTypeTxt, 'sykehus: ', sprintf('%.1f', AggTot), '%, N=', N$Hoved), cex = cexleg) 
                   
                   mtext(at=pos+0.05, text=grtxt, side=2, las=1, cex=cexgr, adj=1, line=0.25) 
-                        TXT <- paste0(grTypeTxt, 'sykehus: ', sprintf('%.1f', AggTot), '%, N=', N$Hoved) #paste0('totalt: ', sprintf('%.1f', AggTot), ', N=', N$Hoved)
+                        TXT <- paste0(NIRUtvalg$grTypeTxt, 'sykehus: ', sprintf('%.1f', AggTot), '%, N=', N$Hoved) #paste0('totalt: ', sprintf('%.1f', AggTot), ', N=', N$Hoved)
                         
                         if (medKI == 0) { 
                               legend(xmax/4, posOver+posDiff, TXT, fill=NA,  border=NA, lwd=2.5, xpd=TRUE, #inset=c(-0.1,0),
