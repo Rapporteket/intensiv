@@ -448,6 +448,78 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='an
             cexgr <- 0.9
       } 
       
+# 1.	Andel donorar av alle daude på intensiv (per eining – samanlikna mot same ShType)
+      if (valgtVar == 'OrganDonationCompletedStatus') { #andelGrVar 
+            #OrganDonationCompletedStatus - Ble organdonasjon gjennomført?
+            #1:ja, 2:nei, -1: tom
+            RegData <- RegData[which(RegData$DischargedIntensiveStatus == 1),] #Døde
+            retn <- 'H'
+            tittel <- 'Andel av de som døde som ble donorer'
+            RegData$Variabel[which(RegData$OrganDonationCompletedStatus == 1)] <- 1
+            cexgr <- 0.9
+      } 
+# 2.	Andel donorar av pasientar med oppheva intrakraniell sirkulasjon (per eining – samanlikna mot same ShType)
+      if (valgtVar == 'OrganDonationCompletedCirc') { #andelGrVar 
+            #Ble det påvist opphevet intrakraniell sirkulasjon?	CerebralCirculationAbolished
+            #1:ja, 2:nei, -1: tom
+            #OrganDonationCompletedStatus - Ble organdonasjon gjennomført?
+            #1:ja, 2:nei, -1: tom
+            RegData <- RegData[which(RegData$CerebralCirculationAbolished == 1),] #Opphevet sirkulasjon
+            retn <- 'H'
+            tittel <- 'Andel donorer av de med opphevet intrakraniell sirkulajon'
+            RegData$Variabel[which(RegData$OrganDonationCompletedStatus == 1)] <- 1
+            cexgr <- 0.9
+      } 
+# 3.	Grunnar til ikkje påvist oppheva intrakraniell sirkulasjon blant daude (histogram per ShType?)
+      if (valgtVar == 'CerebralCirculationAbolishedReasonForNo') { #andeler 
+            #Ble det påvist opphevet intrakraniell sirkulasjon?	CerebralCirculationAbolished
+            #-1 = Velg verdi	0 = Avslag fra RH	1 = Ikke oppfylt kriteriene for hjernedød	
+            #2 = Pasient negativ til donasjon	3 = Pårørende negativ til donasjon	
+            #4 = Plutselig død/hjertestans	5 = Ikke kapasitet på intensiv	
+            #6 = Ikke tenkt på donasjon	7 = Uenighet i behandlingsteam	
+            #8 = Utført angiografi : Ikke opphevet intrakraniell sirkulasjon	
+            #9 = Temp
+
+            #OrganDonationCompletedStatus - Ble organdonasjon gjennomført?
+            #1:ja, 2:nei, -1: tom
+            gr <- 0:9
+            RegData <- RegData[which(RegData$CerebralCirculationAbolishedReasonForNo %in% gr),] 
+            grtxt <- c('Avslag fra RH', 
+                       'Ikke oppfylt kriteriene for hjernedød',
+                       'Pasient negativ til donasjon', 
+                       'Pårørende negativ til donasjon',
+                       'Plutselig død/hjertestans',	
+                       'Ikke kapasitet på intensiv',
+                       'Ikke tenkt på donasjon', 
+                       'Uenighet i behandlingsteam',	
+                       'Angiografi: Ikke opph. intrakran. sirk.',
+                       'Temp')
+            retn <- 'H'
+            tittel <- 'Årsak til ikke påvist opphevet intrakraniell sirkulasjon'
+            RegData$VariabelGr <- factor(RegData$CerebralCirculationAbolishedReasonForNo, levels = gr)
+            cexgr <- 0.9
+      } 
+# 4.	Grunnar til ikkje donasjon hjå pasientar med påvist oppheva intrakraniell sirkulasjon (histogram per ShType?)
+      if (valgtVar == 'OrganDonationCompletedReasonForNoStatus') { #andeler 
+            #Ble organdonasjon gjennomført? Årsak til nei
+            #-1 = Velg verdi	0 = Pasient negativ til organdonasjon	
+            #1 = Pårørende negativ til donasjon	2 = Plutselig død/hjertestans	3 = Avslag fra RH	4 = Temp
+            #OrganDonationCompletedStatus - Ble organdonasjon gjennomført?
+            #1:ja, 2:nei, -1: tom
+            gr <- 0:4
+            RegData <- RegData[which(RegData$OrganDonationCompletedReasonForNoStatus %in% 0:4),] 
+            RegData$VariabelGr <- factor(RegData$OrganDonationCompletedReasonForNoStatus, levels=gr)
+            grtxt <- c('Pasient negativ til organdonasjon',
+                  'Pårørende negativ til donasjon', 
+                  'Plutselig død/hjertestans',	
+                  'Avslag fra RH', 
+                  'Temp')
+            retn <- 'H'
+            tittel <- 'Årsak ikke donasjon, pasientar med opph. intrakran. sirk.'
+            cexgr <- 0.9
+      } 
+      
+      
       #---------------KATEGORISKE
       
       if (valgtVar=='InnMaate') { #andeler

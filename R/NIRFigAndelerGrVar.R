@@ -150,12 +150,20 @@ AggTot <- AndelHele
 soyletxt <- andeltxt
 
 #-----------------
+
 Nut <- length(indGrUt)
-indMed <- (Nut+1):length(sortInd)
-  KI <- 100*binomkonf(AndelerGrSort[indMed]/100*Ngr$Hoved[indMed], Ngr$Hoved[indMed], konfnivaa=0.95)
-  KIned <- c(rep(NA,Nut), KI[1,])
-  KIopp <- c(rep(NA,Nut), KI[2,])
-  KIHele <- 100*binomkonf(AndelHele/100*N$Hoved, N$Hoved, konfnivaa=0.95)
+if (medKI==1) {
+      KIHele <- 100*binomkonf(AndelHele/100*N$Hoved, N$Hoved, konfnivaa=0.95)
+      KI <- NA
+      KIned <- NA
+      KIopp <- NA
+      if (Nut> length(sortInd)) {
+        indMed <- (Nut+1):length(sortInd)
+        KI <- 100*binomkonf(AndelerGrSort[indMed]/100*Ngr$Hoved[indMed], Ngr$Hoved[indMed], konfnivaa=0.95)
+        KIned <- c(rep(NA,Nut), KI[1,])
+        KIopp <- c(rep(NA,Nut), KI[2,])
+      }
+}
   
   #prop.test(x=as.numeric(AndelerGrSort[indMed]/100*Ngr$Hoved[indMed]), n=Ngr$Hoved[indMed])
 #-----------
@@ -283,8 +291,8 @@ if (lagFig == 1) {
                         }
                         barplot(rev(as.numeric(AggVerdier$Hoved)), horiz=TRUE, beside=TRUE, las=1, add=TRUE,
                                 col=fargeHoved, border=NA, cex.names=cexgr) #, xlim=c(0, xmax), ylim=c(ymin,ymax)
-                        soyleXpos <- 1.14*xmax*max(strwidth(soyletxt, units='figure')) # cex=cexgr
-                        text(x=soyleXpos, y=pos+0.1, soyletxt, las=1, cex=cexgr, adj=1, col=farger[1])	#AggVerdier, hvert sykehus
+                        soyleXpos <- 1.14*xmax*max(strwidth(soyletxt, units='figure', cex=cexgr)) # cex=cexgr
+                        text(x=soyleXpos, y=pos+0.1, soyletxt, las=1, cex=0.9*cexgr, adj=1, col=farger[1])	#AggVerdier, hvert sykehus
 
                   
                   #------Tegnforklaring (legend)--------
@@ -292,7 +300,7 @@ if (lagFig == 1) {
                   #       paste0(grTypeTxt, 'sykehus: ', sprintf('%.1f', AggTot), '%, N=', N$Hoved), cex = cexleg) 
                   
                   mtext(at=pos+0.05, text=grtxt, side=2, las=1, cex=cexgr, adj=1, line=0.25) 
-                        TXT <- paste0(grTypeTxt, 'sykehus: ', sprintf('%.1f', AggTot), '%, N=', N$Hoved) #paste0('totalt: ', sprintf('%.1f', AggTot), ', N=', N$Hoved)
+                        TXT <- paste0(NIRUtvalg$grTypeTxt, 'sykehus: ', sprintf('%.1f', AggTot), '%, N=', N$Hoved) #paste0('totalt: ', sprintf('%.1f', AggTot), ', N=', N$Hoved)
                         
                         if (medKI == 0) { 
                               legend(xmax/4, posOver+posDiff, TXT, fill=NA,  border=NA, lwd=2.5, xpd=TRUE, #inset=c(-0.1,0),

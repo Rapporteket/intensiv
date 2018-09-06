@@ -271,7 +271,7 @@ if (lagFig == 1) {
                   maxpos <- max(posOK)+0.7
                   
                    
-                        grTypeTxt <- smltxt
+                        grTypeTxt <- ifelse(grType %in% 1:3, NIRUtvalg$grTypeTxt, 'alle ') #smltxt
                         mtext(at=posOver, paste0('(N)' ), side=2, las=1, cex=cexgr, adj=1, line=0.25)
                         #Linje for hele landet/utvalget:
                         if (medKI == 1) {	
@@ -303,11 +303,11 @@ if (lagFig == 1) {
                   
                   #------Tegnforklaring (legend)--------
                         if (medKI == 0) { 
-                              TXT <- paste0('totalt: ', sprintf('%.1f', AggTot), ', N=', N$Hoved)
+                              TXT <- paste0(grTypeTxt, 'sykehus ', sprintf('%.1f', AggTot), ', N=', N$Hoved)
                               legend(xmax/4, posOver+posDiff, TXT, fill=NA,  border=NA, lwd=2.5,xpd=TRUE,
                                      col=farger[1], cex=cexleg, seg.len=0.6, merge=TRUE, bty='n')
                         } else {
-                              TXT <- c(paste0('totalt: ', sprintf('%.1f', AggTot), ', N=', N$Hoved), 
+                              TXT <- c(paste0(grTypeTxt, 'sykehus ', sprintf('%.1f', AggTot), ', N=', N$Hoved), 
                                        paste0('95% konf.int., ', grTypeTxt, 'sykehus (', 
                                               sprintf('%.1f', KIHele[1]), '-', sprintf('%.1f', KIHele[2]), ')'))
                               legend(xmax/4, posOver, TXT, yjust=0, xpd=TRUE, fill=c(NA, farger[3]),  border=NA, lwd=2.5,  #inset=c(-0.1,0),

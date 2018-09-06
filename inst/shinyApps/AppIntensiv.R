@@ -53,8 +53,8 @@ ui <- fluidPage( #"Hoved"Layout for alt som vises på skjermen
 
       conditionalPanel( #Denne skal bare vises for figursamlinger
         'input.ark == "Fordelinger"',
-       AppNIRbrukervalg(inputId = "valgtVar", label="Velg variabel")
-       #AppNIRbrukervalg(inputId = "datovalg", label="Tidsperiode")
+              AppNIRbrukervalg(ark = "Fordelinger")
+              #AppNIRbrukervalg(inputId = "datovalg", label="Tidsperiode")
        #AppNIRbrukervalg(inputId = "erMann", label="Kjønn"),
        #AppNIRbrukervalg(inputId = "alder", label='Alder'),
        #AppNIRbrukervalg(inputId = "enhetsUtvalg", label='Egen enhet og/eller landet')
@@ -65,41 +65,7 @@ ui <- fluidPage( #"Hoved"Layout for alt som vises på skjermen
 
       conditionalPanel( #
         'input.ark == "Andeler"',
-        #'input.ark === "Fordelinger" || input.ark === "Andeler" ',
-        selectInput(inputId = "valgtVarAndelGrVar", label="Velg variabel",
-                    choices = c('Alder minst 80 år' = 'alder_over80',
-                                'Alder under 18år' = 'alder_u18',
-                                'Død innen 30 dager' = 'dod30d',
-                                'Døde på intensiv' = 'dodeIntensiv',
-                                'Isolasjon av pasient' = 'isolering',
-                                'Liggetid, døde' = 'liggetidDod',
-                                'Nyrebehandling' = 'nyreBeh',
-                                'Reinnleggelse' = 'reinn',
-                                'Respiratorstøtte' = 'respStotte',
-                                'Respiratortid, inv. < 2,5d m/overf.' = 'respiratortidInvMoverf',
-                                'Respiratortid, inv. < 2,5d u/overf.' = 'respiratortidInvUoverf',
-                                'Respiratortid, døde' = 'respiratortidDod',
-                                'Utvidet hemodyn. overvåkning' = 'ExtendedHemodynamicMonitoring',
-                                'Trakeostomi' = 'trakeostomi',
-                                'Trakeostomi, åpen' = 'trakAapen')
-        ),
-        dateRangeInput(inputId = 'datovalgAndelGrVar', start = "2017-01-01", end = Sys.Date(),
-                       label = "Tidsperiode", separator="t.o.m.", language="nb"),
-        selectInput(inputId = "erMannAndelGrVar", label="Kjønn",
-                    choices = c("Begge"=2, "Menn"=1, "Kvinner"=0)
-        ),
-        sliderInput(inputId="alderAndelGrVar", label = "Alder", min = 0,
-                    max = 110, value = c(0, 110)
-        ),
-       br(),
-       p(em('Følgende utvalg gjelder bare figuren som viser utvikling over tid')),
-       selectInput(inputId = 'enhetsUtvalgAndelTid', label='Egen enhet og/eller landet',
-                   choices = c("Egen mot resten av landet"=1, "Hele landet"=0, "Egen enhet"=2)
-       ),
-       selectInput(inputId = "tidsenhetAndelTid", label="Velg tidsenhet",
-                   choices = rev(c('År'= 'Aar', 'Halvår' = 'Halvaar',
-                                   'Kvartal'='Kvartal', 'Måned'='Mnd')))
-
+        AppNIRbrukervalg(ark = "Andeler")
       ),
       conditionalPanel( #
         'input.ark == "Gjennomsnitt"',
@@ -260,8 +226,6 @@ server <- function(input, output) {
   aarFra <- paste0(1900+as.POSIXlt(Sys.Date())$year-5, '-01-01')
   reshIDdummy <- 109773 #Tromsø med.int
 
-
-  
   output$tabAvdMnd12 <- renderTable({
     datoFra12 <- as.Date(paste0(as.numeric(substr(input$datoTil,1,4))-1, substr(input$datoTil,5,8), '01'))
     SkjemaData12mnd <- SkjemaData[SkjemaData$InnDato < as.POSIXlt(input$datoTil)

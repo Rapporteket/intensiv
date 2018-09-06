@@ -114,7 +114,7 @@ tittelpos <- 1
 	pos <- barplot(cbind(as.numeric(dataAlle), rep(0,3), t(dataTab[sortInd,])), horiz=T, beside=FALSE, 
 			border=NA, col=farger[1:3], 
 			main='', font.main=1, xlab='', ylim=c(ymin, 1.05*ymax+2), las=1, cex.names=xkr) 	# ylim=c(0.05, 1.24)*length(Nsh),xlim=c(0,ymax), cex.axis=0.9, cex.names=0.8*xkr,
-	ShNavnSort <- c(NIRUtvalg$grTypeTxt, '', ShNavnSort)
+	ShNavnSort <- c('alle i visninga', '', ShNavnSort) #NIRUtvalg$grTypeTxt
 	NshtxtSort<- c(paste0('N=', N), '', NshtxtSort)
 		legend(x=50, y=1.05*ymax+2, c('Elektivt','Akutt med.', 'Akutt kir.'), xjust=0.5, yjust=0.5,	#inset=0.01,# max(pos)*1.01 x=50, y=ymax,
 			fill=farger[1:3], border=farger[1:3], ncol=3, bty='n')	#cex=0.9,  ncol=6,
