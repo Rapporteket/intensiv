@@ -271,7 +271,7 @@ if (lagFig == 1) {
                   maxpos <- max(posOK)+0.7
                   
                    
-                        grTypeTxt <- smltxt
+                        grTypeTxt <- ifelse(grType %in% 1:3, NIRUtvalg$grTypeTxt, 'alle ') #smltxt
                         mtext(at=posOver, paste0('(N)' ), side=2, las=1, cex=cexgr, adj=1, line=0.25)
                         #Linje for hele landet/utvalget:
                         if (medKI == 1) {	
