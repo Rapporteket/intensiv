@@ -339,10 +339,15 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='an
             RegData <- RegData[ind,]
             if (figurtype %in% c('andeler', 'gjsnGrVar', 'gjsnTid')) {
                   RegData$Variabel  <- as.numeric(RegData$InvasivVentilation)
-                  tittel <- 'invasiv ventilasjon (inkl. overførte pasienter)'}      #Andeler, GjsnGrVar
+                  tittel <- 'invasiv ventilasjon (inkl. overførte pasienter)'      #Andeler, GjsnGrVar
+                  KImaal <- 2.5 #Kun for median
+                  KImaaltxt <- '< 2,5 døgn'
+            }
             if (figurtype == 'andeler') {tittel <- 'Invasiv ventilasjon (inkl. overførte pasienter)'}	
             if (figurtype %in% c('andelTid', 'andelGrVar')) {
                   RegData$Variabel[which(RegData$InvasivVentilation < 2.5)] <- 1
+                  KImaal <- 50 #Over 50% med respiratortid <2,5døgn
+                  KImaaltxt <- '>50'
                   tittel <- 'Invasiv ventilasjon < 2,5 døgn (inkl. overførte pasienter)'}     #AndelGrVar, AndelTid
             gr <- c(0, 1, 2, 3, 4, 5, 6, 7, 14, 1000) #c(0, exp(seq(0,log(30),length.out = 6)), 500),1)
             RegData$VariabelGr <- cut(RegData$InvasivVentilation, breaks=gr, include.lowest=TRUE, right=FALSE)  
@@ -350,8 +355,6 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='an
             xAkseTxt <- 'ventilasjonstid (døgn)'
             varTxt <- 'med inv.ventilasjon < 2,5 døgn'
             #KImaal <- 2.5 #Median respiratortid <2,5døgn 
-            KImaal <- 50 #Over 50% med respiratortid <2,5døgn
-            KImaaltxt <- '>50'
             sortAvtagende <- TRUE      #Rekkefølge
       } 
       if (valgtVar == 'respiratortidInvUoverf') { #Andeler #GjsnGrVar #AndelGrVar, GjsnTid

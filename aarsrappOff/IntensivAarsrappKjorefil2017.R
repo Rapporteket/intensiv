@@ -38,7 +38,7 @@ NIRFigAndeler(RegData=RegData, valgtVar='liggetid', dodInt=1, datoFra=datoFra1aa
 # Trakeostomi reg/lokSent
 
 
-variable <- c('dod30d', 'dodeIntensiv', 'trakeostomi')
+variable <- c('dod30d', 'dodeIntensiv', 'trakeostomi','reinn')
 for (grType in 2:3) {
       for (valgtVar in variable) {
             outfile <- paste0(valgtVar, grType, 'PrSh.pdf')
@@ -62,7 +62,9 @@ for (valgtVar in variable){
 # SAPSII
 
 valgtMaal <- 'Med'
-variable <- c('alder', 'liggetid', 'SAPSII')		
+variable <- c('NEMS', 'respiratortid' ) #c('alder', 'liggetid', 'SAPSII',
+               
+
 for (valgtVar in variable) {
       outfile <- paste0(valgtVar, 'MedTid.pdf')
       NIRFigGjsnTid(RegData=RegData, valgtVar=valgtVar, datoFra=datoFra, datoTil=datoTil, 
@@ -84,23 +86,53 @@ NIRFigGjsnTid(RegData=RegData, valgtVar='liggetid', datoFra=datoFra, datoTil=dat
 
 
 valgtMaal <- 'Med'
-valgtVar <- 'alder'	#'SMR', alder, liggetid, respiratortid,  SAPSII, 'NEMS', 'Nas24'
+valgtVar <- 'respiratortidInvMoverf'	#'SMR', alder, liggetid, respiratortid,  SAPSII, 'NEMS', 'Nas24'
 #Nye: respiratortidInvMoverf, respiratortidInvUoverf, respiratortidNonInv
 variable <- c('alder', 'liggetid', 'respiratortid','NEMS', 'NEMS24', 'Nas24', 
-              'respiratortidInvMoverf', 'respiratortidNonInv', 'SAPSII')
+              'respiratortidInvMoverf', 'respiratortidNonInv', 'SAPSII',
+              'respiratortidInvUoverf')
 for (grType in 2:3) {
       for (valgtVar in variable){ # 
             outfile <- paste0(valgtVar,grType, '_MedPrSh.pdf')
             NIRFigGjsnGrVar(RegData=RegData, valgtVar=valgtVar, valgtMaal=valgtMaal, 
-                         grType=grType, datoFra=datoFra, datoTil=datoTil, outfile=outfile) 
+                         grType=grType, datoFra=datoFra1aar, datoTil=datoTil, outfile=outfile) 
       }
+      NIRFigGjsnGrVar(RegData=RegData, valgtVar='SMR', grType=grType, 
+                      datoFra=datoFra1aar, datoTil=datoTil, outfile=paste0('SMR',grType, '_PrSh.pdf'))
+      NIRFigGjsnGrVar(RegData=RegData, valgtVar='liggetid', valgtMaal=valgtMaal, dodInt=1, 
+                      grType=grType, datoFra=datoFra1aar, datoTil=datoTil, 
+                      outfile=paste0('liggetidDod',grType,'_MedPerSh.pdf'))
 }
 
-NIRFigGjsnGrVar(RegData=RegData, valgtVar='liggetid', valgtMaal=valgtMaal, dodInt=1, 
-                grType=2, datoFra=datoFra, datoTil=datoTil, outfile='liggetidDod2_MedPerSh.pdf')
+
 
 NIRFigGjsnGrVar(RegData=RegData, valgtVar='liggetid', valgtMaal=valgtMaal, dodInt=1, 
-                grType=3, datoFra=datoFra, datoTil=datoTil, outfile='liggetidDod3_MedPerSh.pdf')
+                grType=3, datoFra=datoFra1aar, datoTil=datoTil, outfile='liggetidDod3_MedPerSh.pdf')
+
+
+
+
+#-------------------------------Tabeller--------------------------------
+#Belegg 
+library(xtable)
+RegData1aar <- NIRPreprosess(RegData)
+Utvalg <- NIRUtvalgEnh(RegData1aar, datoFra = datoFra1aar, datoTil = datoTil)
+RegData1aar <- Utvalg$RegData
+
+tabBeleggN <- rbind(
+            'Ferdigstilte intensivopphald' = tapply(RegData1aar$PasientID, RegData1aar$ShType, FUN=length), 		
+            'Registrerte pasientar' = tapply(RegData1aar$PasientID, RegData1aar$ShType, 
+                                             FUN=function(x) length(unique(x))),	
+            'Antall intensivdøger' = round(as.numeric(tapply(RegData1aar$liggetid, RegData1aar$ShType, sum, na.rm=T)),0)	
+      )
+tabBeleggNtot <- cbind(tabBeleggN, rowSums(tabBeleggN))
+colnames(tabBeleggNtot) <- c('lokal-/sentral', 'region', 'alle')
+
+xtable(tabBeleggNtot, digits=0, align=c('l', rep('r', ncol(tabBeleggNtot))), 
+       caption='Antal opphald og liggedøger i 2017.', label='tab:RegEget')
+
+
+
 
 
 

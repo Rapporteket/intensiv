@@ -49,6 +49,8 @@ if (preprosess){
 
 #------- Tilrettelegge variable
 NIRVarSpes <- NIRVarTilrettelegg(RegData=RegData, valgtVar=valgtVar, figurtype = 'gjsnGrVar')
+KImaal <- NIRVarSpes$KImaal
+KImaaltxt <- NIRVarSpes$KImaaltxt
 RegData <- NIRVarSpes$RegData
 
 #------- Gjøre utvalg
