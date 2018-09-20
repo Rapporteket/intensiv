@@ -485,7 +485,7 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='an
 
             #OrganDonationCompletedStatus - Ble organdonasjon gjennomført?
             #1:ja, 2:nei, -1: tom
-            gr <- 0:9
+            gr <- 0:8
             RegData <- RegData[which(RegData$CerebralCirculationAbolishedReasonForNo %in% gr),] 
             grtxt <- c('Avslag fra RH', 
                        'Ikke oppfylt kriteriene for hjernedød',
@@ -495,8 +495,7 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='an
                        'Ikke kapasitet på intensiv',
                        'Ikke tenkt på donasjon', 
                        'Uenighet i behandlingsteam',	
-                       'Angiografi: Ikke opph. intrakran. sirk.',
-                       'Temp')
+                       'Angiografi: Ikke opph. intrakran. sirk.')
             retn <- 'H'
             tittel <- 'Årsak til ikke påvist opphevet intrakraniell sirkulasjon'
             RegData$VariabelGr <- factor(RegData$CerebralCirculationAbolishedReasonForNo, levels = gr)
@@ -509,14 +508,13 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='an
             #1 = Pårørende negativ til donasjon	2 = Plutselig død/hjertestans	3 = Avslag fra RH	4 = Temp
             #OrganDonationCompletedStatus - Ble organdonasjon gjennomført?
             #1:ja, 2:nei, -1: tom
-            gr <- 0:4
+            gr <- 0:3
             RegData <- RegData[which(RegData$OrganDonationCompletedReasonForNoStatus %in% 0:4),] 
             RegData$VariabelGr <- factor(RegData$OrganDonationCompletedReasonForNoStatus, levels=gr)
             grtxt <- c('Pasient negativ til organdonasjon',
                   'Pårørende negativ til donasjon', 
                   'Plutselig død/hjertestans',	
-                  'Avslag fra RH', 
-                  'Temp')
+                  'Avslag fra RH')
             retn <- 'H'
             tittel <- 'Årsak ikke donasjon, pasientar med opph. intrakran. sirk.'
             cexgr <- 0.9

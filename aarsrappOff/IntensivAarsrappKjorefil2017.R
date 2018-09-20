@@ -3,7 +3,7 @@
 #----------------------Figurer til Årsrapport 2017---------------------------
 rm(list=ls())
 library(intensiv)
-datoFra <- '2012-01-01'	
+datoFra <- '2011-01-01'	
 datoTil <- '2017-12-31'	#
 #RegData <- read.table('A:/Intensiv/MainFormDataContract2017-11-07.csv', sep=';', stringsAsFactors=FALSE, 
 #                      header=T, encoding = 'UTF-8')	
