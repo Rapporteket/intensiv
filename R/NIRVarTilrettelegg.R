@@ -274,9 +274,12 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='an
       
       
       if (valgtVar == 'nyreBehTid' ) {   # Andeler, 
-            RegData$Variabel <- RegData$KontinuerligDays + RegData$IntermitterendeDays 
-            RegData <- RegData[which(RegData$InnDato>=as.Date('2015-01-01', tz='UTC')), ] 
-            RegData <- RegData[which(RegData$KidneyReplacingTreatment == 1) %i% which(RegData$Variabel>0), ]   
+            #Noen har KidneyReplacingTreatment=1 uten å ha registrert tid. Velger ut de som har registrert tid.
+            #indTid <- union(!is.na(RegData$KontinuerligDays),!is.na(RegData$IntermitterendeDays))
+            RegData <- RegData[which(RegData$InnDato>=as.Date('2015-01-01', tz='UTC')) %i%
+                                     which(RegData$KidneyReplacingTreatment == 1), ]
+            RegData$Variabel <- rowSums(RegData[ ,c('KontinuerligDays','IntermitterendeDays')], na.rm = T)
+            RegData <- RegData[which(RegData$Variabel>0), ]   
             xAkseTxt <- 'døgn'	
             tittel <- 'Fordeling av antall døgn (heltall) med registrert nyreerstattende behandling'
             gr <- c(1, 2, 3, 4, 5, 6, 7, 14, 1000)
@@ -497,7 +500,10 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='an
                        'Uenighet i behandlingsteam',	
                        'Angiografi: Ikke opph. intrakran. sirk.')
             retn <- 'H'
-            tittel <- 'Årsak til ikke påvist opphevet intrakraniell sirkulasjon'
+            tittel <- c('Årsak, ikke påvist opphevet intrakraniell sirkulasjon',
+                        'hos pasienter med potensielt dødelig hjerneskade')
+            
+            xAkseTxt <- 'Andel (%)'
             RegData$VariabelGr <- factor(RegData$CerebralCirculationAbolishedReasonForNo, levels = gr)
             cexgr <- 0.9
       } 
@@ -517,6 +523,7 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='an
                   'Avslag fra RH')
             retn <- 'H'
             tittel <- 'Årsak ikke donasjon, pasientar med opph. intrakran. sirk.'
+            xAkseTxt <- 'Andel (%)'
             cexgr <- 0.9
       } 
       

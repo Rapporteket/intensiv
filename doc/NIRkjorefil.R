@@ -171,7 +171,9 @@ NIRFigInnMaate (RegData=RegData, valgtVar='InnMaate', minald=0, maxald=130, dato
 
 
 #--------------------------------------- Andeler ----------------------------------
-valgtVar <- 'alder'	#'alder', 'liggetid', 'respiratortid',  'SAPSII', 'NEMS24', 'Nas24', 'InnMaate'
+OrganDonationCompletedReasonForNoStatus
+CerebralCirculationAbolishedReasonForNo
+valgtVar <- 'OrganDonationCompletedReasonForNoStatus'	#'alder', 'liggetid', 'respiratortid',  'SAPSII', 'NEMS24', 'Nas24', 'InnMaate'
                               #Nye: PrimaryReasonAdmitted, inklKrit, respiratortidNonInv, respiratortidInv
                               #nyreBeh, nyreBehTid, ExtendedHemodynamicMonitoring, isolering, isoleringDogn, 
                               #spesTiltak
@@ -183,7 +185,7 @@ outfile <- '' #paste0(valgtVar,'_Ford', '.png')
 
 NIRFigAndeler(RegData=RegData, valgtVar=valgtVar, minald=minald, maxald=maxald,  datoFra=datoFra, 
                      datoTil=datoTil, grType=grType, InnMaate=InnMaate, dodInt=dodInt,erMann=erMann, outfile=outfile, 
-                     hentData=0, preprosess=1, reshID=reshID, enhetsUtvalg=3, lagFig=1)
+                     hentData=0, preprosess=1, reshID=reshID, enhetsUtvalg=0, lagFig=1)
 # Utdata <- NIRAndeler(RegData=RegData, valgtVar=valgtVar, minald=minald, maxald=maxald,  datoFra=datoFra, 
 #                         datoTil=datoTil, InnMaate=InnMaate, dodInt=dodInt,erMann=erMann, outfile=outfile, 
 #                         hentData=0, preprosess=1, reshID=reshID, enhetsUtvalg=enhetsUtvalg, lagFig=1)

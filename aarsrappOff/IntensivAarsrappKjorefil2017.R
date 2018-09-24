@@ -21,15 +21,19 @@ NIRFigInnMaate(RegData=RegData, valgtVar='InnMaate', datoFra=datoFra1aar, datoTi
 
 #--------------------------------------- Andeler ----------------------------------
 
-variable <- c('inklKrit','liggetid','InnMaate','NEMS24', 'Nas24','respiratortidNonInv','respiratortidInv',
+variable <- 'nyreBehTid'
+c('inklKrit','liggetid','InnMaate','NEMS24', 'Nas24','respiratortidNonInv','respiratortidInv',
                   'SAPSII', 'nyreBeh', 'nyreBehTid','spesTiltak', 'respiratortidInvMoverf')
 for (valgtVar in variable) {
       outfile <- paste0(valgtVar, '_Ford.pdf')
       NIRFigAndeler(RegData=RegData, valgtVar=valgtVar, datoFra=datoFra1aar, datoTil=datoTil, 
                  outfile=outfile)
 }
+
 NIRFigAndeler(RegData=RegData, valgtVar='liggetid', dodInt=1, datoFra=datoFra1aar, datoTil=datoTil, 
               outfile='liggetidDod_ford.pdf') 
+NIRFigAndeler(RegData=RegData, valgtVar='spesTiltak', datoFra=datoFra1aar, datoTil=datoTil, grType = 3,
+              outfile='spesTiltak_ford.pdf') 
 
 
 #--------------------------------------- AndelGrVar ----------------------------------

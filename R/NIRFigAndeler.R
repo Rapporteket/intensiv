@@ -288,7 +288,7 @@ NIRFigAndeler  <- function(RegData=0, valgtVar='Alder', datoFra='2011-01-01', da
                                      border=c(fargeHoved,NA), col=c(fargeHoved,fargeRest), bty='n', pch=c(15,18), 
                                      pt.cex=2, lwd=lwdRest, lty=NA, ncol=1)
                         } else {	
-                              legend(xmax/4, posOver+0.8*posDiff, paste0(hovedgrTxt, ' (N=', Nfig$Hoved,')'), 
+                              legend(xmax/4, posOver+0.6*posDiff, paste0(hovedgrTxt, ' (N=', Nfig$Hoved,')'), 
                                      border=NA, fill=fargeHoved, bty='n', ncol=1)
                         }
                         
