@@ -12,7 +12,6 @@ setwd('C:/ResultattjenesteGIT/intensiv/aarsrappOff/')
 
 datoFra1aar <- '2017-01-01'
 
-
 #Innkomstmåte (egen fig.) reg/sentLok
 NIRFigInnMaate(RegData=RegData, datoFra=datoFra1aar, datoTil = datoTil, 
                grType=1, outfile='InnMaateLokSen.pdf')
@@ -21,9 +20,9 @@ NIRFigInnMaate(RegData=RegData, valgtVar='InnMaate', datoFra=datoFra1aar, datoTi
 
 #--------------------------------------- Andeler ----------------------------------
 
-variable <- 'nyreBehTid'
-c('inklKrit','liggetid','InnMaate','NEMS24', 'Nas24','respiratortidNonInv','respiratortidInv',
-                  'SAPSII', 'nyreBeh', 'nyreBehTid','spesTiltak', 'respiratortidInvMoverf')
+variable <- c('OrganDonationCompletedReasonForNoStatus', 'CerebralCirculationAbolishedReasonForNo')
+variable <-  c('inklKrit','liggetid','InnMaate','NEMS24', 'Nas24','respiratortidNonInv','respiratortidInv',
+                   'SAPSII', 'nyreBeh', 'nyreBehTid','spesTiltak', 'respiratortidInvMoverf')
 for (valgtVar in variable) {
       outfile <- paste0(valgtVar, '_Ford.pdf')
       NIRFigAndeler(RegData=RegData, valgtVar=valgtVar, datoFra=datoFra1aar, datoTil=datoTil, 
@@ -42,6 +41,7 @@ NIRFigAndeler(RegData=RegData, valgtVar='spesTiltak', datoFra=datoFra1aar, datoT
 # Trakeostomi reg/lokSent
 
 
+variable <- c('OrganDonationCompletedCirc', 'OrganDonationCompletedStatus')
 variable <- c('dod30d', 'dodeIntensiv', 'trakeostomi','reinn')
 for (grType in 2:3) {
       for (valgtVar in variable) {

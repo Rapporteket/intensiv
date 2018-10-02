@@ -179,7 +179,7 @@ valgtVar <- 'OrganDonationCompletedReasonForNoStatus'	#'alder', 'liggetid', 'res
                               #spesTiltak
                               #Nye, aug-18: CerebralCirculationAbolishedReasonForNo, OrganDonationCompletedReasonForNoStatus
 
-outfile <- '' #paste0(valgtVar,'_Ford', '.png')
+outfile <- paste0(valgtVar,'_Ford', '.png')
 #grType <- 0
 #enhetsUtvalg <- 0
 
