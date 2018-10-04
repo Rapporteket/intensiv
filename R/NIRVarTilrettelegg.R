@@ -326,7 +326,7 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='an
             tittel <- 'Non-invasiv ventilasjon/maskeventilasjon'
             RegData$Variabel  <- as.numeric(RegData$NonInvasivVentilation)
             if (figurtype %in% c('gjsnGrVar', 'gjsnTid')) {
-                  tittel <- 'ventilasjonstid, åpen maske'
+                  tittel <- 'ventilasjonstid, maskeventilasjon'
             }     
             gr <- c(0, 1, 2, 3, 4, 5, 6, 7, 14, 1000)#c(0, exp(seq(0,log(30),length.out = 6)), 500),1)
             RegData$VariabelGr <- cut(RegData$NonInvasivVentilation, breaks=gr, include.lowest=TRUE, right=FALSE)  

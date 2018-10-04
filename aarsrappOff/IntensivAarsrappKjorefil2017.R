@@ -90,7 +90,7 @@ NIRFigGjsnTid(RegData=RegData, valgtVar='liggetid', datoFra=datoFra, datoTil=dat
 
 
 valgtMaal <- 'Med'
-valgtVar <- 'respiratortidInvMoverf'	#'SMR', alder, liggetid, respiratortid,  SAPSII, 'NEMS', 'Nas24'
+variable <- 'respiratortidNonInv'	#'SMR', alder, liggetid, respiratortid,  SAPSII, 'NEMS', 'Nas24'
 #Nye: respiratortidInvMoverf, respiratortidInvUoverf, respiratortidNonInv
 variable <- c('alder', 'liggetid', 'respiratortid','NEMS', 'NEMS24', 'Nas24', 
               'respiratortidInvMoverf', 'respiratortidNonInv', 'SAPSII',
