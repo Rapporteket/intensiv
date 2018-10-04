@@ -41,12 +41,12 @@ NIRFigAndeler(RegData=RegData, valgtVar='spesTiltak', datoFra=datoFra1aar, datoT
 # Trakeostomi reg/lokSent
 
 
-variable <- c('OrganDonationCompletedCirc', 'OrganDonationCompletedStatus')
+variable <- c('OrganDonationCompletedCirc', 'OrganDonationCompletedStatus') #Ngrense=0
 variable <- c('dod30d', 'dodeIntensiv', 'trakeostomi','reinn')
 for (grType in 2:3) {
       for (valgtVar in variable) {
             outfile <- paste0(valgtVar, grType, 'PrSh.pdf')
-            NIRFigAndelerGrVar(RegData=RegData, valgtVar=valgtVar, datoFra=datoFra1aar, 
+            NIRFigAndelerGrVar(RegData=RegData, valgtVar=valgtVar, datoFra=datoFra1aar, Ngrense=0,
                             datoTil=datoTil, grType=grType, outfile=outfile)
       }
 }
