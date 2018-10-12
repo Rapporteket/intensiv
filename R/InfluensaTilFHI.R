@@ -7,6 +7,12 @@
 #evt. aldersgrupper. Foreløpig for få observasjoner. Kan angi median, min og maks?
 #Variable:  RHF , PatientInRegistryGuid, DateAdmittedIntensive, ICD10_1-ICD10_5, 
 
+# Datafelt som er ønskte i aggregert rapport, på dags/vekebasis:
+# -	Veke
+# -	Landsdel
+# -	Diagnosekode
+# -	Aldersgruppe ([0-5> [5-10> [10-15>) …. )
+# -	Skjemastatus ? (tal på skjema i kladd vs ferdigstilte)
 
 InfluData <- read.table('A:/Intensiv/InfluensaFormDataContract2018-10-02.csv', sep=';', 
                         stringsAsFactors=FALSE, header=T, encoding = 'UTF-8')

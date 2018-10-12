@@ -11,6 +11,8 @@
 #' Despite its location, this actually comes after the function section.
 #' Fil som inneholder hjelpefunksjoner. 
 #' FinnReinnleggelser beregner reinnleggelser fra DateAdmittedIntensive og DateDischargedIntensive
+#' SorterOgNavngiTidsEnhet Legger til tidsenhetene Aar, Halvaar, Mnd og Kvartal
+#' 
 #' 
 #' @param RegData data
 #' @param PasientID Variabelen som angir pasientidentifikasjon
