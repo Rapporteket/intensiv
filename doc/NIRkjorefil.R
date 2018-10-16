@@ -65,19 +65,19 @@ load(paste0("A:/Intensiv/NIRdata10000.Rdata")) #RegDataTEST, 2018-06-05
 library(intensiv)
 
 # LagSyntetiskeData
-library(synthpop)
-library(dplyr)
-varBort <- c('FodselsDato', 'ForlopsID')
-ForlopsID <- RegData$ForlopsID
-RegData <- RegData[,-which(names(RegData) %in% varBort)]
-sykehus <- paste('Sykehus', LETTERS[1:10])
-mengdePasienter <- c(0.3, 4, 10, 3, 7, 5, 1, 8, 9.5, 6)
-RegData$SykehusNavn <- sample(sykehus, prob=mengdePasienter/sum(mengdePasienter), size=dim(RegData)[1], replace=T)
-RegDataSyn <- synthpop::syn(RegData, method = "sample", seed = 500) #Trekker med tilbakelegging
-RegData <- data.frame(RegDataSyn$syn, ForlopsID)
-write.table(RegData, file='C:/ResultattjenesteGIT/Nakke/data/NakkeRegDataTest.csv', sep = ';', row.names = F, col.names = T)
-save(RegData, file=paste0('C:/ResultattjenesteGIT/Nakke/data/NakkeRegDataSyn.RData'))
-load('C:/ResultattjenesteGIT/Nakke/data/NakkeRegDataSyn.Rdata')
+# library(synthpop)
+# library(dplyr)
+# varBort <- c('FodselsDato', 'ForlopsID')
+# ForlopsID <- RegData$ForlopsID
+# RegData <- RegData[,-which(names(RegData) %in% varBort)]
+# sykehus <- paste('Sykehus', LETTERS[1:10])
+# mengdePasienter <- c(0.3, 4, 10, 3, 7, 5, 1, 8, 9.5, 6)
+# RegData$SykehusNavn <- sample(sykehus, prob=mengdePasienter/sum(mengdePasienter), size=dim(RegData)[1], replace=T)
+# RegDataSyn <- synthpop::syn(RegData, method = "sample", seed = 500) #Trekker med tilbakelegging
+# RegData <- data.frame(RegDataSyn$syn, ForlopsID)
+# write.table(RegData, file='C:/ResultattjenesteGIT/Nakke/data/NakkeRegDataTest.csv', sep = ';', row.names = F, col.names = T)
+# save(RegData, file=paste0('C:/ResultattjenesteGIT/Nakke/data/NakkeRegDataSyn.RData'))
+# load('C:/ResultattjenesteGIT/Nakke/data/NakkeRegDataSyn.Rdata')
 
 
 
@@ -317,12 +317,17 @@ NIRFigAndelerGrVar(RegData=RegData, valgtVar='reinn', datoFra='2016-01-01', medK
                    datoTil='2016-12-31', grType=3, outfile='Reinnlegging_region_Fig3bKonfInt.pdf') #Reinnlegging_region_Fig3bNy.pdf')
 
 
+#------------------Tabeller-----------------------------------
 
+RegData <- NIRPreprosess(RegData)
+tabBelegg(RegData=RegData, personIDvar='PasientID' , tidsenhet='Mnd')
 
+finnDblReg(RegData, reshID=114240)
 
+tabAntOpphSh5Aar(RegData, datoTil)
 
-
-
+tabAntPasSh5Aar(RegData, personIDvar='PasientID' , datoTil)
+            
 
 
 #--------------------------------------- FORDELING - tatt vekk ----------------------------------

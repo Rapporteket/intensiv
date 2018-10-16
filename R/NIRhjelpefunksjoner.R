@@ -67,14 +67,14 @@ SorterOgNavngiTidsEnhet <- function(RegData, tidsenhet='Aar') {
       #Lager sorteringsvariabel for tidsenhet:
       RegData$TidsEnhetSort <- switch(tidsenhet,
                                       Aar = RegData$Aar-min(RegData$Aar)+1,
-                                      Mnd = RegData$Mnd-min(RegData$Mnd[RegData$Aar==min(RegData$Aar)])+1
-                                      +(RegData$Aar-min(RegData$Aar))*12,
+                                      Mnd = format(RegData$InnDato, '%b%y'), #RegData$Mnd-min(RegData$Mnd[RegData$Aar==min(RegData$Aar)])+1
+                                          #+(RegData$Aar-min(RegData$Aar))*12,
                                       Kvartal = RegData$Kvartal-min(RegData$Kvartal[RegData$Aar==min(RegData$Aar)])+1+
                                             (RegData$Aar-min(RegData$Aar))*4,
                                       Halvaar = RegData$Halvaar-min(RegData$Halvaar[RegData$Aar==min(RegData$Aar)])+1+
                                             (RegData$Aar-min(RegData$Aar))*2
       )
-      
+      #format(RegData$InnDato, '%b%y'), #
       tidtxt <- switch(tidsenhet,
                        Mnd = paste(substr(RegData$Aar[match(1:max(RegData$TidsEnhetSort), RegData$TidsEnhetSort)], 3,4),
                                    sprintf('%02.0f', RegData$Mnd[match(1:max(RegData$TidsEnhetSort), RegData$TidsEnhetSort)]), sep='.'),
@@ -91,6 +91,11 @@ SorterOgNavngiTidsEnhet <- function(RegData, tidsenhet='Aar') {
       UtData <- list('RegData'=RegData, 'tidtxt'=tidtxt)
       return(UtData)
 }
+#' @section Lage tulledata (simulerte data)
+#' Probably better if all sections come first, uless have one section per function. Makes it easier to
+#' see the information flow.
+#' @rdname hjelpeFunksjoner
+#' @export
 lageTulleData <- function(RegData, varBort='ShNavn', antSh=27) {
       #FUNKER IKKE !!!
       library(synthpop)
@@ -103,4 +108,5 @@ lageTulleData <- function(RegData, varBort='ShNavn', antSh=27) {
       RegData$SykehusNavn <- sample(sykehus, prob=fordelingPasienter/sum(fordelingPasienter), size=dim(RegData)[1], replace=T)
       RegDataSyn <- synthpop::syn(RegData, method = "sample", seed = 500) #Trekker med tilbakelegging
       RegData <- data.frame(RegDataSyn$syn) # FÅR feilmld...
+	  return(RegData)
 }
