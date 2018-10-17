@@ -25,9 +25,9 @@ library(tools)	#texi2pdf
 #load(paste0("A:/Intensiv/NIRdata10000.Rdata")) #RegDataTEST, 21.mai 2018
 load(paste0("A:/Intensiv/MainFormDataContract2018-08-30.Rdata")) #RegData 2018-06-18
 setwd('C:/ResultattjenesteGIT/intensiv/inst/') 
-reshID=112044 #Tromsø med int: 601302, Ullevål Kir int: 109773, 102090 Ahus, 112044 Haukeland, 102673 Ålesund Med
+reshID=109773 #Tromsø med int: 601302, Ullevål Kir int: 109773, 102090 Ahus, 112044 Haukeland, 102673 Ålesund Med
 knit('NIRmndRapp.Rnw', encoding = 'UTF-8')
-texi2pdf(file='NIRmndRapp.tex')
+tools::texi2pdf(file='NIRmndRapp.tex')
 
 #knit(input, output = NULL, tangle = FALSE, text = NULL, envir = parent.frame())
 # NIRdata <- RegData
@@ -62,6 +62,7 @@ load(paste0(fil,".Rdata")) #RegData 2018-06-18
 #RegData <- RegData[sample(1:dim(RegData)[1],10000),]
 #save(RegData, file=paste0(dataKat,'NIRdata10000.Rdata')) 
 load(paste0("A:/Intensiv/NIRdata10000.Rdata")) #RegDataTEST, 2018-06-05
+RegData <- NIRPreprosess(RegData)
 library(intensiv)
 
 # LagSyntetiskeData

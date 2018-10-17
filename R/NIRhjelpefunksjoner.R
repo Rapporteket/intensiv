@@ -67,17 +67,18 @@ SorterOgNavngiTidsEnhet <- function(RegData, tidsenhet='Aar') {
       #Lager sorteringsvariabel for tidsenhet:
       RegData$TidsEnhetSort <- switch(tidsenhet,
                                       Aar = RegData$Aar-min(RegData$Aar)+1,
-                                      Mnd = format(RegData$InnDato, '%b%y'), #RegData$Mnd-min(RegData$Mnd[RegData$Aar==min(RegData$Aar)])+1
-                                          #+(RegData$Aar-min(RegData$Aar))*12,
+                                      Mnd = RegData$MndNum-min(RegData$MndNum[RegData$Aar==min(RegData$Aar)])+1
+                                          +(RegData$Aar-min(RegData$Aar))*12, #format(RegData$InnDato, '%b%y'), #
                                       Kvartal = RegData$Kvartal-min(RegData$Kvartal[RegData$Aar==min(RegData$Aar)])+1+
                                             (RegData$Aar-min(RegData$Aar))*4,
                                       Halvaar = RegData$Halvaar-min(RegData$Halvaar[RegData$Aar==min(RegData$Aar)])+1+
                                             (RegData$Aar-min(RegData$Aar))*2
       )
-      #format(RegData$InnDato, '%b%y'), #
+      #as.factor(format(RegData$InnDato, '%b%y')) #
       tidtxt <- switch(tidsenhet,
-                       Mnd = paste(substr(RegData$Aar[match(1:max(RegData$TidsEnhetSort), RegData$TidsEnhetSort)], 3,4),
-                                   sprintf('%02.0f', RegData$Mnd[match(1:max(RegData$TidsEnhetSort), RegData$TidsEnhetSort)]), sep='.'),
+                       #Mnd = paste(substr(RegData$Aar[match(1:max(RegData$TidsEnhetSort), RegData$TidsEnhetSort)], 3,4),
+                        #           sprintf('%02.0f', RegData$Mnd[match(1:max(RegData$TidsEnhetSort), RegData$TidsEnhetSort)]), sep='.'),
+                       Mnd = RegData$MndAar[match(1:max(RegData$TidsEnhetSort), RegData$TidsEnhetSort)],
                        Kvartal = paste(substr(RegData$Aar[match(1:max(RegData$TidsEnhetSort), RegData$TidsEnhetSort)], 3,4),
                                        sprintf('%01.0f', RegData$Kvartal[match(1:max(RegData$TidsEnhetSort), RegData$TidsEnhetSort)]), sep='-'),
                        Halvaar = paste(substr(RegData$Aar[match(1:max(RegData$TidsEnhetSort), RegData$TidsEnhetSort)], 3,4),
@@ -86,6 +87,7 @@ SorterOgNavngiTidsEnhet <- function(RegData, tidsenhet='Aar') {
       
       RegData$TidsEnhetSort <- factor(RegData$TidsEnhetSort, levels=1:max(RegData$TidsEnhetSort))
       RegData$TidsEnhet <- factor(RegData$TidsEnhetSort, ordered = TRUE, labels=tidtxt)
+      
       #RegData$TidsEnhet <- RegData$TidsEnhetSort
       #levels(RegData$TidsEnhet) <- tidtxt
       UtData <- list('RegData'=RegData, 'tidtxt'=tidtxt)

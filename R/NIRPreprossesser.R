@@ -56,9 +56,10 @@ NIRPreprosess <- function(RegData=RegData, lagreKvalIndData=0)	#, reshID=reshID)
 	#RegData$InnDato <- strptime(RegData$DateAdmittedIntensive, format="%Y-%m-%d") # %H:%M:%S" )  #"%d.%m.%Y"	"%Y-%m-%d"
 	
 	# Nye variable:
-	RegData$Mnd <- RegData$Innleggelsestidspunkt$mon +1
-	RegData$Kvartal <- ceiling(RegData$Mnd/3)
-	RegData$Halvaar <- ceiling(RegData$Mnd/6)
+	RegData$MndNum <- RegData$Innleggelsestidspunkt$mon +1
+	RegData$MndAar <- format(RegData$Innleggelsestidspunkt, '%b%y')
+	RegData$Kvartal <- ceiling(RegData$MndNum/3)
+	RegData$Halvaar <- ceiling(RegData$MndNum/6)
 	RegData$Aar <- 1900 + RegData$Innleggelsestidspunkt$year #strptime(RegData$Innleggelsestidspunkt, format="%Y")$year
 	#RegData$Mnd <- paste(RegData$InnDato$year-100,RegData$InnDato$mon+1, sep='.')
 	#verdiGML <- 0:11

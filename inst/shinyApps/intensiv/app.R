@@ -27,9 +27,6 @@ library(knitr)
 #
 # }
 
-#ARBEIDSPLAN:
-#Skill  ut brukerkontroller i egen funksjon
-
 
 # Define UI for application that draws figures
 ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
@@ -52,11 +49,20 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
       tabPanel("Registreringsoversikter",
                h3('Her kan vi evt. ha "undersider" for å velge hvilken tabell man ønsker'),
                br(),
+               sidebarPanel(width=3,
+                            dateRangeInput(inputId = 'datovalgReg', start = "2017-01-01", end = Sys.Date(),
+                                           label = "Tidsperiode", separator="t.o.m.", language="nb"),
+                            selectInput(inputId = "erMannAndelReg", label="Kjønn",
+                                        choices = c("Begge"=2, "Menn"=1, "Kvinner"=0)),
+                            sliderInput(inputId="alderAndelReg", label = "Alder", min = 0,
+                                        max = 110, value = c(0, 110))
+                            ),
+                mainPanel(
+                      h2("Belegg, siste 12 måneder (evt. fra valgt sluttdato og eget/landet/sykehustype)"),
+                      tableOutput('tabBelegg'),
+               br(),
                #h3("1. Antall opphold + pasienter per sykehus og år"),
                #h3("2. Antall opphold + pasienter per sykehus og mnd, siste 12 mnd. ")
-               h2("Belegg"),
-               tableOutput('tabBelegg'),
-               
                h2("Antall registreringer per måned og avdeling"),
                p(em("Velg tidsperiode ved å velge sluttdato i menyen til venstre")),
                tableOutput("tabAvdMnd12"),
@@ -64,8 +70,8 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                h2("Antall registreringer per år og avdeling, siste 5 år"),
                #          #tableOutput("tabAvdNAar5")
                h2("Moglege dobbeltregistreringar")
-               
-      ),
+                )
+      ), #tab
       
       
       #-------Fordelinger----------      
@@ -120,7 +126,7 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                     til venstre. Man kan også gjøre ulike filtreringer.", align='center'),
                br(),
                br(),
-               sidebarPanel(
+               sidebarPanel(width=3,
                      selectInput(inputId = "valgtVarAndelGrVar", label="Velg variabel",
                                  choices = c('Alder minst 80 år' = 'alder_over80',
                                              'Alder under 18år' = 'alder_u18',
@@ -153,13 +159,37 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                                                  'Kvartal'='Kvartal', 'Måned'='Mnd')))
                ),
                mainPanel(
-                     fluidRow(column(6, plotOutput("andelTid"))),
-                     br(),
-                     br(),
-                     fluidRow(
-                           column(6, plotOutput("andelerGrVar") ) #, div(style = "height:100px")) #height='1000px') # '400px'
-                     )   
-               )
+                     # fluidRow(column(6, plotOutput("andelTid"))),
+                     # br(),
+                     # br(),
+                     # fluidRow(
+                     #       column(6, plotOutput("andelerGrVar") ) #, div(style = "height:100px")) #height='1000px') # '400px'
+                     # )   
+                     tabsetPanel(
+                           tabPanel(
+                                 "Figurer",
+                                 #column(10,
+                                 h3(em("Utvikling over tid")),
+                                 plotOutput("andelTid", height = 'auto'),
+                                 br(),
+                                 h3(em("Sykehusvise resultater")),
+                                 plotOutput("andelerGrVar", height='auto')
+                           ),
+                           tabPanel("Tabeller",
+                                    fluidRow(
+                                          column(width = 3, 
+                                                 h3("Utvikling over tid"),
+                                                 tableOutput("andelTidTab")),
+                                          column(width = 9, 
+                                                 h3("Sykehusvise resultater"),
+                                                 tableOutput("andelerGrVarTab")))
+                                    #tableOutput('andelTidTab'),
+                                    #tableOutput('andelerGrVarTab')
+                                    #DT::DTOutput("andelerGrVarTab")
+                                    
+                           ))
+               ) #mainPanel
+               
       ), #tab
       
       
@@ -266,7 +296,7 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
 
 
 #----------------- Define server logic ----------
-server <- function(input, output) { #, session
+server <- function(input, output, session) { #
       
       library(intensiv)
       library(lubridate)
@@ -290,6 +320,7 @@ server <- function(input, output) { #, session
       AarNaa <- as.numeric(format(Sys.Date(), "%Y"))
       aarFra <- paste0(1900+as.POSIXlt(Sys.Date())$year-5, '-01-01')
       reshIDdummy <- 109773 #Tromsø med.int
+      reshID = 109773 
       RegData <- NIRPreprosess(RegData = RegData)
       
       # output$tabAvdMnd12 <- renderTable({
@@ -342,18 +373,34 @@ server <- function(input, output) { #, session
                   on.exit(setwd(owd))
                   file.copy(src, 'NIRmndRapp.Rnw', overwrite = TRUE)
                   
+                  #knitr::knit2pdf(system.file('NIRmndRapp.Rnw', package='intensiv'), encoding = 'UTF-8')
                   texfil <- knitr::knit(system.file('NIRmndRapp.Rnw', package='intensiv'), encoding = 'UTF-8')
-                  texi2pdf(system.file(texfil, package='intensiv'),clean = TRUE) #"NakkeMndRapp.tex"
-                  file.copy('NakkeMndRapp.pdf', file)
-                  
-            },
-            contentType = 'application/pdf'
+                  tools::texi2pdf(system.file(texfil, package='intensiv'),clean = TRUE) #"NakkeMndRapp.tex"
+                  file.copy('NIRmndRapp.pdf', file)
+                  #file.rename('NIRmndRapp.pdf', file)
+            }, contentType = 'application/pdf'
+            
+            # content = function(file) {
+            #       src <- normalizePath(system.file("NORIC_local_monthly_stent.Rmd", package="noric"))
+            #       owd <- setwd(tempdir())
+            #       on.exit(setwd(owd))
+            #       file.copy(src, "tmpNoricStent.Rmd", overwrite = TRUE)
+            #       out <- render("tmpNoricStent.Rmd", output_format = pdf_document(), 
+            #                     params = list(tableFormat="latex"), 
+            #                     output_dir = tempdir())
+            #       # active garbage collection to prevent memory hogging?
+            #       gc()
+            #       file.rename(out, file)
+            # }
+            
+            
       )
       #  If you already have made the PDF file, you can just copy it to file, i.e.
       #  content = function(file) file.copy('your_existing.pdf', file, overwrite = TRUE)
       
       output$tabBelegg <- renderTable({
-            tabBelegg(RegData=RegData, personIDvar='PasientID' , tidsenhet='Mnd') })
+            tabBelegg(RegData=RegData, personIDvar='PasientID' , tidsenhet='Mnd') 
+            },rownames=T, digits=0 )
       
       output$fordelinger <- renderPlot({
             
@@ -362,7 +409,7 @@ server <- function(input, output) { #, session
                           datoFra=input$datovalg[1], datoTil=input$datovalg[2],
                           minald=as.numeric(input$alder[1]), maxald=as.numeric(input$alder[2]),
                           erMann=as.numeric(input$erMann))
-      }, height=700, width=700 #height = function() {session$clientData$output_fordelinger_width}
+      }, height=800, width=800 #height = function() {session$clientData$output_fordelinger_width}
       )
       
       
@@ -386,6 +433,18 @@ server <- function(input, output) { #, session
                            enhetsUtvalg = input$enhetsUtvalgAndelTid)
       }, height = 300, width = 1000
       )
+      output$andelTidTab <- renderTable({ #renderDT({
+            AndelerTid <- NIRFigAndelTid(RegData=RegData, preprosess = 0, valgtVar=input$valgtVarAndelGrVar,
+                                         reshID=reshIDdummy, tidsenhet = 'Mnd',
+                                         datoFra=input$datovalgAndelGrVar[1], datoTil=input$datovalgAndelGrVar[2],
+                                         minald=as.numeric(input$alderAndelGrVar[1]), maxald=as.numeric(input$alderAndelGrVar[2]),
+                                         lagFig=0)
+            tabAndelTid <- cbind(Tidspunkt = names(AndelerTid$AggVerdier$Hoved),
+                                 Andeler = sprintf('%.1f', AndelerTid$AggVerdier$Hoved,1))
+            #as.table(tabAndelerShus)
+            #xtable(tabAndelerShus, digits = c(0,0,1))
+      }, spacing="xs" #,height='60%' #width='60%', 
+      )
       
       output$gjsnGrVar <- renderPlot({
             NIRFigGjsnGrVar(RegData=RegData, preprosess = 0, valgtVar=input$valgtVarGjsn,
@@ -393,7 +452,7 @@ server <- function(input, output) { #, session
                             minald=as.numeric(input$alderGjsn[1]), maxald=as.numeric(input$alderGjsn[2]),
                             erMann=as.numeric(input$erMannGjsn),
                             valgtMaal = input$sentralmaal)
-      }, height=800, width=700
+      }, height=900, width=700
       )
       
       output$gjsnTid <- renderPlot({
@@ -405,14 +464,26 @@ server <- function(input, output) { #, session
                           valgtMaal = input$sentralmaal,
                           tidsenhet = input$tidsenhetGjsn,
                           enhetsUtvalg = input$enhetsUtvalgGjsn)
-      }, height=400, width = 1000
+      }, height=400, width = 1200
       )
+      
+      output$andelerGrVarTab <- renderTable({ #renderDT({
+            AndelerShus <- NIRFigAndelerGrVar(RegData=RegData, preprosess = 0, valgtVar=input$valgtVarAndelGrVar,
+                                              datoFra=input$datovalgAndelGrVar[1], datoTil=input$datovalgAndelGrVar[2],
+                                              minald=as.numeric(input$alderAndelGrVar[1]), maxald=as.numeric(input$alderAndelGrVar[2]),
+                                              lagFig = 0)
+            tabAndelerShus <- cbind(Antall=AndelerShus$Ngr$Hoved,
+                                    Andeler = sprintf('%.1f', AndelerShus$AggVerdier$Hoved,1))
+      }, rownames=T, spacing="xs" #,height='60%' #width='60%', 
+      )
+      
       output$SMR <- renderPlot({
             NIRFigGjsnGrVar(RegData=RegData, preprosess = 0, valgtVar='SMR',
                             datoFra=input$datovalgSMR[1], datoTil=input$datovalgSMR[2],
                             minald=as.numeric(input$alderSMR[1]), maxald=as.numeric(input$alderSMR[2]),
                             erMann=as.numeric(input$erMannSMR))
-      }, heigth = 800, width=700
+      }, height = function() {2*session$clientData$output_SMR_height}, #heigth = 800, width=700
+      width = function() {0.8*session$clientData$output_SMR_width}
       )
       
       output$innMaate <- renderPlot({
@@ -420,7 +491,8 @@ server <- function(input, output) { #, session
                            datoFra=input$datovalgInnMaate[1], datoTil=input$datovalgInnMaate[2],
                            minald=as.numeric(input$alderInnMaate[1]), maxald=as.numeric(input$alderInnMaate[2]),
                            erMann=as.numeric(input$erMannInnMaate))
-      }, height=900, width=700)
+      }, height = function() {2*session$clientData$output_innMaate_height},
+         width = function() {0.8*session$clientData$output_innMaate_width}) #, height=900, width=700)
 }
 
 

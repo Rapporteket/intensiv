@@ -44,6 +44,7 @@ if (!exists('RegData')){
       RegData <- NIRRegDataSQL(datoFra = datoFra1Aar, datoTil = datoTil)
 	  #RegData er data fra siste år.
 }
+RegDataRaa <- RegData #For å kunne "tilbakestille" RegData
 
 RegData <- NIRPreprosess(RegData=RegData)
 RegData <- FinnReinnleggelser(RegData) # Beregne reinnleggelser
@@ -142,21 +143,22 @@ ynskje. I Rapporteket kan ein óg  finne mange fleire figurar og tabellar, og gj
 
 <<'TabReg', results='asis', echo=FALSE, eval=T>>=
 #For bare Eget sykehus
-tabAvdNEget <- rbind(
-	'Ferdigstilte intensivopphald' = tapply(RegDataEget$PasientID, RegDataEget$TidsEnhet, FUN=length), #table(RegDataEget$TidsEnhet), #Neget,		
-	'Registrerte pasientar' = tapply(RegDataEget$PasientID, RegDataEget$TidsEnhet, 
-	                                 FUN=function(x) length(unique(x))),	
-	'Antall intensivdøger' = round(as.numeric(tapply(RegDataEget$liggetid, RegDataEget$TidsEnhet, sum, na.rm=T)),0)	
-	#sum(RegDataEget$DaysAdmittedIntensiv, na.rm=T))
-	)
+# tabAvdNEget <- rbind(
+# 	'Ferdigstilte intensivopphald' = tapply(RegDataEget$PasientID, RegDataEget$TidsEnhet, FUN=length), #table(RegDataEget$TidsEnhet), #Neget,		
+# 	'Registrerte pasientar' = tapply(RegDataEget$PasientID, RegDataEget$TidsEnhet, 
+# 	                                 FUN=function(x) length(unique(x))),	
+# 	'Antall intensivdøger' = round(as.numeric(tapply(RegDataEget$liggetid, RegDataEget$TidsEnhet, sum, na.rm=T)),0)	
+# 	#sum(RegDataEget$DaysAdmittedIntensiv, na.rm=T))
+# 	)
+# 
+# overskr <- dimnames(tabAvdNEget)[[2]]
+# aar <- substr(overskr, 1,2)
+# mnd <- as.numeric(substr(overskr, 4,5))
+# mndTxt <- c('jan', 'feb', 'mar', 'apr', 'mai', 'jun', 'jul', 'aug', 'sep', 'okt', 'nov', 'des') 
+# colnames(tabAvdNEget) <- paste0(mndTxt[mnd], aar)
+tabBelegg <- tabBelegg(RegData=RegDataEget, personIDvar='PasientID', tidsenhet=tidsenhet)
 
-overskr <- dimnames(tabAvdNEget)[[2]]
-aar <- substr(overskr, 1,2)
-mnd <- as.numeric(substr(overskr, 4,5))
-mndTxt <- c('jan', 'feb', 'mar', 'apr', 'mai', 'jun', 'jul', 'aug', 'sep', 'okt', 'nov', 'des') 
-colnames(tabAvdNEget) <- paste0(mndTxt[mnd], aar)
-
-xtable(tabAvdNEget, digits=0, align=c('l', rep('r', ncol(tabAvdNEget))), 
+xtable(tabBelegg, digits=0, align=c('l', rep('r', ncol(tabAvdNEget))), 
 		caption=paste0('Antal opphald og liggedøger, ', shtxt,'.'), label='tab:RegEget')
 
 @
@@ -439,5 +441,9 @@ dblTab <- kable(tabDbl, format='latex', row.names = FALSE) #,
 \end{frame}
 
 \end{tiny}
+
+<<'HenteRenRegData', echo=FALSE>>=
+#RegData <- RegDataRaa
+@
 
 \end{document}

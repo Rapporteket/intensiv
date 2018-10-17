@@ -23,6 +23,7 @@ NULL
 #' @export
 
 #' @section Belegg (antall opphold, pasienter og intensivdøgn)
+#' Siste inntil 5 år eller siste inntil 12 måneder/kvartal/halvår
 #' @rdname NIRtabeller
 #' @export
 tabBelegg <- function(RegData, personIDvar='PasientID' , tidsenhet='Aar') {
@@ -37,13 +38,17 @@ tabBelegg <- function(RegData, personIDvar='PasientID' , tidsenhet='Aar') {
       antTidsenh <- ifelse(tidsenhet=='Aar', 4, 11)
 
       tabBeleggAnt <- tabBeleggAnt[, max(1, dim(tabBeleggAnt)[2]-antTidsenh) : dim(tabBeleggAnt)[2]] #Tar med 12 siste
+      #format(as.yearmon(as.Date('2017-09-02')),'%b%y')
+      #kol <- dimnames(tabBeleggAnt)[[2]]
+      #format(as.Date(kol, format= '%y.%m'),'%b%y')
+      
       # overskr <- dimnames(tabAvdNEget)[[2]]
       # aar <- substr(overskr, 1,2)
       # mnd <- as.numeric(substr(overskr, 4,5))
       # mndTxt <- c('jan', 'feb', 'mar', 'apr', 'mai', 'jun', 'jul', 'aug', 'sep', 'okt', 'nov', 'des') 
       # colnames(tabAvdNEget) <- paste0(mndTxt[mnd], aar)
-      tabBeleggAnt <- xtable::xtable(tabBeleggAnt, digits=0, align=c('l', rep('r', ncol(tabBeleggAnt))),
-             caption=paste0('Antal opphald og liggedøger, ', shtxt,'.'), label='tab:RegEget')
+      #tabBeleggAnt <- xtable::xtable(tabBeleggAnt, digits=0, align=c('l', rep('r', ncol(tabBeleggAnt))),
+       #      caption=paste0('Antal opphald og liggedøger, ', shtxt,'.'), label='tab:RegEget')
       return(tabBeleggAnt)
 }
 #' @section tabAntOpphSh12mnd (antall opphold siste 12 mnd)
