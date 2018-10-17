@@ -304,7 +304,7 @@ server <- function(input, output, session) { #
       
       context <- Sys.getenv("R_RAP_INSTANCE") #Blir tom hvis jobber lokalt
       if (context == "TEST" | context == "QA" | context == "PRODUCTION") {
-            RegData <- NIRRegDataSQL(datoFra = datoFr, datoTil = datoTil)
+            RegData <- NIRRegDataSQL() #datoFra = datoFra, datoTil = datoTil)
             
       } #hente data på server
       
