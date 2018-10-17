@@ -51,20 +51,24 @@ tabBelegg <- function(RegData, personIDvar='PasientID' , tidsenhet='Aar') {
        #      caption=paste0('Antal opphald og liggedøger, ', shtxt,'.'), label='tab:RegEget')
       return(tabBeleggAnt)
 }
-#' @section tabAntOpphSh12mnd (antall opphold siste 12 mnd)
+#' @section tabAntOpphShMnd antall opphold siste X (antMnd) mnd
 #' @rdname NIRtabeller
 #' @export
-tabAntOpphSh12mnd <- function(RegData, datoTil){
+tabAntOpphShMnd <- function(RegData, datoTil, antMnd=6){
       #RegData må inneholde DateAdmittedIntensive, DateDischargedIntensive 
-      RegData$Mnd <- format(RegData$InnDato, '%b%y')
-      datoFraMnd <- as.Date(paste0(1900+datoTil$year,'-', ifelse(datoTil$mon==0, 11, datoTil$mon), '-', '01')) #dato - 
-      datoFra12 <- as.Date(paste0(as.numeric(substr(datoTil,1,4))-1, substr(datoTil,5,8), '01'), tz='UTC')
-      RegData12mnd <- RegData[RegData$InnDato < as.Date(datoTil, tz='UTC')
-                              & RegData$InnDato > as.Date(datoFra12, tz='UTC'), ]
-      tabAvd12mnd <- addmargins(table(RegData12mnd[, c('ShNavn', 'Mnd')]))
-      colnames(tabAvd12mnd) <- substring(colnames(tabAvd12mnd),1,3)
-      tab <- xtable::xtable(tabAvd12mnd)
-	return(tab)
+      datoFra <- floor_date(as.Date(datoTil)%m-% months(antMnd, abbreviate = T), 'month') #as.Date(paste0(as.numeric(substr(datoTil,1,4))-1, substr(datoTil,5,8), '01'), tz='UTC')
+      aggVar <-  c('ShNavn', 'Mnd', 'InnDato')
+      RegDataDum <- RegData[RegData$InnDato <= as.Date(datoTil, tz='UTC')
+                              & RegData$InnDato > as.Date(datoFra, tz='UTC'), aggVar]
+      RegDataDum$Maaned1 <- floor_date(RegDataDum$InnDato, 'month')
+      tabAvdMnd1 <- table(RegDataDum[ , c('ShNavn', 'Maaned1')])
+      colnames(tabAvdMnd1) <- month(ymd(colnames(tabAvdMnd1)), label = T)
+      tabAvdMnd1 <- addmargins((tabAvdMnd1))
+      #tabAvdMnd1 <- RegDataDum %>% group_by(Maaned=floor_date(InnDato, "month"), ShNavn) %>%
+      #      summarize(Antall=length(ShNavn))
+      
+      #tab <- xtable::xtable(tabAvdMnd)
+	return(tabAvdMnd1)
 }
 
 #' @section Antall opphold siste 5 år

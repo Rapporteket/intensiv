@@ -4,11 +4,14 @@
 \alias{hjelpeFunksjoner}
 \alias{FinnReinnleggelser}
 \alias{SorterOgNavngiTidsEnhet}
+\alias{lageTulleData}
 \title{Hjelpefunksjoner. Group of functions page title}
 \usage{
 FinnReinnleggelser(RegData, PasientID = "PasientID")
 
 SorterOgNavngiTidsEnhet(RegData, tidsenhet = "Aar")
+
+lageTulleData(RegData, varBort = "ShNavn", antSh = 27)
 }
 \arguments{
 \item{RegData}{data}

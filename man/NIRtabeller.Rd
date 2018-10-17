@@ -2,29 +2,29 @@
 % Please edit documentation in R/NIRtabeller.R
 \name{NIRtabeller}
 \alias{NIRtabeller}
-\alias{tabAntOpphSh12mnd}
+\alias{tabBelegg}
+\alias{tabAntOpphShMnd}
 \alias{tabAntOpphSh5Aar}
 \alias{tabAntPasSh5Aar}
-\alias{tabBelegg}
 \alias{finnDblReg}
 \title{Funksjoner for å lage tabeller Group of functions page title}
 \usage{
-tabAntOpphSh12mnd(RegData, datoTil)
+tabBelegg(RegData, personIDvar = "PasientID", tidsenhet = "Aar")
+
+tabAntOpphShMnd(RegData, datoTil, antMnd = 6)
 
 tabAntOpphSh5Aar(RegData, datoTil)
 
 tabAntPasSh5Aar(RegData, personIDvar = "PasientID", datoTil)
-
-tabBelegg(RegData, personIDvar = "PasientID", tidsenhet = "Aar")
 
 finnDblReg(RegData, reshID = 114240)
 }
 \arguments{
 \item{RegData}{data}
 
-\item{datoTil}{sluttdato. Brukes i tabellene AntOpph per 12 mnd og Belegg}
-
 \item{personIDvar}{Variabelen som angir pasientidentifikasjon}
+
+\item{datoTil}{sluttdato. Brukes i tabellene AntOpph per 12 mnd og Belegg}
 }
 \value{
 Div tabeller
@@ -43,16 +43,13 @@ RegData må inneholde InnDato.
 -tabAntOpphSh5Aar:Antall opphold per år og enhet siste 5 år (inkl. inneværende år) fram til datoTil. 
 RegData må inneholde Aar.
 }
-\section{Antall opphold siste 5 år}{
-
+\section{tabAntOpphShMnd antall opphold siste X (antMnd) mnd}{
+NA
 }
 
 \section{Antall registreringer siste 5 år}{
 
-}
-
-\section{Belegg (antall opphold, pasienter og intensivdøgn)}{
-NA
+Hmmm
 }
 
 \section{Finn eventuelle dobbeltregistreringer}{

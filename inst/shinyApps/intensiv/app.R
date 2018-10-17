@@ -323,44 +323,8 @@ server <- function(input, output, session) { #
       reshID = 109773 
       RegData <- NIRPreprosess(RegData = RegData)
       
-      # output$tabAvdMnd12 <- renderTable({
-      #       datoFra12 <- as.Date(paste0(as.numeric(substr(input$datoTil,1,4))-1, substr(input$datoTil,5,8), '01'))
-      #       SkjemaData12mnd <- SkjemaData[SkjemaData$InnDato < as.POSIXlt(input$datoTil)
-      #                                     & SkjemaData$InnDato > as.POSIXlt(datoFra12), ]
-      #       if (as.numeric(input$status) %in% 0:1) {SkjemaData12mnd <-
-      #             SkjemaData12mnd[which(SkjemaData12mnd$SkjemaStatus == as.numeric(input$status)), ]
-      #       }
-      #       #Flyttes til overvåkning
-      #       tabAvdSiste12mnd <- addmargins(table(SkjemaData12mnd[SkjemaData12mnd$SkjemaRekkeflg==2, c('Sykehusnavn', 'Mnd')]))
-      #       colnames(tabAvdSiste12mnd) <- substring(colnames(tabAvdSiste12mnd),1,3)
-      #       xtable::xtable(tabAvdSiste12mnd)
-      # },
-      # rownames = TRUE, digits=0 #, align = c('l', rep('r', ncol(tabAvdSiste12mnd)))
-      # )
-      # 
       
-      
-      #------------Tabeller 
-      output$tabAvdSkjema12 <- renderTable({
-            tabAntOpphSh12mnd(RegData = RegData, datoTil=input$datovalgTab[2])  
-            #sprintf('%1.3f'
-            #xtable::xtable(tabAvd12MndNskjema,  align = c('l', rep('r', ncol(tabAvd12MndNskjema))),
-            #              caption= paste0('Tidsperiode: ', as.POSIXlt(datoFra12), 'til', as.POSIXlt(input$datoTil)))
-            #},
-      }, rownames = T, align= 'r' #
-      ) 
-      
-      
-      output$tabAvdNAar5 <- renderTable({
-            
-            tabAvdAarN <- addmargins(table(RegData[which(RegData$Aar %in% (AarNaa-4):AarNaa), c('ShNavn','Aar')]))
-            rownames(tabAvdAarN)[dim(tabAvdAarN)[1] ]<- 'TOTALT, alle avdelinger:'
-            colnames(tabAvdAarN)[dim(tabAvdAarN)[2] ]<- 'Siste 5 år'
-            xtable::xtable(tabAvdAarN)
-            #xtable::xtable(tabAvdAarN)
-      },
-      rownames = T, digits=0)
-      
+#--------startside--------------      
       #output$tekstDash <- c('Figurer med kvalitetsindikatorer',
       #                      'hente ned månedsrapport'),
       output$mndRapp.pdf = downloadHandler(
@@ -379,7 +343,7 @@ server <- function(input, output, session) { #
                   file.copy('NIRmndRapp.pdf', file)
                   #file.rename('NIRmndRapp.pdf', file)
             }, contentType = 'application/pdf'
-
+            
             # content = function(file) {
             #       src <- normalizePath(system.file("NORIC_local_monthly_stent.Rmd", package="noric"))
             #       owd <- setwd(tempdir())
@@ -397,10 +361,58 @@ server <- function(input, output, session) { #
       )
       #  If you already have made the PDF file, you can just copy it to file, i.e.
       #  content = function(file) file.copy('your_existing.pdf', file, overwrite = TRUE)
+
       
+      
+#------------Tabeller 
       output$tabBelegg <- renderTable({
             tabBelegg(RegData=RegData, personIDvar='PasientID' , tidsenhet='Mnd') 
-            },rownames=T, digits=0 )
+      },rownames=T, digits=0 )
+      
+      
+      output$tabAvdSkjema12 <- renderTable({
+            tabAntOpphShMnd(RegData=RegData, datoTil='2018-04-30', antMnd=12 ) #input$datovalgTab[2])  
+            #sprintf('%1.3f'
+            #xtable::xtable(tabAvd12MndNskjema,  align = c('l', rep('r', ncol(tabAvd12MndNskjema))),
+            #              caption= paste0('Tidsperiode: ', as.POSIXlt(datoFra12), 'til', as.POSIXlt(input$datoTil)))
+            #},
+      }, rownames = T, align= 'r' #
+      ) 
+      
+      
+      output$tabAvdNAar5 <- renderTable({
+            
+            tabAvdAarN <- addmargins(table(RegData[which(RegData$Aar %in% (AarNaa-4):AarNaa), c('ShNavn','Aar')]))
+            rownames(tabAvdAarN)[dim(tabAvdAarN)[1] ]<- 'TOTALT, alle avdelinger:'
+            colnames(tabAvdAarN)[dim(tabAvdAarN)[2] ]<- 'Siste 5 år'
+            xtable::xtable(tabAvdAarN)
+            #xtable::xtable(tabAvdAarN)
+      },
+      rownames = T, digits=0)
+      
+      finnDblReg(RegData, reshID=114240)
+      
+      tabAntOpphSh5Aar(RegData, datoTil)
+      
+      tabAntPasSh5Aar(RegData, personIDvar='PasientID' , datoTil)
+      
+      
+      
+      # output$tabAvdMnd12 <- renderTable({
+      #       datoFra12 <- as.Date(paste0(as.numeric(substr(input$datoTil,1,4))-1, substr(input$datoTil,5,8), '01'))
+      #       SkjemaData12mnd <- SkjemaData[SkjemaData$InnDato < as.POSIXlt(input$datoTil)
+      #                                     & SkjemaData$InnDato > as.POSIXlt(datoFra12), ]
+      #       if (as.numeric(input$status) %in% 0:1) {SkjemaData12mnd <-
+      #             SkjemaData12mnd[which(SkjemaData12mnd$SkjemaStatus == as.numeric(input$status)), ]
+      #       }
+      #       #Flyttes til overvåkning
+      #       tabAvdSiste12mnd <- addmargins(table(SkjemaData12mnd[SkjemaData12mnd$SkjemaRekkeflg==2, c('Sykehusnavn', 'Mnd')]))
+      #       colnames(tabAvdSiste12mnd) <- substring(colnames(tabAvdSiste12mnd),1,3)
+      #       xtable::xtable(tabAvdSiste12mnd)
+      # },
+      # rownames = TRUE, digits=0 #, align = c('l', rep('r', ncol(tabAvdSiste12mnd)))
+      # )
+      # 
       
       output$fordelinger <- renderPlot({
             
