@@ -379,14 +379,14 @@ server <- function(input, output, session) { #
                   file.copy('NIRmndRapp.pdf', file)
                   #file.rename('NIRmndRapp.pdf', file)
             }, contentType = 'application/pdf'
-            
+
             # content = function(file) {
             #       src <- normalizePath(system.file("NORIC_local_monthly_stent.Rmd", package="noric"))
             #       owd <- setwd(tempdir())
             #       on.exit(setwd(owd))
             #       file.copy(src, "tmpNoricStent.Rmd", overwrite = TRUE)
-            #       out <- render("tmpNoricStent.Rmd", output_format = pdf_document(), 
-            #                     params = list(tableFormat="latex"), 
+            #       out <- render("tmpNoricStent.Rmd", output_format = pdf_document(),
+            #                     params = list(tableFormat="latex"),
             #                     output_dir = tempdir())
             #       # active garbage collection to prevent memory hogging?
             #       gc()
