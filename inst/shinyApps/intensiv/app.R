@@ -302,9 +302,9 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                h3("1. Resultater fra pårørendeskjema"),
                h3("HN-IKT-rapporter:"),
                h3("2. \"Månedlig oversikt:\" Div. nøkkeltall for egen avd/hele landet, siste 12 måneder"),
-               h3("3. Pasienter utskrevet mellom 17:00 og 08:00, helligdager beh. som vanlige dager"),
-               h3('4. Potensielle donorer'),
-               h3('5. Påvist opphevet sirkulasjon- organdonasjoner og grunn til ikke gjennomført'),
+               h3("3. Pasienter utskrevet mellom 17:00 og 08:00, helligdager beh. som vanlige dager (-> Fig. AndelGrVar)"),
+               h3('4. Potensielle donorer HAR R-FIGUR PÅ DETTE??'),
+               h3('5. Påvist opphevet sirkulasjon- organdonasjoner og grunn til ikke gjennomført. HAR R-FIGUR PÅ DETTE??'),
                h3('6. Overflyttinger mellom sykehus/avd.'),
                h3("7. Fordelinger alder og kjønn..."),
                br()
