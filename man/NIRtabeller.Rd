@@ -5,26 +5,27 @@
 \alias{tabBelegg}
 \alias{tabAntOpphShMnd}
 \alias{tabAntOpphSh5Aar}
-\alias{tabAntPasSh5Aar}
+\alias{tabAntOpphPasSh5Aar}
 \alias{finnDblReg}
 \title{Funksjoner for å lage tabeller Group of functions page title}
 \usage{
-tabBelegg(RegData, personIDvar = "PasientID", tidsenhet = "Aar")
+tabBelegg(RegData, tidsenhet = "Aar", datoTil, enhetsUtvalg = 0,
+  reshID = 0)
 
 tabAntOpphShMnd(RegData, datoTil, antMnd = 6)
 
 tabAntOpphSh5Aar(RegData, datoTil)
 
-tabAntPasSh5Aar(RegData, personIDvar = "PasientID", datoTil)
+tabAntOpphPasSh5Aar(RegData, gr = "opph", datoTil)
 
 finnDblReg(RegData, reshID = 114240)
 }
 \arguments{
 \item{RegData}{data}
 
-\item{personIDvar}{Variabelen som angir pasientidentifikasjon}
-
 \item{datoTil}{sluttdato. Brukes i tabellene AntOpph per 12 mnd og Belegg}
+
+\item{personIDvar}{Variabelen som angir pasientidentifikasjon}
 }
 \value{
 Div tabeller
@@ -47,7 +48,7 @@ RegData må inneholde Aar.
 NA
 }
 
-\section{Antall registreringer siste 5 år}{
+\section{Antall registreringer/pasienter siste 5 år}{
 
 Hmmm
 }

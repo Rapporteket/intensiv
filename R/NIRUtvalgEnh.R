@@ -62,9 +62,12 @@ NIRUtvalgEnh <- function(RegData, datoFra=0, datoTil=0, minald=0, maxald=110, er
       
       indAld <- if(minald>0 | maxald<110) {
             which(RegData$Alder >= minald & RegData$Alder <= maxald)} else {1:Ninn}
-      indDato <- if(datoFra!=0 | datoTil!=0) {
-            which(RegData$InnDato >= as.Date(datoFra, tz= 'UTC') & RegData$InnDato <= as.Date(datoTil, tz= 'UTC'))
-      } else {1:Ninn}
+      indDatoFra <- if(datoFra!=0) {
+            which(RegData$InnDato >= as.Date(datoFra, tz= 'UTC'))
+            } else {1:Ninn}
+      indDatoTil <- if(datoTil!=0) {
+            which(RegData$InnDato <= as.Date(datoTil, tz= 'UTC'))
+            } else {1:Ninn}
       indAar <- if (aar[1] != 0) {which(RegData$Aar %in% aar)} else {1:Ninn}
       indKj <- if (erMann %in% 0:1) {which(RegData$erMann == erMann)} else {1:Ninn}
       indInnMaate <- if (InnMaate %in% c(0,6,8)) {which(RegData$InnMaate == InnMaate)
@@ -73,17 +76,15 @@ NIRUtvalgEnh <- function(RegData, datoFra=0, datoTil=0, minald=0, maxald=110, er
       } else {1:Ninn}
       
       
-      indMed <- indAld %i% indDato %i% indKj %i% indInnMaate %i% indDod #%i% indGrType
+      indMed <- indDatoFra %i% indDatoTil %i% indAld %i% indKj %i% indInnMaate %i% indDod #%i% indGrType
       
       RegData <- RegData[indMed,]
-      
       
       N <- dim(RegData)[1]	#N=0 gir feilmelding
       #grTypetextstreng <- c('lokal-/sentralsykehus', 'lokal-/sentral', 'regionsykehus')				
       grTypetextstreng <- c('lokal-/sentral', 'lokal-/sentral', 'region')				
       if (grType %in% 1:3) {grTypeTxt <- grTypetextstreng[grType]} else {grTypeTxt <- 'alle '}
       #grTypeTxtEgen <- grTypetextstreng[grTypeEgen]
-      
       
       
       utvalgTxt <- c(

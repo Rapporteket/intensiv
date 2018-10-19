@@ -26,9 +26,15 @@ NULL
 #' Siste inntil 5 år eller siste inntil 12 måneder/kvartal/halvår
 #' @rdname NIRtabeller
 #' @export
-tabBelegg <- function(RegData, personIDvar='PasientID' , tidsenhet='Aar') {
-      Mtid <- SorterOgNavngiTidsEnhet(RegData, tidsenhet=tidsenhet)
-      RegData <- Mtid$RegData
+tabBelegg <- function(RegData, tidsenhet='Aar', datoTil, enhetsUtvalg=0, reshID=0) {
+      datoFra <- switch(tidsenhet, 
+                        Mnd = floor_date(as.Date(datoTil)%m-% months(12, abbreviate = T), 'month'), #as.Date(paste0(as.numeric(substr(datoTil,1,4))-1, substr(datoTil,5,8), '01'), tz='UTC')
+                        Aar = paste0(year(as.Date(datoTil))-4, '-01-01')
+      )
+      RegData <- NIRUtvalgEnh(RegData=RegData, datoFra=datoFra, datoTil = datoTil, 
+                             enhetsUtvalg = enhetsUtvalg, reshID = reshID)$RegData
+      RegData <- SorterOgNavngiTidsEnhet(RegData, tidsenhet=tidsenhet)$RegData
+      #RegData <- Mtid$RegData
       tabBeleggAnt <- rbind('Ferdigstilte intensivopphald' = tapply(RegData$PasientID, RegData$TidsEnhet, FUN=length), #table(RegDataEget$TidsEnhet), #Neget,		
                             'Registrerte pasientar' = tapply(RegData$PasientID, RegData$TidsEnhet, 
                                                              FUN=function(x) length(unique(x))),	
@@ -57,26 +63,25 @@ tabBelegg <- function(RegData, personIDvar='PasientID' , tidsenhet='Aar') {
 tabAntOpphShMnd <- function(RegData, datoTil, antMnd=6){
       #RegData må inneholde DateAdmittedIntensive, DateDischargedIntensive 
       datoFra <- floor_date(as.Date(datoTil)%m-% months(antMnd, abbreviate = T), 'month') #as.Date(paste0(as.numeric(substr(datoTil,1,4))-1, substr(datoTil,5,8), '01'), tz='UTC')
-      aggVar <-  c('ShNavn', 'Mnd', 'InnDato')
+      aggVar <-  c('ShNavn', 'InnDato')
       RegDataDum <- RegData[RegData$InnDato <= as.Date(datoTil, tz='UTC')
                               & RegData$InnDato > as.Date(datoFra, tz='UTC'), aggVar]
       RegDataDum$Maaned1 <- floor_date(RegDataDum$InnDato, 'month')
       tabAvdMnd1 <- table(RegDataDum[ , c('ShNavn', 'Maaned1')])
-      colnames(tabAvdMnd1) <- month(ymd(colnames(tabAvdMnd1)), label = T)
+      colnames(tabAvdMnd1) <- format(ymd(colnames(tabAvdMnd1)), '%b%y') #month(ymd(colnames(tabAvdMnd1)), label = T)
       tabAvdMnd1 <- addmargins((tabAvdMnd1))
       #tabAvdMnd1 <- RegDataDum %>% group_by(Maaned=floor_date(InnDato, "month"), ShNavn) %>%
       #      summarize(Antall=length(ShNavn))
-      
-      #tab <- xtable::xtable(tabAvdMnd)
+      tabAvdMnd1 <- xtable::xtable(tabAvdMnd1)
 	return(tabAvdMnd1)
 }
 
 #' @section Antall opphold siste 5 år
-#' Hmmm
 #' @rdname NIRtabeller
 #' @export
 tabAntOpphSh5Aar <- function(RegData, datoTil){
       AarNaa <- as.numeric(format.Date(datoTil, "%Y"))
+      
       tabAvdAarN <- addmargins(table(RegData[which(RegData$Aar %in% (AarNaa-4):AarNaa), c('ShNavn','Aar')]))
       rownames(tabAvdAarN)[dim(tabAvdAarN)[1] ]<- 'TOTALT, alle enheter:'
       colnames(tabAvdAarN)[dim(tabAvdAarN)[2] ]<- 'Siste 5 år'
@@ -84,21 +89,40 @@ tabAntOpphSh5Aar <- function(RegData, datoTil){
       return(tabAvdAarN)
 }
 
-#' @section Antall registreringer siste 5 år:
+#' @section Antall registreringer/pasienter siste 5 år:
 #' Hmmm
 #' @rdname NIRtabeller
 #' @export
-tabAntPasSh5Aar <- function(RegData, personIDvar='PasientID' , datoTil){
+tabAntOpphPasSh5Aar <- function(RegData, gr='opph', datoTil){
       AarNaa <- as.numeric(format.Date(datoTil, "%Y"))
-      Data <- RegData[which(RegData$Aar %in% (AarNaa-4):AarNaa), c('ShNavn','Aar', personIDvar)]
-      tabPasAvdAarN <- tapply(Data$PasientID, Data[ c('ShNavn','Aar')], FUN=function(x) length(unique(x)))
-      tabPasAvdAarN[is.na(tabPasAvdAarN)] <- 0
-      tabPasAvdAarN <- addmargins(tabPasAvdAarN) #, FUN = function(x) sum(x, na.rm=T))
-      rownames(tabPasAvdAarN)[dim(tabPasAvdAarN)[1] ]<- 'TOTALT, alle enheter:'
-      colnames(tabPasAvdAarN)[dim(tabPasAvdAarN)[2] ]<- 'TOTALT'
-      tabPasAvdAarN <- xtable::xtable(tabPasAvdAarN)
-      return(tabPasAvdAarN)
+      
+      if (gr == 'pas'){
+            Data <- RegData[which(RegData$Aar %in% (AarNaa-4):AarNaa), c('ShNavn','Aar', 'PasientID')]
+            tabAvdAarN <- tapply(Data$PasientID, Data[ c('ShNavn','Aar')], FUN=function(x) length(unique(x)))
+            tabAvdAarN[is.na(tabAvdAarN)] <- 0
+            tabAvdAarN <- addmargins(tabAvdAarN) #, FUN = function(x) sum(x, na.rm=T))
+            
+      } else {
+      tabAvdAarN <- addmargins(table(RegData[which(RegData$Aar %in% (AarNaa-4):AarNaa), c('ShNavn','Aar')]))
+      }
+      rownames(tabAvdAarN)[dim(tabAvdAarN)[1] ]<- 'TOTALT, alle enheter:'
+      colnames(tabAvdAarN)[dim(tabAvdAarN)[2] ]<- 'Siste 5 år'
+      tabAvdAarN <- xtable::xtable(tabAvdAarN)
+      return(tabAvdAarN)
 }
+# tabAntPasSh5Aar <- function(RegData, personIDvar='PasientID' , datoTil){
+#       AarNaa <- as.numeric(format.Date(datoTil, "%Y"))
+#       
+#       Data <- RegData[which(RegData$Aar %in% (AarNaa-4):AarNaa), c('ShNavn','Aar', personIDvar)]
+#       tabPasAvdAarN <- tapply(Data$PasientID, Data[ c('ShNavn','Aar')], FUN=function(x) length(unique(x)))
+#       tabPasAvdAarN[is.na(tabPasAvdAarN)] <- 0
+#       
+#       tabPasAvdAarN <- addmargins(tabPasAvdAarN) #, FUN = function(x) sum(x, na.rm=T))
+#       rownames(tabPasAvdAarN)[dim(tabPasAvdAarN)[1] ]<- 'TOTALT, alle enheter:'
+#       colnames(tabPasAvdAarN)[dim(tabPasAvdAarN)[2] ]<- 'TOTALT'
+#       tabPasAvdAarN <- xtable::xtable(tabPasAvdAarN)
+#       return(tabPasAvdAarN)
+# }
 
 #' @section Finn eventuelle dobbeltregistreringer
 #' @rdname NIRtabeller
@@ -108,7 +132,7 @@ finnDblReg <- function(RegData, reshID=114240){
       #RegData må inneholde PasientID, Innleggelsestidspunkt og SkjemaGUID
       #Evt. legge til utvalg på tidsrom
       sortVar <- c('PasientID','Innleggelsestidspunkt', "SkjemaGUID")
-      Data <- RegData[which(RegData$ReshId == reshID), sortVar]
+      RegData <- RegData[which(RegData$ReshId == reshID), sortVar]
       RegDataSort <- RegData[order(RegData$PasientID, RegData$Innleggelsestidspunkt), ]
       RegDataSort$OpphNr <- ave(RegDataSort[ ,'PasientID'], RegDataSort[ ,'PasientID'], FUN=seq_along)
       indPasFlereOpph <- which(RegDataSort$OpphNr>1) 
@@ -121,5 +145,13 @@ finnDblReg <- function(RegData, reshID=114240){
       indDbl <- which(abs(RegDataSort$TidInn) <2 )
       tabDbl <- RegDataSort[sort(c(indDbl, indDbl-1)), 
                             c('PasientID','Innleggelsestidspunkt', "SkjemaGUID")]
+      if (dim(tabDbl)[1] == 0) {
+            tabDbl <- 'Ingen dobbeltregistreringar'
+      } else {tabDbl <- xtable::xtable(tabDbl)}
+      print(paste('Dim RegDATA: ',  dim(RegData)))
       return(tabDbl)
+      
+      
+      
+      
 }

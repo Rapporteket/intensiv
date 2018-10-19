@@ -44,33 +44,52 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                br(),
                h2("Her kan man evt. vise de variable/resultater som er viktigst å overvåke", align='center' ),
                h2("Gi tilbakemelding på hva som skal være på sida", align='center' ),
-               br()),
+               br(),
+               br(),
+               h2('Andre ting å ta stilling til: Hvilke utvalgsmuligheter skal vi ha i de ulike fanene, 
+                  hva skal de hete/navngis, nynorsk el. bokmål, annen organisering?', align='center')
+      ),
       
       tabPanel("Registreringsoversikter",
-               h3('Her kan vi evt. ha "undersider" for å velge hvilken tabell man ønsker'),
-               br(),
                sidebarPanel(width=3,
-                            dateRangeInput(inputId = 'datovalgReg', start = "2017-01-01", end = Sys.Date(),
-                                           label = "Tidsperiode", separator="t.o.m.", language="nb"),
-                            selectInput(inputId = "erMannAndelReg", label="Kjønn",
-                                        choices = c("Begge"=2, "Menn"=1, "Kvinner"=0)),
-                            sliderInput(inputId="alderAndelReg", label = "Alder", min = 0,
-                                        max = 110, value = c(0, 110))
-                            ),
-                mainPanel(
-                      h2("Belegg, siste 12 måneder (evt. fra valgt sluttdato og eget/landet/sykehustype)"),
-                      tableOutput('tabBelegg'),
-               br(),
-               #h3("1. Antall opphold + pasienter per sykehus og år"),
-               #h3("2. Antall opphold + pasienter per sykehus og mnd, siste 12 mnd. ")
-               h2("Antall registreringer per måned og avdeling"),
-               p(em("Velg tidsperiode ved å velge sluttdato i menyen til venstre")),
-               tableOutput("tabAvdMnd12"),
-               
-               h2("Antall registreringer per år og avdeling, siste 5 år"),
-               #          #tableOutput("tabAvdNAar5")
-               h2("Moglege dobbeltregistreringar")
-                )
+                            dateInput(inputId = 'sluttDatoReg', label = 'Velg sluttdato', language="nb",
+                                      value = Sys.Date(), max = Sys.Date()),
+                            # dateRangeInput(inputId = 'datovalgReg', start = "2017-01-01", end = Sys.Date(),
+                            #                label = "Tidsperiode", separator="t.o.m.", language="nb"),
+                            # selectInput(inputId = "tidsenhet", label="Velg tidsenhet",
+                            #             choices = rev(c('År'= 'Aar', 'Halvår' = 'Halvaar',
+                            #                             'Kvartal'='Kvartal', 'Måned'='Mnd'))),
+                            conditionalPanel(
+                                  condition = "input.ark == 'Belegg' || input.ark == 'Ant. opphold'",
+                                  selectInput(inputId = "tidsenhetReg", label="Velg tidsenhet",
+                                        choices = rev(c('År'= 'Aar', 'Måned'='Mnd')))),
+                            conditionalPanel(
+                                  condition = "input.ark == 'Belegg'",
+                                  selectInput(inputId = 'enhetsNivaa', label='Enhetsnivå',
+                                              choices = c("Hele landet"=0, "Egen sykehustype"=4, "Egen enhet"=2)
+                                  ))
+               ),
+               mainPanel(
+                     tabsetPanel(id='ark',
+                           tabPanel('Belegg',
+                                    h2("Belegg på intensiv"),
+                                    br(),
+                                    tableOutput('tabBelegg')
+                           ),
+                           tabPanel('Ant. opphold',
+                                    h2("Antal opphald per avdeling"),
+                                    p(em("Velg tidsperiode ved å velge sluttdato i menyen til venstre")),
+                                    tableOutput("tabAntOpphShMnd12")
+                           ),
+                           tabPanel('Pasientar per år og avd.',
+                                    h2("Antal pasientar ved avdelingane siste 5 år"),
+                                    tableOutput("tabAntPasSh5Aar")
+                           ),
+                           tabPanel('Dobbeltreg.',
+                                    h2("Moglege dobbeltregistreringar"),
+                                    tableOutput("tabDblReg")
+                           ))
+               )
       ), #tab
       
       
@@ -127,36 +146,36 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                br(),
                br(),
                sidebarPanel(width=3,
-                     selectInput(inputId = "valgtVarAndelGrVar", label="Velg variabel",
-                                 choices = c('Alder minst 80 år' = 'alder_over80',
-                                             'Alder under 18år' = 'alder_u18',
-                                             'Død innen 30 dager' = 'dod30d',
-                                             'Døde på intensiv' = 'dodeIntensiv',
-                                             'Isolasjon av pasient' = 'isolering',
-                                             'Liggetid, døde' = 'liggetidDod',
-                                             'Nyrebehandling' = 'nyreBeh',
-                                             'Reinnleggelse' = 'reinn',
-                                             'Respiratorstøtte' = 'respStotte',
-                                             'Respiratortid, inv. < 2,5d m/overf.' = 'respiratortidInvMoverf',
-                                             'Respiratortid, inv. < 2,5d u/overf.' = 'respiratortidInvUoverf',
-                                             'Respiratortid, døde' = 'respiratortidDod',
-                                             'Utvidet hemodyn. overvåkning' = 'ExtendedHemodynamicMonitoring',
-                                             'Trakeostomi' = 'trakeostomi',
-                                             'Trakeostomi, åpen' = 'trakAapen')
-                     ),
-                     dateRangeInput(inputId = 'datovalgAndelGrVar', start = "2017-01-01", end = Sys.Date(),
-                                    label = "Tidsperiode", separator="t.o.m.", language="nb"),
-                     selectInput(inputId = "erMannAndelGrVar", label="Kjønn",
-                                 choices = c("Begge"=2, "Menn"=1, "Kvinner"=0)),
-                     sliderInput(inputId="alderAndelGrVar", label = "Alder", min = 0,
-                                 max = 110, value = c(0, 110)),
-                     br(),
-                     p(em('Følgende utvalg gjelder bare figuren som viser utvikling over tid')),
-                     selectInput(inputId = 'enhetsUtvalgAndelTid', label='Egen enhet og/eller landet',
-                                 choices = c("Egen mot resten av landet"=1, "Hele landet"=0, "Egen enhet"=2)),
-                     selectInput(inputId = "tidsenhetAndelTid", label="Velg tidsenhet",
-                                 choices = rev(c('År'= 'Aar', 'Halvår' = 'Halvaar',
-                                                 'Kvartal'='Kvartal', 'Måned'='Mnd')))
+                            selectInput(inputId = "valgtVarAndelGrVar", label="Velg variabel",
+                                        choices = c('Alder minst 80 år' = 'alder_over80',
+                                                    'Alder under 18år' = 'alder_u18',
+                                                    'Død innen 30 dager' = 'dod30d',
+                                                    'Døde på intensiv' = 'dodeIntensiv',
+                                                    'Isolasjon av pasient' = 'isolering',
+                                                    'Liggetid, døde' = 'liggetidDod',
+                                                    'Nyrebehandling' = 'nyreBeh',
+                                                    'Reinnleggelse' = 'reinn',
+                                                    'Respiratorstøtte' = 'respStotte',
+                                                    'Respiratortid, inv. < 2,5d m/overf.' = 'respiratortidInvMoverf',
+                                                    'Respiratortid, inv. < 2,5d u/overf.' = 'respiratortidInvUoverf',
+                                                    'Respiratortid, døde' = 'respiratortidDod',
+                                                    'Utvidet hemodyn. overvåkning' = 'ExtendedHemodynamicMonitoring',
+                                                    'Trakeostomi' = 'trakeostomi',
+                                                    'Trakeostomi, åpen' = 'trakAapen')
+                            ),
+                            dateRangeInput(inputId = 'datovalgAndelGrVar', start = "2017-01-01", end = Sys.Date(),
+                                           label = "Tidsperiode", separator="t.o.m.", language="nb"),
+                            selectInput(inputId = "erMannAndelGrVar", label="Kjønn",
+                                        choices = c("Begge"=2, "Menn"=1, "Kvinner"=0)),
+                            sliderInput(inputId="alderAndelGrVar", label = "Alder", min = 0,
+                                        max = 110, value = c(0, 110)),
+                            br(),
+                            p(em('Følgende utvalg gjelder bare figuren som viser utvikling over tid')),
+                            selectInput(inputId = 'enhetsUtvalgAndelTid', label='Egen enhet og/eller landet',
+                                        choices = c("Egen mot resten av landet"=1, "Hele landet"=0, "Egen enhet"=2)),
+                            selectInput(inputId = "tidsenhetAndelTid", label="Velg tidsenhet",
+                                        choices = rev(c('År'= 'Aar', 'Halvår' = 'Halvaar',
+                                                        'Kvartal'='Kvartal', 'Måned'='Mnd')))
                ),
                mainPanel(
                      # fluidRow(column(6, plotOutput("andelTid"))),
@@ -195,6 +214,7 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
       
       #------- Gjennomsnitt ----------      
       tabPanel("Gjennomsnitt",
+               h2("Sykehusvise gjennomsnitt/median og utvikling over tid for valgt variabel", align='center'),
                sidebarPanel( 
                      selectInput(inputId = "valgtVarGjsn", label="Velg variabel",
                                  choices = c('Alder' = 'alder',
@@ -230,7 +250,6 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                      )
                ), #sidebarPanel/kolonna til venstre
                mainPanel(
-                     h2("Sykehusvise gjennomsnitt/median og utvikling over tid for valgt variabel"),
                      h5("Hvilken variabel man ønsker å se resultater for, velges fra rullegardinmenyen
                   til venstre. Man kan også gjøre ulike filtreringer."),
                      br(),
@@ -280,14 +299,14 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
       
       tabPanel("Under utvikling",
                br(),
-               h3("Resultater fra pårørendeskjema"),
+               h3("1. Resultater fra pårørendeskjema"),
                h3("HN-IKT-rapporter:"),
-               h3("4. \"Månedlig oversikt:\" Div. nøkkeltall for egen avd/hele landet, siste 12 måneder"),
-               h3("5. Pasienter utskrevet mellom 17:00 og 08:00, helligdager beh. som vanlige dager"),
-               h3('6. Potensielle donorer'),
-               h3('7. Påvist opphevet sirkulasjon- organdonasjoner og grunn til ikke gjennomført'),
-               h3('8. Overflyttinger mellom sykehus/avd.'),
-               h3("9. Fordelinger alder og kjønn"),
+               h3("2. \"Månedlig oversikt:\" Div. nøkkeltall for egen avd/hele landet, siste 12 måneder"),
+               h3("3. Pasienter utskrevet mellom 17:00 og 08:00, helligdager beh. som vanlige dager"),
+               h3('4. Potensielle donorer'),
+               h3('5. Påvist opphevet sirkulasjon- organdonasjoner og grunn til ikke gjennomført'),
+               h3('6. Overflyttinger mellom sykehus/avd.'),
+               h3("7. Fordelinger alder og kjønn..."),
                br()
       )
 )  #navbarPage
@@ -324,7 +343,7 @@ server <- function(input, output, session) { #
       RegData <- NIRPreprosess(RegData = RegData)
       
       
-#--------startside--------------      
+      #--------startside--------------      
       #output$tekstDash <- c('Figurer med kvalitetsindikatorer',
       #                      'hente ned månedsrapport'),
       output$mndRapp.pdf = downloadHandler(
@@ -361,40 +380,42 @@ server <- function(input, output, session) { #
       )
       #  If you already have made the PDF file, you can just copy it to file, i.e.
       #  content = function(file) file.copy('your_existing.pdf', file, overwrite = TRUE)
-
       
       
-#------------Tabeller 
+      
+      #------------Tabeller --------
       output$tabBelegg <- renderTable({
-            tabBelegg(RegData=RegData, personIDvar='PasientID' , tidsenhet='Mnd') 
+            # print(paste('Enhetsnivå: ', as.numeric(input$enhetsNivaa)))
+            # print(paste('sluttdato: ', input$sluttDatoReg))
+            # print(paste('tidsenhet: ', input$tidsenhetReg))
+            # print(paste('RegData: ', dim(RegData)))
+            # print(paste('resh: ', reshID))
+            tabBelegg(RegData=RegData, tidsenhet=input$tidsenhetReg, datoTil=input$sluttDatoReg, 
+                      enhetsUtvalg=as.numeric(input$enhetsNivaa), reshID=reshID)  
       },rownames=T, digits=0 )
       
-      
-      output$tabAvdSkjema12 <- renderTable({
-            tabAntOpphShMnd(RegData=RegData, datoTil='2018-04-30', antMnd=12 ) #input$datovalgTab[2])  
+      output$tabAntOpphShMnd12 <- renderTable({
+            switch(input$tidsenhetReg,
+                   Mnd=tabAntOpphShMnd(RegData=RegData, datoTil=input$sluttDatoReg, antMnd=12), #input$datovalgTab[2])  
+                   Aar=tabAntOpphSh5Aar(RegData=RegData, datoTil=input$sluttDatoReg))
             #sprintf('%1.3f'
             #xtable::xtable(tabAvd12MndNskjema,  align = c('l', rep('r', ncol(tabAvd12MndNskjema))),
             #              caption= paste0('Tidsperiode: ', as.POSIXlt(datoFra12), 'til', as.POSIXlt(input$datoTil)))
             #},
-      }, rownames = T, align= 'r' #
+      }, rownames = T, digits=0, spacing="xs" 
       ) 
       
+      # output$tabAvdNAar5 <- renderTable({
+      #       tabAntOpphSh5Aar(RegData=RegData, datoTil='2018-10-20')
+      # }, rownames = T, digits=0, spacing="xs")
       
-      output$tabAvdNAar5 <- renderTable({
-            
-            tabAvdAarN <- addmargins(table(RegData[which(RegData$Aar %in% (AarNaa-4):AarNaa), c('ShNavn','Aar')]))
-            rownames(tabAvdAarN)[dim(tabAvdAarN)[1] ]<- 'TOTALT, alle avdelinger:'
-            colnames(tabAvdAarN)[dim(tabAvdAarN)[2] ]<- 'Siste 5 år'
-            xtable::xtable(tabAvdAarN)
-            #xtable::xtable(tabAvdAarN)
-      },
-      rownames = T, digits=0)
+      output$tabAntPasSh5Aar <- renderTable({
+            tabAntOpphPasSh5Aar(RegData=RegData, gr='pas', datoTil=input$sluttDatoReg)
+      }, rownames = T, digits=0, spacing="xs")
       
-      finnDblReg(RegData, reshID=114240)
-      
-      tabAntOpphSh5Aar(RegData, datoTil)
-      
-      tabAntPasSh5Aar(RegData, personIDvar='PasientID' , datoTil)
+      output$tabDblReg <- renderTable({
+            finnDblReg(RegData, reshID=reshID)
+      }, spacing="xs") #rownames = T, 
       
       
       
@@ -504,7 +525,7 @@ server <- function(input, output, session) { #
                            minald=as.numeric(input$alderInnMaate[1]), maxald=as.numeric(input$alderInnMaate[2]),
                            erMann=as.numeric(input$erMannInnMaate))
       }, height = function() {2*session$clientData$output_innMaate_height},
-         width = function() {0.8*session$clientData$output_innMaate_width}) #, height=900, width=700)
+      width = function() {0.8*session$clientData$output_innMaate_width}) #, height=900, width=700)
 }
 
 
