@@ -127,7 +127,7 @@ tabAntOpphPasSh5Aar <- function(RegData, gr='opph', datoTil){
 #' @section Finn eventuelle dobbeltregistreringer
 #' @rdname NIRtabeller
 #' @export
-finnDblReg <- function(RegData, reshID=114240){
+finnDblReg <- function(RegData, datoFra='2017-01-01', datoTil=Sys.Date(), reshID=114240){
       #Registreringer kor same pasient har fått registrert to innleggingar med mindre enn 2 timars mellomrom.
       #RegData må inneholde PasientID, Innleggelsestidspunkt og SkjemaGUID
       #Evt. legge til utvalg på tidsrom
@@ -148,7 +148,7 @@ finnDblReg <- function(RegData, reshID=114240){
       if (dim(tabDbl)[1] == 0) {
             tabDbl <- 'Ingen dobbeltregistreringar'
       } else {tabDbl <- xtable::xtable(tabDbl)}
-      print(paste('Dim RegDATA: ',  dim(RegData)))
+      #print(paste('Dim RegDATA: ',  dim(RegData), min(RegData$InnDato)))
       return(tabDbl)
       
       

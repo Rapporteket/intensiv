@@ -93,6 +93,17 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='an
       
       #------------------------------------- 
       
+      if (valgtVar == 'utskrMl17og08') { #AndelGrVar
+        RegData$Innleggelsestidspunkt
+        ind <- union(which(RegData$DateDischargedIntensive$hour<8), which(RegData$DateDischargedIntensives$hour>=17) )
+        #head(RegData$Innleggelsestidspunkt[ind])
+        RegData$Variabel[ind] <- 1
+        varTxt <- 'utskrevet kl 17-08'
+        tittel <- 'Pasienter utskrevet utenfor vakttid'
+        
+      }
+        
+      
       if (valgtVar=='alder') {	#Fordeling, GjsnGrVar, GjsnTid
             RegData <- RegData[which(RegData$Alder>=0), ]    #Tar bort alder<0
             RegData$Variabel <- RegData$Alder  	#GjsnTid, GjsnGrVar

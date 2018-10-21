@@ -2,10 +2,6 @@
 # This is a Shiny web application. You can run the application by clicking
 # the 'Run App' button above.
 #
-# Find out more about building applications with Shiny here:
-#
-#    http://shiny.rstudio.com/
-#
 
 library(shiny)
 library(knitr)
@@ -52,10 +48,11 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
       
       tabPanel("Registreringsoversikter",
                sidebarPanel(width=3,
+                            conditionalPanel(condition = "input.ark == 'Belegg' || input.ark == 'Ant. opphold'
+                                             || input.ark == 'Pasientar per år og avd.' ",
                             dateInput(inputId = 'sluttDatoReg', label = 'Velg sluttdato', language="nb",
-                                      value = Sys.Date(), max = Sys.Date()),
-                            # dateRangeInput(inputId = 'datovalgReg', start = "2017-01-01", end = Sys.Date(),
-                            #                label = "Tidsperiode", separator="t.o.m.", language="nb"),
+                                      value = Sys.Date(), max = Sys.Date())
+                            ),
                             # selectInput(inputId = "tidsenhet", label="Velg tidsenhet",
                             #             choices = rev(c('År'= 'Aar', 'Halvår' = 'Halvaar',
                             #                             'Kvartal'='Kvartal', 'Måned'='Mnd'))),
@@ -67,7 +64,12 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                                   condition = "input.ark == 'Belegg'",
                                   selectInput(inputId = 'enhetsNivaa', label='Enhetsnivå',
                                               choices = c("Hele landet"=0, "Egen sykehustype"=4, "Egen enhet"=2)
-                                  ))
+                                  )),
+                            conditionalPanel(
+                              condition = "input.ark == 'Dobbeltregistreringar'",
+                              dateRangeInput(inputId = 'datovalgReg', start = "2017-01-01", end = Sys.Date(),
+                                              label = "Tidsperiode", separator="t.o.m.", language="nb")
+                            )
                ),
                mainPanel(
                      tabsetPanel(id='ark',
@@ -85,7 +87,7 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                                     h2("Antal pasientar ved avdelingane siste 5 år"),
                                     tableOutput("tabAntPasSh5Aar")
                            ),
-                           tabPanel('Dobbeltreg.',
+                           tabPanel('Dobbeltregistreringar',
                                     h2("Moglege dobbeltregistreringar"),
                                     tableOutput("tabDblReg")
                            ))
