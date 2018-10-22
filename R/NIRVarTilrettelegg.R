@@ -93,15 +93,6 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='an
       
       #------------------------------------- 
       
-      if (valgtVar == 'utskrMl17og08') { #AndelGrVar
-        RegData$Innleggelsestidspunkt
-        ind <- union(which(RegData$DateDischargedIntensive$hour<8), which(RegData$DateDischargedIntensives$hour>=17) )
-        #head(RegData$Innleggelsestidspunkt[ind])
-        RegData$Variabel[ind] <- 1
-        varTxt <- 'utskrevet kl 17-08'
-        tittel <- 'Pasienter utskrevet utenfor vakttid'
-        
-      }
         
       
       if (valgtVar=='alder') {	#Fordeling, GjsnGrVar, GjsnTid
@@ -465,18 +456,27 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='an
             cexgr <- 0.9
       } 
       
-# 1.	Andel donorar av alle daude på intensiv (per eining – samanlikna mot same ShType)
-      if (valgtVar == 'OrganDonationCompletedStatus') { #andelGrVar 
+      if (valgtVar == 'utskrMl17og08') { #AndelGrVar
+            ind <- union(which(RegData$DateDischargedIntensive$hour<8), which(RegData$DateDischargedIntensive$hour>=17) )
+            #head(RegData$Innleggelsestidspunkt[ind])
+            RegData$Variabel[ind] <- 1
+            varTxt <- 'utskrevet kl 17-08'
+            tittel <- 'Pasienter utskrevet utenfor vakttid (<8, >=17)'
+            sortAvtagende <- FALSE
+      }
+      # 1.	Andel donorar av alle daude på intensiv (per eining – samanlikna mot same ShType)
+      if (valgtVar == 'OrganDonationCompletedStatus') { #andelGrVar, andelTid
             #OrganDonationCompletedStatus - Ble organdonasjon gjennomført?
             #1:ja, 2:nei, -1: tom
             RegData <- RegData[which(RegData$DischargedIntensiveStatus == 1),] #Døde
             retn <- 'H'
             tittel <- 'Andel av de som døde som ble donorer'
+            varTxt <- 'donorer'
             RegData$Variabel[which(RegData$OrganDonationCompletedStatus == 1)] <- 1
             cexgr <- 0.9
       } 
 # 2.	Andel donorar av pasientar med oppheva intrakraniell sirkulasjon (per eining – samanlikna mot same ShType)
-      if (valgtVar == 'OrganDonationCompletedCirc') { #andelGrVar 
+      if (valgtVar == 'OrganDonationCompletedCirc') { #andelGrVar, andelTid
             #Ble det påvist opphevet intrakraniell sirkulasjon?	CerebralCirculationAbolished
             #1:ja, 2:nei, -1: tom
             #OrganDonationCompletedStatus - Ble organdonasjon gjennomført?
@@ -484,6 +484,7 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='an
             RegData <- RegData[which(RegData$CerebralCirculationAbolished == 1),] #Opphevet sirkulasjon
             retn <- 'H'
             tittel <- 'Andel donorer av de med opphevet intrakraniell sirkulajon'
+            varTxt <- 'donorer'
             RegData$Variabel[which(RegData$OrganDonationCompletedStatus == 1)] <- 1
             cexgr <- 0.9
       } 

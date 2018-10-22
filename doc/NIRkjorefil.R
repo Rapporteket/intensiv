@@ -144,13 +144,13 @@ minald <- 0 #(standard: 0)
 maxald <- 130	#(standard: 130, må være større enn minald!)
 InnMaate <- '' #0-El, 6-Ak.m, 8-Ak.k, (alle - alt unntatt 0,6,8)
 valgtMaal = 'Gjsn' #'Med' = median. 'Gjsn' = gjennomsnitt. Alt annet gir gjennomsnitt
-datoFra <- '2011-01-01'	# standard: 0	format: YYYY-MM-DD. Kan spesifisere bare første del, eks. YYYY el. YYYY-MM. 
-datoTil <- '2017-12-31'	# standard: 3000
+datoFra <- '2017-01-01'	# standard: 0	format: YYYY-MM-DD. Kan spesifisere bare første del, eks. YYYY el. YYYY-MM. 
+datoTil <- '2018-12-31'	# standard: 3000
 aar <- 0
 dodInt <- 9	# 0-i live, 1 -død, standard: alle (alle andre verdier)
 erMann <- ''	#Kjønn: 0-kvinner, 1-menn, standard: alle (alle andre verdier)
 overfPas <- ''    #Overført under pågående intensivbehandling?	1 = Nei, 2 = Ja
-grType <- 1	#1/2: sentral/lokal, 3:regional, 99:'alle'
+grType <- 99	#1/2: sentral/lokal, 3:regional, 99:'alle'
 enhetsUtvalg <- 0	#0-5
 grVar <- 'ShNavn'
 tidsenhet <- 'Mnd'
@@ -203,12 +203,12 @@ for (valgtVar in variable) {
 
 #--------------------------------------- AndelGrVar ----------------------------------
 grVar <- 'ShNavn'
-valgtVar <- 'alder_over80'	#alder_u18', 'alder_over80', 'dod30d', 'dodeIntensiv', 'innMaate', 
+valgtVar <- 'utskrMl17og08'	#alder_u18', 'alder_over80', 'dod30d', 'dodeIntensiv', 'innMaate', 
                         #respiratortid, 'respStotte', 'reinn
                         #trakeostomi, trakAapen, respiratortidInv, nyreBeh, ExtendedHemodynamicMonitoring,
                         #ExtendedHemodynamicMonitoringPA, isolering
                         #Nye, aug-18: OrganDonationCompletedStatus, OrganDonationCompletedCirc
-outfile <- '' #paste0(valgtVar, '_shNY.pdf')
+outfile <- paste0(valgtVar, '_sh.pdf')
 
 NIRFigAndelerGrVar(RegData=RegData, valgtVar=valgtVar, minald=minald, maxald=maxald,  datoFra=datoFra, 
                 datoTil=datoTil, aar=0, InnMaate=InnMaate, dodInt=dodInt,erMann=erMann, outfile=outfile, 
