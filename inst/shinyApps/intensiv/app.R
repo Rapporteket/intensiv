@@ -44,11 +44,11 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                br(),
                tags$ul(tags$b('Andre ting å ta stilling til: '),
                        tags$li("Foretrukket tittellayout på side - som på andeler eller gjennomsnitt?"), 
+                       tags$li("Ønskes annen organisering av innhold?"), 
                        tags$li("Hvilke utvalgs/filtreringsmuligheter skal vi ha i de ulike fanene"), 
                        tags$li("Navn på faner"), 
-                       tags$li("nynorsk (NB: Vi fort skape mye ekstraarbeid) el. bokmål?"),
-                       tags$li("annen organisering?"), 
-                       tags$li("Innhold i tabeller i tilknytning til figurer. NB: Måtehold!")
+                       tags$li("nynorsk (NB: Vil fort skape mye ekstraarbeid) el. bokmål?"),
+                       tags$li("Innhold i tabeller i tilknytning til figurer.")
                ),
                br(),
                tags$ul(tags$b('Kommer: '),
@@ -61,7 +61,7 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
       
       tabPanel("Registreringsoversikter",
                sidebarPanel(width=3,
-                            conditionalPanel(condition = "input.ark == 'Belegg' || input.ark == 'Ant. opphold'
+                            conditionalPanel(condition = "input.ark == 'Nøkkeltall' || input.ark == 'Ant. opphold'
                                              || input.ark == 'Pasientar per år og avd.' ",
                                              dateInput(inputId = 'sluttDatoReg', label = 'Velg sluttdato', language="nb",
                                                        value = Sys.Date(), max = Sys.Date())
@@ -70,11 +70,11 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                             #             choices = rev(c('År'= 'Aar', 'Halvår' = 'Halvaar',
                             #                             'Kvartal'='Kvartal', 'Måned'='Mnd'))),
                             conditionalPanel(
-                                  condition = "input.ark == 'Belegg' || input.ark == 'Ant. opphold'",
+                                  condition = "input.ark == 'Nøkkeltall' || input.ark == 'Ant. opphold'",
                                   selectInput(inputId = "tidsenhetReg", label="Velg tidsenhet",
                                               choices = rev(c('År'= 'Aar', 'Måned'='Mnd')))),
                             conditionalPanel(
-                                  condition = "input.ark == 'Belegg'",
+                                  condition = "input.ark == 'Nøkkeltall'",
                                   selectInput(inputId = 'enhetsNivaa', label='Enhetsnivå',
                                               choices = c("Hele landet"=0, "Egen sykehustype"=4, "Egen enhet"=2)
                                   )),
@@ -86,10 +86,10 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                ),
                mainPanel(
                      tabsetPanel(id='ark',
-                                 tabPanel('Belegg',
-                                          h2("Belegg på intensiv"),
+                                 tabPanel('Nøkkeltall',
+                                          h2("Nøkkeltall på intensiv"),
                                           br(),
-                                          tableOutput('tabBelegg')
+                                          tableOutput('tabNokkeltall')
                                  ),
                                  tabPanel('Ant. opphold',
                                           h2("Antal opphald per avdeling"),
@@ -401,15 +401,15 @@ server <- function(input, output, session) { #
       
       
       #------------Tabeller --------
-      output$tabBelegg <- renderTable({
+      output$tabNokkeltall <- renderTable({
             # print(paste('Enhetsnivå: ', as.numeric(input$enhetsNivaa)))
             # print(paste('sluttdato: ', input$sluttDatoReg))
             # print(paste('tidsenhet: ', input$tidsenhetReg))
             # print(paste('RegData: ', dim(RegData)))
             # print(paste('resh: ', reshID))
-            tabBelegg(RegData=RegData, tidsenhet=input$tidsenhetReg, datoTil=input$sluttDatoReg, 
+            tabNokkeltall(RegData=RegData, tidsenhet=input$tidsenhetReg, datoTil=input$sluttDatoReg, 
                       enhetsUtvalg=as.numeric(input$enhetsNivaa), reshID=reshID)  
-      },rownames=T, digits=0 )
+      },rownames=T ) #, digits=0 )
       
       output$tabAntOpphShMnd12 <- renderTable({
             switch(input$tidsenhetReg,

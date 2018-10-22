@@ -23,8 +23,8 @@ NULL
 #' @export
 
 #' @section Belegg (antall opphold, pasienter og intensivdøgn)
-#' Siste inntil 5 år eller siste inntil 12 måneder/kvartal/halvår
 #' @rdname NIRtabeller
+#' Siste inntil 5 år eller siste inntil 12 måneder/kvartal/halvår
 #' @export
 tabBelegg <- function(RegData, tidsenhet='Aar', datoTil, enhetsUtvalg=0, reshID=0) {
       datoFra <- switch(tidsenhet, 
@@ -150,8 +150,57 @@ finnDblReg <- function(RegData, datoFra='2017-01-01', datoTil=Sys.Date(), reshID
       } else {tabDbl <- xtable::xtable(tabDbl)}
       #print(paste('Dim RegDATA: ',  dim(RegData), min(RegData$InnDato)))
       return(tabDbl)
-      
-      
-      
-      
 }
+
+
+#' @section Nøkkeltall (antall opph., pasienter,  intensivdøgn, samt div oversiktstall)
+#' @rdname NIRtabeller
+#' Siste inntil 5 år eller siste inntil 12 måneder/kvartal/halvår
+#' @export
+tabNokkeltall <- function(RegData, tidsenhet='Mnd', datoTil, enhetsUtvalg=0, reshID=0) {
+      datoFra <- switch(tidsenhet, 
+                        Mnd = floor_date(as.Date(datoTil)%m-% months(12, abbreviate = T), 'month'), #as.Date(paste0(as.numeric(substr(datoTil,1,4))-1, substr(datoTil,5,8), '01'), tz='UTC')
+                        Aar = paste0(year(as.Date(datoTil))-4, '-01-01')
+      )
+      RegData <- NIRUtvalgEnh(RegData=RegData, datoFra=datoFra, datoTil = datoTil, 
+                              enhetsUtvalg = enhetsUtvalg, reshID = reshID)$RegData
+      RegData <- SorterOgNavngiTidsEnhet(RegData, tidsenhet=tidsenhet)$RegData
+      #NB: sjekk riktige utvalg!!!
+      indLigget <- which(RegData$liggetid>0)
+      indRespt <- which(RegData$respiratortid>0)
+      indSAPS <- which(RegData$SAPSII > 0)
+      indNEMS <- which( (RegData$liggetid>=1) & (RegData$NEMS>1))
+      RegData <- FinnReinnleggelser(RegData=RegData, PasientID = 'PasientID')
+      indReinn <- intersect(which(RegData$InnDato >= as.Date('2016-01-01', tz='UTC')), which(RegData$Overf==1))
+      ind1708 <- union(which(RegData$DateDischargedIntensive$hour<8), which(RegData$DateDischargedIntensive$hour>=17))
+      RegData$Ut1708 <- 0
+      RegData$Ut1708[ind1708]<-1
+      
+      tabNokkeltall <- cbind(
+            'Antall opphold' = tapply(RegData$PasientID, RegData$TidsEnhet, FUN=length), #table(RegDataEget$TidsEnhet), #Neget,		
+            'Antall pasienter' = tapply(RegData$PasientID, RegData$TidsEnhet, 
+                                             FUN=function(x) length(unique(x))),	
+            'Antall intensivdøgn' = round(as.numeric(tapply(RegData$liggetid, RegData$TidsEnhet, sum, na.rm=T)),0),
+            'Liggetid (gj.sn.)' = tapply(RegData$liggetid[indLigget], RegData$TidsEnhet[indLigget], FUN=mean, na.rm=T),
+            'Respiratorstøtte (%)' = tapply(RegData$respiratortid>0, RegData$TidsEnhet, 
+                                            FUN=function(x) sum(x, na.rm=T)/length(x)*100),
+            'Respiratortid (median)' = tapply(RegData$respiratortid[indRespt], RegData$TidsEnhet[indRespt], 
+                                              FUN=median, na.rm=T),
+            'SAPS II (median)' = tapply(RegData$SAPSII[indSAPS], RegData$TidsEnhet[indSAPS], FUN=median, na.rm=T),
+            'NEMS per opph. (median)' = tapply(RegData$NEMS[indNEMS], 
+                                               RegData$TidsEnhet[indNEMS], FUN=median, na.rm=T),
+            'Døde (%)' = tapply((RegData$DischargedIntensiveStatus==1), RegData$TidsEnhet, 
+                                FUN=function(x) sum(x, na.rm=T)/length(x)*100),
+            'Reinnleggelser (<72t)' = tapply(RegData$Reinn==1, RegData$TidsEnhet, 
+                                             FUN=function(x) sum(x, na.rm=T)/length(x)*100),
+            'Utskrevet 17-08 (%)' = tapply(RegData$Ut1708, RegData$TidsEnhet, 
+                                           FUN=function(x) sum(x, na.rm=T)/length(x)*100)
+      )
+      tabNokkeltall[,4:11] <- round(tabNokkeltall[,4:11],1)
+      #dplyr::mutate_at(as.table(tabNokkeltall), vars(), funs(round(., 1)))
+      #antTidsenh <- ifelse(tidsenhet=='Aar', 4, 11)
+      #tabBeleggAnt <- tabBeleggAnt[, max(1, dim(tabBeleggAnt)[2]-antTidsenh) : dim(tabBeleggAnt)[2]] #Tar med 12 siste
+      
+      return(tabNokkeltall)
+}
+      
