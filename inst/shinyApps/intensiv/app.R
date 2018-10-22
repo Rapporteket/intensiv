@@ -53,8 +53,8 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                br(),
                tags$ul(tags$b('Kommer: '),
                        tags$li("Alle figurer vil få tilhørende tabell i fane ved siden av som for 'Andeler' "), 
-                       tags$li("Månedlig oversikt: Div. nøkkeltall for egen avd/hele landet, siste 12 måneder"),
                        tags$li('Overflyttinger mellom sykehus/avd.'),
+                       tags$li('Resultater for pårørendeskjema'),
                        tags$li("Fordelinger alder og kjønn - litt usikker på denne...")
                )
       ), #tab
@@ -409,7 +409,7 @@ server <- function(input, output, session) { #
             # print(paste('resh: ', reshID))
             tabNokkeltall(RegData=RegData, tidsenhet=input$tidsenhetReg, datoTil=input$sluttDatoReg, 
                       enhetsUtvalg=as.numeric(input$enhetsNivaa), reshID=reshID)  
-      },rownames=T ) #, digits=0 )
+      },rownames=T, digits=0 )
       
       output$tabAntOpphShMnd12 <- renderTable({
             switch(input$tidsenhetReg,

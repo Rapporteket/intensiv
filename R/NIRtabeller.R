@@ -176,12 +176,12 @@ tabNokkeltall <- function(RegData, tidsenhet='Mnd', datoTil, enhetsUtvalg=0, res
       RegData$Ut1708 <- 0
       RegData$Ut1708[ind1708]<-1
       
-      tabNokkeltall <- cbind(
+      tabNokkeltall <- rbind(
             'Antall opphold' = tapply(RegData$PasientID, RegData$TidsEnhet, FUN=length), #table(RegDataEget$TidsEnhet), #Neget,		
             'Antall pasienter' = tapply(RegData$PasientID, RegData$TidsEnhet, 
                                              FUN=function(x) length(unique(x))),	
             'Antall intensivdøgn' = round(as.numeric(tapply(RegData$liggetid, RegData$TidsEnhet, sum, na.rm=T)),0),
-            'Liggetid (gj.sn.)' = tapply(RegData$liggetid[indLigget], RegData$TidsEnhet[indLigget], FUN=mean, na.rm=T),
+            'Liggetid (median)' = tapply(RegData$liggetid[indLigget], RegData$TidsEnhet[indLigget], FUN=median, na.rm=T),
             'Respiratorstøtte (%)' = tapply(RegData$respiratortid>0, RegData$TidsEnhet, 
                                             FUN=function(x) sum(x, na.rm=T)/length(x)*100),
             'Respiratortid (median)' = tapply(RegData$respiratortid[indRespt], RegData$TidsEnhet[indRespt], 
@@ -196,7 +196,7 @@ tabNokkeltall <- function(RegData, tidsenhet='Mnd', datoTil, enhetsUtvalg=0, res
             'Utskrevet 17-08 (%)' = tapply(RegData$Ut1708, RegData$TidsEnhet, 
                                            FUN=function(x) sum(x, na.rm=T)/length(x)*100)
       )
-      tabNokkeltall[,4:11] <- round(tabNokkeltall[,4:11],1)
+      #tabNokkeltall[,4:11] <- round(tabNokkeltall[,4:11],1)
       #dplyr::mutate_at(as.table(tabNokkeltall), vars(), funs(round(., 1)))
       #antTidsenh <- ifelse(tidsenhet=='Aar', 4, 11)
       #tabBeleggAnt <- tabBeleggAnt[, max(1, dim(tabBeleggAnt)[2]-antTidsenh) : dim(tabBeleggAnt)[2]] #Tar med 12 siste
