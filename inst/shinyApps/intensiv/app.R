@@ -152,7 +152,15 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                      #           max = as.numeric(format(Sys.Date(), '%Y')), value = )
                ),
                mainPanel(
-                     plotOutput('fordelinger')
+                     tabsetPanel(
+                           tabPanel(
+                                 'Figur',
+                                 #h2(print(fordTabInnhold$tittel)),
+                                    plotOutput('fordelinger')),
+                           tabPanel(
+                                 'Tabell',
+                                 tableOutput('fordelingTab'))
+                     )
                )
       ), #tab Fordelinger
       
@@ -460,6 +468,27 @@ server <- function(input, output, session) { #
                           minald=as.numeric(input$alder[1]), maxald=as.numeric(input$alder[2]),
                           erMann=as.numeric(input$erMann))
       }, height=800, width=800 #height = function() {session$clientData$output_fordelinger_width}
+      )
+      
+      
+      output$fordelingTab <- renderTable({
+            #lagFordTabInnhold <- reactive({ 
+            UtDataFord <- NIRFigAndeler(RegData=RegData, preprosess = 1)
+            tab <-cbind(UtDataFord$Ngr$Hoved, 
+                        UtDataFord$AggVerdier$Hoved, 
+                        UtDataFord$Ngr$Rest,
+                        UtDataFord$AggVerdier$Rest)
+            rownames(tab) <- UtDataFord$grtxt
+            colnames(tab) <- c(paste0(UtDataFord$hovedgrTxt,'\nN'), 
+                               paste0(UtDataFord$hovedgrTxt, '\n Antall'),
+                               if(!is.null(UtDataFord$Ngr$Rest)){UtDataFord$smltxt},
+                               if(!is.null(UtDataFord$Ngr$Rest)){UtDataFord$smltxt})
+            tittel <- UtDataFord$tittel      
+            fordTabInnhold <- list(tittel = UtDataFord$tittel,
+                           fordTab = tab)
+            xtable::xtable(tab, digits=c(0,0,1))
+            #return(UtData)
+      }, rownames = T
       )
       
       

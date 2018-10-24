@@ -7,7 +7,6 @@
 \alias{tabAntOpphSh5Aar}
 \alias{tabAntOpphPasSh5Aar}
 \alias{finnDblReg}
-\alias{tabNokkeltall}
 \title{Funksjoner for å lage tabeller Group of functions page title}
 \usage{
 tabBelegg(RegData, tidsenhet = "Aar", datoTil, enhetsUtvalg = 0,
@@ -21,9 +20,6 @@ tabAntOpphPasSh5Aar(RegData, gr = "opph", datoTil)
 
 finnDblReg(RegData, datoFra = "2017-01-01", datoTil = Sys.Date(),
   reshID = 114240)
-
-tabNokkeltall(RegData, tidsenhet = "Mnd", datoTil, enhetsUtvalg = 0,
-  reshID = 0)
 }
 \arguments{
 \item{RegData}{data}
@@ -49,6 +45,10 @@ RegData må inneholde InnDato.
 -tabAntOpphSh5Aar:Antall opphold per år og enhet siste 5 år (inkl. inneværende år) fram til datoTil. 
 RegData må inneholde Aar.
 }
+\section{Belegg (antall opphold, pasienter og intensivdøgn)}{
+NA
+}
+
 \section{tabAntOpphShMnd antall opphold siste X (antMnd) mnd}{
 NA
 }

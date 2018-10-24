@@ -141,7 +141,7 @@ library(intensiv)
 setwd("c:/ResultattjenesteGIT/Intensiv/")
 reshID=112044 #109773 #Tromsø med int: 601302, Ullevål Kir int: 109773
 minald <- 0 #(standard: 0)
-maxald <- 130	#(standard: 130, må være større enn minald!)
+maxald <- 110	#(standard: 130, må være større enn minald!)
 InnMaate <- '' #0-El, 6-Ak.m, 8-Ak.k, (alle - alt unntatt 0,6,8)
 valgtMaal = 'Gjsn' #'Med' = median. 'Gjsn' = gjennomsnitt. Alt annet gir gjennomsnitt
 datoFra <- '2017-01-01'	# standard: 0	format: YYYY-MM-DD. Kan spesifisere bare første del, eks. YYYY el. YYYY-MM. 
@@ -156,6 +156,7 @@ grVar <- 'ShNavn'
 tidsenhet <- 'Mnd'
 medKI <- 0
 offData <- 0
+outfile <- ''
 #Parameter for evt. kvalitetsmål? angis i Tilrettelegging
 
 
@@ -172,9 +173,7 @@ NIRFigInnMaate (RegData=RegData, valgtVar='InnMaate', minald=0, maxald=130, dato
 
 
 #--------------------------------------- Andeler ----------------------------------
-OrganDonationCompletedReasonForNoStatus
-CerebralCirculationAbolishedReasonForNo
-valgtVar <- 'OrganDonationCompletedReasonForNoStatus'	#'alder', 'liggetid', 'respiratortid',  'SAPSII', 'NEMS24', 'Nas24', 'InnMaate'
+valgtVar <- 'liggetid'	#'alder', 'liggetid', 'respiratortid',  'SAPSII', 'NEMS24', 'Nas24', 'InnMaate'
                               #Nye: PrimaryReasonAdmitted, inklKrit, respiratortidNonInv, respiratortidInv
                               #nyreBeh, nyreBehTid, ExtendedHemodynamicMonitoring, isolering, isoleringDogn, 
                               #spesTiltak
@@ -184,9 +183,12 @@ outfile <- paste0(valgtVar,'_Ford', '.png')
 #grType <- 0
 #enhetsUtvalg <- 0
 
-NIRFigAndeler(RegData=RegData, valgtVar=valgtVar, minald=minald, maxald=maxald,  datoFra=datoFra, 
-                     datoTil=datoTil, grType=grType, InnMaate=InnMaate, dodInt=dodInt,erMann=erMann, outfile=outfile, 
-                     hentData=0, preprosess=1, reshID=reshID, enhetsUtvalg=0, lagFig=1)
+      c('a', NULL)
+                   exists(a)
+      if (!is.null(1)){'hei'}
+      
+tab
+
 # Utdata <- NIRAndeler(RegData=RegData, valgtVar=valgtVar, minald=minald, maxald=maxald,  datoFra=datoFra, 
 #                         datoTil=datoTil, InnMaate=InnMaate, dodInt=dodInt,erMann=erMann, outfile=outfile, 
 #                         hentData=0, preprosess=1, reshID=reshID, enhetsUtvalg=enhetsUtvalg, lagFig=1)
