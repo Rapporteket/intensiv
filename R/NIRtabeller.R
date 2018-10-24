@@ -191,7 +191,7 @@ tabNokkeltall <- function(RegData, tidsenhet='Mnd', datoTil, enhetsUtvalg=0, res
                                                RegData$TidsEnhet[indNEMS], FUN=median, na.rm=T),
             'Døde (%)' = tapply((RegData$DischargedIntensiveStatus==1), RegData$TidsEnhet, 
                                 FUN=function(x) sum(x, na.rm=T)/length(x)*100),
-            'Reinnleggelser (<72t)' = tapply(RegData$Reinn==1, RegData$TidsEnhet, 
+            'Reinnleggelser, <72t (%)' = tapply(RegData$Reinn==1, RegData$TidsEnhet, 
                                              FUN=function(x) sum(x, na.rm=T)/length(x)*100),
             'Utskrevet 17-08 (%)' = tapply(RegData$Ut1708, RegData$TidsEnhet, 
                                            FUN=function(x) sum(x, na.rm=T)/length(x)*100)

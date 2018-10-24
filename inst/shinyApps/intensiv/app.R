@@ -45,6 +45,7 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                tags$ul(tags$b('Andre ting å ta stilling til: '),
                        tags$li("Foretrukket tittellayout på side - som på andeler eller gjennomsnitt?"), 
                        tags$li("Ønskes annen organisering av innhold?"), 
+                       tags$li("Kun en figur på hver side, eller fint å vise to samtidig som under 'Andeler'? "),
                        tags$li("Hvilke utvalgs/filtreringsmuligheter skal vi ha i de ulike fanene"), 
                        tags$li("Navn på faner"), 
                        tags$li("nynorsk (NB: Vil fort skape mye ekstraarbeid) el. bokmål?"),
@@ -59,7 +60,8 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                )
       ), #tab
       
-      tabPanel("Registreringsoversikter",
+#-----Registreringsoversikter------------
+            tabPanel("Registreringsoversikter",
                sidebarPanel(width=3,
                             conditionalPanel(condition = "input.ark == 'Nøkkeltall' || input.ark == 'Ant. opphold'
                                              || input.ark == 'Pasientar per år og avd.' ",
@@ -146,7 +148,15 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                                  max = 110, value = c(0, 110)
                      ),
                      selectInput(inputId = 'enhetsUtvalg', label='Egen enhet og/eller landet',
-                                 choices = c("Egen mot resten av landet"=1, "Hele landet"=0, "Egen enhet"=2)
+                                 choices = c("Egen mot resten av landet"=1, 
+                                             "Hele landet"=0, 
+                                             "Egen enhet"=2,
+                                             "Egen enhet mot egen sykehustype" = 3,
+                                             "Egen sykehustype" = 4,
+                                             "Egen sykehustype mot resten av landet" = 5,
+                                             "Egen enhet mot egen region" = 6, 
+                                             "Egen region" = 7,
+                                             "Egen region mot resten" = 8)
                      )
                      #sliderInput(inputId="aar", label = "Årstall", min = 2012,  #min(RegData$Aar),
                      #           max = as.numeric(format(Sys.Date(), '%Y')), value = )
@@ -159,6 +169,7 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                                     plotOutput('fordelinger')),
                            tabPanel(
                                  'Tabell',
+                                 uiOutput("tittelFord"),
                                  tableOutput('fordelingTab'))
                      )
                )
@@ -441,56 +452,40 @@ server <- function(input, output, session) { #
       output$tabDblReg <- renderTable({
             finnDblReg(RegData, reshID=reshID)
       }, spacing="xs") #rownames = T, 
-      
-      
-      
-      # output$tabAvdMnd12 <- renderTable({
-      #       datoFra12 <- as.Date(paste0(as.numeric(substr(input$datoTil,1,4))-1, substr(input$datoTil,5,8), '01'))
-      #       SkjemaData12mnd <- SkjemaData[SkjemaData$InnDato < as.POSIXlt(input$datoTil)
-      #                                     & SkjemaData$InnDato > as.POSIXlt(datoFra12), ]
-      #       if (as.numeric(input$status) %in% 0:1) {SkjemaData12mnd <-
-      #             SkjemaData12mnd[which(SkjemaData12mnd$SkjemaStatus == as.numeric(input$status)), ]
-      #       }
-      #       #Flyttes til overvåkning
-      #       tabAvdSiste12mnd <- addmargins(table(SkjemaData12mnd[SkjemaData12mnd$SkjemaRekkeflg==2, c('Sykehusnavn', 'Mnd')]))
-      #       colnames(tabAvdSiste12mnd) <- substring(colnames(tabAvdSiste12mnd),1,3)
-      #       xtable::xtable(tabAvdSiste12mnd)
-      # },
-      # rownames = TRUE, digits=0 #, align = c('l', rep('r', ncol(tabAvdSiste12mnd)))
-      # )
-      # 
-      
+
       output$fordelinger <- renderPlot({
-            
             NIRFigAndeler(RegData=RegData, preprosess = 0, valgtVar=input$valgtVar,
-                          reshID=reshIDdummy, enhetsUtvalg=as.numeric(input$enhetsUtvalg),
-                          datoFra=input$datovalg[1], datoTil=input$datovalg[2],
-                          minald=as.numeric(input$alder[1]), maxald=as.numeric(input$alder[2]),
-                          erMann=as.numeric(input$erMann))
+                                                      reshID=reshIDdummy, enhetsUtvalg=as.numeric(input$enhetsUtvalg),
+                                                      datoFra=input$datovalg[1], datoTil=input$datovalg[2],
+                                                      minald=as.numeric(input$alder[1]), maxald=as.numeric(input$alder[2]),
+                                                      erMann=as.numeric(input$erMann))
+            
+            
+            
       }, height=800, width=800 #height = function() {session$clientData$output_fordelinger_width}
       )
       
-      
-      output$fordelingTab <- renderTable({
-            #lagFordTabInnhold <- reactive({ 
-            UtDataFord <- NIRFigAndeler(RegData=RegData, preprosess = 1)
+      observe({      
+            UtDataFord <- NIRFigAndeler(RegData=RegData, preprosess = 0, valgtVar=input$valgtVar,
+                                        reshID=reshIDdummy, enhetsUtvalg=as.numeric(input$enhetsUtvalg),
+                                        datoFra=input$datovalg[1], datoTil=input$datovalg[2],
+                                        minald=as.numeric(input$alder[1]), maxald=as.numeric(input$alder[2]),
+                                        erMann=as.numeric(input$erMann))
+            #NIRFigAndeler(RegData=RegData, preprosess = 0, reshID=109773, enhetsUtvalg=1 ) 
             tab <-cbind(UtDataFord$Ngr$Hoved, 
                         UtDataFord$AggVerdier$Hoved, 
                         UtDataFord$Ngr$Rest,
                         UtDataFord$AggVerdier$Rest)
             rownames(tab) <- UtDataFord$grtxt
-            colnames(tab) <- c(paste0(UtDataFord$hovedgrTxt,'\nN'), 
-                               paste0(UtDataFord$hovedgrTxt, '\n Antall'),
-                               if(!is.null(UtDataFord$Ngr$Rest)){UtDataFord$smltxt},
-                               if(!is.null(UtDataFord$Ngr$Rest)){UtDataFord$smltxt})
-            tittel <- UtDataFord$tittel      
-            fordTabInnhold <- list(tittel = UtDataFord$tittel,
-                           fordTab = tab)
-            xtable::xtable(tab, digits=c(0,0,1))
-            #return(UtData)
-      }, rownames = T
-      )
-      
+            colnames(tab) <- c(paste0(UtDataFord$hovedgrTxt,', N'), 
+                               paste0(UtDataFord$hovedgrTxt, ', Andel (%)'),
+                               if(!is.null(UtDataFord$Ngr$Rest)){paste0(UtDataFord$smltxt,', N')},
+                               if(!is.null(UtDataFord$Ngr$Rest)){paste0(UtDataFord$smltxt, ', Andel (%)')})
+            
+            output$tittelFord <- renderUI({h3(UtDataFord$tittel, align='center')})
+            output$fordelingTab <- renderTable({tab
+            }, rownames = T)
+      })
       
       output$andelerGrVar <- renderPlot({
             
