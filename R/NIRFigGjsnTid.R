@@ -139,6 +139,35 @@ t1 <- switch(valgtMaal,
              Gjsn = 'Gjennomsnittlig ')
 tittel <- paste0(t1, NIRVarSpes$tittel) 
 
+
+ResData <- round(rbind(Midt, Konf, MidtRest, KonfRest), 1)
+rownames(ResData) <- c('Sentralmål', 'KI, min', 'KI, maks', 
+                       'Sentralmål, Resten', 'KI min., Resten', 'KI, maks, Resten')[1:(3*(medSml+1))]
+#UtData <- list(paste0(toString(NIRVarSpes$tittel),'.'), ResData )
+#names(UtData) <- c('tittel', 'Data')
+
+FigDataParam <- list(AggVerdier=ResData, 
+                     N=N, 
+                     Ngr=Ngr,	
+                     #KImaal <- KImaal,
+                     #KImaaltxt <- KImaaltxt,
+                     #soyletxt=soyletxt,
+                     grtxt=levels(RegData$TidsEnhet),
+                     #grtxt2=grtxt2, 
+                     #varTxt=varTxt,
+                     #tidtxt=tidtxt, #NIRVarSpes$grtxt,
+                     tittel=NIRVarSpes$tittel, 
+                     #retn='V', 
+                    # xAkseTxt=xAkseTxt,
+                     #yAkseTxt=yAkseTxt,
+                     utvalgTxt=utvalgTxt, 
+                     fargepalett=NIRUtvalg$fargepalett, 
+                     medSml=medSml,
+                     hovedgrTxt=NIRUtvalg$hovedgrTxt,
+                     smltxt=NIRUtvalg$smltxt)
+
+
+
     #-----------Figur---------------------------------------
 if (length(ind$Hoved)<10 | ((medSml == 1) & (length(ind$Rest) < 10))) {
 figtype(outfile)
@@ -207,11 +236,7 @@ mtext(utvalgTxt, side=3, las=1, cex=0.9, adj=0, col=farger[1], line=c(3+0.8*((Nu
 
 if ( outfile != '') {dev.off()}
 
-ResData <- round(rbind(Midt, Konf, MidtRest, KonfRest), 1)
-rownames(ResData) <- c('Midt', 'KIned', 'KIopp', 'MidtRest', 'KIRestned', 'KIRestopp')[1:(3*(medSml+1))]
-UtData <- list(paste0(toString(NIRVarSpes$tittel),'.'), ResData )
-names(UtData) <- c('tittel', 'Data')
-return(invisible(UtData))
+return(invisible(FigDataParam))
 
 }	#end if statement for 0 observations
 }	#end function

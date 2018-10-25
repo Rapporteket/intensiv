@@ -7,6 +7,8 @@
 \alias{tabAntOpphSh5Aar}
 \alias{tabAntOpphPasSh5Aar}
 \alias{finnDblReg}
+\alias{tabNokkeltall}
+\alias{lagTabavFig}
 \title{Funksjoner for å lage tabeller Group of functions page title}
 \usage{
 tabBelegg(RegData, tidsenhet = "Aar", datoTil, enhetsUtvalg = 0,
@@ -20,6 +22,11 @@ tabAntOpphPasSh5Aar(RegData, gr = "opph", datoTil)
 
 finnDblReg(RegData, datoFra = "2017-01-01", datoTil = Sys.Date(),
   reshID = 114240)
+
+tabNokkeltall(RegData, tidsenhet = "Mnd", datoTil, enhetsUtvalg = 0,
+  reshID = 0)
+
+lagTabavFig(UtDataFraFig)
 }
 \arguments{
 \item{RegData}{data}
@@ -63,6 +70,14 @@ Hmmm
 }
 
 \section{Finn eventuelle dobbeltregistreringer}{
+NA
+}
+
+\section{Nøkkeltall (antall opph., pasienter,  intensivdøgn, samt div oversiktstall)}{
+NA
+}
+
+\section{Vise figurdata som tabell}{
 NA
 }
 

@@ -165,7 +165,6 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                      tabsetPanel(
                            tabPanel(
                                  'Figur',
-                                 #h2(print(fordTabInnhold$tittel)),
                                     plotOutput('fordelinger')),
                            tabPanel(
                                  'Tabell',
@@ -238,17 +237,17 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                                  plotOutput("andelerGrVar", height='auto')
                            ),
                            tabPanel("Tabeller",
-                                    fluidRow(
+                                    uiOutput("tittelAndelGrVar"),
+                                    br(),
+                                    #fluidRow(
                                           column(width = 3, 
-                                                 h3("Utvikling over tid"),
-                                                 tableOutput("andelTidTab")),
-                                          column(width = 9, 
                                                  h3("Sykehusvise resultater"),
-                                                 tableOutput("andelerGrVarTab")))
-                                    #tableOutput('andelTidTab'),
-                                    #tableOutput('andelerGrVarTab')
+                                                 tableOutput("andelerGrVarTab"))),
+                                    column(width = 1),
+                                    column(width = 5, 
+                                           h3("Utvikling over tid"),
+                                           tableOutput("andelTidTab")#)
                                     #DT::DTOutput("andelerGrVarTab")
-                                    
                            ))
                ) #mainPanel
                
@@ -296,13 +295,25 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                      h5("Hvilken variabel man ønsker å se resultater for, velges fra rullegardinmenyen
                   til venstre. Man kan også gjøre ulike filtreringer."),
                      br(),
-                     br(),
-                     plotOutput("gjsnTid"),
-                     plotOutput("gjsnGrVar")
+                     tabsetPanel(
+                           tabPanel("Figurer",
+                                    plotOutput("gjsnTid"),
+                                    plotOutput("gjsnGrVar")),
+                           tabPanel("Tabeller",
+                                    uiOutput("tittelGjsn"),
+                                    br(),
+                                    column(width = 3, 
+                                           h3("Sykehusvise resultater"),
+                                           tableOutput("tabGjsnGrVar")),
+                           column(width = 1),
+                           column(width = 5,
+                                  h3("Utvikling over tid"),
+                                  tableOutput("tabGjsnTid"))
+                           ))
                )
-      ),
-      
-      #--------SMR--------------
+),
+
+#--------SMR--------------
       tabPanel('SMR',
                h3('SMR: Standardisert mortalitetsratio'),
                sidebarPanel(
@@ -459,9 +470,6 @@ server <- function(input, output, session) { #
                                                       datoFra=input$datovalg[1], datoTil=input$datovalg[2],
                                                       minald=as.numeric(input$alder[1]), maxald=as.numeric(input$alder[2]),
                                                       erMann=as.numeric(input$erMann))
-            
-            
-            
       }, height=800, width=800 #height = function() {session$clientData$output_fordelinger_width}
       )
       
@@ -472,23 +480,18 @@ server <- function(input, output, session) { #
                                         minald=as.numeric(input$alder[1]), maxald=as.numeric(input$alder[2]),
                                         erMann=as.numeric(input$erMann))
             #NIRFigAndeler(RegData=RegData, preprosess = 0, reshID=109773, enhetsUtvalg=1 ) 
-            tab <-cbind(UtDataFord$Ngr$Hoved, 
-                        UtDataFord$AggVerdier$Hoved, 
-                        UtDataFord$Ngr$Rest,
-                        UtDataFord$AggVerdier$Rest)
-            rownames(tab) <- UtDataFord$grtxt
-            colnames(tab) <- c(paste0(UtDataFord$hovedgrTxt,', N'), 
-                               paste0(UtDataFord$hovedgrTxt, ', Andel (%)'),
-                               if(!is.null(UtDataFord$Ngr$Rest)){paste0(UtDataFord$smltxt,', N')},
-                               if(!is.null(UtDataFord$Ngr$Rest)){paste0(UtDataFord$smltxt, ', Andel (%)')})
-            
-            output$tittelFord <- renderUI({h3(UtDataFord$tittel, align='center')})
-            output$fordelingTab <- renderTable({tab
-            }, rownames = T)
-      })
+            tab <- lagTabavFig(UtDataFraFig = UtDataFord)
+
+            output$tittelFord <- renderUI({
+                  tagList(
+                        h3(UtDataFord$tittel),
+                        h5(HTML(paste0(UtDataFord$utvalgTxt, '<br />')))
+                  )}) #, align='center'
+            output$fordelingTab <- renderTable(
+                  tab, rownames = T)
+            })
       
       output$andelerGrVar <- renderPlot({
-            
             NIRFigAndelerGrVar(RegData=RegData, preprosess = 0, valgtVar=input$valgtVarAndelGrVar,
                                datoFra=input$datovalgAndelGrVar[1], datoTil=input$datovalgAndelGrVar[2],
                                minald=as.numeric(input$alderAndelGrVar[1]), maxald=as.numeric(input$alderAndelGrVar[2]),
@@ -496,31 +499,59 @@ server <- function(input, output, session) { #
       }, height = 800, width=700 #height = function() {session$clientData$output_andelerGrVarFig_width} #})
       )
       
-      output$andelTid <- renderPlot({
+            output$andelTid <- renderPlot({
+                  
+                  NIRFigAndelTid(RegData=RegData, preprosess = 0, valgtVar=input$valgtVarAndelGrVar,
+                                 reshID=reshIDdummy,
+                                 datoFra=input$datovalgAndelGrVar[1], datoTil=input$datovalgAndelGrVar[2],
+                                 minald=as.numeric(input$alderAndelGrVar[1]), maxald=as.numeric(input$alderAndelGrVar[2]),
+                                 erMann=as.numeric(input$erMannAndelGrVar),
+                                 tidsenhet = input$tidsenhetAndelTid,
+                                 enhetsUtvalg = input$enhetsUtvalgAndelTid)
+            }, height = 300, width = 1000
+            )
             
-            NIRFigAndelTid(RegData=RegData, preprosess = 0, valgtVar=input$valgtVarAndelGrVar,
-                           reshID=reshIDdummy,
-                           datoFra=input$datovalgAndelGrVar[1], datoTil=input$datovalgAndelGrVar[2],
-                           minald=as.numeric(input$alderAndelGrVar[1]), maxald=as.numeric(input$alderAndelGrVar[2]),
-                           erMann=as.numeric(input$erMannAndelGrVar),
-                           tidsenhet = input$tidsenhetAndelTid,
-                           enhetsUtvalg = input$enhetsUtvalgAndelTid)
-      }, height = 300, width = 1000
-      )
-      output$andelTidTab <- renderTable({ #renderDT({
-            AndelerTid <- NIRFigAndelTid(RegData=RegData, preprosess = 0, valgtVar=input$valgtVarAndelGrVar,
-                                         reshID=reshIDdummy, tidsenhet = 'Mnd',
-                                         datoFra=input$datovalgAndelGrVar[1], datoTil=input$datovalgAndelGrVar[2],
-                                         minald=as.numeric(input$alderAndelGrVar[1]), maxald=as.numeric(input$alderAndelGrVar[2]),
-                                         lagFig=0)
-            tabAndelTid <- cbind(Tidspunkt = names(AndelerTid$AggVerdier$Hoved),
-                                 Andeler = sprintf('%.1f', AndelerTid$AggVerdier$Hoved,1))
-            #as.table(tabAndelerShus)
-            #xtable(tabAndelerShus, digits = c(0,0,1))
-      }, spacing="xs" #,height='60%' #width='60%', 
-      )
-      
-      output$gjsnGrVar <- renderPlot({
+            observe({
+                  #AndelTid
+                  AndelerTid <- NIRFigAndelTid(RegData=RegData, preprosess = 0, valgtVar=input$valgtVarAndelGrVar,
+                                               reshID=reshIDdummy,
+                                               datoFra=input$datovalgAndelGrVar[1], datoTil=input$datovalgAndelGrVar[2],
+                                               minald=as.numeric(input$alderAndelGrVar[1]), maxald=as.numeric(input$alderAndelGrVar[2]),
+                                               erMann=as.numeric(input$erMannAndelGrVar),
+                                               tidsenhet = input$tidsenhetAndelTid,
+                                               enhetsUtvalg = input$enhetsUtvalgAndelTid, 
+                                               lagFig=0)
+                  tabAndelTid <- lagTabavFig(UtDataFraFig = AndelerTid)
+                  #tabAndelTid <- cbind(Tidspunkt = names(AndelerTid$AggVerdier$Hoved),
+                   #                    Andeler = sprintf('%.1f', AndelerTid$AggVerdier$Hoved,1))
+                  
+                  output$andelTidTab <- renderTable(
+                        tabAndelTid, 
+                        rownames = T,
+                        spacing="xs") #,height='60%' #width='60%')
+                  #output$tittelAndelTid <- renderUI({h3(AndelerTid$tittel)}) #, align='center'
+                  
+                  #AndelGrVar
+                  AndelerShus <- NIRFigAndelerGrVar(RegData=RegData, preprosess = 0, valgtVar=input$valgtVarAndelGrVar,
+                                                    datoFra=input$datovalgAndelGrVar[1], datoTil=input$datovalgAndelGrVar[2],
+                                                    minald=as.numeric(input$alderAndelGrVar[1]), maxald=as.numeric(input$alderAndelGrVar[2]),
+                                                    erMann=as.numeric(input$erMannAndelGrVar, lagFig = 0))
+                  tabAndelerShus <- cbind(Antall=AndelerShus$Ngr$Hoved,
+                                          Andeler = sprintf('%.1f', AndelerShus$AggVerdier$Hoved,1))
+                  
+                  output$andelerGrVarTab <- renderTable({ 
+                        tabAndelerShus}, rownames=T, spacing="xs" #,height='60%' #width='60%', 
+                  )
+                  output$tittelAndelGrVar <- renderUI({
+                              tagList(
+                                    h3(AndelerShus$tittel),
+                                    h5(HTML(paste0(AndelerShus$utvalgTxt, '<br />')))
+                              )}) #, align='center'
+            }) #observe
+            
+             
+            
+       output$gjsnGrVar <- renderPlot({
             NIRFigGjsnGrVar(RegData=RegData, preprosess = 0, valgtVar=input$valgtVarGjsn,
                             datoFra=input$datovalgGjsn[1], datoTil=input$datovalgGjsn[2],
                             minald=as.numeric(input$alderGjsn[1]), maxald=as.numeric(input$alderGjsn[2]),
@@ -541,22 +572,42 @@ server <- function(input, output, session) { #
       }, height=400, width = 1200
       )
       
-      output$andelerGrVarTab <- renderTable({ #renderDT({
-            AndelerShus <- NIRFigAndelerGrVar(RegData=RegData, preprosess = 0, valgtVar=input$valgtVarAndelGrVar,
-                                              datoFra=input$datovalgAndelGrVar[1], datoTil=input$datovalgAndelGrVar[2],
-                                              minald=as.numeric(input$alderAndelGrVar[1]), maxald=as.numeric(input$alderAndelGrVar[2]),
-                                              lagFig = 0)
-            tabAndelerShus <- cbind(Antall=AndelerShus$Ngr$Hoved,
-                                    Andeler = sprintf('%.1f', AndelerShus$AggVerdier$Hoved,1))
-      }, rownames=T, spacing="xs" #,height='60%' #width='60%', 
-      )
+      observe({
+            dataUtGjsnGrVar <- NIRFigGjsnGrVar(RegData=RegData, preprosess = 0, valgtVar=input$valgtVarGjsn,
+                                               datoFra=input$datovalgGjsn[1], datoTil=input$datovalgGjsn[2],
+                                               minald=as.numeric(input$alderGjsn[1]), maxald=as.numeric(input$alderGjsn[2]),
+                                               erMann=as.numeric(input$erMannGjsn),
+                                               valgtMaal = input$sentralmaal, lagFig = 0)
+            output$tabGjsnGrVar <- renderTable({
+                  tabGjsnGrVar <- cbind(Antall = dataUtGjsnGrVar$Ngr$Hoved,
+                                        Sentralmål = sprintf('%.1f', dataUtGjsnGrVar$AggVerdier$Hoved,1))
+            }, rownames = T, spacing = 'xs')
+            output$tittelGjsn <- renderUI(
+                  tagList(
+                        h3(dataUtGjsnGrVar$tittel),
+                        br(),
+                        h5(HTML(paste0(dataUtGjsnGrVar$utvalgTxt, '<br />')))
+                  ))
+            dataUtGjsnTid <- NIRFigGjsnTid(RegData=RegData, preprosess = 0, valgtVar=input$valgtVarGjsn,
+                                           reshID=reshIDdummy,
+                                           datoFra=input$datovalgGjsn[1], datoTil=input$datovalgGjsn[2],
+                                           minald=as.numeric(input$alderGjsn[1]), maxald=as.numeric(input$alderGjsn[2]),
+                                           erMann=as.numeric(input$erMannGjsn), 
+                                           valgtMaal = input$sentralmaal,
+                                           tidsenhet = input$tidsenhetGjsn,
+                                           enhetsUtvalg = input$enhetsUtvalgGjsn) #, lagFig=0)
+            output$tabGjsnTid <- renderTable({
+                  t(dataUtGjsnTid$AggVerdier)
+            }, rownames = T, spacing = 'xs')
+      }) #observe
+      
       
       output$SMR <- renderPlot({
             NIRFigGjsnGrVar(RegData=RegData, preprosess = 0, valgtVar='SMR',
                             datoFra=input$datovalgSMR[1], datoTil=input$datovalgSMR[2],
                             minald=as.numeric(input$alderSMR[1]), maxald=as.numeric(input$alderSMR[2]),
                             erMann=as.numeric(input$erMannSMR))
-      }, height = function() {2*session$clientData$output_SMR_height}, #heigth = 800, width=700
+      }, height = function() {2.2*session$clientData$output_SMR_height}, #heigth = 800, width=700
       width = function() {0.8*session$clientData$output_SMR_width}
       )
       
@@ -565,8 +616,8 @@ server <- function(input, output, session) { #
                            datoFra=input$datovalgInnMaate[1], datoTil=input$datovalgInnMaate[2],
                            minald=as.numeric(input$alderInnMaate[1]), maxald=as.numeric(input$alderInnMaate[2]),
                            erMann=as.numeric(input$erMannInnMaate))
-      }, height = function() {2*session$clientData$output_innMaate_height},
-      width = function() {0.8*session$clientData$output_innMaate_width}) #, height=900, width=700)
+      }, height = function() {2.2*session$clientData$output_innMaate_height},
+      width = function() {0.7*session$clientData$output_innMaate_width}) #, height=900, width=700)
 }
 
 

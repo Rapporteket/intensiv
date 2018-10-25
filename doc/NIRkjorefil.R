@@ -261,10 +261,10 @@ valgtVar <- 'respiratortidInvMoverf'	#'alder', 'liggetid', 'respiratortid', 'SAP
                         #Nye: respiratortidInvMoverf, respiratortidInvUoverf, respiratortidNonInv
 outfile <- '' #paste0(valgtVar, 'GjsnTid.pdf')
 
-NIRFigGjsnTid(RegData=RegData, outfile=outfile, valgtVar=valgtVar, datoFra=datoFra, datoTil=datoTil, 
+utdata <- NIRFigGjsnTid(RegData=RegData, outfile=outfile, valgtVar=valgtVar, datoFra=datoFra, datoTil=datoTil, 
               tidsenhet=tidsenhet,
                     erMann=erMann,minald=minald, maxald=maxald, InnMaate=InnMaate, dodInt=dodInt,
-		              valgtMaal=valgtMaal,tittel=1, enhetsUtvalg=enhetsUtvalg, reshID=reshID)
+		              valgtMaal=valgtMaal,tittel=1, enhetsUtvalg=8, reshID=reshID)
 
 #NIRFigGjsnTid(RegData=RegData, outfile=outfile, valgtVar=valgtVar, datoFra=datoFra, datoTil=datoTil, 
 #                    erMann=erMann,minald=minald, maxald=maxald, InnMaate=InnMaate, dodInt=dodInt,
@@ -287,7 +287,7 @@ valgtVar <- 'SMR'	#'SMR', alder, liggetid, respiratortid,  SAPSII, 'NEMS', 'Nas2
                         #Nye: respiratortidInvMoverf, respiratortidInvUoverf, respiratortidNonInv
 grType <- 1
 outfile <- '' #paste0(valgtVar, '_test.pdf')#,grType
-NIRFigGjsnGrVar(RegData=RegData, medKI = 1 ,valgtVar=valgtVar, valgtMaal=valgtMaal, minald=minald, maxald=maxald, 
+data <- NIRFigGjsnGrVar(RegData=RegData, medKI = 1 ,valgtVar=valgtVar, valgtMaal=valgtMaal, minald=minald, maxald=maxald, 
              grType=grType, grVar=grVar, InnMaate=InnMaate, datoFra=datoFra, datoTil=datoTil, dodInt=dodInt, 
              erMann=erMann, outfile=outfile) 
  # NIRGjsnGrVar(RegData=RegData, valgtVar=valgtVar, valgtMaal=valgtMaal, minald=minald, maxald=maxald, 
@@ -323,7 +323,7 @@ NIRFigAndelerGrVar(RegData=RegData, valgtVar='reinn', datoFra='2016-01-01', medK
 #------------------Tabeller-----------------------------------
 
 RegData <- NIRPreprosess(RegData)
-tabBelegg(RegData=RegData, personIDvar='PasientID' , tidsenhet='Mnd')
+tabBelegg(RegData=RegData, personIDvar='PasientID', datoTil = datoTil, tidsenhet='Mnd')
 
 finnDblReg(RegData, reshID=114240)
 

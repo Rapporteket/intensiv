@@ -155,7 +155,6 @@ finnDblReg <- function(RegData, datoFra='2017-01-01', datoTil=Sys.Date(), reshID
 
 #' @section Nøkkeltall (antall opph., pasienter,  intensivdøgn, samt div oversiktstall)
 #' @rdname NIRtabeller
-#' Siste inntil 5 år eller siste inntil 12 måneder/kvartal/halvår
 #' @export
 tabNokkeltall <- function(RegData, tidsenhet='Mnd', datoTil, enhetsUtvalg=0, reshID=0) {
       datoFra <- switch(tidsenhet, 
@@ -203,4 +202,20 @@ tabNokkeltall <- function(RegData, tidsenhet='Mnd', datoTil, enhetsUtvalg=0, res
       
       return(tabNokkeltall)
 }
-      
+
+#' @section Vise figurdata som tabell
+#' @rdname NIRtabeller
+#' @export
+lagTabavFig <- function(UtDataFraFig){
+      tab <-cbind(UtDataFraFig$Ngr$Hoved, 
+            UtDataFraFig$AggVerdier$Hoved, 
+            UtDataFraFig$Ngr$Rest,
+            UtDataFraFig$AggVerdier$Rest)
+rownames(tab) <- UtDataFraFig$grtxt
+colnames(tab) <- c(paste0(UtDataFraFig$hovedgrTxt,', N'), 
+                   paste0(UtDataFraFig$hovedgrTxt, ', Andel (%)'),
+                   if(!is.null(UtDataFraFig$Ngr$Rest)){paste0(UtDataFraFig$smltxt,', N')},
+                   if(!is.null(UtDataFraFig$Ngr$Rest)){paste0(UtDataFraFig$smltxt, ', Andel (%)')})
+
+return(tab)
+                   }
