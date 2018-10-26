@@ -158,7 +158,7 @@ finnDblReg <- function(RegData, datoFra='2017-01-01', datoTil=Sys.Date(), reshID
 #' @export
 tabNokkeltall <- function(RegData, tidsenhet='Mnd', datoTil, enhetsUtvalg=0, reshID=0) {
       datoFra <- switch(tidsenhet, 
-                        Mnd = floor_date(as.Date(datoTil)%m-% months(12, abbreviate = T), 'month'), #as.Date(paste0(as.numeric(substr(datoTil,1,4))-1, substr(datoTil,5,8), '01'), tz='UTC')
+                        Mnd = lubridate::floor_date(as.Date(datoTil)%m-% months(12, abbreviate = T), 'month'), #as.Date(paste0(as.numeric(substr(datoTil,1,4))-1, substr(datoTil,5,8), '01'), tz='UTC')
                         Aar = paste0(year(as.Date(datoTil))-4, '-01-01')
       )
       RegData <- NIRUtvalgEnh(RegData=RegData, datoFra=datoFra, datoTil = datoTil, 
@@ -195,6 +195,7 @@ tabNokkeltall <- function(RegData, tidsenhet='Mnd', datoTil, enhetsUtvalg=0, res
             'Utskrevet 17-08 (%)' = tapply(RegData$Ut1708, RegData$TidsEnhet, 
                                            FUN=function(x) sum(x, na.rm=T)/length(x)*100)
       )
+      
       #tabNokkeltall[,4:11] <- round(tabNokkeltall[,4:11],1)
       #dplyr::mutate_at(as.table(tabNokkeltall), vars(), funs(round(., 1)))
       #antTidsenh <- ifelse(tidsenhet=='Aar', 4, 11)

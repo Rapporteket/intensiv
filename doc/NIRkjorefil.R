@@ -61,9 +61,9 @@ load(paste0(fil,".Rdata")) #RegData 2018-06-18
 #       as.POSIXlt(RegData$DateAdmittedIntensive, format="%Y-%m-%d")>= '2015-01-01'), ]
 #RegData <- RegData[sample(1:dim(RegData)[1],10000),]
 #save(RegData, file=paste0(dataKat,'NIRdata10000.Rdata')) 
+library(intensiv)
 load(paste0("A:/Intensiv/NIRdata10000.Rdata")) #RegDataTEST, 2018-06-05
 RegData <- NIRPreprosess(RegData)
-library(intensiv)
 
 # LagSyntetiskeData
 # library(synthpop)
@@ -356,3 +356,13 @@ table(RegData$PatientTransferredFromHospital)[
       which(names(table(RegData$PatientTransferredFromHospital)) %in% From[-which(From %in% c(0,Resh))])]
 table(RegData$PatientTransferredToHospital)[
       which(names(table(RegData$PatientTransferredToHospital)) %in% To[-which(To %in% c(0,Resh))])]
+
+
+
+
+
+
+
+
+
+

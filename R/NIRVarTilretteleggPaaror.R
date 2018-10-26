@@ -6,20 +6,9 @@
 #' andre variable. Det er også her man angir aksetekster og titler for den valgte variabelen. 
 #' Her kan mye hentes til analysebok
 #'
-#' Argumentet \emph{enhetsUtvalg} har følgende valgmuligheter:
-#'    \itemize{
-#'     \item 0: Hele landet
-#'     \item 1: Egen enhet mot resten av landet (Standard)
-#'     \item 2: Egen enhet
-#'     \item 3: Egen enhet mot egen sykehustype
-#'     \item 4: Egen sykehustype
-#'     \item 5: Egen sykehustype mot resten av landet
-#'     \item 6: Egen enhet mot egen region [NB: Intensivregiisteret mangler pt. variabel for region]
-#'     \item 7: Egen region [NB: Mangler pt. variabel for region]
-#'	   \item 8: Egen region mot resten [NB: Mangler pt. variabel for region]
-#'    	}							
 #'    				
 #' @inheritParams NIRFigAndeler
+#' @inheritParams NIRUtvalgEnh
 #' @param figurtype Hvilken figurtype det skal tilrettelegges variable for: 
 #'                'andeler', 'andelGrVar', 'andelTid', 'gjsnGrVar', 'gjsnTid'
 #'				
@@ -29,11 +18,7 @@
 #'
 
 NIRVarTilretteleggPaaror  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='andeler'){
-      #, datoFra='2011-01-01', datoTil='3000-12-31', 
-      #		minald=0, maxald=110, erMann='',InnMaate='', dodInt='',outfile='', 
-      #		preprosess=1, hentData=0, reshID, enhetsUtvalg=1)	
-      
-      
+
       "%i%" <- intersect
       
       #----------- Figurparametre ------------------------------
@@ -74,7 +59,15 @@ NIRVarTilretteleggPaaror  <- function(RegData, valgtVar, grVar='ShNavn', figurty
       
       tittel <- '' #I AndelerGrVar og GjsnGrVar genereres tittel i beregningsfunksjonen
       
+      KodebokPaarorende <- read.table(file='C:/ResultattjenesteGIT/intensiv/doc/KodebokPaarorende.csv', 
+                                      header=T, sep=';',encoding = 'UTF-8', stringsAsFactors = F)
+      VarNavnKodebok <- KodebokPaarorende$Variabelnavn[which(KodebokPaarorende$Variabelnavn != "")]
       
+      #indKodebok <- which(KodebokPaarorende$Variabelnavn == 'PasientGUID'):(
+      #      which(KodebokPaarorende$Variabelnavn == VarNavnKodebok[which(VarNavnKodebok=='PasientGUID')+1])-1)
+      
+      
+      #Eksempel
       if (valgtVar=='alder') {	#Fordeling, GjsnGrVar, GjsnTid
             RegData <- RegData[which(RegData$Alder>=0), ]    #Tar bort alder<0
             RegData$Variabel <- RegData$Alder  	#GjsnTid, GjsnGrVar
@@ -91,7 +84,12 @@ NIRVarTilretteleggPaaror  <- function(RegData, valgtVar, grVar='ShNavn', figurty
             tittel <- c('Totalskår m.h.t. omsorg')
       } 
       
-      if (valgtVar == 'BehandlingHoeflighetRespektMedfoelelseSkaar') {  #gjsnGrVar
+      if (valgtVar == 'BehandlingHoeflighetRespektMedfoelelse') {  #gjsnGrVar
+            indKodebok <- which(KodebokPaarorende$Variabelnavn == valgtVar):(
+                  which(KodebokPaarorende$Variabelnavn == VarNavnKodebok[which(VarNavnKodebok==valgtVar)+1])-1)
+        grtxtDum <- KodebokPaarorende$Mulige.verdier[indKodebok]
+        #Plukk ut gyldige verdier før ' = '
+        #Plukk ut tekstetikett etter ' = '
         RegData$Variabel  <- RegData$BehandlingHoeflighetRespektMedfoelelseSkaar
         tittel <- c('Hvor godt ble pasienten ivaretatt', 
                     'med hensyn til høflighet, respekt og medfølelse?')

@@ -1,5 +1,52 @@
-NIRFigPrePostPaaror  <- function(RegData, valgtVar, outfile='')	
-{
+#' Søylediagram med fordeling før og ved intervensjon
+#'
+#' Funksjon som genererer en fordelingsfigur for to tidsperioder som skal sammenlignes
+#'
+#' Detajer: Her bør man liste opp hvilke variable funksjonen benytter...
+#'
+#' @inheritParams NIRFigAndeler
+#' @inheritParams NIRFigAndelerGrVar
+#' @param valgtMaal 'Med' = median. Alt annet gir gjennomsnitt 
+#'
+#' Argumentet \emph{valgtVar} har følgende valgmuligheter:
+#'    \itemize{
+#'     \item alder: Pasientens alders 
+#'     \item SAPSII: Skår for alvorlighetsgrad av sykdom.  (Simplified Acute Physiology Score II)
+#'    }
+#'
+#' Detajer: Her bør man liste opp hvilke variable funksjonen benytter.
+#'
+#' @return Søylediagram med fordeling før og ved intervensjon
+#'
+#' @export
+
+NIRFigPrePostPaaror  <- function(RegData, valgtVar, outfile=''){
+
+      if (hentData == 1) {		
+            RegData <- NIRRegDataSQL(datoFra, datoTil) #minald=0, maxald=110, erMann='',InnMaate='', dodInt=''
+      }
+      
+      # Hvis RegData ikke har blitt preprosessert. (I samledokument gjøres dette i samledokumentet)
+      if (preprosess){
+            RegData <- NIRPreprosess(RegData=RegData)	#, reshID=reshID)
+      }
+      
+      
+      #     "%i%" <- intersect
+      #--------------- Definere variable ------------------------------
+      
+      NIRVarSpes <- NIRVarTilrettelegg(RegData=RegData, valgtVar=valgtVar, figurtype='andeler')
+      RegData <- NIRVarSpes$RegData
+      flerevar <- NIRVarSpes$flerevar
+      
+      
+      NIRUtvalg <- NIRUtvalgEnh(RegData=RegData, datoFra=datoFra, datoTil=datoTil, aar=aar, 
+                                minald=minald, maxald=maxald, 
+                                erMann=erMann, InnMaate=InnMaate, dodInt=dodInt, 
+                                reshID=reshID, grType=grType, enhetsUtvalg=enhetsUtvalg) #overfPas = overfPas,
+      RegData <- NIRUtvalg$RegData
+      utvalgTxt <- NIRUtvalg$utvalgTxt
+      
       
       #--------HENT grtxt FRA KODEBOK   NIRkodebokPaarorSkjema.csv ? 
       #Kjører nå Manuelt. Kjør løkke og spy ut resultater

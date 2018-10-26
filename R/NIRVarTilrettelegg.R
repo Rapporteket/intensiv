@@ -6,19 +6,6 @@
 #' andre variable. Det er også her man angir aksetekster og titler for den valgte variabelen. 
 #' Her kan mye hentes til analysebok
 #'
-#' Argumentet \emph{enhetsUtvalg} har følgende valgmuligheter:
-#'    \itemize{
-#'     \item 0: Hele landet
-#'     \item 1: Egen enhet mot resten av landet (Standard)
-#'     \item 2: Egen enhet
-#'     \item 3: Egen enhet mot egen sykehustype
-#'     \item 4: Egen sykehustype
-#'     \item 5: Egen sykehustype mot resten av landet
-#'     \item 6: Egen enhet mot egen region [NB: Intensivregiisteret mangler pt. variabel for region]
-#'     \item 7: Egen region [NB: Mangler pt. variabel for region]
-#'	   \item 8: Egen region mot resten [NB: Mangler pt. variabel for region]
-#'    	}							
-#'    				
 #' @inheritParams NIRFigAndeler
 #' @param figurtype Hvilken figurtype det skal tilrettelegges variable for: 
 #'                'andeler', 'andelGrVar', 'andelTid', 'gjsnGrVar', 'gjsnTid'
@@ -461,7 +448,7 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='an
             #head(RegData$Innleggelsestidspunkt[ind])
             RegData$Variabel[ind] <- 1
             varTxt <- 'utskrevet kl 17-08'
-            tittel <- 'Pasienter utskrevet utenfor vakttid (<8, >=17)'
+            tittel <- 'Pasienter utskrevet utenfor vakttid (<8, >=17)' #NB: Skal være <8 og >17
             sortAvtagende <- FALSE
       }
       # 1.	Andel donorar av alle daude på intensiv (per eining – samanlikna mot same ShType)

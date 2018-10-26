@@ -367,6 +367,7 @@ server <- function(input, output, session) { #
       library(intensiv)
       library(lubridate)
       library(zoo)
+      library(kableExtra)
       
       context <- Sys.getenv("R_RAP_INSTANCE") #Blir tom hvis jobber lokalt
       if (context == "TEST" | context == "QA" | context == "PRODUCTION") {
@@ -382,6 +383,7 @@ server <- function(input, output, session) { #
             #  data('NIRRegDataSyn', package = 'intensiv')
             #try(data(package = "intensiv"))
       }
+      options(knitr.table.format = "html")
       datoTil <- as.POSIXlt(Sys.Date())
       AarNaa <- as.numeric(format(Sys.Date(), "%Y"))
       aarFra <- paste0(1900+as.POSIXlt(Sys.Date())$year-5, '-01-01')
@@ -431,15 +433,21 @@ server <- function(input, output, session) { #
       
       
       #------------Tabeller --------
-      output$tabNokkeltall <- renderTable({
+      output$tabNokkeltall <- function() {#renderTable({
             # print(paste('Enhetsnivå: ', as.numeric(input$enhetsNivaa)))
             # print(paste('sluttdato: ', input$sluttDatoReg))
             # print(paste('tidsenhet: ', input$tidsenhetReg))
             # print(paste('RegData: ', dim(RegData)))
             # print(paste('resh: ', reshID))
-            tabNokkeltall(RegData=RegData, tidsenhet=input$tidsenhetReg, datoTil=input$sluttDatoReg, 
-                      enhetsUtvalg=as.numeric(input$enhetsNivaa), reshID=reshID)  
-      },rownames=T, digits=0 )
+            tab <- tabNokkeltall(RegData=RegData, tidsenhet=input$tidsenhetReg, datoTil=input$sluttDatoReg, 
+                      enhetsUtvalg=as.numeric(input$enhetsNivaa), reshID=reshID)
+            tab <- tabNokkeltall(RegData, tidsenhet='Mnd', datoTil, enhetsUtvalg=0, reshID=0)
+            kableExtra::kable(t(tab), 
+                              full_width=F, 
+                              digits = c(0,0,0,1,1,1,0,0,1,2,1)
+                              #,add_header_above = c(" ", "Din avdeling" = 3, "Landet forøvrig" = 3)
+                              )
+      }#,rownames=T, digits=0 )
       
       output$tabAntOpphShMnd12 <- renderTable({
             switch(input$tidsenhetReg,

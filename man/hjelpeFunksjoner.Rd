@@ -5,6 +5,7 @@
 \alias{FinnReinnleggelser}
 \alias{SorterOgNavngiTidsEnhet}
 \alias{lageTulleData}
+\alias{leggTilIntervensjon}
 \title{Hjelpefunksjoner. Group of functions page title}
 \usage{
 FinnReinnleggelser(RegData, PasientID = "PasientID")
@@ -12,6 +13,9 @@ FinnReinnleggelser(RegData, PasientID = "PasientID")
 SorterOgNavngiTidsEnhet(RegData, tidsenhet = "Aar")
 
 lageTulleData(RegData, varBort = "ShNavn", antSh = 27)
+
+leggTilIntervensjon(RegData, startDatoIntervensjon = "2016-10-01",
+  sluttDatoIntervensjon = Sys.Date())
 }
 \arguments{
 \item{RegData}{data}
@@ -39,5 +43,9 @@ SorterOgNavngiTidsEnhet Legger til tidsenhetene Aar, Halvaar, Mnd og Kvartal
 
 Probably better if all sections come first, uless have one section per function. Makes it easier to
 see the information flow.
+}
+
+\section{Legge til indikator for intervensjon, pårørendeoppfølging}{
+NA
 }
 
