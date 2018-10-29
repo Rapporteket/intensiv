@@ -333,8 +333,6 @@ NIRFigAndeler  <- function(RegData=0, valgtVar='alder', datoFra='2011-01-01', da
             title(tittel, line=1.5) #cex.main=1.3)
             
             #Tekst som angir hvilket utvalg som er gjort
-            avst <- 0.8
-            utvpos <- 3	#Startlinje for teksten
             mtext(utvalgTxt, side=3, las=1, cex=0.9, adj=0, col=farger[1], line=c(3+0.8*((NutvTxt-1):0)))
             
             par('fig'=c(0, 1, 0, 1)) 

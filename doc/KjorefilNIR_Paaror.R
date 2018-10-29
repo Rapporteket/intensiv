@@ -7,23 +7,20 @@
 
 library(intensiv)
 rm(list=ls())
-# TestData <- read.table(file='A:/Intensiv/SpSkjemaTestData2018-04-16TestAvTotSkaar.csv', header=T, sep=';',encoding = 'UTF-8')
-#HovedSkjema <- read.table(file='A:/Intensiv/MainFormDataContract2018-10-02.csv', header=T, sep=';',encoding = 'UTF-8')
-load(paste0("A:/Intensiv/NIRdata10000.Rdata")) #RegDataTEST, 2018-06-05
-HovedSkjema <- RegData
-PaarorData <- read.table(file='A:/Intensiv/QuestionaryFormDataContract2018-10-02.csv', header=T, sep=';',encoding = 'UTF-8')
-#load('A:/Intensiv/MainFormDataContract2017-09-18.Rdata') #read.table(file='C:/Registre/NIR/data/Main2017-03-20.csv', header=T, sep=';',encoding = 'UTF-8')
-#PaarorData$PreskjemaGUID <- toupper(PaarorData$HovedskjemaGUID)
+load("A:/Intensiv/NIRdataPaaror.RData") #RegDataTEST, 2018-06-05
+# HovedSkjema <- read.table(file='A:/Intensiv/MainFormDataContract2018-10-02.csv', header=T, sep=';',encoding = 'UTF-8')
+#  HovedSkjema <- RegData
+#  PaarorData <- read.table(file='A:/Intensiv/QuestionaryFormDataContract2018-10-02.csv', header=T, sep=';',encoding = 'UTF-8')
+# PaarorData$PreskjemaGUID <- toupper(PaarorData$HovedskjemaGUID)
 
-hovedVar <- c('SkjemaGUID','DateAdmittedIntensive', 'DaysAdmittedIntensiv','Respirator','TransferredStatus', 
-              'Saps2Score','Saps2ScoreNumber', 'TypeOfAdmission', 'Nems', 'Morsdato', 
-              'PatientTransferredFromHospital', 'PatientTransferredToHospital', 'ShNavn', 'ShType',
-              'DateDischargedIntensive')
-varUT <- which(names(PaarorData) %in% c('Forslag', 'Kommentar', 'Personalet'))
-RegData <- merge(PaarorData[ ,-varUT], HovedSkjema[ ,hovedVar], 
-                 by.x='HovedskjemaGUID', by.y='SkjemaGUID', all.x = TRUE, all.y = FALSE)
-#write.table(RegData, file = 'PaarorData.csv', row.names=FALSE, sep = ';', fileEncoding = "UTF-8")
-RegData <- NIRPreprosess(RegData)
+# hovedVar <- c('SkjemaGUID','DateAdmittedIntensive', 'DaysAdmittedIntensiv','Respirator','TransferredStatus', 
+#               'Saps2Score','Saps2ScoreNumber', 'TypeOfAdmission', 'Nems', 'Morsdato', 
+#               'PatientTransferredFromHospital', 'PatientTransferredToHospital', 'ShNavn', 'ShType',
+#               'DateDischargedIntensive')
+# varUT <- which(names(PaarorData) %in% c('Forslag', 'Kommentar', 'Personalet'))
+# RegData <- merge(PaarorData[ ,-varUT], HovedSkjema[ ,hovedVar], 
+#                  by.x='HovedskjemaGUID', by.y='SkjemaGUID', all.x = TRUE, all.y = FALSE)
+#RegData <- NIRPreprosess(RegData)
 
 #Definerer variabel hvor 1 - før intervensjon, 2-etter intervensjon (innleggelse f.o.m. 1.okt. 2016)
 #Fyrste måleperiode var pasientar innlagde 01.10.15-31.12.15 og andre 01.10.16-31.12.16.  
@@ -41,25 +38,11 @@ RegData <- NIRPreprosess(RegData)
 
 #--------------------------- Figurtilrettelegging og figur--------------------------------------
 
-#--------------start her____________
-#Kodebok
-navn1a <- varnavn_1a$Variabelnavn[which(!is.na(varnavn_1a$Variabelnavn))]
-indekser_kodebok <- which(varnavn_1a$Variabelnavn == 'PhysicalActivity'):(
-      which(varnavn_1a$Variabelnavn == navn1a[which(navn1a=='PhysicalActivity')+1])-1)
-
-KodebokPaarorende <- read.table(file='C:/ResultattjenesteGIT/intensiv/doc/KodebokPaarorende.csv', 
-                                header=T, sep=';',encoding = 'UTF-8', stringsAsFactors = F)
-VarNavn <- KodebokPaarorende$Variabelnavn[which(KodebokPaarorende$Variabelnavn != "")]
-indKodebok <- which(KodebokPaarorende$Variabelnavn == 'PasientGUID'):(
-      which(KodebokPaarorende$Variabelnavn == VarNavn[which(VarNavn=='PasientGUID')+1])-1)
-
-
-
 rm(list=ls())
 #Last inn PaarorDataSkaar, Del1 og Del2
-PaarorData <- read.table(file='A:/Intensiv/PaarorDataSkaar.csv', header=T, sep=';',encoding = 'UTF-8')
+#PaarorData <- read.table(file='A:/Intensiv/PaarorDataSkaar.csv', header=T, sep=';',encoding = 'UTF-8')
 library(intensiv)
-RegData <- NIRPreprosess(RegData=PaarorData)
+load("A:/Intensiv/NIRdataPaaror.RData") #RegDataTEST, 2018-06-05
 
 #--------------Fordeling før og etter, samt tot. gjennomsnitt før og etter----------------------
 #variable <- c('BehandlingHoeflighetRespektMedfoelelseNum', 'BehandlingBesvarerHoeflighetRespektMedfoelelseNum','InformasjonsOverensstemmelseNum', 'LegeInformasjonFrekvensNum')
@@ -90,15 +73,16 @@ Del2 <- c('LegeInformasjonFrekvens',
           'LivsLengde',
           'LivssluttKomfor',
           'LivssluttStoette')
+totSkaarer <-  c('SumScoreSatisfactionCare', 'SumScoreSatisfactionDecision', 'SumScoreAllQuestions')
 
-Del1Skaar <- paste0(Del1,'Skaar')
-Del2Skaar <- paste0(Del2,'Skaar')
-variable <- c(Del1Skaar, Del2Skaar)
-variable <- c(Del1, Del2)
+# Del1Skaar <- paste0(Del1,'Skaar')
+# Del2Skaar <- paste0(Del2,'Skaar')
+# variable <- c(Del1Skaar, Del2Skaar)
+variable <- totSkaarer #c(Del1, Del2, totSkaarer)
 setwd('C:/ResultattjenesteGIT/intensiv/')
 
-valgtVar <- 'BehandlingHoeflighetRespektMedfoelelse'
-NIRFigPrePostPaaror(RegData=RegData, valgtVar=valgtVar, outfile='')
+valgtVar <- 'LivssluttStoette'
+NIRFigPrePostPaaror(RegData=RegData, valgtVar=valgtVar, datoTil='2017-08-01' , outfile='')
 
 for (valgtVar in variable) {
       outfile <- paste0(valgtVar, '.png')
