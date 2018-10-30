@@ -13,7 +13,7 @@ NIRpaarorDataSQL <- function(datoFra = '2011-01-01', datoTil = '2099-01-01') {
       registryName <- "nir"
       dbType <- "mysql"
       
-varHoved <- c("SkjemaGUID
+varHoved <- c("SkjemaGUID 
       ,M.DateAdmittedIntensive 
       ,M.DaysAdmittedIntensiv
       ,M.Respirator
@@ -116,10 +116,10 @@ varPaaror <- 'Q.SkjemaGUID
       , Q.PatientInRegistryGuid'
 
 
-      query <- paste0('SELECT',
+      query <- paste0('SELECT ',
                        varHoved,
                       varPaaror,
-                      'FROM QuestionaryFormDataContract Q
+                      ' FROM QuestionaryFormDataContract Q
 INNER JOIN  MainFormDataContract M
 ON UPPER(Q.HovedskjemaGUID) = UPPER(M.SkjemaGUID) 
 wHERE cast(DateAdmittedIntensive as date) BETWEEN \'', datoFra, '\' AND \'', datoTil, '\'')
