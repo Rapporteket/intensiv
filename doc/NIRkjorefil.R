@@ -144,7 +144,7 @@ minald <- 0 #(standard: 0)
 maxald <- 110	#(standard: 130, må være større enn minald!)
 InnMaate <- '' #0-El, 6-Ak.m, 8-Ak.k, (alle - alt unntatt 0,6,8)
 valgtMaal = 'Gjsn' #'Med' = median. 'Gjsn' = gjennomsnitt. Alt annet gir gjennomsnitt
-datoFra <- '2017-01-01'	# standard: 0	format: YYYY-MM-DD. Kan spesifisere bare første del, eks. YYYY el. YYYY-MM. 
+datoFra <- '2015-01-01'	# standard: 0	format: YYYY-MM-DD. Kan spesifisere bare første del, eks. YYYY el. YYYY-MM. 
 datoTil <- '2018-12-31'	# standard: 3000
 aar <- 0
 dodInt <- 9	# 0-i live, 1 -død, standard: alle (alle andre verdier)
@@ -173,25 +173,16 @@ NIRFigInnMaate (RegData=RegData, valgtVar='InnMaate', minald=0, maxald=130, dato
 
 
 #--------------------------------------- Andeler ----------------------------------
-valgtVar <- 'liggetid'	#'alder', 'liggetid', 'respiratortid',  'SAPSII', 'NEMS24', 'Nas24', 'InnMaate'
+valgtVar <- 'utenforVakttidInn'	#'alder', 'liggetid', 'respiratortid',  'SAPSII', 'NEMS24', 'Nas24', 'InnMaate'
                               #Nye: PrimaryReasonAdmitted, inklKrit, respiratortidNonInv, respiratortidInv
                               #nyreBeh, nyreBehTid, ExtendedHemodynamicMonitoring, isolering, isoleringDogn, 
                               #spesTiltak
                               #Nye, aug-18: CerebralCirculationAbolishedReasonForNo, OrganDonationCompletedReasonForNoStatus
 
-outfile <- paste0(valgtVar,'_Ford', '.png')
-#grType <- 0
-#enhetsUtvalg <- 0
-
-      c('a', NULL)
-                   exists(a)
-      if (!is.null(1)){'hei'}
-      
-tab
-
+outfile <- '' #paste0(valgtVar,'_Ford', '.png')
 NIRFigAndeler(RegData=RegData, valgtVar=valgtVar, minald=minald, maxald=maxald,  datoFra=datoFra, 
                          datoTil=datoTil, InnMaate=InnMaate, dodInt=dodInt,erMann=erMann, outfile=outfile, 
-                         hentData=0, preprosess=1, reshID=reshID, enhetsUtvalg=6, lagFig=1)
+                         hentData=0, preprosess=1, reshID=reshID, enhetsUtvalg=0, lagFig=1)
 
 variable <- c('alder', 'liggetid', 'respiratortid',  'SAPSII', 'NEMS24', 'Nas24', 'InnMaate')
 variable <- c('PrimaryReasonAdmitted', 'inklKrit', 'respiratortidNonInv', 'respiratortidInv', 'nyreBeh',
@@ -205,12 +196,13 @@ for (valgtVar in variable) {
 
 #--------------------------------------- AndelGrVar ----------------------------------
 grVar <- 'ShNavn'
-valgtVar <- 'utskrMl17og08'	#alder_u18', 'alder_over80', 'dod30d', 'dodeIntensiv', 'innMaate', 
+valgtVar <- 'utenforVakttidUt'	#alder_u18', 'alder_over80', 'dod30d', 'dodeIntensiv', 'innMaate', 
                         #respiratortid, 'respStotte', 'reinn
                         #trakeostomi, trakAapen, respiratortidInv, nyreBeh, ExtendedHemodynamicMonitoring,
                         #ExtendedHemodynamicMonitoringPA, isolering
                         #Nye, aug-18: OrganDonationCompletedStatus, OrganDonationCompletedCirc
-outfile <- paste0(valgtVar, '_sh.pdf')
+#Ny, okt-18: utenforVakttidInn, utenforVakttidUt
+outfile <- '' #paste0(valgtVar, '_sh.pdf')
 
 NIRFigAndelerGrVar(RegData=RegData, valgtVar=valgtVar, minald=minald, maxald=maxald,  datoFra=datoFra, 
                 datoTil=datoTil, aar=0, InnMaate=InnMaate, dodInt=dodInt,erMann=erMann, outfile=outfile, 

@@ -6,6 +6,7 @@
 \alias{SorterOgNavngiTidsEnhet}
 \alias{lageTulleData}
 \alias{leggTilIntervensjon}
+\alias{delTekst}
 \title{Hjelpefunksjoner. Group of functions page title}
 \usage{
 FinnReinnleggelser(RegData, PasientID = "PasientID")
@@ -16,11 +17,17 @@ lageTulleData(RegData, varBort = "ShNavn", antSh = 27)
 
 leggTilIntervensjon(RegData, startDatoIntervensjon = "2016-10-01",
   sluttDatoIntervensjon = Sys.Date())
+
+delTekst(x, len)
 }
 \arguments{
 \item{RegData}{data}
 
 \item{PasientID}{Variabelen som angir pasientidentifikasjon}
+
+\item{x}{En tekststreng eller vektor av tekststrenger}
+
+\item{len}{Lengden strengen skal brytes ved}
 }
 \value{
 Div hjelpefunksjoner
@@ -46,6 +53,10 @@ see the information flow.
 }
 
 \section{Legge til indikator for intervensjon, pårørendeoppfølging}{
+NA
+}
+
+\section{Automatisk linjebryting av lange tekstetiketter}{
 NA
 }
 

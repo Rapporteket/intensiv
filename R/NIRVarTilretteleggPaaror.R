@@ -144,72 +144,74 @@ NIRVarTilretteleggPaaror  <- function(RegData, valgtVar, grVar='ShNavn', figurty
       )
 
 
-      if (valgtVar == 'BeslutningsInvolvering') { #Del2[7]
-        #-1:5
-        tittel <-  'Følte du deg involvert i beslutningsprosessen?'	
-        grtxt <- c('veldig utelatt', 'noe utelatt', 'verken eller', 'noe involvert', 
-                   'veldig involvert', '','Ikke svart') #paste0('Jeg følte meg ', )
-      }
-      if (valgtVar == 'BeslutningsStoette') { #Del2[8]
-        #-1:5
-        tittel <-  'Følte du at du fikk støtte når beslutningene ble tatt?'	
-        grtxt <- c('ikke støtte', 'liten støtte', 'en viss støtte', 
-                   'støtte', 'mye støtte', '','Ikke svart') #paste0('Jeg følte at jeg ', )
-      }
-      
-      if (valgtVar == 'BeslutningsKontroll') { #Del2[9]
-        #-1:5
-        tittel <- 'Følte du at du hadde innflytelse på den behandlingen \nsom ditt familiemedlem fikk?'	
-        grtxt <- c('helt uten innflytelse', 'liten innflytelse', 'verken eller', 
-                   'en viss innflytelse', 'god innflytelse', '','Ikke svart')
-      }
-      if (valgtVar == 'BeslutningsTid') { #Del2[10]
-        #-1:2
-        tittel <- c('Når beslutninger skulle tas, hadde du tilstrekkelig med tid til ', 
-                    'å uttrykke dine bekymringer og få besvart dine spørsmål?')
-        grtxt <- c('trengte mer tid', 'tilstrekkelig med tid', '','Ikke svart')
-        koder <- c(1,2,8,9)
-      }
-      if (valgtVar == 'LivsLengde') { #Del2[11], #-1:5
-        tittel <- 'Hvilket utsagn beskriver best din oppfatning \nang. livet til pasienten:'
-        grtxt <- c('unødvendig forlenget', 'forlenget litt lenger enn nødvendig', 
-                   'passe', 'forkortet litt mer enn nødvendig', 'unødvendig forkortet')
-      }
-      if (valgtVar == 'LivssluttKomfor') { #Del2[12] #-1:5
-        tittel <- 'Under de siste timene av livet til pasienten, hvilket utsagn 
-                  beskriver best din oppfatning om hvordan han/hun hadde det:'
-        grtxt <- c('ukomfortabelt', 'noe ukomfortabelt', 'stort sett komfortabelt',
-                   'svært komfortabelt', 'fullstendig komfortabelt')
-      }
-      if (valgtVar == 'LivssluttStoette') { #Del2[13] #-1:5
-        tittel <- 'Under de siste timene før pasienten døde, hvordan \nfølte at du ble involvert beslutningsprosessen?'
-        grtxt <- c('veldig utelatt', 'noe utelatt', 'verken eller', 'noe involvert', 'veldig involvert')
-      }
-      
       
 
-      if (valgtVar %in% c(Del1[c(1:9,11:13)],Del2[c(2,4:6)])) {
+      if (valgtVar %in% c(Del1[c(1:9,11:13)],Del2[c(2:6)])) {
             # -1 = Velg verdi	1 = Fremragende	2 = Meget godt	3 = Godt	4 = Noenlunde	5 = Dårlig	6 = Ikke aktuelt
             # 1 = Fremragende	2 = Meget godt	3 = Godt	4 = Noenlunde	5 = Dårlig	8:'', 9: = Ikke aktuelt
-            grtxt <- c('Fremragende', 'Meget godt', 'Godt', 'Noenlunde', 'Dårlig', '','Ikke svart')
+            grtxt <- c('Fremragende', 'Meget godt', 'Godt', 'Noenlunde', 'Dårlig') #, '','Ikke svart')
       }
       if (valgtVar %in% c(Del1[10],Del2[1])) {
             #      -1:Velg verdi, 1:Svært ofte, 2: Ofte, 3: Av og til, 4: Sjelden, 5: Aldri, 6: Ikke relevant
             # 1 = Fremragende	2 = Meget godt	3 = Godt	4 = Noenlunde	5 = Dårlig	8:'', 9: = Ikke aktuelt
-            grtxt <- c('Svært ofte', 'Ofte', 'Av og til', 'Sjelden', 'Aldri', '','Ikke svart')
+            grtxt <- c('Svært ofte', 'Ofte', 'Av og til', 'Sjelden', 'Aldri')#, '','Ikke svart')
       }
       if (valgtVar %in% Del1[14]) {
-            #-1 = Velg verdi	1 = Svært fornøyd	2 = Meget fornøyd	3 = Middels fornøyd	4 = Ganske misfornøyd	5 = Svært misfornøyd	6 = Ikke relevant
+            #-1 = Velg verdi	1 = Svært fornøyd	2 = Meget fornøyd	3 = Middels fornøyd	4 = Ganske misfornøyd	
+            #5 = Svært misfornøyd	6 = Ikke relevant
             # 1 = Fremragende	2 = Meget godt	3 = Godt	4 = Noenlunde	5 = Dårlig	8:'', 9: = Ikke aktuelt
             grtxt <- c('Svært fornøyd', 'Meget fornøyd', 'Middels fornøyd',
-                       'Ganske misfornøyd', 'Svært misfornøyd', '','Ikke svart')
+                       'Ganske misfornøyd', 'Svært misfornøyd')#, '','Ikke svart')
       }
       
 }
-       RegData$VariabelGr <- RegData[ ,valgtVar]
-       RegData$VariabelGr[RegData$VariabelGr %in% c(-1,6)] <- 9
-       RegData$VariabelGr <- factor(RegData$VariabelGr, levels=c(1:(length(grtxt)-2),8:9))
        
+       if (valgtVar == 'BeslutningsInvolvering') { #Del2[7]
+             #-1:5
+             tittel <-  'Følte du deg involvert i beslutningsprosessen?'	
+             grtxt <- c('veldig utelatt', 'noe utelatt', 'verken eller', 'noe involvert', 
+                        'veldig involvert')#, '','Ikke svart') #paste0('Jeg følte meg ', )
+       }
+       if (valgtVar == 'BeslutningsStoette') { #Del2[8]
+             #-1:5
+             tittel <-  'Følte du at du fikk støtte når beslutningene ble tatt?'	
+             grtxt <- c('ikke støtte', 'liten støtte', 'en viss støtte', 
+                        'støtte', 'mye støtte')#, '','Ikke svart') #paste0('Jeg følte at jeg ', )
+       }
+       if (valgtVar == 'BeslutningsKontroll') { #Del2[9]
+             #-1:5
+             tittel <- 'Følte du at du hadde innflytelse på den behandlingen \nsom ditt familiemedlem fikk?'	
+             grtxt <- c('helt uten innflytelse', 'liten innflytelse', 'verken eller', 
+                        'en viss innflytelse', 'god innflytelse')#, '','Ikke svart')
+       }
+       if (valgtVar == 'BeslutningsTid') { #Del2[10]
+             #-1:2
+             tittel <- c('Når beslutninger skulle tas, hadde du tilstrekkelig med tid til ', 
+                         'å uttrykke dine bekymringer og få besvart dine spørsmål?')
+             grtxt <- c('trengte mer tid', 'tilstrekkelig med tid')
+             #koder <- c(1,2,8,9)
+       }
+       if (valgtVar == 'LivsLengde') { #Del2[11], #-1:5
+             tittel <- 'Hvilket utsagn beskriver best din oppfatning \nang. livet til pasienten:'
+             grtxt <- c('unødvendig forlenget', 'forlenget litt mer enn nødvendig', 
+                        'passe', 'forkortet litt mer enn nødvendig', 'unødvendig forkortet')
+       }
+       if (valgtVar == 'LivssluttKomfor') { #Del2[12] #-1:5
+             tittel <- 'Under de siste timene av livet til pasienten, hvilket utsagn 
+             beskriver best din oppfatning om hvordan han/hun hadde det:'
+             grtxt <- c('ukomfortabelt', 'noe ukomfortabelt', 'stort sett \nkomfortabelt',
+                        'svært komfortabelt', 'fullstendig komfortabelt')
+       }
+       if (valgtVar == 'LivssluttStoette') { #Del2[13] #-1:5
+             tittel <- 'Under de siste timene før pasienten døde, hvordan \nfølte at du ble involvert beslutningsprosessen?'
+             grtxt <- c('veldig utelatt', 'noe utelatt', 'verken eller', 'noe involvert', 'veldig involvert')
+       }
+      grtxt <- c(grtxt, '','Ikke svart')
+      
+      RegData$VariabelGr <- RegData[ ,valgtVar]
+      RegData$VariabelGr[RegData$VariabelGr %in% c(-1,6)] <- 9
+      RegData$VariabelGr <- factor(RegData$VariabelGr, levels=c(1:(length(grtxt)-2),8:9))
+      
       
        if (valgtVar %in% c('SumScoreSatisfactionCare', 'SumScoreSatisfactionDecision', 'SumScoreAllQuestions')) {  #gjsnGrVar
              RegData <- RegData[which(RegData[,valgtVar] >= 0), ]    #Tar bort alder<0

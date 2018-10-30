@@ -123,4 +123,14 @@ leggTilIntervensjon <- function(RegData, #startDatoPre='2011-01-01', sluttDatoPr
                                      which(RegData$InnDato <= as.Date(sluttDatoIntervensjon)))] <- 1
       return(RegData)
 } 
+
+#' @section Automatisk linjebryting av lange tekstetiketter
+#' @param x En tekststreng eller vektor av tekststrenger
+#' @param len Lengden strengen skal brytes ved
+#' @rdname hjelpeFunksjoner
+#' @export
+delTekst <- function(x, len) #x -tekststreng/vektor av tekststrenger, len - Lengden strengen skal brytes ved
+{sapply(x, function(y) paste(strwrap(y, len), collapse = "\n"),
+        USE.NAMES = FALSE)
+}
       

@@ -78,17 +78,21 @@ NIRFigPrePostPaaror  <- function(RegData=0, valgtVar, datoFra='2011-01-01', dato
       #grtxt <- paste0(rev(NIRVarSpes$grtxt), ' (', rev(sprintf('%.1f',AggVerdier$Pre)), '%)') 
       grtxt <- NIRVarSpes$grtxt
       grtxt2 <- paste0(sprintf('%.1f',AggVerdier$Pre),' / ', sprintf('%.1f',AggVerdier$Post),'%')
-      grtxt2[6] <- ''
-      yAkseTxt='Andel svar (%)'
+      grtxt2[match('', grtxt)] <- ''
       tittel <- NIRVarSpes$tittel
       
       
-      AndelerPP <- list(Pre=0, Post=0)
+     # AndelerPP <- list(Pre=0, Post=0)
       NPre <- N$Pre
       NPost <- N$Post
-      AndelerPP$Pre <- cbind(AggVerdier$Pre, AggVerdier$Post)
+      AndelerPP <- cbind(AggVerdier$Pre, AggVerdier$Post)
       
       #-----------Figur---------------------------------------
+      
+      # delTekst <- function(x, len) #x -tekststreng/vektor av tekststrenger, len - Lengden strengen skal brytes ved
+      #       {sapply(x, function(y) paste(strwrap(y, len), collapse = "\n"),
+      #               USE.NAMES = FALSE)
+      #       }
       
       #Plottspesifikke parametre:
       FigTypUt <- figtype(outfile, fargepalett='BlaaOff')	 
@@ -104,10 +108,14 @@ NIRFigPrePostPaaror  <- function(RegData=0, valgtVar, datoFra='2011-01-01', dato
       cexpt <- 2	#Størrelse på punkter (resten av landet)
       
       #Vertikale søyler eller linje
-      ymax <- min(max(c(AndelerPP$Pre, AndelerPP$Post),na.rm=T)*1.25, 110)
-      pos <- barplot(t(AndelerPP$Pre), beside=TRUE, las=1, ylab="Andel pasienter (%)",	
-                     cex.names=0.8, names.arg=grtxt, col=farger[c(3,1)], border='white', ylim=c(0, ymax))	# 
+      ymax <- min(max(AndelerPP,na.rm=T)*1.25, 110)
+      pos <- barplot(t(AndelerPP), beside=TRUE, las=1, ylab="Andel pårørende (%)",	
+                     cex.names=0.8, col=farger[c(3,1)], names.arg=rep('', length(grtxt)), border='white', ylim=c(0, ymax))	# names.arg=grtxt, 
+      # pos <- barplot(as.numeric(AggVerdier$Hoved), beside=TRUE, las=1, ylab=yAkseTxt,	
+      #                sub=xAkseTxt,	col=fargeHoved, border='white', ylim=c(0, ymax))	
       mtext(at=pos[1,], grtxt2, side=1, las=1, cex=0.75, adj=0.2, line=0)
+      grtxt <- delTekst(grtxt, 13)
+      mtext(at=pos[1,], grtxt, side=1, las=1, cex=0.75, adj=0.2, line=2)
       legend('top', c(paste0('Før intervensjon, N=', NPre), paste0('Gj.sn. skår: ',TotSkaar$Pre),
                       paste0('Etter intervensjon, N=', NPost), paste0('Gj.sn. skår: ',TotSkaar$Post)), 
              bty='n', fill=farger[c(3,NA,1,NA)], border=NA, ncol=2, cex=cexleg)

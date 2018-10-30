@@ -42,7 +42,7 @@ rm(list=ls())
 #Last inn PaarorDataSkaar, Del1 og Del2
 #PaarorData <- read.table(file='A:/Intensiv/PaarorDataSkaar.csv', header=T, sep=';',encoding = 'UTF-8')
 library(intensiv)
-load("A:/Intensiv/NIRdataPaaror.RData") #RegDataTEST, 2018-06-05
+load("A:/Intensiv/NIRdataPaaror.RData") #RegDataTEST, 2018-10-02
 
 #--------------Fordeling før og etter, samt tot. gjennomsnitt før og etter----------------------
 #variable <- c('BehandlingHoeflighetRespektMedfoelelseNum', 'BehandlingBesvarerHoeflighetRespektMedfoelelseNum','InformasjonsOverensstemmelseNum', 'LegeInformasjonFrekvensNum')
@@ -78,10 +78,10 @@ totSkaarer <-  c('SumScoreSatisfactionCare', 'SumScoreSatisfactionDecision', 'Su
 # Del1Skaar <- paste0(Del1,'Skaar')
 # Del2Skaar <- paste0(Del2,'Skaar')
 # variable <- c(Del1Skaar, Del2Skaar)
-variable <- totSkaarer #c(Del1, Del2, totSkaarer)
+variable <- c(Del1, Del2, totSkaarer)
 setwd('C:/ResultattjenesteGIT/intensiv/')
 
-valgtVar <- 'LivssluttStoette'
+valgtVar <- 'BeslutningsTid'
 NIRFigPrePostPaaror(RegData=RegData, valgtVar=valgtVar, datoTil='2017-08-01' , outfile='')
 
 for (valgtVar in variable) {

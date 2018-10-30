@@ -55,8 +55,7 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                tags$ul(tags$b('Kommer: '),
                        tags$li("Alle figurer vil få tilhørende tabell i fane ved siden av som for 'Andeler' "), 
                        tags$li('Overflyttinger mellom sykehus/avd.'),
-                       tags$li('Resultater for pårørendeskjema'),
-                       tags$li("Fordelinger alder og kjønn - litt usikker på denne...")
+                       tags$li("Fordelinger alder og kjønn - ikke sikkert denne blir med i første omgang")
                )
       ), #tab
       
@@ -198,7 +197,8 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                                        'Respiratortid, inv. < 2,5d m/overf.' = 'respiratortidInvMoverf',
                                        'Respiratortid, inv. < 2,5d u/overf.' = 'respiratortidInvUoverf',
                                        'Respiratortid, døde' = 'respiratortidDod',
-                                       'Utskrevet på kveld og natt' = 'utskrMl17og08',
+                                       'Utenfor vakttid, innlagt' = 'utenforVakttidInn',
+                                       'Utenfor vakttid, utskrevet' = 'utenforVakttidUt',
                                        'Utvidet hemodyn. overvåkning' = 'ExtendedHemodynamicMonitoring',
                                        'Trakeostomi' = 'trakeostomi',
                                        'Trakeostomi, åpen' = 'trakAapen',
@@ -349,13 +349,66 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                )
       ), #tab
       
-      #-------Under utvikling----------      
-      
-      tabPanel("Pårørendeskjema",
-               br(),
-               h2('Her kommer resultater fra Pårørendeskjema', align = 'center'),
-               br()
-      )
+      #-------Pårørendeskjema----------      
+tabPanel("Pårørendeskjema",
+         h2('Resultater fra Pårørendeskjema', align = 'center'),
+         # fluidRow(column(width = 3, #Første kolonne. Alternativ til sidebarLayout(sidebarPanel())
+         sidebarPanel(
+               selectInput(
+                     inputId = "valgtVarPaarorFord", label="Velg variabel",
+                     choices = c('S1.1 Pasient, høflighet og medfølelse' = 'BehandlingHoeflighetRespektMedfoelelse',
+                                 'S1.2 Smerte' = 'SymptomSmerte',
+                                 'S1.3 Pustebesvær' = 'SymptomPustebesvaer',
+                                 'S1.4 Uro' = 'SymptomUro',
+                                 'S1.5 Interesse for behov' = 'BehandlingBesvarerBehov',
+                                 'S1.6 Følelsesmessig støtte' = 'BehandlingBesvarerStoette',
+                                 'S1.7 Samarbeid' = 'BehandlingSamarbeid',
+                                 'S1.8 Pårørende, høflighet og medfølelse' = 'BehandlingBesvarerHoeflighetRespektMedfoelelse',
+                                 'S1.9 Omsorg, sykepleier' = 'SykepleierOmsorg',
+                                 'S1.10 Kommunikasjon, sykepleier' = 'SykepleierKommunikasjon',
+                                 'S1.11 Omsorg, lege' = 'LegeBehandling',
+                                 'S1.12 Atmosfære på avd.' = 'AtmosfaerenIntensivAvd',
+                                 'S1.13 Atmosfære, venterom' = 'AtmosfaerenPaaroerenderom',
+                                 'S1.14 Omfang av behandling' = 'OmfangetAvBehandlingen',
+                                 'S2.1 Legens informasjonsfrekvens' = 'LegeInformasjonFrekvens',
+                                 'S2.2 Svarvillighet, personale' = 'SvarPaaSpoersmaal',
+                                 'S2.3 Forståelige forklaringer' = 'ForklaringForstaaelse',
+                                 'S2.4 Informasjon, ærlighet' = 'InformasjonsAerlighet',
+                                 'S2.5 Informasjon' = 'InformasjonOmForloep',
+                                 'S2.6 Informasjon, overensstemmelse' = 'InformasjonsOverensstemmelse',
+                                 'S2.7 Beslutningsprosess, involvering' = 'BeslutningsInvolvering',
+                                 'S2.8 Beslutningsprosess, støtte' = 'BeslutningsStoette',
+                                 'S2.9 Beslutningsprosess, innflytelse' = 'BeslutningsKontroll',
+                                 'S2.10 Beslutningsprosess, tid' = 'BeslutningsTid',
+                                 'S2.11 Livslengde' = 'LivsLengde',
+                                 'S2.12 Komfort ved livsslutt, pasient' = 'LivssluttKomfor',
+                                 'S2.13 Involvering ved livsslutt' = 'LivssluttStoette',
+                                 'Totalskår, omsorg (skjema 1)' = 'SumScoreSatisfactionCare', 
+                                 'Totalskår, beslutning (skjema 2)' = 'SumScoreSatisfactionDecision', 
+                                 'Totalskår, alle spørsmål' = 'SumScoreAllQuestions')
+               ),
+               dateInput(inputId = 'startDatoIntervensjon', label = 'Startdato, intervensjon', language="nb",
+                         value = '2016-10-01', max = Sys.Date()),
+               dateRangeInput(inputId = 'datovalgPaarorFord', start = "2015-01-01", end = Sys.Date(),
+                              label = "Tidsperiode", separator="t.o.m.", language="nb"),
+               selectInput(inputId = "erMannPaarorFord", label="Kjønn, pasient",
+                           choices = c("Begge"=2, "Menn"=1, "Kvinner"=0)),
+               h3('Utvalg vedrørende den pårørende (alder, kjønn, relasjon,...)?')
+         ),
+         mainPanel(
+               tabsetPanel(
+                     tabPanel(
+                           'Figur',
+                           plotOutput('paarorFord')),
+                     tabPanel(
+                           'Tabell',
+                           h3('Her kommer en tabell')
+                           #uiOutput("tittelFord"),
+                           #tableOutput('fordelingTab')
+                           )
+               )
+         )
+) #tab Pårørende
 )  #navbarPage
 
 
@@ -372,17 +425,22 @@ server <- function(input, output, session) { #
       context <- Sys.getenv("R_RAP_INSTANCE") #Blir tom hvis jobber lokalt
       if (context == "TEST" | context == "QA" | context == "PRODUCTION") {
             RegData <- NIRRegDataSQL() #datoFra = datoFra, datoTil = datoTil)
+            PaarorData <- NIRpaarorDataSQL() #NB: Ikke laget
             
       } #hente data på server
       
       if (!exists('RegData')){
             #system.file('inst/IntensivMndRapp.Rnw', package='intensiv')
+            load("A:/Intensiv/NIRdataPaaror.RData")
+            PaarorData <- RegData
             load('A:/Intensiv/NIRdata10000.Rdata')
             #RegData <- read.table(fil, sep=';', header=T, encoding = 'UTF-8')
             #Funker:
             #  data('NIRRegDataSyn', package = 'intensiv')
             #try(data(package = "intensiv"))
       }
+      print(paste('Regdata', dim(RegData)[1]))
+      
       options(knitr.table.format = "html")
       datoTil <- as.POSIXlt(Sys.Date())
       AarNaa <- as.numeric(format(Sys.Date(), "%Y"))
@@ -390,7 +448,7 @@ server <- function(input, output, session) { #
       reshIDdummy <- 109773 #Tromsø med.int
       reshID = 109773 
       RegData <- NIRPreprosess(RegData = RegData)
-      
+      PaarorData <- NIRPreprosess(RegData = PaarorData)
       
       #--------startside--------------      
       #output$tekstDash <- c('Figurer med kvalitetsindikatorer',
@@ -626,9 +684,17 @@ server <- function(input, output, session) { #
                            erMann=as.numeric(input$erMannInnMaate))
       }, height = function() {2.2*session$clientData$output_innMaate_height},
       width = function() {0.7*session$clientData$output_innMaate_width}) #, height=900, width=700)
-}
 
 
+output$paarorFord <- renderPlot(
+      NIRFigPrePostPaaror(RegData=PaarorData, preprosess = 0, valgtVar=input$valgtVarPaarorFord,
+                          startDatoIntervensjon = input$startDatoIntervensjon,
+                    datoFra=input$datovalgPaarorFord[1], datoTil=input$datovalgPaarorFord[2],
+                    erMann=as.numeric(input$erMannPaarorFord)
+                    ), width=800, height = 800 #execOnResize=TRUE, 
+)
+
+} #serverdel
 # Run the application
 shinyApp(ui = ui, server = server)
 

@@ -53,19 +53,18 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='an
       RegData$Variabel <- 0
       
       tittel <- '' #I AndelerGrVar og GjsnGrVar genereres tittel i beregningsfunksjonen
-      #MANGER 'innMaate' !! Ikke tilrettelagt
       
       
       
       
-      if (valgtVar == 'OmsorgTot') {  #gjsnGrVar
-            RegData$Variabel  <- RegData$OmsorgTot
-            tittel <- c('Totalskår m.h.t. omsorg')
-      } 
-      if (valgtVar == 'OmsorgTotEndr') {  #gjsnGrVar
-            RegData$Variabel  <- RegData$OmsorgTot
-            tittel <- c('Endring i totalskår m.h.t. omsorg')
-      } 
+      # if (valgtVar == 'OmsorgTot') {  #gjsnGrVar
+      #       RegData$Variabel  <- RegData$OmsorgTot
+      #       tittel <- c('Totalskår m.h.t. omsorg')
+      # } 
+      # if (valgtVar == 'OmsorgTotEndr') {  #gjsnGrVar
+      #       RegData$Variabel  <- RegData$OmsorgTot
+      #       tittel <- c('Endring i totalskår m.h.t. omsorg')
+      # } 
       
       if (valgtVar=='InnMaate') {
             tittel <- 'Fordeling av Innkomstmåte'   
@@ -443,12 +442,20 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='an
             cexgr <- 0.9
       } 
       
-      if (valgtVar == 'utskrMl17og08') { #AndelGrVar
-            ind <- union(which(RegData$DateDischargedIntensive$hour<8), which(RegData$DateDischargedIntensive$hour>=17) )
+      if (valgtVar == 'utenforVakttidInn') { #AndelGrVar
+            ind <- union(which(RegData$Innleggelsestidspunkt$hour<8), which(RegData$Innleggelsestidspunkt$hour>=16) )
             #head(RegData$Innleggelsestidspunkt[ind])
             RegData$Variabel[ind] <- 1
-            varTxt <- 'utskrevet kl 17-08'
-            tittel <- 'Pasienter utskrevet utenfor vakttid (<8, >=17)' #NB: Skal være <8 og >17
+            varTxt <- 'utskrevet kl 16-08'
+            tittel <- 'Pasienter innlagt utenfor vakttid (<8, >=16)' #NB: Skal være <8 og >17
+            sortAvtagende <- FALSE
+      }
+      if (valgtVar == 'utenforVakttidUt') { #AndelGrVar
+            ind <- union(which(RegData$DateDischargedIntensive$hour<8), which(RegData$DateDischargedIntensive$hour>=16) )
+            #head(RegData$Innleggelsestidspunkt[ind])
+            RegData$Variabel[ind] <- 1
+            varTxt <- 'utskrevet kl 16-08'
+            tittel <- 'Pasienter utskrevet utenfor vakttid (<8, >=16)' #NB: Skal være <8 og >17
             sortAvtagende <- FALSE
       }
       # 1.	Andel donorar av alle daude på intensiv (per eining – samanlikna mot same ShType)
