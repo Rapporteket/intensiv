@@ -87,9 +87,9 @@ NIRVarTilretteleggPaaror  <- function(RegData, valgtVar, grVar='ShNavn', figurty
       verdiTom <- -1
       
       library(magrittr)
-      KodebokPaarorende <- read.table(file='C:/ResultattjenesteGIT/intensiv/doc/KodebokPaarorende.csv', 
-                                      header=T, sep=';', stringsAsFactors = F) #encoding = 'UTF-8',
-      VarNavnKodebok <- KodebokPaarorende$Variabelnavn[which(KodebokPaarorende$Variabelnavn != "")]
+      #KodebokPaarorende <- read.table(file='C:/ResultattjenesteGIT/intensiv/doc/KodebokPaarorende.csv', 
+      #                                header=T, sep=';', stringsAsFactors = F) #encoding = 'UTF-8',
+      #VarNavnKodebok <- KodebokPaarorende$Variabelnavn[which(KodebokPaarorende$Variabelnavn != "")]
       
 
  #AUTOMATISK TILRETTELEGGING AV VARIABLE VHA KODEBOK     

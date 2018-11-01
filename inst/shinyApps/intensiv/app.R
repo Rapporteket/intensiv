@@ -499,7 +499,7 @@ server <- function(input, output, session) { #
             # print(paste('resh: ', reshID))
             tab <- tabNokkeltall(RegData=RegData, tidsenhet=input$tidsenhetReg, datoTil=input$sluttDatoReg, 
                       enhetsUtvalg=as.numeric(input$enhetsNivaa), reshID=reshID)
-            tab <- tabNokkeltall(RegData, tidsenhet='Mnd', datoTil, enhetsUtvalg=0, reshID=0)
+            #tab <- tabNokkeltall(RegData, tidsenhet='Mnd', datoTil, enhetsUtvalg=0, reshID=0)
             kableExtra::kable(t(tab), 
                               full_width=F, 
                               digits = c(0,0,0,1,1,1,0,0,1,2,1)
