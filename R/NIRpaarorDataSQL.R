@@ -14,20 +14,20 @@ NIRpaarorDataSQL <- function(datoFra = '2011-01-01', datoTil = '2099-01-01') {
       dbType <- "mysql"
       
 varHoved <- c("SkjemaGUID 
-      ,M.DateAdmittedIntensive 
-      ,M.DaysAdmittedIntensiv
-      ,M.Respirator
-      ,M.TransferredStatus
-      ,M.Saps2Score 
-      ,M.Saps2ScoreNumber 
-      ,M.TypeOfAdmission 
-      ,M.Nems 
-      ,M.Morsdato
-      ,M.PatientTransferredFromHospital 
-      ,M.PatientTransferredToHospital 
-      ,M.ShNavn 
-      ,M.ShType
-      ,M.DateDischargedIntensive")
+      , M.DateAdmittedIntensive 
+      , M.DaysAdmittedIntensiv
+      , M.Respirator
+      , M.TransferredStatus
+      , M.Saps2Score 
+      , M.Saps2ScoreNumber 
+      , M.TypeOfAdmission 
+      , M.Nems 
+      , M.Morsdato
+      , M.PatientTransferredFromHospital 
+      , M.PatientTransferredToHospital 
+      , M.ShNavn 
+      , M.ShType
+      , M.DateDischargedIntensive")
 varPaaror <- 'Q.SkjemaGUID
       , Q.Kjoenn
       , Q.Alder
@@ -108,11 +108,11 @@ varPaaror <- 'Q.SkjemaGUID
       , Q.Helseenhet
       , Q.HelseenhetKortNavn
       , Q.HelseenhetID
-      -- , Q.LastUpdate
-      -- , Q.FormStatus
+      , -- Q.LastUpdate
+      , --  Q.FormStatus
       , Q.PatientAge
       , Q.PatientGender
-      -- , Q.MunicipalNumber, Q.CurrentMunicipalNumber, Q.Municipal, Q.PostalCode, Q.DistrictCode, Q.AddressQuality, Q.FormDate, Q.MajorVersion, Q.MinorVersion
+      , --  Q.MunicipalNumber, Q.CurrentMunicipalNumber, Q.Municipal, Q.PostalCode, Q.DistrictCode, Q.AddressQuality, Q.FormDate, Q.MajorVersion, Q.MinorVersion
       , Q.PatientInRegistryGuid'
 
 
@@ -121,10 +121,9 @@ varPaaror <- 'Q.SkjemaGUID
                       varPaaror,
                       ' FROM QuestionaryFormDataContract Q
 INNER JOIN  MainFormDataContract M
-ON UPPER(Q.HovedskjemaGUID) = UPPER(M.SkjemaGUID) 
-wHERE cast(DateAdmittedIntensive as date) BETWEEN \'', datoFra, '\' AND \'', datoTil, '\'')
-      #WHERE cast(DateAdmittedIntensive as date) >= \'', datoFra, '\' AND DateAdmittedIntensive <= \'', datoTil, '\'')  
-      
+ON UPPER(Q.HovedskjemaGUID) = UPPER(M.SkjemaGUID)' )
+#WHERE cast(DateAdmittedIntensive as date) BETWEEN \'', datoFra, '\' AND \'', datoTil, '\'')
+
       RegData <- rapbase::LoadRegData(registryName, query, dbType)
       
       return(RegData)
