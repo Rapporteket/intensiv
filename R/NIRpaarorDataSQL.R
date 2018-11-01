@@ -27,7 +27,7 @@ varHoved <- c("SkjemaGUID
       , M.PatientTransferredToHospital 
       , M.ShNavn 
       , M.ShType
-      , M.DateDischargedIntensive")
+      , M.DateDischargedIntensive,")
 varPaaror <- 'Q.SkjemaGUID
       , Q.Kjoenn
       , Q.Alder
