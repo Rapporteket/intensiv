@@ -111,7 +111,7 @@ varPaaror <- 'Q.SkjemaGUID
       , Q.LastUpdate
       , Q.FormStatus
       , Q.PatientAge
-      , Q.PatientGender,
+      , Q.PatientGender
       , Q.MunicipalNumber
       , Q.CurrentMunicipalNumber
 , Q.Municipal
