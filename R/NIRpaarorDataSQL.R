@@ -8,12 +8,12 @@
 #' @export
 #'
 #'
-NIRpaarorDataSQL <- function(datoFra = '2011-01-01', datoTil = '2099-01-01') {
+NIRpaarorDataSQL <- function(datoFra = '2015-01-01', datoTil = '2099-01-01') {
       
       registryName <- "nir"
       dbType <- "mysql"
       
-varHoved <- c("SkjemaGUID 
+varHoved <- c("M.SkjemaGUID 
       , M.DateAdmittedIntensive 
       , M.DaysAdmittedIntensiv
       , M.Respirator
@@ -108,11 +108,19 @@ varPaaror <- 'Q.SkjemaGUID
       , Q.Helseenhet
       , Q.HelseenhetKortNavn
       , Q.HelseenhetID
-      , -- Q.LastUpdate
-      , --  Q.FormStatus
+      , Q.LastUpdate
+      , Q.FormStatus
       , Q.PatientAge
-      , Q.PatientGender
-      , --  Q.MunicipalNumber, Q.CurrentMunicipalNumber, Q.Municipal, Q.PostalCode, Q.DistrictCode, Q.AddressQuality, Q.FormDate, Q.MajorVersion, Q.MinorVersion
+      , Q.PatientGender,
+      , Q.MunicipalNumber
+      , Q.CurrentMunicipalNumber
+, Q.Municipal
+, Q.PostalCode
+, Q.DistrictCode
+, Q.AddressQuality
+, Q.FormDate
+, Q.MajorVersion
+, Q.MinorVersion
       , Q.PatientInRegistryGuid'
 
 
@@ -121,7 +129,7 @@ varPaaror <- 'Q.SkjemaGUID
                       varPaaror,
                       ' FROM QuestionaryFormDataContract Q
 INNER JOIN  MainFormDataContract M
-ON UPPER(Q.HovedskjemaGUID) = UPPER(M.SkjemaGUID)' )
+ON Q.HovedskjemaGUID = M.SkjemaGUID') #UPPER(Q.HovedskjemaGUID) = UPPER(M.SkjemaGUID)
 #WHERE cast(DateAdmittedIntensive as date) BETWEEN \'', datoFra, '\' AND \'', datoTil, '\'')
 
       RegData <- rapbase::LoadRegData(registryName, query, dbType)
