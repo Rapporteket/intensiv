@@ -29,7 +29,6 @@ NIRFigPrePostPaaror  <- function(RegData=0, valgtVar, datoFra='2011-01-01', dato
             RegData <- NIRRegDataSQL(datoFra, datoTil) #minald=0, maxald=110, erMann='',InnMaate='', dodInt=''
       }
       
-      # Hvis RegData ikke har blitt preprosessert. (I samledokument gjøres dette i samledokumentet)
       if (preprosess){
             RegData <- NIRPreprosess(RegData=RegData)	#, reshID=reshID)
       }

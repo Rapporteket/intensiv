@@ -50,36 +50,43 @@ texi2pdf(file='OffDataIntensiv.tex')
 #-------------------------------------LASTE DATA-----------------------------------------------
 rm(list=ls())
 
-dato <- '2018-08-30' #MainFormDataContract2018-06-19
+dato <- '2018-11-27' #MainFormDataContract2018-06-19
 dataKat <- 'A:/Intensiv/' 
 fil <- paste0(dataKat,'MainFormDataContract',dato)
-#NIRdata <- read.table(file=paste0(fil,'.csv'), header=T, stringsAsFactors=FALSE, sep=';',encoding = 'UTF-8')
+NIRdata <- read.table(file=paste0(fil,'.csv'), header=T, stringsAsFactors=FALSE, sep=';',encoding = 'UTF-8')
 #RegData <- NIRdata
 load(paste0(fil,".Rdata")) #RegData 2018-06-18
 #save(RegData, file=paste0(fil,'.Rdata'))
-# RegData <- RegData[which(
-#       as.POSIXlt(RegData$DateAdmittedIntensive, format="%Y-%m-%d")>= '2015-01-01'), ]
+ # RegData <- RegData[which(
+ #       as.POSIXlt(RegData$DateAdmittedIntensive, format="%Y-%m-%d")>= '2015-01-01'), ]
 #RegData <- RegData[sample(1:dim(RegData)[1],10000),]
 #save(RegData, file=paste0(dataKat,'NIRdata10000.Rdata')) 
 library(intensiv)
 load(paste0("A:/Intensiv/NIRdata10000.Rdata")) #RegDataTEST, 2018-06-05
-RegData <- NIRPreprosess(RegData)
 
-# LagSyntetiskeData
-# library(synthpop)
-# library(dplyr)
-# varBort <- c('FodselsDato', 'ForlopsID')
-# ForlopsID <- RegData$ForlopsID
-# RegData <- RegData[,-which(names(RegData) %in% varBort)]
-# sykehus <- paste('Sykehus', LETTERS[1:10])
-# mengdePasienter <- c(0.3, 4, 10, 3, 7, 5, 1, 8, 9.5, 6)
-# RegData$SykehusNavn <- sample(sykehus, prob=mengdePasienter/sum(mengdePasienter), size=dim(RegData)[1], replace=T)
-# RegDataSyn <- synthpop::syn(RegData, method = "sample", seed = 500) #Trekker med tilbakelegging
-# RegData <- data.frame(RegDataSyn$syn, ForlopsID)
-# write.table(RegData, file='C:/ResultattjenesteGIT/Nakke/data/NakkeRegDataTest.csv', sep = ';', row.names = F, col.names = T)
-# save(RegData, file=paste0('C:/ResultattjenesteGIT/Nakke/data/NakkeRegDataSyn.RData'))
-# load('C:/ResultattjenesteGIT/Nakke/data/NakkeRegDataSyn.Rdata')
 
+#---------LagSyntetiskeData
+#Hovedtabell
+varBort <- c('PostalCode', 'HF Sykehus', 'Helseenhet', 'HelseenhetKortnavn', 'LastUpdate', 'ShNavn',
+             'ICD10_1', 'ICD10_2', 'ICD10_3', 'ICD10_4', 'ICD10_5')
+HovedData <- read.table(file=paste0(fil,'.csv'), header=T, stringsAsFactors=FALSE, sep=';',encoding = 'UTF-8')
+RegData <- lageTulleData(RegData=HovedData, varBort=varBort, antSh=26, antObs=20000)
+#Pårørendedata
+filPaaror <- paste0(dataKat,'QuestionaryFormDataContract',dato,'.csv')
+PaarorData <- read.table(file=filPaaror, header=T, stringsAsFactors=FALSE, sep=';',encoding = 'UTF-8')
+
+KobleMedHoved <- function(HovedSkjema, Skjema2, alleHovedskjema=F, alleSkjema2=F) {
+      varBegge <- intersect(names(HovedSkjema),names(Skjema2)) ##Variabelnavn som finnes i begge datasett
+      Skjema2 <- Skjema2[ , c("HovedskjemaGUID", names(Skjema2)[!(names(Skjema2) %in% varBegge)])]  #"SkjemaGUID",   
+      data <- merge(HovedSkjema, Skjema2, suffixes = c('','_S2'),
+                      by.x = 'SkjemaGUID', by.y = 'HovedskjemaGUID', all.x = alleHovedskjema, all.y=alleSkjema2)
+      return(data)
+}
+PaarorDataH <- KobleMedHoved(HovedSkjema = HovedData, Skjema2 = PaarorData)
+PaarorDataH <- lageTulleData(RegData=PaarorDataH, varBort=varBort, antSh=26, antObs=600)
+write.table(PaarorDataH, file='A:/Intensiv/PaarorDataHtull.csv', fileEncoding = 'UTF-8', sep = ';', row.names = F)
+save(list=c('RegData', 'PaarorDataH'), file=paste0(dataKat, '/NIRRegDataSyn.RData'))
+#save(RegData, PaarorData, file=paste0(dataKat, '/NIRRegDataSyn.RData'))
 
 
 # Div sjekk

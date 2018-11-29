@@ -80,6 +80,7 @@ totSkaarer <-  c('SumScoreSatisfactionCare', 'SumScoreSatisfactionDecision', 'Su
 # variable <- c(Del1Skaar, Del2Skaar)
 variable <- c(Del1, Del2, totSkaarer)
 setwd('C:/ResultattjenesteGIT/intensiv/')
+test <- NIRPreprosess(RegData)
 
 valgtVar <- 'BeslutningsTid'
 NIRFigPrePostPaaror(RegData=RegData, valgtVar=valgtVar, datoTil='2017-08-01' , outfile='')

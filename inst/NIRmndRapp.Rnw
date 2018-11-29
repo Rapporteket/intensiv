@@ -156,8 +156,8 @@ ynskje. I Rapporteket kan ein óg  finne mange fleire figurar og tabellar, og gj
 # mnd <- as.numeric(substr(overskr, 4,5))
 # mndTxt <- c('jan', 'feb', 'mar', 'apr', 'mai', 'jun', 'jul', 'aug', 'sep', 'okt', 'nov', 'des') 
 # colnames(tabAvdNEget) <- paste0(mndTxt[mnd], aar)
-tabBelegg <- tabBelegg(RegData=RegDataEget, personIDvar='PasientID', tidsenhet=tidsenhet)
-
+tabBelegg <- tabBelegg(RegData=RegDataEget, tidsenhet=tidsenhet) #personIDvar='PasientID', 
+#parametre: RegData, tidsenhet='Aar', datoTil, enhetsUtvalg=0, reshID=0
 xtable(tabBelegg, digits=0, align=c('l', rep('r', ncol(tabAvdNEget))), 
 		caption=paste0('Antal opphald og liggedøger, ', shtxt,'.'), label='tab:RegEget')
 

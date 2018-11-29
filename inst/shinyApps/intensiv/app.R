@@ -31,7 +31,7 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                #fluidRow(
                #column(width=5,
                h2("Månedsrapport"), #),
-               downloadButton(outputId = 'mndRapp.pdf', label='Månedsrapport-virker ikke på server', class = "butt"),
+               downloadButton(outputId = 'mndRapp', label='Månedsrapport-virker ikke på server', class = "butt"),
                tags$head(tags$style(".butt{background-color:#6baed6;} .butt{color: white;}")), # background color and font color
                br(),
                br(),
@@ -429,17 +429,19 @@ server <- function(input, output, session) { #
             
       } #hente data på server
       
-      if (!exists('RegData')){
+      if (!exists('PaarorDataH')){
             #system.file('inst/IntensivMndRapp.Rnw', package='intensiv')
-            load("A:/Intensiv/NIRdataPaaror.RData")
-            PaarorData <- RegData
-            load('A:/Intensiv/NIRdata10000.Rdata')
+            # load("A:/Intensiv/NIRdataPaaror.RData")
+            # PaarorData <- RegData
+            # load('A:/Intensiv/NIRdata10000.Rdata')
+            
+            data('NIRRegDataSyn', package = 'intensiv')
+            
             #RegData <- read.table(fil, sep=';', header=T, encoding = 'UTF-8')
             #Funker:
             #  data('NIRRegDataSyn', package = 'intensiv')
             #try(data(package = "intensiv"))
       }
-      print(paste('Regdata', dim(RegData)[1]))
       
       options(knitr.table.format = "html")
       datoTil <- as.POSIXlt(Sys.Date())
@@ -448,12 +450,12 @@ server <- function(input, output, session) { #
       reshIDdummy <- 109773 #Tromsø med.int
       reshID = 109773 
       RegData <- NIRPreprosess(RegData = RegData)
-      PaarorData <- NIRPreprosess(RegData = PaarorData)
+      PaarorData <- NIRPreprosess(RegData = PaarorDataH) #Må først koble på hoveddata for å få ShType++
       
       #--------startside--------------      
       #output$tekstDash <- c('Figurer med kvalitetsindikatorer',
       #                      'hente ned månedsrapport'),
-      output$mndRapp.pdf = downloadHandler(
+      output$mndRapp = downloadHandler(
             filename = 'MndRapp.pdf',
             #content = function(file) file.copy(system.file('NIRMndRapp.pdf', package = 'Nakke'), file, overwrite = TRUE),
             content = function(file) {

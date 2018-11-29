@@ -13,7 +13,7 @@ FinnReinnleggelser(RegData, PasientID = "PasientID")
 
 SorterOgNavngiTidsEnhet(RegData, tidsenhet = "Aar")
 
-lageTulleData(RegData, varBort = "ShNavn", antSh = 27)
+lageTulleData(RegData, varBort = "", antSh = 26, antObs = 10000)
 
 leggTilIntervensjon(RegData, startDatoIntervensjon = "2016-10-01",
   sluttDatoIntervensjon = Sys.Date())

@@ -443,19 +443,19 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='an
       } 
       
       if (valgtVar == 'utenforVakttidInn') { #AndelGrVar
-            ind <- union(which(RegData$Innleggelsestidspunkt$hour<8), which(RegData$Innleggelsestidspunkt$hour>=16) )
+            ind <- union(which(RegData$Innleggelsestidspunkt$hour<8), which(RegData$Innleggelsestidspunkt$hour>=17) )
             #head(RegData$Innleggelsestidspunkt[ind])
             RegData$Variabel[ind] <- 1
-            varTxt <- 'utskrevet kl 16-08'
-            tittel <- 'Pasienter innlagt utenfor vakttid (<8, >=16)' #NB: Skal være <8 og >17
+            varTxt <- 'utskrevet kl 17-08'
+            tittel <- 'Pasienter innlagt utenfor vakttid (<8, >=17)' 
             sortAvtagende <- FALSE
       }
       if (valgtVar == 'utenforVakttidUt') { #AndelGrVar
-            ind <- union(which(RegData$DateDischargedIntensive$hour<8), which(RegData$DateDischargedIntensive$hour>=16) )
+            ind <- union(which(RegData$DateDischargedIntensive$hour<8), which(RegData$DateDischargedIntensive$hour>=17) )
             #head(RegData$Innleggelsestidspunkt[ind])
             RegData$Variabel[ind] <- 1
-            varTxt <- 'utskrevet kl 16-08'
-            tittel <- 'Pasienter utskrevet utenfor vakttid (<8, >=16)' #NB: Skal være <8 og >17
+            varTxt <- 'utskrevet kl 17-08'
+            tittel <- 'Pasienter utskrevet utenfor vakttid (<8, >=17)' 
             sortAvtagende <- FALSE
       }
       # 1.	Andel donorar av alle daude på intensiv (per eining – samanlikna mot same ShType)
