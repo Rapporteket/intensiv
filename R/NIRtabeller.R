@@ -156,7 +156,7 @@ finnDblReg <- function(RegData, datoFra='2017-01-01', datoTil=Sys.Date(), reshID
 #' @section Nøkkeltall (antall opph., pasienter,  intensivdøgn, samt div oversiktstall)
 #' @rdname NIRtabeller
 #' @export
-tabNokkeltall <- function(RegData, tidsenhet='Mnd', datoTil, enhetsUtvalg=0, reshID=0) {
+tabNokkeltall <- function(RegData, tidsenhet='Mnd', datoTil=Sys.Date(), enhetsUtvalg=0, reshID=0) {
       datoFra <- switch(tidsenhet, 
                         Mnd = lubridate::floor_date(as.Date(datoTil)%m-% months(12, abbreviate = T), 'month'), #as.Date(paste0(as.numeric(substr(datoTil,1,4))-1, substr(datoTil,5,8), '01'), tz='UTC')
                         Aar = paste0(year(as.Date(datoTil))-4, '-01-01')
@@ -181,7 +181,7 @@ tabNokkeltall <- function(RegData, tidsenhet='Mnd', datoTil, enhetsUtvalg=0, res
                                              FUN=function(x) length(unique(x))),	
             'Antall intensivdøgn' = round(as.numeric(tapply(RegData$liggetid, RegData$TidsEnhet, sum, na.rm=T)),0),
             'Liggetid (median)' = tapply(RegData$liggetid[indLigget], RegData$TidsEnhet[indLigget], FUN=median, na.rm=T),
-            'Respiratorstøtte (%)' = tapply(RegData$respiratortid>0, RegData$TidsEnhet, 
+            'Respirator-\nstøtte (%)' = tapply(RegData$respiratortid>0, RegData$TidsEnhet, 
                                             FUN=function(x) sum(x, na.rm=T)/length(x)*100),
             'Respiratortid (median)' = tapply(RegData$respiratortid[indRespt], RegData$TidsEnhet[indRespt], 
                                               FUN=median, na.rm=T),
@@ -190,9 +190,9 @@ tabNokkeltall <- function(RegData, tidsenhet='Mnd', datoTil, enhetsUtvalg=0, res
                                                RegData$TidsEnhet[indNEMS], FUN=median, na.rm=T),
             'Døde (%)' = tapply((RegData$DischargedIntensiveStatus==1), RegData$TidsEnhet, 
                                 FUN=function(x) sum(x, na.rm=T)/length(x)*100),
-            'Reinnleggelser, <72t (%)' = tapply(RegData$Reinn==1, RegData$TidsEnhet, 
+            'Reinnleggelser, \n<72t (%)' = tapply(RegData$Reinn==1, RegData$TidsEnhet, 
                                              FUN=function(x) sum(x, na.rm=T)/length(x)*100),
-            'Utskrevet 17-08 (%)' = tapply(RegData$Ut1708, RegData$TidsEnhet, 
+            'Utskrevet \n kl 17-08 (%)' = tapply(RegData$Ut1708, RegData$TidsEnhet, 
                                            FUN=function(x) sum(x, na.rm=T)/length(x)*100)
       )
       
@@ -213,9 +213,11 @@ lagTabavFig <- function(UtDataFraFig){
             UtDataFraFig$Ngr$Rest,
             UtDataFraFig$AggVerdier$Rest)
 rownames(tab) <- UtDataFraFig$grtxt
-colnames(tab) <- c(paste0(UtDataFraFig$hovedgrTxt,', N'), 
+#kolnavn <- c('Antall' , 'Andel (%)')
+#colnames(tab) <- c(kolnavn, if(!is.null(UtDataFraFig$Ngr$Rest)){kolnavn})
+colnames(tab) <- c(paste0(UtDataFraFig$hovedgrTxt,', Antall'),
                    paste0(UtDataFraFig$hovedgrTxt, ', Andel (%)'),
-                   if(!is.null(UtDataFraFig$Ngr$Rest)){paste0(UtDataFraFig$smltxt,', N')},
+                   if(!is.null(UtDataFraFig$Ngr$Rest)){paste0(UtDataFraFig$smltxt,', Antall')},
                    if(!is.null(UtDataFraFig$Ngr$Rest)){paste0(UtDataFraFig$smltxt, ', Andel (%)')})
 
 return(tab)

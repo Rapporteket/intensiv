@@ -65,9 +65,9 @@ library(intensiv)
 load(paste0("A:/Intensiv/NIRdata10000.Rdata")) #RegDataTEST, 2018-06-05
 
 
-#---------LagSyntetiskeData
+#---------LagSyntetiskeData-------------------------
 #Hovedtabell
-varBort <- c('PostalCode', 'HF Sykehus', 'Helseenhet', 'HelseenhetKortnavn', 'LastUpdate', 'ShNavn',
+varBort <- c('PostalCode', 'HF Sykehus', 'Helseenhet', 'HelseenhetKortnavn', 'LastUpdate', 'ShNavn', 'MunicipalNumber', 'Municipal',
              'ICD10_1', 'ICD10_2', 'ICD10_3', 'ICD10_4', 'ICD10_5')
 HovedData <- read.table(file=paste0(fil,'.csv'), header=T, stringsAsFactors=FALSE, sep=';',encoding = 'UTF-8')
 RegData <- lageTulleData(RegData=HovedData, varBort=varBort, antSh=26, antObs=20000)
@@ -87,7 +87,7 @@ PaarorDataH <- lageTulleData(RegData=PaarorDataH, varBort=varBort, antSh=26, ant
 write.table(PaarorDataH, file='A:/Intensiv/PaarorDataHtull.csv', fileEncoding = 'UTF-8', sep = ';', row.names = F)
 save(list=c('RegData', 'PaarorDataH'), file=paste0(dataKat, '/NIRRegDataSyn.RData'))
 #save(RegData, PaarorData, file=paste0(dataKat, '/NIRRegDataSyn.RData'))
-
+load('A:/Intensiv/NIRRegDataSyn.RData')
 
 # Div sjekk
 table(RegData$ShNavn, RegData$Aar)

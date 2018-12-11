@@ -41,21 +41,23 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                h2("Her kan man evt. vise de variable/resultater som er viktigst å overvåke", align='center' ),
                h2("Gi tilbakemelding på hva som skal være på sida", align='center' ),
                br(),
+               h3("Merk at noen resultater kan se rare ut siden det er syntetiske data!", align='center' ),
                br(),
                tags$ul(tags$b('Andre ting å ta stilling til: '),
+                       tags$li("Er innhold i tabeller i tilknytning til figurer ok? Dvs. er det disse kolonnene dere ønsker. 
+                               (Jeg jobber med å få de penere ut og å få på plass de som mangler."),
                        tags$li("Foretrukket tittellayout på side - som på andeler eller gjennomsnitt?"), 
-                       tags$li("Ønskes annen organisering av innhold?"), 
-                       tags$li("Kun en figur på hver side, eller fint å vise to samtidig som under 'Andeler'? "),
+                       tags$li("Ønskes annen organisering av innhold? - NB: Vi kan ikke gjøre store endringer nå, 
+                               men evt. ha en plan på sikt"), 
+                       tags$li("Kun en figur på hver side, eller er det fint å vise to samtidig som under 'Andeler'? "),
                        tags$li("Hvilke utvalgs/filtreringsmuligheter skal vi ha i de ulike fanene"), 
-                       tags$li("Navn på faner"), 
-                       tags$li("nynorsk (NB: Vil fort skape mye ekstraarbeid) el. bokmål?"),
-                       tags$li("Innhold i tabeller i tilknytning til figurer.")
+                       tags$li("Hvilke navn ønskes på fanene?")
                ),
                br(),
                tags$ul(tags$b('Kommer: '),
                        tags$li("Alle figurer vil få tilhørende tabell i fane ved siden av som for 'Andeler' "), 
                        tags$li('Overflyttinger mellom sykehus/avd.'),
-                       tags$li("Fordelinger alder og kjønn - ikke sikkert denne blir med i første omgang")
+                       tags$li("Fordelinger alder og kjønn - hvordan vil dere ha denne framstilt og hvor?")
                )
       ), #tab
       
@@ -546,7 +548,7 @@ server <- function(input, output, session) { #
                                         reshID=reshIDdummy, enhetsUtvalg=as.numeric(input$enhetsUtvalg),
                                         datoFra=input$datovalg[1], datoTil=input$datovalg[2],
                                         minald=as.numeric(input$alder[1]), maxald=as.numeric(input$alder[2]),
-                                        erMann=as.numeric(input$erMann))
+                                        erMann=as.numeric(input$erMann), lagFig = 0)
             #NIRFigAndeler(RegData=RegData, preprosess = 0, reshID=109773, enhetsUtvalg=1 ) 
             tab <- lagTabavFig(UtDataFraFig = UtDataFord)
 
@@ -555,9 +557,24 @@ server <- function(input, output, session) { #
                         h3(UtDataFord$tittel),
                         h5(HTML(paste0(UtDataFord$utvalgTxt, '<br />')))
                   )}) #, align='center'
-            output$fordelingTab <- renderTable(
-                  tab, rownames = T)
-            })
+            output$fordelingTab <- function() { #renderTable(
+                  
+                  # tab %>%
+                  #       knitr::kable("html", digits = c(0,1,0,1)) %>%
+                  #       kable_styling("hover", full_width = F)
+                  # 
+                  kableExtra::kable(tab, format = 'html'
+                                    #, full_width=F
+                                    , digits = c(0,1,0,1)
+                                    ) %>%
+                        #add_header_above(c(" "=1, "Din avdeling" = 2, "Landet forøvrig" = 2)) %>%
+                        column_spec(column = 1:(ncol(tab)+1), width = '7em') %>%
+                        row_spec(0,bold = T)
+                                     
+                 # tab, rownames = T
+                 
+            }
+            } )
       
       output$andelerGrVar <- renderPlot({
             NIRFigAndelerGrVar(RegData=RegData, preprosess = 0, valgtVar=input$valgtVarAndelGrVar,
