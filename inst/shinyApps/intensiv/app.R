@@ -423,6 +423,7 @@ server <- function(input, output, session) { #
       library(lubridate)
       library(zoo)
       library(kableExtra)
+      library(knitr)
       
       context <- Sys.getenv("R_RAP_INSTANCE") #Blir tom hvis jobber lokalt
       if (context == "TEST" | context == "QA" | context == "PRODUCTION") {
