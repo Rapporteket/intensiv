@@ -460,39 +460,39 @@ server <- function(input, output, session) { #
       #--------startside--------------      
       #output$tekstDash <- c('Figurer med kvalitetsindikatorer',
       #                      'hente ned månedsrapport'),
-      output$mndRapp = downloadHandler(
-            filename = 'MndRapp.pdf',
-            #content = function(file) file.copy(system.file('NIRMndRapp.pdf', package = 'Nakke'), file, overwrite = TRUE),
-            content = function(file) {
-                  # permission to the current working directory
-                  src <- normalizePath(system.file('NIRmndRapp.Rnw', package='intensiv'))
-                  owd <- setwd(tempdir())
-                  on.exit(setwd(owd))
-                  file.copy(src, 'NIRmndRapp.Rnw', overwrite = TRUE)
-                  
-                  #knitr::knit2pdf(system.file('NIRmndRapp.Rnw', package='intensiv'), encoding = 'UTF-8')
-                  texfil <- knitr::knit(system.file('NIRmndRapp.Rnw', package='intensiv'), encoding = 'UTF-8')
-                  tools::texi2pdf(system.file(texfil, package='intensiv'),clean = TRUE) #"NakkeMndRapp.tex"
-                  file.copy('NIRmndRapp.pdf', file)
-                  #file.rename('NIRmndRapp.pdf', file)
-            }, contentType = 'application/pdf'
-            
-            # content = function(file) {
-            #       src <- normalizePath(system.file("NORIC_local_monthly_stent.Rmd", package="noric"))
-            #       owd <- setwd(tempdir())
-            #       on.exit(setwd(owd))
-            #       file.copy(src, "tmpNoricStent.Rmd", overwrite = TRUE)
-            #       out <- render("tmpNoricStent.Rmd", output_format = pdf_document(),
-            #                     params = list(tableFormat="latex"),
-            #                     output_dir = tempdir())
-            #       # active garbage collection to prevent memory hogging?
-            #       gc()
-            #       file.rename(out, file)
-            # }
-            
-            
-      )
-      #  If you already have made the PDF file, you can just copy it to file, i.e.
+      # output$mndRapp = downloadHandler(
+      #       filename = 'MndRapp.pdf',
+      #       #content = function(file) file.copy(system.file('NIRMndRapp.pdf', package = 'Nakke'), file, overwrite = TRUE),
+      #       content = function(file) {
+      #             # permission to the current working directory
+      #             src <- normalizePath(system.file('NIRmndRapp.Rnw', package='intensiv'))
+      #             owd <- setwd(tempdir())
+      #             on.exit(setwd(owd))
+      #             file.copy(src, 'NIRmndRapp.Rnw', overwrite = TRUE)
+      #             
+      #             #knitr::knit2pdf(system.file('NIRmndRapp.Rnw', package='intensiv'), encoding = 'UTF-8')
+      #             texfil <- knitr::knit(system.file('NIRmndRapp.Rnw', package='intensiv'), encoding = 'UTF-8')
+      #             tools::texi2pdf(system.file(texfil, package='intensiv'),clean = TRUE) #"NakkeMndRapp.tex"
+      #             file.copy('NIRmndRapp.pdf', file)
+      #             #file.rename('NIRmndRapp.pdf', file)
+      #       }, contentType = 'application/pdf'
+      #       
+      #       # content = function(file) {
+      #       #       src <- normalizePath(system.file("NORIC_local_monthly_stent.Rmd", package="noric"))
+      #       #       owd <- setwd(tempdir())
+      #       #       on.exit(setwd(owd))
+      #       #       file.copy(src, "tmpNoricStent.Rmd", overwrite = TRUE)
+      #       #       out <- render("tmpNoricStent.Rmd", output_format = pdf_document(),
+      #       #                     params = list(tableFormat="latex"),
+      #       #                     output_dir = tempdir())
+      #       #       # active garbage collection to prevent memory hogging?
+      #       #       gc()
+      #       #       file.rename(out, file)
+      #       # }
+      #       
+      #       
+      # )
+      # #  If you already have made the PDF file, you can just copy it to file, i.e.
       #  content = function(file) file.copy('your_existing.pdf', file, overwrite = TRUE)
       
       
