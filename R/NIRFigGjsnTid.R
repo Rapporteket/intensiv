@@ -40,9 +40,9 @@
 #' @return Linjediagram som viser utvikling over tid for valgt variabel
 #'
 #' @export
-NIRFigGjsnTid <- function(RegData, valgtVar, datoFra='2011-01-01', datoTil='3000-12-31', tidsenhet='Aar',
+NIRFigGjsnTid <- function(RegData, valgtVar='alder', datoFra='2011-01-01', datoTil='3000-12-31', tidsenhet='Aar',
                     minald=0, maxald=110, erMann='', reshID=0, InnMaate='', dodInt='', tittel=1, 
-                    outfile='',enhetsUtvalg=0, valgtMaal='', preprosess=1, hentData=0){
+                    outfile='',enhetsUtvalg=0, valgtMaal='Gjsn', preprosess=1, hentData=0){
   
   if (hentData == 1) {		
     RegData <- NIRRegDataSQL(datoFra, datoTil)
@@ -139,10 +139,11 @@ t1 <- switch(valgtMaal,
              Gjsn = 'Gjennomsnittlig ')
 tittel <- paste0(t1, NIRVarSpes$tittel) 
 
+if (valgtMaal=='Med') {maaltxt <- 'Median ' } else {maaltxt <- 'Gjennomsnitt '}
 
 ResData <- round(rbind(Midt, Konf, MidtRest, KonfRest), 1)
-rownames(ResData) <- c('Sentralmål', 'KI, min', 'KI, maks', 
-                       'Sentralmål, Resten', 'KI min., Resten', 'KI, maks, Resten')[1:(3*(medSml+1))]
+rownames(ResData) <- c(maaltxt, 'KImin', 'KImaks', 
+                       paste0(maaltxt, 'Resten'), 'KImin, Resten', 'KImaks, Resten')[1:(3*(medSml+1))]
 #UtData <- list(paste0(toString(NIRVarSpes$tittel),'.'), ResData )
 #names(UtData) <- c('tittel', 'Data')
 
@@ -184,7 +185,6 @@ xmax <- max(tidNum)+0.5
 cexgr <- 0.9	#Kan endres for enkeltvariable
 ymin <- 0.9*min(KonfRest, Konf, na.rm=TRUE)	#ymin1 - 2*h
 ymax <- 1.1*max(KonfRest, Konf, na.rm=TRUE)	#ymax1 + 2*h
-if (valgtMaal=='Med') {maaltxt <- 'Median ' } else {maaltxt <- 'Gjennomsnitt '}
 ytxt <- maaltxt #paste0(maaltxt, ytxt1, sep='')
 
 #Plottspesifikke parametre:

@@ -33,7 +33,7 @@ tabBelegg <- function(RegData, tidsenhet='Aar', datoTil, enhetsUtvalg=0, reshID=
       )
       RegData <- NIRUtvalgEnh(RegData=RegData, datoFra=datoFra, datoTil = datoTil, 
                              enhetsUtvalg = enhetsUtvalg, reshID = reshID)$RegData
-      RegData <- SorterOgNavngiTidsEnhet(RegData, tidsenhet=tidsenhet)$RegData
+      RegData <- SorterOgNavngiTidsEnhet(RegData, tidsenhet=tidsenhet, tab=1)$RegData
       #RegData <- Mtid$RegData
       tabBeleggAnt <- rbind('Ferdigstilte intensivopphald' = tapply(RegData$PasientID, RegData$TidsEnhet, FUN=length), #table(RegDataEget$TidsEnhet), #Neget,		
                             'Registrerte pasientar' = tapply(RegData$PasientID, RegData$TidsEnhet, 
@@ -68,7 +68,7 @@ tabAntOpphShMnd <- function(RegData, datoTil, antMnd=6){
                               & RegData$InnDato > as.Date(datoFra, tz='UTC'), aggVar]
       RegDataDum$Maaned1 <- floor_date(RegDataDum$InnDato, 'month')
       tabAvdMnd1 <- table(RegDataDum[ , c('ShNavn', 'Maaned1')])
-      colnames(tabAvdMnd1) <- format(ymd(colnames(tabAvdMnd1)), '%b%y') #month(ymd(colnames(tabAvdMnd1)), label = T)
+      colnames(tabAvdMnd1) <- format(ymd(colnames(tabAvdMnd1)), '%b %y') #month(ymd(colnames(tabAvdMnd1)), label = T)
       tabAvdMnd1 <- addmargins((tabAvdMnd1))
       #tabAvdMnd1 <- RegDataDum %>% group_by(Maaned=floor_date(InnDato, "month"), ShNavn) %>%
       #      summarize(Antall=length(ShNavn))
@@ -163,7 +163,7 @@ tabNokkeltall <- function(RegData, tidsenhet='Mnd', datoTil=Sys.Date(), enhetsUt
       )
       RegData <- NIRUtvalgEnh(RegData=RegData, datoFra=datoFra, datoTil = datoTil, 
                               enhetsUtvalg = enhetsUtvalg, reshID = reshID)$RegData
-      RegData <- SorterOgNavngiTidsEnhet(RegData, tidsenhet=tidsenhet)$RegData
+      RegData <- SorterOgNavngiTidsEnhet(RegData, tidsenhet=tidsenhet, tab=1)$RegData
       #NB: sjekk riktige utvalg!!!
       indLigget <- which(RegData$liggetid>0)
       indRespt <- which(RegData$respiratortid>0)
@@ -186,7 +186,7 @@ tabNokkeltall <- function(RegData, tidsenhet='Mnd', datoTil=Sys.Date(), enhetsUt
             'Respiratortid (median)' = tapply(RegData$respiratortid[indRespt], RegData$TidsEnhet[indRespt], 
                                               FUN=median, na.rm=T),
             'SAPS II (median)' = tapply(RegData$SAPSII[indSAPS], RegData$TidsEnhet[indSAPS], FUN=median, na.rm=T),
-            'NEMS per opph. (median)' = tapply(RegData$NEMS[indNEMS], 
+            'NEMS/opph. (median)' = tapply(RegData$NEMS[indNEMS], 
                                                RegData$TidsEnhet[indNEMS], FUN=median, na.rm=T),
             'Døde (%)' = tapply((RegData$DischargedIntensiveStatus==1), RegData$TidsEnhet, 
                                 FUN=function(x) sum(x, na.rm=T)/length(x)*100),
@@ -209,16 +209,19 @@ tabNokkeltall <- function(RegData, tidsenhet='Mnd', datoTil=Sys.Date(), enhetsUt
 #' @export
 lagTabavFig <- function(UtDataFraFig){
       tab <-cbind(UtDataFraFig$Ngr$Hoved, 
-            UtDataFraFig$AggVerdier$Hoved, 
-            UtDataFraFig$Ngr$Rest,
-            UtDataFraFig$AggVerdier$Rest)
-rownames(tab) <- UtDataFraFig$grtxt
-#kolnavn <- c('Antall' , 'Andel (%)')
-#colnames(tab) <- c(kolnavn, if(!is.null(UtDataFraFig$Ngr$Rest)){kolnavn})
-colnames(tab) <- c(paste0(UtDataFraFig$hovedgrTxt,', Antall'),
-                   paste0(UtDataFraFig$hovedgrTxt, ', Andel (%)'),
-                   if(!is.null(UtDataFraFig$Ngr$Rest)){paste0(UtDataFraFig$smltxt,', Antall')},
-                   if(!is.null(UtDataFraFig$Ngr$Rest)){paste0(UtDataFraFig$smltxt, ', Andel (%)')})
+                  UtDataFraFig$AggVerdier$Hoved, 
+                  UtDataFraFig$Ngr$Rest,
+                  UtDataFraFig$AggVerdier$Rest)
+      grtxt <- UtDataFraFig$grtxt
+      if ((min(nchar(grtxt)) == 5) & (max(nchar(grtxt)) == 5)) {
+            grtxt <- paste(substr(grtxt, 1,3), substr(grtxt, 4,5))}
+      rownames(tab) <- grtxt
+      kolnavn <- c('Antall' , 'Andel (%)')
+      colnames(tab) <- c(kolnavn, if(!is.null(UtDataFraFig$Ngr$Rest)){kolnavn})
+      # colnames(tab) <- c(paste0(UtDataFraFig$hovedgrTxt,', Antall'),
+#                    paste0(UtDataFraFig$hovedgrTxt, ', Andel (%)'),
+#                    if(!is.null(UtDataFraFig$Ngr$Rest)){paste0(UtDataFraFig$smltxt,', Antall')},
+#                    if(!is.null(UtDataFraFig$Ngr$Rest)){paste0(UtDataFraFig$smltxt, ', Andel (%)')})
 
 return(tab)
                    }

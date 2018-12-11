@@ -63,7 +63,7 @@ FinnReinnleggelser <- function(RegData, PasientID='PasientID'){
 #' see the information flow.
 #' @rdname hjelpeFunksjoner
 #' @export
-SorterOgNavngiTidsEnhet <- function(RegData, tidsenhet='Aar') {
+SorterOgNavngiTidsEnhet <- function(RegData, tidsenhet='Aar', tab=0) {
       #Lager sorteringsvariabel for tidsenhet:
       RegData$TidsEnhetSort <- switch(tidsenhet,
                                       Aar = RegData$Aar-min(RegData$Aar)+1,
@@ -85,6 +85,7 @@ SorterOgNavngiTidsEnhet <- function(RegData, tidsenhet='Aar') {
                                        sprintf('%01.0f', RegData$Halvaar[match(1:max(RegData$TidsEnhetSort), RegData$TidsEnhetSort)]), sep='-'),
                        Aar = as.character(RegData$Aar[match(1:max(RegData$TidsEnhetSort), RegData$TidsEnhetSort)]))
       
+      if (tab==1 & tidsenhet=='Mnd') {tidtxt <- paste(substr(tidtxt, 1,3), substr(tidtxt, 4,5))}
       RegData$TidsEnhetSort <- factor(RegData$TidsEnhetSort, levels=1:max(RegData$TidsEnhetSort))
       RegData$TidsEnhet <- factor(RegData$TidsEnhetSort, ordered = TRUE, labels=tidtxt)
       

@@ -1,10 +1,11 @@
-#
-# This is a Shiny web application. You can run the application by clicking
-# the 'Run App' button above.
-#
+# Shiny-app for Norsk Intensivregister
 
 library(shiny)
 library(knitr)
+library(intensiv)
+library(lubridate)
+library(zoo)
+library(kableExtra)
 #ibrary(shinyBS) # Additional Bootstrap Controls
 
 # ui <- shinyUI(basicPage(
@@ -44,8 +45,7 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                h3("Merk at noen resultater kan se rare ut siden det er syntetiske data!", align='center' ),
                br(),
                tags$ul(tags$b('Andre ting å ta stilling til: '),
-                       tags$li("Er innhold i tabeller i tilknytning til figurer ok? Dvs. er det disse kolonnene dere ønsker. 
-                               (Jeg jobber med å få de penere ut og å få på plass de som mangler."),
+                       tags$li("Er innhold i tabeller i tilknytning til figurer ok? Dvs. er det disse kolonnene dere ønsker?"),
                        tags$li("Foretrukket tittellayout på side - som på andeler eller gjennomsnitt?"), 
                        tags$li("Ønskes annen organisering av innhold? - NB: Vi kan ikke gjøre store endringer nå, 
                                men evt. ha en plan på sikt"), 
@@ -55,7 +55,6 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                ),
                br(),
                tags$ul(tags$b('Kommer: '),
-                       tags$li("Alle figurer vil få tilhørende tabell i fane ved siden av som for 'Andeler' "), 
                        tags$li('Overflyttinger mellom sykehus/avd.'),
                        tags$li("Fordelinger alder og kjønn - hvordan vil dere ha denne framstilt og hvor?")
                )
@@ -95,12 +94,12 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                                           tableOutput('tabNokkeltall')
                                  ),
                                  tabPanel('Ant. opphold',
-                                          h2("Antal opphald per avdeling"),
+                                          h2("Antall opphold per avdeling"),
                                           p(em("Velg tidsperiode ved å velge sluttdato i menyen til venstre")),
                                           tableOutput("tabAntOpphShMnd12")
                                  ),
                                  tabPanel('Pasientar per år og avd.',
-                                          h2("Antal pasientar ved avdelingane siste 5 år"),
+                                          h2("Antall pasienter ved avdelingene siste 5 år"),
                                           tableOutput("tabAntPasSh5Aar")
                                  ),
                                  tabPanel('Dobbeltregistreringar',
@@ -317,7 +316,8 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
 
 #--------SMR--------------
       tabPanel('SMR',
-               h3('SMR: Standardisert mortalitetsratio'),
+               h3('SMR: Standardisert mortalitetsratio', align='center'),
+               br(),
                sidebarPanel(
                      dateRangeInput(inputId = 'datovalgSMR', start = "2017-07-01", end = Sys.Date(),
                                     label = "Tidsperiode", separator="t.o.m.", language="nb"),
@@ -329,7 +329,14 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                      )
                ),
                mainPanel(
-                     plotOutput('SMR')
+                     tabsetPanel(
+                           tabPanel("Figur",
+                                    plotOutput("SMRfig")),
+                           tabPanel("Tabell",
+                                    uiOutput("tittelSMR"),
+                                    br(),
+                                    tableOutput("SMRtab"))
+                     )
                )
       ), #tab
       
@@ -419,11 +426,6 @@ tabPanel("Pårørendeskjema",
 #----------------- Define server logic ----------
 server <- function(input, output, session) { #
       
-      library(intensiv)
-      library(lubridate)
-      library(zoo)
-      library(kableExtra)
-      library(knitr)
       
       context <- Sys.getenv("R_RAP_INSTANCE") #Blir tom hvis jobber lokalt
       if (context == "TEST" | context == "QA" | context == "PRODUCTION") {
@@ -508,8 +510,15 @@ server <- function(input, output, session) { #
             kableExtra::kable(t(tab), 
                               full_width=F, 
                               digits = c(0,0,0,1,1,1,0,0,1,2,1)
-                              #,add_header_above = c(" ", "Din avdeling" = 3, "Landet forøvrig" = 3)
-                              )
+                             ) %>%
+                  column_spec(column = 1, width_min = '4em', width_max = 10) %>%
+                  #column_spec(column = 1, width = '4em') %>%
+                  column_spec(column = 2:(ncol(tab)), width = '4em')  %>%
+                  #column_spec(column = 2:(ncol(tab)), width_min = '7em', width_max = '7em') %>%
+                  row_spec(0, bold = T, align = 'c') %>%
+                  kable_styling(full_width = FALSE, position = 'left') #"hover", 
+                  
+            
       }#,rownames=T, digits=0 )
       
       output$tabAntOpphShMnd12 <- renderTable({
@@ -558,22 +567,18 @@ server <- function(input, output, session) { #
                         h3(UtDataFord$tittel),
                         h5(HTML(paste0(UtDataFord$utvalgTxt, '<br />')))
                   )}) #, align='center'
-            output$fordelingTab <- function() { #renderTable(
+            output$fordelingTab <- function() { #gr1=UtDataFord$hovedgrTxt, gr2=UtDataFord$smltxt renderTable(
                   
-                  # tab %>%
-                  #       knitr::kable("html", digits = c(0,1,0,1)) %>%
                   #       kable_styling("hover", full_width = F)
-                  # 
+                  antKol <- ncol(tab)
                   kableExtra::kable(tab, format = 'html'
-                                    #, full_width=F
-                                    , digits = c(0,1,0,1)
+                                    , full_width=F
+                                    , digits = c(0,1,0,1)[1:antKol]
                                     ) %>%
-                        #add_header_above(c(" "=1, "Din avdeling" = 2, "Landet forøvrig" = 2)) %>%
-                        column_spec(column = 1:(ncol(tab)+1), width = '7em') %>%
-                        row_spec(0,bold = T)
-                                     
-                 # tab, rownames = T
-                 
+                        add_header_above(c(" "=1, 'Egen enhet/gruppe' = 2, 'Resten' = 2)[1:(antKol/2+1)]) %>%
+                        column_spec(column = 1, width_min = '7em') %>%
+                        column_spec(column = 2:(ncol(tab)+1), width = '7em') %>%
+                        row_spec(0, bold = T)
             }
             } )
       
@@ -608,14 +613,19 @@ server <- function(input, output, session) { #
                                                enhetsUtvalg = input$enhetsUtvalgAndelTid, 
                                                lagFig=0)
                   tabAndelTid <- lagTabavFig(UtDataFraFig = AndelerTid)
-                  #tabAndelTid <- cbind(Tidspunkt = names(AndelerTid$AggVerdier$Hoved),
-                   #                    Andeler = sprintf('%.1f', AndelerTid$AggVerdier$Hoved,1))
-                  
-                  output$andelTidTab <- renderTable(
-                        tabAndelTid, 
-                        rownames = T,
-                        spacing="xs") #,height='60%' #width='60%')
-                  #output$tittelAndelTid <- renderUI({h3(AndelerTid$tittel)}) #, align='center'
+
+
+                  output$andelTidTab <- function() {
+                        antKol <- ncol(tabAndelTid)
+                        kableExtra::kable(tabAndelTid, format = 'html'
+                                          , full_width=F
+                                          , digits = c(0,1,0,1)[1:antKol]
+                        ) %>%
+                              add_header_above(c(" "=1, 'Egen enhet/gruppe' = 2, 'Resten' = 2)[1:(antKol/2+1)]) %>%
+                              column_spec(column = 1, width_min = '7em') %>%
+                              column_spec(column = 2:(antKol+1), width = '7em') %>%
+                              row_spec(0, bold = T)
+                  }
                   
                   #AndelGrVar
                   AndelerShus <- NIRFigAndelerGrVar(RegData=RegData, preprosess = 0, valgtVar=input$valgtVarAndelGrVar,
@@ -623,11 +633,21 @@ server <- function(input, output, session) { #
                                                     minald=as.numeric(input$alderAndelGrVar[1]), maxald=as.numeric(input$alderAndelGrVar[2]),
                                                     erMann=as.numeric(input$erMannAndelGrVar, lagFig = 0))
                   tabAndelerShus <- cbind(Antall=AndelerShus$Ngr$Hoved,
-                                          Andeler = sprintf('%.1f', AndelerShus$AggVerdier$Hoved,1))
+                                          Andeler = AndelerShus$AggVerdier$Hoved)
                   
-                  output$andelerGrVarTab <- renderTable({ 
-                        tabAndelerShus}, rownames=T, spacing="xs" #,height='60%' #width='60%', 
-                  )
+                  # output$andelerGrVarTab <- renderTable({ 
+                  #       tabAndelerShus}, rownames=T, spacing="xs" #,height='60%' #width='60%', 
+                  # )
+                  output$andelerGrVarTab <- function() { #gr1=UtDataFord$hovedgrTxt, gr2=UtDataFord$smltxt renderTable(
+                        antKol <- ncol(tabAndelerShus)
+                        kableExtra::kable(tabAndelerShus, format = 'html'
+                                          #, full_width=T
+                                          , digits = c(0,1) #,0,1)[1:antKol]
+                        ) %>%
+                              column_spec(column = 1, width_min = '5em') %>%
+                              column_spec(column = 2:(antKol+1), width = '4em') %>%
+                              row_spec(0, bold = T)
+                  }
                   output$tittelAndelGrVar <- renderUI({
                               tagList(
                                     h3(AndelerShus$tittel),
@@ -664,11 +684,20 @@ server <- function(input, output, session) { #
                                                minald=as.numeric(input$alderGjsn[1]), maxald=as.numeric(input$alderGjsn[2]),
                                                erMann=as.numeric(input$erMannGjsn),
                                                valgtMaal = input$sentralmaal, lagFig = 0)
-            output$tabGjsnGrVar <- renderTable({
+            output$tabGjsnGrVar <- function() {
                   tabGjsnGrVar <- cbind(Antall = dataUtGjsnGrVar$Ngr$Hoved,
-                                        Sentralmål = sprintf('%.1f', dataUtGjsnGrVar$AggVerdier$Hoved,1))
-            }, rownames = T, spacing = 'xs')
-            output$tittelGjsn <- renderUI(
+                                        Sentralmål = dataUtGjsnGrVar$AggVerdier$Hoved)
+                  colnames(tabGjsnGrVar)[2] <- ifelse(input$sentralmaal == 'Med', 'Median', 'Gjennomsnitt')
+
+                  kableExtra::kable(tabGjsnGrVar, format = 'html'
+                                    , full_width=F
+                                    , digits = c(0,1) #,1,1)[1:antKol]
+                  ) %>%
+                        column_spec(column = 1, width_min = '7em') %>%
+                        column_spec(column = 2:3, width = '7em') %>%
+                        row_spec(0, bold = T)
+            }
+                  output$tittelGjsn <- renderUI(
                   tagList(
                         h3(dataUtGjsnGrVar$tittel),
                         br(),
@@ -682,21 +711,65 @@ server <- function(input, output, session) { #
                                            valgtMaal = input$sentralmaal,
                                            tidsenhet = input$tidsenhetGjsn,
                                            enhetsUtvalg = input$enhetsUtvalgGjsn) #, lagFig=0)
-            output$tabGjsnTid <- renderTable({
-                  t(dataUtGjsnTid$AggVerdier)
-            }, rownames = T, spacing = 'xs')
-      }) #observe
-      
-      
-      output$SMR <- renderPlot({
+            output$tabGjsnTid <- function() {
+                  tabGjsnTid <- t(dataUtGjsnTid$AggVerdier)
+                  grtxt <-dataUtGjsnTid$grtxt
+                  if ((min(nchar(grtxt)) == 5) & (max(nchar(grtxt)) == 5)) {
+                        grtxt <- paste(substr(grtxt, 1,3), substr(grtxt, 4,5))}
+                  rownames(tabGjsnTid) <- grtxt
+
+                  antKol <- ncol(tabGjsnTid)
+                  navnKol <- colnames(tabGjsnTid) 
+                  if (antKol==6) {colnames(tabGjsnTid) <- c(navnKol[1:3], navnKol[1:3])}
+                  kableExtra::kable(tabGjsnTid, format = 'html'
+                                    , full_width=F
+                                    , digits = 1 #c(0,1,1,1)[1:antKol]
+                  ) %>%
+                        add_header_above(c(" "=1, 'Egen enhet/gruppe' = 3, 'Resten' = 3)[1:(antKol/3+1)]) %>%
+                        #add_header_above(c(" "=1, 'Egen enhet/gruppe' = 3, 'Resten' = 3)[1:(antKol/3+1)]) %>%
+                        column_spec(column = 1, width_min = '7em') %>%
+                        column_spec(column = 2:(antKol+1), width = '7em') %>%
+                        row_spec(0, bold = T)
+            }
+      })
+
+      output$SMRfig <- renderPlot({
             NIRFigGjsnGrVar(RegData=RegData, preprosess = 0, valgtVar='SMR',
                             datoFra=input$datovalgSMR[1], datoTil=input$datovalgSMR[2],
                             minald=as.numeric(input$alderSMR[1]), maxald=as.numeric(input$alderSMR[2]),
                             erMann=as.numeric(input$erMannSMR))
-      }, height = function() {2.2*session$clientData$output_SMR_height}, #heigth = 800, width=700
-      width = function() {0.8*session$clientData$output_SMR_width}
+      }, #heigth = 8000, width=800
+      height = function() {2.2*session$clientData$output_SMRfig_height}, #
+      width = function() {0.8*session$clientData$output_SMRfig_width}
       )
-      
+   
+      observe({
+            dataUtSMR <- NIRFigGjsnGrVar(RegData=RegData, preprosess = 0, valgtVar='SMR',
+                            datoFra=input$datovalgSMR[1], datoTil=input$datovalgSMR[2],
+                            minald=as.numeric(input$alderSMR[1]), maxald=as.numeric(input$alderSMR[2]),
+                            erMann=as.numeric(input$erMannSMR), lagFig = 0)
+            output$SMRtab <- function() {
+                  tabSMR <- cbind(Antall = dataUtSMR$Ngr$Hoved,
+                                        SMR = dataUtSMR$AggVerdier$Hoved)
+                  #colnames(tabGjsnGrVar)[2] <- ifelse(input$sentralmaal == 'Med', 'Median', 'Gjennomsnitt')
+
+                  kableExtra::kable(tabSMR, format = 'html'
+                                    , full_width=F
+                                    , digits = c(0,2) #,1,1)[1:antKol]
+                  ) %>%
+                        column_spec(column = 1, width_min = '7em') %>%
+                        column_spec(column = 2:3, width = '7em') %>%
+                        row_spec(0, bold = T)
+            }
+                  output$tittelSMR <- renderUI(
+                  tagList(
+                        h3(dataUtSMR$tittel),
+                        br(),
+                        h5(HTML(paste0(dataUtSMR$utvalgTxt, '<br />')))
+                  ))
+
+})
+				  
       output$innMaate <- renderPlot({
             NIRFigInnMaate(RegData=RegData, preprosess=0, valgtVar='InnMaate', 
                            datoFra=input$datovalgInnMaate[1], datoTil=input$datovalgInnMaate[2],
