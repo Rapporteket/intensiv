@@ -1,4 +1,5 @@
 # Shiny-app for Norsk Intensivregister
+#NB: For å få lagt ut app'en på Shinyapps, må Github-pakkene (intensiv og rapbase) være installert fra Github.
 
 library(shiny)
 library(knitr)
@@ -525,16 +526,8 @@ server <- function(input, output, session) { #
             switch(input$tidsenhetReg,
                    Mnd=tabAntOpphShMnd(RegData=RegData, datoTil=input$sluttDatoReg, antMnd=12), #input$datovalgTab[2])  
                    Aar=tabAntOpphSh5Aar(RegData=RegData, datoTil=input$sluttDatoReg))
-            #sprintf('%1.3f'
-            #xtable::xtable(tabAvd12MndNskjema,  align = c('l', rep('r', ncol(tabAvd12MndNskjema))),
-            #              caption= paste0('Tidsperiode: ', as.POSIXlt(datoFra12), 'til', as.POSIXlt(input$datoTil)))
-            #},
       }, rownames = T, digits=0, spacing="xs" 
       ) 
-      
-      # output$tabAvdNAar5 <- renderTable({
-      #       tabAntOpphSh5Aar(RegData=RegData, datoTil='2018-10-20')
-      # }, rownames = T, digits=0, spacing="xs")
       
       output$tabAntPasSh5Aar <- renderTable({
             tabAntOpphPasSh5Aar(RegData=RegData, gr='pas', datoTil=input$sluttDatoReg)

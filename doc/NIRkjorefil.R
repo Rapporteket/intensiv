@@ -66,9 +66,10 @@ load(paste0("A:/Intensiv/NIRdata10000.Rdata")) #RegDataTEST, 2018-06-05
 
 
 #---------LagSyntetiskeData-------------------------
+library(intensiv)
 #Hovedtabell
 varBort <- c('PostalCode', 'HF Sykehus', 'Helseenhet', 'HelseenhetKortnavn', 'LastUpdate', 'ShNavn', 'MunicipalNumber', 'Municipal',
-             'ICD10_1', 'ICD10_2', 'ICD10_3', 'ICD10_4', 'ICD10_5')
+             'ICD10_1', 'ICD10_2', 'ICD10_3', 'ICD10_4', 'ICD10_5', 'Sykehus', 'HelseenhetID')
 HovedData <- read.table(file=paste0(fil,'.csv'), header=T, stringsAsFactors=FALSE, sep=';',encoding = 'UTF-8')
 RegData <- lageTulleData(RegData=HovedData, varBort=varBort, antSh=26, antObs=20000)
 #Pårørendedata
