@@ -13,7 +13,7 @@ License: GPL2
 LazyData: FALSE
 Encoding: UTF-8
 Depends:
-    R (>= 3.5.0),
+    R (>= 3.4.4),
     rapbase (>= 1.0.0)
 Remotes: 
       Rapporteket/rapbase
