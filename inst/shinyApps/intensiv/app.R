@@ -474,6 +474,8 @@ server <- function(input, output, session) { #
       #             #knitr::knit2pdf(system.file('NIRmndRapp.Rnw', package='intensiv'), encoding = 'UTF-8')
       #             texfil <- knitr::knit(system.file('NIRmndRapp.Rnw', package='intensiv'), encoding = 'UTF-8')
       #             tools::texi2pdf(system.file(texfil, package='intensiv'),clean = TRUE) #"NakkeMndRapp.tex"
+      #Prøv denne:      texfil <- knitr::knit('NIRmndRapp.Rnw', encoding = 'UTF-8')
+      #                 tools::texi2pdf(system.file(texfil, package='intensiv'),clean = TRUE) #"NakkeMndRapp.tex"
       #             file.copy('NIRmndRapp.pdf', file)
       #             #file.rename('NIRmndRapp.pdf', file)
       #       }, contentType = 'application/pdf'

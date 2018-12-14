@@ -13,7 +13,8 @@
 NIRPreprosess <- function(RegData=RegData, lagreKvalIndData=0)	#, reshID=reshID)
 {
   #Kun ferdigstilte registreringer:
-  # Rapporteket får kun levert ferdigstilte registreringer fra MRS/NHN.
+  # Fra des. 2018 får Intensiv også kladd over fra  fra MRS/NHN.
+      RegData <- RegData[RegData$FormStatus==2, ]
 
 #devtools::load_all(quiet = TRUE)
 #source('R/NIRhjelpefunksjoner.R', encoding = 'UTF-8')
@@ -25,7 +26,7 @@ NIRPreprosess <- function(RegData=RegData, lagreKvalIndData=0)	#, reshID=reshID)
   RegData$erMann[RegData$PatientGender == 2] <- 0
   
   #Riktig navn på regions-variabel:
-  #Mangler regionsvariabel!!!
+  #...
 #	RegData$Region <- RegData$RHF
 
 # Endre variabelnavn:
