@@ -421,7 +421,7 @@ xtable(tabResp, align=c('l', 'r','r','c','c'), #digits=c(0,1,1,1,0),
       # tabDbl <- RegDataSort[sort(c(indDbl, indDbl-1)), 
       #            c('PasientID','Innleggelsestidspunkt', "SkjemaGUID")]
       
-tabDbl <- finnDblReg(RegData=RegData, reshID=reshID) 
+tabDbl <- finnDblReg(RegData=RegData, reshID=reshID) #datoFra = datoFra, 
 dblTab <- knitr::kable(tabDbl, format='latex', row.names = FALSE) #, 
                 #caption='Registreringer kor same pasient har fått registrert to innleggingar med mindre enn 2 timars mellomrom.')
 #dblTab <- xtable(tabDbl, row.names = FALSE)
