@@ -37,6 +37,7 @@ varPaaror <- 'Q.SkjemaGUID
 , Q.BorMedPasienten
 , Q.HvorOfteSerDuPasienten
 , Q.HvorBorDu
+, Q.FormStatus
 , Q.KontaktMedInstensivavdelingen
 , Q.BehandlingHoeflighetRespektMedfoelelse
 , Q.BehandlingHoeflighetRespektMedfoelelseSkaaring
