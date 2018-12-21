@@ -22,10 +22,7 @@ FigNIRMeanMed_sql.R
 *.gz
 *.csv
 *.xlsx
-<<<<<<< HEAD
 ~$NIRkodebok2016-06-01.xlsx
-=======
->>>>>>> rel
 *.docx
 *.tmp
-
+tesst2filer

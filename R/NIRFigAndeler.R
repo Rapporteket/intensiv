@@ -94,7 +94,7 @@
 #'
 #' @export
 
-NIRFigAndeler  <- function(RegData=0, valgtVar='Alder', datoFra='2011-01-01', datoTil='3000-12-31', aar=0, overfPas=0,
+NIRFigAndeler  <- function(RegData=0, valgtVar='alder', datoFra='2011-01-01', datoTil='3000-12-31', aar=0, overfPas=0,
                         minald=0, maxald=110, erMann='',InnMaate='', dodInt='',outfile='', grType=99,  
                         preprosess=1, hentData=0, reshID=0, enhetsUtvalg=0, lagFig=1)	{
       
@@ -128,10 +128,10 @@ NIRFigAndeler  <- function(RegData=0, valgtVar='Alder', datoFra='2011-01-01', da
       
       #--------------- Gjøre beregninger ------------------------------
       #Gjør beregninger selv om det evt ikke skal vise figur ut. Trenger utdata.
-      AggVerdier <- list(Hoved = 0, Rest =0)
-      N <- list(Hoved = 0, Rest =0)
-      Nfig <- list(Hoved = 0, Rest =0) #figurtekst: N i legend
-      Ngr <- list(Hoved = 0, Rest =0)
+      AggVerdier <- list(Hoved = NA, Rest = NULL)
+      N <- list(Hoved = NULL, Rest =NULL)
+      Nfig <- list(Hoved = NULL, Rest =NULL) #figurtekst: N i legend
+      Ngr <- list(Hoved = NULL, Rest =NULL)
       ind <- NIRUtvalg$ind
 	variable <- NIRVarSpes$variable
       
@@ -288,7 +288,7 @@ NIRFigAndeler  <- function(RegData=0, valgtVar='Alder', datoFra='2011-01-01', da
                                      border=c(fargeHoved,NA), col=c(fargeHoved,fargeRest), bty='n', pch=c(15,18), 
                                      pt.cex=2, lwd=lwdRest, lty=NA, ncol=1)
                         } else {	
-                              legend(xmax/4, posOver+0.8*posDiff, paste0(hovedgrTxt, ' (N=', Nfig$Hoved,')'), 
+                              legend(xmax/4, posOver+0.6*posDiff, paste0(hovedgrTxt, ' (N=', Nfig$Hoved,')'), 
                                      border=NA, fill=fargeHoved, bty='n', ncol=1)
                         }
                         
@@ -333,8 +333,6 @@ NIRFigAndeler  <- function(RegData=0, valgtVar='Alder', datoFra='2011-01-01', da
             title(tittel, line=1.5) #cex.main=1.3)
             
             #Tekst som angir hvilket utvalg som er gjort
-            avst <- 0.8
-            utvpos <- 3	#Startlinje for teksten
             mtext(utvalgTxt, side=3, las=1, cex=0.9, adj=0, col=farger[1], line=c(3+0.8*((NutvTxt-1):0)))
             
             par('fig'=c(0, 1, 0, 1)) 

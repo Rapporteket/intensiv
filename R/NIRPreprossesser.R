@@ -13,7 +13,8 @@
 NIRPreprosess <- function(RegData=RegData, lagreKvalIndData=0)	#, reshID=reshID)
 {
   #Kun ferdigstilte registreringer:
-  # Rapporteket får kun levert ferdigstilte registreringer fra MRS/NHN.
+  # Fra des. 2018 får Intensiv også kladd over fra  fra MRS/NHN.
+      RegData <- RegData[RegData$FormStatus==2, ]
 
 #devtools::load_all(quiet = TRUE)
 #source('R/NIRhjelpefunksjoner.R', encoding = 'UTF-8')
@@ -25,7 +26,7 @@ NIRPreprosess <- function(RegData=RegData, lagreKvalIndData=0)	#, reshID=reshID)
   RegData$erMann[RegData$PatientGender == 2] <- 0
   
   #Riktig navn på regions-variabel:
-  #Mangler regionsvariabel!!!
+  #...
 #	RegData$Region <- RegData$RHF
 
 # Endre variabelnavn:
@@ -54,11 +55,13 @@ NIRPreprosess <- function(RegData=RegData, lagreKvalIndData=0)	#, reshID=reshID)
 	RegData$InnDato <- as.Date(RegData$DateAdmittedIntensive, tz= 'UTC', format="%Y-%m-%d") 
 	RegData$Innleggelsestidspunkt <- as.POSIXlt(RegData$DateAdmittedIntensive, tz= 'UTC', format="%Y-%m-%d %H:%M:%S" )
 	#RegData$InnDato <- strptime(RegData$DateAdmittedIntensive, format="%Y-%m-%d") # %H:%M:%S" )  #"%d.%m.%Y"	"%Y-%m-%d"
+	RegData$DateDischargedIntensive <- as.POSIXlt(RegData$DateDischargedIntensive, tz= 'UTC', format="%Y-%m-%d %H:%M:%S" )
 	
 	# Nye variable:
-	RegData$Mnd <- RegData$Innleggelsestidspunkt$mon +1
-	RegData$Kvartal <- ceiling(RegData$Mnd/3)
-	RegData$Halvaar <- ceiling(RegData$Mnd/6)
+	RegData$MndNum <- RegData$Innleggelsestidspunkt$mon +1
+	RegData$MndAar <- format(RegData$Innleggelsestidspunkt, '%b%y')
+	RegData$Kvartal <- ceiling(RegData$MndNum/3)
+	RegData$Halvaar <- ceiling(RegData$MndNum/6)
 	RegData$Aar <- 1900 + RegData$Innleggelsestidspunkt$year #strptime(RegData$Innleggelsestidspunkt, format="%Y")$year
 	#RegData$Mnd <- paste(RegData$InnDato$year-100,RegData$InnDato$mon+1, sep='.')
 	#verdiGML <- 0:11

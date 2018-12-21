@@ -2,15 +2,36 @@
 % Please edit documentation in R/NIRtabeller.R
 \name{NIRtabeller}
 \alias{NIRtabeller}
-\alias{tabAntOpphSh12mnd}
+\alias{tabBelegg}
+\alias{tabAntOpphShMnd}
+\alias{tabAntOpphSh5Aar}
+\alias{tabAntOpphPasSh5Aar}
+\alias{finnDblReg}
+\alias{tabNokkeltall}
+\alias{lagTabavFig}
 \title{Funksjoner for å lage tabeller Group of functions page title}
 \usage{
-tabAntOpphSh12mnd(RegData, datoTil)
+tabBelegg(RegData, tidsenhet = "Aar", datoTil, enhetsUtvalg = 0,
+  reshID = 0)
+
+tabAntOpphShMnd(RegData, datoTil, antMnd = 6)
+
+tabAntOpphSh5Aar(RegData, datoTil)
+
+tabAntOpphPasSh5Aar(RegData, gr = "opph", datoTil)
+
+finnDblReg(RegData, datoFra = "2017-01-01", datoTil = Sys.Date(),
+  reshID = 114240)
+
+tabNokkeltall(RegData, tidsenhet = "Mnd", datoTil, enhetsUtvalg = 0,
+  reshID = 0)
+
+lagTabavFig(UtDataFraFig)
 }
 \arguments{
 \item{RegData}{data}
 
-\item{datoTil}{sluttdato. Brukes}
+\item{datoTil}{sluttdato. Brukes i tabellene AntOpph per 12 mnd og Belegg}
 
 \item{personIDvar}{Variabelen som angir pasientidentifikasjon}
 }
@@ -22,10 +43,7 @@ Fil som beregner div tabeller.Group of functions Description section
 }
 \details{
 Detaljer. kommer senereGroup of functions Details paragraph.
-}
-\section{Finne reinnleggelser After function section}{
 
-Despite its location, this actually comes after the function section.
 Fil som inneholder funksjoner for å lage tabeller, i første rekke tellinger av personer 
 Aktuelle tabeller:
 -Belegg (samlerapport), antall opphold per år og enhet, ant. pasienter per år og enhet, ant opph. per måned og enhet.
@@ -34,10 +52,32 @@ RegData må inneholde InnDato.
 -tabAntOpphSh5Aar:Antall opphold per år og enhet siste 5 år (inkl. inneværende år) fram til datoTil. 
 RegData må inneholde Aar.
 }
+\section{Belegg (antall opphold, pasienter og intensivdøgn)}{
+NA
+}
 
-\section{Antall opphold per enhet og måned}{
+\section{tabAntOpphShMnd antall opphold siste X (antMnd) mnd}{
+NA
+}
 
-Probably better if all sections come first, uless have one section per function. Makes it easier to
-see the information flow.
+\section{Antall opphold siste 5 år}{
+NA
+}
+
+\section{Antall registreringer/pasienter siste 5 år}{
+
+Hmmm
+}
+
+\section{Finn eventuelle dobbeltregistreringer}{
+NA
+}
+
+\section{Nøkkeltall (antall opph., pasienter,  intensivdøgn, samt div oversiktstall)}{
+NA
+}
+
+\section{Vise figurdata som tabell}{
+NA
 }
 

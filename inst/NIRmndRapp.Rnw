@@ -44,6 +44,7 @@ if (!exists('RegData')){
       RegData <- NIRRegDataSQL(datoFra = datoFra1Aar, datoTil = datoTil)
 	  #RegData er data fra siste år.
 }
+RegDataRaa <- RegData #For å kunne "tilbakestille" RegData
 
 RegData <- NIRPreprosess(RegData=RegData)
 RegData <- FinnReinnleggelser(RegData) # Beregne reinnleggelser
@@ -51,8 +52,8 @@ RegData <- FinnReinnleggelser(RegData) # Beregne reinnleggelser
 
 #RegData endres til 6 mnd:
 grType <- RegData$ShType[match(reshID, RegData$ReshId)]
-NIRUtvalg <- NIRUtvalgEnh(RegData, reshID = reshID, datoFra = datoFra6mnd, 
-                          datoTil = datoTil, enhetsUtvalg =1)
+NIRUtvalg <- NIRUtvalgEnh(RegData, reshID = reshID, enhetsUtvalg =1,
+                          datoFra = datoFra6mnd, datoTil = datoTil)
 #Fra NIRUTvalg: utvalgTxt, ind, medSml, smltxt, hovedgrTxt, grTypeTxt, RegData
 RegData <- NIRUtvalg$RegData
 shtxt <- NIRUtvalg$hovedgrTxt
@@ -60,7 +61,7 @@ ShTypeEgenTxt <- NIRUtvalg$grTypeTxt
 ind <- NIRUtvalg$ind
 N <- dim(RegData)[1]
 
-SortMnd <- SorterOgNavngiTidsEnhet(RegData, tidsenhet=tidsenhet)
+SortMnd <- SorterOgNavngiTidsEnhet(RegData=RegData, tidsenhet=tidsenhet)
 RegData <- SortMnd$RegData
 #tidtxt <- SortMnd$tidtxt
 
@@ -142,21 +143,22 @@ ynskje. I Rapporteket kan ein óg  finne mange fleire figurar og tabellar, og gj
 
 <<'TabReg', results='asis', echo=FALSE, eval=T>>=
 #For bare Eget sykehus
-tabAvdNEget <- rbind(
-	'Ferdigstilte intensivopphald' = tapply(RegDataEget$PasientID, RegDataEget$TidsEnhet, FUN=length), #table(RegDataEget$TidsEnhet), #Neget,		
-	'Registrerte pasientar' = tapply(RegDataEget$PasientID, RegDataEget$TidsEnhet, 
-	                                 FUN=function(x) length(unique(x))),	
-	'Antall intensivdøger' = round(as.numeric(tapply(RegDataEget$liggetid, RegDataEget$TidsEnhet, sum, na.rm=T)),0)	
-	#sum(RegDataEget$DaysAdmittedIntensiv, na.rm=T))
-	)
-
-overskr <- dimnames(tabAvdNEget)[[2]]
-aar <- substr(overskr, 1,2)
-mnd <- as.numeric(substr(overskr, 4,5))
-mndTxt <- c('jan', 'feb', 'mar', 'apr', 'mai', 'jun', 'jul', 'aug', 'sep', 'okt', 'nov', 'des') 
-colnames(tabAvdNEget) <- paste0(mndTxt[mnd], aar)
-
-xtable(tabAvdNEget, digits=0, align=c('l', rep('r', ncol(tabAvdNEget))), 
+# tabAvdNEget <- rbind(
+# 	'Ferdigstilte intensivopphald' = tapply(RegDataEget$PasientID, RegDataEget$TidsEnhet, FUN=length), #table(RegDataEget$TidsEnhet), #Neget,		
+# 	'Registrerte pasientar' = tapply(RegDataEget$PasientID, RegDataEget$TidsEnhet, 
+# 	                                 FUN=function(x) length(unique(x))),	
+# 	'Antall intensivdøger' = round(as.numeric(tapply(RegDataEget$liggetid, RegDataEget$TidsEnhet, sum, na.rm=T)),0)	
+# 	#sum(RegDataEget$DaysAdmittedIntensiv, na.rm=T))
+# 	)
+# 
+# overskr <- dimnames(tabAvdNEget)[[2]]
+# aar <- substr(overskr, 1,2)
+# mnd <- as.numeric(substr(overskr, 4,5))
+# mndTxt <- c('jan', 'feb', 'mar', 'apr', 'mai', 'jun', 'jul', 'aug', 'sep', 'okt', 'nov', 'des') 
+# colnames(tabAvdNEget) <- paste0(mndTxt[mnd], aar)
+tabBelegg <- tabBelegg(RegData=RegDataEget, datoTil=datoTil, tidsenhet=tidsenhet) #personIDvar='PasientID', 
+#parametre: RegData, tidsenhet='Aar', datoTil, enhetsUtvalg=0, reshID=0
+xtable(tabBelegg, digits=0, align=c('l', rep('r', ncol(tabBelegg))), 
 		caption=paste0('Antal opphald og liggedøger, ', shtxt,'.'), label='tab:RegEget')
 
 @
@@ -405,25 +407,25 @@ xtable(tabResp, align=c('l', 'r','r','c','c'), #digits=c(0,1,1,1,0),
 
 <<'DblReg', results='asis', echo=FALSE>>=
 
-      RegDataSort <- RegDataEget[order(RegDataEget$PasientID, RegDataEget$Innleggelsestidspunkt), 
-                             c('PasientID','Innleggelsestidspunkt', "SkjemaGUID")]
-      RegDataSort$OpphNr <- ave(RegDataSort[ ,'PasientID'], RegDataSort[ ,'PasientID'], FUN=seq_along)
-      indPasFlereOpph <- which(RegDataSort$OpphNr>1) 
-      RegDataSort$TidInn <- NA
-      RegDataSort$TidInn[indPasFlereOpph] <- 
-                        difftime(RegDataSort$Innleggelsestidspunkt[indPasFlereOpph], 
-                                 RegDataSort$Innleggelsestidspunkt[indPasFlereOpph-1], 
-                                 units = 'hour')
-
-      indDbl <- which(abs(RegDataSort$TidInn) <2 )
-      tabDbl <- RegDataSort[sort(c(indDbl, indDbl-1)), 
-                 c('PasientID','Innleggelsestidspunkt', "SkjemaGUID")]
+      # RegDataSort <- RegDataEget[order(RegDataEget$PasientID, RegDataEget$Innleggelsestidspunkt), 
+      #                        c('PasientID','Innleggelsestidspunkt', "SkjemaGUID")]
+      # RegDataSort$OpphNr <- ave(RegDataSort[ ,'PasientID'], RegDataSort[ ,'PasientID'], FUN=seq_along)
+      # indPasFlereOpph <- which(RegDataSort$OpphNr>1) 
+      # RegDataSort$TidInn <- NA
+      # RegDataSort$TidInn[indPasFlereOpph] <- 
+      #                   difftime(RegDataSort$Innleggelsestidspunkt[indPasFlereOpph], 
+      #                            RegDataSort$Innleggelsestidspunkt[indPasFlereOpph-1], 
+      #                            units = 'hour')
+      # 
+      # indDbl <- which(abs(RegDataSort$TidInn) <2 )
+      # tabDbl <- RegDataSort[sort(c(indDbl, indDbl-1)), 
+      #            c('PasientID','Innleggelsestidspunkt', "SkjemaGUID")]
       
-library(knitr)
-dblTab <- kable(tabDbl, format='latex', row.names = FALSE) #, 
+tabDbl <- finnDblReg(RegData=RegData, reshID=reshID) #datoFra = datoFra, 
+dblTab <- knitr::kable(tabDbl, format='latex', row.names = FALSE) #, 
                 #caption='Registreringer kor same pasient har fått registrert to innleggingar med mindre enn 2 timars mellomrom.')
 #dblTab <- xtable(tabDbl, row.names = FALSE)
-      
+     
 @
 
 \begin{table}[h]
@@ -439,5 +441,9 @@ dblTab <- kable(tabDbl, format='latex', row.names = FALSE) #,
 \end{frame}
 
 \end{tiny}
+
+<<'HenteRenRegData', echo=FALSE>>=
+#RegData <- RegDataRaa
+@
 
 \end{document}

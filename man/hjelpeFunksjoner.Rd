@@ -4,16 +4,30 @@
 \alias{hjelpeFunksjoner}
 \alias{FinnReinnleggelser}
 \alias{SorterOgNavngiTidsEnhet}
+\alias{lageTulleData}
+\alias{leggTilIntervensjon}
+\alias{delTekst}
 \title{Hjelpefunksjoner. Group of functions page title}
 \usage{
 FinnReinnleggelser(RegData, PasientID = "PasientID")
 
 SorterOgNavngiTidsEnhet(RegData, tidsenhet = "Aar")
+
+lageTulleData(RegData, varBort = "", antSh = 26, antObs = 10000)
+
+leggTilIntervensjon(RegData, startDatoIntervensjon = "2016-10-01",
+  sluttDatoIntervensjon = Sys.Date())
+
+delTekst(x, len)
 }
 \arguments{
 \item{RegData}{data}
 
 \item{PasientID}{Variabelen som angir pasientidentifikasjon}
+
+\item{x}{En tekststreng eller vektor av tekststrenger}
+
+\item{len}{Lengden strengen skal brytes ved}
 }
 \value{
 Div hjelpefunksjoner
@@ -29,11 +43,20 @@ Detaljer. kommer senereGroup of functions Details paragraph.
 Despite its location, this actually comes after the function section.
 Fil som inneholder hjelpefunksjoner. 
 FinnReinnleggelser beregner reinnleggelser fra DateAdmittedIntensive og DateDischargedIntensive
+SorterOgNavngiTidsEnhet Legger til tidsenhetene Aar, Halvaar, Mnd og Kvartal
 }
 
 \section{Tilrettelegge tidsenhetvariabel}{
 
 Probably better if all sections come first, uless have one section per function. Makes it easier to
 see the information flow.
+}
+
+\section{Legge til indikator for intervensjon, pårørendeoppfølging}{
+NA
+}
+
+\section{Automatisk linjebryting av lange tekstetiketter}{
+NA
 }
 

@@ -40,9 +40,9 @@
 #' @return Linjediagram som viser utvikling over tid for valgt variabel
 #'
 #' @export
-NIRFigGjsnTid <- function(RegData, valgtVar, datoFra='2011-01-01', datoTil='3000-12-31', tidsenhet='Aar',
+NIRFigGjsnTid <- function(RegData, valgtVar='alder', datoFra='2011-01-01', datoTil='3000-12-31', tidsenhet='Aar',
                     minald=0, maxald=110, erMann='', reshID=0, InnMaate='', dodInt='', tittel=1, 
-                    outfile='',enhetsUtvalg=0, valgtMaal='', preprosess=1, hentData=0){
+                    outfile='',enhetsUtvalg=0, valgtMaal='Gjsn', preprosess=1, hentData=0){
   
   if (hentData == 1) {		
     RegData <- NIRRegDataSQL(datoFra, datoTil)
@@ -74,7 +74,7 @@ NIRFigGjsnTid <- function(RegData, valgtVar, datoFra='2011-01-01', datoTil='3000
             RegDataFunk <- SorterOgNavngiTidsEnhet(RegData=RegData, tidsenhet = tidsenhet)
             RegData <- RegDataFunk$RegData
             #tidtxt <- RegDataFunk$tidtxt
-            tidNum <- as.numeric(levels(RegData$TidsEnhetSort))
+            tidNum <- min(RegData$TidsEnhetSort, na.rm=T):max(RegData$TidsEnhetSort, na.rm = T) #as.numeric(levels(RegData$TidsEnhetSort))
             AntTidsenh <- length(tidNum)
             
 #--------------- Gjøre beregninger ------------------------------
@@ -105,8 +105,8 @@ if (valgtMaal=='Med') {
 #and are said to be rather insensitive to the underlying distributions of the samples. The idea appears to be to give 
 #roughly a 95% confidence interval for the difference in two medians. 	
 } else {	#Gjennomsnitt blir standard.
-	Midt <- tapply(RegData[ind$Hoved ,'Variabel'], RegData[ind$Hoved, 'TidsEnhet'], mean)
-	SD <- tapply(RegData[ind$Hoved ,'Variabel'], RegData[ind$Hoved, 'TidsEnhet'], sd)
+	Midt <- tapply(RegData[ind$Hoved ,'Variabel'], RegData[ind$Hoved, 'TidsEnhet'], mean, na.rm=T)
+	SD <- tapply(RegData[ind$Hoved ,'Variabel'], RegData[ind$Hoved, 'TidsEnhet'], sd, na.rm=T)
 	Konf <- rbind(Midt - 2*SD/sqrt(N), Midt + 2*SD/sqrt(N))
 }
 
@@ -139,6 +139,36 @@ t1 <- switch(valgtMaal,
              Gjsn = 'Gjennomsnittlig ')
 tittel <- paste0(t1, NIRVarSpes$tittel) 
 
+if (valgtMaal=='Med') {maaltxt <- 'Median ' } else {maaltxt <- 'Gjennomsnitt '}
+
+ResData <- round(rbind(Midt, Konf, MidtRest, KonfRest), 1)
+rownames(ResData) <- c(maaltxt, 'KImin', 'KImaks', 
+                       paste0(maaltxt, 'Resten'), 'KImin, Resten', 'KImaks, Resten')[1:(3*(medSml+1))]
+#UtData <- list(paste0(toString(NIRVarSpes$tittel),'.'), ResData )
+#names(UtData) <- c('tittel', 'Data')
+
+FigDataParam <- list(AggVerdier=ResData, 
+                     N=N, 
+                     Ngr=Ngr,	
+                     #KImaal <- KImaal,
+                     #KImaaltxt <- KImaaltxt,
+                     #soyletxt=soyletxt,
+                     grtxt=levels(RegData$TidsEnhet),
+                     #grtxt2=grtxt2, 
+                     #varTxt=varTxt,
+                     #tidtxt=tidtxt, #NIRVarSpes$grtxt,
+                     tittel=NIRVarSpes$tittel, 
+                     #retn='V', 
+                    # xAkseTxt=xAkseTxt,
+                     #yAkseTxt=yAkseTxt,
+                     utvalgTxt=utvalgTxt, 
+                     fargepalett=NIRUtvalg$fargepalett, 
+                     medSml=medSml,
+                     hovedgrTxt=NIRUtvalg$hovedgrTxt,
+                     smltxt=NIRUtvalg$smltxt)
+
+
+
     #-----------Figur---------------------------------------
 if (length(ind$Hoved)<10 | ((medSml == 1) & (length(ind$Rest) < 10))) {
 figtype(outfile)
@@ -155,7 +185,6 @@ xmax <- max(tidNum)+0.5
 cexgr <- 0.9	#Kan endres for enkeltvariable
 ymin <- 0.9*min(KonfRest, Konf, na.rm=TRUE)	#ymin1 - 2*h
 ymax <- 1.1*max(KonfRest, Konf, na.rm=TRUE)	#ymax1 + 2*h
-if (valgtMaal=='Med') {maaltxt <- 'Median ' } else {maaltxt <- 'Gjennomsnitt '}
 ytxt <- maaltxt #paste0(maaltxt, ytxt1, sep='')
 
 #Plottspesifikke parametre:
@@ -207,11 +236,7 @@ mtext(utvalgTxt, side=3, las=1, cex=0.9, adj=0, col=farger[1], line=c(3+0.8*((Nu
 
 if ( outfile != '') {dev.off()}
 
-ResData <- round(rbind(Midt, Konf, MidtRest, KonfRest), 1)
-rownames(ResData) <- c('Midt', 'KIned', 'KIopp', 'MidtRest', 'KIRestned', 'KIRestopp')[1:(3*(medSml+1))]
-UtData <- list(paste0(toString(NIRVarSpes$tittel),'.'), ResData )
-names(UtData) <- c('tittel', 'Data')
-return(invisible(UtData))
+return(invisible(FigDataParam))
 
 }	#end if statement for 0 observations
 }	#end function

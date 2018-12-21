@@ -49,6 +49,8 @@ if (preprosess){
 
 #------- Tilrettelegge variable
 NIRVarSpes <- NIRVarTilrettelegg(RegData=RegData, valgtVar=valgtVar, figurtype = 'gjsnGrVar')
+KImaal <- NIRVarSpes$KImaal
+KImaaltxt <- NIRVarSpes$KImaaltxt
 RegData <- NIRVarSpes$RegData
 
 #------- Gjøre utvalg
@@ -185,9 +187,9 @@ GjsnGrVarData <- list(AggVerdier=AggVerdier, #Endres til Soyleverdi? Evt. AggVer
                          tittel=tittel,    #NIRVarSpes$tittel, 
                          #yAkseTxt=yAkseTxt, 
                          retn='H', 
-                         xAkseTxt=NIRVarSpes$xAkseTxt,
-                         grTypeTxt=NIRUtvalg$grTypeTxt,			 
-                         utvalgTxt=NIRUtvalg$utvalgTxt, 
+                         xAkseTxt=xAkseTxt,
+                         grTypeTxt=grTypeTxt,			 
+                         utvalgTxt=utvalgTxt, 
                          fargepalett=NIRUtvalg$fargepalett, 
                          medSml=NIRUtvalg$medSml, 
                          smltxt=NIRUtvalg$smltxt)

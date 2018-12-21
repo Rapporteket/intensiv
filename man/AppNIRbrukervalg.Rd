@@ -4,7 +4,7 @@
 \alias{AppNIRbrukervalg}
 \title{Funksjon som inneholder alle brukervalg for Intensivregisteret}
 \usage{
-AppNIRbrukervalg(inputId = "type valg", label = "Brukervalg")
+AppNIRbrukervalg(ark = "angi sideID")
 }
 \value{
 Visning av brukervalg
@@ -16,5 +16,6 @@ Denne funksjonen beregner ikke noe. :-|
 Mer info?
 
 @param id namespace for this module
+ @param inputId id for brukervalget til den aktuelle figur/tabelltypen
  @param label Label for this module
 }

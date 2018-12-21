@@ -8,9 +8,9 @@
 #'     \item 3: Egen enhet mot egen sykehustype
 #'     \item 4: Egen sykehustype
 #'     \item 5: Egen sykehustype mot resten av landet
-#'     \item 6: Egen enhet mot egen region [NB: Intensivregiisteret mangler pt. variabel for region]
-#'     \item 7: Egen region [NB: Mangler pt. variabel for region]
-#'	  \item 8: Egen region mot resten [NB: Mangler pt. variabel for region]
+#'     \item 6: Egen enhet mot egen region 
+#'     \item 7: Egen region 
+#'	 \item 8: Egen region mot resten 
 #'    	}							
 #'    				
 #' @inheritParams NIRFigAndeler
@@ -46,8 +46,8 @@ NIRUtvalgEnh <- function(RegData, datoFra=0, datoTil=0, minald=0, maxald=110, er
                               '2' = RegData[which(RegData$ReshId == reshID),],	#kun egen enhet
                               '3' = subset(RegData,ShType==grTypeEgen),
                               '4' = RegData[which(RegData$ShType == grTypeEgen),],	#kun egen shgruppe
-                              '6' = RegData[which(RegData$Region == as.character(RegData$Region[indEgen1])),],	#sml region
-                              '7' = RegData[which(RegData$Region == as.character(RegData$Region[indEgen1])),])	#kun egen region
+                              '6' = RegData[which(RegData$RHF == as.character(RegData$RHF[indEgen1])),],	#mot eget RHF
+                              '7' = RegData[which(RegData$RHF == as.character(RegData$RHF[indEgen1])),])	#kun egen RHF
       }
       
       Ninn <- dim(RegData)[1]
@@ -62,9 +62,12 @@ NIRUtvalgEnh <- function(RegData, datoFra=0, datoTil=0, minald=0, maxald=110, er
       
       indAld <- if(minald>0 | maxald<110) {
             which(RegData$Alder >= minald & RegData$Alder <= maxald)} else {1:Ninn}
-      indDato <- if(datoFra!=0 | datoTil!=0) {
-            which(RegData$InnDato >= as.Date(datoFra, tz= 'UTC') & RegData$InnDato <= as.Date(datoTil, tz= 'UTC'))
-      } else {1:Ninn}
+      indDatoFra <- if(datoFra!=0) {
+            which(RegData$InnDato >= as.Date(datoFra, tz= 'UTC'))
+            } else {1:Ninn}
+      indDatoTil <- if(datoTil!=0) {
+            which(RegData$InnDato <= as.Date(datoTil, tz= 'UTC'))
+            } else {1:Ninn}
       indAar <- if (aar[1] != 0) {which(RegData$Aar %in% aar)} else {1:Ninn}
       indKj <- if (erMann %in% 0:1) {which(RegData$erMann == erMann)} else {1:Ninn}
       indInnMaate <- if (InnMaate %in% c(0,6,8)) {which(RegData$InnMaate == InnMaate)
@@ -73,17 +76,15 @@ NIRUtvalgEnh <- function(RegData, datoFra=0, datoTil=0, minald=0, maxald=110, er
       } else {1:Ninn}
       
       
-      indMed <- indAld %i% indDato %i% indKj %i% indInnMaate %i% indDod #%i% indGrType
+      indMed <- indDatoFra %i% indDatoTil %i% indAld %i% indKj %i% indInnMaate %i% indDod #%i% indGrType
       
       RegData <- RegData[indMed,]
-      
       
       N <- dim(RegData)[1]	#N=0 gir feilmelding
       #grTypetextstreng <- c('lokal-/sentralsykehus', 'lokal-/sentral', 'regionsykehus')				
       grTypetextstreng <- c('lokal-/sentral', 'lokal-/sentral', 'region')				
       if (grType %in% 1:3) {grTypeTxt <- grTypetextstreng[grType]} else {grTypeTxt <- 'alle '}
       #grTypeTxtEgen <- grTypetextstreng[grTypeEgen]
-      
       
       
       utvalgTxt <- c(
@@ -110,8 +111,8 @@ NIRUtvalgEnh <- function(RegData, datoFra=0, datoTil=0, minald=0, maxald=110, er
                                        '0' = 'Hele landet',
                                        '4' = paste0(grTypetextstreng[RegData$ShType[indEgen1]], 'sykehus'),
                                        '5' = paste0(grTypetextstreng[RegData$ShType[indEgen1]], 'sykehus'),
-                                       '7' = as.character(RegData$Region[indEgen1]),
-                                       '8' = as.character(RegData$Region[indEgen1]))
+                                       '7' = as.character(RegData$RHF[indEgen1]),
+                                       '8' = as.character(RegData$RHF[indEgen1]))
             }
       
       
@@ -127,19 +128,19 @@ NIRUtvalgEnh <- function(RegData, datoFra=0, datoTil=0, minald=0, maxald=110, er
                   ind$Hoved <-which(as.numeric(RegData$ReshId)==reshID) } else {
                         ind$Hoved <- switch(as.character(enhetsUtvalg),
                                             '5' = which(RegData$ShType == RegData$ShType[indEgen1]),	#shgr
-                                            '8' = which(RegData$Region == RegData$Region[indEgen1]))}	#region
+                                            '8' = which(RegData$RHF == RegData$RHF[indEgen1]))}	#RHF
             smltxt <- switch(as.character(enhetsUtvalg),
                              '1' = 'landet forøvrig',
                              '3' = paste0('andre ', grTypetextstreng[RegData$ShType[indEgen1]], 'sykehus'),	#RegData inneh. kun egen shgruppe
                              '5' = 'andre typer sykehus',
-                             '6' = paste0(RegData$Region[indEgen1], ' forøvrig'),	#RegData inneh. kun egen region
-                             '8' = 'andre regioner')
+                             '6' = paste0(RegData$RHF[indEgen1], ' forøvrig'),	#RegData inneh. kun egen RHF
+                             '8' = 'andre RHF')
             ind$Rest <- switch(as.character(enhetsUtvalg),
                                '1' = which(as.numeric(RegData$ReshId) != reshID),
                                '3' = which(as.numeric(RegData$ReshId) != reshID),	#RegData inneh. kun egen shgruppe
                                '5' = which(RegData$ShType != RegData$ShType[indEgen1]),
-                               '6' = which(as.numeric(RegData$ReshId)!=reshID),	#RegData inneh. kun egen region
-                               '8' = which(RegData$Region != RegData$Region[indEgen1]))
+                               '6' = which(as.numeric(RegData$ReshId)!=reshID),	#RegData inneh. kun egen RHF
+                               '8' = which(RegData$RHF != RegData$RHF[indEgen1]))
       }								
       ind$ShTypeEgen =  which(RegData$ShType == RegData$ShType[indEgen1]) #Funker ikke hvis gjort utvalg på annen sykehustype
       
