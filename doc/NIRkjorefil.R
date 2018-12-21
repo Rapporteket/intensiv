@@ -256,8 +256,8 @@ for (valgtVar in variable){
 }
 
 #---------------------GjsnTid----------------------------------------------
-tidsenhet <- 'Mnd'
-enhetsUtvalg <- 3
+tidsenhet <- 'Aar'
+enhetsUtvalg <- 2
 valgtVar <- 'respiratortidInvMoverf'	#'alder', 'liggetid', 'respiratortid', 'SAPSII', 
                         #Nye: respiratortidInvMoverf, respiratortidInvUoverf, respiratortidNonInv
 outfile <- '' #paste0(valgtVar, 'GjsnTid.pdf')
