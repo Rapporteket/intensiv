@@ -324,7 +324,7 @@ NIRFigAndelerGrVar(RegData=RegData, valgtVar='reinn', datoFra='2016-01-01', medK
 #------------------Tabeller-----------------------------------
 
 RegData <- NIRPreprosess(RegData)
-tabBelegg(RegData=RegData, personIDvar='PasientID', datoTil = datoTil, tidsenhet='Mnd')
+tabBelegg(RegData=RegData, datoTil = datoTil, tidsenhet='Mnd') #personIDvar='PasientID', 
 
 finnDblReg(RegData, reshID=114240)
 
@@ -332,6 +332,65 @@ tabAntOpphSh5Aar(RegData, datoTil)
 
 tabAntPasSh5Aar(RegData, personIDvar='PasientID' , datoTil)
             
+
+
+#----------------Kobling av transport-data-----------------------
+TransportData <- read.table(file='A:/Intensiv/Intensivtransport/Intensivtransport.csv', header=T, stringsAsFactors=FALSE, sep=';',encoding = 'UTF-8')
+TransportData$DatoTid <- paste(TransportData$Dato, TransportData$Klokkeslett)
+TransportData <- TransportData[order(TransportData$Personnummer),]
+RegisterData <- read.table(file='A:/Intensiv/Intensivtransport/IntensivVariabel.csv', header=T, stringsAsFactors=FALSE, sep=';',encoding = 'UTF-8')
+RegisterData <- RegisterData[order(RegisterData$Fnr), ]
+
+#Skal koble sammen på personnummer og tid. Tillater inntil 24t avvik mellom innleggelsesdato og transportdato
+#Bruke difftime? 
+# 1. Sjekke hvilke personnummer fra intensivtransporten som finnes i intensivfila
+# 2. Sjekke match på tid for de aktuelle personnumrene
+
+#PersnrBruk <- sort(TransportData$Personnummer)[sort(TransportData$Personnummer) %in% sort(RegisterData$Fnr)]
+indPersMatchTransp <- TransportData$Personnummer %in% RegisterData$Fnr
+indPersMatchRegister <- which(RegisterData$Fnr %in% TransportData$Personnummer)
+TransportData <- TransportData[indPersMatchTransp,]
+RegisterData <- RegisterData[indPersMatchRegister,]
+
+TransportData$diffTid <- NA
+avvik <- 24
+indMatchRegData <- NULL
+indMatchTranspData <- NULL
+#NB: Tar ikke høyde for dobbeltregistreringer
+for (k in 1:12) { #dim(TransportData)[1]
+      ind <- which(RegisterData$Fnr  %in% TransportData$Personnummer[k])
+       diff <- difftime(as.POSIXlt(TransportData$DatoTid[k], tz='UTC'), 
+                             as.POSIXlt(RegisterData$DateAndTimeAdmittedIntensive[ind], tz='UTC'), units = 'hours')
+       sjekk <- sum(min(abs(diff)) < avvik)
+       if (sjekk > 0){
+             indMatchTranspData <- c(indMatchTranspData, k) 
+             indMatchRegData <- c(indMatchRegData , ind[which(abs(diff) == min(abs(diff)))])
+       }
+#       k <- k+1
+      }       
+indMatchTranspData <- indMatchTranspData[indMatchTranspData>0]
+indMatchRegData <- unique(indMatchRegData)
+merge(
+
+      TransportData[k,]
+      RegisterData[ind,c('Fnr', "DateAndTimeAdmittedIntensive")]
+
+
+PersnrMatch <- TransportData$Personnummer[indPersMatch]
+table(table(PersnrMatch))
+
+diffTid <- difftime(as.POSIXlt(TransportData$DatoTid, tz='UTC'), #, format = '%Y-%m-%d %t:%m'), 
+                    as.POSIXlt(RegisterData$DateAndTimeAdmittedIntensive, tz='UTC'), units = 'hours')
+
+
+avvik <- 48 #timer
+test <- difftime(as.POSIXlt(TransportData$DatoTid[1:10], tz='UTC'), #, format = '%Y-%m-%d %t:%m'), 
+                 as.POSIXlt(RegisterData$DateAndTimeAdmittedIntensive[1:10], tz='UTC'), units = 'hours')
+
+
+DataKoblet <- merge(TransportData, RegisterData, suffixes = c('','_Int'),
+              by.x = 'Fnr', by.y = 'Personnummer', all.x = F, all.y=F)
+
 
 
 #--------------------------------------- FORDELING - tatt vekk ----------------------------------
