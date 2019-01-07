@@ -7,6 +7,7 @@ library(intensiv)
 library(lubridate)
 library(zoo)
 library(kableExtra)
+Sys.setlocale("LC_TIME", "nb_NO.UTF-8")
 #ibrary(shinyBS) # Additional Bootstrap Controls
 
 # ui <- shinyUI(basicPage(

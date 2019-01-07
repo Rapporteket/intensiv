@@ -53,8 +53,8 @@ rm(list=ls())
 dato <- '2018-12-14' #MainFormDataContract2018-06-19
 dataKat <- 'A:/Intensiv/' 
 fil <- paste0(dataKat,'MainFormDataContract',dato)
-NIRdata <- read.table(file=paste0(fil,'.csv'), header=T, stringsAsFactors=FALSE, sep=';',encoding = 'UTF-8')
-RegData <- NIRdata
+#NIRdata <- read.table(file=paste0(fil,'.csv'), header=T, stringsAsFactors=FALSE, sep=';',encoding = 'UTF-8')
+#RegData <- NIRdata
 load(paste0(fil,".Rdata")) #RegData 2018-06-18
 #save(RegData, file=paste0(fil,'.Rdata'))
  # RegData <- RegData[which(
@@ -340,6 +340,15 @@ TransportData$DatoTid <- paste(TransportData$Dato, TransportData$Klokkeslett)
 TransportData <- TransportData[order(TransportData$Personnummer),]
 RegisterData <- read.table(file='A:/Intensiv/Intensivtransport/IntensivVariabel.csv', header=T, stringsAsFactors=FALSE, sep=';',encoding = 'UTF-8')
 RegisterData <- RegisterData[order(RegisterData$Fnr), ]
+
+library(intensiv)
+RegisterData$Innleggelsestidspunkt <- as.POSIXlt(RegisterData$DateAndTimeAdmittedIntensive, tz= 'UTC', format="%Y-%m-%d %H:%M" )
+finnDblReg(RegData = RegisterData, pasientID = 'Fnr') #datoFra = '2013-01-01', 
+
+reshID=112044
+RegData <- NIRPreprosess(RegData)
+DblReg <- finnDblReg(RegData = RegData) #reshID = reshID, datoFra = '2018-01-01'
+write.table(DblReg,file = 'Dobbeltreg.csv',row.names = F, col.names = T, sep = ';')
 
 #Skal koble sammen på personnummer og tid. Tillater inntil 24t avvik mellom innleggelsesdato og transportdato
 #Bruke difftime? 
