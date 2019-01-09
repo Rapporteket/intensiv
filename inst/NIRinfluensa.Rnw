@@ -67,7 +67,8 @@ Influensarapportering fra NIR, 2019 }
 
 <<'LageTabeller', results='asis'>>=
 
-InfluData$Influensa <- NA
+#InfluData$Influensa <- NA
+InfluData$Influensa <- factor(NA, levels = c('Mistenkt', 'Bekreftet'))
 # InfluData$Bekreftet <- 0
 # InfluData$Mistenkt <- 0
 #--Identifiser J10 og J11 i ICD10-variablene.
