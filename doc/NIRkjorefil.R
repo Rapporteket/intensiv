@@ -16,15 +16,15 @@ setwd('C:/registre/NIR/trunk/KvalKtrAvData')
 aggregate(NIRdata$PatientInRegistryKey, by=list(NIRdata$ShNavn, NIRdata$ShTypeTxt), FUN=length)
 aggregate(NIRdata$DaysAdmittedIntensiv, by=list(NIRdata$ShNavn, NIRdata$ShTypeTxt), FUN=length)
 
-#--------------------------------------SAMLERAPPORT/MndRapp-----------------------------------
+#--------------------------------------SAMLERAPPORT/MndRapp/Influensa-----------------------------------
 rm(list=ls())
 library(knitr)
 library(intensiv)
 library(tools)	#texi2pdf
+setwd('C:/ResultattjenesteGIT/intensiv/inst/') 
 
 #load(paste0("A:/Intensiv/NIRdata10000.Rdata")) #RegDataTEST, 21.mai 2018
 load(paste0("A:/Intensiv/MainFormDataContract2018-12-14.Rdata")) #RegData 2018-06-18
-setwd('C:/ResultattjenesteGIT/intensiv/inst/') 
 reshID=109773 #Tromsø med int: 601302, Ullevål Kir int: 109773, 102090 Ahus, 112044 Haukeland, 102673 Ålesund Med
 knit('NIRmndRapp.Rnw', encoding = 'UTF-8')
 tools::texi2pdf(file='NIRmndRapp.tex')
@@ -34,11 +34,16 @@ tools::texi2pdf(file='NIRmndRapp.tex')
 knit('NIRSamleRapp.Rnw')
 texi2pdf(file='NIRSamleRapp.tex')
 
-
-
 knit('OffDataIntensiv.Rnw')
 texi2pdf(file='OffDataIntensiv.tex')
 
+
+InfluDataAlle <- read.table('A:/Intensiv/InfluensaFormDataContract2019-01-07.csv', sep=';', 
+                            stringsAsFactors=FALSE, header=T, encoding = 'UTF-8')
+variableTilTab <- c('RHF', 'PatientInRegistryGuid', 'FormDate', 'ICD10_1', 'ICD10_2') #'DateAdmittedIntensive', 
+InfluData <- InfluDataAlle[ ,variableTilTab]
+knit('NIRinfluensa.Rnw', encoding = 'UTF-8')
+tools::texi2pdf(file='NIRinfluensa.tex')
 #NIRSamleRapp for hver enkelt enhet (alle)
 #for (reshID in AlleResh ) {
 #	knit('NIRSamleRapp.Rnw')
@@ -50,7 +55,7 @@ texi2pdf(file='OffDataIntensiv.tex')
 #-------------------------------------LASTE DATA-----------------------------------------------
 rm(list=ls())
 
-dato <- '2018-12-14' #MainFormDataContract2018-06-19
+dato <- '2019-01-07' #'2018-12-14' #MainFormDataContract2018-06-19
 dataKat <- 'A:/Intensiv/' 
 fil <- paste0(dataKat,'MainFormDataContract',dato)
 #NIRdata <- read.table(file=paste0(fil,'.csv'), header=T, stringsAsFactors=FALSE, sep=';',encoding = 'UTF-8')
@@ -64,7 +69,17 @@ load(paste0(fil,".Rdata")) #RegData 2018-06-18
 library(intensiv)
 load(paste0("A:/Intensiv/NIRdata10000.Rdata")) #RegDataTEST, 2018-06-05
 
+Sys.setlocale("LC_TIME", "nb_NO.UTF-8") 
+Sys.setlocale("LC_ALL", "nb_NO.UTF-8") 
 
+"LC_CTYPE=en_US.UTF-8;
+LC_NUMERIC=C;
+LC_TIME=nb_NO;
+LC_COLLATE=en_US.UTF-8;
+LC_MONETARY=en_US.UTF-8;
+LC_MESSAGES=en_US.UTF-8;
+LC_PAPER=en_US.UTF-8;LC_NAME=C;
+LC_ADDRESS=C;LC_TELEPHONE=C;LC_MEASUREMENT=en_US.UTF-8;LC_IDENTIFICATION=C"
 #---------LagSyntetiskeData-------------------------
 library(intensiv)
 #Hovedtabell

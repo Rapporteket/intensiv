@@ -4,10 +4,10 @@
 \alias{NIRFigGjsnTid}
 \title{Utvikling over tid for gjennomsnitt/median av valgt variabel}
 \usage{
-NIRFigGjsnTid(RegData, valgtVar, datoFra = "2011-01-01",
+NIRFigGjsnTid(RegData, valgtVar = "alder", datoFra = "2011-01-01",
   datoTil = "3000-12-31", tidsenhet = "Aar", minald = 0, maxald = 110,
   erMann = "", reshID = 0, InnMaate = "", dodInt = "", tittel = 1,
-  outfile = "", enhetsUtvalg = 0, valgtMaal = "", preprosess = 1,
+  outfile = "", enhetsUtvalg = 0, valgtMaal = "Gjsn", preprosess = 1,
   hentData = 0)
 }
 \arguments{

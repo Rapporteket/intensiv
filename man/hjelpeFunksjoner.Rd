@@ -11,9 +11,9 @@
 \usage{
 FinnReinnleggelser(RegData, PasientID = "PasientID")
 
-SorterOgNavngiTidsEnhet(RegData, tidsenhet = "Aar")
+SorterOgNavngiTidsEnhet(RegData, tidsenhet = "Aar", tab = 0)
 
-lageTulleData(RegData, varBort = "", antSh = 26, antObs = 10000)
+lageTulleData(RegData, varBort = "", antSh = 26, antObs = 20000)
 
 leggTilIntervensjon(RegData, startDatoIntervensjon = "2016-10-01",
   sluttDatoIntervensjon = Sys.Date())
