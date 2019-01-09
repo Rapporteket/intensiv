@@ -13,7 +13,7 @@
 NIRPreprosess <- function(RegData=RegData, lagreKvalIndData=0)	#, reshID=reshID)
 {
       #Miljøparametre
-      print(Sys.getlocale())
+      #print(Sys.getlocale())
       #Sys.setlocale("LC_TIME", "nb_NO.UTF-8")   
       #print(paste('Etter at satt "nb_NO.UTF-8": ', Sys.getlocale()))
       

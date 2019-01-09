@@ -60,7 +60,7 @@ dataKat <- 'A:/Intensiv/'
 fil <- paste0(dataKat,'MainFormDataContract',dato)
 #NIRdata <- read.table(file=paste0(fil,'.csv'), header=T, stringsAsFactors=FALSE, sep=';',encoding = 'UTF-8')
 #RegData <- NIRdata
-load(paste0(fil,".Rdata")) #RegData 2018-06-18
+load(paste0(fil,".Rdata")) #RegData 2019-01-07
 #save(RegData, file=paste0(fil,'.Rdata'))
  # RegData <- RegData[which(
  #       as.POSIXlt(RegData$DateAdmittedIntensive, format="%Y-%m-%d")>= '2015-01-01'), ]
@@ -167,14 +167,14 @@ minald <- 0 #(standard: 0)
 maxald <- 110	#(standard: 130, må være større enn minald!)
 InnMaate <- '' #0-El, 6-Ak.m, 8-Ak.k, (alle - alt unntatt 0,6,8)
 valgtMaal = 'Gjsn' #'Med' = median. 'Gjsn' = gjennomsnitt. Alt annet gir gjennomsnitt
-datoFra <- '2015-01-01'	# standard: 0	format: YYYY-MM-DD. Kan spesifisere bare første del, eks. YYYY el. YYYY-MM. 
-datoTil <- '2018-12-31'	# standard: 3000
+datoFra <- '2018-01-01'	# standard: 0	format: YYYY-MM-DD. Kan spesifisere bare første del, eks. YYYY el. YYYY-MM. 
+datoTil <- '2019-12-31'	# standard: 3000
 aar <- 0
 dodInt <- 9	# 0-i live, 1 -død, standard: alle (alle andre verdier)
 erMann <- ''	#Kjønn: 0-kvinner, 1-menn, standard: alle (alle andre verdier)
 overfPas <- ''    #Overført under pågående intensivbehandling?	1 = Nei, 2 = Ja
 grType <- 99	#1/2: sentral/lokal, 3:regional, 99:'alle'
-enhetsUtvalg <- 8	#0-8
+enhetsUtvalg <- 4	#0-8
 grVar <- 'ShNavn'
 tidsenhet <- 'Mnd'
 medKI <- 0
@@ -272,7 +272,6 @@ for (valgtVar in variable){
 
 #---------------------GjsnTid----------------------------------------------
 tidsenhet <- 'Aar'
-enhetsUtvalg <- 2
 valgtVar <- 'respiratortidInvMoverf'	#'alder', 'liggetid', 'respiratortid', 'SAPSII', 
                         #Nye: respiratortidInvMoverf, respiratortidInvUoverf, respiratortidNonInv
 outfile <- '' #paste0(valgtVar, 'GjsnTid.pdf')
@@ -280,7 +279,7 @@ outfile <- '' #paste0(valgtVar, 'GjsnTid.pdf')
 utdata <- NIRFigGjsnTid(RegData=RegData, outfile=outfile, valgtVar=valgtVar, datoFra=datoFra, datoTil=datoTil, 
               tidsenhet=tidsenhet,
                     erMann=erMann,minald=minald, maxald=maxald, InnMaate=InnMaate, dodInt=dodInt,
-		              valgtMaal=valgtMaal,tittel=1, enhetsUtvalg=8, reshID=reshID)
+		              valgtMaal=valgtMaal,tittel=1, enhetsUtvalg=3, reshID=reshID)
 
 #NIRFigGjsnTid(RegData=RegData, outfile=outfile, valgtVar=valgtVar, datoFra=datoFra, datoTil=datoTil, 
 #                    erMann=erMann,minald=minald, maxald=maxald, InnMaate=InnMaate, dodInt=dodInt,
