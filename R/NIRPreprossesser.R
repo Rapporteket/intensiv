@@ -13,7 +13,9 @@
 NIRPreprosess <- function(RegData=RegData, lagreKvalIndData=0)	#, reshID=reshID)
 {
       #Miljøparametre
+      print(Sys.getlocale())
       Sys.setlocale("LC_TIME", "nb_NO.UTF-8")   
+      print(paste('Etter at satt "nb_NO.UTF-8": ', Sys.getlocale()))
       
       #Kun ferdigstilte registreringer:
       # Fra des. 2018 får Intensiv også kladd over fra  fra MRS/NHN.
