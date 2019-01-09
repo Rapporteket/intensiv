@@ -52,6 +52,10 @@ Probably better if all sections come first, uless have one section per function.
 see the information flow.
 }
 
+\section{Lage tulledata (simulerte data)}{
+NA
+}
+
 \section{Legge til indikator for intervensjon, pårørendeoppfølging}{
 NA
 }
