@@ -17,20 +17,36 @@ library(xtable)
 library(lubridate)
 @
 
+
 <<'hentDataOgTilrettelegg', include=FALSE>>=
+#«ICD-10-kode: J10» (bekreftet influensa), 
+#«ICD-11-kode: J10» (mistenkt influensa), 
+
+#Antall innleggelser med bekreftet influensa (ICD10_1 eller _2 == 10) pr.uke og  pr. helseregion, 
+#evt. aldersgrupper. Foreløpig for få observasjoner. Kan angi median, min og maks?
+#Variable:  RHF , PatientInRegistryGuid, DateAdmittedIntensive, ICD10_1-ICD10_5, 
+
+# Datafelt som er ønskte i aggregert rapport, på dags/vekebasis:
+# -	Veke
+# -	Landsdel
+# -	Diagnosekode
+# -	Aldersgruppe ([0-5> [5-10> [10-15>) …. )
+# -	Skjemastatus ? (tal på skjema i kladd vs ferdigstilte)
+
+
 #startOfMonth<- function(x) {as.Date(format(x, "%Y-%m-01")) }
 
 if (!exists('InfluDataAlle')){
-      NIRInfluDataSQL <- function(datoFra = '2019-01-01', datoTil = '2099-01-01') {
+      NIRInfluDataSQL <- function(datoFra = '2018-01-01', datoTil = '2099-01-01') {
             
             registryName <- "nir"
             dbType <- "mysql"
             query <- paste0('SELECT 
+                  ShNavn,
                   RHF,
                   PatientInRegistryGuid,
                   FormDate,
-                  ICD10_1,
-                  ICD10_2
+                  ICD10_1
             FROM InfluensaFormDataContract
             WHERE cast(FormDate as date) BETWEEN \'', datoFra, '\' AND \'', datoTil, '\'')
             #WHERE cast(DateAdmittedIntensive as date) >= \'', datoFra, '\' AND DateAdmittedIntensive <= \'', datoTil, '\'')  
@@ -38,48 +54,32 @@ if (!exists('InfluDataAlle')){
             RegData <- rapbase::LoadRegData(registryName, query, dbType)
             return(RegData)
       }  
-      InfluData <- NIRInfluDataSQL(datoFra = '2019-01-01')
+      
+      InfluData <- NIRInfluDataSQL(datoFra = '2018-01-01')
 }
 #library(dplyr)
 InfluData$InnDato <- as.Date(InfluData$FormDate) #, tz='UTC', format = '%Y-%m-%d"')
 	
-@
+#ICD10_1
+# -1 = Velg verdi   
+# 9 = J10 Influensa som skyldes identifisert sesongvariabelt influensavirus                                             
+# 10 = J10.0 Påvist influensavirus med pneumoni                                
+# 11 = J10.1 Påvist influensavirus med annen luftveissykdom                                        
+# 12 = J10.8 Påvist influensavirus med annen organmanifestasjon                                              
+# 13 = J11 Influensa som skyldes uidentifisert virus (Klinisk mistanke)                                        
+# 14 = J11.0 Mistenkt influensavirus med pneumoni                                          
+# 15 = J11.1 Mistenkt influensavirus med annen luftveissykdom                                  
+# 16 = J11.8 Mistenkt influensavirus med annen organmanifestasjon                                        
+# 17 = Annet
+#Når ein opprettar eit influensaskjema har ein per def. Mistanke om influensa. Vi meiner difor at skjema med verdi -1 også bør tellast med som mistenkt influensa.
 
-\begin{document}
-
-\title[Influensa \\\today] {%\textit{Influensadata, NIR} \\
-Influensarapportering fra NIR, 2019 }
-
-\maketitle
-
-
-
-
-%\begin{frame}[fragile] {Hva er dette?}
-% Dette er en automagisk utsendt rapport fra Norsk Intensivregister (NIR). 
-% Dokumentet inneholder oppsummering av influensatilfeller hos pasienter som 
-% kvalifiserer for rapportering til NIR. 
-% Influensatilfellene er rapportert i eget skjema i registeret og det er data fra dette skjemaet som danner grunnlaget
-% for denne rapporten.
-%\end{frame}
-
-\begin{tiny}
-
-<<'LageTabeller', results='asis'>>=
-
-#InfluData$Influensa <- NA
 InfluData$Influensa <- factor(NA, levels = c('Mistenkt', 'Bekreftet'))
-# InfluData$Bekreftet <- 0
-# InfluData$Mistenkt <- 0
 #--Identifiser J10 og J11 i ICD10-variablene.
- indBekreftet <- which(InfluData$ICD10_1==10 | InfluData$ICD10_2==10)
- indMistenkt <- which(InfluData$ICD10_1==11 | InfluData$ICD10_2==11)
-# InfluData$Bekreftet <- (InfluData$ICD10_1==10 | InfluData$ICD10_2==10)
-# InfluData$Mistenkt <- (InfluData$ICD10_1==11 | InfluData$ICD10_2==11)
+ indBekreftet <- which(InfluData$ICD10_1 %in% c(9:12))
+ indMistenkt <- which(InfluData$ICD10_1 %in% c(-1,13:16))
  InfluData$Influensa[indMistenkt] <- 'Mistenkt'
  InfluData$Influensa[indBekreftet] <- 'Bekreftet'
 
- 
 #Legge på tidsenheter
 InfluData$Aar <- format(InfluData$InnDato, '%Y')
 InfluData$UkeNr <- format(InfluData$InnDato, '%V')
@@ -89,6 +89,39 @@ InfluData$UkeAar <- format(InfluData$InnDato, '%Y.%V')
 
 #InfluData$UkeNr <- factor(InfluData$UkeNr, levels=c(min(InfluData$UkeNr):max(InfluData$UkeNr)))
 InfluData$RHF <- factor(InfluData$RHF)
+@
+
+\begin{document}
+
+\title[Influensa \\\today] {%\textit{Influensadata, NIR} \\
+Influensarapportering fra NIR, sesongen 2018/19 }
+
+\maketitle
+
+
+
+
+\begin{tiny}
+
+\begin{frame}[fragile] {Hva er dette?}
+Dette er en automagisk utsendt rapport fra Norsk Intensivregister (NIR).
+Dokumentet inneholder oppsummering av influensatilfeller hos pasienter som
+kvalifiserer for rapportering til NIR.
+Influensatilfellene er rapportert i eget skjema i registeret og det er data fra dette skjemaet som danner grunnlaget
+for denne rapporten.
+Resultatene er oppsummert i tabeller som viser antall influensatabeller per uke.\\
+
+Merk at:
+\begin{itemize}
+\item Tabellene skiller ikke på om et skjema er ferdigstilt eller ikke.
+\item Skjema uten spesifikasjon av diagnose, er kategorisert som mistenkte influensatilfeller.
+\end{itemize}
+
+\end{frame}
+
+
+
+<<'LageTabeller', results='asis'>>=
 
 # dato <- '2018-12-31'
 # format.Date(dato, '%Y.%V')
@@ -96,39 +129,102 @@ InfluData$RHF <- factor(InfluData$RHF)
 # lubridate::week(dato)
 
 #Aggregere på RHF, UkeNr, Ant. bekreftet, Ant. mistenkt
-# tapply(InfluData[ ,c('Bekreftet', 'Mistenkt')], InfluData[ ,c('RHF', 'UkeAar')], sum, na.rm=T)#InfluData$UkeNr, function(x) sum((InfluData$ICD10_1==10 | InfluData$ICD10_2==10)))
 # tapply(InfluData[ ,c('RHF', 'UkeAar', "ICD10_1")], length)
 # table(InfluData[ ,c('RHF', 'Mistenkt', 'UkeNr')])      #InfluData$UkeNr, function(x) sum((InfluData$ICD10_1==10 | InfluData$ICD10_2==10)))
-TabUkeRHF <- ftable(InfluData[ ,c('UkeAar', 'RHF', 'Influensa')])      #InfluData$UkeNr, function(x) sum((InfluData$ICD10_1==10 | InfluData$ICD10_2==10)))
+#TabUkeRHF <- ftable(InfluData[ ,c('UkeAar', 'RHF', 'Influensa')])     
+TabUkeRHF <- ftable(InfluData[ , c('UkeAar', 'RHF', 'Influensa')], row.vars ='UkeAar') #, col.vars = c('RHF', 'Influensa'))     
 # dum <- as.table(TabUkeRHF)
 # MistenktUkeRHF<- dum[,,'Mistenkt']
 # addmargins(MistenktUkeRHF) #, margin = seq_along(dim(MistenktUkeRHF)), FUN = sum, quiet = FALSE)
-TabUkeTot <- table(InfluData[ ,c('UkeAar', 'Influensa')])      #InfluData$UkeNr, function(x) sum((InfluData$ICD10_1==10 | InfluData$ICD10_2==10)))
+TabUkeInflu <- table(InfluData[ ,c('UkeAar', 'Influensa')])      #InfluData$UkeNr, function(x) sum((InfluData$ICD10_1==10 | InfluData$ICD10_2==10)))
+TabUkeTot <- cbind(TabUkeInflu, 
+      'Tot. ant. skjema' = table(InfluData$UkeAar))
 @ 
 
 \begin{frame}[fragile] {Bekreftet Influensa}
 <<'TabUkeRHFBekreftet', results='asis'>>=
-print(xtable::xtable(addmargins(as.table(TabUkeRHF)[,,'Bekreftet']), digits=0, #align=c('l', rep('r', ncol(alderDIV))), 
-		caption='Bekreftet influensa per uke og region, 2019'),  
+navnRHF <- attributes(TabUkeRHF)$col.vars$RHF
+navn2Influ <- attributes(TabUkeRHF)$col.vars$Influensa
+navnUkenr <- attributes(TabUkeRHF)$row.vars$UkeAar
+TabUkeRHF <- as.matrix(TabUkeRHF)
+colnames(TabUkeRHF) <- rep(c('M','B'),4) #letters[1:8]
+navnRHF <- sub('Helse ', '', navnRHF)
+TabUkeRHF <- rbind( TabUkeRHF, Sum = colSums(TabUkeRHF))
+#test <- simsalapar::fftable(TabUkeRHF, digits=0, method='compact', #align=c('l', rep('r', ncol(alderDIV))),
+#		caption='Bekreftet influensa per uke og region, 2019',
+#		sanitize.rownames.function = identity)
+#test <- c('a  ', 'b', 'c')
+#paste(test, collapse=''))
+#TabUkeRHF <- addmargins(TabUkeRHF)
+
+add.to.row <- list(pos = list(-1), command = NULL)
+command <- paste0(paste0('& \\multicolumn{2}{l}{', navnRHF, '} ', collapse=''), '\\\\\n') #, '{\\footnote}{B-bekreftet, M-mistenkt}')
+      # '& \\multicolumn{2}{c}{A} & \\multicolumn{2}{c}{B} & \\multicolumn{2}{c}{C} & \\multicolumn{2}{c}{D}  \\\\\n' 
+add.to.row$command <- command
+print(xtable::xtable(TabUkeRHF, digits=0, #method='compact', #align=c('l', rep('r', ncol(alderDIV))),
+		caption='Influensatilfeller per uke og region, 2019. (B - bekreftet, M - mistenkt)'),
+      #footnote= 'B-bekreftet, M-mistenkt',
+		add.to.row = add.to.row,
 		sanitize.rownames.function = identity)
+
+
+#xtable::xtableFtable(TabUkeRHF, digits=0, method='compact', #align=c('l', rep('r', ncol(alderDIV))),
+#		caption='Bekreftet influensa per uke og region, 2019',
+#		sanitize.rownames.function = identity)
+
+#\multicolumn{number cols}{align}{text} % align: l,c,r
+
+# Grade3 <- c("A","B","B","A","B","C","C","D","A","B",
+# "C","C","C","D","B","B","D","C","C","D")
+# Grade6 <- c("A","A","A","B","B","B","B","B","C","C",
+# "A","C","C","C","D","D","D","D","D","D")
+# Cohort <- table(Grade3, Grade6)
+# addtorow <- list()
+# addtorow$pos <- list(-1)
+# addtorow$command <- c("& \\multicolumn{2}{c}{Grade 6} & \\multicolumn{2}{c}{Grade 7} \\\\\n") #,"Grade 3 & A & B & C & D \\\\\n")
+#print(xtable(Cohort), add.to.row = addtorow) #, include.colnames = FALSE)
+
+
 @
 \end{frame}
 
-\begin{frame}[fragile] {Mistenkt Influensa}
-<<'TabUkeRHFMistenkt', results='asis'>>=
-print(xtable::xtable(addmargins(as.table(TabUkeRHF)[,,'Mistenkt']), digits=0, #align=c('l', rep('r', ncol(alderDIV))), 
-		caption='Mistenkt influensa per uke og region, 2019'), 
-      sanitize.rownames.function = identity)
-@
-\end{frame}
+% \begin{frame}[fragile] {Mistenkt Influensa}
+% <<'TabUkeRHFMistenkt', results='asis'>>=
+% print(xtable::xtable(addmargins(as.table(TabUkeRHF)[,,'Mistenkt']), digits=0, #align=c('l', rep('r', ncol(alderDIV))), 
+% 		caption='Mistenkt influensa per uke og region, 2019'), 
+%       sanitize.rownames.function = identity)
+% @
+% \end{frame}
 
+ 
 \begin{frame}[fragile] {Influensa per uke, totalt}
 
 <<'TabUkeTot', results='asis'>>=
-print(xtable::xtable(TabUkeTot, #digits=1, align=c('l', rep('r', ncol(alderDIV))), 
-		caption='Influensatilfeller per uke, 2019'), 
+print(xtable::xtable(TabUkeTot, #digits=1, align=c('l', rep('r', ncol(alderDIV))),
+		caption='Totalt antall influensatilfeller per uke, 2018/19.'),
+		#Totalt antall skjema er antall registrerte influensaskjema.'),
 		sanitize.rownames.function = identity)
 @
 \end{frame}
+
+
+<<'Manuelle resultater', results='hide'>>=
+
+@
+
+
+% \begin{frame}[fragile] {Ferdigstilte influensaskjema uten ICD10-kode}
+% <<'TabICD10koder', results='asis'>>=
+% ind <- which(InfluData$ICD10_1 == -1)
+% 
+% print(
+% IkkeFerdig <- InfluData[ind, c('ShNavn', 'InnDato')] #, row.names = F)
+%  print(xtable::xtable(IkkeFerdig, #digits=1, align=c('l', rep('r', ncol(alderDIV))), 
+%  		caption='Ferdigstilte influensaskjema hvor ICD10-kode ikke er spesifisert.'), 
+%  		sanitize.rownames.function = identity)
+% @
+% \end{frame}
+
+
 \end{tiny}
 \end{document}

@@ -40,7 +40,7 @@ texi2pdf(file='OffDataIntensiv.tex')
 
 InfluDataAlle <- read.table('A:/Intensiv/InfluensaFormDataContract2019-01-07.csv', sep=';', 
                             stringsAsFactors=FALSE, header=T, encoding = 'UTF-8')
-variableTilTab <- c('RHF', 'PatientInRegistryGuid', 'FormDate', 'ICD10_1', 'ICD10_2') #'DateAdmittedIntensive', 
+variableTilTab <- c('ShNavn', 'RHF', 'PatientInRegistryGuid', 'FormDate', 'ICD10_1') #'DateAdmittedIntensive', 
 InfluData <- InfluDataAlle[ ,variableTilTab]
 knit('NIRinfluensa.Rnw', encoding = 'UTF-8')
 tools::texi2pdf(file='NIRinfluensa.tex')
@@ -278,7 +278,7 @@ outfile <- '' #paste0(valgtVar, 'GjsnTid.pdf')
 
 utdata <- NIRFigGjsnTid(RegData=RegData, outfile=outfile, valgtVar=valgtVar, datoFra=datoFra, datoTil=datoTil, 
               tidsenhet=tidsenhet,
-                    erMann=erMann,minald=minald, maxald=maxald, InnMaate=InnMaate, dodInt=dodInt,
+                    erMann=erMann,minald=minald,  maxald=maxald, InnMaate=InnMaate, dodInt=dodInt,
 		              valgtMaal=valgtMaal,tittel=1, enhetsUtvalg=3, reshID=reshID)
 
 #NIRFigGjsnTid(RegData=RegData, outfile=outfile, valgtVar=valgtVar, datoFra=datoFra, datoTil=datoTil, 
