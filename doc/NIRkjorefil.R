@@ -40,7 +40,7 @@ texi2pdf(file='OffDataIntensiv.tex')
 
 InfluDataAlle <- read.table('A:/Intensiv/InfluensaFormDataContract2019-01-07.csv', sep=';', 
                             stringsAsFactors=FALSE, header=T, encoding = 'UTF-8')
-variableTilTab <- c('ShNavn', 'RHF', 'PatientInRegistryGuid', 'FormDate', 'ICD10_1') #'DateAdmittedIntensive', 
+variableTilTab <- c('ShNavn', 'RHF', 'PatientInRegistryGuid', 'FormDate','FormStatus', 'ICD10_1') #'DateAdmittedIntensive', 
 InfluData <- InfluDataAlle[ ,variableTilTab]
 knit('NIRinfluensa.Rnw', encoding = 'UTF-8')
 tools::texi2pdf(file='NIRinfluensa.tex')
