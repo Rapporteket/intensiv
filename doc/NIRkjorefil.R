@@ -374,28 +374,58 @@ indPersMatchTransp <- TransportData$Personnummer %in% RegisterData$Fnr
 indPersMatchRegister <- which(RegisterData$Fnr %in% TransportData$Personnummer)
 TransportData <- TransportData[indPersMatchTransp,]
 RegisterData <- RegisterData[indPersMatchRegister,]
+#1142 (av 16958)reg. basert på personnummer fra Registeret finnes i TransportData
+#699 (av 822) reg. basert på personnummer fra Registeret finnes i TransportData
+write.table(TransportData,file = 'TransportDataMatch.csv',row.names = F, col.names = T, sep = ';')
+write.table(RegisterData,file = 'RegDataTranspMatch.csv',row.names = F, col.names = T, sep = ';')
 
-TransportData$diffTid <- NA
+#Beregne 30-dagers dødelighet
+RegisterData$Dod30d <- 0
+RegisterData$Dod90d <- 0
+RegisterData$Dod365d <- 0
+RegisterData$Dod30d[which(difftime(as.Date(RegisterData$Morsdato, format="%d.%m.%Y"), 
+                             as.Date(RegisterData$DateAndTimeAdmittedIntensive), units='days')< 30)] <- 1
+
+RegisterData$Dod90d[which(difftime(as.Date(RegisterData$Morsdato, format="%d.%m.%Y"), 
+                             as.Date(RegisterData$DateAndTimeAdmittedIntensive), units='days')< 90)] <- 1
+RegisterData$Dod365d[which(difftime(as.Date(RegisterData$Morsdato, format="%d.%m.%Y"), 
+                             as.Date(RegisterData$DateAndTimeAdmittedIntensive), units='days')< 365)] <- 1
+table(RegisterData$Dod30d)
+table(RegisterData$Dod90d)
+table(RegisterData$Dod365d)
+
 avvik <- 24
 indMatchRegData <- NULL
 indMatchTranspData <- NULL
+TranspRegAlle <- cbind(TransportData[0,], RegisterData[0,])
 #NB: Tar ikke høyde for dobbeltregistreringer
-for (k in 1:12) { #dim(TransportData)[1]
-      ind <- which(RegisterData$Fnr  %in% TransportData$Personnummer[k])
+for (k in 1:dim(TransportData)[1]) { #dim(TransportData)[1]
+      ind <- which(RegisterData$Fnr  %in% TransportData$Personnummer[k]) #Hvilke reg. som er aktuelle ut fra pers.nr.
        diff <- difftime(as.POSIXlt(TransportData$DatoTid[k], tz='UTC'), 
                              as.POSIXlt(RegisterData$DateAndTimeAdmittedIntensive[ind], tz='UTC'), units = 'hours')
-       sjekk <- sum(min(abs(diff)) < avvik)
+       sjekk <- sum(min(abs(diff)) < avvik) #antall av minste differanse < avvik
        if (sjekk > 0){
-             indMatchTranspData <- c(indMatchTranspData, k) 
-             indMatchRegData <- c(indMatchRegData , ind[which(abs(diff) == min(abs(diff)))])
+             indMatchTranspData <- c(indMatchTranspData, k) #Radnummer i transportdata
+             indMatchRegData <- ind[which(abs(diff) == min(abs(diff)))] #c(indMatchRegData , ind[which(abs(diff) == min(abs(diff)))]) #matcher minste avvik. Kan være flere
+             for (j in indMatchRegData){
+             TranspRegAlle <- rbind(TranspRegAlle,
+                                    cbind(TransportData[k,], 
+                                    RegisterData[j,])
+                          )
+             }
        }
-#       k <- k+1
-      }       
+#k <- k+1
+       }       
+write.table(TranspRegAlle,file = 'A:/Intensiv/Intensivtransport/TranspRegDataAlleMatch.csv',row.names = F, col.names = T, sep = ';')
+
 indMatchTranspData <- indMatchTranspData[indMatchTranspData>0]
 indMatchRegData <- unique(indMatchRegData)
-merge(
 
-      TransportData[k,]
+TransportData[indMatchTranspData,]
+RegisterData[indMatchRegData,]
+
+
+merge(TransportData[k,],
       RegisterData[ind,c('Fnr', "DateAndTimeAdmittedIntensive")]
 
 
