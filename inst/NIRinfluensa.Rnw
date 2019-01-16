@@ -85,13 +85,15 @@ InfluData$Influensa <- factor(NA, levels = c('Mistenkt', 'Bekreftet'))
 InfluData$Aar <- format(InfluData$InnDato, '%Y')
 InfluData$UkeNr <- format(InfluData$InnDato, '%V')
 InfluData$UkeAar <- format(InfluData$InnDato, '%Y.%V')
+InfluData$UkeAar <- as.factor(InfluData$UkeAar)
 #InfluData$UkeAar <- sub('19.00', '18.52', InfluData$UkeAar)
 
 
 #InfluData$UkeNr <- factor(InfluData$UkeNr, levels=c(min(InfluData$UkeNr):max(InfluData$UkeNr)))
 InfluData$RHF <- factor(InfluData$RHF)
 
-antFerdig <- sum(InfluData$FormStatus==2)
+indFerdig <- which(InfluData$FormStatus==2)
+antFerdig <- length(indFerdig)
 antSkjema <- dim(InfluData)[1]
 @
 
@@ -117,7 +119,7 @@ Resultatene er oppsummert i tabeller som viser antall influensatabeller per uke.
 
 \bf{Merk at:}
 \begin{itemize}
-\item Tabellene skiller ikke på om et skjema er ferdigstilt eller ikke. Det er \Sexpr{antSkjema-antFerdig} av de \Sexpr{antSkjema} skjemaene som ikke er ferdigstilt.
+% \item Tabellene skiller ikke på om et skjema er ferdigstilt eller ikke. Det er \Sexpr{antSkjema-antFerdig} av de \Sexpr{antSkjema} % skjemaene som ikke er ferdigstilt.
 \item Skjema uten spesifikasjon av diagnose, er kategorisert som mistenkte influensatilfeller.
 \item Registrering av influensa for sesongen 2018/19 startet uke 40 i 2018.
 \end{itemize}
@@ -138,20 +140,24 @@ Resultatene er oppsummert i tabeller som viser antall influensatabeller per uke.
 # table(InfluData[ ,c('RHF', 'Mistenkt', 'UkeNr')])      #InfluData$UkeNr, function(x) sum((InfluData$ICD10_1==10 | InfluData$ICD10_2==10)))
 #TabUkeRHF <- ftable(InfluData[ ,c('UkeAar', 'RHF', 'Influensa')])     
 TabUkeRHF <- ftable(InfluData[ , c('UkeAar', 'RHF', 'Influensa')], row.vars ='UkeAar') #, col.vars = c('RHF', 'Influensa'))     
-# dum <- as.table(TabUkeRHF)
+TabUkeRHFFerdig <- ftable(InfluData[indFerdig , c('UkeAar', 'RHF', 'Influensa')], row.vars ='UkeAar') #, col.vars = c('RHF', 'Influensa'))     
 # MistenktUkeRHF<- dum[,,'Mistenkt']
 # addmargins(MistenktUkeRHF) #, margin = seq_along(dim(MistenktUkeRHF)), FUN = sum, quiet = FALSE)
 antUker <- dim(TabUkeRHF)[1]
 indAntRader <- max(1,(antUker-15)):(antUker+1)
 
 TabUkeInflu <- table(InfluData[ ,c('UkeAar', 'Influensa')])      #InfluData$UkeNr, function(x) sum((InfluData$ICD10_1==10 | InfluData$ICD10_2==10)))
+TabUkeInfluFerdig <- table(InfluData[indFerdig ,c('UkeAar', 'Influensa')])      #InfluData$UkeNr, function(x) sum((InfluData$ICD10_1==10 | InfluData$ICD10_2==10)))
+
 TabUkeTot <- addmargins(TabUkeInflu) #cbind(TabUkeInflu, 'Tot. ant. skjema' = table(InfluData$UkeAar))
 row.names(TabUkeTot)[antUker+1] <- 'Sum, hele sesongen'
+TabUkeTotFerdig <- addmargins(TabUkeInfluFerdig) #cbind(TabUkeInflu, 'Tot. ant. skjema' = table(InfluData$UkeAar))
+row.names(TabUkeTotFerdig)[antUker+1] <- 'Sum, hele sesongen'
 @ 
 
 
-\begin{frame}[fragile] {Influensa i regionene}
-<<'TabUkeRHFBekreftet', results='asis'>>=
+\begin{frame}[fragile] {Influensa i regionene, alle skjema}
+<<'TabUkeRHFalle', results='asis'>>=
 navnRHF <- attributes(TabUkeRHF)$col.vars$RHF
 navn2Influ <- attributes(TabUkeRHF)$col.vars$Influensa
 navnUkenr <- attributes(TabUkeRHF)$row.vars$UkeAar
@@ -159,11 +165,6 @@ TabUkeRHF <- as.matrix(TabUkeRHF)
 colnames(TabUkeRHF) <- rep(c('M','B'),4) #letters[1:8]
 navnRHF <- sub('Helse ', '', navnRHF)
 TabUkeRHF <- rbind( TabUkeRHF, Sesongsum = colSums(TabUkeRHF))
-#test <- simsalapar::fftable(TabUkeRHF, digits=0, method='compact', #align=c('l', rep('r', ncol(alderDIV))),
-#		caption='Bekreftet influensa per uke og region, 2019',
-#		sanitize.rownames.function = identity)
-#test <- c('a  ', 'b', 'c')
-#paste(test, collapse=''))
 #TabUkeRHF <- addmargins(TabUkeRHF)
 
 add.to.row <- list(pos = list(-1), command = NULL)
@@ -190,6 +191,27 @@ print(xtable::xtable(TabUkeRHF[indAntRader,], digits=0, #method='compact', #alig
 @
 \end{frame}
 
+\begin{frame}[fragile] {Influensa i regionene, ferdigstilte skjema}
+<<'TabUkeRHFferdigstilt', results='asis'>>=
+#navnRHF <- attributes(TabUkeRHFFerdig)$col.vars$RHF
+#navn2Influ <- attributes(TabUkeRHFFerdig)$col.vars$Influensa
+#navnUkenr <- attributes(TabUkeRHFFerdig)$row.vars$UkeAar
+TabUkeRHFFerdig <- as.matrix(TabUkeRHFFerdig)
+colnames(TabUkeRHFFerdig) <- rep(c('M','B'),4) #letters[1:8]
+#navnRHF <- sub('Helse ', '', navnRHF)
+TabUkeRHFFerdig <- rbind( TabUkeRHFFerdig, Sesongsum = colSums(TabUkeRHFFerdig))
+
+add.to.row <- list(pos = list(-1), command = NULL)
+command <- paste0(paste0('& \\multicolumn{2}{l}{', navnRHF, '} ', collapse=''), '\\\\\n')
+add.to.row$command <- command
+print(xtable::xtable(TabUkeRHFFerdig[indAntRader,], digits=0, 
+		caption='Influensatilfeller per uke og region, basert på kun ferdigstilte influensaskjema, siste 15 uker og totalt, sesongen 2018/19. (B - bekreftet, M - mistenkt)'),
+		add.to.row = add.to.row,
+		sanitize.rownames.function = identity)
+@
+
+\end{frame}
+
 % \begin{frame}[fragile] {Mistenkt Influensa}
 % <<'TabUkeRHFMistenkt', results='asis'>>=
 % print(xtable::xtable(addmargins(as.table(TabUkeRHF)[,,'Mistenkt']), digits=0, #align=c('l', rep('r', ncol(alderDIV))), 
@@ -209,6 +231,15 @@ print(xtable::xtable(TabUkeTot, digits=0, #align=c('l', rep('r', ncol(TabUkeTot)
 @
 \end{frame}
 
+\begin{frame}[fragile] {Influensa per uke, totalt (kun ferdigstilte skjema)}
+
+<<'TabUkeTotferdig', results='asis'>>=
+print(xtable::xtable(TabUkeTotFerdig, digits=0, #align=c('l', rep('r', ncol(TabUkeTot))),
+		caption='Antall influensatilfeller siste 15 uker og totalt, sesongen 2018/19.'),
+		#Totalt antall skjema er antall registrerte influensaskjema.'),
+		sanitize.rownames.function = identity)
+@
+\end{frame}
 
 <<'Manuelle resultater', results='hide'>>=
 
