@@ -42,8 +42,10 @@ InfluDataAlle <- read.table('A:/Intensiv/InfluensaFormDataContract2019-01-07.csv
                             stringsAsFactors=FALSE, header=T, encoding = 'UTF-8')
 variableTilTab <- c('ShNavn', 'RHF', 'PatientInRegistryGuid', 'FormDate','FormStatus', 'ICD10_1') #'DateAdmittedIntensive', 
 InfluData <- InfluDataAlle[ ,variableTilTab]
-knit('NIRinfluensa.Rnw', encoding = 'UTF-8')
-tools::texi2pdf(file='NIRinfluensa.tex')
+knit('NIRinfluensaUtenICD10.Rnw', encoding = 'UTF-8')
+tools::texi2pdf(file='NIRinfluensaUtenICD10.tex')
+# knit('NIRinfluensa.Rnw', encoding = 'UTF-8')
+# tools::texi2pdf(file='NIRinfluensa.tex')
 #NIRSamleRapp for hver enkelt enhet (alle)
 #for (reshID in AlleResh ) {
 #	knit('NIRSamleRapp.Rnw')
