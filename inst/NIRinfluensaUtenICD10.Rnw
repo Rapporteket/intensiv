@@ -82,17 +82,17 @@ if (!exists('InfluDataAlle')){
 % \maketitle
  \begin{tiny}
 
-\begin{frame}[fragile] {Ferdigstilte influensaskjema hvor ICD10-kode ikke er spesifisert}
+\begin{frame}[fragile] {Influensaskjema med manglende ICD10-kode}
 <<'TabICD10koder', results='asis'>>=
 ind <- which(InfluData$ICD10_1 == -1 & InfluData$FormStatus!=2)
 # InfluData$InnDato <- as.Date(InfluData$FormDate, tz='UTC')
 # InfluData$InnDato <- format.Date(InfluData$FormDate) #, tz='UTC', format = '%Y-%m-%d"')
 
 IkkeFerdig <- InfluData[ind, c('ShNavn', 'FormDate')] #, row.names = F)
-attributes(IkkeFerdig)$row.names <- rep('',dim(IkkeFerdig)[1])
+#attributes(IkkeFerdig)$row.names <- rep('',dim(IkkeFerdig)[1])
 
  print(xtable::xtable(IkkeFerdig, #digits=1, align=c('l', rep('r', ncol(alderDIV))),
- 		caption='Ferdigstilte influensaskjema hvor ICD10-kode ikke er spesifisert.'),
+ 		caption='Ferdigstilte influensaskjema hvor ICD10-kode ikke er spesifisert.'), #
  		sanitize.rownames.function = identity)
 @
 \end{frame}
