@@ -91,9 +91,13 @@ ind <- which(InfluData$ICD10_1 == -1 & InfluData$FormStatus!=2)
 IkkeFerdig <- InfluData[ind, c('ShNavn', 'FormDate')] #, row.names = F)
 #attributes(IkkeFerdig)$row.names <- rep('',dim(IkkeFerdig)[1])
 
- print(xtable::xtable(IkkeFerdig, #digits=1, align=c('l', rep('r', ncol(alderDIV))),
- 		caption='Ferdigstilte influensaskjema hvor ICD10-kode ikke er spesifisert.'), #
+IkkeFerdig <- knitr::kable(IkkeFerdig, format='latex', row.names = FALSE)
+ print(IkkeFerdig, #digits=1, align=c('l', rep('r', ncol(alderDIV))),
+ 		caption='Ferdigstilte influensaskjema hvor ICD10-kode ikke er spesifisert.',
  		sanitize.rownames.function = identity)
+# print(xtable::xtable(IkkeFerdig, #digits=1, align=c('l', rep('r', ncol(alderDIV))),
+# 		caption='Ferdigstilte influensaskjema hvor ICD10-kode ikke er spesifisert.'), #
+# 		sanitize.rownames.function = identity)
 @
 \end{frame}
 
