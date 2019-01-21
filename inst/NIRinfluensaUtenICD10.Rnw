@@ -1,0 +1,106 @@
+\documentclass[handout, xcolor=pdftex,dvipsnames,table]{beamer}  %presentation,
+\usetheme{Hannover}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[english, norsk]{babel}
+\usepackage{xspace}
+\usepackage{booktabs}
+\usepackage{rotating}
+\usepackage{graphicx}
+
+
+<<'initOpts',include=FALSE>>=
+knitr::opts_chunk$set(warnings=FALSE,echo=FALSE)
+knitr::opts_knit$set(root.dir = './')
+library(xtable)
+library(lubridate)
+@
+
+
+<<'hentDataOgTilrettelegg', include=FALSE>>=
+#«ICD-10-kode: J10» (bekreftet influensa), 
+#«ICD-11-kode: J10» (mistenkt influensa), 
+
+#Antall innleggelser med bekreftet influensa (ICD10_1 eller _2 == 10) pr.uke og  pr. helseregion, 
+#evt. aldersgrupper. Foreløpig for få observasjoner. Kan angi median, min og maks?
+#Variable:  RHF , PatientInRegistryGuid, DateAdmittedIntensive, ICD10_1-ICD10_5, 
+
+# Datafelt som er ønskte i aggregert rapport, på dags/vekebasis:
+# -	Veke
+# -	Landsdel
+# -	Diagnosekode
+# -	Aldersgruppe ([0-5> [5-10> [10-15>) …. )
+# -	Skjemastatus ? (tal på skjema i kladd vs ferdigstilte)
+
+
+#startOfMonth<- function(x) {as.Date(format(x, "%Y-%m-01")) }
+
+if (!exists('InfluDataAlle')){
+      NIRInfluDataSQL <- function(datoFra = '2018-01-01', datoTil = '2099-01-01') {
+            
+            registryName <- "nir"
+            dbType <- "mysql"
+            query <- paste0('SELECT 
+                  ShNavn,
+                  RHF,
+                  PatientInRegistryGuid,
+                  FormDate,
+                  ICD10_1,
+                  FormStatus
+            FROM InfluensaFormDataContract
+            WHERE cast(FormDate as date) BETWEEN \'', datoFra, '\' AND \'', datoTil, '\'')
+            #WHERE cast(DateAdmittedIntensive as date) >= \'', datoFra, '\' AND DateAdmittedIntensive <= \'', datoTil, '\'')  
+            
+            RegData <- rapbase::LoadRegData(registryName, query, dbType)
+            return(RegData)
+      }  
+      
+      InfluData <- NIRInfluDataSQL(datoFra = '2018-01-01')
+}
+#library(dplyr)
+	
+#ICD10_1
+# -1 = Velg verdi   
+# 9 = J10 Influensa som skyldes identifisert sesongvariabelt influensavirus                                             
+# 10 = J10.0 Påvist influensavirus med pneumoni                                
+# 11 = J10.1 Påvist influensavirus med annen luftveissykdom                                        
+# 12 = J10.8 Påvist influensavirus med annen organmanifestasjon                                              
+# 13 = J11 Influensa som skyldes uidentifisert virus (Klinisk mistanke)                                        
+# 14 = J11.0 Mistenkt influensavirus med pneumoni                                          
+# 15 = J11.1 Mistenkt influensavirus med annen luftveissykdom                                  
+# 16 = J11.8 Mistenkt influensavirus med annen organmanifestasjon                                        
+# 17 = Annet
+#Når ein opprettar eit influensaskjema har ein per def. Mistanke om influensa. Vi meiner difor at skjema med verdi -1 også bør tellast med som mistenkt influensa.
+
+@
+
+\begin{document}
+
+% \title[Influensa \\\today] {%\textit{Influensadata, NIR} \\
+% Influensarapportering fra NIR, sesongen 2018/19 }
+% \maketitle
+ \begin{tiny}
+
+\begin{frame}[fragile] {Influensaskjema med manglende ICD10-kode}
+<<'TabICD10koder', results='asis'>>=
+ind <- which(InfluData$ICD10_1 == -1 & InfluData$FormStatus!=2)
+# InfluData$InnDato <- as.Date(InfluData$FormDate, tz='UTC')
+# InfluData$InnDato <- format.Date(InfluData$FormDate) #, tz='UTC', format = '%Y-%m-%d"')
+
+IkkeFerdig <- InfluData[ind, c('ShNavn', 'FormDate')] #, row.names = F)
+#attributes(IkkeFerdig)$row.names <- rep('',dim(IkkeFerdig)[1])
+
+IkkeFerdig <- knitr::kable(IkkeFerdig, format='latex', row.names = FALSE)
+ print(IkkeFerdig, #digits=1, align=c('l', rep('r', ncol(alderDIV))),
+ 		caption='Ferdigstilte influensaskjema hvor ICD10-kode ikke er spesifisert.',
+ 		sanitize.rownames.function = identity)
+# print(xtable::xtable(IkkeFerdig, #digits=1, align=c('l', rep('r', ncol(alderDIV))),
+# 		caption='Ferdigstilte influensaskjema hvor ICD10-kode ikke er spesifisert.'), #
+# 		sanitize.rownames.function = identity)
+@
+\end{frame}
+
+
+\end{tiny}
+\end{document}

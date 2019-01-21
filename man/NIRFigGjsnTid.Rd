@@ -4,10 +4,10 @@
 \alias{NIRFigGjsnTid}
 \title{Utvikling over tid for gjennomsnitt/median av valgt variabel}
 \usage{
-NIRFigGjsnTid(RegData, valgtVar, datoFra = "2011-01-01",
+NIRFigGjsnTid(RegData, valgtVar = "alder", datoFra = "2011-01-01",
   datoTil = "3000-12-31", tidsenhet = "Aar", minald = 0, maxald = 110,
   erMann = "", reshID = 0, InnMaate = "", dodInt = "", tittel = 1,
-  outfile = "", enhetsUtvalg = 0, valgtMaal = "", preprosess = 1,
+  outfile = "", enhetsUtvalg = 0, valgtMaal = "Gjsn", preprosess = 1,
   hentData = 0)
 }
 \arguments{
@@ -86,8 +86,8 @@ Argumentet \emph{enhetsUtvalg} har følgende valgmuligheter:
     \item 3: Egen enhet mot egen sykehustype
     \item 4: Egen sykehustype
     \item 5: Egen sykehustype mot resten av landet
-    \item 6: Egen enhet mot egen region [NB: Intensivregiisteret mangler pt. variabel for region]
-    \item 7: Egen region [NB: Mangler pt. variabel for region]
-   \item 8: Egen region mot resten [NB: Mangler pt. variabel for region]
+    \item 6: Egen enhet mot egen region 
+    \item 7: Egen region 
+   \item 8: Egen region mot resten [
    	}
 }

@@ -25,9 +25,9 @@
 #'     \item 3: Egen enhet mot egen sykehustype
 #'     \item 4: Egen sykehustype
 #'     \item 5: Egen sykehustype mot resten av landet
-#'     \item 6: Egen enhet mot egen region [NB: Intensivregiisteret mangler pt. variabel for region]
-#'     \item 7: Egen region [NB: Mangler pt. variabel for region]
-#'	   \item 8: Egen region mot resten [NB: Mangler pt. variabel for region]
+#'     \item 6: Egen enhet mot egen region 
+#'     \item 7: Egen region 
+#'	   \item 8: Egen region mot resten [
 #'    	}							
 #'
 #' @inheritParams NIRFigAndeler 
@@ -75,7 +75,6 @@ NIRFigGjsnTid <- function(RegData, valgtVar='alder', datoFra='2011-01-01', datoT
             RegData <- RegDataFunk$RegData
             #tidtxt <- RegDataFunk$tidtxt
             tidNum <- min(RegData$TidsEnhetSort, na.rm=T):max(RegData$TidsEnhetSort, na.rm = T) #as.numeric(levels(RegData$TidsEnhetSort))
-            AntTidsenh <- length(tidNum)
             
 #--------------- Gjøre beregninger ------------------------------
 KIekstrem <- NULL
@@ -209,7 +208,10 @@ if (medSml==1) {
       #            tidtxt[AntTidsenh]+0.012, tidtxt[AntTidsenh:1], tidtxt[1]-0.01), 
       #          c(KonfRest[1,c(1,1:AntTidsenh, AntTidsenh)], KonfRest[2,c(AntTidsenh,AntTidsenh:1,1)]), 
       #          col=fargeRestRes, border=NA)
-      polygon( c(tidNum[1]-0.01,tidNum, tidNum[AntTidsenh]+0.012, 
+      AntTidsenh <- max(which(!is.na(KonfRest[1,])))
+            #which(KonfRest==max(KonfRest, na.rm = T)) #Tar bare høyde for at siste tidspunkt har KonfRest=NA
+            #length(min(tidNum, na.rm = T):max(tidNum, na.rm = T)) #length(tidNum)
+      polygon( c(tidNum[1]-0.01,tidNum[1:AntTidsenh], tidNum[AntTidsenh]+0.012, 
 				tidNum[AntTidsenh]+0.012, tidNum[AntTidsenh:1], tidNum[1]-0.01), 
 		c(KonfRest[1,c(1,1:AntTidsenh, AntTidsenh)], KonfRest[2,c(AntTidsenh,AntTidsenh:1,1)]), 
 			col=fargeRestRes, border=NA)

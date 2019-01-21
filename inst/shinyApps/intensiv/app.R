@@ -7,6 +7,7 @@ library(intensiv)
 library(lubridate)
 library(zoo)
 library(kableExtra)
+#Sys.setlocale("LC_TIME", "nb_NO.UTF-8")
 #ibrary(shinyBS) # Additional Bootstrap Controls
 
 # ui <- shinyUI(basicPage(
@@ -448,6 +449,8 @@ server <- function(input, output, session) { #
             #  data('NIRRegDataSyn', package = 'intensiv')
             #try(data(package = "intensiv"))
       }
+      #HUSK Å FJERNE DENNE PÅ SERVER:
+      load(paste0(fil,".Rdata")) #RegData 2018-06-18
       
       options(knitr.table.format = "html")
       datoTil <- as.POSIXlt(Sys.Date())
