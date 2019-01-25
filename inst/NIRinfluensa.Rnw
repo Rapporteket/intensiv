@@ -115,7 +115,7 @@ Dokumentet inneholder oppsummering av influensatilfeller hos pasienter som
 kvalifiserer for rapportering til NIR.
 Influensatilfellene er rapportert i eget skjema i registeret og det er data fra dette skjemaet som danner grunnlaget
 for denne rapporten.
-Resultatene er oppsummert i tabeller som viser antall influensatabeller per uke.\\
+Resultatene er oppsummert i tabeller som viser antall influensatilfeller per uke.\\
 
 \bf{Merk at:}
 \begin{itemize}
