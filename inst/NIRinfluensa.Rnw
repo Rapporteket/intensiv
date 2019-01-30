@@ -84,10 +84,11 @@ InfluData$Influensa <- factor(NA, levels = c('Mistenkt', 'Bekreftet'))
 #Legge på tidsenheter
 InfluData$Aar <- format(InfluData$InnDato, '%Y')
 InfluData$UkeNr <- format(InfluData$InnDato, '%V')
-InfluData$UkeAar <- format(InfluData$InnDato, '%Y.%V')
+InfluData$UkeAar <- format(InfluData$InnDato, '%G.%V') #%G -The week-based year, %V - Week of the year as decimal number (01–53) as defined in ISO 8601
 InfluData$UkeAar <- as.factor(InfluData$UkeAar)
 #InfluData$UkeAar <- sub('19.00', '18.52', InfluData$UkeAar)
-
+format(as.Date('2018-12-31'), '%G.%V')
+format(as.Date('2016-01-01'), '%Y.%V')
 
 #InfluData$UkeNr <- factor(InfluData$UkeNr, levels=c(min(InfluData$UkeNr):max(InfluData$UkeNr)))
 InfluData$RHF <- factor(InfluData$RHF)
@@ -224,7 +225,7 @@ print(xtable::xtable(TabUkeRHFFerdig[indAntRader,], digits=0,
 \begin{frame}[fragile] {Influensa per uke, totalt}
 
 <<'TabUkeTot', results='asis'>>=
-print(xtable::xtable(TabUkeTot, digits=0, #align=c('l', rep('r', ncol(TabUkeTot))),
+print(xtable::xtable(TabUkeTot[indAntRader,], digits=0, #align=c('l', rep('r', ncol(TabUkeTot))),
 		caption='Antall influensatilfeller siste 15 uker og totalt, sesongen 2018/19.'),
 		#Totalt antall skjema er antall registrerte influensaskjema.'),
 		sanitize.rownames.function = identity)
@@ -234,7 +235,7 @@ print(xtable::xtable(TabUkeTot, digits=0, #align=c('l', rep('r', ncol(TabUkeTot)
 \begin{frame}[fragile] {Influensa per uke, totalt (kun ferdigstilte skjema)}
 
 <<'TabUkeTotferdig', results='asis'>>=
-print(xtable::xtable(TabUkeTotFerdig, digits=0, #align=c('l', rep('r', ncol(TabUkeTot))),
+print(xtable::xtable(TabUkeTotFerdig[indAntRader,], digits=0, #align=c('l', rep('r', ncol(TabUkeTot))),
 		caption='Antall influensatilfeller siste 15 uker og totalt, sesongen 2018/19.'),
 		#Totalt antall skjema er antall registrerte influensaskjema.'),
 		sanitize.rownames.function = identity)
