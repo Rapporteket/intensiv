@@ -34,7 +34,9 @@ datoFra6mnd <- paste0(substr(as.character(dato %m-% months(6, abbreviate=FALSE))
       
 datoFra <- datoFra6mnd
 #Ønsker eget datasett for forrige måned
-datoFraMnd <- as.Date(paste0(1900+dato$year,'-', ifelse(dato$mon==0, 11, dato$mon), '-', '01'), tz='UTC') #dato - 
+dato <- as.POSIXlt('2018-12-07')
+datoFraMnd <- format(datoTil, "%Y-%m-01")
+# Gir feil dato: datoFraMnd <- as.Date(paste0(1900+dato$year,'-', ifelse(dato$mon==0, 11, dato$mon), '-', '01'), tz='UTC') #dato - 
 
 tidsenhet <- 'Mnd'
 preprosess <- 0

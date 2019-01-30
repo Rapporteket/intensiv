@@ -25,7 +25,7 @@ setwd('C:/ResultattjenesteGIT/intensiv/inst/')
 
 #load(paste0("A:/Intensiv/NIRdata10000.Rdata")) #RegDataTEST, 21.mai 2018
 load(paste0("A:/Intensiv/MainFormDataContract2018-12-14.Rdata")) #RegData 2018-06-18
-reshID=109773 #Tromsø med int: 601302, Ullevål Kir int: 109773, 102090 Ahus, 112044 Haukeland, 102673 Ålesund Med
+reshID=706078 #Tromsø med int: 601302, Ullevål Kir int: 109773, 102090 Ahus, 112044 Haukeland, 102673 Ålesund Med, Kristiansund: 706078 
 knit('NIRmndRapp.Rnw', encoding = 'UTF-8')
 tools::texi2pdf(file='NIRmndRapp.tex')
 
