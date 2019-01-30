@@ -38,14 +38,14 @@ knit('OffDataIntensiv.Rnw')
 texi2pdf(file='OffDataIntensiv.tex')
 
 
-InfluDataAlle <- read.table('A:/Intensiv/InfluensaFormDataContract2019-01-07.csv', sep=';', 
+InfluDataAlle <- read.table('A:/Intensiv/InfluensaFormDataContract2019-01-30.csv', sep=';', 
                             stringsAsFactors=FALSE, header=T, encoding = 'UTF-8')
 variableTilTab <- c('ShNavn', 'RHF', 'PatientInRegistryGuid', 'FormDate','FormStatus', 'ICD10_1') #'DateAdmittedIntensive', 
 InfluData <- InfluDataAlle[ ,variableTilTab]
-knit('NIRinfluensaUtenICD10.Rnw', encoding = 'UTF-8')
-tools::texi2pdf(file='NIRinfluensaUtenICD10.tex')
-# knit('NIRinfluensa.Rnw', encoding = 'UTF-8')
-# tools::texi2pdf(file='NIRinfluensa.tex')
+# knit('NIRinfluensaUtenICD10.Rnw', encoding = 'UTF-8')
+# tools::texi2pdf(file='NIRinfluensaUtenICD10.tex')
+ knit('NIRinfluensa.Rnw', encoding = 'UTF-8')
+ tools::texi2pdf(file='NIRinfluensa.tex')
 #NIRSamleRapp for hver enkelt enhet (alle)
 #for (reshID in AlleResh ) {
 #	knit('NIRSamleRapp.Rnw')
@@ -325,11 +325,19 @@ for (valgtVar in c('alder', 'liggetid', 'respiratortid','NEMS' ,'SAPSII', 'SMR')
 
 #--------------------------------------OFFENTLIGGJØRING-------------------------------------
 
+<<<<<<< HEAD
+setwd('aarsrappOff/')
+NIRFigGjsnGrVar(RegData=RegData, valgtVar='respiratortidInvMoverf', datoFra='2016-01-01', valgtMaal = 'Med',
+                datoTil='2016-12-31', grType=1, outfile='Respiratortid_loksent_Fig2aNy.pdf')
+NIRFigGjsnGrVar(RegData=RegData, valgtVar='respiratortidInvMoverf', datoFra='2016-01-01', valgtMaal = 'Med',
+                                datoTil='2016-12-31', grType=3, outfile='Respiratortid_region_Fig2bNy.pdf')
+=======
 
 NIRFigGjsnGrVar(RegData=RegData, valgtVar='respiratortidInvMoverf', datoFra='2016-01-01', 
                 datoTil='2016-12-31', grType=1, outfile='Respiratortid_loksent_Fig2a.pdf')
 NIRFigGjsnGrVar(RegData=RegData, valgtVar='respiratortidInvMoverf', datoFra='2016-01-01', valgtMaal = 'Gjsn',
                                 datoTil='2016-12-31', grType=3, outfile='test.png') #Respiratortid_region_Fig2bNy.pdf')
+>>>>>>> rel
                                 
 NIRFigAndelerGrVar(RegData=RegData, valgtVar='reinn', datoFra='2016-01-01', medKI = 1,
                    datoTil='2016-12-31', grType=1, outfile='Reinnlegging_loksent_Fig3aKonfInt.pdf')
