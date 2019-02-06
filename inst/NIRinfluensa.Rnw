@@ -86,9 +86,6 @@ InfluData$Aar <- format(InfluData$InnDato, '%Y')
 InfluData$UkeNr <- format(InfluData$InnDato, '%V')
 InfluData$UkeAar <- format(InfluData$InnDato, '%G.%V') #%G -The week-based year, %V - Week of the year as decimal number (01–53) as defined in ISO 8601
 InfluData$UkeAar <- as.factor(InfluData$UkeAar)
-#InfluData$UkeAar <- sub('19.00', '18.52', InfluData$UkeAar)
-format(as.Date('2018-12-31'), '%G.%V')
-format(as.Date('2016-01-01'), '%Y.%V')
 
 #InfluData$UkeNr <- factor(InfluData$UkeNr, levels=c(min(InfluData$UkeNr):max(InfluData$UkeNr)))
 InfluData$RHF <- factor(InfluData$RHF)
@@ -145,7 +142,7 @@ TabUkeRHFFerdig <- ftable(InfluData[indFerdig , c('UkeAar', 'RHF', 'Influensa')]
 # MistenktUkeRHF<- dum[,,'Mistenkt']
 # addmargins(MistenktUkeRHF) #, margin = seq_along(dim(MistenktUkeRHF)), FUN = sum, quiet = FALSE)
 antUker <- dim(TabUkeRHF)[1]
-indAntRader <- max(1,(antUker-15)):(antUker+1)
+indAntRader <- max(1,(antUker-14)):(antUker+1)
 
 TabUkeInflu <- table(InfluData[ ,c('UkeAar', 'Influensa')])      #InfluData$UkeNr, function(x) sum((InfluData$ICD10_1==10 | InfluData$ICD10_2==10)))
 TabUkeInfluFerdig <- table(InfluData[indFerdig ,c('UkeAar', 'Influensa')])      #InfluData$UkeNr, function(x) sum((InfluData$ICD10_1==10 | InfluData$ICD10_2==10)))
@@ -163,7 +160,7 @@ navnRHF <- attributes(TabUkeRHF)$col.vars$RHF
 navn2Influ <- attributes(TabUkeRHF)$col.vars$Influensa
 navnUkenr <- attributes(TabUkeRHF)$row.vars$UkeAar
 TabUkeRHF <- as.matrix(TabUkeRHF)
-colnames(TabUkeRHF) <- rep(c('M','B'),4) #letters[1:8]
+colnames(TabUkeRHF) <- rep(c('M','B'), length(levels(InfluData$RHF))) #letters[1:8]
 navnRHF <- sub('Helse ', '', navnRHF)
 TabUkeRHF <- rbind( TabUkeRHF, Sesongsum = colSums(TabUkeRHF))
 #TabUkeRHF <- addmargins(TabUkeRHF)
@@ -176,7 +173,7 @@ command <- paste0(paste0('& \\multicolumn{2}{l}{', navnRHF, '} ', collapse=''), 
 #comment$command <- "\\hline\n{\\footnotesize B - bekreftet, M - mistenkt}\n"
 add.to.row$command <- command
 print(xtable::xtable(TabUkeRHF[indAntRader,], digits=0, #method='compact', #align=c('l', rep('r', ncol(alderDIV))),
-		caption='Influensatilfeller per uke og region, siste 15 uker og totalt, sesongen 2018/19. (B - bekreftet, M - mistenkt)'),
+		caption='Influensatilfeller per uke og region, siste 15 uker og totalt sesongen 2018/19. (B - bekreftet, M - mistenkt)'),
       #footnote= 'B-bekreftet, M-mistenkt',),
 		add.to.row = add.to.row,
 		sanitize.rownames.function = identity)
@@ -198,7 +195,7 @@ print(xtable::xtable(TabUkeRHF[indAntRader,], digits=0, #method='compact', #alig
 #navn2Influ <- attributes(TabUkeRHFFerdig)$col.vars$Influensa
 #navnUkenr <- attributes(TabUkeRHFFerdig)$row.vars$UkeAar
 TabUkeRHFFerdig <- as.matrix(TabUkeRHFFerdig)
-colnames(TabUkeRHFFerdig) <- rep(c('M','B'),4) #letters[1:8]
+colnames(TabUkeRHFFerdig) <- rep(c('M','B'),length(levels(InfluData$RHF))) #letters[1:8]
 #navnRHF <- sub('Helse ', '', navnRHF)
 TabUkeRHFFerdig <- rbind( TabUkeRHFFerdig, Sesongsum = colSums(TabUkeRHFFerdig))
 
@@ -236,7 +233,7 @@ print(xtable::xtable(TabUkeTot[indAntRader,], digits=0, #align=c('l', rep('r', n
 
 <<'TabUkeTotferdig', results='asis'>>=
 print(xtable::xtable(TabUkeTotFerdig[indAntRader,], digits=0, #align=c('l', rep('r', ncol(TabUkeTot))),
-		caption='Antall influensatilfeller siste 15 uker og totalt, sesongen 2018/19.'),
+		caption='Antall influensatilfeller basert på ferdigstilte skjema siste 15 uker og totalt, sesongen 2018/19.'),
 		#Totalt antall skjema er antall registrerte influensaskjema.'),
 		sanitize.rownames.function = identity)
 @
