@@ -24,7 +24,7 @@ library(tools)	#texi2pdf
 setwd('C:/ResultattjenesteGIT/intensiv/inst/') 
 
 #load(paste0("A:/Intensiv/NIRdata10000.Rdata")) #RegDataTEST, 21.mai 2018
-load(paste0("A:/Intensiv/MainFormDataContract2018-12-14.Rdata")) #RegData 2018-06-18
+load(paste0("A:/Intensiv/MainFormDataContract2019-01-30.Rdata")) #RegData 2018-06-18
 reshID=706078 #Tromsø med int: 601302, Ullevål Kir int: 109773, 102090 Ahus, 112044 Haukeland, 102673 Ålesund Med, Kristiansund: 706078 
 knit('NIRmndRapp.Rnw', encoding = 'UTF-8')
 tools::texi2pdf(file='NIRmndRapp.tex')
@@ -37,8 +37,8 @@ texi2pdf(file='NIRSamleRapp.tex')
 knit('OffDataIntensiv.Rnw')
 texi2pdf(file='OffDataIntensiv.tex')
 
-
-InfluDataAlle <- read.table('A:/Intensiv/InfluensaFormDataContract2019-01-30.csv', sep=';', 
+dato <- '2019-02-06' #2019-01-30
+InfluDataAlle <- read.table(paste0('A:/Intensiv/InfluensaFormDataContract', dato, '.csv'), sep=';', 
                             stringsAsFactors=FALSE, header=T, encoding = 'UTF-8')
 variableTilTab <- c('ShNavn', 'RHF', 'PatientInRegistryGuid', 'FormDate','FormStatus', 'ICD10_1') #'DateAdmittedIntensive', 
 InfluData <- InfluDataAlle[ ,variableTilTab]
@@ -46,7 +46,7 @@ InfluData <- InfluDataAlle[ ,variableTilTab]
 # tools::texi2pdf(file='NIRinfluensaUtenICD10.tex')
  knit('NIRinfluensa.Rnw', encoding = 'UTF-8')
  tools::texi2pdf(file='NIRinfluensa.tex')
-#NIRSamleRapp for hver enkelt enhet (alle)
+      #NIRSamleRapp for hver enkelt enhet (alle)
 #for (reshID in AlleResh ) {
 #	knit('NIRSamleRapp.Rnw')
 #	texi2pdf(file='NIRSamleRapp.tex')
@@ -57,7 +57,7 @@ InfluData <- InfluDataAlle[ ,variableTilTab]
 #-------------------------------------LASTE DATA-----------------------------------------------
 rm(list=ls())
 
-dato <- '2019-01-07' #'2018-12-14' #MainFormDataContract2018-06-19
+dato <- '2019-01-30' #'2018-12-14' #MainFormDataContract2018-06-19
 dataKat <- 'A:/Intensiv/' 
 fil <- paste0(dataKat,'MainFormDataContract',dato)
 #NIRdata <- read.table(file=paste0(fil,'.csv'), header=T, stringsAsFactors=FALSE, sep=';',encoding = 'UTF-8')
