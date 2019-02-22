@@ -18,13 +18,16 @@ Depends:
 Remotes: 
       Rapporteket/rapbase
 Imports:
-    plyr,
+    kableExtra,
+    knitr, 
     lubridate,
-    xtable
+    plyr,
+    shiny,
+    xtable,
+    zoo
 RoxygenNote: 6.0.1
 Suggests:
     rmarkdown,
-    knitr,
     testthat, 
     prodlim,
 VignetteBuilder: knitr
