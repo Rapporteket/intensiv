@@ -198,13 +198,16 @@ NIRFigInnMaate (RegData=RegData, valgtVar='InnMaate', minald=0, maxald=130, dato
 
 
 #--------------------------------------- Andeler ----------------------------------
-valgtVar <- 'alder'	#'alder', 'liggetid', 'respiratortid',  'SAPSII', 'NEMS24', 'Nas24', 'InnMaate'
+valgtVar <- 'inklKrit'	#'alder', 'liggetid', 'respiratortid',  'SAPSII', 'NEMS24', 'Nas24', 'InnMaate'
                               #Nye: PrimaryReasonAdmitted, inklKrit, respiratortidNonInv, respiratortidInv
                               #nyreBeh, nyreBehTid, ExtendedHemodynamicMonitoring, isolering, isoleringDogn, 
                               #spesTiltak
                               #Nye, aug-18: CerebralCirculationAbolishedReasonForNo, OrganDonationCompletedReasonForNoStatus
                               #Nye: 'utenforVakttidInn'
-
+Utdata <- NIRFigAndeler(RegData=RegData, valgtVar='inklKrit', 
+              #minald=minald, maxald=maxald,  datoFra=datoFra, 
+              #datoTil=datoTil, InnMaate=InnMaate, dodInt=dodInt,erMann=erMann, 
+              outfile='', reshID=109773, enhetsUtvalg=1, lagFig=1)
 outfile <- '' #paste0(valgtVar,'_Ford', '.png')
 NIRFigAndeler(RegData=RegData, valgtVar=valgtVar, minald=minald, maxald=maxald,  datoFra=datoFra, 
                          datoTil=datoTil, InnMaate=InnMaate, dodInt=dodInt,erMann=erMann, outfile=outfile, 

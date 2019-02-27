@@ -46,6 +46,22 @@ PaarorData <- NIRPreprosess(RegData = PaarorDataH) #Må først koble på hovedda
 #Sys.setlocale("LC_TIME", "nb_NO.UTF-8")
 #ibrary(shinyBS) # Additional Bootstrap Controls
 
+# ui <- shinyUI(basicPage(
+#   downloadButton('report')
+# ))
+#
+# server <- function(input, output) {
+#   output$report = downloadHandler(
+#     filename = 'MndRapp.pdf',
+#     content = function(file) {
+#       out = knit2pdf('C:/ResultattjenesteGIT/Intensiv/inst/IntensivMndRapp.Rnw', encoding = 'UTF-8', clean = TRUE)
+#       file.rename(out, file) # move pdf to file for downloading
+#     },
+#     contentType = 'application/pdf'
+#   )
+#
+# }
+
 
 # Define UI for application that draws figures
 ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
@@ -57,7 +73,7 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                #fluidRow(
                #column(width=5,
                h2("Månedsrapport"), #),
-               downloadButton(outputId = 'mndRapp.pdf', label='Last ned MÅNEDSRAPPORT', class = "butt"),
+               downloadButton(outputId = 'mndRapp', label='Månedsrapport-virker ikke på server', class = "butt"),
                
                tags$head(tags$style(".butt{background-color:#6baed6;} .butt{color: white;}")), # background color and font color
                br(),
@@ -77,7 +93,7 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
       ), #tab
       
 #-----Registreringsoversikter------------
-            tabPanel("Aktivitet",
+            tabPanel("Registreringsoversikter",
                sidebarPanel(width=3,
                             conditionalPanel(condition = "input.ark == 'Nøkkeltall' || input.ark == 'Ant. opphold'
                                              || input.ark == 'Pasientar per år og avd.' ",
@@ -466,15 +482,52 @@ server <- function(input, output, session) { #
     # file.rename(paste0(substr(tmpFile, 1, nchar(tmpFile)-3), 'pdf'), file)
   }
   
-
-  output$mndRapp.pdf <- downloadHandler(
+  # output$lastNed_saml_land <- downloadHandler(
+  #   filename = function(){
+  #     paste0('samleDokLandet', Sys.time(), '.pdf')
+  #   },
+  #   
+  #   content = function(file){
+  #     contentFile(file, "NorgastSamleDokLandetShiny.Rnw", "tmpNorgastSamleLandet.Rnw", input$datovalg_sml[1],
+  #                 input$datovalg_sml[2], reshID=reshID())
+  #   }
+  # )
+  output$mndRapp <- downloadHandler(
     filename = function(){ paste0('MndRapp', Sys.time(), '.pdf')}, #'MndRapp.pdf',
     
     content = function(file){
       contentFile(file, srcFil="NIRmndRapp.Rnw", tmpFile="tmpNIRmndRapp.Rnw")
     }
   )
+  #      output$mndRapp = downloadHandler(
+ #            filename = 'MndRapp.pdf',
+ #            content = function(file) {
+ #                  src, owd, on.exit, file.copy(src, 'NIRmndRapp.Rnw', overwrite = TRUE)
+ # 
+ #                  texfil <- knitr::knit(system.file('NIRmndRapp.Rnw', package='intensiv'), encoding = 'UTF-8')
+ #                  tools::texi2pdf(system.file(texfil, package='intensiv'),clean = TRUE) #"NakkeMndRapp.tex"
+ # #     Prøv denne:      
+ #                  texfil <- knitr::knit('NIRmndRapp.Rnw', encoding = 'UTF-8')
+ #                  tools::texi2pdf(system.file(texfil, package='intensiv'),clean = TRUE) #"NakkeMndRapp.tex"
+ #                  file.copy('NIRmndRapp.pdf', file)
+ #            }, contentType = 'application/pdf'
 
+            # content = function(file) {
+            #       src, owd, on.exit, file.copy(src, 'NIRmndRapp.Rnw', overwrite = TRUE)
+  
+            #       out <- render("tmpNoricStent.Rmd", output_format = pdf_document(),
+            #                     params = list(tableFormat="latex"),
+            #                     output_dir = tempdir())
+            #       # active garbage collection to prevent memory hogging?
+            #       gc()
+            #       file.rename(out, file)
+            # }
+
+
+#      )
+      #  If you already have made the PDF file, you can just copy it to file, i.e.
+       content = function(file) file.copy('your_existing.pdf', file, overwrite = TRUE)
+      
       
       
       #------------Tabeller --------
