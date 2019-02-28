@@ -176,7 +176,7 @@ dodInt <- 9	# 0-i live, 1 -død, standard: alle (alle andre verdier)
 erMann <- ''	#Kjønn: 0-kvinner, 1-menn, standard: alle (alle andre verdier)
 overfPas <- ''    #Overført under pågående intensivbehandling?	1 = Nei, 2 = Ja
 grType <- 99	#1/2: sentral/lokal, 3:regional, 99:'alle'
-enhetsUtvalg <- 4	#0-8
+enhetsUtvalg <- 1	#0-8
 grVar <- 'ShNavn'
 tidsenhet <- 'Mnd'
 medKI <- 0
@@ -186,7 +186,7 @@ outfile <- ''
 
 
 NIRFigInnMaate (RegData=RegData, valgtVar='InnMaate', minald=0, maxald=130, datoTil = datoTil,
-                           grType=3, grVar='ShNavn', InnMaate=99, dodInt='', outfile='')
+                           grType=, grVar='ShNavn', InnMaate=99, dodInt='', outfile='')
 
 #--------------------------------------- Ny struktur basert på grVar? ----------------------------------
 #Prioriter kvalitetsindikatorene: reinn, SMR, median innleggelse (se årsrapport)
@@ -204,9 +204,8 @@ valgtVar <- 'inklKrit'	#'alder', 'liggetid', 'respiratortid',  'SAPSII', 'NEMS24
                               #spesTiltak
                               #Nye, aug-18: CerebralCirculationAbolishedReasonForNo, OrganDonationCompletedReasonForNoStatus
                               #Nye: 'utenforVakttidInn'
-Utdata <- NIRFigAndeler(RegData=RegData, valgtVar='inklKrit', 
-              #minald=minald, maxald=maxald,  datoFra=datoFra, 
-              #datoTil=datoTil, InnMaate=InnMaate, dodInt=dodInt,erMann=erMann, 
+Utdata <- NIRFigAndeler(RegData=RegData, valgtVar='inklKrit', datoFra=datoFra, datoTil=datoTil,
+              #minald=minald, maxald=maxald,   InnMaate=InnMaate, dodInt=dodInt,erMann=erMann, 
               outfile='', reshID=109773, enhetsUtvalg=1, lagFig=1)
 outfile <- '' #paste0(valgtVar,'_Ford', '.png')
 NIRFigAndeler(RegData=RegData, valgtVar=valgtVar, minald=minald, maxald=maxald,  datoFra=datoFra, 

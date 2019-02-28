@@ -53,7 +53,7 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
       #span("Tab1", title="Short description  for the tab") ,
       #<p title="Free Web tutorials"> W3Schools.com</p>
       tabPanel(p("Viktigste resultater/Oversiktsside", 
-                 title='Her kan det kanskje komme ei liste med hvilke variable man kan få resultater for'),
+                 title= 'Liste med hvilke variable man kan få resultater for'),
                #fluidRow(
                #column(width=5,
                h2("Månedsrapport"), #),
@@ -77,10 +77,10 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
       ), #tab
       
 #-----Registreringsoversikter------------
-            tabPanel("Aktivitet",
+            tabPanel(p("Aktivitet", title='Liste med variable'),
                sidebarPanel(width=3,
-                            conditionalPanel(condition = "input.ark == 'Nøkkeltall' || input.ark == 'Ant. opphold'
-                                             || input.ark == 'Pasientar per år og avd.' ",
+                            conditionalPanel(condition = "input.ark == 'Nøkkeltall' || input.ark == 'Ant. opphold' 
+                                             || input.ark == 'Pasientar per år og avd.'  || input.ark == 'Inklusjonskriterier' ",
                                              dateInput(inputId = 'sluttDatoReg', label = 'Velg sluttdato', language="nb",
                                                        value = Sys.Date(), max = Sys.Date())
                             ),
@@ -92,7 +92,7 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                                   selectInput(inputId = "tidsenhetReg", label="Velg tidsenhet",
                                               choices = rev(c('År'= 'Aar', 'Måned'='Mnd')))),
                             conditionalPanel(
-                                  condition = "input.ark == 'Nøkkeltall'",
+                                  condition = "input.ark == 'Nøkkeltall'  || input.ark == 'Inklusjonskriterier' ",
                                   selectInput(inputId = 'enhetsNivaa', label='Enhetsnivå',
                                               choices = c("Hele landet"=0, "Egen sykehustype"=4, "Egen enhet"=2)
                                   )),
@@ -101,6 +101,7 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                                   dateRangeInput(inputId = 'datovalgReg', start = "2017-07-01", end = idag,
                                                  label = "Tidsperiode", separator="t.o.m.", language="nb")
                             )
+                            
                ),
                mainPanel(
                      tabsetPanel(id='ark',
@@ -118,11 +119,21 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                                           h2("Antall pasienter ved avdelingene siste 5 år"),
                                           tableOutput("tabAntPasSh5Aar")
                                  ),
-                                 tabPanel('Dobbeltregistreringar',
+                                 tabPanel('Inklusjonskriterier',
+                                   tabsetPanel(
+                                     tabPanel('Figur',
+                                              plotOutput('inklKrit')) #,
+                                     # tabPanel(
+                                     #   'Tabell',
+                                     #   uiOutput("tittelFord"),
+                                     #   tableOutput('fordelingTab'))
+                                   ),
+                                   tabPanel('Dobbeltregistreringar',
                                           h2("Moglege dobbeltregistreringar"),
                                           tableOutput("tabDblReg")
-                                 ))
-               )
+                                 )
+                                 )
+               ))
       ), #tab
       
       
@@ -138,7 +149,6 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                            choices = c('Alder' = 'alder', 
                                        'Innkomstmåte' = 'InnMaate',
                                        'Hemodynamisk overvåkn.' = 'ExtendedHemodynamicMonitoring',
-                                       'Inklusjonskriterier' = 'inklKrit',
                                        'Isolasjon, type' = 'isolering',
                                        'Isolasjon, varighet' = 'isoleringDogn',
                                        'Liggetid' = 'liggetid',
@@ -187,11 +197,27 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                            tabPanel(
                                  'Tabell',
                                  uiOutput("tittelFord"),
-                                 tableOutput('fordelingTab'))
+                                 tableOutput('fordelingTab'),
+                                 downloadButton(outputId = 'lastNed_tabFord', label='Last ned tabell') #, class = "butt")
+                           )
                      )
                )
       ), #tab Fordelinger
       
+      # mainPanel(tabsetPanel(id = "tabs_andeler",
+      #                       tabPanel("Figur, tidssvisning",
+      #                                plotOutput("fig_andel_tid", height="auto"),
+      #                                downloadButton("lastNedBilde_tid", "Last ned figur")),
+      #                       tabPanel("Tabell, tidssvisning",
+      #                                uiOutput("utvalg_tid"),
+      #                                tableOutput("Tabell_tid"), downloadButton("lastNed_tid", "Last ned tabell")),
+      #                       tabPanel("Figur, sykehusvisning",
+      #                                plotOutput("fig_andel_grvar", height="auto"),
+      #                                downloadButton("lastNedBilde_sykehus_andel", "Last ned figur")),
+      #                       tabPanel("Tabell, sykehusvisning",
+      #                                uiOutput("utvalg_sykehus_andel"),
+      #                                tableOutput("Tabell_sykehus_andel"), downloadButton("lastNed_sykehus_andel", "Last ned tabell"))
+      # )),
       
       #-------Andeler----------      
       tabPanel("Andeler",
@@ -422,6 +448,7 @@ tabPanel("Pårørendeskjema",
                            choices = c("Begge"=2, "Menn"=1, "Kvinner"=0)),
                h3('Utvalg vedrørende den pårørende (alder, kjønn, relasjon,...)?')
          ),
+         
          mainPanel(
                tabsetPanel(
                      tabPanel(
@@ -441,11 +468,12 @@ tabPanel("Pårørendeskjema",
 
 
 
+
+
 #----------------- Define server logic ----------
 server <- function(input, output, session) { #
       
-      
-      
+
       #--------startside--------------      
 #      output$tekstDash <- c('Figurer med kvalitetsindikatorer',
 #                           'hente ned månedsrapport'),
@@ -477,7 +505,7 @@ server <- function(input, output, session) { #
 
       
       
-      #------------Tabeller --------
+      #------------ Aktivitet (/Tabeller) --------
       output$tabNokkeltall <- function() {#renderTable({
             # print(paste('Enhetsnivå: ', as.numeric(input$enhetsNivaa)))
             # print(paste('sluttdato: ', input$sluttDatoReg))
@@ -516,6 +544,15 @@ server <- function(input, output, session) { #
             finnDblReg(RegData, reshID=reshID)
       }, spacing="xs") #rownames = T, 
 
+      
+      output$inklKrit <- renderPlot({
+        NIRFigAndeler(RegData=RegData, preprosess = 0, valgtVar='inklKrit',
+                      reshID=reshIDdummy, enhetsUtvalg=as.numeric(input$enhetsUtvalg),
+                      datoFra=input$datovalg[1], datoTil=input$datovalg[2])
+      }, height=800, width=800 #height = function() {session$clientData$output_fordelinger_width}
+      )
+      
+      
       output$fordelinger <- renderPlot({
             NIRFigAndeler(RegData=RegData, preprosess = 0, valgtVar=input$valgtVar,
                                                       reshID=reshIDdummy, enhetsUtvalg=as.numeric(input$enhetsUtvalg),
@@ -552,7 +589,16 @@ server <- function(input, output, session) { #
                         column_spec(column = 2:(ncol(tab)+1), width = '7em') %>%
                         row_spec(0, bold = T)
             }
-            } )
+            
+            output$lastNed_tabFord <- downloadHandler(
+              filename = function(){
+                paste0(input$valgtVar, '_fordeling.csv')
+              },
+              content = function(file, filename){
+                write.csv2(tab, file, row.names = F, na = '')
+              }
+            )
+            })
       
       output$andelerGrVar <- renderPlot({
             NIRFigAndelerGrVar(RegData=RegData, preprosess = 0, valgtVar=input$valgtVarAndelGrVar,
@@ -760,6 +806,7 @@ output$paarorFord <- renderPlot(
 )
 
 } #serverdel
+
 # Run the application
 shinyApp(ui = ui, server = server)
 
