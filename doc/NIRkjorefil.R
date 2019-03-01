@@ -186,7 +186,7 @@ outfile <- ''
 
 
 NIRFigInnMaate (RegData=RegData, valgtVar='InnMaate', minald=0, maxald=130, datoTil = datoTil,
-                           grType=, grVar='ShNavn', InnMaate=99, dodInt='', outfile='')
+                           grVar='ShNavn', InnMaate=99, dodInt='', outfile='')
 
 #--------------------------------------- Ny struktur basert på grVar? ----------------------------------
 #Prioriter kvalitetsindikatorene: reinn, SMR, median innleggelse (se årsrapport)
@@ -206,7 +206,7 @@ valgtVar <- 'inklKrit'	#'alder', 'liggetid', 'respiratortid',  'SAPSII', 'NEMS24
                               #Nye: 'utenforVakttidInn'
 Utdata <- NIRFigAndeler(RegData=RegData, valgtVar='inklKrit', datoFra=datoFra, datoTil=datoTil,
               #minald=minald, maxald=maxald,   InnMaate=InnMaate, dodInt=dodInt,erMann=erMann, 
-              outfile='', reshID=109773, enhetsUtvalg=1, lagFig=1)
+              outfile='', reshID=109773, enhetsUtvalg=6, lagFig=1)
 outfile <- '' #paste0(valgtVar,'_Ford', '.png')
 NIRFigAndeler(RegData=RegData, valgtVar=valgtVar, minald=minald, maxald=maxald,  datoFra=datoFra, 
                          datoTil=datoTil, InnMaate=InnMaate, dodInt=dodInt,erMann=erMann, outfile=outfile, 

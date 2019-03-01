@@ -29,7 +29,7 @@ if (!exists('PaarorDataH')){
   #try(data(package = "intensiv"))
 }
 #HUSK Å FJERNE DENNE PÅ SERVER:
-#load(paste0(fil,".Rdata")) #RegData 2018-06-18
+load(paste0(fil,".Rdata")) #RegData 2018-06-18
 
 options(knitr.table.format = "html")
 idag <- as.Date('2018-11-30') #Sys.Date()
@@ -56,31 +56,45 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                  title= 'Liste med hvilke variable man kan få resultater for'),
                #fluidRow(
                #column(width=5,
-               h2("Månedsrapport"), #),
-               downloadButton(outputId = 'mndRapp.pdf', label='Last ned MÅNEDSRAPPORT', class = "butt"),
-               
-               tags$head(tags$style(".butt{background-color:#6baed6;} .butt{color: white;}")), # background color and font color
+               h2('Velkommen til ny versjon av Rapporteket for Intensivregisteret!', align='center'),
+               sidebarPanel(
+                 width = 3,
+                 h3('Dokumenter med sammenstilling av resultater'),
+                 br(),
+                 br(),
+                 br(),
+                 h3("Månedsrapport"), #),
+                 downloadButton(outputId = 'mndRapp.pdf', label='Last ned MÅNEDSRAPPORT', class = "butt"),
+                 tags$head(tags$style(".butt{background-color:#6baed6;} .butt{color: white;}")), # background color and font color
+                 br(),
+                 br(),
+                 h3('Samlede resultater, egen enhet'),
+                 downloadButton(outputId = 'samleRapp.pdf', label='Last ned', class = "butt"),
+                 br(),
+                 br()
+               ),
+               mainPanel(
+                 h4('Her kan man finne visualiseringer og oppsummeringer av de fleste variable som registreres
+                  i registeret. Resultatene er i hovedsak organisert ut fra hvordan de er visualisert. F.eks. 
+                  finner man under "Andeler" resultater av typen "andel under 80 år" eller 
+                  "andel opphold hvor pasienten døde". Under "gjennomsnitt" finner man eksempelvis beregninger av
+                  "gjennomsnittsalder" eller gjennomsnittlig respiratortid. (Man kan  velge å heller se på median.)'),
                br(),
                br(),
                br(),
-               h2("Her kommer dæsjbordet", align='center' ),
                br(),
                br(),
                br(),
-               h3("Merk at noen resultater kan se rare ut siden det er syntetiske data!", align='center' ),
-               br(),
-               br(),
-               tags$ul(tags$b('Kommer: '),
-                       tags$li('Overflyttinger mellom sykehus/avd.'),
-                       tags$li('Mulighet for å laste ned tabeller')
+               h3("Merk at noen resultater kan se rare ut siden dette er syntetiske data!", align='center' )
                )
       ), #tab
       
 #-----Registreringsoversikter------------
-            tabPanel(p("Aktivitet", title='Liste med variable'),
+            tabPanel(p("Aktivitet", title='Tabeller med registreringsoversikter, samt nøkkeltall'),
                sidebarPanel(width=3,
                             conditionalPanel(condition = "input.ark == 'Nøkkeltall' || input.ark == 'Ant. opphold' 
-                                             || input.ark == 'Pasientar per år og avd.'  || input.ark == 'Inklusjonskriterier' ",
+                                             || input.ark == 'Pasientar per år og avd.' ", 
+                                             # || input.ark == 'Inklusjonskriterier' ",
                                              dateInput(inputId = 'sluttDatoReg', label = 'Velg sluttdato', language="nb",
                                                        value = Sys.Date(), max = Sys.Date())
                             ),
@@ -92,9 +106,10 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                                   selectInput(inputId = "tidsenhetReg", label="Velg tidsenhet",
                                               choices = rev(c('År'= 'Aar', 'Måned'='Mnd')))),
                             conditionalPanel(
-                                  condition = "input.ark == 'Nøkkeltall'  || input.ark == 'Inklusjonskriterier' ",
+                                  condition = "input.ark == 'Nøkkeltall'", #  || input.ark == 'Inklusjonskriterier' ",
                                   selectInput(inputId = 'enhetsNivaa', label='Enhetsnivå',
-                                              choices = c("Hele landet"=0, "Egen sykehustype"=4, "Egen enhet"=2)
+                                              choices = c("Hele landet"=0, "Egen enhet"=2, 
+                                                          "Egen sykehustype"=4, "Egen region"=7)
                                   )),
                             conditionalPanel(
                                   condition = "input.ark == 'Dobbeltregistreringar'",
@@ -119,36 +134,41 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                                           h2("Antall pasienter ved avdelingene siste 5 år"),
                                           tableOutput("tabAntPasSh5Aar")
                                  ),
-                                 tabPanel('Inklusjonskriterier',
-                                   tabsetPanel(
-                                     tabPanel('Figur',
-                                              plotOutput('inklKrit')) #,
-                                     # tabPanel(
-                                     #   'Tabell',
-                                     #   uiOutput("tittelFord"),
-                                     #   tableOutput('fordelingTab'))
-                                   ),
+                                 # tabPanel('Inklusjonskriterier',
+                                 #   tabsetPanel(
+                                 #     tabPanel('Figur',
+                                 #              plotOutput('inklKrit')) #,
+                                 #     # tabPanel(
+                                 #     #   'Tabell',
+                                 #     #   uiOutput("tittelFord"),
+                                 #     #   tableOutput('fordelingTab'))
+                                 #   ),
                                    tabPanel('Dobbeltregistreringar',
                                           h2("Moglege dobbeltregistreringar"),
                                           tableOutput("tabDblReg")
                                  )
                                  )
-               ))
+               )
       ), #tab
       
       
       #-------Fordelinger----------      
       
       tabPanel(p("Fordelinger", 
-                 title='Her kan det kanskje komme ei liste med hvilke variable man kan få resultater for'),
+                 title='Alder, Innkomstmåte, Hemodynamisk overvåkning, Isolasjon, Liggetid, Nas, NEMS, Nyrebehandling,
+                 Primærårsak, Respiratortid, SAPSII, Spesielle tiltak, Donorer'),
                #"Fordelinger",
                # fluidRow(column(width = 3, #Første kolonne. Alternativ til sidebarLayout(sidebarPanel())
                sidebarPanel(
+                 width = 3,
+                 h4('Her kan man velge hvilken variabel man ønsker å se resultater for og gjøre ulike filtreringer.'),
+                 br(),
                      selectInput(
                            inputId = "valgtVar", label="Velg variabel",
                            choices = c('Alder' = 'alder', 
                                        'Innkomstmåte' = 'InnMaate',
                                        'Hemodynamisk overvåkn.' = 'ExtendedHemodynamicMonitoring',
+                                       'Inklusjonskriterier' = 'inklKrit',
                                        'Isolasjon, type' = 'isolering',
                                        'Isolasjon, varighet' = 'isoleringDogn',
                                        'Liggetid' = 'liggetid',
@@ -220,7 +240,8 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
       # )),
       
       #-------Andeler----------      
-      tabPanel("Andeler",
+      tabPanel(p("Andeler", title='Alder, Overlevelse, Isolasjon, Nyrebehandling, Reinnleggelse, Respiratorstøtte, Respiratortid,
+                 Utenfor vakttid, Hemodyn., Takeostomi, Donorer'),
                h2("Sykehusvise andeler og utvikling over tid for valgt variabel", align='center'),
                h5("Hvilken variabel man ønsker å se resultater for, velges fra rullegardinmenyen
                     til venstre. Man kan også gjøre ulike filtreringer.", align='center'),
@@ -285,13 +306,15 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                                     uiOutput("tittelAndelGrVar"),
                                     br(),
                                     #fluidRow(
-                                          column(width = 3, 
-                                                 h3("Sykehusvise resultater"),
-                                                 tableOutput("andelerGrVarTab"))),
+                                    column(width = 3, 
+                                           h3("Sykehusvise resultater"),
+                                           tableOutput("andelerGrVarTab"),
+                                           downloadButton(outputId = 'lastNed_tabAndelGrVar', label='Last ned tabell')),
                                     column(width = 1),
                                     column(width = 5, 
                                            h3("Utvikling over tid"),
-                                           tableOutput("andelTidTab")#)
+                                           tableOutput("andelTidTab"),
+                                           downloadButton(outputId = 'lastNed_tabAndelTid', label='Last ned tabell'))
                                     #DT::DTOutput("andelerGrVarTab")
                            ))
                ) #mainPanel
@@ -300,9 +323,12 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
       
       
       #------- Gjennomsnitt ----------      
-      tabPanel("Gjennomsnitt",
+      tabPanel(p("Gjennomsnitt", title = 'Alder, Liggetid, Nas, NEMS, Respiratortid, SAPSII'),
                h2("Sykehusvise gjennomsnitt/median og utvikling over tid for valgt variabel", align='center'),
+               h5("Hvilken variabel man ønsker å se resultater for, velges fra rullegardinmenyen
+                  til venstre. (Man kan også gjøre ulike filtreringer.)", align='center'),
                sidebarPanel( 
+                 width = 3,
                      selectInput(inputId = "valgtVarGjsn", label="Velg variabel",
                                  choices = c('Alder' = 'alder',
                                              'Liggetid' = 'liggetid',
@@ -337,8 +363,6 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                      )
                ), #sidebarPanel/kolonna til venstre
                mainPanel(
-                     h5("Hvilken variabel man ønsker å se resultater for, velges fra rullegardinmenyen
-                  til venstre. Man kan også gjøre ulike filtreringer."),
                      br(),
                      tabsetPanel(
                            tabPanel("Figurer",
@@ -349,12 +373,15 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                                     br(),
                                     column(width = 3, 
                                            h3("Sykehusvise resultater"),
-                                           tableOutput("tabGjsnGrVar")),
+                                           tableOutput("tabGjsnGrVar"),
+                                           downloadButton(outputId = 'lastNed_tabGjsnGrVar', label='Last ned tabell'))
+                           ),
                            column(width = 1),
                            column(width = 5,
                                   h3("Utvikling over tid"),
-                                  tableOutput("tabGjsnTid"))
-                           ))
+                                  tableOutput("tabGjsnTid"),
+                                  downloadButton(outputId = 'lastNed_tabGjsnTid', label='Last ned tabell'))
+                           )
                )
 ),
 
@@ -363,6 +390,7 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                h3('SMR: Standardisert mortalitetsratio', align='center'),
                br(),
                sidebarPanel(
+                 width = 3,
                      dateRangeInput(inputId = 'datovalgSMR', start = "2017-07-01", end = idag,
                                     label = "Tidsperiode", separator="t.o.m.", language="nb"),
                      selectInput(inputId = "erMannSMR", label="Kjønn",
@@ -388,6 +416,7 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
       tabPanel('Type opphold',
                h3('Type opphold'),
                sidebarPanel(
+                 width = 3,
                      dateRangeInput(inputId = 'datovalgInnMaate', start = "2017-07-01", end = idag,
                                     label = "Tidsperiode", separator="t.o.m.", language="nb"),
                      selectInput(inputId = "erMannInnMaate", label="Kjønn",
@@ -403,10 +432,11 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
       ), #tab
       
       #-------Pårørendeskjema----------      
-tabPanel("Pårørendeskjema",
-         h2('Resultater fra Pårørendeskjema', align = 'center'),
+tabPanel("Pasientskjema",
+         h2('Resultater fra Pårørendeskjema (FS-ICU)', align = 'center'),
          # fluidRow(column(width = 3, #Første kolonne. Alternativ til sidebarLayout(sidebarPanel())
          sidebarPanel(
+           width = 3,
                selectInput(
                      inputId = "valgtVarPaarorFord", label="Velg variabel",
                      choices = c('S1.1 Pasient, høflighet og medfølelse' = 'BehandlingHoeflighetRespektMedfoelelse',
@@ -497,13 +527,18 @@ server <- function(input, output, session) { #
 
   output$mndRapp.pdf <- downloadHandler(
     filename = function(){ paste0('MndRapp', Sys.time(), '.pdf')}, #'MndRapp.pdf',
-    
     content = function(file){
       contentFile(file, srcFil="NIRmndRapp.Rnw", tmpFile="tmpNIRmndRapp.Rnw")
     }
   )
 
-      
+  output$samleRapp.pdf <- downloadHandler(
+    filename = function(){ paste0('NIRsamleRapp', Sys.time(), '.pdf')}, 
+    content = function(file){
+      contentFile(file, srcFil="NIRSamleRapp.Rnw", tmpFile="tmpNIRSamleRapp.Rnw")
+    }
+  )
+  
       
       #------------ Aktivitet (/Tabeller) --------
       output$tabNokkeltall <- function() {#renderTable({
@@ -596,9 +631,8 @@ server <- function(input, output, session) { #
               },
               content = function(file, filename){
                 write.csv2(tab, file, row.names = F, na = '')
-              }
-            )
-            })
+              })
+            }) #observe
       
       output$andelerGrVar <- renderPlot({
             NIRFigAndelerGrVar(RegData=RegData, preprosess = 0, valgtVar=input$valgtVarAndelGrVar,
@@ -644,6 +678,14 @@ server <- function(input, output, session) { #
                               column_spec(column = 2:(antKol+1), width = '7em') %>%
                               row_spec(0, bold = T)
                   }
+                  output$lastNed_tabAndelTid <- downloadHandler(
+                    filename = function(){
+                      paste0(input$valgtVar, '_andelTid.csv')
+                    },
+                    content = function(file, filename){
+                      write.csv2(tabAndelTid, file, row.names = T, na = '')
+                    })
+                  
                   
                   #AndelGrVar
                   AndelerShus <- NIRFigAndelerGrVar(RegData=RegData, preprosess = 0, valgtVar=input$valgtVarAndelGrVar,
@@ -666,6 +708,14 @@ server <- function(input, output, session) { #
                               column_spec(column = 2:(antKol+1), width = '4em') %>%
                               row_spec(0, bold = T)
                   }
+                  output$lastNed_tabAndelGrVar <- downloadHandler(
+                    filename = function(){
+                      paste0(input$valgtVar, '_andelGrVar.csv')
+                    },
+                    content = function(file, filename){
+                      write.csv2(tabAndelerShus, file, row.names = T, na = '')
+                    })
+                  
                   output$tittelAndelGrVar <- renderUI({
                               tagList(
                                     h3(AndelerShus$tittel),
@@ -702,11 +752,11 @@ server <- function(input, output, session) { #
                                                minald=as.numeric(input$alderGjsn[1]), maxald=as.numeric(input$alderGjsn[2]),
                                                erMann=as.numeric(input$erMannGjsn),
                                                valgtMaal = input$sentralmaal, lagFig = 0)
+            tabGjsnGrVar <- cbind(Antall = dataUtGjsnGrVar$Ngr$Hoved,
+                                  Sentralmål = dataUtGjsnGrVar$AggVerdier$Hoved)
+            colnames(tabGjsnGrVar)[2] <- ifelse(input$sentralmaal == 'Med', 'Median', 'Gjennomsnitt')
+            
             output$tabGjsnGrVar <- function() {
-                  tabGjsnGrVar <- cbind(Antall = dataUtGjsnGrVar$Ngr$Hoved,
-                                        Sentralmål = dataUtGjsnGrVar$AggVerdier$Hoved)
-                  colnames(tabGjsnGrVar)[2] <- ifelse(input$sentralmaal == 'Med', 'Median', 'Gjennomsnitt')
-
                   kableExtra::kable(tabGjsnGrVar, format = 'html'
                                     , full_width=F
                                     , digits = c(0,1) #,1,1)[1:antKol]
@@ -714,7 +764,16 @@ server <- function(input, output, session) { #
                         column_spec(column = 1, width_min = '7em') %>%
                         column_spec(column = 2:3, width = '7em') %>%
                         row_spec(0, bold = T)
-            }
+                  }
+            
+            output$lastNed_tabGjsnGrVar <- downloadHandler(
+              filename = function(){
+                paste0(input$valgtVar, '_gjsnGrVar.csv')
+              },
+              content = function(file, filename){
+                write.csv2(tabGjsnGrVar, file, row.names = T, na = '')
+              })
+            
                   output$tittelGjsn <- renderUI(
                   tagList(
                         h3(dataUtGjsnGrVar$tittel),
@@ -729,17 +788,18 @@ server <- function(input, output, session) { #
                                            valgtMaal = input$sentralmaal,
                                            tidsenhet = input$tidsenhetGjsn,
                                            enhetsUtvalg = input$enhetsUtvalgGjsn) #, lagFig=0)
+            tabGjsnTid <- t(dataUtGjsnTid$AggVerdier)
+            grtxt <-dataUtGjsnTid$grtxt
+            if ((min(nchar(grtxt)) == 5) & (max(nchar(grtxt)) == 5)) {
+              grtxt <- paste(substr(grtxt, 1,3), substr(grtxt, 4,5))}
+            rownames(tabGjsnTid) <- grtxt
+            
+            antKol <- ncol(tabGjsnTid)
+            navnKol <- colnames(tabGjsnTid) 
+            if (antKol==6) {colnames(tabGjsnTid) <- c(navnKol[1:3], navnKol[1:3])}
+            
             output$tabGjsnTid <- function() {
-                  tabGjsnTid <- t(dataUtGjsnTid$AggVerdier)
-                  grtxt <-dataUtGjsnTid$grtxt
-                  if ((min(nchar(grtxt)) == 5) & (max(nchar(grtxt)) == 5)) {
-                        grtxt <- paste(substr(grtxt, 1,3), substr(grtxt, 4,5))}
-                  rownames(tabGjsnTid) <- grtxt
-
-                  antKol <- ncol(tabGjsnTid)
-                  navnKol <- colnames(tabGjsnTid) 
-                  if (antKol==6) {colnames(tabGjsnTid) <- c(navnKol[1:3], navnKol[1:3])}
-                  kableExtra::kable(tabGjsnTid, format = 'html'
+              kableExtra::kable(tabGjsnTid, format = 'html'
                                     , full_width=F
                                     , digits = 1 #c(0,1,1,1)[1:antKol]
                   ) %>%
@@ -749,6 +809,14 @@ server <- function(input, output, session) { #
                         column_spec(column = 2:(antKol+1), width = '7em') %>%
                         row_spec(0, bold = T)
             }
+            output$lastNed_tabGjsnTid <- downloadHandler(
+              filename = function(){
+                paste0(input$valgtVar, '_gjsnTid.csv')
+              },
+              content = function(file, filename){
+                write.csv2(tabGjsnTid, file, row.names = T, na = '')
+              })
+            
       })
 
       output$SMRfig <- renderPlot({
