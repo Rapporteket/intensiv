@@ -75,10 +75,12 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                ),
                mainPanel(
                  h4('Her kan man finne visualiseringer og oppsummeringer av de fleste variable som registreres
-                  i registeret. Resultatene er i hovedsak organisert ut fra hvordan de er visualisert. F.eks. 
+                  i registeret. I hver fane kan man velge hvilken variabel man vil se resultat for og om man vil gjøre 
+                  filtreringer. Hold musepekeren over fanen for å se hvilke variable/tema som er visualisert i fanen. 
+                  Fanene er i hovedsak organisert ut fra hvordan resultatene er visualisert. F.eks. 
                   finner man under "Andeler" resultater av typen "andel under 80 år" eller 
                   "andel opphold hvor pasienten døde". Under "gjennomsnitt" finner man eksempelvis beregninger av
-                  "gjennomsnittsalder" eller gjennomsnittlig respiratortid. (Man kan  velge å heller se på median.)'),
+                  "gjennomsnittsalder" eller gjennomsnittlig respiratortid.'),
                br(),
                br(),
                br(),
@@ -91,6 +93,7 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
       
 #-----Registreringsoversikter------------
             tabPanel(p("Aktivitet", title='Tabeller med registreringsoversikter, samt nøkkeltall'),
+                     #evt: span("Tab1",title="Short description  for the tab" )
                sidebarPanel(width=3,
                             conditionalPanel(condition = "input.ark == 'Nøkkeltall' || input.ark == 'Ant. opphold' 
                                              || input.ark == 'Pasientar per år og avd.' ", 
@@ -432,7 +435,7 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
       ), #tab
       
       #-------Pårørendeskjema----------      
-tabPanel("Pasientskjema",
+tabPanel(p("Pasientskjema", title='Enkeltspørsmål fra FS-ICU, samt totalskårer'),
          h2('Resultater fra Pårørendeskjema (FS-ICU)', align = 'center'),
          # fluidRow(column(width = 3, #Første kolonne. Alternativ til sidebarLayout(sidebarPanel())
          sidebarPanel(
