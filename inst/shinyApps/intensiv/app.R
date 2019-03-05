@@ -2,11 +2,11 @@
 #NB: For å få lagt ut app'en på Shinyapps, må Github-pakkene (intensiv og rapbase) være installert fra Github.
 
 library(shiny)
-library(intensiv)
 library(lubridate)
 library(zoo)
 library(kableExtra)
 library(knitr)
+library(intensiv)
 
 context <- Sys.getenv("R_RAP_INSTANCE") #Blir tom hvis jobber lokalt
 if (context == "TEST" | context == "QA" | context == "PRODUCTION") {
