@@ -2,11 +2,11 @@
 #NB: For å få lagt ut app'en på Shinyapps, må Github-pakkene (intensiv og rapbase) være installert fra Github.
 
 library(shiny)
-library(knitr)
 library(intensiv)
 library(lubridate)
 library(zoo)
 library(kableExtra)
+library(knitr)
 
 context <- Sys.getenv("R_RAP_INSTANCE") #Blir tom hvis jobber lokalt
 if (context == "TEST" | context == "QA" | context == "PRODUCTION") {
@@ -29,8 +29,9 @@ if (!exists('PaarorDataH')){
   #try(data(package = "intensiv"))
 }
 #HUSK Å FJERNE DENNE PÅ SERVER:
-load(paste0(fil,".Rdata")) #RegData 2018-06-18
+#load(paste0(fil,".Rdata")) #RegData 2018-06-18
 
+#!!!! NB: Endre til dagens dato når har ferske data
 options(knitr.table.format = "html")
 idag <- as.Date('2018-11-30') #Sys.Date()
 datoTil <- as.POSIXlt(idag)
