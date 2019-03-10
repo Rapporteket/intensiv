@@ -6,7 +6,8 @@
 \usage{
 NIRUtvalgEnh(RegData, datoFra = 0, datoTil = 0, minald = 0,
   maxald = 110, erMann = "", InnMaate = "", aar = 0, grType = 99,
-  enhetsUtvalg = 0, reshID = 0, dodInt = "", fargepalett = "BlaaOff")
+  enhetsUtvalg = 0, reshID = 0, dodInt = "",
+  fargepalett = "BlaaOff")
 }
 \arguments{
 \item{RegData}{En dataramme med alle nødvendige variabler fra registeret}

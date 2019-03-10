@@ -16,16 +16,16 @@ setwd('C:/registre/NIR/trunk/KvalKtrAvData')
 aggregate(NIRdata$PatientInRegistryKey, by=list(NIRdata$ShNavn, NIRdata$ShTypeTxt), FUN=length)
 aggregate(NIRdata$DaysAdmittedIntensiv, by=list(NIRdata$ShNavn, NIRdata$ShTypeTxt), FUN=length)
 
-#--------------------------------------SAMLERAPPORT/MndRapp-----------------------------------
+#--------------------------------------SAMLERAPPORT/MndRapp/Influensa-----------------------------------
 rm(list=ls())
 library(knitr)
 library(intensiv)
 library(tools)	#texi2pdf
+setwd('C:/ResultattjenesteGIT/intensiv/inst/') 
 
 #load(paste0("A:/Intensiv/NIRdata10000.Rdata")) #RegDataTEST, 21.mai 2018
-load(paste0("A:/Intensiv/MainFormDataContract2018-08-30.Rdata")) #RegData 2018-06-18
-setwd('C:/ResultattjenesteGIT/intensiv/inst/') 
-reshID=109773 #Tromsø med int: 601302, Ullevål Kir int: 109773, 102090 Ahus, 112044 Haukeland, 102673 Ålesund Med
+load(paste0("A:/Intensiv/MainFormDataContract2019-01-30.Rdata")) #RegData 2018-06-18
+reshID=706078 #Tromsø med int: 601302, Ullevål Kir int: 109773, 102090 Ahus, 112044 Haukeland, 102673 Ålesund Med, Kristiansund: 706078 
 knit('NIRmndRapp.Rnw', encoding = 'UTF-8')
 tools::texi2pdf(file='NIRmndRapp.tex')
 
@@ -34,12 +34,19 @@ tools::texi2pdf(file='NIRmndRapp.tex')
 knit('NIRSamleRapp.Rnw')
 texi2pdf(file='NIRSamleRapp.tex')
 
-
-
 knit('OffDataIntensiv.Rnw')
 texi2pdf(file='OffDataIntensiv.tex')
 
-#NIRSamleRapp for hver enkelt enhet (alle)
+dato <- '2019-02-06' #2019-01-30
+InfluDataAlle <- read.table(paste0('A:/Intensiv/InfluensaFormDataContract', dato, '.csv'), sep=';', 
+                            stringsAsFactors=FALSE, header=T, encoding = 'UTF-8')
+variableTilTab <- c('ShNavn', 'RHF', 'PatientInRegistryGuid', 'FormDate','FormStatus', 'ICD10_1') #'DateAdmittedIntensive', 
+InfluData <- InfluDataAlle[ ,variableTilTab]
+# knit('NIRinfluensaUtenICD10.Rnw', encoding = 'UTF-8')
+# tools::texi2pdf(file='NIRinfluensaUtenICD10.tex')
+ knit('NIRinfluensa.Rnw', encoding = 'UTF-8')
+ tools::texi2pdf(file='NIRinfluensa.tex')
+      #NIRSamleRapp for hver enkelt enhet (alle)
 #for (reshID in AlleResh ) {
 #	knit('NIRSamleRapp.Rnw')
 #	texi2pdf(file='NIRSamleRapp.tex')
@@ -50,12 +57,12 @@ texi2pdf(file='OffDataIntensiv.tex')
 #-------------------------------------LASTE DATA-----------------------------------------------
 rm(list=ls())
 
-dato <- '2018-11-27' #MainFormDataContract2018-06-19
+dato <- '2019-01-30' #'2018-12-14' #MainFormDataContract2018-06-19
 dataKat <- 'A:/Intensiv/' 
 fil <- paste0(dataKat,'MainFormDataContract',dato)
-NIRdata <- read.table(file=paste0(fil,'.csv'), header=T, stringsAsFactors=FALSE, sep=';',encoding = 'UTF-8')
+#NIRdata <- read.table(file=paste0(fil,'.csv'), header=T, stringsAsFactors=FALSE, sep=';',encoding = 'UTF-8')
 #RegData <- NIRdata
-load(paste0(fil,".Rdata")) #RegData 2018-06-18
+load(paste0(fil,".Rdata")) #RegData 2019-01-07
 #save(RegData, file=paste0(fil,'.Rdata'))
  # RegData <- RegData[which(
  #       as.POSIXlt(RegData$DateAdmittedIntensive, format="%Y-%m-%d")>= '2015-01-01'), ]
@@ -64,7 +71,17 @@ load(paste0(fil,".Rdata")) #RegData 2018-06-18
 library(intensiv)
 load(paste0("A:/Intensiv/NIRdata10000.Rdata")) #RegDataTEST, 2018-06-05
 
+Sys.setlocale("LC_TIME", "nb_NO.UTF-8") 
+Sys.setlocale("LC_ALL", "nb_NO.UTF-8") 
 
+"LC_CTYPE=en_US.UTF-8;
+LC_NUMERIC=C;
+LC_TIME=nb_NO;
+LC_COLLATE=en_US.UTF-8;
+LC_MONETARY=en_US.UTF-8;
+LC_MESSAGES=en_US.UTF-8;
+LC_PAPER=en_US.UTF-8;LC_NAME=C;
+LC_ADDRESS=C;LC_TELEPHONE=C;LC_MEASUREMENT=en_US.UTF-8;LC_IDENTIFICATION=C"
 #---------LagSyntetiskeData-------------------------
 library(intensiv)
 #Hovedtabell
@@ -146,20 +163,20 @@ NonInv <- tapply(RegData$NonInvasivVentilation[ind],RegData$Aar[ind], FUN=sum)
 
 #-------------------------------------- Parametre ----------------------------------------------------
 library(intensiv)
-setwd("c:/ResultattjenesteGIT/Intensiv/")
+setwd("C:/ResultattjenesteGIT/intensiv/")
 reshID=112044 #109773 #Tromsø med int: 601302, Ullevål Kir int: 109773
 minald <- 0 #(standard: 0)
 maxald <- 110	#(standard: 130, må være større enn minald!)
 InnMaate <- '' #0-El, 6-Ak.m, 8-Ak.k, (alle - alt unntatt 0,6,8)
 valgtMaal = 'Gjsn' #'Med' = median. 'Gjsn' = gjennomsnitt. Alt annet gir gjennomsnitt
-datoFra <- '2015-01-01'	# standard: 0	format: YYYY-MM-DD. Kan spesifisere bare første del, eks. YYYY el. YYYY-MM. 
-datoTil <- '2018-12-31'	# standard: 3000
+datoFra <- '2017-01-01'	# standard: 0	format: YYYY-MM-DD. Kan spesifisere bare første del, eks. YYYY el. YYYY-MM. 
+datoTil <- '2017-12-31'	# standard: 3000
 aar <- 0
 dodInt <- 9	# 0-i live, 1 -død, standard: alle (alle andre verdier)
 erMann <- ''	#Kjønn: 0-kvinner, 1-menn, standard: alle (alle andre verdier)
 overfPas <- ''    #Overført under pågående intensivbehandling?	1 = Nei, 2 = Ja
 grType <- 99	#1/2: sentral/lokal, 3:regional, 99:'alle'
-enhetsUtvalg <- 8	#0-8
+enhetsUtvalg <- 1	#0-8
 grVar <- 'ShNavn'
 tidsenhet <- 'Mnd'
 medKI <- 0
@@ -169,7 +186,7 @@ outfile <- ''
 
 
 NIRFigInnMaate (RegData=RegData, valgtVar='InnMaate', minald=0, maxald=130, datoTil = datoTil,
-                           grType=3, grVar='ShNavn', InnMaate=99, dodInt='', outfile='')
+                           grVar='ShNavn', InnMaate=99, dodInt='', outfile='')
 
 #--------------------------------------- Ny struktur basert på grVar? ----------------------------------
 #Prioriter kvalitetsindikatorene: reinn, SMR, median innleggelse (se årsrapport)
@@ -181,16 +198,19 @@ NIRFigInnMaate (RegData=RegData, valgtVar='InnMaate', minald=0, maxald=130, dato
 
 
 #--------------------------------------- Andeler ----------------------------------
-valgtVar <- 'utenforVakttidInn'	#'alder', 'liggetid', 'respiratortid',  'SAPSII', 'NEMS24', 'Nas24', 'InnMaate'
+valgtVar <- 'inklKrit'	#'alder', 'liggetid', 'respiratortid',  'SAPSII', 'NEMS24', 'Nas24', 'InnMaate'
                               #Nye: PrimaryReasonAdmitted, inklKrit, respiratortidNonInv, respiratortidInv
                               #nyreBeh, nyreBehTid, ExtendedHemodynamicMonitoring, isolering, isoleringDogn, 
                               #spesTiltak
                               #Nye, aug-18: CerebralCirculationAbolishedReasonForNo, OrganDonationCompletedReasonForNoStatus
-
+                              #Nye: 'utenforVakttidInn'
+Utdata <- NIRFigAndeler(RegData=RegData, valgtVar='inklKrit', datoFra=datoFra, datoTil=datoTil,
+              #minald=minald, maxald=maxald,   InnMaate=InnMaate, dodInt=dodInt,erMann=erMann, 
+              outfile='', reshID=109773, enhetsUtvalg=6, lagFig=1)
 outfile <- '' #paste0(valgtVar,'_Ford', '.png')
 NIRFigAndeler(RegData=RegData, valgtVar=valgtVar, minald=minald, maxald=maxald,  datoFra=datoFra, 
                          datoTil=datoTil, InnMaate=InnMaate, dodInt=dodInt,erMann=erMann, outfile=outfile, 
-                         hentData=0, preprosess=1, reshID=reshID, enhetsUtvalg=0, lagFig=1)
+                         hentData=0, preprosess=1, reshID=reshID, enhetsUtvalg=0, lagFig=0)
 
 variable <- c('alder', 'liggetid', 'respiratortid',  'SAPSII', 'NEMS24', 'Nas24', 'InnMaate')
 variable <- c('PrimaryReasonAdmitted', 'inklKrit', 'respiratortidNonInv', 'respiratortidInv', 'nyreBeh',
@@ -210,7 +230,7 @@ valgtVar <- 'utenforVakttidUt'	#alder_u18', 'alder_over80', 'dod30d', 'dodeInten
                         #ExtendedHemodynamicMonitoringPA, isolering
                         #Nye, aug-18: OrganDonationCompletedStatus, OrganDonationCompletedCirc
 #Ny, okt-18: utenforVakttidInn, utenforVakttidUt
-outfile <- '' #paste0(valgtVar, '_sh.pdf')
+outfile <- paste0(valgtVar, '_sh.pdf')
 
 NIRFigAndelerGrVar(RegData=RegData, valgtVar=valgtVar, minald=minald, maxald=maxald,  datoFra=datoFra, 
                 datoTil=datoTil, aar=0, InnMaate=InnMaate, dodInt=dodInt,erMann=erMann, outfile=outfile, 
@@ -255,16 +275,15 @@ for (valgtVar in variable){
 }
 
 #---------------------GjsnTid----------------------------------------------
-tidsenhet <- 'Mnd'
-enhetsUtvalg <- 3
+tidsenhet <- 'Aar'
 valgtVar <- 'respiratortidInvMoverf'	#'alder', 'liggetid', 'respiratortid', 'SAPSII', 
                         #Nye: respiratortidInvMoverf, respiratortidInvUoverf, respiratortidNonInv
 outfile <- '' #paste0(valgtVar, 'GjsnTid.pdf')
 
 utdata <- NIRFigGjsnTid(RegData=RegData, outfile=outfile, valgtVar=valgtVar, datoFra=datoFra, datoTil=datoTil, 
               tidsenhet=tidsenhet,
-                    erMann=erMann,minald=minald, maxald=maxald, InnMaate=InnMaate, dodInt=dodInt,
-		              valgtMaal=valgtMaal,tittel=1, enhetsUtvalg=8, reshID=reshID)
+                    erMann=erMann,minald=minald,  maxald=maxald, InnMaate=InnMaate, dodInt=dodInt,
+		              valgtMaal=valgtMaal,tittel=1, enhetsUtvalg=3, reshID=reshID)
 
 #NIRFigGjsnTid(RegData=RegData, outfile=outfile, valgtVar=valgtVar, datoFra=datoFra, datoTil=datoTil, 
 #                    erMann=erMann,minald=minald, maxald=maxald, InnMaate=InnMaate, dodInt=dodInt,
@@ -308,11 +327,19 @@ for (valgtVar in c('alder', 'liggetid', 'respiratortid','NEMS' ,'SAPSII', 'SMR')
 
 #--------------------------------------OFFENTLIGGJØRING-------------------------------------
 
+#<<<<<<< HEAD
+setwd('aarsrappOff/')
+NIRFigGjsnGrVar(RegData=RegData, valgtVar='respiratortidInvMoverf', datoFra='2016-01-01', valgtMaal = 'Med',
+                datoTil='2016-12-31', grType=1, outfile='Respiratortid_loksent_Fig2aNy.pdf')
+NIRFigGjsnGrVar(RegData=RegData, valgtVar='respiratortidInvMoverf', datoFra='2016-01-01', valgtMaal = 'Med',
+                                datoTil='2016-12-31', grType=3, outfile='Respiratortid_region_Fig2bNy.pdf')#
+#=======
 
 NIRFigGjsnGrVar(RegData=RegData, valgtVar='respiratortidInvMoverf', datoFra='2016-01-01', 
                 datoTil='2016-12-31', grType=1, outfile='Respiratortid_loksent_Fig2a.pdf')
 NIRFigGjsnGrVar(RegData=RegData, valgtVar='respiratortidInvMoverf', datoFra='2016-01-01', valgtMaal = 'Gjsn',
                                 datoTil='2016-12-31', grType=3, outfile='test.png') #Respiratortid_region_Fig2bNy.pdf')
+>>>>>>> rel
                                 
 NIRFigAndelerGrVar(RegData=RegData, valgtVar='reinn', datoFra='2016-01-01', medKI = 1,
                    datoTil='2016-12-31', grType=1, outfile='Reinnlegging_loksent_Fig3aKonfInt.pdf')
@@ -323,7 +350,7 @@ NIRFigAndelerGrVar(RegData=RegData, valgtVar='reinn', datoFra='2016-01-01', medK
 #------------------Tabeller-----------------------------------
 
 RegData <- NIRPreprosess(RegData)
-tabBelegg(RegData=RegData, personIDvar='PasientID', datoTil = datoTil, tidsenhet='Mnd')
+tabBelegg(RegData=RegData, datoTil = datoTil, tidsenhet='Mnd') #personIDvar='PasientID', 
 
 finnDblReg(RegData, reshID=114240)
 
@@ -331,6 +358,104 @@ tabAntOpphSh5Aar(RegData, datoTil)
 
 tabAntPasSh5Aar(RegData, personIDvar='PasientID' , datoTil)
             
+
+
+#----------------Kobling av transport-data-----------------------
+TransportData <- read.table(file='A:/Intensiv/Intensivtransport/Intensivtransport.csv', header=T, stringsAsFactors=FALSE, sep=';',encoding = 'UTF-8')
+TransportData$DatoTid <- paste(TransportData$Dato, TransportData$Klokkeslett)
+TransportData <- TransportData[order(TransportData$Personnummer),]
+RegisterData <- read.table(file='A:/Intensiv/Intensivtransport/IntensivVariabel.csv', header=T, stringsAsFactors=FALSE, sep=';',encoding = 'UTF-8')
+RegisterData <- RegisterData[order(RegisterData$Fnr), ]
+
+library(intensiv)
+RegisterData$Innleggelsestidspunkt <- as.POSIXlt(RegisterData$DateAndTimeAdmittedIntensive, tz= 'UTC', format="%Y-%m-%d %H:%M" )
+finnDblReg(RegData = RegisterData, pasientID = 'Fnr') #datoFra = '2013-01-01', 
+
+reshID=112044
+RegData <- NIRPreprosess(RegData)
+DblReg <- finnDblReg(RegData = RegData) #reshID = reshID, datoFra = '2018-01-01'
+write.table(DblReg,file = 'Dobbeltreg.csv',row.names = F, col.names = T, sep = ';')
+
+#Skal koble sammen på personnummer og tid. Tillater inntil 24t avvik mellom innleggelsesdato og transportdato
+#Bruke difftime? 
+# 1. Sjekke hvilke personnummer fra intensivtransporten som finnes i intensivfila
+# 2. Sjekke match på tid for de aktuelle personnumrene
+
+#PersnrBruk <- sort(TransportData$Personnummer)[sort(TransportData$Personnummer) %in% sort(RegisterData$Fnr)]
+indPersMatchTransp <- TransportData$Personnummer %in% RegisterData$Fnr
+indPersMatchRegister <- which(RegisterData$Fnr %in% TransportData$Personnummer)
+TransportData <- TransportData[indPersMatchTransp,]
+RegisterData <- RegisterData[indPersMatchRegister,]
+#1142 (av 16958)reg. basert på personnummer fra Registeret finnes i TransportData
+#699 (av 822) reg. basert på personnummer fra Registeret finnes i TransportData
+write.table(TransportData,file = 'TransportDataMatch.csv',row.names = F, col.names = T, sep = ';')
+write.table(RegisterData,file = 'RegDataTranspMatch.csv',row.names = F, col.names = T, sep = ';')
+
+#Beregne 30-dagers dødelighet
+RegisterData$Dod30d <- 0
+RegisterData$Dod90d <- 0
+RegisterData$Dod365d <- 0
+RegisterData$Dod30d[which(difftime(as.Date(RegisterData$Morsdato, format="%d.%m.%Y"), 
+                             as.Date(RegisterData$DateAndTimeAdmittedIntensive), units='days')< 30)] <- 1
+
+RegisterData$Dod90d[which(difftime(as.Date(RegisterData$Morsdato, format="%d.%m.%Y"), 
+                             as.Date(RegisterData$DateAndTimeAdmittedIntensive), units='days')< 90)] <- 1
+RegisterData$Dod365d[which(difftime(as.Date(RegisterData$Morsdato, format="%d.%m.%Y"), 
+                             as.Date(RegisterData$DateAndTimeAdmittedIntensive), units='days')< 365)] <- 1
+table(RegisterData$Dod30d)
+table(RegisterData$Dod90d)
+table(RegisterData$Dod365d)
+
+avvik <- 24
+indMatchRegData <- NULL
+indMatchTranspData <- NULL
+TranspRegAlle <- cbind(TransportData[0,], RegisterData[0,])
+#NB: Tar ikke høyde for dobbeltregistreringer
+for (k in 1:dim(TransportData)[1]) { #dim(TransportData)[1]
+      ind <- which(RegisterData$Fnr  %in% TransportData$Personnummer[k]) #Hvilke reg. som er aktuelle ut fra pers.nr.
+       diff <- difftime(as.POSIXlt(TransportData$DatoTid[k], tz='UTC'), 
+                             as.POSIXlt(RegisterData$DateAndTimeAdmittedIntensive[ind], tz='UTC'), units = 'hours')
+       sjekk <- sum(min(abs(diff)) < avvik) #antall av minste differanse < avvik
+       if (sjekk > 0){
+             indMatchTranspData <- c(indMatchTranspData, k) #Radnummer i transportdata
+             indMatchRegData <- ind[which(abs(diff) == min(abs(diff)))] #c(indMatchRegData , ind[which(abs(diff) == min(abs(diff)))]) #matcher minste avvik. Kan være flere
+             for (j in indMatchRegData){
+             TranspRegAlle <- rbind(TranspRegAlle,
+                                    cbind(TransportData[k,], 
+                                    RegisterData[j,])
+                          )
+             }
+       }
+#k <- k+1
+       }       
+write.table(TranspRegAlle,file = 'A:/Intensiv/Intensivtransport/TranspRegDataAlleMatch.csv',row.names = F, col.names = T, sep = ';')
+
+indMatchTranspData <- indMatchTranspData[indMatchTranspData>0]
+indMatchRegData <- unique(indMatchRegData)
+
+TransportData[indMatchTranspData,]
+RegisterData[indMatchRegData,]
+
+
+merge(TransportData[k,],
+      RegisterData[ind,c('Fnr', "DateAndTimeAdmittedIntensive")]
+
+
+PersnrMatch <- TransportData$Personnummer[indPersMatch]
+table(table(PersnrMatch))
+
+diffTid <- difftime(as.POSIXlt(TransportData$DatoTid, tz='UTC'), #, format = '%Y-%m-%d %t:%m'), 
+                    as.POSIXlt(RegisterData$DateAndTimeAdmittedIntensive, tz='UTC'), units = 'hours')
+
+
+avvik <- 48 #timer
+test <- difftime(as.POSIXlt(TransportData$DatoTid[1:10], tz='UTC'), #, format = '%Y-%m-%d %t:%m'), 
+                 as.POSIXlt(RegisterData$DateAndTimeAdmittedIntensive[1:10], tz='UTC'), units = 'hours')
+
+
+DataKoblet <- merge(TransportData, RegisterData, suffixes = c('','_Int'),
+              by.x = 'Fnr', by.y = 'Personnummer', all.x = F, all.y=F)
+
 
 
 #--------------------------------------- FORDELING - tatt vekk ----------------------------------

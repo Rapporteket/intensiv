@@ -27,13 +27,10 @@ NIRUtvalgEnh <- function(RegData, datoFra=0, datoTil=0, minald=0, maxald=110, er
       #OffAlleFarger <- c('#c6dbef', '#6baed6', '#4292c6', '#2171b5', '#084594', '#000059', '#FF7260', '#4D4D4D', '#737373', '#A6A6A6', '#DADADA')
       #BlaaOff = OffAlleFarger[rev(c(1,2,4,5))]
       
-      
        
       # Definer intersect-operator
       "%i%" <- intersect
-      
       dodInt <- as.numeric(dodInt)
-      
       
       #Enhetsutvalg:
       #Når bare skal sammenlikne med sykehusgruppe eller region, eller ikke sammenlikne, 
@@ -89,7 +86,7 @@ NIRUtvalgEnh <- function(RegData, datoFra=0, datoTil=0, minald=0, maxald=110, er
       
       utvalgTxt <- c(
             if(datoFra!=0 | datoTil!=0) {paste0(
-                  'Registreringsperiode: ', if (N>0) {min(as.Date(RegData$InnDato), na.rm=T)} else {datoFra}, 
+                  'Innleggelsesdatoer: ', if (N>0) {min(as.Date(RegData$InnDato), na.rm=T)} else {datoFra}, 
                   ' til ', if (N>0) {max(as.Date(RegData$InnDato), na.rm=T)} else {datoTil})} else {NULL},
             if (aar[1] > 0){paste0('Innleggelsesår: ', paste0(aar, collapse=', '))},
             if ((minald>0) | (maxald<110)) {

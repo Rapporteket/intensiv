@@ -22,6 +22,7 @@ FigNIRMeanMed_sql.R
 *.gz
 *.csv
 *.xlsx
+~$NIRkodebok2016-06-01.xlsx
 *.docx
 *.tmp
 tesst2filer

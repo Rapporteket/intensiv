@@ -20,11 +20,11 @@ tabAntOpphSh5Aar(RegData, datoTil)
 
 tabAntOpphPasSh5Aar(RegData, gr = "opph", datoTil)
 
-finnDblReg(RegData, datoFra = "2017-01-01", datoTil = Sys.Date(),
-  reshID = 114240)
+finnDblReg(RegData, datoTil = Sys.Date(), reshID = 0,
+  pasientID = "PasientID")
 
-tabNokkeltall(RegData, tidsenhet = "Mnd", datoTil, enhetsUtvalg = 0,
-  reshID = 0)
+tabNokkeltall(RegData, tidsenhet = "Mnd", datoTil = Sys.Date(),
+  enhetsUtvalg = 0, reshID = 0)
 
 lagTabavFig(UtDataFraFig)
 }

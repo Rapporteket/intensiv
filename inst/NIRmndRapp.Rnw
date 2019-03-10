@@ -34,7 +34,9 @@ datoFra6mnd <- paste0(substr(as.character(dato %m-% months(6, abbreviate=FALSE))
       
 datoFra <- datoFra6mnd
 #Ønsker eget datasett for forrige måned
-datoFraMnd <- as.Date(paste0(1900+dato$year,'-', ifelse(dato$mon==0, 11, dato$mon), '-', '01'), tz='UTC') #dato - 
+dato <- as.POSIXlt('2018-12-07')
+datoFraMnd <- format(datoTil, "%Y-%m-01")
+# Gir feil dato: datoFraMnd <- as.Date(paste0(1900+dato$year,'-', ifelse(dato$mon==0, 11, dato$mon), '-', '01'), tz='UTC') #dato - 
 
 tidsenhet <- 'Mnd'
 preprosess <- 0
@@ -61,7 +63,7 @@ ShTypeEgenTxt <- NIRUtvalg$grTypeTxt
 ind <- NIRUtvalg$ind
 N <- dim(RegData)[1]
 
-SortMnd <- SorterOgNavngiTidsEnhet(RegData, tidsenhet=tidsenhet)
+SortMnd <- SorterOgNavngiTidsEnhet(RegData=RegData, tidsenhet=tidsenhet)
 RegData <- SortMnd$RegData
 #tidtxt <- SortMnd$tidtxt
 
@@ -156,9 +158,9 @@ ynskje. I Rapporteket kan ein óg  finne mange fleire figurar og tabellar, og gj
 # mnd <- as.numeric(substr(overskr, 4,5))
 # mndTxt <- c('jan', 'feb', 'mar', 'apr', 'mai', 'jun', 'jul', 'aug', 'sep', 'okt', 'nov', 'des') 
 # colnames(tabAvdNEget) <- paste0(mndTxt[mnd], aar)
-tabBelegg <- tabBelegg(RegData=RegDataEget, tidsenhet=tidsenhet) #personIDvar='PasientID', 
+tabBelegg <- tabBelegg(RegData=RegDataEget, datoTil=datoTil, tidsenhet=tidsenhet) #personIDvar='PasientID', 
 #parametre: RegData, tidsenhet='Aar', datoTil, enhetsUtvalg=0, reshID=0
-xtable(tabBelegg, digits=0, align=c('l', rep('r', ncol(tabAvdNEget))), 
+xtable(tabBelegg, digits=0, align=c('l', rep('r', ncol(tabBelegg))), 
 		caption=paste0('Antal opphald og liggedøger, ', shtxt,'.'), label='tab:RegEget')
 
 @
@@ -421,7 +423,7 @@ xtable(tabResp, align=c('l', 'r','r','c','c'), #digits=c(0,1,1,1,0),
       # tabDbl <- RegDataSort[sort(c(indDbl, indDbl-1)), 
       #            c('PasientID','Innleggelsestidspunkt', "SkjemaGUID")]
       
-tabDbl <- finnDblReg(RegData=RegData, reshID=reshID) 
+tabDbl <- finnDblReg(RegData=RegData, reshID=reshID) #datoFra = datoFra, 
 dblTab <- knitr::kable(tabDbl, format='latex', row.names = FALSE) #, 
                 #caption='Registreringer kor same pasient har fått registrert to innleggingar med mindre enn 2 timars mellomrom.')
 #dblTab <- xtable(tabDbl, row.names = FALSE)

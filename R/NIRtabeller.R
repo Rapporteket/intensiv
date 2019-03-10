@@ -127,14 +127,15 @@ tabAntOpphPasSh5Aar <- function(RegData, gr='opph', datoTil){
 #' @section Finn eventuelle dobbeltregistreringer
 #' @rdname NIRtabeller
 #' @export
-finnDblReg <- function(RegData, datoFra='2017-01-01', datoTil=Sys.Date(), reshID=114240){
+finnDblReg <- function(RegData, datoTil=Sys.Date(), reshID=0, pasientID = 'PasientID'){ #datoFra='2017-01-01', 
       #Registreringer kor same pasient har fått registrert to innleggingar med mindre enn 2 timars mellomrom.
       #RegData må inneholde PasientID, Innleggelsestidspunkt og SkjemaGUID
       #Evt. legge til utvalg på tidsrom
-      sortVar <- c('PasientID','Innleggelsestidspunkt', "SkjemaGUID")
-      RegData <- RegData[which(RegData$ReshId == reshID), sortVar]
-      RegDataSort <- RegData[order(RegData$PasientID, RegData$Innleggelsestidspunkt), ]
-      RegDataSort$OpphNr <- ave(RegDataSort[ ,'PasientID'], RegDataSort[ ,'PasientID'], FUN=seq_along)
+      sortVar <- c('ReshId',pasientID,'Innleggelsestidspunkt', "SkjemaGUID")
+      ind <- if (reshID == 0) {1:dim(RegData)[1]} else {which(RegData$ReshId==reshID)}
+      RegData <- RegData[ind, sortVar]
+      RegDataSort <- RegData[order(RegData$ReshId, RegData$PasientID, RegData$Innleggelsestidspunkt), ]
+      RegDataSort$OpphNr <- ave(RegDataSort[ ,pasientID], RegDataSort[ ,pasientID], FUN=seq_along)
       indPasFlereOpph <- which(RegDataSort$OpphNr>1) 
       RegDataSort$TidInn <- NA
       RegDataSort$TidInn[indPasFlereOpph] <- 
@@ -143,11 +144,13 @@ finnDblReg <- function(RegData, datoFra='2017-01-01', datoTil=Sys.Date(), reshID
                      units = 'hour')
       
       indDbl <- which(abs(RegDataSort$TidInn) <2 )
-      tabDbl <- RegDataSort[sort(c(indDbl, indDbl-1)), 
-                            c('PasientID','Innleggelsestidspunkt', "SkjemaGUID")]
-      if (dim(tabDbl)[1] == 0) {
+      tabDblRaa <- RegDataSort[sort(c(indDbl, indDbl-1)), sortVar]
+                            #c(pasientID,'Innleggelsestidspunkt', "SkjemaGUID")]
+      if (dim(tabDblRaa)[1] == 0) {
             tabDbl <- 'Ingen dobbeltregistreringar'
-      } else {tabDbl <- xtable::xtable(tabDbl)}
+      } else {#tabDbl <- xtable::xtable(tabDblRaa)}
+            #funker: tabDbl <- xtable(as.matrix(tabDblRaa,dim(tabDblRaa)[1], dim(tabDblRaa)[2] ))
+            tabDbl <- tabDblRaa}
       #print(paste('Dim RegDATA: ',  dim(RegData), min(RegData$InnDato)))
       return(tabDbl)
 }
@@ -224,4 +227,4 @@ lagTabavFig <- function(UtDataFraFig){
 #                    if(!is.null(UtDataFraFig$Ngr$Rest)){paste0(UtDataFraFig$smltxt, ', Andel (%)')})
 
 return(tab)
-                   }
+}

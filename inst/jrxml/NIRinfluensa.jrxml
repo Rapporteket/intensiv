@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.4.3.final using JasperReports Library version 6.4.3  -->
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="NIRSamleRapp" language="groovy" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" scriptletClass="no.skde.tools.report.ProcessNowebRapporteket" uuid="334d651a-6c7d-4382-8db8-edbe0421acda">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="NIRinfluensa" language="groovy" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" scriptletClass="no.skde.tools.report.ProcessNowebRapporteket" uuid="334d651a-6c7d-4382-8db8-edbe0421acda">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<property name="ireport.jasperserver.url" value="https://test.helseregister.no/rapporteket_test/"/>
 	<property name="ireport.jasperserver.user" value="superuser"/>
-	<property name="ireport.jasperserver.report.resource" value="/organizations/Intensiv/Reports/NIRsamlerapp_files/Main_Jrxml"/>
-	<property name="ireport.jasperserver.reportUnit" value="/organizations/Intensiv/Reports/NIRsamlerapp"/>
+	<property name="ireport.jasperserver.report.resource" value="/organizations/Intensiv/Reports/NIRinfluensa_files/Main_Jrxml"/>
+	<property name="ireport.jasperserver.reportUnit" value="/organizations/Intensiv/Reports/NIRinfluensa"/>
+	<property name="com.jaspersoft.studio.report.unit.description" value="Oversikt over influensatilfeller basert på eget influensaskjema, Norsk Intensivregister"/>
 	<parameter name="LoggedInUser" class="com.jaspersoft.jasperserver.api.metadata.user.domain.User" isForPrompting="false">
 		<parameterDescription><![CDATA[At server side, gets the User object from the JRS logged in user]]></parameterDescription>
 	</parameter>
@@ -27,7 +28,7 @@
 		<defaultValueExpression><![CDATA[new String("intensiv")]]></defaultValueExpression>
 	</parameter>
 	<parameter name="reportFileName" class="java.lang.String" isForPrompting="false">
-		<defaultValueExpression><![CDATA[new String("NIRSamleRapp")]]></defaultValueExpression>
+		<defaultValueExpression><![CDATA[new String("NIRinfluensa")]]></defaultValueExpression>
 	</parameter>
 	<parameter name="useKnitr" class="java.lang.Integer" isForPrompting="false">
 		<parameterDescription><![CDATA[Set to 1 if Knitr processing, 0 if Sweave]]></parameterDescription>
@@ -38,7 +39,7 @@
 		<defaultValueExpression><![CDATA[new Integer(1)]]></defaultValueExpression>
 	</parameter>
 	<parameter name="emailSubject" class="java.lang.String" isForPrompting="false">
-		<defaultValueExpression><![CDATA[new String("Samlerapport for Norsk Intensivregister")]]></defaultValueExpression>
+		<defaultValueExpression><![CDATA[new String("Influensaregistrering, Norsk Intensivregister")]]></defaultValueExpression>
 	</parameter>
 	<queryString language="SQL">
 		<![CDATA[]]>
@@ -60,7 +61,7 @@
 				<textElement textAlignment="Center">
 					<font size="20"/>
 				</textElement>
-				<text><![CDATA[Samlerapport fra Norsk Intensivregister]]></text>
+				<text><![CDATA[Influensaregistrering, Norsk Intensivregister]]></text>
 			</staticText>
 		</band>
 	</title>
