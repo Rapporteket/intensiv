@@ -132,7 +132,7 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                          tabPanel('Ant. opphold',
                                   h2("Antall opphold per avdeling"),
                                   p(em("Velg tidsperiode ved å velge sluttdato i menyen til venstre")),
-                                  tableOutput("tabAntOpphShMnd12")
+                                  tableOutput("tabAntOpphSh")
                          ),
                          tabPanel('Pasientar per år og avd.',
                                   h2("Antall pasienter ved avdelingene siste 5 år"),
@@ -147,8 +147,8 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                          #     #   uiOutput("tittelFord"),
                          #     #   tableOutput('fordelingTab'))
                          #   ),
-                         tabPanel('Dobbeltregistreringar',
-                                  h2("Moglege dobbeltregistreringar"),
+                         tabPanel('Dobbeltregistreringer',
+                                  h2("Mulige dobbeltregistreringer"),
                                   tableOutput("tabDblReg")
                          )
              )
@@ -567,7 +567,7 @@ server <- function(input, output, session) { #
             
       }#,rownames=T, digits=0 )
       
-      output$tabAntOpphShMnd12 <- renderTable({
+      output$tabAntOpphSh <- renderTable({
             switch(input$tidsenhetReg,
                    Mnd=tabAntOpphShMnd(RegData=RegData, datoTil=input$sluttDatoReg, antMnd=12), #input$datovalgTab[2])  
                    Aar=tabAntOpphSh5Aar(RegData=RegData, datoTil=input$sluttDatoReg))
