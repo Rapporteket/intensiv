@@ -16,7 +16,7 @@ Depends:
     R (>= 3.5.0),
     rapbase (>= 1.0.0)
 Remotes: 
-      Rapporteket/rapbase
+      Rapporteket/rapbase@rel
 Suggests:
     rmarkdown,
     testthat, 
