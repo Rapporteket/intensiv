@@ -1,7 +1,7 @@
 ###------------- Lager "anonymt" minimumsdatasett basert på rådata for å beregne kvalitetsindikatorer. 
 # Alternativt kan man lage et 01-datasett, men vi vil da trenge egen beregning for dette datasettet.
 # Enhet, RHF, sykehustype, kjønn, aldersgruppe, år, samt variable som inngår i kvalitetsindikatorene
-
+# DATA TIL BRUK I "EGEN" KvalInd-VISNING.
 load("C:/Registre/NIR/data/NIRdata10000.Rdata") #RegData
 RegData <- NIRPreprosess(RegData=RegData)	#, reshID=reshID)
 

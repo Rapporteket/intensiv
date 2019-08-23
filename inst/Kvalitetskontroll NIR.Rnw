@@ -61,8 +61,6 @@
 library(RJDBC)
 library(RMySQL)
 library(xtable)
-#kontakt <- dbConnect(MySQL(), user="nir", password="nir", dbname="nir", host='172.19.15.124')  #'localhost'
-kontakt <- dbConnect(MySQL(), user="ro_IRRDS", password="fropFav2", dbname="IntensivRegisterReportDataStaging", host='172.19.13.111')
 spørring.tab <- 'SELECT * from resh' 
 spørring.nir <- 'SELECT FreshOrganizationUnitId AS avdid, 			
 					    DateAdmittedIntensive AS inndato,

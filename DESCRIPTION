@@ -15,8 +15,10 @@ LazyData: false
 Depends:
     R (>= 3.5.0),
     rapbase (>= 1.0.0)
+    rapFigurer
 Remotes: 
       Rapporteket/rapbase@rel
+      Rapporteket/rapFigurer@master
 Suggests:
     rmarkdown,
     testthat, 

@@ -5,17 +5,8 @@ account: lenatest
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 613533
-<<<<<<< HEAD
-bundleId: 1758405
+bundleId: 2069563
 url: https://lenatest.shinyapps.io/intensiv/
-when: 1544621478.02561
+when: 1557323808.40597
 asMultiple: FALSE
 asStatic: FALSE
-=======
-bundleId: 1916846
-url: https://lenatest.shinyapps.io/intensiv/
-when: 1551791233.68811
-asMultiple: FALSE
-asStatic: FALSE
-ignoredFiles: appFigtype.R
->>>>>>> 4427cfc690a5bee0046f75acd8329b4b645c1999

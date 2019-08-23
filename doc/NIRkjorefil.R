@@ -60,7 +60,7 @@ rm(list=ls())
 dato <- '2019-01-30' #'2018-12-14' #MainFormDataContract2018-06-19
 dataKat <- 'A:/Intensiv/' 
 fil <- paste0(dataKat,'MainFormDataContract',dato)
-#NIRdata <- read.table(file=paste0(fil,'.csv'), header=T, stringsAsFactors=FALSE, sep=';',encoding = 'UTF-8')
+NIRdata <- read.table(file=paste0(fil,'.csv'), header=T, stringsAsFactors=FALSE, sep=';',encoding = 'UTF-8')
 #RegData <- NIRdata
 load(paste0(fil,".Rdata")) #RegData 2019-01-07
 #save(RegData, file=paste0(fil,'.Rdata'))
@@ -325,7 +325,7 @@ for (valgtVar in c('alder', 'liggetid', 'respiratortid','NEMS' ,'SAPSII', 'SMR')
 }
 
 
-#--------------------------------------OFFENTLIGGJØRING-------------------------------------
+#--------------------------------------OFFENTLIGGJØRING, figurer-------------------------------------
 
 setwd('aarsrappOff/')
 NIRFigGjsnGrVar(RegData=RegData, valgtVar='respiratortidInvMoverf', datoFra='2016-01-01', valgtMaal = 'Med',

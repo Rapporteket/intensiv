@@ -95,16 +95,17 @@ NIRFigAndelTid <- function(RegData, valgtVar='alder_u18', datoFra='2011-01-01', 
             #--------------- Gjøre beregninger ------------------------------
             
             AggVerdier <- list(Hoved = 0, Rest =0)
-            N <- list(Hoved = length(ind$Hoved), Rest =length(ind$Rest))
+            Ngr <- list(Hoved = 0, Rest =0)
+			N <- list(Hoved = length(ind$Hoved), Rest =length(ind$Rest))
             
             
             NAarHoved <- tapply(RegData[ind$Hoved, 'Variabel'], RegData[ind$Hoved ,'TidsEnhet'], length) #Tot. ant. per tidsenhet
-            NAarHendHoved <- tapply(RegData[ind$Hoved, 'Variabel'], RegData[ind$Hoved ,'TidsEnhet'],sum, na.rm=T) #Ant. hendelser per tidsenhet
-            AggVerdier$Hoved <- NAarHendHoved/NAarHoved*100
+            Ngr$Hoved <- tapply(RegData[ind$Hoved, 'Variabel'], RegData[ind$Hoved ,'TidsEnhet'],sum, na.rm=T) #Ant. hendelser per tidsenhet
+            AggVerdier$Hoved <- Ngr$Hoved/NAarHoved*100
             NAarRest <- tapply(RegData$Variabel[ind$Rest], RegData$TidsEnhet[ind$Rest], length)	
-            NAarHendRest <- tapply(RegData$Variabel[ind$Rest], RegData$TidsEnhet[ind$Rest],sum, na.rm=T)
-            AggVerdier$Rest <- NAarHendRest/NAarRest*100
-            Ngr <- list(Hoved = NAarHendHoved, Rest = NAarHendRest)
+            Ngr$Rest <- tapply(RegData$Variabel[ind$Rest], RegData$TidsEnhet[ind$Rest],sum, na.rm=T)
+            AggVerdier$Rest <- Ngr$Rest/NAarRest*100
+            #Ngr <- list(Hoved = NAarHendHoved, Rest = NAarHendRest)
             
             if (valgtVar %in% c('liggetidDod','respiratortidDod')) {
                   #Kommentar: for liggetid og respiratortid vises antall pasienter og ikke antall liggedøgn for døde

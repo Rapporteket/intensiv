@@ -199,7 +199,7 @@ fargeRestRes <- farger[4]
 plot(tidNum,Midt, xlim= c(xmin, xmax), ylim=c(ymin, ymax), type='n', frame.plot=FALSE, #ylim=c(ymin-0.05*ymax, ymax),
 		#cex=0.8, cex.lab=0.9, cex.axis=0.9,	
 		ylab=c(ytxt,'med 95% konfidensintervall'), 
-		xlab='Innleggelsesår', xaxt='n', 
+		xlab='Innleggelsestidspunkt', xaxt='n', 
 		sub='(Tall i boksene angir antall innleggelser)', cex.sub=cexgr)	#, axes=F)
 axis(side=1, at = tidNum, labels = levels(RegData$TidsEnhet))	
 #Sammenlikning:

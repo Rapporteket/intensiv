@@ -59,6 +59,8 @@ if (!exists('InfluDataAlle')){
       InfluData <- NIRInfluDataSQL(datoFra = '2018-01-01')
 }
 #library(dplyr)
+#InfluData <- read.table(file='A:/Intensiv/InfluensaFormDataContract2019-05-24.csv', header=T, stringsAsFactors=FALSE, sep=';',encoding = 'UTF-8')
+
 InfluData$InnDato <- as.Date(InfluData$FormDate) #, tz='UTC', format = '%Y-%m-%d"')
 	
 #ICD10_1
@@ -133,6 +135,7 @@ Resultatene er oppsummert i tabeller som viser antall influensatilfeller per uke
 # lubridate::isoweek(dato)
 # lubridate::week(dato)
 
+
 #Aggregere på RHF, UkeNr, Ant. bekreftet, Ant. mistenkt
 # tapply(InfluData[ ,c('RHF', 'UkeAar', "ICD10_1")], length)
 # table(InfluData[ ,c('RHF', 'Mistenkt', 'UkeNr')])      #InfluData$UkeNr, function(x) sum((InfluData$ICD10_1==10 | InfluData$ICD10_2==10)))
@@ -151,6 +154,7 @@ TabUkeTot <- addmargins(TabUkeInflu) #cbind(TabUkeInflu, 'Tot. ant. skjema' = ta
 row.names(TabUkeTot)[antUker+1] <- 'Sum, hele sesongen'
 TabUkeTotFerdig <- addmargins(TabUkeInfluFerdig) #cbind(TabUkeInflu, 'Tot. ant. skjema' = table(InfluData$UkeAar))
 row.names(TabUkeTotFerdig)[antUker+1] <- 'Sum, hele sesongen'
+#write.table(TabUkeTot, file = 'a:/Intensiv/InfluensaHeleSesongen.csv', fileEncoding = 'UTF-8', sep = ';')
 @ 
 
 
