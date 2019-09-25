@@ -170,7 +170,7 @@ FigDataParam <- list(AggVerdier=ResData,
 
     #-----------Figur---------------------------------------
 if (length(ind$Hoved)<10 | ((medSml == 1) & (length(ind$Rest) < 10))) {
-figtype(outfile)
+rapFigurer::figtype(outfile)
 	plot.new()
 	title(main=tittel)
 	text(0.5, 0.65, 'Færre enn 10 registreringer i hoved-', cex=1.2)
@@ -187,7 +187,7 @@ ymax <- 1.1*max(KonfRest, Konf, na.rm=TRUE)	#ymax1 + 2*h
 ytxt <- maaltxt #paste0(maaltxt, ytxt1, sep='')
 
 #Plottspesifikke parametre:
-FigTypUt <- figtype(outfile, fargepalett=NIRUtvalg$fargepalett)
+FigTypUt <- rapFigurer::figtype(outfile, fargepalett=NIRUtvalg$fargepalett)
 #Tilpasse marger for å kunne skrive utvalgsteksten
 NutvTxt <- length(utvalgTxt)
 par('fig'=c(0, 1, 0, 1-0.02*(max((NutvTxt-1),0))))	

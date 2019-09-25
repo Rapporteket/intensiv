@@ -67,7 +67,7 @@ Ngrense <- 10
 			
 #-----------Figur---------------------------------------
 if 	( max(Nsh) < Ngrense)	{#Dvs. hvis ALLE er mindre enn grensa.
-	figtype(outfile)
+	rapFigurer::figtype(outfile)
 	plot.new()
 	if (dim(RegData)[1]>0) {
 	tekst <- paste0('Færre enn ', Ngrense, ' registreringer ved hvert av sykehusene')
@@ -98,7 +98,7 @@ NshtxtSort <- Nshtxt[sortInd]
 if (grType %in% 1:3) {xkr <- 1} else {xkr <- 0.75}
 cexShNavn <- 1.2
 
-FigTypUt <- figtype(outfile, height=3*800, fargepalett=NIRUtvalg$fargepalett)	
+FigTypUt <- rapFigurer::figtype(outfile, height=3*800, fargepalett=NIRUtvalg$fargepalett)	
 farger <- FigTypUt$farger
 #Tilpasse marger for å kunne skrive utvalgsteksten
 NutvTxt <- length(utvalgTxt)

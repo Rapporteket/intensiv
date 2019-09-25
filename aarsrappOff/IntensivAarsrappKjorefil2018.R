@@ -6,12 +6,12 @@ datoFra <- '2011-01-01'
 datoTil <- '2018-12-31'	#
 datoFra1aar <- '2018-01-01'
 #------Klargjøre årsrapportfil-------------
-RegData <- read.table('A:/Intensiv/MainFormDataContract2019-04-30.csv', sep=';', stringsAsFactors=FALSE, 
+RegData <- read.table('A:/Intensiv/MainFormDataContract2019-09-24.csv', sep=';', stringsAsFactors=FALSE, 
                       header=T, encoding = 'UTF-8')	
-# indDato <- intersect(which(as.Date(RegData$DateAdmittedIntensive) >= as.Date(datoFra, tz= 'UTC')), 
-#                         which(as.Date(RegData$DateAdmittedIntensive) <= as.Date(datoTil, tz= 'UTC')))
-indDato <- intersect(which(RegData$DateAdmittedIntensive >= datoFra), 
-                     which(RegData$DateAdmittedIntensive <= datoTil))
+ indDato <- intersect(which(as.Date(RegData$DateAdmittedIntensive) >= as.Date(datoFra, tz= 'UTC')), 
+                         which(as.Date(RegData$DateAdmittedIntensive) <= as.Date(datoTil, tz= 'UTC')))
+# indDato <- intersect(which(RegData$DateAdmittedIntensive >= datoFra), 
+#                      which(RegData$DateAdmittedIntensive <= datoTil))
 RegData <- RegData[indDato,]
 save(RegData, file = 'A:/Intensiv/NIRaarsrapp2018.RData')
 RegDataAarCSV <- NIRPreprosess(RegData)
@@ -29,9 +29,10 @@ NIRFigInnMaate(RegData=RegData, valgtVar='InnMaate', datoFra=datoFra1aar, datoTi
                grType=3, outfile='InnMaateReg.pdf')
 
 #--------------------------------------- Andeler ----------------------------------
+variable <- 'BehandlingBesvarerBehov'
 
-variable <- c('OrganDonationCompletedReasonForNoStatus', 'CerebralCirculationAbolishedReasonForNo')
-variable <-  c('inklKrit','liggetid','InnMaate','NEMS24', 'Nas24','respiratortidNonInv','respiratortidInv',
+variable <- c('OrganDonationCompletedReasonForNoStatus', 'CerebralCirculationAbolishedReasonForNo',
+              'inklKrit','liggetid','InnMaate','NEMS24', 'Nas24','respiratortidNonInv',
                    'SAPSII', 'nyreBeh', 'nyreBehTid','spesTiltak') #, 'respiratortidInvMoverf')
 for (valgtVar in variable) {
       outfile <- paste0(valgtVar, '_Ford.pdf')
@@ -51,12 +52,12 @@ NIRFigAndeler(RegData=RegData, valgtVar='spesTiltak', datoFra=datoFra1aar, datoT
 # Trakeostomi reg/lokSent
 
 
-variable <- c('OrganDonationCompletedCirc', 'OrganDonationCompletedStatus') #Ngrense=0
-variable <- c('dod30d', 'dodeIntensiv', 'trakeostomi','reinn')
+variable <- c('OrganDonationCompletedCirc', 'OrganDonationCompletedStatus', 
+              'dod30d', 'dodeIntensiv', 'trakeostomi','reinn')
 for (grType in 2:3) {
       for (valgtVar in variable) {
             outfile <- paste0(valgtVar, grType, 'PrSh.pdf')
-            NIRFigAndelerGrVar(RegData=RegData, valgtVar=valgtVar, datoFra=datoFra1aar, Ngrense=0,
+            NIRFigAndelerGrVar(RegData=RegData, valgtVar=valgtVar, datoFra=datoFra1aar, Ngrense=10,
                             datoTil=datoTil, grType=grType, outfile=outfile)
       }
 }
@@ -100,8 +101,9 @@ NIRFigGjsnTid(RegData=RegData, valgtVar='liggetid', datoFra=datoFra, datoTil=dat
 
 
 valgtMaal <- 'Med'
-variable <- 'respiratortidNonInv'	#'SMR', alder, liggetid, respiratortid,  SAPSII, 'NEMS', 'Nas24'
+#variable <- 'respiratortidNonInv'	#'SMR', alder, liggetid, respiratortid,  SAPSII, 'NEMS', 'Nas24'
 #Nye: respiratortidInvMoverf, respiratortidInvUoverf, respiratortidNonInv
+variable <- 'respiratortidInvUoverf'
 variable <- c('alder', 'liggetid', 'respiratortid','NEMS', 'NEMS24', 'Nas24', 
               'respiratortidInvMoverf', 'respiratortidNonInv', 'SAPSII',
               'respiratortidInvUoverf')
@@ -154,7 +156,26 @@ RegData1aar$ShNavn
 xtable(table(RegData1aar$ShNavn), align=c('l','r'), #row.names=F,
        caption = 'Tal på registrerte opphald')
 
-row.names(tab)
+
+#Aktivitet/Nøkkeltall
+tabNokkeltall <- tabNokkeltall(RegData=RegData1aar, datoTil=datoTil) #, tidsenhet='Mnd' 
+xtable(tabNokkeltall, digits= 1, align=c('l', rep('r', ncol(tabNokkeltall))), #row.names=F,
+       caption = 'Samla tal på intensivopphald og aktivitet i NIR 2018')
+
+
+
+#Fordeling av kjønn per sykehustype og år
+RegDataPre <- NIRPreprosess(RegData)
+tabShTypeAar <- table(RegDataPre$Aar, RegDataPre$ShType)
+tabKj <- table(RegDataPre[RegDataPre$erMann==1 , c('Aar', 'ShType')])
+kjLandet <- prop.table(table(RegDataPre[ , c('Aar', "erMann")]),1)
+AndelMenn <- 100*cbind(tabKj/tabShTypeAar,
+                       kjLandet[,'1'])
+colnames(AndelMenn) <- c('Lok./Sentral', 'Region', 'Hele landet')
+xtable(AndelMenn, digits=1, align=c('l', rep('r', ncol(AndelMenn))), 
+       caption='Andel (prosent) av oppholdene som er menn.', label='tab:KjonnAar')
+
+
 #--------------------------------------OFFENTLIGGJØRING, 2016-------------------------------------
 
 

@@ -228,7 +228,7 @@ NIRFigAndeler  <- function(RegData=0, valgtVar='alder', datoFra='2011-01-01', da
                   #|(grVar=='' & length(which(RegData$ReshId == reshID))<5 & enhetsUtvalg %in% c(1,3))) 
             {
                   #-----------Figur---------------------------------------
-                  FigTypUt <-figtype(outfile)  #FigTypUt <- figtype(outfile)
+                  FigTypUt <- rapFigurer::figtype(outfile)  #FigTypUt <- figtype(outfile)
                   farger <- FigTypUt$farger
                   plot.new()
                   title(tittel)	#, line=-6)
@@ -243,7 +243,7 @@ NIRFigAndeler  <- function(RegData=0, valgtVar='alder', datoFra='2011-01-01', da
                   #Plottspesifikke parametre:
                   #Høyde må avhenge av antall grupper
                   hoyde <- ifelse(length(AggVerdier$Hoved)>20, 3*800, 3*600)
-                  FigTypUt <- figtype(outfile, height=hoyde, fargepalett=fargepalett)	
+                  FigTypUt <- rapFigurer::figtype(outfile, height=hoyde, fargepalett=fargepalett)	
                   #Tilpasse marger for å kunne skrive utvalgsteksten
                   NutvTxt <- length(utvalgTxt)
                   vmarg <- switch(retn, V=0.05, H=min(1,max(0, strwidth(grtxt, units='figure', cex=cexgr)*0.75)))
@@ -311,7 +311,7 @@ NIRFigAndeler  <- function(RegData=0, valgtVar='alder', datoFra='2011-01-01', da
                   ymax <- min(max(c(AggVerdier$Hoved, AggVerdier$Rest),na.rm=T)*1.25, 115)
                   pos <- barplot(as.numeric(AggVerdier$Hoved), beside=TRUE, las=1, ylab=yAkseTxt,	
                                  sub=xAkseTxt,	col=fargeHoved, border='white', ylim=c(0, ymax))	
-                  mtext(at=pos, grtxt, side=1, las=1, cex=cexgr, adj=0.5, line=0.5)
+                  mtext(at=pos, grtxt, side=1, las=1, cex=0.95*cexgr, adj=0.5, line=0.5)
                   mtext(at=pos, grtxt2, side=1, las=1, cex=0.8*cexgr, adj=0.5, line=1.5, col=graa[2])
                   mtext(at=0,  paste0(hovedgrTxt,': '), side=1, cex=0.8*cexgr, adj=0.9, line=1.5, col=graa[2])
                   #legend(x=0, y=-0.05*ymax, legend=paste0(hovedgrTxt,':'), col=fargeRest,pch=18,bty="n",ncol=2, cex=0.9*cexgr, xpd=TRUE) #pt.cex=0.7,

@@ -167,7 +167,7 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='an
             RegData <- RegData[which((RegData$Isolation %in% 2:3) & (RegData$IsolationDaysTotal>0)), ]   
             RegData$Variabel <- RegData$IsolationDaysTotal 
             xAkseTxt <- 'døgn'	
-            tittel <- 'Fordeling av antall døgn (heltall) med registrert isolasjon av pasient'   
+            tittel <- 'Antall døgn (heltall) med registrert isolasjon av pasient'   
             gr <- c(1, 2, 3, 4, 5, 6, 7, 14, 1000)
             RegData$VariabelGr <- cut(RegData$Variabel, breaks=gr, include.lowest=TRUE, right=FALSE)	
             grtxt <- c(1:6,'7-13','14+')
@@ -269,7 +269,7 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='an
             RegData$Variabel <- rowSums(RegData[ ,c('KontinuerligDays','IntermitterendeDays')], na.rm = T)
             RegData <- RegData[which(RegData$Variabel>0), ]   
             xAkseTxt <- 'døgn'	
-            tittel <- 'Fordeling av antall døgn (heltall) med registrert nyreerstattende behandling'
+            tittel <- 'Antall døgn (heltall) med registrert nyreerstattende behandling'
             gr <- c(1, 2, 3, 4, 5, 6, 7, 14, 1000)
             RegData$VariabelGr <- cut(RegData$Variabel, breaks=gr, include.lowest=TRUE, right=FALSE)	
             grtxt <- c(1:6,'7-13','14+')
@@ -366,9 +366,9 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='an
             grtxt <- c('(0-1)','[1-2)','[2-3)','[3-4)','[4-5)','[5-6)','[6-7)','[7-14)','14+')
             xAkseTxt <- 'ventilasjonstid (døgn)'
             varTxt <- 'med inv.ventilasjon < 2,5 døgn (uten overførte pasienter)'
-            #KImaal <- 2.5 #Median respiratortid <2,5døgn 
-            KImaal <- 50 #Over 50% med respiratortid <2,5døgn
-            KImaaltxt <- '>50'
+            KImaal <- 2.5 #Median respiratortid <2,5døgn 
+            #KImaal <- 50 #Over 50% med respiratortid <2,5døgn
+            KImaaltxt <- '<2,5'
             sortAvtagende <- TRUE      #Rekkefølge
       } 
       
@@ -528,7 +528,7 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='an
                   'Plutselig død/hjertestans',	
                   'Avslag fra RH')
             retn <- 'H'
-            tittel <- 'Årsak ikke donasjon, pasientar med opph. intrakran. sirk.'
+            tittel <- 'Årsak ikke donasjon, pasienter med opph. intrakran. sirk.'
             xAkseTxt <- 'Andel (%)'
             cexgr <- 0.9
       } 
