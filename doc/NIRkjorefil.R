@@ -57,7 +57,7 @@ InfluData <- InfluDataAlle[ ,variableTilTab]
 #-------------------------------------LASTE DATA-----------------------------------------------
 rm(list=ls())
 
-dato <- '2019-01-30' #'2018-12-14' #MainFormDataContract2018-06-19
+dato <- '2019-09-24' #'2018-12-14' #MainFormDataContract2018-06-19
 dataKat <- 'A:/Intensiv/' 
 fil <- paste0(dataKat,'MainFormDataContract',dato)
 NIRdata <- read.table(file=paste0(fil,'.csv'), header=T, stringsAsFactors=FALSE, sep=';',encoding = 'UTF-8')
@@ -94,14 +94,17 @@ filPaaror <- paste0(dataKat,'QuestionaryFormDataContract',dato,'.csv')
 PaarorData <- read.table(file=filPaaror, header=T, stringsAsFactors=FALSE, sep=';',encoding = 'UTF-8')
 
 KobleMedHoved <- function(HovedSkjema, Skjema2, alleHovedskjema=F, alleSkjema2=F) {
+  HovedSkjema <- plyr::rename(HovedSkjema, c('FormDate' = 'FormDateHoved'))
       varBegge <- intersect(names(HovedSkjema),names(Skjema2)) ##Variabelnavn som finnes i begge datasett
       Skjema2 <- Skjema2[ , c("HovedskjemaGUID", names(Skjema2)[!(names(Skjema2) %in% varBegge)])]  #"SkjemaGUID",   
       data <- merge(HovedSkjema, Skjema2, suffixes = c('','_S2'),
                       by.x = 'SkjemaGUID', by.y = 'HovedskjemaGUID', all.x = alleHovedskjema, all.y=alleSkjema2)
       return(data)
 }
-PaarorDataH <- KobleMedHoved(HovedSkjema = HovedData, Skjema2 = PaarorData)
+
+PaarorDataH2018 <- KobleMedHoved(HovedSkjema = RegData2018, Skjema2 = PaarorData)
 PaarorDataH <- lageTulleData(RegData=PaarorDataH, varBort=varBort, antSh=26, antObs=600)
+save(PaarorDataH, file=paste0(dataKat, 'PaarorRegData.RData'))
 write.table(PaarorDataH, file='A:/Intensiv/PaarorDataHtull.csv', fileEncoding = 'UTF-8', sep = ';', row.names = F)
 save(list=c('RegData', 'PaarorDataH'), file=paste0(dataKat, '/NIRRegDataSyn.RData'))
 #save(RegData, PaarorData, file=paste0(dataKat, '/NIRRegDataSyn.RData'))
@@ -169,8 +172,8 @@ minald <- 0 #(standard: 0)
 maxald <- 110	#(standard: 130, må være større enn minald!)
 InnMaate <- '' #0-El, 6-Ak.m, 8-Ak.k, (alle - alt unntatt 0,6,8)
 valgtMaal = 'Gjsn' #'Med' = median. 'Gjsn' = gjennomsnitt. Alt annet gir gjennomsnitt
-datoFra <- '2017-01-01'	# standard: 0	format: YYYY-MM-DD. Kan spesifisere bare første del, eks. YYYY el. YYYY-MM. 
-datoTil <- '2017-12-31'	# standard: 3000
+datoFra <- '2018-01-01'	# standard: 0	format: YYYY-MM-DD. Kan spesifisere bare første del, eks. YYYY el. YYYY-MM. 
+datoTil <- '2018-12-31'	# standard: 3000
 aar <- 0
 dodInt <- 9	# 0-i live, 1 -død, standard: alle (alle andre verdier)
 erMann <- ''	#Kjønn: 0-kvinner, 1-menn, standard: alle (alle andre verdier)
@@ -207,10 +210,12 @@ valgtVar <- 'inklKrit'	#'alder', 'liggetid', 'respiratortid',  'SAPSII', 'NEMS24
 Utdata <- NIRFigAndeler(RegData=RegData, valgtVar='inklKrit', datoFra=datoFra, datoTil=datoTil,
               #minald=minald, maxald=maxald,   InnMaate=InnMaate, dodInt=dodInt,erMann=erMann, 
               outfile='', reshID=109773, enhetsUtvalg=6, lagFig=1)
+
 outfile <- '' #paste0(valgtVar,'_Ford', '.png')
 NIRFigAndeler(RegData=RegData, valgtVar=valgtVar, minald=minald, maxald=maxald,  datoFra=datoFra, 
                          datoTil=datoTil, InnMaate=InnMaate, dodInt=dodInt,erMann=erMann, outfile=outfile, 
-                         hentData=0, preprosess=1, reshID=reshID, enhetsUtvalg=0, lagFig=0)
+                         hentData=0, preprosess=1, reshID=reshID, enhetsUtvalg=0, lagFig=1)
+
 
 variable <- c('alder', 'liggetid', 'respiratortid',  'SAPSII', 'NEMS24', 'Nas24', 'InnMaate')
 variable <- c('PrimaryReasonAdmitted', 'inklKrit', 'respiratortidNonInv', 'respiratortidInv', 'nyreBeh',

@@ -610,17 +610,18 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='an
 
 #---------------- PÅRØRENDESKJEMA----------------------------------
       
+    
       
-            #if (valgtVar=='innMaate') {
-      #	#Innleggelsesmåte. Genererer annen figurtype
-      #      #0:Planlagt operasjon, 6:Akutt nonoperativ, 8:Akutt operasjon
-      #      RegData$Variabel <- RegData$InnMaate	#Gir ikke mening i andelsberegning, men trenger å være tilgengelig.
-      #      RegData <- RegData[which(RegData$InnMaate %in% c(0,6,8)), ]
-      #	tittel <-'Innkomstmåte'
-      #}
-      #------------Alle over er ok
-      
-      
+      # if (valgtVar == 'BehandlingHoeflighetRespektMedfoelelse') { #andeler, 
+      #   RegData <- RegData[which(RegData$respiratortid>0), ] # & (RegData$InnDato>=as.Date('2016-01-01', tz='UTC'))), ] 
+      #   RegData$Variabel  <- as.numeric(RegData$respiratortid)
+      #   tittel <- c('Hvordan ble du møtt av intensivpersonalet', 
+      #               ' med hensyn til høflighet, respekt og medfølelse?')
+      #    gr <- -1, 1:4
+      #   RegData$VariabelGr <- 
+      #   xAkseTxt <- 'Respiratortid (døgn)'
+      #   sortAvtagende <- TRUE      #Rekkefølge
+      # } 
       
       
       UtData <- list(RegData=RegData, minald=minald,

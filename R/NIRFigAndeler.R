@@ -111,9 +111,12 @@ NIRFigAndeler  <- function(RegData=0, valgtVar='alder', datoFra='2011-01-01', da
       
  #     "%i%" <- intersect
       #--------------- Definere variable ------------------------------
-      
+   if (valgtVar %in% c('BehandlingHoeflighetRespektMedfoelelse')){
+      NIRVarSpes <- NIRVarTilretteleggPaaror(RegData=RegData, valgtVar=valgtVar, figurtype='andeler')
+   } else {
       NIRVarSpes <- NIRVarTilrettelegg(RegData=RegData, valgtVar=valgtVar, figurtype='andeler')
-      RegData <- NIRVarSpes$RegData
+   }
+   RegData <- NIRVarSpes$RegData
       flerevar <- NIRVarSpes$flerevar
       
       

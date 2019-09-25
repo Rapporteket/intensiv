@@ -20,6 +20,7 @@ write.table(RegDataAarCSV, file = 'A:/Intensiv/NIRaarsrapp2018.csv', row.names =
 
 
 load("A:/Intensiv/NIRaarsrapp2018.Rdata") 
+load('A:/Intensiv/PaarorRegData2018.RData')
 setwd('P:/Registerinfo og historie/intensiv/aarsrappOff')
 
 #Innkomstmåte (egen fig.) reg/sentLok
@@ -29,7 +30,6 @@ NIRFigInnMaate(RegData=RegData, valgtVar='InnMaate', datoFra=datoFra1aar, datoTi
                grType=3, outfile='InnMaateReg.pdf')
 
 #--------------------------------------- Andeler ----------------------------------
-variable <- 'BehandlingBesvarerBehov'
 
 variable <- c('OrganDonationCompletedReasonForNoStatus', 'CerebralCirculationAbolishedReasonForNo',
               'inklKrit','liggetid','InnMaate','NEMS24', 'Nas24','respiratortidNonInv',
@@ -44,8 +44,9 @@ NIRFigAndeler(RegData=RegData, valgtVar='liggetid', dodInt=1, datoFra=datoFra1aa
               outfile='liggetidDod_ford.pdf') 
 NIRFigAndeler(RegData=RegData, valgtVar='spesTiltak', datoFra=datoFra1aar, datoTil=datoTil, grType = 3,
               outfile='spesTiltak_ford.pdf') 
-
-
+#Pårørende
+NIRFigAndeler(RegData=PaarorDataH2018, valgtVar='BehandlingHoeflighetRespektMedfoelelse', datoFra=datoFra1aar, datoTil=datoTil, 
+              outfile='BehandlingHoeflighetRespektMedfoelelse_Ford.pdf') 
 #--------------------------------------- AndelGrVar ----------------------------------
 # Reinnleggelser reg/sentlok
 # Død innen 30 dager reg/sentLok

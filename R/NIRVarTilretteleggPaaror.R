@@ -110,7 +110,7 @@ NIRVarTilretteleggPaaror  <- function(RegData, valgtVar, grVar='ShNavn', figurty
       # } 
       
       tittel <- switch(valgtVar,
-                       BehandlingHoeflighetRespektMedfoelelse = c('Hvordan ble du møtt av intensivpersonalet', 
+                       BehandlingHoeflighetRespektMedfoelelse = c('Hvordan ble pasienten møtt av intensivpersonalet', 
                                                                   ' med hensyn til høflighet, respekt og medfølelse?'),
                        SymptomSmerte = c('Hvor godt vurderte og behandlet intensivpersonalet ',
                                          'symptomene til pasienten med hensyn til smerte?'),
