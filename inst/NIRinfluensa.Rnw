@@ -56,14 +56,15 @@ if (!exists('InfluDataAlle')){
             return(RegData)
       }  
       
-      InfluData <- NIRInfluDataSQL(datoFra = '2019-01-01')
+      InfluData <- NIRInfluDataSQL(datoFra = '2019-09-30')
 }
 #library(dplyr)
 #InfluData <- read.table(file='A:/Intensiv/InfluensaFormDataContract2019-05-24.csv', header=T, stringsAsFactors=FALSE, sep=';',encoding = 'UTF-8')
 
+datoU40 <- '2019-09-30'
 InfluData$InnDato <- as.Date(InfluData$FormDate) #, tz='UTC', format = '%Y-%m-%d"')
-InfluData <- NIRutvalgEnh(dato)
-	
+InfluData <- InfluData[which(InfluData$InnDato >= datoU40), ]  #NIRUtvalgEnh(RegData=InfluData, datoFra = '2019-09-30')$RegData
+sesongTxt <- ' 2019/20'	
 #ICD10_1
 # -1 = Velg verdi   
 # 9 = J10 Influensa som skyldes identifisert sesongvariabelt influensavirus                                             
@@ -123,7 +124,7 @@ Resultatene er oppsummert i tabeller som viser antall influensatilfeller per uke
 % \item Tabellene skiller ikke på om et skjema er ferdigstilt eller ikke. Det er \Sexpr{antSkjema-antFerdig} av de \Sexpr{antSkjema} % skjemaene som ikke er ferdigstilt.
 \item Skjema uten spesifikasjon av diagnose, er kategorisert som mistenkte influensatilfeller.
 \item Start av influensasesongen 2019/20 er uke 40 i 2019.
-\item Dato er basert på dato for når skjemaet ble opprettet fordi dette er den eneste datoen som finnes for alle registreringer. 
+\item Rapporten er basert på alle registreringer til og med \Sexpr{Sys.Date()-1}. 
 % NB: Innleggelesesdato ser ut til å være identisk med FormDate!
 \end{itemize}
 
@@ -180,7 +181,7 @@ command <- paste0(paste0('& \\multicolumn{2}{l}{', navnRHF, '} ', collapse=''), 
 #comment$command <- "\\hline\n{\\footnotesize B - bekreftet, M - mistenkt}\n"
 add.to.row$command <- command
 print(xtable::xtable(TabUkeRHF[indAntRader,], digits=0, #method='compact', #align=c('l', rep('r', ncol(alderDIV))),
-		caption='Influensatilfeller per uke og region, siste 15 uker og totalt sesongen 2018/19. (B - bekreftet, M - mistenkt)'),
+		caption=paste0('Influensatilfeller per uke og region sesongen', sesongTxt,' (B - bekreftet, M - mistenkt)')),
       #footnote= 'B-bekreftet, M-mistenkt',),
 		add.to.row = add.to.row,
 		sanitize.rownames.function = identity)
@@ -198,9 +199,6 @@ print(xtable::xtable(TabUkeRHF[indAntRader,], digits=0, #method='compact', #alig
 
 \begin{frame}[fragile] {Influensa i regionene, ferdigstilte skjema}
 <<'TabUkeRHFferdigstilt', results='asis'>>=
-#navnRHF <- attributes(TabUkeRHFFerdig)$col.vars$RHF
-#navn2Influ <- attributes(TabUkeRHFFerdig)$col.vars$Influensa
-#navnUkenr <- attributes(TabUkeRHFFerdig)$row.vars$UkeAar
 TabUkeRHFFerdig <- as.matrix(TabUkeRHFFerdig)
 colnames(TabUkeRHFFerdig) <- rep(c('M','B'),length(levels(InfluData$RHF))) #letters[1:8]
 #navnRHF <- sub('Helse ', '', navnRHF)
@@ -210,37 +208,29 @@ add.to.row <- list(pos = list(-1), command = NULL)
 command <- paste0(paste0('& \\multicolumn{2}{l}{', navnRHF, '} ', collapse=''), '\\\\\n')
 add.to.row$command <- command
 print(xtable::xtable(TabUkeRHFFerdig[indAntRader,], digits=0, 
-		caption='Influensatilfeller per uke og region, basert på kun ferdigstilte influensaskjema, siste 15 uker og totalt, sesongen 2018/19. (B - bekreftet, M - mistenkt)'),
+		caption=paste0('Influensatilfeller per uke og region, basert på kun ferdigstilte influensaskjema, sesongen',
+sesongTxt,'. (B - bekreftet, M - mistenkt)')),
 		add.to.row = add.to.row,
 		sanitize.rownames.function = identity)
 @
 
 \end{frame}
 
-% \begin{frame}[fragile] {Mistenkt Influensa}
-% <<'TabUkeRHFMistenkt', results='asis'>>=
-% print(xtable::xtable(addmargins(as.table(TabUkeRHF)[,,'Mistenkt']), digits=0, #align=c('l', rep('r', ncol(alderDIV))), 
-% 		caption='Mistenkt influensa per uke og region, 2019'), 
-%       sanitize.rownames.function = identity)
-% @
-% \end{frame}
-
- 
-\begin{frame}[fragile] {Influensa per uke, totalt}
+\begin{frame}[fragile] {Influensa, hele landet}
 
 <<'TabUkeTot', results='asis'>>=
 print(xtable::xtable(TabUkeTot[indAntRader,], digits=0, #align=c('l', rep('r', ncol(TabUkeTot))),
-		caption='Antall influensatilfeller siste 15 uker og totalt, sesongen 2018/19.'),
+		caption=paste0('Antall influensatilfeller sesongen', sesongTxt, '.')),
 		#Totalt antall skjema er antall registrerte influensaskjema.'),
 		sanitize.rownames.function = identity)
 @
 \end{frame}
 
-\begin{frame}[fragile] {Influensa per uke, totalt (kun ferdigstilte skjema)}
+\begin{frame}[fragile] {Influensa, hele landet (kun ferdigstilte skjema)}
 
 <<'TabUkeTotferdig', results='asis'>>=
 print(xtable::xtable(TabUkeTotFerdig[indAntRader,], digits=0, #align=c('l', rep('r', ncol(TabUkeTot))),
-		caption='Antall influensatilfeller basert på ferdigstilte skjema siste 15 uker og totalt, sesongen 2018/19.'),
+		caption=paste0('Antall influensatilfeller basert på ferdigstilte skjema, sesongen', sesongTxt,'.')),
 		#Totalt antall skjema er antall registrerte influensaskjema.'),
 		sanitize.rownames.function = identity)
 @

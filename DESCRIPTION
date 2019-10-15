@@ -13,7 +13,7 @@ License: GPL2
 Encoding: UTF-8
 LazyData: false
 Depends:
-    R (>= 3.5.0),
+    R (>= 3.6.0),
     rapbase (>= 1.0.0),
     rapFigurer
 Remotes: 
@@ -22,14 +22,7 @@ Remotes:
 Suggests:
     rmarkdown,
     testthat, 
-    prodlim,
-    kableExtra,
-    knitr, 
-    lubridate,
-    plyr,
-    shiny,
-    xtable,
-    zoo
+    prodlim
 Imports:
     kableExtra,
     knitr, 

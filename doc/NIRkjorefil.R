@@ -171,7 +171,7 @@ reshID=112044 #109773 #Tromsø med int: 601302, Ullevål Kir int: 109773
 minald <- 0 #(standard: 0)
 maxald <- 110	#(standard: 130, må være større enn minald!)
 InnMaate <- '' #0-El, 6-Ak.m, 8-Ak.k, (alle - alt unntatt 0,6,8)
-valgtMaal = 'Gjsn' #'Med' = median. 'Gjsn' = gjennomsnitt. Alt annet gir gjennomsnitt
+valgtMaal = 'Med' #'Med' = median. 'Gjsn' = gjennomsnitt. Alt annet gir gjennomsnitt
 datoFra <- '2018-01-01'	# standard: 0	format: YYYY-MM-DD. Kan spesifisere bare første del, eks. YYYY el. YYYY-MM. 
 datoTil <- '2018-12-31'	# standard: 3000
 aar <- 0
@@ -281,14 +281,15 @@ for (valgtVar in variable){
 
 #---------------------GjsnTid----------------------------------------------
 tidsenhet <- 'Aar'
-valgtVar <- 'respiratortidInvMoverf'	#'alder', 'liggetid', 'respiratortid', 'SAPSII', 
+datoFra <- '2012-01-01'
+valgtVar <- 'NEMS'	#'alder', 'liggetid', 'respiratortid', 'SAPSII', 
                         #Nye: respiratortidInvMoverf, respiratortidInvUoverf, respiratortidNonInv
 outfile <- '' #paste0(valgtVar, 'GjsnTid.pdf')
 
 utdata <- NIRFigGjsnTid(RegData=RegData, outfile=outfile, valgtVar=valgtVar, datoFra=datoFra, datoTil=datoTil, 
               tidsenhet=tidsenhet,
                     erMann=erMann,minald=minald,  maxald=maxald, InnMaate=InnMaate, dodInt=dodInt,
-		              valgtMaal=valgtMaal,tittel=1, enhetsUtvalg=3, reshID=reshID)
+		              valgtMaal='Med',tittel=1, enhetsUtvalg=0, reshID=reshID)
 
 #NIRFigGjsnTid(RegData=RegData, outfile=outfile, valgtVar=valgtVar, datoFra=datoFra, datoTil=datoTil, 
 #                    erMann=erMann,minald=minald, maxald=maxald, InnMaate=InnMaate, dodInt=dodInt,

@@ -149,7 +149,7 @@ colnames(tabBeleggNtot) <- c('lokal-/sentral', 'region', 'alle')
 xtable(tabBeleggNtot, digits=0, align=c('l', rep('r', ncol(tabBeleggNtot))), 
        caption='Antal opphald og liggedøger i 2018.', label='tab:RegEget')
 
-
+NIRFigGjsnTid(RegData = RegData1aar, valgtVar = 'NEMS', tidsenhet = 'Mnd', valgtMaal = 'Med', outfile = 'NEMStest.pdf')
 library(lubridate)
 #Antall opphold
 tabDum <- tabAntOpphShMnd(RegData=RegData1aar, datoTil=datoTil, antMnd=12)
