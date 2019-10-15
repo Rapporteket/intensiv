@@ -19,7 +19,8 @@ write.table(RegDataAarCSV, file = 'A:/Intensiv/NIRaarsrapp2018.csv', row.names =
             fileEncoding = 'UTF-8', sep = ';')
 
 
-load("A:/Intensiv/NIRaarsrapp2018.Rdata") 
+load("A:/Intensiv/NIRaarsrapp2018.Rdata")
+PaarorDataH <- PaarorDataH2018
 load('A:/Intensiv/PaarorRegData2018.RData')
 setwd('P:/Registerinfo og historie/intensiv/aarsrappOff')
 

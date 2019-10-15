@@ -17,7 +17,7 @@ Depends:
     rapbase (>= 1.0.0),
     rapFigurer
 Remotes: 
-      Rapporteket/rapbase@rel
+      Rapporteket/rapbase@rel,
       Rapporteket/rapFigurer@master
 Suggests:
     rmarkdown,
