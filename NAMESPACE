@@ -2,6 +2,7 @@
 
 export(AppNIRbrukervalg)
 export(FinnReinnleggelser)
+export(KobleMedHoved)
 export(NIRFigAndelTid)
 export(NIRFigAndeler)
 export(NIRFigAndelerGrVar)

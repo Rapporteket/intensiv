@@ -4,7 +4,7 @@
 \alias{NIRpaarorDataSQL}
 \title{Henter data fra pårørendeskjema registrert for Intensiv}
 \usage{
-NIRpaarorDataSQL(datoFra = "2015-01-01", datoTil = "2099-01-01")
+NIRpaarorDataSQL(datoFra = "2015-12-01", datoTil = Sys.Date())
 }
 \arguments{
 \item{datoFra}{Tidligste dato i utvalget (vises alltid i figuren).}

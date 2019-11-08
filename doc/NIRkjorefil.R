@@ -23,14 +23,15 @@ library(intensiv)
 library(tools)	#texi2pdf
 #setwd('C:/ResultattjenesteGIT/intensiv/inst/') 
 setwd('/home/rstudio/intensiv/inst') 
+reshID=706078 #Tromsø med int: 601302, Ullevål Kir int: 109773, 102090 Ahus, 112044 Haukeland, 102673 Ålesund Med, Kristiansund: 706078 
 
 #load(paste0("A:/Intensiv/NIRdata10000.Rdata")) #RegDataTEST, 21.mai 2018
 load(paste0("A:/Intensiv/MainFormDataContract2019-01-30.Rdata")) #RegData 2018-06-18
-reshID=706078 #Tromsø med int: 601302, Ullevål Kir int: 109773, 102090 Ahus, 112044 Haukeland, 102673 Ålesund Med, Kristiansund: 706078 
 #knit('NIRmndRapp.Rnw', encoding = 'UTF-8')
 #tools::texi2pdf(file='NIRmndRapp.tex')
-rmarkdown::render('NIRmndRapp.Rnw', output_format = pdf_document(),
-                         params = list(tableFormat="latex"))
+knit2pdf('NIRmndRapp.Rnw') #, encoding = 'UTF-8')
+#Får ikke denne til å funke: rmarkdown::render('NIRmndRapp.Rnw', output_format = pdf_document(),
+                         #params = list(tableFormat="latex"))
 
 #knit(input, output = NULL, tangle = FALSE, text = NULL, envir = parent.frame())
 # NIRdata <- RegData
@@ -97,14 +98,16 @@ filPaaror <- paste0(dataKat,'QuestionaryFormDataContract',dato,'.csv')
 PaarorData <- read.table(file=filPaaror, header=T, stringsAsFactors=FALSE, sep=';',encoding = 'UTF-8')
 
 KobleMedHoved <- function(HovedSkjema, Skjema2, alleHovedskjema=F, alleSkjema2=F) {
-  HovedSkjema <- plyr::rename(HovedSkjema, c('FormDate' = 'FormDateHoved'))
+  #HovedSkjema <- plyr::rename(HovedSkjema, c('FormDate' = 'FormDateHoved'))
       varBegge <- intersect(names(HovedSkjema),names(Skjema2)) ##Variabelnavn som finnes i begge datasett
       Skjema2 <- Skjema2[ , c("HovedskjemaGUID", names(Skjema2)[!(names(Skjema2) %in% varBegge)])]  #"SkjemaGUID",   
       data <- merge(HovedSkjema, Skjema2, suffixes = c('','_S2'),
                       by.x = 'SkjemaGUID', by.y = 'HovedskjemaGUID', all.x = alleHovedskjema, all.y=alleSkjema2)
       return(data)
 }
-
+HovedSkjema <- RegData
+Skjema2 <- PaarorData
+  
 PaarorDataH2018 <- KobleMedHoved(HovedSkjema = RegData2018, Skjema2 = PaarorData)
 PaarorDataH <- lageTulleData(RegData=PaarorDataH, varBort=varBort, antSh=26, antObs=600)
 save(PaarorDataH, file=paste0(dataKat, 'PaarorRegData.RData'))

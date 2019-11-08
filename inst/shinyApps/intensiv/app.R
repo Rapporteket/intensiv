@@ -11,8 +11,9 @@ library(knitr)
 context <- Sys.getenv("R_RAP_INSTANCE") #Blir tom hvis jobber lokalt
 paaServer <- context %in% c("DEV", "TEST", "QA", "PRODUCTION")
 if (paaServer) {
-  RegData <- NIRRegDataSQL(datoFra='2016-01-01') #datoFra = datoFra, datoTil = datoTil)
+  RegData <- NIRRegDataSQL(datoFra='2015-01-01') #datoFra = datoFra, datoTil = datoTil)
   PaarorData <- NIRpaarorDataSQL() 
+  PaarorDataH <- KobleMedHoved(RegData, PaarorData, alleHovedskjema=F, alleSkjema2=F)
 } #hente data på server
 
 if (!exists('PaarorData')){
@@ -518,16 +519,18 @@ server <- function(input, output, session) { #
 #      output$tekstDash <- c('Figurer med kvalitetsindikatorer',
 #                           'hente ned månedsrapport'),
   # funksjon for å kjøre Rnw-filer (render file funksjon)
-  contentFile <- function(file, srcFil, tmpFile) {
+  contentFile <- function(file, srcFil, tmpFile,
+                          reshID=0, datoFra=startDato, datoTil=Sys.Date()) {
     src <- normalizePath(system.file(srcFil, package="intensiv"))
-   
+   #dev.off()
     # gå til tempdir. Har ikke skriverettigheter i arbeidskatalog
     owd <- setwd(tempdir())
     on.exit(setwd(owd))
     file.copy(src, tmpFile, overwrite = TRUE)
     
-    texfil <- knitr::knit(tmpFile, encoding = 'UTF-8')
-    tools::texi2pdf(texfil, clean = TRUE)
+    #texfil <- knitr::knit(tmpFile, encoding = 'UTF-8')
+    #tools::texi2pdf(texfil, clean = TRUE)
+    knitr::knit2pdf(tmpFile)
     
     gc() #Opprydning gc-"garbage collection"
     file.copy(paste0(substr(tmpFile, 1, nchar(tmpFile)-3), 'pdf'), file)
@@ -538,28 +541,30 @@ server <- function(input, output, session) { #
   output$mndRapp.pdf <- downloadHandler(
     filename = function(){ paste0('MndRapp', Sys.time(), '.pdf')}, #'MndRapp.pdf',
     content = function(file){
-      contentFile(file, srcFil="NIRmndRapp.Rnw", tmpFile="tmpNIRmndRapp.Rnw")
+      contentFile(file, srcFil="NIRmndRapp.Rnw", tmpFile="tmpNIRmndRapp.Rnw",
+                  reshID = reshID(), datoFra = startDato)
     }
   )
 
   output$samleRapp.pdf <- downloadHandler(
     filename = function(){ paste0('NIRsamleRapp', Sys.time(), '.pdf')}, 
     content = function(file){
-      contentFile(file, srcFil="NIRSamleRapp.Rnw", tmpFile="tmpNIRSamleRapp.Rnw")
+      contentFile(file, srcFil="NIRSamleRapp.Rnw", tmpFile="tmpNIRSamleRapp.Rnw",
+                  reshID = reshID(), datoFra = startDato)
     }
   )
-  library(rmarkdown)
-  out <- rmarkdown::render(tmpFile, output_format = pdf_document(),
-    params = list(tableFormat="latex",
-    hospitalName=hospitalName,
-    reshId=reshId,
-    year=input$yearSet,
-    session=session
-  ), output_dir = tempdir())
-  # active garbage collection to prevent memory hogging?
-  gc()
-  file.rename(out, file)
-}
+  
+#   out <- rmarkdown::render(tmpFile, output_format = pdf_document(),
+#     params = list(tableFormat="latex",
+#     hospitalName=hospitalName,
+#     reshId=reshId,
+#     year=input$yearSet,
+#     session=session
+#   ), output_dir = tempdir())
+#   # active garbage collection to prevent memory hogging?
+#   gc()
+#   file.rename(out, file)
+# }
       
       #------------ Aktivitet (/Tabeller) --------
       output$tabNokkeltall <- function() {#renderTable({

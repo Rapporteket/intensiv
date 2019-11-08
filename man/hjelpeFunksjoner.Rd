@@ -7,6 +7,7 @@
 \alias{lageTulleData}
 \alias{leggTilIntervensjon}
 \alias{delTekst}
+\alias{KobleMedHoved}
 \title{Hjelpefunksjoner. Group of functions page title}
 \usage{
 FinnReinnleggelser(RegData, PasientID = "PasientID")
@@ -19,6 +20,9 @@ leggTilIntervensjon(RegData, startDatoIntervensjon = "2016-10-01",
   sluttDatoIntervensjon = Sys.Date())
 
 delTekst(x, len)
+
+KobleMedHoved(HovedSkjema, Skjema2, alleHovedskjema = F,
+  alleSkjema2 = F)
 }
 \arguments{
 \item{RegData}{data}
@@ -28,6 +32,14 @@ delTekst(x, len)
 \item{x}{En tekststreng eller vektor av tekststrenger}
 
 \item{len}{Lengden strengen skal brytes ved}
+
+\item{HovedSkjema}{Registerets hovedskjma (Main..)}
+
+\item{Skjema2}{Skjemaet som skal kobles til hovedskjema. (Pårørendeskjema, Influensaskjema)}
+
+\item{alleHovedskjema}{TRUE/FALSE. standard: FALSE. I praksis om vi skal ha en left? join eller ikke}
+
+\item{alleSkjema2}{TRUE/FALSE.standard: FALSE I praksis om vi skal ha en right? join eller ikke}
 }
 \value{
 Div hjelpefunksjoner
@@ -57,6 +69,8 @@ NA
 }
 
 \section{Legge til indikator for intervensjon, pårørendeoppfølging}{
+NA
+
 NA
 }
 

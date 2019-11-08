@@ -143,4 +143,21 @@ delTekst <- function(x, len) #x -tekststreng/vektor av tekststrenger, len - Leng
 {sapply(x, function(y) paste(strwrap(y, len), collapse = "\n"),
         USE.NAMES = FALSE)
 }
+
+#' @section Legge til indikator for intervensjon, pårørendeoppfølging
+#' @param HovedSkjema Registerets hovedskjma (Main..)
+#' @param Skjema2 Skjemaet som skal kobles til hovedskjema. (Pårørendeskjema, Influensaskjema)
+#' @param alleHovedskjema TRUE/FALSE. standard: FALSE. I praksis om vi skal ha en left? join eller ikke
+#' @param alleSkjema2 TRUE/FALSE.standard: FALSE I praksis om vi skal ha en right? join eller ikke
+#' @rdname hjelpeFunksjoner
+#' @export
+KobleMedHoved <- function(HovedSkjema, Skjema2, alleHovedskjema=F, alleSkjema2=F) {
+  #HovedSkjema <- plyr::rename(HovedSkjema, c('FormDate' = 'FormDateHoved'))
+  varBegge <- intersect(names(HovedSkjema),names(Skjema2)) ##Variabelnavn som finnes i begge datasett
+  Skjema2 <- Skjema2[ , c("HovedskjemaGUID", names(Skjema2)[!(names(Skjema2) %in% varBegge)])]  #"SkjemaGUID",   
+  data <- merge(HovedSkjema, Skjema2, suffixes = c('','_S2'),
+                by.x = 'SkjemaGUID', by.y = 'HovedskjemaGUID', all.x = alleHovedskjema, all.y=alleSkjema2)
+  return(data)
+}
+
       
