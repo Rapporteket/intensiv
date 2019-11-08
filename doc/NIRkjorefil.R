@@ -21,7 +21,7 @@ rm(list=ls())
 library(knitr)
 library(intensiv)
 library(tools)	#texi2pdf
-#setwd('C:/ResultattjenesteGIT/intensiv/inst/') 
+setwd('C:/ResultattjenesteGIT/intensiv/inst/') 
 setwd('/home/rstudio/intensiv/inst') 
 reshID=706078 #Tromsø med int: 601302, Ullevål Kir int: 109773, 102090 Ahus, 112044 Haukeland, 102673 Ålesund Med, Kristiansund: 706078 
 
@@ -32,6 +32,12 @@ load(paste0("A:/Intensiv/MainFormDataContract2019-01-30.Rdata")) #RegData 2018-0
 knit2pdf('NIRmndRapp.Rnw') #, encoding = 'UTF-8')
 #Får ikke denne til å funke: rmarkdown::render('NIRmndRapp.Rnw', output_format = pdf_document(),
                          #params = list(tableFormat="latex"))
+load(paste0("A:/Intensiv/intensivdata.Rdata")) #RegData 2018-06-18
+reshID=706078 #Tromsø med int: 601302, Ullevål Kir int: 109773, 102090 Ahus, 112044 Haukeland, 102673 Ålesund Med, Kristiansund: 706078 
+knit('NIRmndRapp.Rnw', encoding = 'UTF-8')
+tools::texi2pdf(file='NIRmndRapp.tex')
+rmarkdown::render('NIRmndRapp.Rnw', output_format = 'beamer_presentation')
+#, params = list(tableFormat="latex"))
 
 #knit(input, output = NULL, tangle = FALSE, text = NULL, envir = parent.frame())
 # NIRdata <- RegData
@@ -41,7 +47,7 @@ texi2pdf(file='NIRSamleRapp.tex')
 knit('OffDataIntensiv.Rnw')
 texi2pdf(file='OffDataIntensiv.tex')
 
-dato <- '2019-10-15' #2019-01-30
+dato <- '2019-11-05' #2019-01-30
 InfluDataAlle <- read.table(paste0('A:/Intensiv/InfluensaFormDataContract', dato, '.csv'), sep=';', 
                             stringsAsFactors=FALSE, header=T, encoding = 'UTF-8')
 variableTilTab <- c('ShNavn', 'RHF', 'PatientInRegistryGuid', 'FormDate','FormStatus', 'ICD10_1') #'DateAdmittedIntensive', 
@@ -65,9 +71,9 @@ dato <- '2019-09-24' #'2018-12-14' #MainFormDataContract2018-06-19
 dataKat <- 'A:/Intensiv/' 
 fil <- paste0(dataKat,'MainFormDataContract',dato)
 NIRdata <- read.table(file=paste0(fil,'.csv'), header=T, stringsAsFactors=FALSE, sep=';',encoding = 'UTF-8')
-#RegData <- NIRdata
+RegData <- NIRdata
 load(paste0(fil,".Rdata")) #RegData 2019-01-07
-#save(RegData, file=paste0(fil,'.Rdata'))
+save(RegData, file=paste0('intensivdata.Rdata'))
  # RegData <- RegData[which(
  #       as.POSIXlt(RegData$DateAdmittedIntensive, format="%Y-%m-%d")>= '2015-01-01'), ]
 #RegData <- RegData[sample(1:dim(RegData)[1],10000),]
