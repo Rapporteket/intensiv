@@ -21,13 +21,16 @@ rm(list=ls())
 library(knitr)
 library(intensiv)
 library(tools)	#texi2pdf
-setwd('C:/ResultattjenesteGIT/intensiv/inst/') 
+#setwd('C:/ResultattjenesteGIT/intensiv/inst/') 
+setwd('/home/rstudio/intensiv/inst') 
 
 #load(paste0("A:/Intensiv/NIRdata10000.Rdata")) #RegDataTEST, 21.mai 2018
 load(paste0("A:/Intensiv/MainFormDataContract2019-01-30.Rdata")) #RegData 2018-06-18
 reshID=706078 #Tromsø med int: 601302, Ullevål Kir int: 109773, 102090 Ahus, 112044 Haukeland, 102673 Ålesund Med, Kristiansund: 706078 
-knit('NIRmndRapp.Rnw', encoding = 'UTF-8')
-tools::texi2pdf(file='NIRmndRapp.tex')
+#knit('NIRmndRapp.Rnw', encoding = 'UTF-8')
+#tools::texi2pdf(file='NIRmndRapp.tex')
+rmarkdown::render('NIRmndRapp.Rnw', output_format = pdf_document(),
+                         params = list(tableFormat="latex"))
 
 #knit(input, output = NULL, tangle = FALSE, text = NULL, envir = parent.frame())
 # NIRdata <- RegData

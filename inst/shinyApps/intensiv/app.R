@@ -9,40 +9,30 @@ library(kableExtra)
 library(knitr)
 
 context <- Sys.getenv("R_RAP_INSTANCE") #Blir tom hvis jobber lokalt
-if (context == "TEST" | context == "QA" | context == "PRODUCTION") {
-  RegData <- NIRRegDataSQL() #datoFra = datoFra, datoTil = datoTil)
+paaServer <- context %in% c("DEV", "TEST", "QA", "PRODUCTION")
+if (paaServer) {
+  RegData <- NIRRegDataSQL(datoFra='2016-01-01') #datoFra = datoFra, datoTil = datoTil)
   PaarorData <- NIRpaarorDataSQL() 
-  
 } #hente data på server
 
-if (!exists('PaarorDataH')){
-  #system.file('inst/IntensivMndRapp.Rnw', package='intensiv')
-  # load("A:/Intensiv/NIRdataPaaror.RData")
-  # PaarorData <- RegData
-  # load('A:/Intensiv/NIRdata10000.Rdata')
-  
-  data('NIRRegDataSyn', package = 'intensiv')
-  
-  #RegData <- read.table(fil, sep=';', header=T, encoding = 'UTF-8')
-  #Funker:
-  #  data('NIRRegDataSyn', package = 'intensiv')
+if (!exists('PaarorData')){
+    data('NIRRegDataSyn', package = 'intensiv')
   #try(data(package = "intensiv"))
 }
-#HUSK Å FJERNE DENNE PÅ SERVER:
-#load(paste0(fil,".Rdata")) #RegData 2018-06-18
 
-#!!!! NB: Endre til dagens dato når har ferske data
 options(knitr.table.format = "html")
-idag <- as.Date('2018-11-30') #Sys.Date()
+idag <- Sys.Date() #as.Date('2018-11-30') #
 datoTil <- as.POSIXlt(idag)
-AarNaa <- as.numeric(format(idag, "%Y"))
 aarFra <- paste0(1900+as.POSIXlt(idag)$year-5, '-01-01')
-reshIDdummy <- 109773 #Tromsø med.int
-reshID = 109773 
+startDato <- paste0(1900+as.POSIXlt(idag)$year, '-01-01')
+  AarNaa <- as.numeric(format(idag, "%Y"))
+#reshID = 109773 
 RegData <- NIRPreprosess(RegData = RegData)
 PaarorData <- NIRPreprosess(RegData = PaarorDataH) #Må først koble på hoveddata for å få ShType++
 
-
+regTitle <- ifelse(paaServer, 
+                   'NORSK INTENSIVREGISTER',
+                   'Norsk Intensivregister med FIKTIVE data')
 
 #Sys.setlocale("LC_TIME", "nb_NO.UTF-8")
 #ibrary(shinyBS) # Additional Bootstrap Controls
@@ -50,9 +40,8 @@ PaarorData <- NIRPreprosess(RegData = PaarorDataH) #Må først koble på hovedda
 
 # Define UI for application that draws figures
 ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
-  title = 'NORSK INTENSIVREGISTER',
+  title = regTitle,
   #span("Tab1", title="Short description  for the tab") ,
-  #<p title="Free Web tutorials"> W3Schools.com</p>
   tabPanel(p("Viktigste resultater/Oversiktsside", 
              title= 'Liste med hvilke variable man kan få resultater for'),
            #fluidRow(
@@ -88,7 +77,7 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
              br(),
              br(),
              br(),
-             h3("Merk at noen resultater kan se rare ut siden dette er syntetiske data!", align='center' )
+             h3(ifelse(paaServer, "","Merk at noen resultater kan se rare ut siden dette er syntetiske data!"), align='center' )
            )
   ), #tab
   
@@ -117,7 +106,7 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                           )),
                         conditionalPanel(
                           condition = "input.ark == 'Dobbeltregistreringar'",
-                          dateRangeInput(inputId = 'datovalgReg', start = "2017-07-01", end = idag,
+                          dateRangeInput(inputId = 'datovalgReg', start = startDato, end = idag,
                                          label = "Tidsperiode", separator="t.o.m.", language="nb")
                         )
                         
@@ -191,7 +180,7 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                            'Årsak, ikke donasjon ved opphevet intrakraniell sirk.' = 'OrganDonationCompletedReasonForNoStatus'
                )
              ),
-             dateRangeInput(inputId = 'datovalg', start = "2017-07-01", end = idag,
+             dateRangeInput(inputId = 'datovalg', start = startDato, end = idag,
                             label = "Tidsperiode", separator="t.o.m.", language="nb"),
              selectInput(inputId = "erMann", label="Kjønn",
                          choices = c("Begge"=2, "Menn"=1, "Kvinner"=0)
@@ -275,7 +264,7 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                            'Døde som ble donorer' = 'OrganDonationCompletedStatus',
                            'Donorer, opphevet intrakran. sirkulajon' = 'OrganDonationCompletedCirc')
              ), 
-             dateRangeInput(inputId = 'datovalgAndelGrVar', start = "2017-07-01", end = idag,
+             dateRangeInput(inputId = 'datovalgAndelGrVar', start = startDato, end = idag,
                             label = "Tidsperiode", separator="t.o.m.", language="nb"),
              selectInput(inputId = "erMannAndelGrVar", label="Kjønn",
                          choices = c("Begge"=2, "Menn"=1, "Kvinner"=0)),
@@ -346,7 +335,7 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                                      'SAPSII-skår (alvorlighetsgrad)' = 'SAPSII'
                          )
              ),
-             dateRangeInput(inputId = 'datovalgGjsn', start = "2017-07-01", end = idag,
+             dateRangeInput(inputId = 'datovalgGjsn', start = startDato, end = idag,
                             label = "Tidsperiode", separator="t.o.m.", language="nb"),
              selectInput(inputId = "erMannGjsn", label="Kjønn",
                          choices = c("Begge"=2, "Menn"=1, "Kvinner"=0)
@@ -394,7 +383,7 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
            br(),
            sidebarPanel(
              width = 3,
-             dateRangeInput(inputId = 'datovalgSMR', start = "2017-07-01", end = idag,
+             dateRangeInput(inputId = 'datovalgSMR', start = startDato, end = idag,
                             label = "Tidsperiode", separator="t.o.m.", language="nb"),
              selectInput(inputId = "erMannSMR", label="Kjønn",
                          choices = c("Begge"=2, "Menn"=1, "Kvinner"=0)
@@ -420,7 +409,7 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
            h3('Type opphold'),
            sidebarPanel(
              width = 3,
-             dateRangeInput(inputId = 'datovalgInnMaate', start = "2017-07-01", end = idag,
+             dateRangeInput(inputId = 'datovalgInnMaate', start = startDato, end = idag,
                             label = "Tidsperiode", separator="t.o.m.", language="nb"),
              selectInput(inputId = "erMannInnMaate", label="Kjønn",
                          choices = c("Begge"=2, "Menn"=1, "Kvinner"=0)
@@ -506,7 +495,25 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
 #----------------- Define server logic ----------
 server <- function(input, output, session) { #
       
-
+  reshID <- reactive({ifelse(paaServer, as.numeric(rapbase::getUserReshId(session)), 109773)})
+  rolle <- reactive({ifelse(paaServer, rapbase::getShinyUserRole(shinySession=session), 'SC')})
+  #rolle <- ifelse(paaServer, rapbase::getShinyUserRole(shinySession=session), 'LU')
+  #userRole <- reactive({ifelse(onServer, rapbase::getUserRole(session), 'SC')})
+  #output$reshID <- renderText({ifelse(paaServer, as.numeric(rapbase::getUserReshId(session)), 105460)}) #evt renderUI
+  
+  # observe({if (rolle() != 'SC') { #
+  #   shinyjs::hide(id = 'velgResh')
+  #   shinyjs::hide(id = 'velgReshKval')
+  #   #hideTab(inputId = "tabs_andeler", target = "Figur, sykehusvisning")
+  # }
+  # })
+  # widget
+  if (paaServer) {
+    output$appUserName <- renderText(rapbase::getUserFullName(session))
+    output$appOrgName <- renderText(rapbase::getUserReshId(session))}
+  
+  
+  
       #--------startside--------------      
 #      output$tekstDash <- c('Figurer med kvalitetsindikatorer',
 #                           'hente ned månedsrapport'),
@@ -541,17 +548,23 @@ server <- function(input, output, session) { #
       contentFile(file, srcFil="NIRSamleRapp.Rnw", tmpFile="tmpNIRSamleRapp.Rnw")
     }
   )
-  
+  library(rmarkdown)
+  out <- rmarkdown::render(tmpFile, output_format = pdf_document(),
+    params = list(tableFormat="latex",
+    hospitalName=hospitalName,
+    reshId=reshId,
+    year=input$yearSet,
+    session=session
+  ), output_dir = tempdir())
+  # active garbage collection to prevent memory hogging?
+  gc()
+  file.rename(out, file)
+}
       
       #------------ Aktivitet (/Tabeller) --------
       output$tabNokkeltall <- function() {#renderTable({
-            # print(paste('Enhetsnivå: ', as.numeric(input$enhetsNivaa)))
-            # print(paste('sluttdato: ', input$sluttDatoReg))
-            # print(paste('tidsenhet: ', input$tidsenhetReg))
-            # print(paste('RegData: ', dim(RegData)))
-            # print(paste('resh: ', reshID))
             tab <- tabNokkeltall(RegData=RegData, tidsenhet=input$tidsenhetReg, datoTil=input$sluttDatoReg, 
-                      enhetsUtvalg=as.numeric(input$enhetsNivaa), reshID=reshID)
+                      enhetsUtvalg=as.numeric(input$enhetsNivaa), reshID=reshID())
             #tab <- tabNokkeltall(RegData, tidsenhet='Mnd', datoTil, enhetsUtvalg=0, reshID=0)
             kableExtra::kable(t(tab), 
                               full_width=F, 
@@ -579,13 +592,13 @@ server <- function(input, output, session) { #
       }, rownames = T, digits=0, spacing="xs")
       
       output$tabDblReg <- renderTable({
-            finnDblReg(RegData, reshID=reshID)
+            finnDblReg(RegData, reshID=reshID())
       }, spacing="xs") #rownames = T, 
 
       
       output$inklKrit <- renderPlot({
         NIRFigAndeler(RegData=RegData, preprosess = 0, valgtVar='inklKrit',
-                      reshID=reshIDdummy, enhetsUtvalg=as.numeric(input$enhetsUtvalg),
+                      reshID=reshID(), enhetsUtvalg=as.numeric(input$enhetsUtvalg),
                       datoFra=input$datovalg[1], datoTil=input$datovalg[2])
       }, height=800, width=800 #height = function() {session$clientData$output_fordelinger_width}
       )
@@ -593,7 +606,7 @@ server <- function(input, output, session) { #
     #------------Fordelinger---------------------  
       output$fordelinger <- renderPlot({
             NIRFigAndeler(RegData=RegData, preprosess = 0, valgtVar=input$valgtVar,
-                                                      reshID=reshIDdummy, enhetsUtvalg=as.numeric(input$enhetsUtvalg),
+                                                      reshID=reshID(), enhetsUtvalg=as.numeric(input$enhetsUtvalg),
                                                       datoFra=input$datovalg[1], datoTil=input$datovalg[2],
                                                       minald=as.numeric(input$alder[1]), maxald=as.numeric(input$alder[2]),
                                                       erMann=as.numeric(input$erMann))
@@ -602,7 +615,7 @@ server <- function(input, output, session) { #
       
       observe({      
             UtDataFord <- NIRFigAndeler(RegData=RegData, preprosess = 0, valgtVar=input$valgtVar,
-                                        reshID=reshIDdummy, enhetsUtvalg=as.numeric(input$enhetsUtvalg),
+                                        reshID=reshID(), enhetsUtvalg=as.numeric(input$enhetsUtvalg),
                                         datoFra=input$datovalg[1], datoTil=input$datovalg[2],
                                         minald=as.numeric(input$alder[1]), maxald=as.numeric(input$alder[2]),
                                         erMann=as.numeric(input$erMann), lagFig = 0)
@@ -649,7 +662,7 @@ server <- function(input, output, session) { #
             output$andelTid <- renderPlot({
                   
                   NIRFigAndelTid(RegData=RegData, preprosess = 0, valgtVar=input$valgtVarAndelGrVar,
-                                 reshID=reshIDdummy,
+                                 reshID=reshID(),
                                  datoFra=input$datovalgAndelGrVar[1], datoTil=input$datovalgAndelGrVar[2],
                                  minald=as.numeric(input$alderAndelGrVar[1]), maxald=as.numeric(input$alderAndelGrVar[2]),
                                  erMann=as.numeric(input$erMannAndelGrVar),
@@ -661,7 +674,7 @@ server <- function(input, output, session) { #
             observe({
                   #AndelTid
                   AndelerTid <- NIRFigAndelTid(RegData=RegData, preprosess = 0, valgtVar=input$valgtVarAndelGrVar,
-                                               reshID=reshIDdummy,
+                                               reshID=reshID(),
                                                datoFra=input$datovalgAndelGrVar[1], datoTil=input$datovalgAndelGrVar[2],
                                                minald=as.numeric(input$alderAndelGrVar[1]), maxald=as.numeric(input$alderAndelGrVar[2]),
                                                erMann=as.numeric(input$erMannAndelGrVar),
@@ -740,7 +753,7 @@ server <- function(input, output, session) { #
       
       output$gjsnTid <- renderPlot({
             NIRFigGjsnTid(RegData=RegData, preprosess = 0, valgtVar=input$valgtVarGjsn,
-                          reshID=reshIDdummy,
+                          reshID=reshID(),
                           datoFra=input$datovalgGjsn[1], datoTil=input$datovalgGjsn[2],
                           minald=as.numeric(input$alderGjsn[1]), maxald=as.numeric(input$alderGjsn[2]),
                           erMann=as.numeric(input$erMannGjsn), 
@@ -785,7 +798,7 @@ server <- function(input, output, session) { #
             h5(HTML(paste0(dataUtGjsnGrVar$utvalgTxt, '<br />')))
           ))
         dataUtGjsnTid <- NIRFigGjsnTid(RegData=RegData, preprosess = 0, valgtVar=input$valgtVarGjsn,
-                                       reshID=reshIDdummy,
+                                       reshID=reshID(),
                                        datoFra=input$datovalgGjsn[1], datoTil=input$datovalgGjsn[2],
                                        minald=as.numeric(input$alderGjsn[1]), maxald=as.numeric(input$alderGjsn[2]),
                                        erMann=as.numeric(input$erMannGjsn), 
