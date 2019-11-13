@@ -179,7 +179,7 @@ NonInv <- tapply(RegData$NonInvasivVentilation[ind],RegData$Aar[ind], FUN=sum)
 #-------------------------------------- Parametre ----------------------------------------------------
 library(intensiv)
 setwd("C:/ResultattjenesteGIT/intensiv/")
-reshID=112044 #109773 #Tromsø med int: 601302, Ullevål Kir int: 109773
+reshID=112044 #109773 #Tromsø med int: 601302, Ullevål Kir int: 109773, Haukeland ROE: 107717
 minald <- 0 #(standard: 0)
 maxald <- 110	#(standard: 130, må være større enn minald!)
 InnMaate <- '' #0-El, 6-Ak.m, 8-Ak.k, (alle - alt unntatt 0,6,8)
@@ -294,7 +294,7 @@ for (valgtVar in variable){
 #---------------------GjsnTid----------------------------------------------
 tidsenhet <- 'Aar'
 datoFra <- '2012-01-01'
-valgtVar <- 'NEMS'	#'alder', 'liggetid', 'respiratortid', 'SAPSII', 
+valgtVar <- 'alder'	#'alder', 'liggetid', 'respiratortid', 'SAPSII', 
                         #Nye: respiratortidInvMoverf, respiratortidInvUoverf, respiratortidNonInv
 outfile <- '' #paste0(valgtVar, 'GjsnTid.pdf')
 

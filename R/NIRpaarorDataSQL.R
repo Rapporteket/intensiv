@@ -130,6 +130,7 @@ INNER JOIN  MainFormDataContract M
 ON Q.HovedskjemaGUID = M.SkjemaGUID
 WHERE cast(DateAdmittedIntensive as date) BETWEEN \'', datoFra, '\' AND \'', datoTil, '\'')
 #UPPER(Q.HovedskjemaGUID) = UPPER(M.SkjemaGUID)
+
       query <- paste0('SELECT ',
                       varPaaror,
                       ' FROM QuestionaryFormDataContract Q')
