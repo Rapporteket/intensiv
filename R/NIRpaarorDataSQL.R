@@ -131,9 +131,9 @@ ON Q.HovedskjemaGUID = M.SkjemaGUID
 WHERE cast(DateAdmittedIntensive as date) BETWEEN \'', datoFra, '\' AND \'', datoTil, '\'')
 #UPPER(Q.HovedskjemaGUID) = UPPER(M.SkjemaGUID)
 
-      # query <- paste0('SELECT ',
-      #                 varPaaror,
-      #                 ' FROM QuestionaryFormDataContract Q')
+      query <- paste0('SELECT ',
+                      varPaaror,
+                      ' FROM QuestionaryFormDataContract Q')
 
       RegData <- rapbase::LoadRegData(registryName="nir", query=query, dbType="mysql")
       return(RegData)

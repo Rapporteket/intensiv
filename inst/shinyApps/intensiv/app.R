@@ -815,7 +815,6 @@ server <- function(input, output, session) { #
         if ((min(nchar(grtxt)) == 5) & (max(nchar(grtxt)) == 5)) {
           grtxt <- paste(substr(grtxt, 1,3), substr(grtxt, 4,5))}
         rownames(tabGjsnTid) <- grtxt
-        
         antKol <- ncol(tabGjsnTid)
         navnKol <- colnames(tabGjsnTid) 
         if (antKol==6) {colnames(tabGjsnTid) <- c(navnKol[1:3], navnKol[1:3])}
