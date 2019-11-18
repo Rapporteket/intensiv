@@ -166,7 +166,7 @@ NIRFigAndelTid <- function(RegData, valgtVar='alder_u18', datoFra='2011-01-01', 
             } else {
                   
                   #Plottspesifikke parametre:
-                  FigTypUt <- figtype(outfile, fargepalett=fargepalett)
+                  FigTypUt <- rapFigurer::figtype(outfile, fargepalett=fargepalett)
                   farger <- FigTypUt$farger
                   fargeHoved <- farger[3]
                   fargeRest <- farger[1]

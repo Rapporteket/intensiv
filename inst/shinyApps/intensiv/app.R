@@ -71,9 +71,14 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
              br()
            ),
            mainPanel(
+             shinyalert::useShinyalert(),
+             appNavbarUserWidget(user = uiOutput("appUserName"),
+                                 organization = uiOutput("appOrgName"),
+                                 addUserInfo = TRUE),
+             tags$head(tags$link(rel="shortcut icon", href="rap/favicon.ico")),
              h4('Her kan man finne visualiseringer og oppsummeringer av de fleste variable som registreres
                   i registeret. I hver fane kan man velge hvilken variabel man vil se resultat for og om man vil gjøre 
-                  filtreringer. Hold musepekeren over fanen for å se hvilke variable/tema som er visualisert i fanen. 
+                  filtreringer. Hold musepekeren over fanen for å se hvilke variable/trunema som er visualisert i fanen. 
                   Fanene er i hovedsak organisert ut fra hvordan resultatene er visualisert. F.eks. 
                   finner man under "Andeler" resultater av typen "andel under 80 år" eller 
                   "andel opphold hvor pasienten døde". Under "gjennomsnitt" finner man eksempelvis beregninger av
@@ -505,7 +510,7 @@ server <- function(input, output, session) { #
   raplog::appLogger(session = session, msg = "Starter intensiv-app")
       
   reshID <- reactive({ifelse(paaServer, as.numeric(rapbase::getUserReshId(session)), 109773)})
-  rolle <- reactive({ifelse(paaServer, rapbase::getShinyUserRole(shinySession=session), 'SC')})
+  rolle <- reactive({ifelse(paaServer, rapbase::getUserRole(shinySession=session), 'SC')})
   #userRole <- reactive({ifelse(onServer, rapbase::getUserRole(session), 'SC')})
   #output$reshID <- renderText({ifelse(paaServer, as.numeric(rapbase::getUserReshId(session)), 105460)}) #evt renderUI
   
@@ -518,7 +523,16 @@ server <- function(input, output, session) { #
   # widget
   if (paaServer) {
     output$appUserName <- renderText(rapbase::getUserFullName(session))
-    output$appOrgName <- renderText(rapbase::getUserReshId(session))}
+    output$appOrgName <- renderText(paste0('rolle: ', rolle(), '<br> ReshID: ', reshID()) )}
+  
+  # User info in widget
+  userInfo <- rapbase::howWeDealWithPersonalData(session)
+  observeEvent(input$userInfo, {
+    shinyalert::shinyalert("Dette vet Rapporteket om deg:", userInfo,
+               type = "", imageUrl = "rap/logo.svg",
+               closeOnEsc = TRUE, closeOnClickOutside = TRUE,
+               html = TRUE, confirmButtonText = rapbase::noOptOutOk())
+  })
   
   
   

@@ -25,10 +25,12 @@ Suggests:
     prodlim
 Imports:
     kableExtra,
-    knitr, 
+    knitr,
+    lifecycle,
     lubridate,
     plyr,
     shiny,
+    shinyalert,
     xtable,
     zoo
 VignetteBuilder: knitr

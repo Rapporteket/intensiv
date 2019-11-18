@@ -151,7 +151,7 @@ finnDblReg <- function(RegData, datoTil=Sys.Date(), reshID=0, pasientID = 'Pasie
             tabDbl <- 'Ingen dobbeltregistreringar'
       } else {
         test <- as.matrix(tabDblRaa,dim(tabDblRaa)[1], dim(tabDblRaa)[2] )
-        tabDbl <- xtable(test, row.names=NA)
+        tabDbl <- xtable::xtable(test, row.names=NA)
             #tabDbl <- tabDblRaa
             }
       return(tabDbl)
