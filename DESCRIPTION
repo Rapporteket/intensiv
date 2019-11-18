@@ -14,11 +14,11 @@ Encoding: UTF-8
 LazyData: false
 Depends:
     R (>= 3.6.0),
-    rapbase (>= 1.0.0),
-    rapFigurer
+    rapbase (>= 1.0.0)
 Remotes: 
       Rapporteket/rapbase@rel,
       Rapporteket/rapFigurer@master
+      Rapporteket/raplog@rel
 Suggests:
     rmarkdown,
     testthat, 

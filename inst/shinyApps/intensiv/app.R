@@ -8,6 +8,8 @@ library(zoo)
 library(kableExtra)
 library(knitr)
 
+addResourcePath('rap', system.file('www', package='rapbase'))
+
 context <- Sys.getenv("R_RAP_INSTANCE") #Blir tom hvis jobber lokalt
 paaServer <- context %in% c("DEV", "TEST", "QA", "PRODUCTION")
 if (paaServer) {
@@ -16,7 +18,7 @@ if (paaServer) {
   PaarorDataH <- KobleMedHoved(RegData, PaarorData, alleHovedskjema=F, alleSkjema2=F)
 } #hente data på server
 
-if (!exists('PaarorData')){
+if (!exists('PaarorDataH')){
     data('NIRRegDataSyn', package = 'intensiv')
   #try(data(package = "intensiv"))
 }
@@ -25,9 +27,8 @@ options(knitr.table.format = "html")
 idag <- Sys.Date() #as.Date('2018-11-30') #
 datoTil <- as.POSIXlt(idag)
 aarFra <- paste0(1900+as.POSIXlt(idag)$year-5, '-01-01')
-startDato <- paste0(1900+as.POSIXlt(idag)$year, '-01-01')
-  AarNaa <- as.numeric(format(idag, "%Y"))
-#reshID = 109773 
+startDato <- paste0(as.numeric(format(idag-90, "%Y")), '-01-01') #paste0(1900+as.POSIXlt(idag)$year, '-01-01')
+AarNaa <- as.numeric(format(idag, "%Y"))
 RegData <- NIRPreprosess(RegData = RegData)
 PaarorData <- NIRPreprosess(RegData = PaarorDataH) #Må først koble på hoveddata for å få ShType++
 
@@ -41,8 +42,13 @@ regTitle <- ifelse(paaServer,
 
 # Define UI for application that draws figures
 ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
-  title = regTitle,
   #span("Tab1", title="Short description  for the tab") ,
+  #title = regTitle,
+  title = div(a(includeHTML(system.file('www/logo.svg', package='rapbase'))),
+              regTitle),
+  windowTitle = regTitle,
+  theme = "rap/bootstrap.css",
+  
   tabPanel(p("Viktigste resultater/Oversiktsside", 
              title= 'Liste med hvilke variable man kan få resultater for'),
            #fluidRow(
@@ -481,7 +487,7 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                  'Tabell',
                  h3('Her kommer en tabell')
                  #uiOutput("tittelFord"),
-                 #tableOutput('fordelingTab')
+                 #tableOutput('fordelingTabPaaror')
                )
              )
            )
@@ -495,10 +501,11 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
 
 #----------------- Define server logic ----------
 server <- function(input, output, session) { #
+  
+  raplog::appLogger(session = session, msg = "Starter intensiv-app")
       
   reshID <- reactive({ifelse(paaServer, as.numeric(rapbase::getUserReshId(session)), 109773)})
   rolle <- reactive({ifelse(paaServer, rapbase::getShinyUserRole(shinySession=session), 'SC')})
-  #rolle <- ifelse(paaServer, rapbase::getShinyUserRole(shinySession=session), 'LU')
   #userRole <- reactive({ifelse(onServer, rapbase::getUserRole(session), 'SC')})
   #output$reshID <- renderText({ifelse(paaServer, as.numeric(rapbase::getUserReshId(session)), 105460)}) #evt renderUI
   
@@ -567,6 +574,7 @@ server <- function(input, output, session) { #
 # }
       
       #------------ Aktivitet (/Tabeller) --------
+ # observe({
       output$tabNokkeltall <- function() {#renderTable({
             tab <- t(tabNokkeltall(RegData=RegData, tidsenhet=input$tidsenhetReg, datoTil=input$sluttDatoReg, 
                       enhetsUtvalg=as.numeric(input$enhetsNivaa), reshID=reshID()))
@@ -586,9 +594,10 @@ server <- function(input, output, session) { #
       }#,rownames=T, digits=0 )
       
       output$tabAntOpphSh <- renderTable({
-            switch(input$tidsenhetReg,
+            tab <- switch(input$tidsenhetReg,
                    Mnd=tabAntOpphShMnd(RegData=RegData, datoTil=input$sluttDatoReg, antMnd=12), #input$datovalgTab[2])  
                    Aar=tabAntOpphSh5Aar(RegData=RegData, datoTil=input$sluttDatoReg))
+           
       }, rownames = T, digits=0, spacing="xs" 
       ) 
       
@@ -597,7 +606,12 @@ server <- function(input, output, session) { #
       }, rownames = T, digits=0, spacing="xs")
       
       output$tabDblReg <- renderTable({
-            finnDblReg(RegData, reshID=reshID())
+        tabDBL <- finnDblReg(RegData, reshID=reshID()) #tabDBL <- 
+        print(reshID())
+        print(tabDBL)
+        print(class(tabDBL))
+        finnDblReg(RegData, reshID=reshID())
+        #tabDBL <- knitr::kable(tabDBL, format='html', row.names = NA)
       }, spacing="xs") #rownames = T, 
 
       
@@ -607,7 +621,7 @@ server <- function(input, output, session) { #
                       datoFra=input$datovalg[1], datoTil=input$datovalg[2])
       }, height=800, width=800 #height = function() {session$clientData$output_fordelinger_width}
       )
-      
+  #})
     #------------Fordelinger---------------------  
       output$fordelinger <- renderPlot({
             NIRFigAndeler(RegData=RegData, preprosess = 0, valgtVar=input$valgtVar,
@@ -810,6 +824,7 @@ server <- function(input, output, session) { #
                                        valgtMaal = input$sentralmaal,
                                        tidsenhet = input$tidsenhetGjsn,
                                        enhetsUtvalg = input$enhetsUtvalgGjsn) #, lagFig=0)
+        #dataUtGjsnTid <- NIRFigGjsnTid(RegData=RegData, preprosess = 0, reshID=reshID, datoFra = '2019-01-01')
         tabGjsnTid <- t(dataUtGjsnTid$AggVerdier)
         grtxt <-dataUtGjsnTid$grtxt
         if ((min(nchar(grtxt)) == 5) & (max(nchar(grtxt)) == 5)) {

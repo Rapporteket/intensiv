@@ -60,7 +60,7 @@ tabBelegg <- function(RegData, tidsenhet='Aar', datoTil, enhetsUtvalg=0, reshID=
 #' @section tabAntOpphShMnd antall opphold siste X (antMnd) mnd
 #' @rdname NIRtabeller
 #' @export
-tabAntOpphShMnd <- function(RegData, datoTil, datoFra='Ikke angitt', antMnd=6){
+tabAntOpphShMnd <- function(RegData, datoTil=Sys.Date(), datoFra='Ikke angitt', antMnd=6){
       #RegData må inneholde DateAdmittedIntensive, DateDischargedIntensive 
   if (datoFra == 'Ikke angitt') {
       datoFra <- lubridate::floor_date(as.Date(datoTil)%m-% months(antMnd, abbreviate = T), 'month')} #as.Date(paste0(as.numeric(substr(datoTil,1,4))-1, substr(datoTil,5,8), '01'), tz='UTC')
@@ -149,10 +149,11 @@ finnDblReg <- function(RegData, datoTil=Sys.Date(), reshID=0, pasientID = 'Pasie
                             #c(pasientID,'Innleggelsestidspunkt', "SkjemaGUID")]
       if (dim(tabDblRaa)[1] == 0) {
             tabDbl <- 'Ingen dobbeltregistreringar'
-      } else {#tabDbl <- xtable::xtable(tabDblRaa)}
-            #funker: tabDbl <- xtable(as.matrix(tabDblRaa,dim(tabDblRaa)[1], dim(tabDblRaa)[2] ))
-            tabDbl <- tabDblRaa}
-      #print(paste('Dim RegDATA: ',  dim(RegData), min(RegData$InnDato)))
+      } else {
+        test <- as.matrix(tabDblRaa,dim(tabDblRaa)[1], dim(tabDblRaa)[2] )
+        tabDbl <- xtable(test, row.names=NA)
+            #tabDbl <- tabDblRaa
+            }
       return(tabDbl)
 }
 
