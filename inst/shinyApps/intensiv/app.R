@@ -13,7 +13,7 @@ addResourcePath('rap', system.file('www', package='rapbase'))
 context <- Sys.getenv("R_RAP_INSTANCE") #Blir tom hvis jobber lokalt
 paaServer <- context %in% c("DEV", "TEST", "QA", "PRODUCTION")
 if (paaServer) {
-  RegData <- NIRRegDataSQL(datoFra='2015-01-01') #datoFra = datoFra, datoTil = datoTil)
+  RegData <- NIRRegDataSQL(datoFra='2015-01-01', session = session) #datoFra = datoFra, datoTil = datoTil)
   PaarorData <- NIRpaarorDataSQL() 
   PaarorDataH <- KobleMedHoved(RegData, PaarorData, alleHovedskjema=F, alleSkjema2=F)
   
