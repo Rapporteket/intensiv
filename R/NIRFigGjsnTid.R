@@ -67,6 +67,11 @@ NIRFigGjsnTid <- function(RegData, valgtVar='alder', datoFra='2011-01-01', datoT
   RegData <- NIRUtvalg$RegData
   utvalgTxt <- NIRUtvalg$utvalgTxt
   medSml <- NIRUtvalg$medSml
+  KImaal <- ifelse(valgtMaal=='Med', NIRVarSpes$KImaal, NA)
+  KImaaltxt <- ifelse(NIRVarSpes$KImaaltxt=='', '', 
+                      ifelse(valgtMaal=='Med', paste0('Mål:',NIRVarSpes$KImaaltxt), ''))
+  
+  
 #------------------------Klargjøre tidsenhet--------------
   N <- list(Hoved = dim(RegData)[1], Rest=0)
   #N <- list(Hoved = 0, Rest =0)
@@ -149,8 +154,8 @@ rownames(ResData) <- c(maaltxt, 'KImin', 'KImaks',
 FigDataParam <- list(AggVerdier=ResData, 
                      N=N, 
                      Ngr=Ngr,	
-                     #KImaal <- KImaal,
-                     #KImaaltxt <- KImaaltxt,
+                     KImaal <- KImaal,
+                     KImaaltxt <- KImaaltxt,
                      #soyletxt=soyletxt,
                      grtxt=levels(RegData$TidsEnhet),
                      #grtxt2=grtxt2, 
@@ -202,6 +207,7 @@ plot(tidNum,Midt, xlim= c(xmin, xmax), ylim=c(ymin, ymax), type='n', frame.plot=
 		xlab='Innleggelsestidspunkt', xaxt='n', 
 		sub='(Tall i boksene angir antall innleggelser)', cex.sub=cexgr)	#, axes=F)
 axis(side=1, at = tidNum, labels = levels(RegData$TidsEnhet))	
+
 #Sammenlikning:
 if (medSml==1) {
       # polygon( c(tidtxt[1]-0.01,tidtxt, tidtxt[AntTidsenh]+0.012, 
@@ -222,6 +228,11 @@ h <- strheight(1, cex=cexgr)*0.7	#,  units='figure',
 b <- 1.1*strwidth(max(N, na.rm=T), cex=cexgr)/2	#length(tidNum)/30
 rect(tidNum-b, Midt-h, tidNum+b, Midt+h, border = fargeHovedRes, lwd=1)	#border=farger[4], col=farger[4]
 text(tidNum, Midt, N, col=fargeHovedRes, cex=cexgr) 	
+
+#KImål
+lines(tidNum, rep(KImaal,length(tidNum)), col= '#FF7260', lwd=3)
+mtext(text=KImaaltxt, at=KImaal, side=4, las=0, line=-1, cex=0.9, col='#FF7260') #adj=0.1,  
+#mtext(text=KImaaltxt, at=KImaal, side=4, las=0, cex=0.9, col='#FF7260') #adj=0.1,  
 
 #Konfidensintervall:
 ind <- which(Konf[1, ] > Midt-h) #Konfidensintervall som er tilnærmet 0

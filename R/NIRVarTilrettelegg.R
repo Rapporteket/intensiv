@@ -115,6 +115,32 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='an
             tittel <- 'Opphold der pasienten døde innen 30 dager etter innleggelse'
             sortAvtagende <- FALSE
       }
+      if (valgtVar=='dod365d') { #AndelTid,AndelerGrVar
+        RegData$Variabel <- RegData$Dod365
+        varTxt <- 'pasienter som døde'
+        tittel <- 'Opphold der pasienten døde innen ett år etter innleggelse'
+        sortAvtagende <- FALSE
+      }
+      if (valgtVar=='bukleie') { #fordeling, AndelTid,AndelerGrVar
+        #Kun pasienter med invasiv støtte
+        ind <- which(RegData$InvasivVentilation>0) %i%  which(RegData$InnDato>=as.Date('2015-01-01', tz='UTC'))
+        RegData <- RegData[ind,]
+        indBukleie <- which(RegData$Bukleie>-1)
+        if (figurtype == 'andeler') {	#Fordelingsfigur
+          RegData <- RegData[indBukleie, ]
+          tittel <- 'Antall ganger pasienter i bukleie er snudd'
+          gr <- c(0:6,100)	
+          RegData$VariabelGr <- cut(RegData$Bukleie, breaks=gr, include.lowest=TRUE, right=FALSE)	
+          grtxt <- c(gr[1:6], '6+')
+          xAkseTxt <- 'Antall ganger snudd'
+        }
+        if (figurtype %in% c('andelTid', 'andelGrVar')) {
+          tittel <- 'Pasienter med invasiv ventilasjon som har ligget i bukleie'
+        RegData$Variabel[indBukleie] <- 1
+        varTxt <- 'opphold i bukleie'
+        }
+        sortAvtagende <- FALSE
+      }
       
       if (valgtVar=='dodeIntensiv') { #AndelTid,AndelerGrVar
             #Andel som dør på intensiv
@@ -198,6 +224,12 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='an
             xAkseTxt <- 'Liggetid (døgn)'
       }
       
+      if (valgtVar=='erMann') { #AndelTid/GrVar
+        RegData <- RegData[which(RegData$erMann %in% 0:1), ]  	#Tar bort ukjente  
+        RegData$Variabel <- RegData$erMann
+        varTxt <- 'menn'
+        tittel <- 'Andel av oppholdene hvor pasienten er mann'
+      }
       if (valgtVar=='liggetidDod') { #AndelTid
             RegData <- RegData[which(RegData$liggetid>=0), ]    #Tar bort liggetid<0 samt NA
             RegData <- RegData[which(RegData$DischargedIntensiveStatus %in% 0:1), ]  	#Tar bort ukjente  
@@ -332,13 +364,13 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='an
                   RegData$Variabel  <- as.numeric(RegData$InvasivVentilation)
                   tittel <- 'invasiv ventilasjon (inkl. overførte pasienter)'      #Andeler, GjsnGrVar
                   KImaal <- 2.5 #Kun for median
-                  KImaaltxt <- '< 2,5 døgn'
+                  KImaaltxt <- '< 2,5 dager'
             }
             if (figurtype == 'andeler') {tittel <- 'Invasiv ventilasjon (inkl. overførte pasienter)'}	
             if (figurtype %in% c('andelTid', 'andelGrVar')) {
                   RegData$Variabel[which(RegData$InvasivVentilation < 2.5)] <- 1
-                  KImaal <- 50 #Over 50% med respiratortid <2,5døgn
-                  KImaaltxt <- '>50'
+                  #KImaal <- 50 #Over 50% med respiratortid <2,5døgn
+                  #KImaaltxt <- '>50'
                   tittel <- 'Invasiv ventilasjon < 2,5 døgn (inkl. overførte pasienter)'}     #AndelGrVar, AndelTid
             gr <- c(0, 1, 2, 3, 4, 5, 6, 7, 14, 1000) #c(0, exp(seq(0,log(30),length.out = 6)), 500),1)
             RegData$VariabelGr <- cut(RegData$InvasivVentilation, breaks=gr, include.lowest=TRUE, right=FALSE)  
@@ -356,19 +388,22 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='an
             RegData <- RegData[ind,]
             if (figurtype %in% c('andeler', 'gjsnGrVar', 'gjsnTid')) {
                   RegData$Variabel  <- as.numeric(RegData$InvasivVentilation)
-                  tittel <- 'invasiv ventilasjon (uten overførte pasienter)'}      #Andeler, GjsnGrVar
+                  tittel <- 'invasiv ventilasjon (uten overførte pasienter)'
+                  KImaal <- 2.5 #Median respiratortid <2,5døgn 
+                  #KImaal <- 50 #Over 50% med respiratortid <2,5døgn
+                  KImaaltxt <- '<2,5'
+            }      #Andeler, GjsnGrVar
             if (figurtype == 'andeler') {tittel <- 'Invasiv ventilasjon (uten overførte pasienter)'}	
             if (figurtype %in% c('andelTid', 'andelGrVar')) {
                   RegData$Variabel[which(RegData$InvasivVentilation < 2.5)] <- 1
+                  #KImaal <- 50 #Over 50% med respiratortid <2,5døgn
+                  #KImaaltxt <- '>50'
                   tittel <- 'Invasiv ventilasjon < 2,5 døgn (uten overførte pasienter)'}     #AndelGrVar, AndelTid
             gr <- c(0, 1, 2, 3, 4, 5, 6, 7, 14, 1000) #c(0, exp(seq(0,log(30),length.out = 6)), 500),1)
             RegData$VariabelGr <- cut(RegData$InvasivVentilation, breaks=gr, include.lowest=TRUE, right=FALSE)  
             grtxt <- c('(0-1)','[1-2)','[2-3)','[3-4)','[4-5)','[5-6)','[6-7)','[7-14)','14+')
             xAkseTxt <- 'ventilasjonstid (døgn)'
             varTxt <- 'med inv.ventilasjon < 2,5 døgn (uten overførte pasienter)'
-            KImaal <- 2.5 #Median respiratortid <2,5døgn 
-            #KImaal <- 50 #Over 50% med respiratortid <2,5døgn
-            KImaaltxt <- '<2,5'
             sortAvtagende <- TRUE      #Rekkefølge
       } 
       
@@ -406,7 +441,7 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='an
       
       if (valgtVar == 'SMR') { #GjsnGrVar
             #Tar ut reinnlagte på intensiv og  de med SAPSII=0 (ikke scorede) 
-            #05.06.2018 overflyttede skal ikke lenger tas ut
+            #05.06.2018 overflyttede skal ikke lenger tas bort
             #De under 16år tas ut i NIRutvalg
             #(TransferredStatus: 1= ikke overført, 2= overført), 
             #Skal ikke brukes: ReAdmitted: #1:Ja, 2:Nei, 3:Ukjent, -1:Ikke utfylt
@@ -623,6 +658,7 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='an
       #   sortAvtagende <- TRUE      #Rekkefølge
       # } 
       
+      RegData$Variabel <- as.numeric(RegData$Variabel)
       
       UtData <- list(RegData=RegData, minald=minald,
                      grtxt=grtxt, cexgr=cexgr, varTxt=varTxt, xAkseTxt=xAkseTxt, KImaal=KImaal, KImaaltxt=KImaaltxt, 

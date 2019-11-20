@@ -86,6 +86,10 @@ NIRPreprosess <- function(RegData=RegData, lagreKvalIndData=0)	#, reshID=reshID)
       RegData$Dod30 <- 0
       RegData$Dod30[which(difftime(as.Date(RegData$Morsdato, format="%Y-%m-%d %H:%M:%S"), 
                                    as.Date(RegData$InnDato), units='days')< 30)] <- 1
+ 
+      RegData$Dod365 <- 0
+      RegData$Dod365[which(difftime(as.Date(RegData$Morsdato, format="%Y-%m-%d %H:%M:%S"), 
+                                   as.Date(RegData$InnDato), units='days')< 365)] <- 1
       
       #Konvertere boolske variable fra tekst til boolske variable...
       TilLogiskeVar <- function(Skjema){

@@ -28,9 +28,9 @@
 #' @return Figur som viser tidstrend, dvs. andel av valgt variabel for hvert år. 
 #'
 #' @export
-NIRFigAndelTid <- function(RegData, valgtVar='alder_u18', datoFra='2011-01-01', datoTil='3000-12-31', tidsenhet='Aar',
+NIRFigAndelTid <- function(RegData, valgtVar='alder_u18', datoFra='2011-01-01', datoTil=Sys.Date(), tidsenhet='Aar',
                         minald=0, maxald=110, erMann='', InnMaate='', dodInt='', reshID=0, outfile='', 
-                        enhetsUtvalg=1, preprosess=1, hentData=0, lagFig=1, offData=0) {
+                        enhetsUtvalg=0, preprosess=1, hentData=0, lagFig=1, offData=0) {
       
       if (hentData == 1) {		
             RegData <- NIRRegDataSQL(datoFra, datoTil)
@@ -201,7 +201,7 @@ NIRFigAndelTid <- function(RegData, valgtVar='alder_u18', datoFra='2011-01-01', 
                   
                   #KImål
                   lines(xskala,rep(KImaal,length(xskala)), col= '#FF7260', lwd=3)
-                  mtext(text=KImaaltxt, at=KImaal, side=4, las=1, adj=0.5,  cex=0.9, col='#FF7260')
+                  mtext(text=KImaaltxt, at=KImaal, side=4, las=0, adj=0.5,  cex=0.9, col='#FF7260')
                   #text(max(xskala), KImaal, pos=4, paste0('Mål:',KImaaltxt), cex=0.9, col='#FF7260')
                   
                   Ttxt <- paste0('(Tall ved punktene angir antall ', varTxt, ')') 

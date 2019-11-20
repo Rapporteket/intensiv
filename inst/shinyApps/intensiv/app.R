@@ -16,6 +16,12 @@ if (paaServer) {
   RegData <- NIRRegDataSQL(datoFra='2015-01-01') #datoFra = datoFra, datoTil = datoTil)
   PaarorData <- NIRpaarorDataSQL() 
   PaarorDataH <- KobleMedHoved(RegData, PaarorData, alleHovedskjema=F, alleSkjema2=F)
+  
+  qInfluensa <- 'SELECT ShNavn, RHF, PatientInRegistryGuid, FormDate,FormStatus, ICD10_1
+                  from InfluensaFormDataContract'
+  InfluData <- rapbase::LoadRegData(registryName= "nir", query=qInfluensa, dbType="mysql")
+  
+  #repLogger(session = session, 'Hentet alle data fra intensivregisteret')
 } #hente data på server
 
 if (!exists('PaarorDataH')){
@@ -53,22 +59,21 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
              title= 'Liste med hvilke variable man kan få resultater for'),
            #fluidRow(
            #column(width=5,
-           h2('Velkommen til ny versjon av Rapporteket for Intensivregisteret!', align='center'),
+           h2('Velkommen til Rapporteket-Intensiv!', align='center'),
            sidebarPanel(
              width = 3,
-             h3('Dokumenter med sammenstilling av resultater'),
-             br(),
-             br(),
+             h3('Dokumenter med samling av resultater'),
              br(),
              h3("Månedsrapport"), #),
              downloadButton(outputId = 'mndRapp.pdf', label='Last ned MÅNEDSRAPPORT', class = "butt"),
              tags$head(tags$style(".butt{background-color:#6baed6;} .butt{color: white;}")), # background color and font color
              br(),
-             br(),
              h3('Samlede resultater, egen enhet'),
-             downloadButton(outputId = 'samleRapp.pdf', label='Last ned', class = "butt"),
+             downloadButton(outputId = 'samleRapp.pdf', label='Last ned samlerapport', class = "butt"),
              br(),
-             br()
+             br(),
+             h3('Resultater fra influensaregistrering'),
+             downloadButton(outputId = 'influensaRapp.pdf', label='Last ned influensarapport', class = "butt")
            ),
            mainPanel(
              shinyalert::useShinyalert(),
@@ -76,21 +81,48 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                                  organization = uiOutput("appOrgName"),
                                  addUserInfo = TRUE),
              tags$head(tags$link(rel="shortcut icon", href="rap/favicon.ico")),
-             h4('Her kan man finne visualiseringer og oppsummeringer av de fleste variable som registreres
-                  i registeret. I hver fane kan man velge hvilken variabel man vil se resultat for og om man vil gjøre 
-                  filtreringer. Hold musepekeren over fanen for å se hvilke variable/trunema som er visualisert i fanen. 
-                  Fanene er i hovedsak organisert ut fra hvordan resultatene er visualisert. F.eks. 
-                  finner man under "Andeler" resultater av typen "andel under 80 år" eller 
-                  "andel opphold hvor pasienten døde". Under "gjennomsnitt" finner man eksempelvis beregninger av
-                  "gjennomsnittsalder" eller gjennomsnittlig respiratortid.'),
-             br(),
-             br(),
-             br(),
-             br(),
-             br(),
-             br(),
-             h3(ifelse(paaServer, "","Merk at noen resultater kan se rare ut siden dette er syntetiske data!"), align='center' )
-           )
+             tabsetPanel(
+               tabPanel('Startside',
+             
+             h3(ifelse(paaServer, "","Merk at noen resultater kan se rare ut siden dette er syntetiske data!"), align='center' ),
+             h2("Nøkkeltall på intensiv"),
+             selectInput(inputId = 'enhetsNivaaStart', label='Enhetsnivå',
+                           choices = c("Hele landet"=0, "Egen enhet"=2,
+                                       "Egen sykehustype"=4, "Egen region"=7)
+               ),
+             tableOutput('tabNokkeltallStart')
+           ),
+           
+           tabPanel('Brukerveiledning',
+                    h4('På Rapporteket kan du finne visualiseringer og oppsummeringer av de fleste variable 
+                    som registreres i registeret. Hold musepekeren over fanen for å se hvilke variable/tema 
+                    som er visualisert i fanen. 
+                  Fanene er i hovedsak organisert ut fra hvordan resultatene er visualisert.'),
+                    br(),
+                    h4(tags$b('Månedsrapport ol.'), 'Vi må huske å skrive noe om hvordan man bestiller 
+                       månedsrapport...!'),
+                    br(),
+                    h4(tags$b(tags$u('Innhold i de ulike fanene:'))),
+                    h4('I feltet til venstre på hver side kan du velge hvilken variabel du ønsker å se
+                            resultater for. Der kan du også gjøre ulike filtreringer/utvalg av data.'),
+                    h4(tags$b('Aktivitet '), 'viser oversikt over registreringer og aktivitet'),
+                    h4(tags$b('Fordelinger '), 'viser på fordelinger (figur/tabell) av ulike variable.'),
+                    h4(tags$b('Andeler'), ' viser andeler(prosent) en per sykehus og utvikling over tid.
+                            du kan velge hvilken tidsskala du vi se på. Her finner du resultater av typen 
+                            "andel under 80 år" eller "andel opphold hvor pasienten døde".'),
+                    h4(tags$b('Gjennomsnitt'), ' viser gjennomsnittsverdier per sykehus og utvikling over tid.
+                            Du kan velge om du vil se gjennomsnitt eller median. Her finner du resultater som 
+                       "gjennomsnittsalder" eller median respiratortid.'),
+                    h4(tags$b('SMR '), 'viser SMR per sykehus.'),
+                    h4(tags$b('Type opphold'), 'viser en figur med fordeling av oppholdstyper'),
+                    h4(tags$b('Pasientskjema'), 'viser resultater fra pårørendeundersøkelser 
+                       registrert i skjemaet FS-ICU'),
+                    br(),
+                    h4('Gi gjerne innspill til registerledelsen om det er resultater/tabeller/figurer du savner
+                            på Rapporteket-Intensiv')
+                    )
+             )#tabset
+           )#main
   ), #tab
   
   #-----Registreringsoversikter------------
@@ -125,11 +157,6 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
            ),
            mainPanel(
              tabsetPanel(id='ark',
-                         tabPanel('Nøkkeltall',
-                                  h2("Nøkkeltall på intensiv"),
-                                  br(),
-                                  tableOutput('tabNokkeltall')
-                         ),
                          tabPanel('Ant. opphold',
                                   h2("Antall opphold per avdeling"),
                                   p(em("Velg tidsperiode ved å velge sluttdato i menyen til venstre")),
@@ -138,6 +165,11 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                          tabPanel('Pasientar per år og avd.',
                                   h2("Antall pasienter ved avdelingene siste 5 år"),
                                   tableOutput("tabAntPasSh5Aar")
+                         ),
+                         tabPanel('Nøkkeltall',
+                                  h2("Nøkkeltall på intensiv"),
+                                  br(),
+                                  tableOutput('tabNokkeltall')
                          ),
                          # tabPanel('Inklusjonskriterier',
                          #   tabsetPanel(
@@ -171,6 +203,7 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
              selectInput(
                inputId = "valgtVar", label="Velg variabel",
                choices = c('Alder' = 'alder', 
+                           'Bukleie' = 'bukleie',
                            'Innkomstmåte' = 'InnMaate',
                            'Hemodynamisk overvåkn.' = 'ExtendedHemodynamicMonitoring',
                            'Inklusjonskriterier' = 'inklKrit',
@@ -258,10 +291,13 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                inputId = "valgtVarAndelGrVar", label="Velg variabel",
                choices = c('Alder minst 80 år' = 'alder_over80',
                            'Alder under 18år' = 'alder_u18',
+                           'Bukleie' = 'bukleie',
                            'Død innen 30 dager' = 'dod30d',
+                           'Død innen ett år' = 'dod365d',
                            'Døde på intensiv' = 'dodeIntensiv',
                            'Isolasjon av pasient' = 'isolering',
                            'Liggetid, døde' = 'liggetidDod',
+                           'Menn' = 'erMann',
                            'Nyrebehandling' = 'nyreBeh',
                            'Reinnleggelse' = 'reinn',
                            'Respiratorstøtte' = 'respStotte',
@@ -500,7 +536,12 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
 )  #navbarPage
 
 
-
+#------------Influensa-----------------------------
+# tabPanel(p("Inluensa", title='Resultater fra influensaregistrering'),
+#          h2('Resultater fra influensaregistrering', align = 'center'),    
+#  mainPanel(
+#  )        
+# )
 
 
 
@@ -549,8 +590,6 @@ server <- function(input, output, session) { #
     on.exit(setwd(owd))
     file.copy(src, tmpFile, overwrite = TRUE)
     
-    #texfil <- knitr::knit(tmpFile, encoding = 'UTF-8')
-    #tools::texi2pdf(texfil, clean = TRUE)
     knitr::knit2pdf(tmpFile)
     
     gc() #Opprydning gc-"garbage collection"
@@ -575,6 +614,14 @@ server <- function(input, output, session) { #
     }
   )
   
+  output$influensaRapp.pdf <- downloadHandler(
+    filename = function(){ paste0('NIRinfluensa', Sys.time(), '.pdf')}, 
+    content = function(file){
+      contentFile(file, srcFil="NIRinfluensa.Rnw", tmpFile="tmpNIRinfluensa.Rnw")
+    }
+  )
+  
+  
 #   out <- rmarkdown::render(tmpFile, output_format = pdf_document(),
 #     params = list(tableFormat="latex",
 #     hospitalName=hospitalName,
@@ -589,13 +636,27 @@ server <- function(input, output, session) { #
       
       #------------ Aktivitet (/Tabeller) --------
  # observe({
-      output$tabNokkeltall <- function() {#renderTable({
+ 
+   output$tabNokkeltallStart <- function() {
+    tab <- t(tabNokkeltall(RegData=RegData, tidsenhet='Mnd',
+                           enhetsUtvalg=as.numeric(input$enhetsNivaaStart), reshID=reshID()))
+    kableExtra::kable(tab,
+                      full_width=F,
+                      digits = c(0,0,0,1,0,1,1,0,0,0,1,1,2,1)
+    ) %>%
+      column_spec(column = 1, width_min = '4em', width_max = 10) %>%
+      column_spec(column = 2:(ncol(tab)), width = '4em')  %>%
+      row_spec(0, bold = T, align = 'c') %>%
+      kable_styling(full_width = FALSE, position = 'left') #"hover",
+  }
+  
+  output$tabNokkeltall <- function() {#renderTable({
             tab <- t(tabNokkeltall(RegData=RegData, tidsenhet=input$tidsenhetReg, datoTil=input$sluttDatoReg, 
                       enhetsUtvalg=as.numeric(input$enhetsNivaa), reshID=reshID()))
             #tab <- tabNokkeltall(RegData, tidsenhet='Mnd', datoTil, enhetsUtvalg=0, reshID=0)
             kableExtra::kable(tab, 
                               full_width=F, 
-                              digits = c(0,0,0,1,1,1,0,0,1,2,1)
+                              digits = c(0,0,0,1,0,1,1,0,0,0,1,1,2,1)
                              ) %>%
                   column_spec(column = 1, width_min = '4em', width_max = 10) %>%
                   #column_spec(column = 1, width = '4em') %>%
@@ -621,9 +682,6 @@ server <- function(input, output, session) { #
       
       output$tabDblReg <- renderTable({
         tabDBL <- finnDblReg(RegData, reshID=reshID()) #tabDBL <- 
-        print(reshID())
-        print(tabDBL)
-        print(class(tabDBL))
         finnDblReg(RegData, reshID=reshID())
         #tabDBL <- knitr::kable(tabDBL, format='html', row.names = NA)
       }, spacing="xs") #rownames = T, 

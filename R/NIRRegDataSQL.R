@@ -9,15 +9,14 @@
 #'
 #'
 NIRRegDataSQL <- function(datoFra = '2011-01-01', datoTil = '2099-01-01') {
+  #, session='ingen Rsesjon'
   
-  registryName <- "nir"
-  dbType <- "mysql"
-
 #	DischargedHospitalStatus,
   
   query <- paste0('SELECT
 	Bilirubin,
       BrainDamage,
+      Bukleie,
       CerebralCirculationAbolished,
       CerebralCirculationAbolishedReasonForNo,
       ChronicDiseases,
@@ -94,7 +93,9 @@ FROM
 WHERE cast(DateAdmittedIntensive as date) BETWEEN \'', datoFra, '\' AND \'', datoTil, '\'')
   #WHERE cast(DateAdmittedIntensive as date) >= \'', datoFra, '\' AND DateAdmittedIntensive <= \'', datoTil, '\'')  
 
-  RegData <- rapbase::LoadRegData(registryName, query, dbType)
+  RegData <- rapbase::LoadRegData(registryName= "nir", query=query, dbType="mysql")
   
-  return(RegData)
+  raplog::repLogger(session = session, 'Hentet alle data fra intensivregisteret')
+  
+    return(RegData)
 }
