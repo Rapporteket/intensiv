@@ -24,6 +24,7 @@ Suggests:
     testthat, 
     prodlim
 Imports:
+    DT,
     kableExtra,
     knitr,
     lifecycle,
