@@ -12,22 +12,6 @@ addResourcePath('rap', system.file('www', package='rapbase'))
 
 context <- Sys.getenv("R_RAP_INSTANCE") #Blir tom hvis jobber lokalt
 paaServer <- context %in% c("DEV", "TEST", "QA", "PRODUCTION")
-if (paaServer) {
-  RegData <- NIRRegDataSQL(datoFra='2015-01-01', session = session) #datoFra = datoFra, datoTil = datoTil)
-  PaarorData <- NIRpaarorDataSQL() 
-  PaarorDataH <- KobleMedHoved(RegData, PaarorData, alleHovedskjema=F, alleSkjema2=F)
-  
-  qInfluensa <- 'SELECT ShNavn, RHF, PatientInRegistryGuid, FormDate,FormStatus, ICD10_1
-                  from InfluensaFormDataContract'
-  InfluData <- rapbase::LoadRegData(registryName= "nir", query=qInfluensa, dbType="mysql")
-  
-  #repLogger(session = session, 'Hentet alle data fra intensivregisteret')
-} #hente data på server
-
-if (!exists('PaarorDataH')){
-    data('NIRRegDataSyn', package = 'intensiv')
-  #try(data(package = "intensiv"))
-}
 
 options(knitr.table.format = "html")
 idag <- Sys.Date() #as.Date('2018-11-30') #
@@ -35,8 +19,6 @@ datoTil <- as.POSIXlt(idag)
 aarFra <- paste0(1900+as.POSIXlt(idag)$year-5, '-01-01')
 startDato <- paste0(as.numeric(format(idag-90, "%Y")), '-01-01') #paste0(1900+as.POSIXlt(idag)$year, '-01-01')
 AarNaa <- as.numeric(format(idag, "%Y"))
-RegData <- NIRPreprosess(RegData = RegData)
-PaarorData <- NIRPreprosess(RegData = PaarorDataH) #Må først koble på hoveddata for å få ShType++
 
 regTitle <- ifelse(paaServer, 
                    'NORSK INTENSIVREGISTER',
@@ -609,6 +591,24 @@ server <- function(input, output, session) { #
                html = TRUE, confirmButtonText = rapbase::noOptOutOk())
   })
   
+#---------Hente data  
+  if (paaServer) {
+    RegData <- NIRRegDataSQL(datoFra='2015-01-01', session = session) #datoFra = datoFra, datoTil = datoTil)
+    PaarorData <- NIRpaarorDataSQL() 
+    PaarorDataH <- KobleMedHoved(RegData, PaarorData, alleHovedskjema=F, alleSkjema2=F)
+    qInfluensa <- 'SELECT ShNavn, RHF, PatientInRegistryGuid, FormDate,FormStatus, ICD10_1
+                  from InfluensaFormDataContract'
+    InfluData <- rapbase::LoadRegData(registryName= "nir", query=qInfluensa, dbType="mysql")
+    
+    #repLogger(session = session, 'Hentet alle data fra intensivregisteret')
+  } #hente data på server
+  
+  if (!exists('PaarorDataH')){
+    data('NIRRegDataSyn', package = 'intensiv')
+    #try(data(package = "intensiv"))
+  }
+  RegData <- NIRPreprosess(RegData = RegData)
+  PaarorData <- NIRPreprosess(RegData = PaarorDataH) #Må først koble på hoveddata for å få ShType++
   
   
       #--------startside--------------      
@@ -1074,9 +1074,9 @@ server <- function(input, output, session) { #
         #   baseName <- "NORIC_local_monthly_stent"
         # }
         fun <- "subscriptionLocalMonthlyReps"
-        paramNames <- c("baseName", "reshID", "registryName", "author", "hospitalName", #Endret til reshID
+        paramNames <- c("baseName", "reshId", "registryName", "author", "hospitalName", #Endret til reshID
                         "type")
-        paramValues <- c(baseName, reshId, localRegistryName, author, hospitalName, 'pdf') #input$subscriptionFileFormat)
+        paramValues <- c(baseName, reshId(), localRegistryName, author, hospitalName, 'pdf') #input$subscriptionFileFormat)
         
         
         rapbase::createAutoReport(synopsis = synopsis, package = package,
