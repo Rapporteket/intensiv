@@ -667,20 +667,7 @@ server <- function(input, output, session) { #
     }
   )
   
-  
-#   out <- rmarkdown::render(tmpFile, output_format = pdf_document(),
-#     params = list(tableFormat="latex",
-#     hospitalName=hospitalName,
-#     reshId=reshId,
-#     year=input$yearSet,
-#     session=session
-#   ), output_dir = tempdir())
-#   # active garbage collection to prevent memory hogging?
-#   gc()
-#   file.rename(out, file)
-# }
-      
-      #------------ Aktivitet (/Tabeller) --------
+#------------ Aktivitet (/Tabeller) --------
  # observe({
  
    output$tabNokkeltallStart <- function() {
@@ -740,7 +727,7 @@ server <- function(input, output, session) { #
       }, height=800, width=800 #height = function() {session$clientData$output_fordelinger_width}
       )
   #})
-    #------------Fordelinger---------------------  
+#------------Fordelinger---------------------  
       output$fordelinger <- renderPlot({
             NIRFigAndeler(RegData=RegData, preprosess = 0, valgtVar=input$valgtVar,
                                                       reshID=reshID(), enhetsUtvalg=as.numeric(input$enhetsUtvalg),
@@ -787,7 +774,7 @@ server <- function(input, output, session) { #
               })
             }) #observe
       
-      #---------Andeler-------------------------
+#---------Andeler-------------------------
       output$andelerGrVar <- renderPlot({
             NIRFigAndelerGrVar(RegData=RegData, preprosess = 0, valgtVar=input$valgtVarAndelGrVar,
                                datoFra=input$datovalgAndelGrVar[1], datoTil=input$datovalgAndelGrVar[2],
@@ -878,7 +865,7 @@ server <- function(input, output, session) { #
             }) #observe
             
              
-  #--------------Gjennomsnitt---------------          
+#--------------Gjennomsnitt---------------          
        output$gjsnGrVar <- renderPlot({
             NIRFigGjsnGrVar(RegData=RegData, preprosess = 0, valgtVar=input$valgtVarGjsn,
                             datoFra=input$datovalgGjsn[1], datoTil=input$datovalgGjsn[2],
@@ -973,7 +960,7 @@ server <- function(input, output, session) { #
         
       })
       
-      #--------------SMR----------------------------------
+#--------------SMR----------------------------------
       output$SMRfig <- renderPlot({
         NIRFigGjsnGrVar(RegData=RegData, preprosess = 0, valgtVar='SMR',
                         datoFra=input$datovalgSMR[1], datoTil=input$datovalgSMR[2],
