@@ -89,7 +89,6 @@
 #'                      3: regionsykehus
 #'                      99: alle (standard)
 #' @param lagFig Angir om figur skal lages eller ikke 0-ikke lag, 1-lag
-#' @session Shiny-appsesjon
 #' 								
 #' @return Søylediagram (fordeling) av valgt variabel. De enkelte verdiene kan også sendes med.
 #'

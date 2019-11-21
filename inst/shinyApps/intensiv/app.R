@@ -37,14 +37,16 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
   windowTitle = regTitle,
   theme = "rap/bootstrap.css",
   
-  tabPanel(p("Viktigste resultater/Oversiktsside", 
-             title= 'Liste med hvilke variable man kan få resultater for'),
+  tabPanel(p("Oversiktsside", 
+             title= 'Nøkkeltall og samlerapporter'),
            #fluidRow(
            #column(width=5,
            h2('Velkommen til Rapporteket-Intensiv!', align='center'),
            sidebarPanel(
              width = 3,
              h3('Dokumenter med samling av resultater'),
+             h5('Disse kan man få regelmessig tilsendt på e-post. 
+                Gå til fanen "Abonnement" for å bestille dette.'),
              br(),
              h3("Månedsrapport"), #),
              downloadButton(outputId = 'mndRapp.pdf', label='Last ned MÅNEDSRAPPORT', class = "butt"),
@@ -52,6 +54,7 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
              br(),
              h3('Samlede resultater, egen enhet'),
              downloadButton(outputId = 'samleRapp.pdf', label='Last ned samlerapport', class = "butt"),
+             br(),
              br(),
              br(),
              h3('Resultater fra influensaregistrering'),
@@ -69,7 +72,7 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
              h3(ifelse(paaServer, "","Merk at noen resultater kan se rare ut siden dette er syntetiske data!"), align='center' ),
              h2("Nøkkeltall på intensiv"),
              selectInput(inputId = 'enhetsNivaaStart', label='Enhetsnivå',
-                           choices = c("Hele landet"=0, "Egen enhet"=2,
+                           choices = c("Egen enhet"=2, "Hele landet"=0, 
                                        "Egen sykehustype"=4, "Egen region"=7)
                ),
              tableOutput('tabNokkeltallStart')
@@ -77,7 +80,7 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
            
            tabPanel('Brukerveiledning',
                     h4('På Rapporteket kan du finne visualiseringer og oppsummeringer av de fleste variable 
-                    som registreres i registeret. Hold musepekeren over fanen for å se hvilke variable/tema 
+                    som registreres i registeret. Hold musepekeren over en fane for å se hvilke variable/tema 
                     som er visualisert i fanen. 
                   Fanene er i hovedsak organisert ut fra hvordan resultatene er visualisert.'),
                     br(),
@@ -517,7 +520,7 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
   ), #tab Pårørende
   
   
-  tabPanel(p("Abonnement - IKKE AKTIVERT",
+  tabPanel(p("Abonnement",
              title='Bestill automatisk utsending av rapporter på e-post'),
            sidebarLayout(
              sidebarPanel(width = 3,
@@ -568,6 +571,7 @@ server <- function(input, output, session) { #
       
   reshID <- reactive({ifelse(paaServer, as.numeric(rapbase::getUserReshId(session)), 109773)})
   rolle <- reactive({ifelse(paaServer, rapbase::getUserRole(shinySession=session), 'SC')})
+  brukernavn <- reactive({ifelse(paaServer, rapbase::getUserName(shinySession=session), 'tullebukk')})
   #userRole <- reactive({ifelse(onServer, rapbase::getUserRole(session), 'SC')})
   #output$reshID <- renderText({ifelse(paaServer, as.numeric(rapbase::getUserReshId(session)), 105460)}) #evt renderUI
   
@@ -635,11 +639,11 @@ server <- function(input, output, session) { #
   output$mndRapp.pdf <- downloadHandler(
     filename = function(){ paste0('MndRapp', Sys.time(), '.pdf')}, 
     content = function(file){
-      henteSamleRapporter(file, rnwFil="NIRmndRapp.Rnw", 
+      henteSamlerapporter(file, rnwFil="NIRmndRapp.Rnw", 
                           reshID = reshID(), datoFra = startDato)
     }
   )
-
+  
     # output$mndRapp.pdf <- downloadHandler(
   #   filename = function(){ paste0('MndRapp', Sys.time(), '.pdf')}, #'MndRapp.pdf',
   #   content = function(file){
@@ -651,7 +655,7 @@ server <- function(input, output, session) { #
   output$samleRapp.pdf <- downloadHandler(
     filename = function(){ paste0('NIRsamleRapp', Sys.time(), '.pdf')}, 
     content = function(file){
-      henteSamleRapporter(file, rnwFil="NIRSamleRapp.Rnw",
+      henteSamlerapporter(file, rnwFil="NIRSamleRapp.Rnw",
                   reshID = reshID(), datoFra = startDato)
     }
   )
@@ -659,7 +663,7 @@ server <- function(input, output, session) { #
   output$influensaRapp.pdf <- downloadHandler(
     filename = function(){ paste0('NIRinfluensa', Sys.time(), '.pdf')}, 
     content = function(file){
-      henteSamleRapporter(file, rnwFil="NIRinfluensa.Rnw")
+      henteSamlerapporter(file, rnwFil="NIRinfluensa.Rnw")
     }
   )
   
@@ -1027,7 +1031,7 @@ server <- function(input, output, session) { #
       
       
 #------------------ Abonnement ----------------------------------------------
-      ## rekative verdier for å holde rede på endringer som skjer mens
+      ## reaktive verdier for å holde rede på endringer som skjer mens
       ## applikasjonen kjører
       rv <- reactiveValues(
         subscriptionTab = rapbase::makeUserSubscriptionTab(session))
@@ -1065,7 +1069,8 @@ server <- function(input, output, session) { #
         email <- rapbase::getUserEmail(session)
         if (input$subscriptionRep == "Månedsrapport") {
           synopsis <- "Intensiv/Rapporteket: månedsrapport"
-          baseName <- "NIRmndRapp" #Navn på fila
+          rnwFil <- "NIRmndRapp.Rnw" #Navn på fila
+          print(rnwFil)
         }
         #"Månedsrapport", "Samlerapport", "Influensaresultater"
         #NIRSamleRapp.Rnw og NIRinfluensa.Rnw
@@ -1073,11 +1078,12 @@ server <- function(input, output, session) { #
         #   synopsis <- "NORIC/Rapporteket: stentbruk, månedlig"
         #   baseName <- "NORIC_local_monthly_stent"
         # }
-        fun <- "subscriptionLocalMonthlyReps"
-        paramNames <- c("baseName", "reshId", "registryName", "author", "hospitalName", #Endret til reshID
-                        "type")
-        paramValues <- c(baseName, reshId(), localRegistryName, author, hospitalName, 'pdf') #input$subscriptionFileFormat)
         
+        
+        fun <- "abonnement"  #"henteSamlerapporter"
+        paramNames <- c('rnwFil', 'brukernavn', "reshID", "datoFra", 'datoTil')
+        paramValues <- c(rnwFil, brukernavn(), reshID(), startDato, Sys.Date()) #input$subscriptionFileFormat)
+        #abonnement('NIRmndRapp.Rnw')
         
         rapbase::createAutoReport(synopsis = synopsis, package = package,
                                   fun = fun, paramNames = paramNames,

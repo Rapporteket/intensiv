@@ -24,6 +24,7 @@ Suggests:
     testthat, 
     prodlim
 Imports:
+    digest,
     DT,
     kableExtra,
     knitr,
