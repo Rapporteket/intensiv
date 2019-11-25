@@ -724,7 +724,7 @@ server <- function(input, output, session) { #
       output$inklKrit <- renderPlot({
         NIRFigAndeler(RegData=RegData, preprosess = 0, valgtVar='inklKrit',
                       reshID=reshID(), enhetsUtvalg=as.numeric(input$enhetsUtvalg),
-                      datoFra=input$datovalg[1], datoTil=input$datovalg[2], session=session)
+                      datoFra=input$datovalg[1], datoTil=input$datovalg[2]) #, session=session)
       }, height=800, width=800 #height = function() {session$clientData$output_fordelinger_width}
       )
   #})
@@ -734,7 +734,7 @@ server <- function(input, output, session) { #
                                                       reshID=reshID(), enhetsUtvalg=as.numeric(input$enhetsUtvalg),
                                                       datoFra=input$datovalg[1], datoTil=input$datovalg[2],
                                                       minald=as.numeric(input$alder[1]), maxald=as.numeric(input$alder[2]),
-                                                      erMann=as.numeric(input$erMann), session = session)
+                                                      erMann=as.numeric(input$erMann)) #, session = session)
       }, height=800, width=800 #height = function() {session$clientData$output_fordelinger_width}
       )
       
@@ -743,7 +743,7 @@ server <- function(input, output, session) { #
                                         reshID=reshID(), enhetsUtvalg=as.numeric(input$enhetsUtvalg),
                                         datoFra=input$datovalg[1], datoTil=input$datovalg[2],
                                         minald=as.numeric(input$alder[1]), maxald=as.numeric(input$alder[2]),
-                                        erMann=as.numeric(input$erMann), lagFig = 0, session = session)
+                                        erMann=as.numeric(input$erMann), lagFig = 0) #, session = session)
             #NIRFigAndeler(RegData=RegData, preprosess = 0, reshID=109773, enhetsUtvalg=1 ) 
             tab <- lagTabavFig(UtDataFraFig = UtDataFord)
 
