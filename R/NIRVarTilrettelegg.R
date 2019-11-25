@@ -115,6 +115,12 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='an
             tittel <- 'Opphold der pasienten døde innen 30 dager etter innleggelse'
             sortAvtagende <- FALSE
       }
+      if (valgtVar=='dod90d') { #AndelTid,AndelerGrVar
+        RegData$Variabel <- RegData$Dod90
+        varTxt <- 'pasienter som døde'
+        tittel <- 'Opphold der pasienten døde innen 90 dager etter innleggelse'
+        sortAvtagende <- FALSE
+      }
       if (valgtVar=='dod365d') { #AndelTid,AndelerGrVar
         RegData$Variabel <- RegData$Dod365
         varTxt <- 'pasienter som døde'

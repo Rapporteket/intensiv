@@ -8,10 +8,12 @@
 #' @export
 #'
 #'
-NIRRegDataSQL <- function(datoFra = '2011-01-01', datoTil = '2099-01-01',
-                          session='') {
+NIRRegDataSQL <- function(datoFra = '2011-01-01', datoTil = '2099-01-01') { #,session='') {
   
-#	DischargedHospitalStatus,
+  #raplog::repLogger(session = session, 'Hentet alle data fra intensivregisteret')
+
+  
+  #	DischargedHospitalStatus,
   
   query <- paste0('SELECT
 	Bilirubin,
@@ -95,7 +97,7 @@ WHERE cast(DateAdmittedIntensive as date) BETWEEN \'', datoFra, '\' AND \'', dat
 
   RegData <- rapbase::LoadRegData(registryName= "nir", query=query, dbType="mysql")
   
-  raplog::repLogger(session = session, 'Hentet alle data fra intensivregisteret')
+  
   
     return(RegData)
 }

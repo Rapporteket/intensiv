@@ -278,6 +278,7 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                            'Alder under 18år' = 'alder_u18',
                            'Bukleie' = 'bukleie',
                            'Død innen 30 dager' = 'dod30d',
+                           'Død innen 90 dager' = 'dod90d',
                            'Død innen ett år' = 'dod365d',
                            'Døde på intensiv' = 'dodeIntensiv',
                            'Isolasjon av pasient' = 'isolering',
@@ -597,7 +598,7 @@ server <- function(input, output, session) { #
   
 #---------Hente data  
   if (paaServer) {
-    RegData <- NIRRegDataSQL(datoFra='2015-01-01', session = session) #datoFra = datoFra, datoTil = datoTil)
+    RegData <- NIRRegDataSQL(datoFra='2011-01-01') #, session = session) #datoFra = datoFra, datoTil = datoTil)
     PaarorData <- NIRpaarorDataSQL() 
     PaarorDataH <- KobleMedHoved(RegData, PaarorData, alleHovedskjema=F, alleSkjema2=F)
     qInfluensa <- 'SELECT ShNavn, RHF, PatientInRegistryGuid, FormDate,FormStatus, ICD10_1

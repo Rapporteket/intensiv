@@ -184,8 +184,8 @@ minald <- 0 #(standard: 0)
 maxald <- 110	#(standard: 130, må være større enn minald!)
 InnMaate <- '' #0-El, 6-Ak.m, 8-Ak.k, (alle - alt unntatt 0,6,8)
 valgtMaal = 'Med' #'Med' = median. 'Gjsn' = gjennomsnitt. Alt annet gir gjennomsnitt
-datoFra <- '2018-01-01'	# standard: 0	format: YYYY-MM-DD. Kan spesifisere bare første del, eks. YYYY el. YYYY-MM. 
-datoTil <- '2018-12-31'	# standard: 3000
+datoFra <- '2019-01-01'	# standard: 0	format: YYYY-MM-DD. Kan spesifisere bare første del, eks. YYYY el. YYYY-MM. 
+datoTil <- '2019-12-31'	# standard: 3000
 aar <- 0
 dodInt <- 9	# 0-i live, 1 -død, standard: alle (alle andre verdier)
 erMann <- ''	#Kjønn: 0-kvinner, 1-menn, standard: alle (alle andre verdier)
@@ -241,17 +241,18 @@ for (valgtVar in variable) {
 
 #--------------------------------------- AndelGrVar ----------------------------------
 grVar <- 'ShNavn'
-valgtVar <- 'utenforVakttidUt'	#alder_u18', 'alder_over80', 'dod30d', 'dodeIntensiv', 'innMaate', 
-                        #respiratortid, 'respStotte', 'reinn
+valgtVar <- 'liggetidDod'	#alder_u18', 'alder_over80', 'dod30d', 'dodeIntensiv', 'innMaate', 
+                        #liggetidDod, respiratortid, 'respStotte', 'reinn
                         #trakeostomi, trakAapen, respiratortidInv, nyreBeh, ExtendedHemodynamicMonitoring,
                         #ExtendedHemodynamicMonitoringPA, isolering
                         #Nye, aug-18: OrganDonationCompletedStatus, OrganDonationCompletedCirc
 #Ny, okt-18: utenforVakttidInn, utenforVakttidUt
-outfile <- paste0(valgtVar, '_sh.pdf')
-
+outfile <- ''# paste0(valgtVar, '_sh.pdf')
+RegData <- NIRRegDataSQL()
+RegData <- NIRPreprosess(RegData = RegData)
 NIRFigAndelerGrVar(RegData=RegData, valgtVar=valgtVar, minald=minald, maxald=maxald,  datoFra=datoFra, 
                 datoTil=datoTil, aar=0, InnMaate=InnMaate, dodInt=dodInt,erMann=erMann, outfile=outfile, 
-                grType=1, grVar=grVar, hentData=0, preprosess=1, lagFig=1, medKI=1,offData = offData)
+                grType=grType, grVar=grVar, hentData=0, preprosess=1, lagFig=1, medKI=0,offData = offData)
 
 #NIRAndelerGrVar(RegData=RegData, valgtVar=valgtVar, minald=minald, maxald=maxald,  datoFra=datoFra, 
 #                datoTil=datoTil, aar=0, InnMaate=InnMaate, dodInt=dodInt,erMann=erMann, outfile=outfile, 
@@ -498,11 +499,27 @@ table(RegData$PatientTransferredToHospital)[
       which(names(table(RegData$PatientTransferredToHospital)) %in% To[-which(To %in% c(0,Resh))])]
 
 
+#----------------- Sepsispasienter 2017 og 2018
+library(intensiv)
+rm(list=ls())
+RegData <- NIRRegDataSQL(datoFra = '2017-01-01', datoTil = '2018-12-31')
+RegData <- NIRPreprosess(RegData = RegData)
+RegData <- RegData[which(RegData$PrimaryReasonAdmitted == 5), ] #Sepsis
 
+AntSepsis <- dim(RegData)[1]
+Ant30 <- table(RegData$Dod30)
+Andel30 <- paste0(sprintf('%.1f',Ant30/AntSepsis*100), '%')
+Ant90 <- table(RegData$Dod90)
+Andel90 <- paste0(sprintf('%.1f',Ant90/AntSepsis*100), '%')
 
-
-
-
+tab <- rbind(
+  Ant30,
+  Andel30,
+  Ant90,
+  Andel90
+)
+colnames(tab) <- c('Levende', 'Død')
+t(tab)
 
 
 

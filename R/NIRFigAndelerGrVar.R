@@ -121,8 +121,16 @@ if (offData==1) {
       AndelerGr <- c(AndelerGr, AndelHele)
       names(N) <- NIRUtvalg$grTypeTxt
       Ngr <- c(Ngr, N)
-	 }
+}
 
+if (valgtVar %in% c('liggetidDod','respiratortidDod')) {
+  #Kommentar: for liggetid og respiratortid vises antall pasienter og ikke antall liggedøgn for døde
+  #Ngr <-tapply(RegData[, 'DischargedIntensiveStatus'], RegData[ ,grVar],sum, na.rm=T)    #liggetid i døgn, navnene blir litt villedende men enklest å gjøre dette på denne måten 
+  SUMGr <- tapply(RegData[, 'Variabel'], RegData[ ,grVar], sum,na.rm=T)
+  SUMGrHend <- tapply(RegData[, 'Variabel2'], RegData[ ,grVar],sum, na.rm=T)
+  AndelerGr <- SUMGrHend/SUMGr*100
+  AndelHele <- sum(RegData$Variabel2)/sum(RegData$Variabel)*100
+}
 if (sum(which(Ngr < Ngrense))>0) {indGrUt <- as.numeric(which(Ngr<Ngrense))} else {indGrUt <- 0}
 AndelerGr[indGrUt] <- NA #-0.0001
 Ngrtxt <- as.character(Ngr)	#
@@ -139,7 +147,6 @@ Ngr <- Ngr[sortInd]
 #                     '1' = paste0(c(names(Ngr), NIRUtvalg$grTypeTxt)[sortInd], '(',c(Ngrtxt, N)[sortInd], ')')
 #                        )
 andeltxt <- andeltxtUsort[sortInd]
-
 
 N = list(Hoved=N, Rest=0)
 Ngr = list(Hoved=Ngr, Rest=0)
@@ -241,7 +248,7 @@ if (lagFig == 1) {
                   NutvTxt <- length(utvalgTxt)
                   vmarg <- min(1,max(0, strwidth(grtxt, units='figure', cex=cexgr)*0.75))
                   #NB: strwidth oppfører seg ulikt avh. av device...
-                  par('fig'=c(vmarg, 1, 0, 1-0.02*(NutvTxt-1)))	#Har alltid datoutvalg med
+                  par('fig'=c(vmarg, 1, 0, 1-0.02*max(0,(NutvTxt-1))))	#Har alltid datoutvalg med
                   
                   
                   farger <- FigTypUt$farger
