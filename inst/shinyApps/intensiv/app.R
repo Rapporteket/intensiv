@@ -568,7 +568,7 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
 server <- function(input, output, session) { #
   
 #-----------Div serveroppstart------------------  
-  raplog::appLogger(session = session, msg = "Starter intensiv-app")
+  #raplog::appLogger(session = session, msg = "Starter intensiv-app")
       
   reshID <- reactive({ifelse(paaServer, as.numeric(rapbase::getUserReshId(session)), 109773)})
   rolle <- reactive({ifelse(paaServer, rapbase::getUserRole(shinySession=session), 'SC')})
