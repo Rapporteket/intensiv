@@ -36,7 +36,8 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
               regTitle),
   windowTitle = regTitle,
   theme = "rap/bootstrap.css",
-  
+
+  #--------------Startside------------------------------  
   tabPanel(p("Oversiktsside", 
              title= 'Nøkkeltall og samlerapporter'),
            #fluidRow(
@@ -75,36 +76,48 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                            choices = c("Egen enhet"=2, "Hele landet"=0, 
                                        "Egen sykehustype"=4, "Egen region"=7)
                ),
-             tableOutput('tabNokkeltallStart')
+             tableOutput('tabNokkeltallStart'), 
+             br('Se neste fane "Aktivitet" for å se nærmere på nøkkeltall')
            ),
            
            tabPanel('Brukerveiledning',
-                    h4('På Rapporteket kan du finne visualiseringer og oppsummeringer av de fleste variable 
-                    som registreres i registeret. Hold musepekeren over en fane for å se hvilke variable/tema 
-                    som er visualisert i fanen. 
-                  Fanene er i hovedsak organisert ut fra hvordan resultatene er visualisert.'),
+                    h4('å Rapporteket kan du finne visualiseringer og oppsummeringer av de fleste 
+                       variabler som registreres i registeret. Hold musepekeren over en fane for 
+                       å se hvilke variable/tema som er visualisert i fanen.'),
                     br(),
-                    h4(tags$b('Månedsrapport ol.'), 'Vi må huske å skrive noe om hvordan man bestiller 
-                       månedsrapport...!'),
+                    h4(tags$b('Abonnement på rapporter'), 'Dersom du går i fanen «Abonnement» helt 
+                       til høyre kan du bestille leveranse av utvalgte samlerapporter til e-postkassen 
+                       din til faste tider. Du kan laste ned de samme rapportene direkte ved å klikke 
+                       på knappene i venstre marg på denne startsiden.'),
                     br(),
                     h4(tags$b(tags$u('Innhold i de ulike fanene:'))),
-                    h4('I feltet til venstre på hver side kan du velge hvilken variabel du ønsker å se
-                            resultater for. Der kan du også gjøre ulike filtreringer/utvalg av data.'),
-                    h4(tags$b('Aktivitet '), 'viser oversikt over registreringer og aktivitet'),
-                    h4(tags$b('Fordelinger '), 'viser på fordelinger (figur/tabell) av ulike variable.'),
-                    h4(tags$b('Andeler'), ' viser andeler(prosent) en per sykehus og utvikling over tid.
-                            du kan velge hvilken tidsskala du vi se på. Her finner du resultater av typen 
-                            "andel under 80 år" eller "andel opphold hvor pasienten døde".'),
-                    h4(tags$b('Gjennomsnitt'), ' viser gjennomsnittsverdier per sykehus og utvikling over tid.
-                            Du kan velge om du vil se gjennomsnitt eller median. Her finner du resultater som 
-                       "gjennomsnittsalder" eller median respiratortid.'),
-                    h4(tags$b('SMR '), 'viser SMR per sykehus.'),
-                    h4(tags$b('Type opphold'), 'viser en figur med fordeling av oppholdstyper'),
+                    h4('Generelt finner du i hver fane et felt til venstre hvor du kan velge hvilken 
+                       variabel du ønsker å se resultater for. Der kan du også gjøre ulike 
+                       filtreringer/utvalg av data. Du kan også velge om du vil se resultater 
+                       kun fra egen enhet, fra hele landet, eller egen enhet sammenlignet mot for 
+                       eksempel liknende enheter. I underfanene kan du som regel velge om du vil 
+                       se resultatene som figur eller tabell.'),
+                    h4(tags$b('Aktivitet '), 'viser informasjon om antall registreringer og aktivitet 
+                       i avdelingen.'),
+                    h4(tags$b('Fordelinger '), 'viser hvordan verdiene på valgt variabel fordeler seg. 
+                       For eksempel kan du se en fordeling av alder som viser antall pasienter 
+                       i ulike alderskategorier.'),
+                    h4(tags$b('Andeler'), ' viser andeler(prosent) av valgt parameter per sykehus, 
+                       og utvikling av andelen over tid. Du kan velge hvilken tidsskala du vi se på. 
+                       Her finner du resultater av typen "andel under 80 år" eller "andel opphold 
+                       hvor pasienten døde".'),
+                    h4(tags$b('Gjennomsnitt'), ' viser gjennomsnittsverdier for valgt variabel 
+                       per sykehus og utvikling over tid for den samme variabelen. Du kan velge 
+                       om du vil se gjennomsnitt eller median. Her finner du resultater som 
+                       "gjennomsnittsalder" eller "median respiratortid".'),
+                    h4(tags$b('SMR '), 'viser SMR per sykehus. Dette er faktisk dødelighet 
+                       delt på estimert dødelighet ut fra SAPS-skår.'),
+                    h4(tags$b('Type opphold'), 'viser en figur med fordeling av oppholdstyper.'),
                     h4(tags$b('Pasientskjema'), 'viser resultater fra pårørendeundersøkelser 
-                       registrert i skjemaet FS-ICU'),
+                       registrert i skjemaet FS-ICU.'),
                     br(),
                     h4('Gi gjerne innspill til registerledelsen om det er resultater/tabeller/figurer du savner
-                            på Rapporteket-Intensiv')
+                            på Rapporteket-Intensiv.')
                     )
              )#tabset
            )#main
@@ -144,10 +157,11 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
              tabsetPanel(id='ark',
                          tabPanel('Ant. opphold',
                                   h2("Antall opphold per avdeling"),
+                                  h3('ferdigstilte inntil forrige døgn'),
                                   p(em("Velg tidsperiode ved å velge sluttdato i menyen til venstre")),
                                   tableOutput("tabAntOpphSh")
                          ),
-                         tabPanel('Pasientar per år og avd.',
+                         tabPanel('Pasienter per år og avd.',
                                   h2("Antall pasienter ved avdelingene siste 5 år"),
                                   tableOutput("tabAntPasSh5Aar")
                          ),
