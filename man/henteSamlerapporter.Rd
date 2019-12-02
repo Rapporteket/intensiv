@@ -4,11 +4,13 @@
 \alias{henteSamlerapporter}
 \title{Funksjon som produserer rapporten som skal sendes til mottager.}
 \usage{
-henteSamlerapporter(filnavn, rnwFil, reshID = 0, datoFra = startDato,
-  datoTil = Sys.Date())
+henteSamlerapporter(filnavn, rnwFil, reshID = 0, datoFra = Sys.Date() -
+  180, datoTil = Sys.Date())
 }
 \arguments{
 \item{filnavn}{sdf}
+
+\item{rnwFil}{Navn på fila som skal kjøres. Angis uten ending (\emph{dvs uten  ".Rnw"})}
 
 \item{reshID}{Aktuell reshid}
 

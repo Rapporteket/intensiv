@@ -154,7 +154,7 @@ NIRFigAndelTid <- function(RegData, valgtVar='alder_u18', datoFra='2011-01-01', 
             #-----------Figur---------------------------------------
             #Hvis for f? observasjoner..
             if (N$Hoved < 10 | (medSml ==1 & N$Rest<10)) {
-                  FigTypUt <- figtype(outfile)
+                  FigTypUt <- rapFigurer::figtype(outfile)
                   farger <- FigTypUt$farger
                   plot.new()
                   title(main=paste0('variabel: ', valgtVar))	#, line=-6)

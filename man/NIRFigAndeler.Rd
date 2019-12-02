@@ -9,7 +9,7 @@ NIRFigAndeler(RegData = 0, valgtVar = "alder",
   overfPas = 0, minald = 0, maxald = 110, erMann = "",
   InnMaate = "", dodInt = "", outfile = "", grType = 99,
   preprosess = 1, hentData = 0, reshID = 0, enhetsUtvalg = 0,
-  lagFig = 1, session = "")
+  lagFig = 1)
 }
 \arguments{
 \item{RegData}{En dataramme med alle nødvendige variabler fra registeret}

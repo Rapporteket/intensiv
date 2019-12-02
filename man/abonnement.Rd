@@ -11,6 +11,8 @@ abonnement(rnwFil, brukernavn = "tullebukk", reshID = 0,
   datoFra = Sys.Date() - 180, datoTil = Sys.Date())
 }
 \arguments{
+\item{rnwFil}{Navn på fila som skal kjøres. Angis MED filending (\emph{dvs "filnavn.Rnw"})}
+
 \item{reshID}{Aktuell reshid}
 
 \item{datoFra}{dato}

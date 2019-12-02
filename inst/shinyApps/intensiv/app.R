@@ -211,8 +211,8 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                            'Liggetid' = 'liggetid',
                            'Nas-skår (sykepleierakt.)' = 'Nas24',
                            'NEMS-skår (ressursbruk)' = 'NEMS24',
-                           'Nyrebeh., type' = 'nyreBeh',
-                           'Nyrebeh., varighet' = 'nyreBehTid',
+                           'Nyreerstattende beh., type' = 'nyreBeh',
+                           'Nyreerstattende beh., varighet' = 'nyreBehTid',
                            'Primærårsak' = 'PrimaryReasonAdmitted',
                            'Respiratortid' = 'respiratortid',
                            'Respiratortid, ikke-invasiv' = 'respiratortidNonInv',
@@ -291,26 +291,27 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                choices = c('Alder minst 80 år' = 'alder_over80',
                            'Alder under 18år' = 'alder_u18',
                            'Bukleie' = 'bukleie',
-                           'Død innen 30 dager' = 'dod30d',
-                           'Død innen 90 dager' = 'dod90d',
-                           'Død innen ett år' = 'dod365d',
+                           'Døde innen 30 dager' = 'dod30d',
+                           'Døde innen 90 dager' = 'dod90d',
+                           'Døde innen ett år' = 'dod365d',
                            'Døde på intensiv' = 'dodeIntensiv',
+                           'Invasiv respiratortid < 2,5 døgn, m/overførte' = 'respiratortidInvMoverf',
+                           'Invasiv respiratortid < 2,5 døgn, u/overførte' = 'respiratortidInvUoverf',
                            'Isolasjon av pasient' = 'isolering',
                            'Liggetid, døde' = 'liggetidDod',
                            'Menn' = 'erMann',
-                           'Nyrebehandling' = 'nyreBeh',
+                           'Nyreerstattende behandling' = 'nyreBeh',
+                           'Organdonorer, av døde' = 'OrganDonationCompletedStatus',
+                           'Organdonorer, av alle med opphevet intrakran. sirk.' = 'OrganDonationCompletedCirc',
                            'Reinnleggelse' = 'reinn',
                            'Respiratorstøtte' = 'respStotte',
-                           'Respiratortid, inv. < 2,5d m/overf.' = 'respiratortidInvMoverf',
-                           'Respiratortid, inv. < 2,5d u/overf.' = 'respiratortidInvUoverf',
                            'Respiratortid, døde' = 'respiratortidDod',
                            'Utenfor vakttid, innlagt' = 'utenforVakttidInn',
                            'Utenfor vakttid, utskrevet' = 'utenforVakttidUt',
                            'Utvidet hemodyn. overvåkning' = 'ExtendedHemodynamicMonitoring',
                            'Trakeostomi' = 'trakeostomi',
-                           'Trakeostomi, åpen' = 'trakAapen',
-                           'Døde som ble donorer' = 'OrganDonationCompletedStatus',
-                           'Donorer, opphevet intrakran. sirkulajon' = 'OrganDonationCompletedCirc')
+                           'Trakeostomi, åpen' = 'trakAapen'
+                           )
              ), 
              dateRangeInput(inputId = 'datovalgAndelGrVar', start = startDato, end = idag,
                             label = "Tidsperiode", separator="t.o.m.", language="nb"),
@@ -373,13 +374,13 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
              selectInput(inputId = "valgtVarGjsn", label="Velg variabel",
                          choices = c('Alder' = 'alder',
                                      'Liggetid' = 'liggetid',
-                                     'Nas-skår (sykepleierakt.)' = 'Nas24',
+                                     'Nas-skår (sykepleieraktivitet)' = 'Nas24',
                                      'NEMS-skår (ressursbruk)' = 'NEMS24',
                                      'NEMS-skår per opphold' = 'NEMS',
                                      'Respiratortid' = 'respiratortid',
                                      'Respiratortid, ikke-invasiv' = 'respiratortidNonInv',
-                                     'Respiratortid, invasiv m/overf.' = 'respiratortidInvMoverf',
-                                     'Respiratortid, invasiv u/overf.' = 'respiratortidInvUoverf',
+                                     'Respiratortid, invasiv m/overførte' = 'respiratortidInvMoverf',
+                                     'Respiratortid, invasiv u/overførte' = 'respiratortidInvUoverf',
                                      'SAPSII-skår (alvorlighetsgrad)' = 'SAPSII'
                          )
              ),
@@ -582,7 +583,7 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
 server <- function(input, output, session) { #
   
 #-----------Div serveroppstart------------------  
-  #raplog::appLogger(session = session, msg = "Starter intensiv-app")
+  raplog::appLogger(session = session, msg = "Starter intensiv-app")
       
   reshID <- reactive({ifelse(paaServer, as.numeric(rapbase::getUserReshId(session)), 109773)})
   rolle <- reactive({ifelse(paaServer, rapbase::getUserRole(shinySession=session), 'SC')})
@@ -684,7 +685,10 @@ server <- function(input, output, session) { #
   
 #------------ Aktivitet (/Tabeller) --------
  # observe({
- 
+  #TESTING
+  # tab <- t(tabNokkeltall(RegData=RegData, tidsenhet='Mnd',
+  #                        enhetsUtvalg=0, reshID=109773))
+           
    output$tabNokkeltallStart <- function() {
     tab <- t(tabNokkeltall(RegData=RegData, tidsenhet='Mnd',
                            enhetsUtvalg=as.numeric(input$enhetsNivaaStart), reshID=reshID()))
@@ -758,7 +762,8 @@ server <- function(input, output, session) { #
                                         datoFra=input$datovalg[1], datoTil=input$datovalg[2],
                                         minald=as.numeric(input$alder[1]), maxald=as.numeric(input$alder[2]),
                                         erMann=as.numeric(input$erMann), lagFig = 0) #, session = session)
-            #NIRFigAndeler(RegData=RegData, preprosess = 0, reshID=109773, enhetsUtvalg=1 ) 
+            #RegData <- NIRRegDataSQL(datoFra = '2018-01-01')
+            #UtDataFord <- NIRFigAndeler(RegData=RegData, valgtVar='bukleie', reshID=109773, enhetsUtvalg=0 ) 
             tab <- lagTabavFig(UtDataFraFig = UtDataFord)
 
             output$tittelFord <- renderUI({

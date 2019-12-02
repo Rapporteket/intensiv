@@ -123,7 +123,7 @@ lageTulleData <- function(RegData, varBort='', antSh=26, antObs=20000) {
 }
 
 #' Legge til indikator for intervensjon, pårørendeoppfølging
-#' @param RegData
+#' @param RegData Dataramme
 #' @param startDatoIntervensjon startdato for intervensjon. Foreslått verdi '2016-01-01' basert 
 #' på de første studiene som ble gjort med pårørendeskjema
 #' @param sluttDatoIntervensjon sluttdato for 
@@ -163,7 +163,7 @@ KobleMedHoved <- function(HovedSkjema, Skjema2, alleHovedskjema=F, alleSkjema2=F
     
 #' Funksjon som produserer rapporten som skal sendes til mottager.
 #'
-#' @param rnwFil Navn på fila som skal kjøres. Angis uten ending (\emph{dvs uten  ".Rnw")
+#' @param rnwFil Navn på fila som skal kjøres. Angis uten ending (\emph{dvs uten  ".Rnw"})
 #' @param reshID Aktuell reshid
 #' @param filnavn sdf  
 #' @param datoFra dato
@@ -194,7 +194,7 @@ henteSamlerapporter <- function(filnavn, rnwFil, reshID=0,
 #' has the effect of providing the parameters as class
 #' \emph{list}. Verdier gis inn som listeparametre 
 #'
-#' @param rnwFil Navn på fila som skal kjøres. Angis uten ending (\emph{dvs uten  ".Rnw")
+#' @param rnwFil Navn på fila som skal kjøres. Angis MED filending (\emph{dvs "filnavn.Rnw"})
 #' @param reshID Aktuell reshid
 #' @param datoFra dato
 #' @param parametre Liste med valgfrie parametre, avhengig av type rapport

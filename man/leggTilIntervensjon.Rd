@@ -8,6 +8,8 @@ leggTilIntervensjon(RegData, startDatoIntervensjon = "2016-10-01",
   sluttDatoIntervensjon = Sys.Date())
 }
 \arguments{
+\item{RegData}{Dataramme}
+
 \item{startDatoIntervensjon}{startdato for intervensjon. Foreslått verdi '2016-01-01' basert 
 på de første studiene som ble gjort med pårørendeskjema}
 

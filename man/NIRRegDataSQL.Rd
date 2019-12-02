@@ -4,8 +4,7 @@
 \alias{NIRRegDataSQL}
 \title{Henter data registrert for Intensiv}
 \usage{
-NIRRegDataSQL(datoFra = "2011-01-01", datoTil = "2099-01-01",
-  session = "")
+NIRRegDataSQL(datoFra = "2011-01-01", datoTil = "2099-01-01")
 }
 \arguments{
 \item{datoFra}{Tidligste dato i utvalget (vises alltid i figuren).}

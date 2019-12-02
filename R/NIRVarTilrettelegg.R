@@ -26,6 +26,7 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='an
       
       "%i%" <- intersect
       
+      
       #----------- Figurparametre ------------------------------
       cexgr <- 1	#Kan endres for enkeltvariable
       retn <- 'V'		#Vertikal som standard. 'H' angis evt. for enkeltvariable
@@ -51,9 +52,6 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='an
       variable <- 'Ingen'
       #deltittel <- ''
       RegData$Variabel <- 0
-      
-      tittel <- '' #I AndelerGrVar og GjsnGrVar genereres tittel i beregningsfunksjonen
-      
       
       
       
@@ -127,21 +125,28 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='an
         tittel <- 'Opphold der pasienten døde innen ett år etter innleggelse'
         sortAvtagende <- FALSE
       }
+      
       if (valgtVar=='bukleie') { #fordeling, AndelTid,AndelerGrVar
-        #Kun pasienter med invasiv støtte
-        ind <- which(RegData$InvasivVentilation>0) %i%  which(RegData$InnDato>=as.Date('2015-01-01', tz='UTC'))
-        RegData <- RegData[ind,]
-        indBukleie <- which(RegData$Bukleie>-1)
+        #Kun pasienter med invasiv støtte'
+         # RegData <- NIRRegDataSQL()
+         # RegData <- NIRPreprosess(RegData)
+         # RegData <- RegData[which(RegData$ReshId == 109773),]
+        # '%i%' <- intersect
+        indVentil <-  which(RegData$InvasivVentilation>0) %i% 
+          which(RegData$InnDato>=as.Date('2015-01-01', tz='UTC'))
+        #indPotBuk <- which(RegData$Bukleie >-1)
+        RegData <- RegData[indVentil, ] #'%i%' indPotBuk
+        indBukleie <- which(RegData$Bukleie>0)
         if (figurtype == 'andeler') {	#Fordelingsfigur
           RegData <- RegData[indBukleie, ]
-          tittel <- 'Antall ganger pasienter i bukleie er snudd'
-          gr <- c(0:6,100)	
+          tittel <- 'Opphold der pasienten har vært i bukleie'
+          gr <- c(1:11,100)	
           RegData$VariabelGr <- cut(RegData$Bukleie, breaks=gr, include.lowest=TRUE, right=FALSE)	
-          grtxt <- c(gr[1:6], '6+')
-          xAkseTxt <- 'Antall ganger snudd'
+          grtxt <- c(gr[1:10], '10+')
+          xAkseTxt <- 'Antall ganger i bukleie'
         }
         if (figurtype %in% c('andelTid', 'andelGrVar')) {
-          tittel <- 'Pasienter med invasiv ventilasjon som har ligget i bukleie'
+          tittel <- 'Opphold der pasienten har vært i bukleie' # - dobbeltsjekk!
         RegData$Variabel[indBukleie] <- 1
         varTxt <- 'opphold i bukleie'
         }
@@ -170,14 +175,14 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='an
                   RegData <- RegData[ which(RegData$ExtendedHemodynamicMonitoring %in% 1:3), ]             
                   RegData$Variabel[which(RegData$ExtendedHemodynamicMonitoring %in% 2:3)] <- 1
                   }
-            #xAkseTxt <- 'Innkomstmåte'
+            #xAkseTxt <- ''
       }
       if (valgtVar=='ExtendedHemodynamicMonitoringPA') { #andelerGrVar
             tittel <- 'Utvidet hemodynamisk monitorering, PA'   
             RegData <- RegData[which((RegData$ExtendedHemodynamicMonitoring %in% 2:3)), ]             
             RegData$Variabel[which(RegData$ExtendedHemodynamicMonitoring == 3)] <- 1
             grtxt <- c('Ikke svart', 'Nei','Piccokateter o.l', 'Pulmonaliskateter') 
-            #xAkseTxt <- 'Innkomstmåte'
+            #xAkseTxt <- ''
       }
       
       if (valgtVar=='isolering') { #Andeler, andelerGrVar
@@ -212,7 +217,7 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='an
             gr <- c(0,6,8)
             RegData <- RegData[which((RegData$InnMaate %in% gr)), ]  #Kun gyldige verdier: 0,6,8          
             RegData$VariabelGr <- factor(RegData$InnMaate, levels=gr)
-            grtxt <- c('Elektivt','Akutt med.', 'Akutt kir.') 
+            grtxt <- c('Planlagt operasjon','Akutt non-operativ', 'Akutt operasjon') 
             xAkseTxt <- 'Innkomstmåte'
       }
       
@@ -315,6 +320,7 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='an
       }
       
       if (valgtVar=='reinn') { #AndelGrVar, AndelTid
+        
             #Andel reinnlagte kun hvor dette er registrert. #Tidligere: Ja=1, nei=2, ukjent=9
             #Endret til: -1 = Velg verdi, 1 = Ja, 2 = Nei, 3 = Ukjent
             
@@ -478,7 +484,7 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='an
             RegData <- RegData[which(RegData$Trakeostomi %in% 2:3) 
                                      %i%  which(RegData$InnDato >= as.Date('2016-01-01', tz='UTC')), ] #Innført ila 2015
             retn <- 'H'
-            tittel <- 'Andel opphold med trakeostomi lagt under oppholdet'
+            tittel <- 'Andel trakeostomier gjort åpent/operativt'
             RegData$Variabel[which(RegData$Trakeostomi == 3)] <- 1
             cexgr <- 0.9
       } 
@@ -619,7 +625,7 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='an
                           'MovedPatientToAnotherIntensivDuring24Hours', 'VasoactiveInfusion' )
             #retn <- 'H'
             grtxt <- c('Liggetid over 24t', 'Mekanisk \nrespirasjonsstøtte', 'Død innen 24t',  'Overflyttet innen 24t', 
-                       'Kontinuerlig \nvasoaktiv infusjon')
+                       'Infusjon av medikamenter for \n å endre hemodynamikk/sirkulasjon')
             ind01 <- which(RegData[ ,variable] != -1, arr.ind = T) #Alle ja/nei
             ind1 <- which(RegData[ ,variable] == 1, arr.ind=T) #Ja i alle variable
             RegData[ ,variable] <- NA
