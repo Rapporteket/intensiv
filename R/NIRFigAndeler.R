@@ -174,7 +174,6 @@ NIRFigAndeler  <- function(RegData=0, valgtVar='alder', datoFra='2011-01-01', da
                                 paste0(min(N$Rest),'-',max(N$Rest)))
       } else {
             Nfig <- N}
-
       grtxt2 <- paste0(sprintf('%.1f',AggVerdier$Hoved), '%') #paste0('(', sprintf('%.1f',AggVerdier$Hoved), '%)')
       
       # grtxt2 <- paste0(paste0('(', sprintf('%.1f',Utdata$AggVerdier$Hoved), '%)'),
@@ -192,7 +191,9 @@ NIRFigAndeler  <- function(RegData=0, valgtVar='alder', datoFra='2011-01-01', da
       KImaal <- NIRVarSpes$KImaal
       fargepalett <- NIRUtvalg$fargepalett
       
-      FigDataParam <- list(AggVerdier=AggVerdier, N=Nfig, 
+      FigDataParam <- list(AggVerdier=AggVerdier, 
+                           Nfig=Nfig,
+                           N=N, 
                            Ngr=Ngr,	
                            KImaal <- NIRVarSpes$KImaal,
                            grtxt2=grtxt2, 

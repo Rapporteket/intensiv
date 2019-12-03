@@ -25,6 +25,19 @@ setwd('C:/ResultattjenesteGIT/intensiv/inst/')
 setwd('/home/rstudio/intensiv/inst') 
 reshID=706078 #Tromsø med int: 601302, Ullevål Kir int: 109773, 102090 Ahus, 112044 Haukeland, 102673 Ålesund Med, Kristiansund: 706078 
 
+RegData <- NIRPreprosess(NIRRegDataSQL(datoFra = '2019-01-01'))
+#ind <- intersect(which(RegData$CerebralCirculationAbolishedReasonForNo>-1))
+#gr <- 0:8
+#RegData <- RegData[which(RegData$CerebralCirculationAbolishedReasonForNo %in% gr),] 
+Utdata <- NIRFigAndeler(RegData=RegData, valgtVar='CerebralCirculationAbolishedReasonForNo',
+                        reshID = 107717)
+Utdata$Nfig$Hoved
+Utdata$N
+#RegData <- RegData[ind,]
+aggVar  <- list(RegData$ShType) #RegData$CerebralCirculationAbolishedReasonForNo, 
+aggregate(x=RegData$ReshId, by=aggVar, FUN=length)
+
+
 #load(paste0("A:/Intensiv/NIRdata10000.Rdata")) #RegDataTEST, 21.mai 2018
 load(paste0("A:/Intensiv/MainFormDataContract2019-01-30.Rdata")) #RegData 2018-06-18
 #knit('NIRmndRapp.Rnw', encoding = 'UTF-8')
@@ -219,7 +232,7 @@ valgtVar <- 'inklKrit'	#'alder', 'liggetid', 'respiratortid',  'SAPSII', 'NEMS24
                               #spesTiltak
                               #Nye, aug-18: CerebralCirculationAbolishedReasonForNo, OrganDonationCompletedReasonForNoStatus
                               #Nye: 'utenforVakttidInn'
-Utdata <- NIRFigAndeler(RegData=RegData, valgtVar='inklKrit', datoFra=datoFra, datoTil=datoTil,
+Utdata <- NIRFigAndeler(RegData=RegData, valgtVar='CerebralCirculationAbolishedReasonForNo', datoFra=datoFra, datoTil=datoTil,
               #minald=minald, maxald=maxald,   InnMaate=InnMaate, dodInt=dodInt,erMann=erMann, 
               outfile='', reshID=109773, enhetsUtvalg=6, lagFig=1)
 
