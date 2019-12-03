@@ -1077,15 +1077,18 @@ server <- function(input, output, session) { #
         if (input$subscriptionRep == "Månedsrapport") {
           synopsis <- "Intensiv/Rapporteket: månedsrapport"
           rnwFil <- "NIRmndRapp.Rnw" #Navn på fila
-          print(rnwFil)
+          #print(rnwFil)
         }
-        #"Månedsrapport", "Samlerapport", "Influensaresultater"
-        #NIRSamleRapp.Rnw og NIRinfluensa.Rnw
-        # if (input$subscriptionRep == "Stentbruk, månedlig") {
-        #   synopsis <- "NORIC/Rapporteket: stentbruk, månedlig"
-        #   baseName <- "NORIC_local_monthly_stent"
-        # }
-        
+        if (input$subscriptionRep == "Samlerapport") {
+          synopsis <- "Intensiv/Rapporteket: Samlerapport"
+          rnwFil <- "NIRSamleRapp.Rnw" #Navn på fila
+          #print(rnwFil)
+        }
+        if (input$subscriptionRep == "Influensaresultater") {
+          synopsis <- "Intensiv/Rapporteket: influensaresultater"
+          rnwFil <- "NIRinfluensa.Rnw" #Navn på fila
+          #print(rnwFil)
+        }
         
         fun <- "abonnement"  #"henteSamlerapporter"
         paramNames <- c('rnwFil', 'brukernavn', "reshID", "datoFra", 'datoTil')
