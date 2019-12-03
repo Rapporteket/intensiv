@@ -213,6 +213,7 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                            'NEMS-skår (ressursbruk)' = 'NEMS24',
                            'Nyreerstattende beh., type' = 'nyreBeh',
                            'Nyreerstattende beh., varighet' = 'nyreBehTid',
+                           'Potensielle donorer, årsak ikke påvist opph. sirkulasjon' = 'CerebralCirculationAbolishedReasonForNo',
                            'Primærårsak' = 'PrimaryReasonAdmitted',
                            'Respiratortid' = 'respiratortid',
                            'Respiratortid, ikke-invasiv' = 'respiratortidNonInv',
@@ -220,7 +221,6 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                            'Respiratortid, invasiv u/overf.' = 'respiratortidInvUoverf',
                            'SAPSII-skår (alvorlighet av sykd.)' = 'SAPSII',
                            'Spesielle tiltak' = 'spesTiltak',
-                           'Potensielle donorer, årsak ikke påvist opph. sirkulasjon' = 'CerebralCirculationAbolishedReasonForNo',
                            'Årsak, ikke donasjon ved opphevet intrakraniell sirk.' = 'OrganDonationCompletedReasonForNoStatus'
                )
              ),
@@ -375,10 +375,10 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                          choices = c('Alder' = 'alder',
                                      'Liggetid' = 'liggetid',
                                      'Nas-skår (sykepleieraktivitet)' = 'Nas24',
-                                     'NEMS-skår (ressursbruk)' = 'NEMS24',
+                                     'NEMS-skår per døgn' = 'NEMS24',
                                      'NEMS-skår per opphold' = 'NEMS',
-                                     'Respiratortid' = 'respiratortid',
-                                     'Respiratortid, ikke-invasiv' = 'respiratortidNonInv',
+                                     'Respiratortid, invasiv og non-invasiv' = 'respiratortid',
+                                     'Respiratortid, non-invasiv' = 'respiratortidNonInv',
                                      'Respiratortid, invasiv m/overførte' = 'respiratortidInvMoverf',
                                      'Respiratortid, invasiv u/overførte' = 'respiratortidInvUoverf',
                                      'SAPSII-skår (alvorlighetsgrad)' = 'SAPSII'

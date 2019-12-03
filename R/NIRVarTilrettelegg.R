@@ -55,26 +55,6 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='an
       
       
       
-      # if (valgtVar == 'OmsorgTot') {  #gjsnGrVar
-      #       RegData$Variabel  <- RegData$OmsorgTot
-      #       tittel <- c('Totalskår m.h.t. omsorg')
-      # } 
-      # if (valgtVar == 'OmsorgTotEndr') {  #gjsnGrVar
-      #       RegData$Variabel  <- RegData$OmsorgTot
-      #       tittel <- c('Endring i totalskår m.h.t. omsorg')
-      # } 
-      
-      if (valgtVar=='InnMaate') {
-            tittel <- 'Fordeling av Innkomstmåte'   
-            indMed <- which((RegData$InnMaate %in% c(0,6,8)))  
-            RegData <- RegData[indMed, ]             
-            gr <- c(0,6,8)
-            RegData$VariabelGr <- factor(RegData$InnMaate, levels=gr)
-            grtxt <- c('Elektivt','Akutt med.', 'Akutt kir.') #InnMaate - 0-El, 6-Ak.m, 8-Ak.k, standard: alle (alt unntatt 0,6,8)
-            subtxt <- 'Innkomstmåte'
-      }
-      
-      
       #------------------------------------- 
       
         
@@ -140,9 +120,9 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='an
         if (figurtype == 'andeler') {	#Fordelingsfigur
           RegData <- RegData[indBukleie, ]
           tittel <- 'Opphold der pasienten har vært i bukleie'
-          gr <- c(1:11,100)	
+          gr <- c(1:10,100)	
           RegData$VariabelGr <- cut(RegData$Bukleie, breaks=gr, include.lowest=TRUE, right=FALSE)	
-          grtxt <- c(gr[1:10], '10+')
+          grtxt <- c(gr[1:9], '10+')
           xAkseTxt <- 'Antall ganger i bukleie'
         }
         if (figurtype %in% c('andelTid', 'andelGrVar')) {
@@ -220,7 +200,7 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='an
             grtxt <- c('Planlagt operasjon','Akutt non-operativ', 'Akutt operasjon') 
             xAkseTxt <- 'Innkomstmåte'
       }
-      
+
       
       if (valgtVar == 'liggetid') { #Andeler #GjsnGrVar
             #Liggetid bare >0
@@ -583,14 +563,6 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='an
       
       #---------------KATEGORISKE
       
-      if (valgtVar=='InnMaate') { #andeler
-            tittel <- 'Fordeling av Innkomstmåte'   
-            gr <- c(0,6,8)
-            RegData <- RegData[ which((RegData$InnMaate %in% gr)), ]             
-            RegData$VariabelGr <- factor(RegData$InnMaate, levels=gr)
-            grtxt <- c('Elektivt','Akutt med.', 'Akutt kir.') #InnMaate - 0-El, 6-Ak.m, 8-Ak.k, standard: alle (alt unntatt 0,6,8)
-            xAkseTxt <- 'Innkomstmåte'
-      }
       if (valgtVar == 'PrimaryReasonAdmitted') { #Andeler 
             #                       1:Respiratorisk svikt, 2:Sirk./kardiovaskulær svikt, 3:Gastroenterologisk svikt, 
             #                       4:Nevrologisk svikt, 5:Sepsis, 6:Skade/traume, 7:Metabolsk/intoksikasjon, 8:Hematologisk svikt, 
@@ -625,7 +597,7 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='an
                           'MovedPatientToAnotherIntensivDuring24Hours', 'VasoactiveInfusion' )
             #retn <- 'H'
             grtxt <- c('Liggetid over 24t', 'Mekanisk \nrespirasjonsstøtte', 'Død innen 24t',  'Overflyttet innen 24t', 
-                       'Infusjon av medikamenter for \n å endre hemodynamikk/sirkulasjon')
+                       'Infusjon av medikamenter for å \n endre hemodynamikk/sirkulasjon')
             ind01 <- which(RegData[ ,variable] != -1, arr.ind = T) #Alle ja/nei
             ind1 <- which(RegData[ ,variable] == 1, arr.ind=T) #Ja i alle variable
             RegData[ ,variable] <- NA

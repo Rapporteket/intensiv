@@ -42,7 +42,7 @@ NIRFigInnMaate <- function(RegData, valgtVar='InnMaate', datoFra='2010-01-01', d
       RegData <- RegData[which(RegData$Variabel %in% gr), ]
 	RegData$VariabelGr <- factor(RegData$Variabel, levels=gr)
 	tittel <-'Innkomstmåte'
-      grtxt <- c('Elektivt','Akutt med.', 'Akutt kir.') #InnMaate - 0-El, 6-Ak.m, 8-Ak.k, standard: alle (alt unntatt 0,6,8)
+      grtxt <- c('Planlagt operasjon','Akutt non-operativ', 'Akutt operasjon') #InnMaate - 0-El, 6-Ak.m, 8-Ak.k, standard: alle (alt unntatt 0,6,8)
       subtxt <- 'Innkomstmåte'
 
 #------- Gjøre utvalg
@@ -116,11 +116,10 @@ tittelpos <- 1
 			main='', font.main=1, xlab='', ylim=c(ymin, 1.05*ymax+2), las=1, cex.names=xkr) 	# ylim=c(0.05, 1.24)*length(Nsh),xlim=c(0,ymax), cex.axis=0.9, cex.names=0.8*xkr,
 	ShNavnSort <- c('alle i visninga', '', ShNavnSort) #NIRUtvalg$grTypeTxt
 	NshtxtSort<- c(paste0('N=', N), '', NshtxtSort)
-		legend(x=50, y=1.05*ymax+2, c('Elektivt','Akutt med.', 'Akutt kir.'), xjust=0.5, yjust=0.5,	#inset=0.01,# max(pos)*1.01 x=50, y=ymax,
+		legend(x=50, y=1.05*ymax+2, c('Planlagt operasjon','Akutt non-operativ', 'Akutt operasjon'), xjust=0.5, yjust=0.5,	#inset=0.01,# max(pos)*1.01 x=50, y=ymax,
 			fill=farger[1:3], border=farger[1:3], ncol=3, bty='n')	#cex=0.9,  ncol=6,
 	xmax <- 100
 	mtext('(sortert på andel "Akutt med.")', line=0.5, cex=1)
-
 
 	mtext(at=pos, ShNavnSort, side=2, las=1, cex=cexShNavn*xkr, adj=1, line=0.25)	#Sykehusnavn
 	text(x=0.005*xmax, y=pos, NshtxtSort, las=1, cex=xkr, adj=0, col=farger[4], lwd=3)	#c(Nshtxt[sortInd],''),

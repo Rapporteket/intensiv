@@ -94,6 +94,10 @@ SorterOgNavngiTidsEnhet <- function(RegData, tidsenhet='Aar', tab=0) {
       #a <- factor(c(1:10,3,2,4,3,7,9,4), levels=1:11, labels = letters[1:11])
 #table(a)
 
+#      måned og år som faktor i riktig rekkefølge og med alle måneder inkludert
+#      RegData$MndAar <- factor(format(RegData $HovedDato, format='%b-%y'), 
+      #levels = format(seq(as.Date(datoFra),as.Date(datoTil), by="month"), "%b-%y"))
+      
       #RegData$TidsEnhet <- RegData$TidsEnhetSort
       #levels(RegData$TidsEnhet) <- tidtxt
       UtData <- list('RegData'=RegData, 'tidtxt'=tidtxt)
