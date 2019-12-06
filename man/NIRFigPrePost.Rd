@@ -7,7 +7,7 @@
 NIRFigPrePost(RegData, valgtVar, datoFra = "2012-04-01",
   datoTil = "2050-12-31", minald = 0, maxald = 110, erMann = "",
   diagnose = "", innl4t = "", NIHSSinn = "", outfile = "", reshID,
-  enhetsUtvalg = 1, preprosess = 1, hentData = 0)
+  enhetsUtvalg = 1, preprosess = 1, hentData = 0, ...)
 }
 \arguments{
 \item{RegData}{En dataramme med alle nødvendige variabler fra registeret}

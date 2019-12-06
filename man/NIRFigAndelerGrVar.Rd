@@ -9,7 +9,7 @@ NIRFigAndelerGrVar(RegData, valgtVar = "dod30d",
   minald = 0, maxald = 110, aldGr = 0, medKI = 0, Ngrense = 10,
   grType = 99, grVar = "ShNavn", InnMaate = 99, dodInt = "",
   erMann = "", hentData = 0, preprosess = 1, outfile = "",
-  lagFig = 1, offData = 0)
+  lagFig = 1, offData = 0, ...)
 }
 \arguments{
 \item{RegData}{En dataramme med alle nødvendige variabler fra registeret}

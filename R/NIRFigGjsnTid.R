@@ -42,8 +42,12 @@
 #' @export
 NIRFigGjsnTid <- function(RegData, valgtVar='alder', datoFra='2011-01-01', datoTil='3000-12-31', tidsenhet='Aar',
                     minald=0, maxald=110, erMann='', reshID=0, InnMaate='', dodInt='', tittel=1, 
-                    outfile='',enhetsUtvalg=0, valgtMaal='Gjsn', preprosess=1, hentData=0){
+                    outfile='',enhetsUtvalg=0, valgtMaal='Gjsn', preprosess=1, hentData=0,...){
   
+  
+  if ("session" %in% names(list(...))) {
+    raplog::repLogger(session = list(...)[["session"]], msg = paste0("GjsnTid: ", valgtVar))
+  }
   if (hentData == 1) {		
     RegData <- NIRRegDataSQL(datoFra, datoTil)
   }

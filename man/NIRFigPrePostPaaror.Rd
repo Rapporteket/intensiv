@@ -10,7 +10,7 @@ NIRFigPrePostPaaror(RegData = 0, valgtVar, datoFra = "2011-01-01",
   sluttDatoIntervensjon = Sys.Date(), minald = 0, maxald = 110,
   erMann = "", InnMaate = "", dodInt = "", outfile = "",
   grType = 99, preprosess = 1, hentData = 0, reshID = 0,
-  enhetsUtvalg = 0, lagFig = 1)
+  enhetsUtvalg = 0, lagFig = 1, ...)
 }
 \arguments{
 \item{RegData}{En dataramme med alle nødvendige variabler fra registeret}

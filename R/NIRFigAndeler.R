@@ -96,10 +96,11 @@
 
 NIRFigAndeler  <- function(RegData=0, valgtVar='alder', datoFra='2011-01-01', datoTil='3000-12-31', aar=0, 
                            overfPas=0, minald=0, maxald=110, erMann='',InnMaate='', dodInt='',outfile='', 
-                           grType=99,  preprosess=1, hentData=0, reshID=0, enhetsUtvalg=0, lagFig=1) { #, session='')	{
-       #test
-   #raplog::repLogger(session = session, paste0('Fordelingsfigur: ',valgtVar))
-   
+                           grType=99,  preprosess=1, hentData=0, reshID=0, enhetsUtvalg=0, lagFig=1, ...) { #, session='')	{
+    
+   if ("session" %in% names(list(...))) {
+      raplog::repLogger(session = list(...)[["session"]], msg = paste0('Fordelingsfigur: ',valgtVar))
+   }
       if (hentData == 1) {		
             RegData <- NIRRegDataSQL(datoFra, datoTil) #minald=0, maxald=110, erMann='',InnMaate='', dodInt=''
       }

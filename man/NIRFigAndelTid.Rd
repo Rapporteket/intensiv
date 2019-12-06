@@ -8,7 +8,7 @@ NIRFigAndelTid(RegData, valgtVar = "alder_u18", datoFra = "2011-01-01",
   datoTil = Sys.Date(), tidsenhet = "Aar", minald = 0,
   maxald = 110, erMann = "", InnMaate = "", dodInt = "",
   reshID = 0, outfile = "", enhetsUtvalg = 0, preprosess = 1,
-  hentData = 0, lagFig = 1, offData = 0)
+  hentData = 0, lagFig = 1, offData = 0, ...)
 }
 \arguments{
 \item{RegData}{En dataramme med alle nødvendige variabler fra registeret}

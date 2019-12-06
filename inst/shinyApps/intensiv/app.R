@@ -516,8 +516,8 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
              dateRangeInput(inputId = 'datovalgPaarorFord', start = "2015-01-01", end = idag,
                             label = "Tidsperiode", separator="t.o.m.", language="nb"),
              selectInput(inputId = "erMannPaarorFord", label="Kjønn, pasient",
-                         choices = c("Begge"=2, "Menn"=1, "Kvinner"=0)),
-             h3('Utvalg vedrørende den pårørende (alder, kjønn, relasjon,...)?')
+                         choices = c("Begge"=2, "Menn"=1, "Kvinner"=0))
+             #h3('Utvalg vedrørende den pårørende (alder, kjønn, relasjon,...)?')
            ),
            
            mainPanel(
@@ -742,7 +742,7 @@ server <- function(input, output, session) { #
       output$inklKrit <- renderPlot({
         NIRFigAndeler(RegData=RegData, preprosess = 0, valgtVar='inklKrit',
                       reshID=reshID(), enhetsUtvalg=as.numeric(input$enhetsUtvalg),
-                      datoFra=input$datovalg[1], datoTil=input$datovalg[2]) #, session=session)
+                      datoFra=input$datovalg[1], datoTil=input$datovalg[2], session=session)
       }, height=800, width=800 #height = function() {session$clientData$output_fordelinger_width}
       )
   #})
@@ -752,7 +752,7 @@ server <- function(input, output, session) { #
                                                       reshID=reshID(), enhetsUtvalg=as.numeric(input$enhetsUtvalg),
                                                       datoFra=input$datovalg[1], datoTil=input$datovalg[2],
                                                       minald=as.numeric(input$alder[1]), maxald=as.numeric(input$alder[2]),
-                                                      erMann=as.numeric(input$erMann)) #, session = session)
+                                                      erMann=as.numeric(input$erMann), session = session)
       }, height=800, width=800 #height = function() {session$clientData$output_fordelinger_width}
       )
       
@@ -761,7 +761,7 @@ server <- function(input, output, session) { #
                                         reshID=reshID(), enhetsUtvalg=as.numeric(input$enhetsUtvalg),
                                         datoFra=input$datovalg[1], datoTil=input$datovalg[2],
                                         minald=as.numeric(input$alder[1]), maxald=as.numeric(input$alder[2]),
-                                        erMann=as.numeric(input$erMann), lagFig = 0) #, session = session)
+                                        erMann=as.numeric(input$erMann), lagFig = 0, session = session)
             #RegData <- NIRRegDataSQL(datoFra = '2018-01-01')
             #UtDataFord <- NIRFigAndeler(RegData=RegData, valgtVar='bukleie', reshID=109773, enhetsUtvalg=0 ) 
             tab <- lagTabavFig(UtDataFraFig = UtDataFord)
@@ -799,7 +799,7 @@ server <- function(input, output, session) { #
             NIRFigAndelerGrVar(RegData=RegData, preprosess = 0, valgtVar=input$valgtVarAndelGrVar,
                                datoFra=input$datovalgAndelGrVar[1], datoTil=input$datovalgAndelGrVar[2],
                                minald=as.numeric(input$alderAndelGrVar[1]), maxald=as.numeric(input$alderAndelGrVar[2]),
-                               erMann=as.numeric(input$erMannAndelGrVar))
+                               erMann=as.numeric(input$erMannAndelGrVar), session=session)
       }, height = 800, width=700 #height = function() {session$clientData$output_andelerGrVarFig_width} #})
       )
       
@@ -811,7 +811,8 @@ server <- function(input, output, session) { #
                                  minald=as.numeric(input$alderAndelGrVar[1]), maxald=as.numeric(input$alderAndelGrVar[2]),
                                  erMann=as.numeric(input$erMannAndelGrVar),
                                  tidsenhet = input$tidsenhetAndelTid,
-                                 enhetsUtvalg = input$enhetsUtvalgAndelTid)
+                                 enhetsUtvalg = input$enhetsUtvalgAndelTid,
+                                 session=session)
             }, height = 300, width = 1000
             )
             
@@ -824,7 +825,7 @@ server <- function(input, output, session) { #
                                                erMann=as.numeric(input$erMannAndelGrVar),
                                                tidsenhet = input$tidsenhetAndelTid,
                                                enhetsUtvalg = input$enhetsUtvalgAndelTid, 
-                                               lagFig=0)
+                                               lagFig=0, session=session)
                   tabAndelTid <- lagTabavFig(UtDataFraFig = AndelerTid)
 
 
@@ -852,7 +853,8 @@ server <- function(input, output, session) { #
                   AndelerShus <- NIRFigAndelerGrVar(RegData=RegData, preprosess = 0, valgtVar=input$valgtVarAndelGrVar,
                                                     datoFra=input$datovalgAndelGrVar[1], datoTil=input$datovalgAndelGrVar[2],
                                                     minald=as.numeric(input$alderAndelGrVar[1]), maxald=as.numeric(input$alderAndelGrVar[2]),
-                                                    erMann=as.numeric(input$erMannAndelGrVar, lagFig = 0))
+                                                    erMann=as.numeric(input$erMannAndelGrVar), 
+                                                    lagFig = 0, session=session)
                   tabAndelerShus <- cbind(Antall=AndelerShus$Ngr$Hoved,
                                           Andeler = AndelerShus$AggVerdier$Hoved)
                   
@@ -903,7 +905,8 @@ server <- function(input, output, session) { #
                           erMann=as.numeric(input$erMannGjsn), 
                           valgtMaal = input$sentralmaal,
                           tidsenhet = input$tidsenhetGjsn,
-                          enhetsUtvalg = input$enhetsUtvalgGjsn)
+                          enhetsUtvalg = input$enhetsUtvalgGjsn,
+                          session=session)
       }, height=400, width = 1200
       )
       
@@ -948,7 +951,8 @@ server <- function(input, output, session) { #
                                        erMann=as.numeric(input$erMannGjsn), 
                                        valgtMaal = input$sentralmaal,
                                        tidsenhet = input$tidsenhetGjsn,
-                                       enhetsUtvalg = input$enhetsUtvalgGjsn) #, lagFig=0)
+                                       enhetsUtvalg = input$enhetsUtvalgGjsn,
+                                       session = session) #, lagFig=0)
         #dataUtGjsnTid <- NIRFigGjsnTid(RegData=RegData, preprosess = 0, reshID=reshID, datoFra = '2019-01-01')
         tabGjsnTid <- t(dataUtGjsnTid$AggVerdier)
         grtxt <-dataUtGjsnTid$grtxt
@@ -1022,7 +1026,8 @@ server <- function(input, output, session) { #
         NIRFigInnMaate(RegData=RegData, preprosess=0, valgtVar='InnMaate', 
                        datoFra=input$datovalgInnMaate[1], datoTil=input$datovalgInnMaate[2],
                        minald=as.numeric(input$alderInnMaate[1]), maxald=as.numeric(input$alderInnMaate[2]),
-                       erMann=as.numeric(input$erMannInnMaate))
+                       erMann=as.numeric(input$erMannInnMaate),
+                       session=session)
       }, height = function() {2.2*session$clientData$output_innMaate_height},
       width = function() {0.7*session$clientData$output_innMaate_width}) #, height=900, width=700)
       
@@ -1031,7 +1036,7 @@ server <- function(input, output, session) { #
         NIRFigPrePostPaaror(RegData=PaarorData, preprosess = 0, valgtVar=input$valgtVarPaarorFord,
                             startDatoIntervensjon = input$startDatoIntervensjon,
                             datoFra=input$datovalgPaarorFord[1], datoTil=input$datovalgPaarorFord[2],
-                            erMann=as.numeric(input$erMannPaarorFord)
+                            erMann=as.numeric(input$erMannPaarorFord,session=session)
         ), width=800, height = 800 #execOnResize=TRUE, 
       )
     

@@ -8,9 +8,13 @@
 #'
 #' @export
 #'
-NIRFigGjsnPaaror  <- function(RegData, valgtVar, valgtMaal='Gjsn', prePost=2, grVar='ShNavn',outfile='')	
+NIRFigGjsnPaaror  <- function(RegData, valgtVar, valgtMaal='Gjsn', prePost=2, grVar='ShNavn',outfile='',...)	
 {
       
+   if ("session" %in% names(list(...))) {
+      raplog::repLogger(session = list(...)[["session"]], msg = paste0("GjsnPaaror: ", valgtVar))
+   }
+   
       #RegData <- NIRPreprosess(RegData=RegData) #Gjort tidl
       RegData <- RegData[RegData$PrePost==prePost,]
       #-----------------Tilrettelegge variable--------------------------   

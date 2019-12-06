@@ -16,9 +16,12 @@
 #' @export
 NIRFigPrePost  <- function(RegData, valgtVar, datoFra='2012-04-01', datoTil='2050-12-31', 
 		minald=0, maxald=110, erMann='', diagnose='', innl4t='', NIHSSinn='', outfile='', 
-		reshID, enhetsUtvalg=1, preprosess=1, hentData=0)	
+		reshID, enhetsUtvalg=1, preprosess=1, hentData=0,...)	
 {
-
+  
+  if ("session" %in% names(list(...))) {
+    raplog::repLogger(session = list(...)[["session"]], msg = paste0("NIRFigPrePost: ", valgtVar))
+  } 
 
   if (hentData == 1) {		
     RegData <- NIRRegDataSQL(datoFra, datoTil)

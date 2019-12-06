@@ -30,9 +30,12 @@
 #' @export
 NIRFigAndelTid <- function(RegData, valgtVar='alder_u18', datoFra='2011-01-01', datoTil=Sys.Date(), tidsenhet='Aar',
                         minald=0, maxald=110, erMann='', InnMaate='', dodInt='', reshID=0, outfile='', 
-                        enhetsUtvalg=0, preprosess=1, hentData=0, lagFig=1, offData=0) {
+                        enhetsUtvalg=0, preprosess=1, hentData=0, lagFig=1, offData=0,...) {
       
-      if (hentData == 1) {		
+   if ("session" %in% names(list(...))) {
+      raplog::repLogger(session = list(...)[["session"]], msg = paste0("AndelTid: ", valgtVar))
+   }
+   if (hentData == 1) {		
             RegData <- NIRRegDataSQL(datoFra, datoTil)
       }
       if (offData == 1) {
