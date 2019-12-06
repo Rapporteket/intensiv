@@ -84,10 +84,11 @@ NIRFigAndelTid <- function(RegData, valgtVar='alder_u18', datoFra='2011-01-01', 
             ind <- list(Hoved = 1:dim(RegData)[1], Rest = NULL)
       }
       RegData <- NIRUtvalg$RegData
-      
+      Ngrense <-ifelse(valgtVar %in% c('OrganDonationCompletedStatus', 'OrganDonationCompletedCirc'),
+                       0,10)
       #------------------------Klargjøre tidsenhet--------------
       N <- list(Hoved = dim(RegData)[1], Rest=0)
-      if (N$Hoved>9) {
+      if (N$Hoved>Ngrense) {
             RegDataFunk <- SorterOgNavngiTidsEnhet(RegData=RegData, tidsenhet = tidsenhet)
             RegData <- RegDataFunk$RegData
             #tidtxt <- RegDataFunk$tidtxt
@@ -153,7 +154,7 @@ NIRFigAndelTid <- function(RegData, valgtVar='alder_u18', datoFra='2011-01-01', 
             
             #-----------Figur---------------------------------------
             #Hvis for f? observasjoner..
-            if (N$Hoved < 10 | (medSml ==1 & N$Rest<10)) {
+            if (N$Hoved < Ngrense | (medSml ==1 & N$Rest < Ngrense)) {
                   FigTypUt <- rapFigurer::figtype(outfile)
                   farger <- FigTypUt$farger
                   plot.new()

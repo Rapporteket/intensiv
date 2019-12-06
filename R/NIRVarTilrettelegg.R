@@ -126,7 +126,7 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='an
           xAkseTxt <- 'Antall ganger i bukleie'
         }
         if (figurtype %in% c('andelTid', 'andelGrVar')) {
-          tittel <- 'Opphold der pasienten har vært i bukleie' # - dobbeltsjekk!
+          tittel <- 'Opphold med invasiv resp.støtte der pasienten er snudd til bukleie' 
         RegData$Variabel[indBukleie] <- 1
         varTxt <- 'opphold i bukleie'
         }

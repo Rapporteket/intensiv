@@ -1,6 +1,6 @@
 #Til analysebok:
 #Liggetid og respiratortid for pasienter som ikke er overført mellom sykehus.
-
+ 
 #Alle off.farger:
 
       #c6dbef #6baed6 #4292c6 #2171b5 #084594 #000059 #FF7260 #4D4D4D #737373 #A6A6A6 #DADADA
@@ -27,11 +27,11 @@ reshID=706078 #Tromsø med int: 601302, Ullevål Kir int: 109773, 102090 Ahus, 1
 
 RegData <- NIRPreprosess(NIRRegDataSQL(datoFra = '2019-01-01'))
 #ind <- intersect(which(RegData$CerebralCirculationAbolishedReasonForNo>-1))
-#gr <- 0:8
-#RegData <- RegData[which(RegData$CerebralCirculationAbolishedReasonForNo %in% gr),] 
-Utdata <- NIRFigAndeler(RegData=RegData, valgtVar='CerebralCirculationAbolishedReasonForNo',
-                        reshID = 107717)
-Utdata$Nfig$Hoved
+gr <- 0:8
+RegData <- RegData[which(RegData$CerebralCirculationAbolishedReasonForNo %in% gr),] 
+Utdata <- NIRFigAndeler(RegData=RegData, valgtVar='CerebralCirculationAbolishedReasonForNo', #CerebralCirculationAbolishedReasonForNo
+                        reshID = 107717, enhetsUtvalg = 7)
+Utdata$Nfig
 Utdata$N
 #RegData <- RegData[ind,]
 aggVar  <- list(RegData$ShType) #RegData$CerebralCirculationAbolishedReasonForNo, 

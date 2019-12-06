@@ -54,7 +54,6 @@ NIRFigAndelerGrVar <- function(RegData, valgtVar='dod30d', datoFra='2010-01-01',
             
       }
       if (offData == 1) {
-            ##DENNE MÅ ENDRES NÅR VI FÅR DATA I PAKKEN!!
             filnavn <-  paste0('NIRdata01', valgtVar)
             #assign('NIRdata01',filnavn)
             utvalgsInfo <- RegData$utvalgsInfo
@@ -114,6 +113,8 @@ if (dim(RegData)[1] >= 0) {
 	
 N <- dim(RegData)[1]
 #if(N > 0) {Ngr <- table(RegData[ ,grVar])} else {Ngr <- 0}
+if (valgtVar %in% c('OrganDonationCompletedStatus', 'OrganDonationCompletedCirc')) {
+  Ngrense <- 1}
 AntGr <- length(which(Ngr >= Ngrense))	#length(which(Midt>0))
 AndelHele <- sum(RegData$Variabel==1)/N*100	
 AndelerGr <- as.vector(table(RegData[which(RegData$Variabel==1) , grVar])/Ngr*100)	#round(100*Nvar/Ngr,2)
