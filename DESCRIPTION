@@ -1,8 +1,8 @@
 Package: intensiv
 Type: Package
 Title: Resultatrapporter for Intensivregisteret
-Version: 1.3.1
-Date: 2019-03-01
+Version: 2.0.0
+Date: 2019-12-11
 Author: Authors@R: c(person("Olsen", "Lena", email =
     "Lena.Ringstad.Olsen@unn.no", role = c("cre", "aut")), person("Edvardsen",
     "Are", email = "are.edvardsen@helse- nord.no", role = c("aut")))
@@ -13,12 +13,12 @@ License: GPL2
 Encoding: UTF-8
 LazyData: false
 Depends:
-    R (>= 3.6.0),
+    R (>= 3.5.0),
     rapbase (>= 1.0.0)
 Remotes: 
-      Rapporteket/rapbase@rel,
-      Rapporteket/rapFigurer@master,
-      Rapporteket/raplog@rel
+      Rapporteket/rapbase,
+      Rapporteket/rapFigurer,
+      Rapporteket/raplog
 Suggests:
     rmarkdown,
     testthat, 

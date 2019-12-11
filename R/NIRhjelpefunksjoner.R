@@ -182,8 +182,8 @@ henteSamlerapporter <- function(filnavn, rnwFil, reshID=0,
     tmpFile <- paste0('tmp',rnwFil)
     src <- normalizePath(system.file(rnwFil, package=Rpakke))
     # gå til tempdir. Har ikke skriverettigheter i arbeidskatalog
-    owd <- setwd(tempdir())
-    #on.exit(setwd(owd))
+    #owd <- 
+      setwd(tempdir())
     file.copy(src, tmpFile, overwrite = TRUE)
     
     knitr::knit2pdf(tmpFile)
@@ -221,10 +221,11 @@ abonnement <- function(rnwFil, brukernavn='tullebukk', reshID=0,
   tmpFile <- paste0(filbase, Sys.Date(),'_',digest::digest(brukernavn), '.Rnw')
   src <- normalizePath(system.file(rnwFil, package='intensiv'))
   # gå til tempdir. Har ikke skriverettigheter i arbeidskatalog
-  owd <- setwd(tempdir())
-  #on.exit(setwd(owd))
-  file.copy(src, tmpFile, overwrite = TRUE)
-  knitr::knit2pdf(input=tmpFile) #, output = paste0(filbase, digest::digest(brukernavn),'.tex'))
+  #owd <- 
+  setwd(tempdir())
+  dir <- getwd()
+  file.copy(dir, tmpFile, overwrite = TRUE)
+  knitr::knit2pdf(input=tmpFile) 
   
   #gc() #Opprydning gc-"garbage collection"
   utfil <- paste0(owd, '/', substr(tmpFile, 1, nchar(tmpFile)-3), 'pdf')
