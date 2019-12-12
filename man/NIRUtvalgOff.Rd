@@ -4,8 +4,8 @@
 \alias{NIRUtvalgOff}
 \title{Funksjon som gjør utvalg av anonymiserte data, returnerer det filtrerte datasettet og utvalgsteksten.}
 \usage{
-NIRUtvalgOff(RegData, aldGr = 0, erMann = "", InnMaate = "", aar = 0,
-  grType = 99, fargepalett = "BlaaOff")
+NIRUtvalgOff(RegData, aldGr = 0, erMann = "", InnMaate = "",
+  aar = 0, grType = 99, fargepalett = "BlaaOff")
 }
 \arguments{
 \item{RegData}{En dataramme med alle nødvendige variabler fra registeret}

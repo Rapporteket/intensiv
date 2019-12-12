@@ -60,9 +60,10 @@ tabBelegg <- function(RegData, tidsenhet='Aar', datoTil, enhetsUtvalg=0, reshID=
 #' @section tabAntOpphShMnd antall opphold siste X (antMnd) mnd
 #' @rdname NIRtabeller
 #' @export
-tabAntOpphShMnd <- function(RegData, datoTil, antMnd=6){
+tabAntOpphShMnd <- function(RegData, datoTil=Sys.Date(), datoFra='Ikke angitt', antMnd=6){
       #RegData må inneholde DateAdmittedIntensive, DateDischargedIntensive 
-      datoFra <- floor_date(as.Date(datoTil)%m-% months(antMnd, abbreviate = T), 'month') #as.Date(paste0(as.numeric(substr(datoTil,1,4))-1, substr(datoTil,5,8), '01'), tz='UTC')
+  if (datoFra == 'Ikke angitt') {
+      datoFra <- lubridate::floor_date(as.Date(datoTil)%m-% months(antMnd, abbreviate = T), 'month')} #as.Date(paste0(as.numeric(substr(datoTil,1,4))-1, substr(datoTil,5,8), '01'), tz='UTC')
       aggVar <-  c('ShNavn', 'InnDato')
       RegDataDum <- RegData[RegData$InnDato <= as.Date(datoTil, tz='UTC')
                               & RegData$InnDato > as.Date(datoFra, tz='UTC'), aggVar]
@@ -148,10 +149,11 @@ finnDblReg <- function(RegData, datoTil=Sys.Date(), reshID=0, pasientID = 'Pasie
                             #c(pasientID,'Innleggelsestidspunkt', "SkjemaGUID")]
       if (dim(tabDblRaa)[1] == 0) {
             tabDbl <- 'Ingen dobbeltregistreringar'
-      } else {#tabDbl <- xtable::xtable(tabDblRaa)}
-            #funker: tabDbl <- xtable(as.matrix(tabDblRaa,dim(tabDblRaa)[1], dim(tabDblRaa)[2] ))
-            tabDbl <- tabDblRaa}
-      #print(paste('Dim RegDATA: ',  dim(RegData), min(RegData$InnDato)))
+      } else {
+        test <- as.matrix(tabDblRaa,dim(tabDblRaa)[1], dim(tabDblRaa)[2] )
+        tabDbl <- xtable::xtable(test, row.names=NA)
+            #tabDbl <- tabDblRaa
+            }
       return(tabDbl)
 }
 
@@ -172,8 +174,9 @@ tabNokkeltall <- function(RegData, tidsenhet='Mnd', datoTil=Sys.Date(), enhetsUt
       indRespt <- which(RegData$respiratortid>0)
       indSAPS <- which(RegData$SAPSII > 0)
       indNEMS <- which( (RegData$liggetid>=1) & (RegData$NEMS>1))
-      RegData <- FinnReinnleggelser(RegData=RegData, PasientID = 'PasientID')
-      indReinn <- intersect(which(RegData$InnDato >= as.Date('2016-01-01', tz='UTC')), which(RegData$Overf==1))
+      RegDataReinn <- NIRVarTilrettelegg(RegData=RegData, valgtVar = 'reinn', figurtype = 'andelGrVar')$RegData
+      #RegData <- FinnReinnleggelser(RegData=RegData, PasientID = 'PasientID')
+      #indReinn <- intersect(which(RegData$InnDato >= as.Date('2016-01-01', tz='UTC')), which(RegData$Overf==1))
       ind1708 <- union(which(RegData$DateDischargedIntensive$hour<8), which(RegData$DateDischargedIntensive$hour>=17))
       RegData$Ut1708 <- 0
       RegData$Ut1708[ind1708]<-1
@@ -184,16 +187,22 @@ tabNokkeltall <- function(RegData, tidsenhet='Mnd', datoTil=Sys.Date(), enhetsUt
                                              FUN=function(x) length(unique(x))),	
             'Antall intensivdøgn' = round(as.numeric(tapply(RegData$liggetid, RegData$TidsEnhet, sum, na.rm=T)),0),
             'Liggetid (median)' = tapply(RegData$liggetid[indLigget], RegData$TidsEnhet[indLigget], FUN=median, na.rm=T),
+            'Liggetid (totalt)' = tapply(RegData$liggetid[indLigget], RegData$TidsEnhet[indLigget], FUN=sum, na.rm=T),
             'Respirator-\nstøtte (%)' = tapply(RegData$respiratortid>0, RegData$TidsEnhet, 
                                             FUN=function(x) sum(x, na.rm=T)/length(x)*100),
             'Respiratortid (median)' = tapply(RegData$respiratortid[indRespt], RegData$TidsEnhet[indRespt], 
                                               FUN=median, na.rm=T),
+            'Respiratortid (totalt)' = tapply(RegData$respiratortid[indRespt], RegData$TidsEnhet[indRespt], 
+                                              FUN=sum, na.rm=T),
             'SAPS II (median)' = tapply(RegData$SAPSII[indSAPS], RegData$TidsEnhet[indSAPS], FUN=median, na.rm=T),
             'NEMS/opph. (median)' = tapply(RegData$NEMS[indNEMS], 
                                                RegData$TidsEnhet[indNEMS], FUN=median, na.rm=T),
+            'NEMS (totalt)' = tapply(RegData$NEMS[indNEMS], 
+                                           RegData$TidsEnhet[indNEMS], FUN=sum, na.rm=T),
             'Døde (%)' = tapply((RegData$DischargedIntensiveStatus==1), RegData$TidsEnhet, 
                                 FUN=function(x) sum(x, na.rm=T)/length(x)*100),
-            'Reinnleggelser, \n<72t (%)' = tapply(RegData$Reinn==1, RegData$TidsEnhet, 
+            'Reinnleggelser, \n<72t (%)' = tapply(RegDataReinn$Reinn==1, RegDataReinn$TidsEnhet,
+              #tapply(RegData$Reinn[indReinn]==1, RegData$TidsEnhet[indReinn], 
                                              FUN=function(x) sum(x, na.rm=T)/length(x)*100),
             'Utskrevet \n kl 17-08 (%)' = tapply(RegData$Ut1708, RegData$TidsEnhet, 
                                            FUN=function(x) sum(x, na.rm=T)/length(x)*100)

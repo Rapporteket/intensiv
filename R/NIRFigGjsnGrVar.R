@@ -35,9 +35,11 @@
 NIRFigGjsnGrVar <- function(RegData, valgtVar, preprosess=1, hentData=0, valgtMaal='Gjsn', 
                   minald=0, maxald=110, datoFra='2011-01-01', datoTil='3000-01-01', aar=0,
                   grType=99, InnMaate=99, dodInt='', erMann='', grVar='ShNavn', medKI=1, 
-                  lagFig=1, outfile='') {
+                  lagFig=1, outfile='',...) {
       
-      
+  if ("session" %in% names(list(...))) {
+    raplog::repLogger(session = list(...)[["session"]], msg = paste0("AndelGrVar: ", valgtVar))
+  }     
 if (hentData == 1) {		
   RegData <- NIRRegDataSQL(datoFra, datoTil)
 }
@@ -221,7 +223,7 @@ if (lagFig == 1) {
                   #|(grVar=='' & length(which(RegData$ReshId == reshID))<5 & enhetsUtvalg %in% c(1,3))) 
             {
                   #-----------Figur---------------------------------------
-                  FigTypUt <-figtype(outfile)  #FigTypUt <- figtype(outfile)
+                  FigTypUt <-rapFigurer::figtype(outfile)  #FigTypUt <- rapFigurer::figtype(outfile)
                   farger <- FigTypUt$farger
                   plot.new()
                   title(tittel)	#, line=-6)
@@ -237,7 +239,7 @@ if (lagFig == 1) {
                   #Plottspesifikke parametre:
                   #Høyde må avhenge av antall grupper
                   hoyde <- ifelse(length(AggVerdier$Hoved)>20, 3*800, 3*600)
-                  FigTypUt <- figtype(outfile, height=hoyde, fargepalett=fargepalett)	
+                  FigTypUt <- rapFigurer::figtype(outfile, height=hoyde, fargepalett=fargepalett)	
                   #Tilpasse marger for å kunne skrive utvalgsteksten
                   NutvTxt <- length(utvalgTxt)
                   vmarg <- min(1,max(0, strwidth(grtxt, units='figure', cex=cexgr)*0.75))

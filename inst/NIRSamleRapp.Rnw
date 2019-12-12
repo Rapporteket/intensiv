@@ -144,7 +144,10 @@ datoFra <- '2018-01-01'
 fraAar <- '2018'
 datoFraNorsk <- format.Date(datoFra, format='%d.%m%.%Y')
 if (!exists('NIRdata')){
-      NIRdata <- NIRRegDataSQL(datoFra = datoFra)
+  if (exists('RegData')) {
+    NIRdata <- RegData
+  } else {
+      NIRdata <- NIRRegDataSQL(datoFra = datoFra)}
 }
 @
 

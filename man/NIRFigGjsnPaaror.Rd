@@ -5,7 +5,7 @@
 \title{Funksjon for å tilrettelegge variable for beregning.}
 \usage{
 NIRFigGjsnPaaror(RegData, valgtVar, valgtMaal = "Gjsn", prePost = 2,
-  grVar = "ShNavn", outfile = "")
+  grVar = "ShNavn", outfile = "", ...)
 }
 \arguments{
 \item{RegData}{En dataramme med alle nødvendige variabler fra registeret}

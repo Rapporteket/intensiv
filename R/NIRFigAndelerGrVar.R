@@ -43,18 +43,19 @@
 NIRFigAndelerGrVar <- function(RegData, valgtVar='dod30d', datoFra='2010-01-01', datoTil='3000-01-01', aar=0, 
                             minald=0, maxald=110, aldGr=0, medKI=0, Ngrense=10,
                             grType=99, grVar='ShNavn', InnMaate=99, dodInt='', erMann='', hentData=0,
-                            preprosess=1, outfile='', lagFig=1, offData=0)
+                            preprosess=1, outfile='', lagFig=1, offData=0,...){
                             #KImaal = NA, utvalgsInfo = "", tittel = "", sortAvtagende=TRUE,) 
       
+  if ("session" %in% names(list(...))) {
+    raplog::repLogger(session = list(...)[["session"]], msg = paste0("FigAndelerGrVar: ", valgtVar))
+  }  
       
-      
-{
+
       if (hentData == 1) {		
             RegData <- NIRRegDataSQL(datoFra, datoTil)
             
       }
       if (offData == 1) {
-            ##DENNE MÅ ENDRES NÅR VI FÅR DATA I PAKKEN!!
             filnavn <-  paste0('NIRdata01', valgtVar)
             #assign('NIRdata01',filnavn)
             utvalgsInfo <- RegData$utvalgsInfo
@@ -114,6 +115,8 @@ if (dim(RegData)[1] >= 0) {
 	
 N <- dim(RegData)[1]
 #if(N > 0) {Ngr <- table(RegData[ ,grVar])} else {Ngr <- 0}
+if (valgtVar %in% c('OrganDonationCompletedStatus', 'OrganDonationCompletedCirc')) {
+  Ngrense <- 1}
 AntGr <- length(which(Ngr >= Ngrense))	#length(which(Midt>0))
 AndelHele <- sum(RegData$Variabel==1)/N*100	
 AndelerGr <- as.vector(table(RegData[which(RegData$Variabel==1) , grVar])/Ngr*100)	#round(100*Nvar/Ngr,2)
@@ -121,8 +124,16 @@ if (offData==1) {
       AndelerGr <- c(AndelerGr, AndelHele)
       names(N) <- NIRUtvalg$grTypeTxt
       Ngr <- c(Ngr, N)
-	 }
+}
 
+if (valgtVar %in% c('liggetidDod','respiratortidDod')) {
+  #Kommentar: for liggetid og respiratortid vises antall pasienter og ikke antall liggedøgn for døde
+  #Ngr <-tapply(RegData[, 'DischargedIntensiveStatus'], RegData[ ,grVar],sum, na.rm=T)    #liggetid i døgn, navnene blir litt villedende men enklest å gjøre dette på denne måten 
+  SUMGr <- tapply(RegData[, 'Variabel'], RegData[ ,grVar], sum,na.rm=T)
+  SUMGrHend <- tapply(RegData[, 'Variabel2'], RegData[ ,grVar],sum, na.rm=T)
+  AndelerGr <- SUMGrHend/SUMGr*100
+  AndelHele <- sum(RegData$Variabel2)/sum(RegData$Variabel)*100
+}
 if (sum(which(Ngr < Ngrense))>0) {indGrUt <- as.numeric(which(Ngr<Ngrense))} else {indGrUt <- 0}
 AndelerGr[indGrUt] <- NA #-0.0001
 Ngrtxt <- as.character(Ngr)	#
@@ -139,7 +150,6 @@ Ngr <- Ngr[sortInd]
 #                     '1' = paste0(c(names(Ngr), NIRUtvalg$grTypeTxt)[sortInd], '(',c(Ngrtxt, N)[sortInd], ')')
 #                        )
 andeltxt <- andeltxtUsort[sortInd]
-
 
 N = list(Hoved=N, Rest=0)
 Ngr = list(Hoved=Ngr, Rest=0)
@@ -221,7 +231,7 @@ if (lagFig == 1) {
                   #|(grVar=='' & length(which(RegData$ReshId == reshID))<5 & enhetsUtvalg %in% c(1,3))) 
             {
                   #-----------Figur---------------------------------------
-                  FigTypUt <-figtype(outfile)  #FigTypUt <- figtype(outfile)
+                  FigTypUt <-rapFigurer::figtype(outfile)  #FigTypUt <- figtype(outfile)
                   farger <- FigTypUt$farger
                   plot.new()
                   title(tittel)	#, line=-6)
@@ -236,12 +246,12 @@ if (lagFig == 1) {
                   #Plottspesifikke parametre:
                   #Høyde må avhenge av antall grupper
                   hoyde <- ifelse(length(AggVerdier$Hoved)>20, 3*800, 3*600)
-                  FigTypUt <- figtype(outfile, height=hoyde, fargepalett=fargepalett)	
+                  FigTypUt <- rapFigurer::figtype(outfile, height=hoyde, fargepalett=fargepalett)	
                   #Tilpasse marger for å kunne skrive utvalgsteksten
                   NutvTxt <- length(utvalgTxt)
                   vmarg <- min(1,max(0, strwidth(grtxt, units='figure', cex=cexgr)*0.75))
                   #NB: strwidth oppfører seg ulikt avh. av device...
-                  par('fig'=c(vmarg, 1, 0, 1-0.02*(NutvTxt-1)))	#Har alltid datoutvalg med
+                  par('fig'=c(vmarg, 1, 0, 1-0.02*max(0,(NutvTxt-1))))	#Har alltid datoutvalg med
                   
                   
                   farger <- FigTypUt$farger

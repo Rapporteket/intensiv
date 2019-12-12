@@ -8,12 +8,10 @@
 #' @export
 #'
 #'
-NIRpaarorDataSQL <- function(datoFra = '2015-01-01', datoTil = '2099-01-01') {
+NIRpaarorDataSQL <- function(datoFra = '2015-12-01', datoTil = Sys.Date()) {
       
-      registryName <- "nir"
-      dbType <- "mysql"
       
-varHoved <- c("M.SkjemaGUID 
+varHoved <- c("UPPER(M.SkjemaGUID) AS SkjemaGUID
       , M.DateAdmittedIntensive 
       , M.DaysAdmittedIntensiv
       , M.Respirator
@@ -100,7 +98,7 @@ varPaaror <- 'Q.SkjemaGUID
 --       , Q.Kommentar
 --       , Q.Personalet
 , Q.ReshId
-, Q.HovedskjemaGUID
+, UPPER(Q.HovedskjemaGUID) AS HovedskjemaGUID
 , Q.FormTypeId
 , Q.UnitId
 , Q.RHF
@@ -129,10 +127,14 @@ varPaaror <- 'Q.SkjemaGUID
                       varPaaror,
                       ' FROM QuestionaryFormDataContract Q
 INNER JOIN  MainFormDataContract M
-ON Q.HovedskjemaGUID = M.SkjemaGUID 
+ON Q.HovedskjemaGUID = M.SkjemaGUID
 WHERE cast(DateAdmittedIntensive as date) BETWEEN \'', datoFra, '\' AND \'', datoTil, '\'')
 #UPPER(Q.HovedskjemaGUID) = UPPER(M.SkjemaGUID)
-      RegData <- rapbase::LoadRegData(registryName, query, dbType)
-      
+
+      query <- paste0('SELECT ',
+                      varPaaror,
+                      ' FROM QuestionaryFormDataContract Q')
+
+      RegData <- rapbase::LoadRegData(registryName="nir", query=query, dbType="mysql")
       return(RegData)
 }

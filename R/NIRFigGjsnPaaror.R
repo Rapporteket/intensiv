@@ -8,9 +8,13 @@
 #'
 #' @export
 #'
-NIRFigGjsnPaaror  <- function(RegData, valgtVar, valgtMaal='Gjsn', prePost=2, grVar='ShNavn',outfile='')	
+NIRFigGjsnPaaror  <- function(RegData, valgtVar, valgtMaal='Gjsn', prePost=2, grVar='ShNavn',outfile='',...)	
 {
       
+   if ("session" %in% names(list(...))) {
+      raplog::repLogger(session = list(...)[["session"]], msg = paste0("GjsnPaaror: ", valgtVar))
+   }
+   
       #RegData <- NIRPreprosess(RegData=RegData) #Gjort tidl
       RegData <- RegData[RegData$PrePost==prePost,]
       #-----------------Tilrettelegge variable--------------------------   
@@ -115,7 +119,7 @@ NIRFigGjsnPaaror  <- function(RegData, valgtVar, valgtMaal='Gjsn', prePost=2, gr
       #Plottspesifikke parametre:
       #Høyde må avhenge av antall grupper
       hoyde <- ifelse(length(AggVerdier$Hoved)>20, 3*800, 3*600)
-      FigTypUt <- figtype(outfile, height=hoyde, fargepalett='BlaaOff')
+      FigTypUt <- rapFigurer::figtype(outfile, height=hoyde, fargepalett='BlaaOff')
       #Tilpasse marger for å kunne skrive utvalgsteksten
       #NutvTxt <- 1 #length(utvalgTxt)
       vmarg <- min(1,max(0, strwidth(grtxt, units='figure', cex=cexgr)*0.75))

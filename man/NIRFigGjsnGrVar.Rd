@@ -5,10 +5,10 @@
 \title{Søylediagram med gjennomsnitt/median for hver grupperingsenhet (sykehus, RHF, ...)}
 \usage{
 NIRFigGjsnGrVar(RegData, valgtVar, preprosess = 1, hentData = 0,
-  valgtMaal = "Gjsn", minald = 0, maxald = 110, datoFra = "2011-01-01",
-  datoTil = "3000-01-01", aar = 0, grType = 99, InnMaate = 99,
-  dodInt = "", erMann = "", grVar = "ShNavn", medKI = 1, lagFig = 1,
-  outfile = "")
+  valgtMaal = "Gjsn", minald = 0, maxald = 110,
+  datoFra = "2011-01-01", datoTil = "3000-01-01", aar = 0,
+  grType = 99, InnMaate = 99, dodInt = "", erMann = "",
+  grVar = "ShNavn", medKI = 1, lagFig = 1, outfile = "", ...)
 }
 \arguments{
 \item{RegData}{En dataramme med alle nødvendige variabler fra registeret}

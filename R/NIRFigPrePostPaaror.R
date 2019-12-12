@@ -23,8 +23,10 @@
 NIRFigPrePostPaaror  <- function(RegData=0, valgtVar, datoFra='2011-01-01', datoTil='3000-12-31', aar=0, 
                                  startDatoIntervensjon='2016-10-01', sluttDatoIntervensjon=Sys.Date(),
                                  minald=0, maxald=110, erMann='',InnMaate='', dodInt='',outfile='', grType=99,  
-                                 preprosess=1, hentData=0, reshID=0, enhetsUtvalg=0, lagFig=1){ #overfPas=0, 
-      
+                                 preprosess=1, hentData=0, reshID=0, enhetsUtvalg=0, lagFig=1,...){ #overfPas=0, 
+   if ("session" %in% names(list(...))) {
+      raplog::repLogger(session = list(...)[["session"]], msg = paste0("FigPrePostPaaror: ", valgtVar))
+   }     
       if (hentData == 1) {		
             RegData <- NIRRegDataSQL(datoFra, datoTil) #minald=0, maxald=110, erMann='',InnMaate='', dodInt=''
       }
@@ -94,7 +96,7 @@ NIRFigPrePostPaaror  <- function(RegData=0, valgtVar, datoFra='2011-01-01', dato
       #       }
       
       #Plottspesifikke parametre:
-      FigTypUt <- figtype(outfile, fargepalett='BlaaOff')	 
+      FigTypUt <- rapFigurer::figtype(outfile, fargepalett='BlaaOff')	 
       NutvTxt <- length(utvalgTxt)
       vmarg <- 0 #switch(retn, V=0, H=max(0, strwidth(grtxt, units='figure', cex=cexgr)*0.7))
       par('fig'=c(vmarg, 1, 0, 1-0.02*(NutvTxt-1+length(tittel)-1)))	#Har alltid datoutvalg med

@@ -16,9 +16,12 @@
 #' @export
 NIRFigPrePost  <- function(RegData, valgtVar, datoFra='2012-04-01', datoTil='2050-12-31', 
 		minald=0, maxald=110, erMann='', diagnose='', innl4t='', NIHSSinn='', outfile='', 
-		reshID, enhetsUtvalg=1, preprosess=1, hentData=0)	
+		reshID, enhetsUtvalg=1, preprosess=1, hentData=0,...)	
 {
-
+  
+  if ("session" %in% names(list(...))) {
+    raplog::repLogger(session = list(...)[["session"]], msg = paste0("NIRFigPrePost: ", valgtVar))
+  } 
 
   if (hentData == 1) {		
     RegData <- NIRRegDataSQL(datoFra, datoTil)
@@ -235,7 +238,7 @@ if (medSml == 1) {
 #Hvis for få observasjoner..
 #if (dim(RegData)[1] < 10 | (length(which(RegData$ReshId == reshID))<5 & enhetsUtvalg == 1)) {
 if (NHoved < 10 | (medSml ==1 & Nrest<10)) {
-FigTypUt <- figtype(outfile)
+FigTypUt <- rapFigurer::figtype(outfile)
 farger <- FigTypUt$farger
 	plot.new()
 	title(main=paste('variabel: ', valgtVar, sep=''))	
@@ -249,7 +252,7 @@ farger <- FigTypUt$farger
 #Innparametre: subtxt, grtxt, grtxt2, tittel, Andeler
 
 #Plottspesifikke parametre:
-FigTypUt <- figtype(outfile, fargepalett=NIRUtvalg$fargepalett)	 
+FigTypUt <- rapFigurer::figtype(outfile, fargepalett=NIRUtvalg$fargepalett)	 
 NutvTxt <- length(utvalgTxt)
 vmarg <- switch(retn, V=0, H=max(0, strwidth(grtxt, units='figure', cex=cexgr)*0.7))
 par('fig'=c(vmarg, 1, 0, 1-0.02*(NutvTxt-1+length(tittel)-1)))	#Har alltid datoutvalg med

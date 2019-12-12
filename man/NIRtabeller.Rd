@@ -14,7 +14,8 @@
 tabBelegg(RegData, tidsenhet = "Aar", datoTil, enhetsUtvalg = 0,
   reshID = 0)
 
-tabAntOpphShMnd(RegData, datoTil, antMnd = 6)
+tabAntOpphShMnd(RegData, datoTil = Sys.Date(), datoFra = "Ikke angitt",
+  antMnd = 6)
 
 tabAntOpphSh5Aar(RegData, datoTil)
 

@@ -1,6 +1,7 @@
 \documentclass[handout, xcolor=pdftex,dvipsnames,table]{beamer}  %presentation,
+%\documentclass[handout, xcolor=pdftex,dvipsnames,table]  %presentation,
 \usetheme{Hannover}
-
+ 
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage[english, norsk]{babel}
@@ -49,6 +50,7 @@ if (!exists('RegData')){
 RegDataRaa <- RegData #For å kunne "tilbakestille" RegData
 
 RegData <- NIRPreprosess(RegData=RegData)
+RegData <- NIRUtvalgEnh(RegData=RegData, datoFra=datoFra1Aar)$RegData
 RegData <- FinnReinnleggelser(RegData) # Beregne reinnleggelser
 #RegData1aar <- RegData
 

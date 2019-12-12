@@ -28,11 +28,14 @@
 #' @return Figur som viser tidstrend, dvs. andel av valgt variabel for hvert år. 
 #'
 #' @export
-NIRFigAndelTid <- function(RegData, valgtVar='alder_u18', datoFra='2011-01-01', datoTil='3000-12-31', tidsenhet='Aar',
+NIRFigAndelTid <- function(RegData, valgtVar='alder_u18', datoFra='2011-01-01', datoTil=Sys.Date(), tidsenhet='Aar',
                         minald=0, maxald=110, erMann='', InnMaate='', dodInt='', reshID=0, outfile='', 
-                        enhetsUtvalg=1, preprosess=1, hentData=0, lagFig=1, offData=0) {
+                        enhetsUtvalg=0, preprosess=1, hentData=0, lagFig=1, offData=0,...) {
       
-      if (hentData == 1) {		
+   if ("session" %in% names(list(...))) {
+      raplog::repLogger(session = list(...)[["session"]], msg = paste0("AndelTid: ", valgtVar))
+   }
+   if (hentData == 1) {		
             RegData <- NIRRegDataSQL(datoFra, datoTil)
       }
       if (offData == 1) {
@@ -84,10 +87,11 @@ NIRFigAndelTid <- function(RegData, valgtVar='alder_u18', datoFra='2011-01-01', 
             ind <- list(Hoved = 1:dim(RegData)[1], Rest = NULL)
       }
       RegData <- NIRUtvalg$RegData
-      
+      Ngrense <-ifelse(valgtVar %in% c('OrganDonationCompletedStatus', 'OrganDonationCompletedCirc'),
+                       0,10)
       #------------------------Klargjøre tidsenhet--------------
       N <- list(Hoved = dim(RegData)[1], Rest=0)
-      if (N$Hoved>9) {
+      if (N$Hoved>Ngrense) {
             RegDataFunk <- SorterOgNavngiTidsEnhet(RegData=RegData, tidsenhet = tidsenhet)
             RegData <- RegDataFunk$RegData
             #tidtxt <- RegDataFunk$tidtxt
@@ -95,16 +99,17 @@ NIRFigAndelTid <- function(RegData, valgtVar='alder_u18', datoFra='2011-01-01', 
             #--------------- Gjøre beregninger ------------------------------
             
             AggVerdier <- list(Hoved = 0, Rest =0)
-            N <- list(Hoved = length(ind$Hoved), Rest =length(ind$Rest))
+            Ngr <- list(Hoved = 0, Rest =0)
+			N <- list(Hoved = length(ind$Hoved), Rest =length(ind$Rest))
             
             
             NAarHoved <- tapply(RegData[ind$Hoved, 'Variabel'], RegData[ind$Hoved ,'TidsEnhet'], length) #Tot. ant. per tidsenhet
-            NAarHendHoved <- tapply(RegData[ind$Hoved, 'Variabel'], RegData[ind$Hoved ,'TidsEnhet'],sum, na.rm=T) #Ant. hendelser per tidsenhet
-            AggVerdier$Hoved <- NAarHendHoved/NAarHoved*100
+            Ngr$Hoved <- tapply(RegData[ind$Hoved, 'Variabel'], RegData[ind$Hoved ,'TidsEnhet'],sum, na.rm=T) #Ant. hendelser per tidsenhet
+            AggVerdier$Hoved <- Ngr$Hoved/NAarHoved*100
             NAarRest <- tapply(RegData$Variabel[ind$Rest], RegData$TidsEnhet[ind$Rest], length)	
-            NAarHendRest <- tapply(RegData$Variabel[ind$Rest], RegData$TidsEnhet[ind$Rest],sum, na.rm=T)
-            AggVerdier$Rest <- NAarHendRest/NAarRest*100
-            Ngr <- list(Hoved = NAarHendHoved, Rest = NAarHendRest)
+            Ngr$Rest <- tapply(RegData$Variabel[ind$Rest], RegData$TidsEnhet[ind$Rest],sum, na.rm=T)
+            AggVerdier$Rest <- Ngr$Rest/NAarRest*100
+            #Ngr <- list(Hoved = NAarHendHoved, Rest = NAarHendRest)
             
             if (valgtVar %in% c('liggetidDod','respiratortidDod')) {
                   #Kommentar: for liggetid og respiratortid vises antall pasienter og ikke antall liggedøgn for døde
@@ -152,8 +157,8 @@ NIRFigAndelTid <- function(RegData, valgtVar='alder_u18', datoFra='2011-01-01', 
             
             #-----------Figur---------------------------------------
             #Hvis for f? observasjoner..
-            if (N$Hoved < 10 | (medSml ==1 & N$Rest<10)) {
-                  FigTypUt <- figtype(outfile)
+            if (N$Hoved < Ngrense | (medSml ==1 & N$Rest < Ngrense)) {
+                  FigTypUt <- rapFigurer::figtype(outfile)
                   farger <- FigTypUt$farger
                   plot.new()
                   title(main=paste0('variabel: ', valgtVar))	#, line=-6)
@@ -165,7 +170,7 @@ NIRFigAndelTid <- function(RegData, valgtVar='alder_u18', datoFra='2011-01-01', 
             } else {
                   
                   #Plottspesifikke parametre:
-                  FigTypUt <- figtype(outfile, fargepalett=fargepalett)
+                  FigTypUt <- rapFigurer::figtype(outfile, fargepalett=fargepalett)
                   farger <- FigTypUt$farger
                   fargeHoved <- farger[3]
                   fargeRest <- farger[1]
@@ -200,7 +205,7 @@ NIRFigAndelTid <- function(RegData, valgtVar='alder_u18', datoFra='2011-01-01', 
                   
                   #KImål
                   lines(xskala,rep(KImaal,length(xskala)), col= '#FF7260', lwd=3)
-                  mtext(text=KImaaltxt, at=KImaal, side=4, las=1, adj=0.5,  cex=0.9, col='#FF7260')
+                  mtext(text=KImaaltxt, at=KImaal, side=4, las=0, adj=0.5,  cex=0.9, col='#FF7260')
                   #text(max(xskala), KImaal, pos=4, paste0('Mål:',KImaaltxt), cex=0.9, col='#FF7260')
                   
                   Ttxt <- paste0('(Tall ved punktene angir antall ', varTxt, ')') 
