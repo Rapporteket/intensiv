@@ -1070,7 +1070,6 @@ server <- function(input, output, session) { #
       
       ## nye abonnement
       observeEvent (input$subscribe, { #MÅ HA
-        package <- "intensiv"
         owner <- rapbase::getUserName(session)
         interval <- strsplit(input$subscriptionFreq, "-")[[1]][2]
         intervalName <- strsplit(input$subscriptionFreq, "-")[[1]][1]
@@ -1098,9 +1097,10 @@ server <- function(input, output, session) { #
         fun <- "abonnement"  #"henteSamlerapporter"
         paramNames <- c('rnwFil', 'brukernavn', "reshID", "datoFra", 'datoTil')
         paramValues <- c(rnwFil, brukernavn(), reshID(), startDato, Sys.Date()) #input$subscriptionFileFormat)
-        #abonnement('NIRmndRapp.Rnw')
         
-        rapbase::createAutoReport(synopsis = synopsis, package = package,
+        test <- abonnement(rnwFil = 'NIRmndRapp.Rnw', brukernavn='tullebukk', reshID=109773, datoTil=Sys.Date())
+        
+        rapbase::createAutoReport(synopsis = synopsis, package = "intensiv",
                                   fun = fun, paramNames = paramNames,
                                   paramValues = paramValues, owner = owner,
                                   email = email, organization = organization,

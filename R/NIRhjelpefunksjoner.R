@@ -224,11 +224,11 @@ abonnement <- function(rnwFil, brukernavn='tullebukk', reshID=0,
   #owd <- 
   setwd(tempdir())
   dir <- getwd()
-  file.copy(dir, tmpFile, overwrite = TRUE)
+  file.copy(src, tmpFile, overwrite = TRUE)
   knitr::knit2pdf(input=tmpFile) 
   
   #gc() #Opprydning gc-"garbage collection"
-  utfil <- paste0(owd, '/', substr(tmpFile, 1, nchar(tmpFile)-3), 'pdf')
+  utfil <- paste0(dir, '/', substr(tmpFile, 1, nchar(tmpFile)-3), 'pdf')
   #utfil <- file.copy(from = paste0(substr(tmpFile, 1, nchar(tmpFile)-3), 'pdf'), 
    #         to = paste0(filbase, digest::digest(brukernavn),'.pdf')) #filnavn)
   return(utfil)
