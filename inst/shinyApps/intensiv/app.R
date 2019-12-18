@@ -634,23 +634,6 @@ server <- function(input, output, session) { #
       #--------startside--------------      
 #      output$tekstDash <- c('Figurer med kvalitetsindikatorer',
 #                           'hente ned månedsrapport'),
-#  funksjon for å kjøre Rnw-filer (render file funksjon)
-  # contentFile <- function(file, srcFil, tmpFile,
-  #                         reshID=0, datoFra=startDato, datoTil=Sys.Date()) {
-  #   src <- normalizePath(system.file(srcFil, package="intensiv"))
-  #  #dev.off()
-  #   # gå til tempdir. Har ikke skriverettigheter i arbeidskatalog
-  #   owd <- setwd(tempdir())
-  #   on.exit(setwd(owd))
-  #   file.copy(src, tmpFile, overwrite = TRUE)
-  # 
-  #   knitr::knit2pdf(tmpFile)
-  # 
-  #   gc() #Opprydning gc-"garbage collection"
-  #   file.copy(paste0(substr(tmpFile, 1, nchar(tmpFile)-3), 'pdf'), file)
-  #   # file.rename(paste0(substr(tmpFile, 1, nchar(tmpFile)-3), 'pdf'), file)
-  # }
-  #Erstattes av henteSamlerapporter()
 
   output$mndRapp.pdf <- downloadHandler(
     filename = function(){ paste0('MndRapp', Sys.time(), '.pdf')}, 
@@ -660,14 +643,6 @@ server <- function(input, output, session) { #
     }
   )
   
-    # output$mndRapp.pdf <- downloadHandler(
-  #   filename = function(){ paste0('MndRapp', Sys.time(), '.pdf')}, #'MndRapp.pdf',
-  #   content = function(file){
-  #     contentFile(file, srcFil="NIRmndRapp.Rnw", tmpFile="tmpNIRmndRapp.Rnw",
-  #                 reshID = reshID(), datoFra = startDato)
-  #   }
-  # )
-
   output$samleRapp.pdf <- downloadHandler(
     filename = function(){ paste0('NIRsamleRapp', Sys.time(), '.pdf')}, 
     content = function(file){
@@ -1070,7 +1045,6 @@ server <- function(input, output, session) { #
       
       ## nye abonnement
       observeEvent (input$subscribe, { #MÅ HA
-        package <- "intensiv"
         owner <- rapbase::getUserName(session)
         interval <- strsplit(input$subscriptionFreq, "-")[[1]][2]
         intervalName <- strsplit(input$subscriptionFreq, "-")[[1]][1]
@@ -1097,10 +1071,11 @@ server <- function(input, output, session) { #
         
         fun <- "abonnement"  #"henteSamlerapporter"
         paramNames <- c('rnwFil', 'brukernavn', "reshID", "datoFra", 'datoTil')
-        paramValues <- c(rnwFil, brukernavn(), reshID(), startDato, Sys.Date()) #input$subscriptionFileFormat)
-        #abonnement('NIRmndRapp.Rnw')
+        paramValues <- c(rnwFil, brukernavn(), reshID(), startDato, as.character(datoTil)) #input$subscriptionFileFormat)
         
-        rapbase::createAutoReport(synopsis = synopsis, package = package,
+        test <- abonnement(rnwFil = 'NIRmndRapp.Rnw', brukernavn='IntensivBruker', reshID=109773, datoTil=Sys.Date())
+        
+        rapbase::createAutoReport(synopsis = synopsis, package = "intensiv",
                                   fun = fun, paramNames = paramNames,
                                   paramValues = paramValues, owner = owner,
                                   email = email, organization = organization,
