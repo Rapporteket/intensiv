@@ -1043,6 +1043,7 @@ server <- function(input, output, session) { #
         }
       })
       
+      print(session)
       ## nye abonnement
       observeEvent (input$subscribe, { #MÅ HA
         owner <- rapbase::getUserName(session)

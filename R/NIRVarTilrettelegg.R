@@ -169,19 +169,20 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='an
             #-1 = Velg verdi, 1 = Ingen, 2 = Kontaktsmitte, 3 = Luftsmitte
             tittel <- 'Andel av opphold med registrert isolasjon av pasient'   
          if (figurtype=='andeler') {
-                  gr <- c(-1,1:3)
+                  gr <- c(-1,1:5)
                   RegData <- RegData[ which((RegData$Isolation %in% gr)), ]             
                   RegData$VariabelGr <- factor(RegData$Isolation, levels=gr)
-                  grtxt <- c('Ikke svart', 'Ingen','Kontaktsmitte', 'Luftsmitte')
+                  grtxt <- c('Ikke svart', 'Ingen','Kontaktsmitte', 'Luftsmitte', 
+                             'Dråpesmitte (01.02.2020)', 'Beskyttende isolasjon (01.02.2020')
             }
         if (figurtype=='andelGrVar'){
-                  RegData <- RegData[ which(RegData$Isolation %in% 1:3), ]             
-                  RegData$Variabel[which(RegData$Isolation %in% 2:3)] <- 1
+                  RegData <- RegData[ which(RegData$Isolation %in% 1:5), ]             
+                  RegData$Variabel[which(RegData$Isolation %in% 2:5)] <- 1
                   }
  }
      if (valgtVar == 'isoleringDogn' ) {   # Andeler, 
             RegData <- RegData[which(RegData$InnDato>=as.Date('2015-01-01', tz='UTC')), ] 
-            RegData <- RegData[which((RegData$Isolation %in% 2:3) & (RegData$IsolationDaysTotal>0)), ]   
+            RegData <- RegData[which((RegData$Isolation %in% 2:5) & (RegData$IsolationDaysTotal>0)), ]   
             RegData$Variabel <- RegData$IsolationDaysTotal 
             xAkseTxt <- 'døgn'	
             tittel <- 'Antall døgn (heltall) med registrert isolasjon av pasient'   
