@@ -446,7 +446,7 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                tabPanel("Figur",
                         plotOutput("SMRfig")),
                tabPanel("Tabell",
-                        uiOutput("tittelSMR"),
+                        # uiOutput("tittelSMR"),
                         br(),
                         tableOutput("SMRtab"))
              )
