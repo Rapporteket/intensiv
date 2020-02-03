@@ -191,7 +191,7 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
   #-------Fordelinger----------      
   
   tabPanel(p("Fordelinger", 
-             title='Alder, Innkomstmåte, Hemodynamisk overvåkning, Isolasjon, Liggetid, Nas, NEMS, Nyrebehandling,
+             title='Alder, Type opphold, Hemodynamisk overvåkning, Isolasjon, Liggetid, Nas, NEMS, Nyrebehandling,
                  Primærårsak, Respiratortid, SAPSII, Spesielle tiltak, Donorer'),
            #"Fordelinger",
            # fluidRow(column(width = 3, #Første kolonne. Alternativ til sidebarLayout(sidebarPanel())
@@ -203,7 +203,6 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                inputId = "valgtVar", label="Velg variabel",
                choices = c('Alder' = 'alder', 
                            'Bukleie' = 'bukleie',
-                           'Innkomstmåte' = 'InnMaate',
                            'Hemodynamisk overvåkn.' = 'ExtendedHemodynamicMonitoring',
                            'Inklusjonskriterier' = 'inklKrit',
                            'Isolasjon, type' = 'isolering',
@@ -221,6 +220,7 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                            'Respiratortid, invasiv u/overf.' = 'respiratortidInvUoverf',
                            'SAPSII-skår (alvorlighet av sykd.)' = 'SAPSII',
                            'Spesielle tiltak' = 'spesTiltak',
+                           'Type opphold' = 'InnMaate',
                            'Årsak, ikke donasjon ved opphevet intrakraniell sirk.' = 'OrganDonationCompletedReasonForNoStatus'
                )
              ),

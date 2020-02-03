@@ -194,12 +194,12 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='an
       
       if (valgtVar=='InnMaate') { #Andeler
             #InnMaate - 0-El, 6-Ak.m, 8-Ak.k, standard: alle (alt unntatt 0,6,8)
-            tittel <- 'Fordeling av Innkomstmåte'   
+            tittel <- 'Fordeling av type opphold'   
             gr <- c(0,6,8)
             RegData <- RegData[which((RegData$InnMaate %in% gr)), ]  #Kun gyldige verdier: 0,6,8          
             RegData$VariabelGr <- factor(RegData$InnMaate, levels=gr)
             grtxt <- c('Planlagt operasjon','Akutt non-operativ', 'Akutt operasjon') 
-            xAkseTxt <- 'Innkomstmåte'
+            xAkseTxt <- 'Type opphold'
       }
 
       
