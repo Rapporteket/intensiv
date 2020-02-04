@@ -43,9 +43,9 @@ NIRFigInnMaate <- function(RegData, valgtVar='InnMaate', datoFra='2010-01-01', d
 	gr <- c(0,6,8)
       RegData <- RegData[which(RegData$Variabel %in% gr), ]
 	RegData$VariabelGr <- factor(RegData$Variabel, levels=gr)
-	tittel <-'Innkomstmåte'
+	tittel <-'Type opphold'
       grtxt <- c('Planlagt operasjon','Akutt non-operativ', 'Akutt operasjon') #InnMaate - 0-El, 6-Ak.m, 8-Ak.k, standard: alle (alt unntatt 0,6,8)
-      subtxt <- 'Innkomstmåte'
+      subtxt <- 'Type opphold'
 
 #------- Gjøre utvalg
 #minald <- max(NIRVarSpes$minald, minald)
@@ -121,7 +121,7 @@ tittelpos <- 1
 		legend(x=50, y=1.05*ymax+2, c('Planlagt operasjon','Akutt non-operativ', 'Akutt operasjon'), xjust=0.5, yjust=0.5,	#inset=0.01,# max(pos)*1.01 x=50, y=ymax,
 			fill=farger[1:3], border=farger[1:3], ncol=3, bty='n')	#cex=0.9,  ncol=6,
 	xmax <- 100
-	mtext('(sortert på andel "Akutt med.")', line=0.5, cex=1)
+	mtext('(sortert på andel "Akutt non-op.")', line=0.5, cex=1)
 
 	mtext(at=pos, ShNavnSort, side=2, las=1, cex=cexShNavn*xkr, adj=1, line=0.25)	#Sykehusnavn
 	text(x=0.005*xmax, y=pos, NshtxtSort, las=1, cex=xkr, adj=0, col=farger[4], lwd=3)	#c(Nshtxt[sortInd],''),
