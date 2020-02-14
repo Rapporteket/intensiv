@@ -245,7 +245,7 @@ return(tab)
 #' @return Div tabeller
 #' @export
 tabOverforinger <- function(RegData, datoFra=Sys.Date()-365, datoTil=Sys.Date()){
-  #Overf: (1= ikke overført, 2= overført)
+  #Overf: (1= ikke overført, 2= overført) TransferredStatus
   #Overført FRA eget sykehus TIL annet
   RegData <- NIRRegDataSQL(datoFra = '2017-09-01')
   RegData <- NIRPreprosess(RegData)

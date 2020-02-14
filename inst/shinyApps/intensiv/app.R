@@ -917,8 +917,8 @@ server <- function(input, output, session) { #
         
         output$tittelGjsn <- renderUI(
           tagList(
-            h3(dataUtGjsnGrVar$tittel),
-            br(),
+            h3(HTML(paste(dataUtGjsnGrVar$tittel, '<br />'))),
+            #br(),
             h5(HTML(paste0(dataUtGjsnGrVar$utvalgTxt, '<br />')))
           ))
         dataUtGjsnTid <- NIRFigGjsnTid(RegData=RegData, preprosess = 0, valgtVar=input$valgtVarGjsn,
@@ -993,7 +993,6 @@ server <- function(input, output, session) { #
         output$tittelSMR <- renderUI(
           tagList(
             h4(HTML(paste(dataUtSMR$tittel, sep= '<br />'))),
-            br(),
             h5(HTML(paste0(dataUtSMR$utvalgTxt, '<br />')))
           ))
         
