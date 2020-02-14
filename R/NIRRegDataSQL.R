@@ -16,6 +16,7 @@ NIRRegDataSQL <- function(datoFra = '2011-01-01', datoTil = '2099-01-01') { #,se
   #	DischargedHospitalStatus,
   
   query <- paste0('SELECT
+  Age,
 	Bilirubin,
       BrainDamage,
       Bukleie,
@@ -31,7 +32,7 @@ NIRRegDataSQL <- function(datoFra = '2011-01-01', datoTil = '2099-01-01') { #,se
       EcmoEcla,
       ExtendedHemodynamicMonitoring,
       FormStatus,
-      -- FrailtyIndex,
+      FrailtyIndex,
       Glasgow,
       Hco3,
       HeartRate,
@@ -69,7 +70,7 @@ HF,
       PatientGender,
       PatientTransferredFromHospital,
       PatientTransferredToHospital,
-      -- PIM_Probability
+      PIM_Probability
       Potassium,
       PrimaryReasonAdmitted,
       -- ReAdmitted,
@@ -97,6 +98,7 @@ FROM
 WHERE cast(DateAdmittedIntensive as date) BETWEEN \'', datoFra, '\' AND \'', datoTil, '\'')
   #WHERE cast(DateAdmittedIntensive as date) >= \'', datoFra, '\' AND DateAdmittedIntensive <= \'', datoTil, '\'')  
 
+  #query <- 'select * from MainFormDataContract'
   RegData <- rapbase::LoadRegData(registryName= "nir", query=query, dbType="mysql")
   
   

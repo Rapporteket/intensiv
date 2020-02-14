@@ -204,6 +204,7 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                choices = c('Alder' = 'alder', 
                            'Bukleie' = 'bukleie',
                            'Hemodynamisk overvåkn.' = 'ExtendedHemodynamicMonitoring',
+                           'Frailty index' = 'frailtyIndex',
                            'Inklusjonskriterier' = 'inklKrit',
                            'Isolasjon, type' = 'isolering',
                            'Isolasjon, varighet' = 'isoleringDogn',
@@ -219,6 +220,7 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                            'Respiratortid, invasiv m/overf.' = 'respiratortidInvMoverf',
                            'Respiratortid, invasiv u/overf.' = 'respiratortidInvUoverf',
                            'SAPSII-skår (alvorlighet av sykd.)' = 'SAPSII',
+                           'SAPSII-skår (uten alderspoeng)' = 'SAPSIIuAlder',
                            'Spesielle tiltak' = 'spesTiltak',
                            'Type opphold' = 'InnMaate',
                            'Årsak, ikke donasjon ved opphevet intrakraniell sirk.' = 'OrganDonationCompletedReasonForNoStatus'
@@ -446,7 +448,7 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                tabPanel("Figur",
                         plotOutput("SMRfig")),
                tabPanel("Tabell",
-                        # uiOutput("tittelSMR"),
+                        uiOutput("tittelSMR"),
                         br(),
                         tableOutput("SMRtab"))
              )
@@ -743,7 +745,7 @@ server <- function(input, output, session) { #
 
             output$tittelFord <- renderUI({
                   tagList(
-                        h3(UtDataFord$tittel),
+                        h3(HTML(paste(UtDataFord$tittel, sep='<br />'))),
                         h5(HTML(paste0(UtDataFord$utvalgTxt, '<br />')))
                   )}) #, align='center'
             output$fordelingTab <- function() { #gr1=UtDataFord$hovedgrTxt, gr2=UtDataFord$smltxt renderTable(
@@ -856,7 +858,7 @@ server <- function(input, output, session) { #
                   
                   output$tittelAndelGrVar <- renderUI({
                               tagList(
-                                    h3(AndelerShus$tittel),
+                                    h3(HTML(paste(AndelerShus$tittel, sep = '<br />'))),
                                     h5(HTML(paste0(AndelerShus$utvalgTxt, '<br />')))
                               )}) #, align='center'
             }) #observe
@@ -990,7 +992,7 @@ server <- function(input, output, session) { #
         }
         output$tittelSMR <- renderUI(
           tagList(
-            h3(dataUtSMR$tittel),
+            h4(HTML(paste(dataUtSMR$tittel, sep= '<br />'))),
             br(),
             h5(HTML(paste0(dataUtSMR$utvalgTxt, '<br />')))
           ))
@@ -1043,7 +1045,6 @@ server <- function(input, output, session) { #
         }
       })
       
-      print(session)
       ## nye abonnement
       observeEvent (input$subscribe, { #MÅ HA
         owner <- rapbase::getUserName(session)

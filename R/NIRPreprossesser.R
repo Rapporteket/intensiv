@@ -36,13 +36,19 @@ NIRPreprosess <- function(RegData=RegData, lagreKvalIndData=0)	#, reshID=reshID)
       
       # Endre variabelnavn:
       #For enkelhetsskyld kalles Saps2Score som er Estimert mortalitet for SMR
+      #RegData$logit <- -7.7631 + 0.0737*RegData$Saps2ScoreNumber + 0.9971*log(RegData$Saps2ScoreNumber+1)
+      #RegData$Mort <- exp(RegData$logit)/(1+exp(RegData$logit))*100 # = Saps2Score = SMR
+      RegData$SapsSum <- with(RegData, Glasgow+Age+SystolicBloodPressure+HeartRate+Temperature+MvOrCpap+UrineOutput+
+              SerumUreaOrBun+Leukocytes+Potassium+Sodium+Hco3+Bilirubin+TypeOfAdmission)
+      head(RegData$SapsSum)
+      head(RegData$Saps2ScoreNumber)
+      names(RegData)[which(names(RegData) == 'Saps2Score')] <- 'SMR' #Saps2Score er SAPS estimert mortalitet
+      names(RegData)[which(names(RegData) == 'Saps2ScoreNumber')] <- 'SAPSII'
       names(RegData)[which(names(RegData) == 'DaysAdmittedIntensiv')] <- 'liggetid'
       names(RegData)[which(names(RegData) == 'Nems')] <- 'NEMS'
       names(RegData)[which(names(RegData) == 'PatientAge')] <- 'Alder'
       #	names(RegData)[which(names(RegData) == 'ReAdmitted')] <- 'Reinn'
       names(RegData)[which(names(RegData) == 'Respirator')] <- 'respiratortid'
-      names(RegData)[which(names(RegData) == 'Saps2Score')] <- 'SMR' #Saps2Score er SAPS estimert mortalitet
-      names(RegData)[which(names(RegData) == 'Saps2ScoreNumber')] <- 'SAPSII'
       names(RegData)[which(names(RegData) == 'TransferredStatus')] <- 'Overf'
       names(RegData)[which(names(RegData) == 'TypeOfAdmission')] <- 'InnMaate'
       names(RegData)[which(names(RegData) == 'ReshID')] <- 'ReshId'

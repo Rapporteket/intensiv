@@ -181,15 +181,16 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='an
                   }
       }
       
-      if (valgtVar=='frailityIndex') { #Andeler
+      if (valgtVar=='frailtyIndex') { #Andeler
         #1:9 Veldig sprek - Terminalt syk
-        tittel <- 'Skrøpelighets indeks ("fraility")'   
+        tittel <- 'Skrøpelighets indeks ("frailty")'   
         gr <- 1:9
-        RegData <- RegData[which((RegData$FrailityIndex %in% gr)), ]  #Kun gyldige verdier: 0,6,8          
-        RegData$VariabelGr <- factor(RegData$FrailityIndex, levels=gr)
+        RegData <- RegData[which((RegData$FrailtyIndex %in% gr)), ]  #Kun gyldige verdier: 0,6,8          
+        RegData$VariabelGr <- factor(RegData$FrailtyIndex, levels=gr)
         grtxt <- c('Veldig sprek', 'Sprek', 'Ok', 'Sårbar', 'Lett skrøpelig', 'Moderat skrøpelig', 
-                   'Alvorlig skøpelig', 'Svært alvorlig', 'Terminal') 
+                   'Alvorlig skøpelig', 'Svært skrøpelig', 'Terminal') 
         xAkseTxt <- 'Grad av skrøpelighet'
+        retn <- 'H'
       }
       
      if (valgtVar == 'isoleringDogn' ) {   # Andeler, 
@@ -442,6 +443,21 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='an
             RegData$VariabelGr <- cut(RegData$SAPSII, breaks=gr, include.lowest=TRUE, right=FALSE) 
             grtxt <- c('(0-10)','[10-20)','[20-30)','[30-40)','[40-50)','[50-60)','[60-70)','[70-80)','[80-90)','[90-100)','100+')  
             xAkseTxt <- 'SAPSII-skår'
+      }
+      if (valgtVar=='SAPSIIuAlder') { #Andeler #GjsnGrVar
+        #Test:
+        #Tar ut SAPSII=0 (ikke scorede)
+        #og de under 16år (tas ut i NIRutvalg)
+        tittel <- 'Fordeling av SAPSII (u/alderspoeng)'
+        if (figurtype %in% c('gjsnGrVar', 'gjsnTid')) {
+          tittel <- 'SAPSII (u/alderspoeng)' }
+        minald <- max(16, minald)     #Bare voksne skal skåres
+        RegData <- RegData[which(as.numeric(RegData$SAPSII) > 0), ]
+        RegData$Variabel <- ifelse(RegData$Age >-1, RegData$SAPSII-RegData$Age, RegData$SAPSII)
+        gr <- c(seq(0, 100,10), 500) 
+        RegData$VariabelGr <- cut(RegData$Variabel, breaks=gr, include.lowest=TRUE, right=FALSE) 
+        grtxt <- c('(0-10)','[10-20)','[20-30)','[30-40)','[40-50)','[50-60)','[60-70)','[70-80)','[80-90)','[90-100)','100+')  
+        xAkseTxt <- 'SAPSII-skår u/alder'
       }
       
       if (valgtVar == 'SMR') { #GjsnGrVar
