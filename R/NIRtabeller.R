@@ -244,14 +244,41 @@ return(tab)
 # @inheritParams NIRFigAndeler
 #' @return Div tabeller
 #' @export
-tabOverforinger <- function(RegData, datoFra=Sys.Date()-365, datoTil=Sys.Date()){
+tabOverforinger <- function(RegData, datoFra=Sys.Date()-365, datoTil=Sys.Date(), 
+                            reshID=0, enhetsUtvalg=2, overfFraSh=1){
   #Overf: (1= ikke overført, 2= overført) TransferredStatus
-  #Overført FRA eget sykehus TIL annet
-  RegData <- NIRRegDataSQL(datoFra = '2017-09-01')
+  #Hvis alle kolonner som sier noe om til/fra-sykehus er tomme, vet vi ikke om det er ei overføring
+  #til eller fra det aktuelle sykehuset. Disse må derfor ekskluderes. (Gjelder ca 5% i 2015-19)
+  #Filtrerer på eget sykehus. Ser hvilke avdelinger overført fra eget TIL andre
+  #Vi må ta med 
+  RegData <- NIRRegDataSQL(datoFra = '2019-01-01')
   RegData <- NIRPreprosess(RegData)
-  Data <- RegData[which(RegData$Overf == 2), c("InnDato", 'Sykehus')] #Omfatter både overføringer til OG fra
+  #overfFraSh <- 0
+  #reshID <- 108610 #Overfører TIL Hamar
+  shNavn <- RegData$ShNavn[match(reshID,RegData$ReshId)]
   
-  
-  #Overført TIL eget sykehus FRA annet
+  overfVariabel <- ifelse(overfFraSh==1, 'PatientTransferredFromHospital', 'PatientTransferredToHospital')
+  tittel <- paste('Pasienter overført', ifelse(overfFraSh==1,'TIL', 'FRA'), shNavn)
+  variabler <- c("InnDato", 'ShNavn', 'ReshId', 'PatientTransferredToHospital', 'PatientTransferredToHospitalName', 
+                 'PatientTransferredToHospitalText', 'PatientTransferredFromHospital', 
+                 'PatientTransferredFromHospitalName', 'PatientTransferredFromHospitalText')#overfVariabel)
+  indMed <- which(RegData$Overf==2 & (RegData$ReshId == reshID | RegData[ ,overfVariabel]==reshID))
+    Data <- RegData[indMed, variabler] 
+    if (overfFraSh==1) {
+      ind <- which(!(Data$ReshId == reshID & Data$PatientTransferredFromHospital>0))
+      Data$TilfraNavn <- Data$PatientTransferredToHospitalName
+      Data$OverfTxt <- Data$PatientTransferredToHospitalText
+    } else {
+      ind <- which(!(Data$ReshId == reshID & Data$PatientTransferredToHospital>0))
+      Data$TilfraNavn <- Data$PatientTransferredFromHospitalName
+      Data$OverfTxt <- Data$PatientTransferredFromHospitalText
+    }
+    Data <- Data[ind, ] #Tar bort de som for eget sykehus har overføring i "feil" retning
+    Data$OverfNavn <- Data$ShNavn
+    indEget <- which(Data$OverfNavn==shNavn)
+    Data$OverfNavn[indEget] <- Data$TilfraNavn[indEget]
+    Data$OverfNavn[which(!(is.na(Data$OverfTxt)) & is.na(Data$OverfNavn))] <- 'Annet'
+    Tab <- sort(table(Data$OverfNavn))#sort(table(Data$PatientTransferredToHospitalName), decreasing = T)
+    
   
 }

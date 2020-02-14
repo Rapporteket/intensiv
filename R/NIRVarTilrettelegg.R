@@ -313,6 +313,16 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='an
             sortAvtagende <- FALSE
       }
       
+      if (valgtVar == 'overfTil'){ #Overf: 1= ikke overført, 2= overført
+        tittel <- 'Pasienter overført TIL valgt(e) enheter'
+        ind <- which(RegData$Overf==2 & !is.na(RegData$PatientTransferredToHospitalName))
+        RegData <- RegData[ind,]
+        RegData$VariabelGr <- as.factor(RegData$PatientTransferredToHospitalName)
+        grtxt <- levels(RegData$VariabelGr)
+        retn <- 'H'
+        
+      }
+      
       if (valgtVar=='reinn') { #AndelGrVar, AndelTid
         
             #Andel reinnlagte kun hvor dette er registrert. #Tidligere: Ja=1, nei=2, ukjent=9

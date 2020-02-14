@@ -170,6 +170,12 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                                   br(),
                                   tableOutput('tabNokkeltall')
                          ),
+                         tabPanel('Overføringer',
+                                  h2('Overføringer til/fra egen avdeling'),
+                                  br(),
+                                  tableOutput('tabOverfFra'),
+                                  tableOutput('tabOverfTil')
+                         ),
                          # tabPanel('Inklusjonskriterier',
                          #   tabsetPanel(
                          #     tabPanel('Figur',
@@ -708,6 +714,15 @@ server <- function(input, output, session) { #
       output$tabAntPasSh5Aar <- renderTable({
             tabAntOpphPasSh5Aar(RegData=RegData, gr='pas', datoTil=input$sluttDatoReg)
       }, rownames = T, digits=0, spacing="xs")
+      
+      output$tabOverfFra <- renderTable({
+        tabOverforinger(RegData=RegData, datoFra=Sys.Date()-365, datoTil=input$sluttDatoReg, 
+                                    reshID=reshID(), overfFraSh=1)
+      })
+      output$tabOverfTil <- renderTable({
+        tabOverforinger(RegData=RegData, datoFra=Sys.Date()-365, datoTil=input$sluttDatoReg, 
+                        reshID=reshID(), overfFraSh=0)
+      })
       
       output$tabDblReg <- renderTable({
         tabDBL <- finnDblReg(RegData, reshID=reshID()) #tabDBL <- 
