@@ -149,7 +149,7 @@ delTekst <- function(x, len) #x -tekststreng/vektor av tekststrenger, len - Leng
         USE.NAMES = FALSE)
 }
 
-#' Legge til indikator for intervensjon, pårørendeoppfølging
+#' Koble et annet skjema til hovedskjema
 #' @param HovedSkjema Registerets hovedskjma (Main..)
 #' @param Skjema2 Skjemaet som skal kobles til hovedskjema. (Pårørendeskjema, Influensaskjema)
 #' @param alleHovedskjema TRUE/FALSE. standard: FALSE. I praksis om vi skal ha en left? join eller ikke

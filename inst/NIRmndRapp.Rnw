@@ -110,16 +110,18 @@ Rapporten inneheld anonymiserte samledata. I tilfelle der utvalet inneheld få r
 
 Denne rapporten er utarbeidd på oppdrag frå Norsk intensivregister (NIR) og vert generert automatisk
 frå Rapporteket. Alle resultat er baserte på data frå registeret og er gyldige per rapportdato for
-opphald som er ferdigstilte i MRS. Uttrekket blir gjort for kvar kalendermånad, med ein knapp månads forseinking. Månadsrapport for januar vert sendt ut sist i februar, for februar sist i mars osv. Rapporten inneheld alle ferdigstilte opphald i MRS der innleggingstidspunktet på intensiv er i tidsrommet kl.00.00 den fyrste i aktuell månad til kl. 23.59 den siste i månaden. NIR-einingar
-som er ajour med registreringa, vil dermed kunne få nær fullstendige månadsrapportar
+opphald som er ferdigstilte i MRS. Rapporten inneheld alle ferdigstilte opphald i MRS der innleggingstidspunktet på intensiv er i tidsrommet kl.00.00 den fyrste i aktuell månad til kl. 23.59 den siste i månaden. NIR-einingar
+som er ajour med registreringa, vil dermed kunne få nær fullstendige månadsrapportar.
 
 
 For \Sexpr{shtxt} er siste ferdigstilte innleggingsdato i denne rapporten
 \Sexpr{maxDatoEget}.
 \par
 
-Denne rapporten kan óg hentast ved at ein loggar seg inn på Rapporteket-Intensiv og klikkar på "Månedsrapport". Det gjer at alle kan hente seg representative månadsrapportar når dei måtte
-ynskje. I Rapporteket kan ein óg  finne mange fleire figurar og tabellar, og gjere endringar i tidsintervall og samanlikningsgrunnlag.
+Denne rapporten kan hentast ved at ein loggar seg inn på Rapporteket-Intensiv og klikkar på "Månedsrapport". 
+Det gjer at alle kan hente seg representative månadsrapportar når dei måtte ynskje. En kan óg abbonera på rapporten. 
+Ein vél da sjølve kor ofte ein ynskjer rapporten.
+I Rapporteket kan ein óg finne mange fleire figurar og tabellar og gjere endringar i tidsintervall og samanlikningsgrunnlag.
  
 
 \end{frame}

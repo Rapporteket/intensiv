@@ -179,7 +179,19 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='an
                   RegData <- RegData[ which(RegData$Isolation %in% 1:5), ]             
                   RegData$Variabel[which(RegData$Isolation %in% 2:5)] <- 1
                   }
- }
+      }
+      
+      if (valgtVar=='frailityIndex') { #Andeler
+        #1:9 Veldig sprek - Terminalt syk
+        tittel <- 'Skrøpelighets indeks ("fraility")'   
+        gr <- 1:9
+        RegData <- RegData[which((RegData$FrailityIndex %in% gr)), ]  #Kun gyldige verdier: 0,6,8          
+        RegData$VariabelGr <- factor(RegData$FrailityIndex, levels=gr)
+        grtxt <- c('Veldig sprek', 'Sprek', 'Ok', 'Sårbar', 'Lett skrøpelig', 'Moderat skrøpelig', 
+                   'Alvorlig skøpelig', 'Svært alvorlig', 'Terminal') 
+        xAkseTxt <- 'Grad av skrøpelighet'
+      }
+      
      if (valgtVar == 'isoleringDogn' ) {   # Andeler, 
             RegData <- RegData[which(RegData$InnDato>=as.Date('2015-01-01', tz='UTC')), ] 
             RegData <- RegData[which((RegData$Isolation %in% 2:5) & (RegData$IsolationDaysTotal>0)), ]   
@@ -307,7 +319,7 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='an
             
             #Det er mange feil i variabelen ReAdmitted. Beregner derfor reinnleggelse basert på 
             #Innleggelsestidspunkt , DateDischargedIntensive og en PasientID
-            #29.06.18: Filtrer på kun ikke-overflyttede. (1= ikke overført, 2= overført)
+            #29.06.18: Filtrer på kun ikke-overflyttede. Overf: (1= ikke overført, 2= overført)
             RegData <- RegData[which(RegData$InnDato >= as.Date('2016-01-01', tz='UTC')) %i% 
                                      which(RegData$Overf==1), ]	
             RegData <- FinnReinnleggelser(RegData=RegData, PasientID = 'PasientID')
@@ -576,7 +588,7 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='an
             RegData$VariabelGr <- factor(RegData$PrimaryReasonAdmitted, levels=gr)
             grtxt <- c('Respiratorisk svikt', 'Sirk./kardiovaskulær svikt', 'Gastroenterologisk svikt', 
                        'Nevrologisk svikt', 'Sepsis', 'Skade/traume', 'Metabolsk/intoksikasjon', 'Hematologisk svikt', 
-                       'Nyresvikt', 'Postoperativt', 'Annet')
+                       'Nyresvikt', 'Postoperativt (kompl. til anestesi/kirurgi)', 'Annet')
             cexgr <- 0.9
       } 
       #-------------- SAMMENSATTE variable

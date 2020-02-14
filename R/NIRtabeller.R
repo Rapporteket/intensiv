@@ -237,3 +237,21 @@ lagTabavFig <- function(UtDataFraFig){
 
 return(tab)
 }
+
+#' @param RegData data
+#' @param personIDvar Variabelen som angir pasientidentifikasjon
+#' @param datoTil sluttdato. Brukes i tabellene AntOpph per 12 mnd og Belegg
+# @inheritParams NIRFigAndeler
+#' @return Div tabeller
+#' @export
+tabOverforinger <- function(RegData, datoFra=Sys.Date()-365, datoTil=Sys.Date()){
+  #Overf: (1= ikke overført, 2= overført)
+  #Overført FRA eget sykehus TIL annet
+  RegData <- NIRRegDataSQL(datoFra = '2017-09-01')
+  RegData <- NIRPreprosess(RegData)
+  Data <- RegData[which(RegData$Overf == 2), c("InnDato", 'Sykehus')] #Omfatter både overføringer til OG fra
+  
+  
+  #Overført TIL eget sykehus FRA annet
+  
+}
