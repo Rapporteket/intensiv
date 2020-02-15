@@ -4,8 +4,15 @@
 \alias{RegData01Off}
 \title{Lager "anonymt" minimumsdatasett basert på rådata for å beregne kvalitetsindikatorer.}
 \usage{
-RegData01Off(RegData, valgtVar, datoFra = "2016-01-01",
-  datoTil = "3000-01-01", tilleggsVar = 0, hentData = 0, rand = 0)
+RegData01Off(
+  RegData,
+  valgtVar,
+  datoFra = "2016-01-01",
+  datoTil = "3000-01-01",
+  tilleggsVar = 0,
+  hentData = 0,
+  rand = 0
+)
 }
 \arguments{
 \item{RegData}{En dataramme med alle nødvendige variabler fra registeret}

@@ -147,7 +147,7 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                                                   "Egen sykehustype"=4, "Egen region"=7)
                           )),
                         conditionalPanel(
-                          condition = "input.ark == 'Dobbeltregistreringar'",
+                          condition = "input.ark == 'Dobbeltregistreringar' || 'input.ark == 'Overføringer'",
                           dateRangeInput(inputId = 'datovalgReg', start = startDato, end = idag,
                                          label = "Tidsperiode", separator="t.o.m.", language="nb")
                         )
@@ -171,10 +171,16 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                                   tableOutput('tabNokkeltall')
                          ),
                          tabPanel('Overføringer',
-                                  h2('Overføringer til/fra egen avdeling'),
+                                  p(h2('Overføring av intensivpasienter til/fra ', uiOutput('egetShnavn'),
+                                     align='center') ), 
+                                  #h2(uiOutput('egetShnavn')),
                                   br(),
-                                  tableOutput('tabOverfFra'),
-                                  tableOutput('tabOverfTil')
+                                  column(6,
+                                         h4('Overføringer TIL '),
+                                  tableOutput('tabOverfFra')),
+                                  column(6,
+                                         h4('Overføringer FRA'),
+                                         tableOutput('tabOverfTil'))
                          ),
                          # tabPanel('Inklusjonskriterier',
                          #   tabsetPanel(
@@ -595,9 +601,11 @@ server <- function(input, output, session) { #
       
   reshID <- reactive({ifelse(paaServer, as.numeric(rapbase::getUserReshId(session)), 109773)})
   rolle <- reactive({ifelse(paaServer, rapbase::getUserRole(shinySession=session), 'SC')})
-  brukernavn <- reactive({ifelse(paaServer, rapbase::getUserName(shinySession=session), 'tullebukk')})
+  brukernavn <- reactive({ifelse(paaServer, rapbase::getUserName(shinySession=session), 'brukernavn')})
   #userRole <- reactive({ifelse(onServer, rapbase::getUserRole(session), 'SC')})
   #output$reshID <- renderText({ifelse(paaServer, as.numeric(rapbase::getUserReshId(session)), 105460)}) #evt renderUI
+  #enhetsNavn <- reactive({ifelse(paaServer, rapbase::(shinySession=session), 'egen enhet')})
+  output$egetShnavn <- renderText(as.character(RegData$ShNavn[match(reshID(), RegData$ReshId)]))
   
   # observe({if (rolle() != 'SC') { #
   #   shinyjs::hide(id = 'velgResh')
@@ -619,9 +627,9 @@ server <- function(input, output, session) { #
                html = TRUE, confirmButtonText = rapbase::noOptOutOk())
   })
   
-#---------Hente data  
+#---------Hente data------------
   if (paaServer) {
-    RegData <- NIRRegDataSQL(datoFra='2011-01-01') #, session = session) #datoFra = datoFra, datoTil = datoTil)
+    RegData <- NIRRegDataSQL(datoFra='2018-01-01') #, session = session) #datoFra = datoFra, datoTil = datoTil)
     PaarorData <- NIRpaarorDataSQL() 
     PaarorDataH <- KobleMedHoved(RegData, PaarorData, alleHovedskjema=F, alleSkjema2=F)
     qInfluensa <- 'SELECT ShNavn, RHF, PatientInRegistryGuid, FormDate,FormStatus, ICD10_1
@@ -709,20 +717,23 @@ server <- function(input, output, session) { #
                    Aar=tabAntOpphSh5Aar(RegData=RegData, datoTil=input$sluttDatoReg))
            
       }, rownames = T, digits=0, spacing="xs" 
-      ) 
+      )
       
       output$tabAntPasSh5Aar <- renderTable({
             tabAntOpphPasSh5Aar(RegData=RegData, gr='pas', datoTil=input$sluttDatoReg)
       }, rownames = T, digits=0, spacing="xs")
       
       output$tabOverfFra <- renderTable({
-        tabOverforinger(RegData=RegData, datoFra=Sys.Date()-365, datoTil=input$sluttDatoReg, 
+        #tab <- tabOverforinger(RegData=RegData, reshID=reshID) 
+        tab <- tabOverforinger(RegData=RegData, datoFra=input$startDatoReg, datoTil=input$sluttDatoReg, 
                                     reshID=reshID(), overfFraSh=1)
-      })
+         xtable::xtable(tab) #, colnames=F)
+      }, rownames = T)
       output$tabOverfTil <- renderTable({
-        tabOverforinger(RegData=RegData, datoFra=Sys.Date()-365, datoTil=input$sluttDatoReg, 
+        tab <- tabOverforinger(RegData=RegData, datoFra=input$startDatoReg, datoTil=input$sluttDatoReg, 
                         reshID=reshID(), overfFraSh=0)
-      })
+        xtable::xtable(tab)
+      }, rownames=T)
       
       output$tabDblReg <- renderTable({
         tabDBL <- finnDblReg(RegData, reshID=reshID()) #tabDBL <- 

@@ -4,8 +4,12 @@
 \alias{NIRVarTilretteleggPaaror}
 \title{Funksjon for å tilrettelegge variable for beregning.}
 \usage{
-NIRVarTilretteleggPaaror(RegData, valgtVar, grVar = "ShNavn",
-  figurtype = "andeler")
+NIRVarTilretteleggPaaror(
+  RegData,
+  valgtVar,
+  grVar = "ShNavn",
+  figurtype = "andeler"
+)
 }
 \arguments{
 \item{RegData}{En dataramme med alle nødvendige variabler fra registeret}

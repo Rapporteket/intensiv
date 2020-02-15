@@ -1,30 +1,11 @@
-#' Funksjoner for å lage tabeller Group of functions page title
+#' Funksjoner for å lage tabeller 
 #' 
-#' Fil som beregner div tabeller.Group of functions Description section
-#' 
-#' Detaljer. kommer senereGroup of functions Details paragraph.
-#'
-#' Fil som inneholder funksjoner for å lage tabeller, i første rekke tellinger av personer 
-#' Aktuelle tabeller:
-#' -Belegg (samlerapport), antall opphold per år og enhet, ant. pasienter per år og enhet, ant opph. per måned og enhet.
-#' -tabAntOpphSh12mnd: Antall opphold per måned og enhet siste 12 måneder fram til datoTil. 
-#' RegData må inneholde InnDato.
-#' -tabAntOpphSh5Aar:Antall opphold per år og enhet siste 5 år (inkl. inneværende år) fram til datoTil. 
-#' RegData må inneholde Aar.
-#' 
+#' Belegg (antall opphold, pasienter og intensivdøgn)
+#' Siste inntil 5 år eller siste inntil 12 måneder/kvartal/halvår
 #' @param RegData data
 #' @param personIDvar Variabelen som angir pasientidentifikasjon
 #' @param datoTil sluttdato. Brukes i tabellene AntOpph per 12 mnd og Belegg
-# @inheritParams NIRFigAndeler
-#' @return Div tabeller
-#' @name NIRtabeller
-NULL
-#' @rdname NIRtabeller
-#' @export
-
-#' @section Belegg (antall opphold, pasienter og intensivdøgn)
-#' @rdname NIRtabeller
-#' Siste inntil 5 år eller siste inntil 12 måneder/kvartal/halvår
+#' @inheritParams NIRFigAndeler
 #' @export
 tabBelegg <- function(RegData, tidsenhet='Aar', datoTil, enhetsUtvalg=0, reshID=0) {
       datoFra <- switch(tidsenhet, 
@@ -57,8 +38,12 @@ tabBelegg <- function(RegData, tidsenhet='Aar', datoTil, enhetsUtvalg=0, reshID=
        #      caption=paste0('Antal opphald og liggedøger, ', shtxt,'.'), label='tab:RegEget')
       return(tabBeleggAnt)
 }
-#' @section tabAntOpphShMnd antall opphold siste X (antMnd) mnd
-#' @rdname NIRtabeller
+#' tabAntOpphShMnd antall opphold siste X (antMnd) mnd
+#'
+#' @param RegData 
+#' @inheritParams NIRUtvalgEnh
+#' @param antMnd antall måneder som skal vises
+#'
 #' @export
 tabAntOpphShMnd <- function(RegData, datoTil=Sys.Date(), datoFra='Ikke angitt', antMnd=6){
       #RegData må inneholde DateAdmittedIntensive, DateDischargedIntensive 
@@ -77,8 +62,10 @@ tabAntOpphShMnd <- function(RegData, datoTil=Sys.Date(), datoFra='Ikke angitt', 
 	return(tabAvdMnd1)
 }
 
-#' @section Antall opphold siste 5 år
-#' @rdname NIRtabeller
+#' Antall opphold siste 5 år
+#'
+#' @param RegData data
+#' @param datoTil sluttdato
 #' @export
 tabAntOpphSh5Aar <- function(RegData, datoTil){
       AarNaa <- as.numeric(format.Date(datoTil, "%Y"))
@@ -90,9 +77,12 @@ tabAntOpphSh5Aar <- function(RegData, datoTil){
       return(tabAvdAarN)
 }
 
-#' @section Antall registreringer/pasienter siste 5 år:
-#' Hmmm
-#' @rdname NIRtabeller
+#'Antall registreringer/pasienter siste 5 år:
+#'
+#' @param RegData data
+#' @param gr gruppering opphold (opph, standard), pasienter (pas)
+#' @param datoTil sluttdato
+#'
 #' @export
 tabAntOpphPasSh5Aar <- function(RegData, gr='opph', datoTil){
       AarNaa <- as.numeric(format.Date(datoTil, "%Y"))
@@ -125,8 +115,12 @@ tabAntOpphPasSh5Aar <- function(RegData, gr='opph', datoTil){
 #       return(tabPasAvdAarN)
 # }
 
-#' @section Finn eventuelle dobbeltregistreringer
-#' @rdname NIRtabeller
+#' Finn eventuelle dobbeltregistreringer
+#' @param RegData data
+#' @param datoTil sluttdato
+#' @param reshID enhetens resh
+#' @param pasientID pasientidentifikasjon, personentydig
+#'
 #' @export
 finnDblReg <- function(RegData, datoTil=Sys.Date(), reshID=0, pasientID = 'PasientID'){ #datoFra='2017-01-01', 
       #Registreringer kor same pasient har fått registrert to innleggingar med mindre enn 2 timars mellomrom.
@@ -158,8 +152,13 @@ finnDblReg <- function(RegData, datoTil=Sys.Date(), reshID=0, pasientID = 'Pasie
 }
 
 
-#' @section Nøkkeltall (antall opph., pasienter,  intensivdøgn, samt div oversiktstall)
-#' @rdname NIRtabeller
+#'  Nøkkeltall (antall opph., pasienter,  intensivdøgn, samt div oversiktstall)
+#'
+#' @param RegData dataramme 
+#' @param tidsenhet velg: Aar, Halvaar, Kvartal, Mnd (standard)
+#' @param datoTil sluttdato
+#' @param enhetsUtvalg enhetsutvalg
+#' @param reshID enhetens resh-id
 #' @export
 tabNokkeltall <- function(RegData, tidsenhet='Mnd', datoTil=Sys.Date(), enhetsUtvalg=0, reshID=0) {
       datoFra <- switch(tidsenhet, 
@@ -216,8 +215,8 @@ tabNokkeltall <- function(RegData, tidsenhet='Mnd', datoTil=Sys.Date(), enhetsUt
       return(tabNokkeltall)
 }
 
-#' @section Vise figurdata som tabell
-#' @rdname NIRtabeller
+#' Vise figurdata som tabell
+#' @param UtDataFraFig data fra figurfunksjoner, dvs. beregnede verdier
 #' @export
 lagTabavFig <- function(UtDataFraFig){
       tab <-cbind(UtDataFraFig$Ngr$Hoved, 
@@ -238,11 +237,13 @@ lagTabavFig <- function(UtDataFraFig){
 return(tab)
 }
 
+#' Finne overføringer til/fra en enhet
 #' @param RegData data
-#' @param personIDvar Variabelen som angir pasientidentifikasjon
+#' @param datoFra startdato
 #' @param datoTil sluttdato. Brukes i tabellene AntOpph per 12 mnd og Belegg
-# @inheritParams NIRFigAndeler
-#' @return Div tabeller
+#' @param overfFraSh - overføring fra (1) eller til (0) den aktuelle enheten
+#' @inheritParams NIRUtvalgEnh
+#' @param enhetsUtvalg 
 #' @export
 tabOverforinger <- function(RegData, datoFra=Sys.Date()-365, datoTil=Sys.Date(), 
                             reshID=0, enhetsUtvalg=2, overfFraSh=1){
@@ -278,7 +279,7 @@ tabOverforinger <- function(RegData, datoFra=Sys.Date()-365, datoTil=Sys.Date(),
     indEget <- which(Data$OverfNavn==shNavn)
     Data$OverfNavn[indEget] <- Data$TilfraNavn[indEget]
     Data$OverfNavn[which(!(is.na(Data$OverfTxt)) & is.na(Data$OverfNavn))] <- 'Annet'
-    Tab <- sort(table(Data$OverfNavn))#sort(table(Data$PatientTransferredToHospitalName), decreasing = T)
-    
-  
+    Tab <- cbind('Antall pasienter' = sort(table(Data$OverfNavn), decreasing = T)) #sort(table(Data$PatientTransferredToHospitalName), decreasing = T)
+    #colnames(Tab) <- 'Antall pasienter'
+    return(Tab)
 }

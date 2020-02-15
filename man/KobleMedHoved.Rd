@@ -2,10 +2,9 @@
 % Please edit documentation in R/NIRhjelpefunksjoner.R
 \name{KobleMedHoved}
 \alias{KobleMedHoved}
-\title{Legge til indikator for intervensjon, pårørendeoppfølging}
+\title{Koble et annet skjema til hovedskjema}
 \usage{
-KobleMedHoved(HovedSkjema, Skjema2, alleHovedskjema = F,
-  alleSkjema2 = F)
+KobleMedHoved(HovedSkjema, Skjema2, alleHovedskjema = F, alleSkjema2 = F)
 }
 \arguments{
 \item{HovedSkjema}{Registerets hovedskjma (Main..)}
@@ -17,5 +16,5 @@ KobleMedHoved(HovedSkjema, Skjema2, alleHovedskjema = F,
 \item{alleSkjema2}{TRUE/FALSE.standard: FALSE I praksis om vi skal ha en right? join eller ikke}
 }
 \description{
-Legge til indikator for intervensjon, pårørendeoppfølging
+Koble et annet skjema til hovedskjema
 }
