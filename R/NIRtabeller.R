@@ -252,11 +252,15 @@ tabOverforinger <- function(RegData, datoFra=Sys.Date()-365, datoTil=Sys.Date(),
   #til eller fra det aktuelle sykehuset. Disse må derfor ekskluderes. (Gjelder ca 5% i 2015-19)
   #Filtrerer på eget sykehus. Ser hvilke avdelinger overført fra eget TIL andre
   #Vi må ta med 
-  RegData <- NIRRegDataSQL(datoFra = '2019-01-01')
-  RegData <- NIRPreprosess(RegData)
-  #overfFraSh <- 0
-  #reshID <- 108610 #Overfører TIL Hamar
+  # RegData <- NIRRegDataSQL(datoFra = '2019-01-01')
+  # RegData <- NIRPreprosess(RegData)
+  # datoFra=Sys.Date()-365
+  # datoTil=Sys.Date()
+  # overfFraSh <- 0
+  # reshID <- 108610 #Overfører TIL Hamar
+  
   shNavn <- RegData$ShNavn[match(reshID,RegData$ReshId)]
+  RegData <- NIRUtvalgEnh(RegData = RegData, datoFra = datoFra, datoTil = datoTil)$RegData
   
   overfVariabel <- ifelse(overfFraSh==1, 'PatientTransferredFromHospital', 'PatientTransferredToHospital')
   tittel <- paste('Pasienter overført', ifelse(overfFraSh==1,'TIL', 'FRA'), shNavn)
@@ -275,7 +279,7 @@ tabOverforinger <- function(RegData, datoFra=Sys.Date()-365, datoTil=Sys.Date(),
       Data$OverfTxt <- Data$PatientTransferredFromHospitalText
     }
     Data <- Data[ind, ] #Tar bort de som for eget sykehus har overføring i "feil" retning
-    Data$OverfNavn <- Data$ShNavn
+    Data$OverfNavn <- as.character(Data$ShNavn)
     indEget <- which(Data$OverfNavn==shNavn)
     Data$OverfNavn[indEget] <- Data$TilfraNavn[indEget]
     Data$OverfNavn[which(!(is.na(Data$OverfTxt)) & is.na(Data$OverfNavn))] <- 'Annet'

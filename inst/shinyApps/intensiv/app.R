@@ -629,7 +629,7 @@ server <- function(input, output, session) { #
   
 #---------Hente data------------
   if (paaServer) {
-    RegData <- NIRRegDataSQL(datoFra='2018-01-01') #, session = session) #datoFra = datoFra, datoTil = datoTil)
+    RegData <- NIRRegDataSQL(datoFra='2011-01-01') #, session = session) #datoFra = datoFra, datoTil = datoTil)
     PaarorData <- NIRpaarorDataSQL() 
     PaarorDataH <- KobleMedHoved(RegData, PaarorData, alleHovedskjema=F, alleSkjema2=F)
     qInfluensa <- 'SELECT ShNavn, RHF, PatientInRegistryGuid, FormDate,FormStatus, ICD10_1
@@ -725,13 +725,15 @@ server <- function(input, output, session) { #
       
       output$tabOverfFra <- renderTable({
         #tab <- tabOverforinger(RegData=RegData, reshID=reshID) 
-        tab <- tabOverforinger(RegData=RegData, datoFra=input$startDatoReg, datoTil=input$sluttDatoReg, 
+        tab <- tabOverforinger(RegData=RegData, datoFra=input$datovalgReg[1], datoTil=input$datovalgReg[2], 
                                     reshID=reshID(), overfFraSh=1)
          xtable::xtable(tab) #, colnames=F)
       }, rownames = T)
       output$tabOverfTil <- renderTable({
-        tab <- tabOverforinger(RegData=RegData, datoFra=input$startDatoReg, datoTil=input$sluttDatoReg, 
+        tab <- tabOverforinger(RegData=RegData, datoFra=input$datovalgReg[1], datoTil=input$datovalgReg[2], 
                         reshID=reshID(), overfFraSh=0)
+        print(input$datovalgReg[1])
+        print(input$datovalgReg[2])
         xtable::xtable(tab)
       }, rownames=T)
       
