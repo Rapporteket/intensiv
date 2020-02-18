@@ -9,7 +9,6 @@
 #' 
 #' @param RegData data
 #' @param PasientID Variabelen som angir pasientidentifikasjon
-#' @inheritParams NIRFigAndeler
 #' @return Div hjelpefunksjoner
 #' @export
 
@@ -249,14 +248,12 @@ abonnement <- function(rnwFil, brukernavn='tullebukk', reshID=0,
 #'
 #' @return
 #' @export
-#'
-#' @examples
 tilretteleggKvalIndData <- function(RegData, valgtVar= 'reinn', 
                                     datoFra='2016-01-01', datoTil=Sys.Date()){
-  datoFra='2018-01-01'
-  datoTil=Sys.Date()
-  RegData <- NIRRegDataSQL(datoFra = datoFra, datoTil = datoTil)
-  RegData <- NIRPreprosess(RegData=RegData)
+  #datoFra='2018-01-01'
+  #datoTil=Sys.Date()
+  #RegData <- NIRRegDataSQL(datoFra = datoFra, datoTil = datoTil)
+  #RegData <- NIRPreprosess(RegData=RegData)
   
   resultatVariabler <- c('Aar', "ShNavn", "ReshId", "Variabel") #'KvalIndId', 
   IntensivKvalInd <- data.frame(NULL) #Aar=NULL, ShNavn=NULL)

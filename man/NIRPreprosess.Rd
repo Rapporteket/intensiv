@@ -4,7 +4,7 @@
 \alias{NIRPreprosess}
 \title{Preprosesser data fra Intensivregisteret}
 \usage{
-NIRPreprosess(RegData = RegData, lagreKvalIndData = 0)
+NIRPreprosess(RegData = RegData)
 }
 \arguments{
 \item{RegData}{En dataramme med alle nødvendige variabler fra registeret}

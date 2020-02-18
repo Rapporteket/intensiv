@@ -2,14 +2,17 @@
 % Please edit documentation in R/NIRhjelpefunksjoner.R
 \name{SorterOgNavngiTidsEnhet}
 \alias{SorterOgNavngiTidsEnhet}
-\title{Tilrettelegge tidsenhetvariabel:
-Probably better if all sections come first, uless have one section per function. Makes it easier to
-see the information flow.}
+\title{Tilrettelegge tidsenhetvariabel:}
 \usage{
 SorterOgNavngiTidsEnhet(RegData, tidsenhet = "Aar", tab = 0)
 }
+\arguments{
+\item{RegData}{}
+
+\item{tidsenhet}{'Aar' (standard), 'Halvaar', 'Kvartal', 'Mnd'}
+
+\item{tab}{husker ikke hva denne gjør...}
+}
 \description{
 Tilrettelegge tidsenhetvariabel:
-Probably better if all sections come first, uless have one section per function. Makes it easier to
-see the information flow.
 }
