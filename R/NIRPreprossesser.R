@@ -10,7 +10,7 @@
 #'
 #' @export
 #'
-NIRPreprosess <- function(RegData=RegData, lagreKvalIndData=0)	#, reshID=reshID)
+NIRPreprosess <- function(RegData=RegData)	#, reshID=reshID)
 {
       #Miljøparametre
       #print(Sys.getlocale())

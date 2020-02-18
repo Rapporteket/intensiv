@@ -1,8 +1,3 @@
-# Må det kanskje komme en overordnet tittel her?
-#---------------------------------------------
-
-#' Hjelpefunksjoner. Group of functions page title
-#' 
 #' Fil med div hjelpefunksjoner.Group of functions Description section
 #' 
 #' Detaljer. kommer senereGroup of functions Details paragraph.
@@ -54,8 +49,10 @@ FinnReinnleggelser <- function(RegData, PasientID='PasientID'){
 }
 
 #' Tilrettelegge tidsenhetvariabel:
-#' Probably better if all sections come first, uless have one section per function. Makes it easier to
-#' see the information flow.
+#' @param RegData 
+#' @param tidsenhet 'Aar' (standard), 'Halvaar', 'Kvartal', 'Mnd'
+#' @param tab husker ikke hva denne gjør...
+#'
 #' @export
 SorterOgNavngiTidsEnhet <- function(RegData, tidsenhet='Aar', tab=0) {
       #Lager sorteringsvariabel for tidsenhet:
@@ -105,7 +102,6 @@ SorterOgNavngiTidsEnhet <- function(RegData, tidsenhet='Aar', tab=0) {
 }
 
 #' Lage tulledata (simulerte data)
-#'
 #' @param RegData Dataramme
 #' @param varBort variable som skal fjernes fra RegData
 #' @param antSh antall simulerte sykehus
@@ -239,5 +235,124 @@ abonnement <- function(rnwFil, brukernavn='tullebukk', reshID=0,
                     reshId = reshID[[1]],
                     msg = paste("Leverer: ", utfil))
   return(utfil)
+}
+
+
+#' Funksjon for å tilrettelegge kvalitetsindikatordata. Data skal  
+#' være på forma 0-1 for "andelsvariabler". For indikatorer som baserers på gjennomsnitt/median,
+#' må faktiske observasjoner benyttes. 
+#'
+#' @param RegData 
+#' @param KIvariabel 
+#' @param datoFra 
+#' @param datoTil 
+#'
+#' @return
+#' @export
+#'
+#' @examples
+tilretteleggKvalIndData <- function(RegData, valgtVar= 'reinn', 
+                                    datoFra='2016-01-01', datoTil=Sys.Date()){
+  datoFra='2018-01-01'
+  datoTil=Sys.Date()
+  RegData <- NIRRegDataSQL(datoFra = datoFra, datoTil = datoTil)
+  RegData <- NIRPreprosess(RegData=RegData)
+  
+  resultatVariabler <- c('Aar', "ShNavn", "ReshId", "Variabel") #'KvalIndId', 
+  IntensivKvalInd <- data.frame(NULL) #Aar=NULL, ShNavn=NULL)
+  
+  kvalIndParam <- c('reinn', 'respiratortidInvMoverf')
+  indikatorID <- c('intensiv1', 'intensiv2')
+  valgtVar <- 'respiratortidInvMoverf'
+  
+  for (valgtVar in kvalIndParam){
+    
+    figurtype <- switch(valgtVar,
+                           reinn = 'andelGrVar',
+                        respiratortidInvMoverf = 'gjsnGrVar')
+                        
+    
+    Data <- NIRVarTilrettelegg(RegData=RegData, valgtVar=valgtVar, 
+                               figurtype=figurtype)$RegData[ , resultatVariabler]
+    #Data <- NIRUtvalgEnh(RegData = Data, datoFra = datoFra, datoTil = datoTil)$RegData
+    #NIRKvalInd1 <- Data
+    Data$kvalIndID <- indikatorID[which(kvalIndParam == valgtVar)]
+    
+    IntensivKvalInd <- rbind(IntensivKvalInd, Data)
+  }
+  
+  
+  
+  
+  #Mappe om fra resh til organisasjonsnummer
+  ShOversikt <- unique(RegData[ ,c('ReshId', 'ShNavn')], row.names=F)[order(unique(RegData$ShNavn)), ]
+
+#  ReshId - orgID, resh per 2020-02-19                
+  nyID <- c('102090'='974588951',               #AHUS - Intensiv
+  '4205696'='974588951',        #         AHUS - Postop
+  '111487'='974588951',         #                 Aker
+  '104450'='974631091',           #            Arendal
+  '4210053'='974795361',             #             Bodø
+  '103090'='974705788',               #          Bærum
+  '108897'='974116804',              #   Diakonhjemmet
+  '103620'='974631326',               #        Drammen
+  '108609'='974631768',                #       Elverum
+  '105282'='974744570',                #         Førde
+  '108618'='974632535',                 #       Gjøvik
+  '108610'='974724960',                 #        Hamar
+  '101858'='974795833',                 #   Hammerfest
+  '100180'='974316285',                 #  Haraldplass
+  '700617'='974795639',                 #      Harstad
+  '100273'='974724774',                  #   Haugesund
+  '109363'='974557746',              # Haukel. Brannsk
+  '112044'='974557746',             # Haukel. KSK Int.
+  '105048'='974557746',             #      Haukel. MIO
+  '106271'='974557746',             #   Haukel. Postop
+  '107717'='974557746',             #      Haukel. ROE
+  '106285'='974557746',             #      Haukel. TIO
+  '4209889'='974633752',             #      KalnesØstf.
+  '101830'='974795930',             #         Kirkenes
+  '4208715'='974631385',             #        Kongsberg
+  '114240'='974733013',              #    Kristiansand
+  '706078'='974746948',              #    Kristiansund
+  '102250'='974754118',              #        Levanger
+  '108626'='874632562',              #     Lillehammer
+  '4208892'='974207532', #Lovisenberg Diakonale Sykehus
+  '103015'='974795515',     #                Mo i Rana
+  '706079'='974745569',     #                    Molde
+  '103141'='974795485',      #                 Mosjøen
+  '4208039'='974633698',     #                     Moss
+  '105893'='974753898',     #                   Namsos
+  '700618'='974795396',     #                  Narvik
+  '705757'='974707152',     #         Radiumhospitalet
+  '705576'='874716782',     #         RH Barneintensiv
+  '705577'='874716782',     #            RH Gen Int 1
+  '706929'='874716782',     #            RH Gen Int 2
+  '700419'='874716782',      #               RH samlet
+  '103539'='974631407',       #              Ringerike
+  '103149'='974795477',        #          Sandnessjøen
+  '102026'='974633191',         #                Skien
+  '4201313'='974749025',          #   St. Olav Hovedint
+  '114282'='974703300',         #            Stavanger
+  '700720'='974795787',      #Tromsø Intensivmedisinsk
+  '700619'='974795787',     #         Tromsø Kir. int.
+  '601302'='974795787',     #           Tromsø Med int
+  '700620'='974795787',     #            Tromsø Postop
+  '103948'='974589095',      #                Tønsberg
+  '109870'='974589095',     #     Ullevål Akuttmed Int
+  '111449'='974589095',      #        Ullevål Barneint
+  '109773'='974589095',     #          Ullevål Gen int
+  '109877'='974589095',     #        Ullevål Hjerte-PO
+  '4205969'='974589095',     #    Ullevål Hjertemed Int
+  '109779'='974589095',     #         Ullevål Nevroint
+  '109778'='974589095',     #           Ullevål Postop
+  '110867'='974795574',     #          Vesterål.Stokm.
+  '4209764'='974747545',     #                    Volda
+  '108308'='974747138',     #              Ålesund Kir
+  '102673'='974747138')     #              Ålesund Med
+  
+  Data$SykehusOrgId <- as.character(nyID[as.character(Data$ReshId)])
+  
+  
 }
   

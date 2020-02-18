@@ -732,8 +732,6 @@ server <- function(input, output, session) { #
       output$tabOverfTil <- renderTable({
         tab <- tabOverforinger(RegData=RegData, datoFra=input$datovalgReg[1], datoTil=input$datovalgReg[2], 
                         reshID=reshID(), overfFraSh=0)
-        print(input$datovalgReg[1])
-        print(input$datovalgReg[2])
         xtable::xtable(tab)
       }, rownames=T)
       
