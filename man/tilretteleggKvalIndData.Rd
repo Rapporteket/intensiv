@@ -6,21 +6,14 @@
 være på forma 0-1 for "andelsvariabler". For indikatorer som baserers på gjennomsnitt/median,
 må faktiske observasjoner benyttes.}
 \usage{
-tilretteleggKvalIndData(
-  RegData,
-  valgtVar = "reinn",
-  datoFra = "2016-01-01",
-  datoTil = Sys.Date()
-)
+tilretteleggKvalIndData(RegData, datoFra = "2016-01-01", datoTil = Sys.Date())
 }
 \arguments{
-\item{RegData}{}
+\item{RegData}{dataramme}
 
-\item{datoFra}{}
+\item{datoFra}{startdato}
 
-\item{datoTil}{}
-
-\item{KIvariabel}{}
+\item{datoTil}{sluttdato}
 }
 \value{
 

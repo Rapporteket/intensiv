@@ -241,19 +241,19 @@ abonnement <- function(rnwFil, brukernavn='tullebukk', reshID=0,
 #' være på forma 0-1 for "andelsvariabler". For indikatorer som baserers på gjennomsnitt/median,
 #' må faktiske observasjoner benyttes. 
 #'
-#' @param RegData 
-#' @param KIvariabel 
-#' @param datoFra 
-#' @param datoTil 
+#' @param RegData dataramme
+#' @param datoFra startdato
+#' @param datoTil sluttdato
 #'
 #' @return
 #' @export
-tilretteleggKvalIndData <- function(RegData, valgtVar= 'reinn', 
+tilretteleggKvalIndData <- function(RegData, 
                                     datoFra='2016-01-01', datoTil=Sys.Date()){
-  #datoFra='2018-01-01'
-  #datoTil=Sys.Date()
-  #RegData <- NIRRegDataSQL(datoFra = datoFra, datoTil = datoTil)
-  #RegData <- NIRPreprosess(RegData=RegData)
+  # datoFra='2018-01-01'
+  # datoTil=Sys.Date()
+  # RegData <- NIRRegDataSQL(datoFra = datoFra, datoTil = datoTil)
+  # RegData <- NIRPreprosess(RegData=RegData)
+  # data <- tilretteleggKvalIndData (RegData, datoFra='2016-01-01', datoTil=Sys.Date())
   
   resultatVariabler <- c('Aar', "ShNavn", "ReshId", "Variabel") #'KvalIndId', 
   IntensivKvalInd <- data.frame(NULL) #Aar=NULL, ShNavn=NULL)
@@ -348,8 +348,8 @@ tilretteleggKvalIndData <- function(RegData, valgtVar= 'reinn',
   '108308'='974747138',     #              Ålesund Kir
   '102673'='974747138')     #              Ålesund Med
   
-  Data$SykehusOrgId <- as.character(nyID[as.character(Data$ReshId)])
-  
+  IntensivKvalInd$SykehusOrgId <- as.character(nyID[as.character(IntensivKvalInd$ReshId)])
+  return(IntensivKvalInd)
   
 }
   
