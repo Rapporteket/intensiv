@@ -614,7 +614,7 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='an
             RegData$VariabelGr <- factor(RegData$PrimaryReasonAdmitted, levels=gr)
             grtxt <- c('Respiratorisk svikt', 'Sirk./kardiovaskulær svikt', 'Gastroenterologisk svikt', 
                        'Nevrologisk svikt', 'Sepsis', 'Skade/traume', 'Metabolsk/intoksikasjon', 'Hematologisk svikt', 
-                       'Nyresvikt', 'Postoperativt (kompl. til anestesi/kirurgi)', 'Annet')
+                       'Nyresvikt', 'Postoperativt (komplikasjon \ntil anestesi/kirurgi)', 'Annet')
             cexgr <- 0.9
       } 
       #-------------- SAMMENSATTE variable

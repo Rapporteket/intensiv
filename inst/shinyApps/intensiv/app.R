@@ -27,6 +27,47 @@ regTitle <- ifelse(paaServer,
 #Sys.setlocale("LC_TIME", "nb_NO.UTF-8")
 #ibrary(shinyBS) # Additional Bootstrap Controls
 
+#---------Hente data------------
+if (paaServer) {
+  RegData <- NIRRegDataSQL(datoFra='2018-08-01') #, session = session) #datoFra = datoFra, datoTil = datoTil)
+  PaarorData <- NIRpaarorDataSQL() 
+  PaarorDataH <- KobleMedHoved(RegData, PaarorData, alleHovedskjema=F, alleSkjema2=F)
+  qInfluensa <- 'SELECT ShNavn, RHF, PatientInRegistryGuid, FormDate,FormStatus, ICD10_1
+                  from InfluensaFormDataContract'
+  InfluData <- rapbase::LoadRegData(registryName= "nir", query=qInfluensa, dbType="mysql")
+  
+  #repLogger(session = session, 'Hentet alle data fra intensivregisteret')
+} #hente data på server
+
+if (!exists('PaarorDataH')){
+  data('NIRRegDataSyn', package = 'intensiv')
+  #try(data(package = "intensiv"))
+}
+RegData <- NIRPreprosess(RegData = RegData)
+PaarorData <- NIRPreprosess(RegData = PaarorDataH) #Må først koble på hoveddata for å få ShType++
+
+
+#-----Definere utvalgsinnhold og evt. parametre som er statiske i appen----------
+
+#Definere utvalgsinnhold
+#sykehusNavn <- sort(c('',unique(RegData$ShNavn)), index.return=T)
+#sykehusValg <- c(0,unique(RegData$ReshId))[sykehusNavn$ix]
+sykehusNavn <- sort(unique(RegData$ShNavn), index.return=T)
+sykehusValg <- unique(RegData$ReshId)[sykehusNavn$ix]
+sykehusValg <- c(0,sykehusValg)
+names(sykehusValg) <- c('Alle',sykehusNavn$x)
+
+enhetsUtvalg <- c("Egen mot resten av landet"=1, 
+                  "Hele landet"=0, 
+                  "Egen enhet"=2,
+                  "Egen enhet mot egen sykehustype" = 3,
+                  "Egen sykehustype" = 4,
+                  "Egen sykehustype mot resten av landet" = 5,
+                  "Egen enhet mot egen region" = 6, 
+                  "Egen region" = 7,
+                  "Egen region mot resten" = 8)
+
+#enhetsUtvalgNavn <- 
 
 # Define UI for application that draws figures
 ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
@@ -37,6 +78,9 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
   windowTitle = regTitle,
   theme = "rap/bootstrap.css",
 
+  
+  
+  
   #--------------Startside------------------------------  
   tabPanel(p("Oversiktsside", 
              title= 'Nøkkeltall og samlerapporter'),
@@ -71,7 +115,8 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                tabPanel('Startside',
              
              h3(ifelse(paaServer, "","Merk at noen resultater kan se rare ut siden dette er syntetiske data!"), align='center' ),
-             h2("Nøkkeltall på intensiv"),
+             #h2("Nøkkeltall på intensiv"),
+             h3(uiOutput('NokkeltallUtvalgTxt')),
              selectInput(inputId = 'enhetsNivaaStart', label='Enhetsnivå',
                            choices = c("Egen enhet"=2, "Hele landet"=0, 
                                        "Egen sykehustype"=4, "Egen region"=7)
@@ -81,7 +126,7 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
            ),
            
            tabPanel('Brukerveiledning',
-                    h4('å Rapporteket kan du finne visualiseringer og oppsummeringer av de fleste 
+                    h4('På Rapporteket kan du finne visualiseringer og oppsummeringer av de fleste 
                        variabler som registreres i registeret. Hold musepekeren over en fane for 
                        å se hvilke variable/tema som er visualisert i fanen.'),
                     br(),
@@ -166,7 +211,8 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                                   tableOutput("tabAntPasSh5Aar")
                          ),
                          tabPanel('Nøkkeltall',
-                                  h2("Nøkkeltall på intensiv"),
+                                  h2("Nøkkeltall på intensiv, ", align='center'), 
+                                  h2(uiOutput('egetShnavn'), align='c'),
                                   br(),
                                   tableOutput('tabNokkeltall')
                          ),
@@ -246,16 +292,9 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
              sliderInput(inputId="alder", label = "Alder", min = 0,
                          max = 110, value = c(0, 110)
              ),
+             enhetsUtvalgValg <- 
              selectInput(inputId = 'enhetsUtvalg', label='Egen enhet og/eller landet',
-                         choices = c("Egen mot resten av landet"=1, 
-                                     "Hele landet"=0, 
-                                     "Egen enhet"=2,
-                                     "Egen enhet mot egen sykehustype" = 3,
-                                     "Egen sykehustype" = 4,
-                                     "Egen sykehustype mot resten av landet" = 5,
-                                     "Egen enhet mot egen region" = 6, 
-                                     "Egen region" = 7,
-                                     "Egen region mot resten" = 8)
+                         choices = enhetsUtvalg
              )
              #sliderInput(inputId="aar", label = "Årstall", min = 2012,  #min(RegData$Aar),
              #           max = as.numeric(format(Sys.Date(), '%Y')), value = )
@@ -599,13 +638,28 @@ server <- function(input, output, session) { #
 #-----------Div serveroppstart------------------  
   raplog::appLogger(session = session, msg = "Starter intensiv-app")
       
-  reshID <- reactive({ifelse(paaServer, as.numeric(rapbase::getUserReshId(session)), 109773)})
+  reshID <- ifelse(paaServer, as.numeric(rapbase::getUserReshId(session)), 109773)
   rolle <- reactive({ifelse(paaServer, rapbase::getUserRole(shinySession=session), 'SC')})
   brukernavn <- reactive({ifelse(paaServer, rapbase::getUserName(shinySession=session), 'brukernavn')})
+  # reshID <- reactive({ifelse(paaServer, as.numeric(rapbase::getUserReshId(session)), 109773)})
+  # rolle <- reactive({ifelse(paaServer, rapbase::getUserRole(shinySession=session), 'SC')})
+  # brukernavn <- reactive({ifelse(paaServer, rapbase::getUserName(shinySession=session), 'brukernavn')})
   #userRole <- reactive({ifelse(onServer, rapbase::getUserRole(session), 'SC')})
   #output$reshID <- renderText({ifelse(paaServer, as.numeric(rapbase::getUserReshId(session)), 105460)}) #evt renderUI
   #enhetsNavn <- reactive({ifelse(paaServer, rapbase::(shinySession=session), 'egen enhet')})
-  output$egetShnavn <- renderText(as.character(RegData$ShNavn[match(reshID(), RegData$ReshId)]))
+  indReshEgen <- match(reshID, RegData$ReshId)
+  egetShnavn <- as.character(RegData$ShNavn[indReshEgen])
+  egetRHF <- as.character(RegData$RHF[indReshEgen])
+  egetHF <- as.character(RegData$HF[indReshEgen])
+  egenShType <- c('lokal-/sentralsykehus', '', 
+                       'universitetssykehus')[RegData$ShType[indReshEgen]]
+  egenLokalitet <- c(2, 4, 7)
+  names(egenLokalitet) <- c(egetShnavn, egenShType , egetRHF)
+  output$egetShnavn <- renderText(egetShnavn)
+  # output$egetRHF <- renderText(as.character(RegData$RHF[indReshEgen]))
+  # output$egetRHF <- renderText(as.character(RegData$HF[indReshEgen]))
+  # output$egensykehustype <- renderText(c('universitetssykehus', '', 
+  #                                        'lokal-/sentralsykehus')[RegData$ShType[indReshEgen]])
   
   # observe({if (rolle() != 'SC') { #
   #   shinyjs::hide(id = 'velgResh')
@@ -616,7 +670,7 @@ server <- function(input, output, session) { #
   # widget
   if (paaServer) {
     output$appUserName <- renderText(rapbase::getUserFullName(session))
-    output$appOrgName <- renderText(paste0('rolle: ', rolle(), '<br> ReshID: ', reshID()) )}
+    output$appOrgName <- renderText(paste0('rolle: ', rolle(), '<br> ReshID: ', reshID) )}
   
   # User info in widget
   userInfo <- rapbase::howWeDealWithPersonalData(session)
@@ -627,25 +681,6 @@ server <- function(input, output, session) { #
                html = TRUE, confirmButtonText = rapbase::noOptOutOk())
   })
   
-#---------Hente data------------
-  if (paaServer) {
-    RegData <- NIRRegDataSQL(datoFra='2011-01-01') #, session = session) #datoFra = datoFra, datoTil = datoTil)
-    PaarorData <- NIRpaarorDataSQL() 
-    PaarorDataH <- KobleMedHoved(RegData, PaarorData, alleHovedskjema=F, alleSkjema2=F)
-    qInfluensa <- 'SELECT ShNavn, RHF, PatientInRegistryGuid, FormDate,FormStatus, ICD10_1
-                  from InfluensaFormDataContract'
-    InfluData <- rapbase::LoadRegData(registryName= "nir", query=qInfluensa, dbType="mysql")
-    
-    #repLogger(session = session, 'Hentet alle data fra intensivregisteret')
-  } #hente data på server
-  
-  if (!exists('PaarorDataH')){
-    data('NIRRegDataSyn', package = 'intensiv')
-    #try(data(package = "intensiv"))
-  }
-  RegData <- NIRPreprosess(RegData = RegData)
-  PaarorData <- NIRPreprosess(RegData = PaarorDataH) #Må først koble på hoveddata for å få ShType++
-  
   
       #--------startside--------------      
 #      output$tekstDash <- c('Figurer med kvalitetsindikatorer',
@@ -655,7 +690,7 @@ server <- function(input, output, session) { #
     filename = function(){ paste0('MndRapp', Sys.time(), '.pdf')}, 
     content = function(file){
       henteSamlerapporter(file, rnwFil="NIRmndRapp.Rnw", 
-                          reshID = reshID(), datoFra = startDato)
+                          reshID = reshID, datoFra = startDato)
     }
   )
   
@@ -663,7 +698,7 @@ server <- function(input, output, session) { #
     filename = function(){ paste0('NIRsamleRapp', Sys.time(), '.pdf')}, 
     content = function(file){
       henteSamlerapporter(file, rnwFil="NIRSamleRapp.Rnw",
-                  reshID = reshID(), datoFra = startDato)
+                  reshID = reshID, datoFra = startDato)
     }
   )
   
@@ -678,11 +713,16 @@ server <- function(input, output, session) { #
  # observe({
   #TESTING
   # tab <- t(tabNokkeltall(RegData=RegData, tidsenhet='Mnd',
-  #                        enhetsUtvalg=0, reshID=109773))
-           
+  #                        enhetsUtvalg=0, reshID=109773))#
+  output$NokkeltallUtvalgTxt <- renderText({
+    paste0('Nøkkeltall på intensiv, ', 
+              as.character(names(egenLokalitet[which(egenLokalitet==as.numeric(input$enhetsNivaaStart))])))
+    #paste0('Nøkkeltall på intensiv, ', as.character(names(egenLokalitet[which(egenLokalitet==4)])))
+    
+  })    
    output$tabNokkeltallStart <- function() {
     tab <- t(tabNokkeltall(RegData=RegData, tidsenhet='Mnd',
-                           enhetsUtvalg=as.numeric(input$enhetsNivaaStart), reshID=reshID()))
+                           enhetsUtvalg=as.numeric(input$enhetsNivaaStart), reshID=reshID))
     kableExtra::kable(tab,
                       full_width=F,
                       digits = c(0,0,0,1,0,1,1,0,0,0,1,1,2,1)
@@ -695,7 +735,7 @@ server <- function(input, output, session) { #
   
   output$tabNokkeltall <- function() {#renderTable({
             tab <- t(tabNokkeltall(RegData=RegData, tidsenhet=input$tidsenhetReg, datoTil=input$sluttDatoReg, 
-                      enhetsUtvalg=as.numeric(input$enhetsNivaa), reshID=reshID()))
+                      enhetsUtvalg=as.numeric(input$enhetsNivaa), reshID=reshID))
             #tab <- tabNokkeltall(RegData, tidsenhet='Mnd', datoTil, enhetsUtvalg=0, reshID=0)
             kableExtra::kable(tab, 
                               full_width=F, 
@@ -726,25 +766,25 @@ server <- function(input, output, session) { #
       output$tabOverfFra <- renderTable({
         #tab <- tabOverforinger(RegData=RegData, reshID=reshID) 
         tab <- tabOverforinger(RegData=RegData, datoFra=input$datovalgReg[1], datoTil=input$datovalgReg[2], 
-                                    reshID=reshID(), overfFraSh=1)
+                                    reshID=reshID, overfFraSh=1)
          xtable::xtable(tab) #, colnames=F)
       }, rownames = T)
       output$tabOverfTil <- renderTable({
         tab <- tabOverforinger(RegData=RegData, datoFra=input$datovalgReg[1], datoTil=input$datovalgReg[2], 
-                        reshID=reshID(), overfFraSh=0)
+                        reshID=reshID, overfFraSh=0)
         xtable::xtable(tab)
       }, rownames=T)
       
       output$tabDblReg <- renderTable({
-        tabDBL <- finnDblReg(RegData, reshID=reshID()) #tabDBL <- 
-        finnDblReg(RegData, reshID=reshID())
+        tabDBL <- finnDblReg(RegData, reshID=reshID) #tabDBL <- 
+        finnDblReg(RegData, reshID=reshID)
         #tabDBL <- knitr::kable(tabDBL, format='html', row.names = NA)
       }, spacing="xs") #rownames = T, 
 
       
       output$inklKrit <- renderPlot({
         NIRFigAndeler(RegData=RegData, preprosess = 0, valgtVar='inklKrit',
-                      reshID=reshID(), enhetsUtvalg=as.numeric(input$enhetsUtvalg),
+                      reshID=reshID, enhetsUtvalg=as.numeric(input$enhetsUtvalg),
                       datoFra=input$datovalg[1], datoTil=input$datovalg[2], session=session)
       }, height=800, width=800 #height = function() {session$clientData$output_fordelinger_width}
       )
@@ -752,7 +792,7 @@ server <- function(input, output, session) { #
 #------------Fordelinger---------------------  
       output$fordelinger <- renderPlot({
             NIRFigAndeler(RegData=RegData, preprosess = 0, valgtVar=input$valgtVar,
-                                                      reshID=reshID(), enhetsUtvalg=as.numeric(input$enhetsUtvalg),
+                                                      reshID=reshID, enhetsUtvalg=as.numeric(input$enhetsUtvalg),
                                                       datoFra=input$datovalg[1], datoTil=input$datovalg[2],
                                                       minald=as.numeric(input$alder[1]), maxald=as.numeric(input$alder[2]),
                                                       erMann=as.numeric(input$erMann), session = session)
@@ -761,7 +801,7 @@ server <- function(input, output, session) { #
       
       observe({      
             UtDataFord <- NIRFigAndeler(RegData=RegData, preprosess = 0, valgtVar=input$valgtVar,
-                                        reshID=reshID(), enhetsUtvalg=as.numeric(input$enhetsUtvalg),
+                                        reshID=reshID, enhetsUtvalg=as.numeric(input$enhetsUtvalg),
                                         datoFra=input$datovalg[1], datoTil=input$datovalg[2],
                                         minald=as.numeric(input$alder[1]), maxald=as.numeric(input$alder[2]),
                                         erMann=as.numeric(input$erMann), lagFig = 0, session = session)
@@ -809,7 +849,7 @@ server <- function(input, output, session) { #
             output$andelTid <- renderPlot({
                   
                   NIRFigAndelTid(RegData=RegData, preprosess = 0, valgtVar=input$valgtVarAndelGrVar,
-                                 reshID=reshID(),
+                                 reshID=reshID,
                                  datoFra=input$datovalgAndelGrVar[1], datoTil=input$datovalgAndelGrVar[2],
                                  minald=as.numeric(input$alderAndelGrVar[1]), maxald=as.numeric(input$alderAndelGrVar[2]),
                                  erMann=as.numeric(input$erMannAndelGrVar),
@@ -822,7 +862,7 @@ server <- function(input, output, session) { #
             observe({
                   #AndelTid
                   AndelerTid <- NIRFigAndelTid(RegData=RegData, preprosess = 0, valgtVar=input$valgtVarAndelGrVar,
-                                               reshID=reshID(),
+                                               reshID=reshID,
                                                datoFra=input$datovalgAndelGrVar[1], datoTil=input$datovalgAndelGrVar[2],
                                                minald=as.numeric(input$alderAndelGrVar[1]), maxald=as.numeric(input$alderAndelGrVar[2]),
                                                erMann=as.numeric(input$erMannAndelGrVar),
@@ -902,7 +942,7 @@ server <- function(input, output, session) { #
       
       output$gjsnTid <- renderPlot({
             NIRFigGjsnTid(RegData=RegData, preprosess = 0, valgtVar=input$valgtVarGjsn,
-                          reshID=reshID(),
+                          reshID=reshID,
                           datoFra=input$datovalgGjsn[1], datoTil=input$datovalgGjsn[2],
                           minald=as.numeric(input$alderGjsn[1]), maxald=as.numeric(input$alderGjsn[2]),
                           erMann=as.numeric(input$erMannGjsn), 
@@ -948,7 +988,7 @@ server <- function(input, output, session) { #
             h5(HTML(paste0(dataUtGjsnGrVar$utvalgTxt, '<br />')))
           ))
         dataUtGjsnTid <- NIRFigGjsnTid(RegData=RegData, preprosess = 0, valgtVar=input$valgtVarGjsn,
-                                       reshID=reshID(),
+                                       reshID=reshID,
                                        datoFra=input$datovalgGjsn[1], datoTil=input$datovalgGjsn[2],
                                        minald=as.numeric(input$alderGjsn[1]), maxald=as.numeric(input$alderGjsn[2]),
                                        erMann=as.numeric(input$erMannGjsn), 
@@ -1098,7 +1138,7 @@ server <- function(input, output, session) { #
         
         fun <- "abonnement"  #"henteSamlerapporter"
         paramNames <- c('rnwFil', 'brukernavn', "reshID", "datoFra", 'datoTil')
-        paramValues <- c(rnwFil, brukernavn(), reshID(), startDato, as.character(datoTil)) #input$subscriptionFileFormat)
+        paramValues <- c(rnwFil, brukernavn(), reshID, startDato, as.character(datoTil)) #input$subscriptionFileFormat)
         
         test <- abonnement(rnwFil = 'NIRmndRapp.Rnw', brukernavn='IntensivBruker', reshID=109773, datoTil=Sys.Date())
         
