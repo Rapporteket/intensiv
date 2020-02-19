@@ -67,54 +67,7 @@ enhetsUtvalg <- c("Egen mot resten av landet"=1,
                   "Egen region" = 7,
                   "Egen region mot resten" = 8)
 
-valgFordeling<- c('Alder' = 'alder', 
-                  'Bukleie' = 'bukleie',
-                  'Hemodynamisk overvåkn.' = 'ExtendedHemodynamicMonitoring',
-                  'Frailty index' = 'frailtyIndex',
-                  'Inklusjonskriterier' = 'inklKrit',
-                  'Isolasjon, type' = 'isolering',
-                  'Isolasjon, varighet' = 'isoleringDogn',
-                  'Liggetid' = 'liggetid',
-                  'Nas-skår (sykepleierakt.)' = 'Nas24',
-                  'NEMS-skår (ressursbruk)' = 'NEMS24',
-                  'Nyreerstattende beh., type' = 'nyreBeh',
-                  'Nyreerstattende beh., varighet' = 'nyreBehTid',
-                  'Potensielle donorer, årsak ikke påvist opph. sirkulasjon' = 'CerebralCirculationAbolishedReasonForNo',
-                  'Primærårsak' = 'PrimaryReasonAdmitted',
-                  'Respiratortid' = 'respiratortid',
-                  'Respiratortid, ikke-invasiv' = 'respiratortidNonInv',
-                  'Respiratortid, invasiv m/overf.' = 'respiratortidInvMoverf',
-                  'Respiratortid, invasiv u/overf.' = 'respiratortidInvUoverf',
-                  'SAPSII-skår (alvorlighet av sykd.)' = 'SAPSII',
-                  'SAPSII-skår (uten alderspoeng)' = 'SAPSIIuAlder',
-                  'Spesielle tiltak' = 'spesTiltak',
-                  'Type opphold' = 'InnMaate',
-                  'Årsak, ikke donasjon ved opphevet intrakraniell sirk.' = 'OrganDonationCompletedReasonForNoStatus'
-)
-valgAndeler <- c('Alder minst 80 år' = 'alder_over80',
-                 'Alder under 18år' = 'alder_u18',
-                 'Bukleie' = 'bukleie',
-                 'Døde innen 30 dager' = 'dod30d',
-                 'Døde innen 90 dager' = 'dod90d',
-                 'Døde innen ett år' = 'dod365d',
-                 'Døde på intensiv' = 'dodeIntensiv',
-                 'Invasiv respiratortid < 2,5 døgn, m/overførte' = 'respiratortidInvMoverf',
-                 'Invasiv respiratortid < 2,5 døgn, u/overførte' = 'respiratortidInvUoverf',
-                 'Isolasjon av pasient' = 'isolering',
-                 'Liggetid, døde' = 'liggetidDod',
-                 'Menn' = 'erMann',
-                 'Nyreerstattende behandling' = 'nyreBeh',
-                 'Organdonorer, av døde' = 'OrganDonationCompletedStatus',
-                 'Organdonorer, av alle med opphevet intrakran. sirk.' = 'OrganDonationCompletedCirc',
-                 'Reinnleggelse' = 'reinn',
-                 'Respiratorstøtte' = 'respStotte',
-                 'Respiratortid, døde' = 'respiratortidDod',
-                 'Utenfor vakttid, innlagt' = 'utenforVakttidInn',
-                 'Utenfor vakttid, utskrevet' = 'utenforVakttidUt',
-                 'Utvidet hemodyn. overvåkning' = 'ExtendedHemodynamicMonitoring',
-                 'Trakeostomi' = 'trakeostomi',
-                 'Trakeostomi, åpen' = 'trakAapen')
-
+#enhetsUtvalgNavn <- 
 
 # Define UI for application that draws figures
 ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
@@ -296,48 +249,60 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
              )
            )
   ), #tab
- 
-  #   #-------Utvalg, figurer (felles sidebar panel)----------    
-  
-  #sidebarPanel(
-  sidebarPanel(
-    width = 3,
-    h4('FELLES: Her kan man velge hvilken variabel man ønsker å se resultater for og gjøre ulike filtreringer.'),
-    br(),
-    
-    # conditionalPanel(
-    #   condition = "input.ark == 'Fordelinger' || 'input.ark == 'Andeler'",
-                     selectInput(inputId = "valgtVar", label="Velg variabel",
-                                 choices = valgFordeling),
-                     selectInput(inputId = "valgtVarAndelGrVar", label="Velg variabel",
-                                 choices = valgAndeler),
-     dateRangeInput(inputId = 'datovalg', start = startDato, end = idag,
-                     label = "Tidsperiode", separator="t.o.m.", language="nb"),
-      selectInput(inputId = "erMann", label="Kjønn",
-                  choices = c("Begge"=2, "Menn"=1, "Kvinner"=0)
-      ),
-      sliderInput(inputId="alder", label = "Alder", min = 0,
-                  max = 110, value = c(0, 110)
-      ),
-      selectInput(inputId = 'enhetsUtvalg', label='Egen enhet og/eller landet',
-                    choices = enhetsUtvalg
-        ),
-      #sliderInput(inputId="aar", label = "Årstall", min = 2012,  #min(RegData$Aar),
-      #           max = as.numeric(format(Sys.Date(), '%Y')), value = )
-    #),
-    br(),
-    # conditionalPanel(
-    #   condition = "input.ark == 'Andeler' || 'input.ark == 'Gjennomsnitt'",
-      p(em('Følgende utvalg gjelder bare figuren som viser utvikling over tid')),
-    selectInput(inputId = "tidsenhet", label="Velg tidsenhet",
-                choices = rev(c('År'= 'Aar', 'Halvår' = 'Halvaar',
-                                'Kvartal'='Kvartal', 'Måned'='Mnd')))
-  ), #felles sidebarPanel
-  
-  
   
   
   #-------Fordelinger----------      
+  #column()           
+  sidebarPanel(
+  width = 3,
+  h4('Her kan man velge hvilken variabel man ønsker å se resultater for og gjøre ulike filtreringer.'),
+  br(),
+  selectInput(
+    inputId = "valgtVar", label="Velg variabel",
+    choices = c('Alder' = 'alder', 
+                'Bukleie' = 'bukleie',
+                'Hemodynamisk overvåkn.' = 'ExtendedHemodynamicMonitoring',
+                'Frailty index' = 'frailtyIndex',
+                'Inklusjonskriterier' = 'inklKrit',
+                'Isolasjon, type' = 'isolering',
+                'Isolasjon, varighet' = 'isoleringDogn',
+                'Liggetid' = 'liggetid',
+                'Nas-skår (sykepleierakt.)' = 'Nas24',
+                'NEMS-skår (ressursbruk)' = 'NEMS24',
+                'Nyreerstattende beh., type' = 'nyreBeh',
+                'Nyreerstattende beh., varighet' = 'nyreBehTid',
+                'Potensielle donorer, årsak ikke påvist opph. sirkulasjon' = 'CerebralCirculationAbolishedReasonForNo',
+                'Primærårsak' = 'PrimaryReasonAdmitted',
+                'Respiratortid' = 'respiratortid',
+                'Respiratortid, ikke-invasiv' = 'respiratortidNonInv',
+                'Respiratortid, invasiv m/overf.' = 'respiratortidInvMoverf',
+                'Respiratortid, invasiv u/overf.' = 'respiratortidInvUoverf',
+                'SAPSII-skår (alvorlighet av sykd.)' = 'SAPSII',
+                'SAPSII-skår (uten alderspoeng)' = 'SAPSIIuAlder',
+                'Spesielle tiltak' = 'spesTiltak',
+                'Type opphold' = 'InnMaate',
+                'Årsak, ikke donasjon ved opphevet intrakraniell sirk.' = 'OrganDonationCompletedReasonForNoStatus'
+    )
+  ),
+  conditionalPanel(
+    condition = "input.ark == 'Fordelinger' || 'input.ark == 'Andeler'",
+    dateRangeInput(inputId = 'datovalg', start = startDato, end = idag,
+                   label = "Tidsperiode", separator="t.o.m.", language="nb"),
+  selectInput(inputId = "erMann", label="Kjønn",
+              choices = c("Begge"=2, "Menn"=1, "Kvinner"=0)
+  ),
+  sliderInput(inputId="alder", label = "Alder", min = 0,
+              max = 110, value = c(0, 110)
+  ),
+  enhetsUtvalgValg <- 
+    selectInput(inputId = 'enhetsUtvalg', label='Egen enhet og/eller landet',
+                choices = enhetsUtvalg
+    )
+  #sliderInput(inputId="aar", label = "Årstall", min = 2012,  #min(RegData$Aar),
+  #           max = as.numeric(format(Sys.Date(), '%Y')), value = )
+)
+),
+  
   
   
   tabPanel(p("Fordelinger", 
@@ -384,7 +349,56 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                     til venstre. Man kan også gjøre ulike filtreringer.", align='center'),
            br(),
            br(),
+           sidebarPanel(
+             width=3,
+             selectInput(
+               inputId = "valgtVarAndelGrVar", label="Velg variabel",
+               choices = c('Alder minst 80 år' = 'alder_over80',
+                           'Alder under 18år' = 'alder_u18',
+                           'Bukleie' = 'bukleie',
+                           'Døde innen 30 dager' = 'dod30d',
+                           'Døde innen 90 dager' = 'dod90d',
+                           'Døde innen ett år' = 'dod365d',
+                           'Døde på intensiv' = 'dodeIntensiv',
+                           'Invasiv respiratortid < 2,5 døgn, m/overførte' = 'respiratortidInvMoverf',
+                           'Invasiv respiratortid < 2,5 døgn, u/overførte' = 'respiratortidInvUoverf',
+                           'Isolasjon av pasient' = 'isolering',
+                           'Liggetid, døde' = 'liggetidDod',
+                           'Menn' = 'erMann',
+                           'Nyreerstattende behandling' = 'nyreBeh',
+                           'Organdonorer, av døde' = 'OrganDonationCompletedStatus',
+                           'Organdonorer, av alle med opphevet intrakran. sirk.' = 'OrganDonationCompletedCirc',
+                           'Reinnleggelse' = 'reinn',
+                           'Respiratorstøtte' = 'respStotte',
+                           'Respiratortid, døde' = 'respiratortidDod',
+                           'Utenfor vakttid, innlagt' = 'utenforVakttidInn',
+                           'Utenfor vakttid, utskrevet' = 'utenforVakttidUt',
+                           'Utvidet hemodyn. overvåkning' = 'ExtendedHemodynamicMonitoring',
+                           'Trakeostomi' = 'trakeostomi',
+                           'Trakeostomi, åpen' = 'trakAapen'
+                           )
+             ), 
+             dateRangeInput(inputId = 'datovalgAndelGrVar', start = startDato, end = idag,
+                            label = "Tidsperiode", separator="t.o.m.", language="nb"),
+             selectInput(inputId = "erMannAndelGrVar", label="Kjønn",
+                         choices = c("Begge"=2, "Menn"=1, "Kvinner"=0)),
+             sliderInput(inputId="alderAndelGrVar", label = "Alder", min = 0,
+                         max = 110, value = c(0, 110)),
+             br(),
+             p(em('Følgende utvalg gjelder bare figuren som viser utvikling over tid')),
+             selectInput(inputId = 'enhetsUtvalgAndelTid', label='Egen enhet og/eller landet',
+                         choices = c("Egen mot resten av landet"=1, "Hele landet"=0, "Egen enhet"=2)),
+             selectInput(inputId = "tidsenhetAndelTid", label="Velg tidsenhet",
+                         choices = rev(c('År'= 'Aar', 'Halvår' = 'Halvaar',
+                                         'Kvartal'='Kvartal', 'Måned'='Mnd')))
+           ),
            mainPanel(
+             # fluidRow(column(6, plotOutput("andelTid"))),
+             # br(),
+             # br(),
+             # fluidRow(
+             #       column(6, plotOutput("andelerGrVar") ) #, div(style = "height:100px")) #height='1000px') # '400px'
+             # )   
              tabsetPanel(
                tabPanel(
                  "Figurer",
@@ -838,9 +852,9 @@ server <- function(input, output, session) { #
 #---------Andeler-------------------------
       output$andelerGrVar <- renderPlot({
             NIRFigAndelerGrVar(RegData=RegData, preprosess = 0, valgtVar=input$valgtVarAndelGrVar,
-                               datoFra=input$datovalg[1], datoTil=input$datovalg[2],
-                               minald=as.numeric(input$alder[1]), maxald=as.numeric(input$alder[2]),
-                               erMann=as.numeric(input$erMann), session=session)
+                               datoFra=input$datovalgAndelGrVar[1], datoTil=input$datovalgAndelGrVar[2],
+                               minald=as.numeric(input$alderAndelGrVar[1]), maxald=as.numeric(input$alderAndelGrVar[2]),
+                               erMann=as.numeric(input$erMannAndelGrVar), session=session)
       }, height = 800, width=700 #height = function() {session$clientData$output_andelerGrVarFig_width} #})
       )
       
@@ -848,11 +862,11 @@ server <- function(input, output, session) { #
                   
                   NIRFigAndelTid(RegData=RegData, preprosess = 0, valgtVar=input$valgtVarAndelGrVar,
                                  reshID=reshID,
-                                 datoFra=input$datovalg[1], datoTil=input$datovalg[2],
-                                 minald=as.numeric(input$alder[1]), maxald=as.numeric(input$alder[2]),
-                                 erMann=as.numeric(input$erMann),
-                                 tidsenhet = input$tidsenhet,
-                                 enhetsUtvalg = input$enhetsUtvalg,
+                                 datoFra=input$datovalgAndelGrVar[1], datoTil=input$datovalgAndelGrVar[2],
+                                 minald=as.numeric(input$alderAndelGrVar[1]), maxald=as.numeric(input$alderAndelGrVar[2]),
+                                 erMann=as.numeric(input$erMannAndelGrVar),
+                                 tidsenhet = input$tidsenhetAndelTid,
+                                 enhetsUtvalg = input$enhetsUtvalgAndelTid,
                                  session=session)
             }, height = 300, width = 1000
             )
@@ -861,11 +875,11 @@ server <- function(input, output, session) { #
                   #AndelTid
                   AndelerTid <- NIRFigAndelTid(RegData=RegData, preprosess = 0, valgtVar=input$valgtVarAndelGrVar,
                                                reshID=reshID,
-                                               datoFra=input$datovalg[1], datoTil=input$datovalg[2],
-                                               minald=as.numeric(input$alder[1]), maxald=as.numeric(input$alder[2]),
-                                               erMann=as.numeric(input$erMann),
-                                               tidsenhet = input$tidsenhet,
-                                               enhetsUtvalg = input$enhetsUtvalg, 
+                                               datoFra=input$datovalgAndelGrVar[1], datoTil=input$datovalgAndelGrVar[2],
+                                               minald=as.numeric(input$alderAndelGrVar[1]), maxald=as.numeric(input$alderAndelGrVar[2]),
+                                               erMann=as.numeric(input$erMannAndelGrVar),
+                                               tidsenhet = input$tidsenhetAndelTid,
+                                               enhetsUtvalg = input$enhetsUtvalgAndelTid, 
                                                lagFig=0, session=session)
                   tabAndelTid <- lagTabavFig(UtDataFraFig = AndelerTid)
 
@@ -891,10 +905,10 @@ server <- function(input, output, session) { #
                   
                   
                   #AndelGrVar
-                  AndelerShus <- NIRFigAndelerGrVar(RegData=RegData, preprosess = 0, valgtVar=input$valgtVar,
-                                                    datoFra=input$datovalg[1], datoTil=input$datovalg[2],
-                                                    minald=as.numeric(input$alder[1]), maxald=as.numeric(input$alder[2]),
-                                                    erMann=as.numeric(input$erMann), 
+                  AndelerShus <- NIRFigAndelerGrVar(RegData=RegData, preprosess = 0, valgtVar=input$valgtVarAndelGrVar,
+                                                    datoFra=input$datovalgAndelGrVar[1], datoTil=input$datovalgAndelGrVar[2],
+                                                    minald=as.numeric(input$alderAndelGrVar[1]), maxald=as.numeric(input$alderAndelGrVar[2]),
+                                                    erMann=as.numeric(input$erMannAndelGrVar), 
                                                     lagFig = 0, session=session)
                   tabAndelerShus <- cbind(Antall=AndelerShus$Ngr$Hoved,
                                           Andeler = AndelerShus$AggVerdier$Hoved)
