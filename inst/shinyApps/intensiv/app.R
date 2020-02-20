@@ -9,6 +9,8 @@ library(kableExtra)
 library(knitr)
 library(shinyjs)
 
+#https://cran.r-project.org/web/packages/expss/vignettes/tables-with-labels.html
+
 addResourcePath('rap', system.file('www', package='rapbase'))
 
 context <- Sys.getenv("R_RAP_INSTANCE") #Blir tom hvis jobber lokalt
@@ -269,6 +271,7 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
            # fluidRow(column(width = 3, #Første kolonne. Alternativ til sidebarLayout(sidebarPanel())
 
            sidebarPanel(
+             id = "brukervalg_fordeling",
              width = 3,
              h4('Her kan man velge hvilken variabel man ønsker å se resultater for og gjøre ulike filtreringer.'),
              br(),
@@ -318,11 +321,12 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                  ),
              selectInput(inputId = 'velgResh', label='Velg eget Sykehus',
                          #selected = 0,
-                         choices = sykehusValg)
+                         choices = sykehusValg),
                #sliderInput(inputId="aar", label = "Årstall", min = 2012,  #min(RegData$Aar),
-               #           max = as.numeric(format(Sys.Date(), '%Y')), value = )
-             
+               #           max = as.numeric(format(Sys.Date(), '%Y')), value = ),
+             actionButton("reset_fordValg", label="Tilbakestill valg")
            ),
+           
            
            mainPanel(
              tabsetPanel(
@@ -364,6 +368,7 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
            br(),
            br(),
            sidebarPanel(
+             id = "brukervalg_andeler",
              width=3,
              selectInput(
                inputId = "valgtVarAndelGrVar", label="Velg variabel",
@@ -404,7 +409,8 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                          choices = c("Egen mot resten av landet"=1, "Hele landet"=0, "Egen enhet"=2)),
              selectInput(inputId = "tidsenhetAndelTid", label="Velg tidsenhet",
                          choices = rev(c('År'= 'Aar', 'Halvår' = 'Halvaar',
-                                         'Kvartal'='Kvartal', 'Måned'='Mnd')))
+                                         'Kvartal'='Kvartal', 'Måned'='Mnd'))),
+             actionButton("reset_andelValg", label="Tilbakestill valg")
            ),
            mainPanel(
              # fluidRow(column(6, plotOutput("andelTid"))),
@@ -449,6 +455,7 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
            h5("Hvilken variabel man ønsker å se resultater for, velges fra rullegardinmenyen
                   til venstre. (Man kan også gjøre ulike filtreringer.)", align='center'),
            sidebarPanel( 
+             id = "brukervalg_gjsn",
              width = 3,
              selectInput(inputId = "valgtVarGjsn", label="Velg variabel",
                          choices = c('Alder' = 'alder',
@@ -481,7 +488,8 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
              selectInput(inputId = "tidsenhetGjsn", label="Velg tidsenhet",
                          choices = rev(c('År'= 'Aar', 'Halvår' = 'Halvaar',
                                          'Kvartal'='Kvartal', 'Måned'='Mnd'))
-             )
+             ),
+             actionButton("reset_gjsnValg", label="Tilbakestill valg")
            ), #sidebarPanel/kolonna til venstre
            mainPanel(
              br(),
@@ -690,7 +698,10 @@ server <- function(input, output, session) { #
     #hideTab(inputId = "tabs_andeler", target = "Figur, sykehusvisning")
   }
   })
-
+  observeEvent(input$reset_fordValg, shinyjs::reset("brukervalg_fordeling"))
+  observeEvent(input$reset_andelValg, shinyjs::reset("brukervalg_andeler"))
+  observeEvent(input$reset_gjsnValg, shinyjs::reset("brukervalg_gjsn"))
+  
   # widget
   if (paaServer) {
     output$appUserName <- renderText(rapbase::getUserFullName(session))
@@ -819,6 +830,11 @@ server <- function(input, output, session) { #
       )
   #})
 #------------Fordelinger---------------------  
+      
+      #   observeEvent(input$reset_xx, {
+      #    shinyjs::reset("enhetsUtvalg")
+      #    shinyjs::reset("alder")
+      # })
       output$fordelinger <- renderPlot({
             NIRFigAndeler(RegData=RegData, preprosess = 0, valgtVar=input$valgtVar,
                           reshID=reshID, velgAvd = input$velgResh,

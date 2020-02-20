@@ -118,10 +118,7 @@ For \Sexpr{shtxt} er siste ferdigstilte innleggingsdato i denne rapporten
 \Sexpr{maxDatoEget}.
 \par
 
-Denne rapporten kan hentast ved at ein loggar seg inn på Rapporteket-Intensiv og klikkar på "Månedsrapport". 
-Det gjer at alle kan hente seg representative månadsrapportar når dei måtte ynskje. En kan óg abbonera på rapporten. 
-Ein vél da sjølve kor ofte ein ynskjer rapporten.
-I Rapporteket kan ein óg finne mange fleire figurar og tabellar og gjere endringar i tidsintervall og samanlikningsgrunnlag.
+Denne rapporten kan hentast ved at ein loggar seg inn på Rapporteket-Intensiv og klikkar på "Månedsrapport". Det gjer at alle kan hente seg representative månadsrapportar når dei måtte ynskje. Ein kan óg abonnere på rapporten. Ein vél da sjølv kor ofte ein ynskjer rapporten. I Rapporteket kan ein óg finne mange fleire figurar og tabellar og gjere endringar i tidsintervall og samanlikningsgrunnlag.
  
 
 \end{frame}
@@ -165,7 +162,7 @@ I Rapporteket kan ein óg finne mange fleire figurar og tabellar og gjere endrin
 tabBelegg <- tabBelegg(RegData=RegDataEget, datoTil=datoTil, tidsenhet=tidsenhet) #personIDvar='PasientID', 
 #parametre: RegData, tidsenhet='Aar', datoTil, enhetsUtvalg=0, reshID=0
 xtable(tabBelegg, digits=0, align=c('l', rep('r', ncol(tabBelegg))), 
-		caption=paste0('Antal opphald og liggedøger, ', shtxt,'.'), label='tab:RegEget')
+		caption=paste0('Tal på opphald og liggedøger, ', shtxt,'.'), label='tab:RegEget')
 
 @
 
