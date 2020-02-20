@@ -246,7 +246,7 @@ return(tab)
 #' @param enhetsUtvalg 
 #' @export
 tabOverforinger <- function(RegData, datoFra=Sys.Date()-365, datoTil=Sys.Date(), 
-                            reshID=0, enhetsUtvalg=2, overfFraSh=1){
+                            reshID=0, velgAvd=0, enhetsUtvalg=2, overfFraSh=1){
   #Overf: (1= ikke overført, 2= overført) TransferredStatus
   #Hvis alle kolonner som sier noe om til/fra-sykehus er tomme, vet vi ikke om det er ei overføring
   #til eller fra det aktuelle sykehuset. Disse må derfor ekskluderes. (Gjelder ca 5% i 2015-19)
@@ -257,8 +257,10 @@ tabOverforinger <- function(RegData, datoFra=Sys.Date()-365, datoTil=Sys.Date(),
   # datoFra=Sys.Date()-365
   # datoTil=Sys.Date()
   # overfFraSh <- 0
+  # velgAvd <- 0
   # reshID <- 108610 #Overfører TIL Hamar
   
+  if (velgAvd!=0){ reshID<- velgAvd}
   shNavn <- RegData$ShNavn[match(reshID,RegData$ReshId)]
   RegData <- NIRUtvalgEnh(RegData = RegData, datoFra = datoFra, datoTil = datoTil)$RegData
   
@@ -283,7 +285,13 @@ tabOverforinger <- function(RegData, datoFra=Sys.Date()-365, datoTil=Sys.Date(),
     indEget <- which(Data$OverfNavn==shNavn)
     Data$OverfNavn[indEget] <- Data$TilfraNavn[indEget]
     Data$OverfNavn[which(!(is.na(Data$OverfTxt)) & is.na(Data$OverfNavn))] <- 'Annet'
-    Tab <- cbind('Antall pasienter' = sort(table(Data$OverfNavn), decreasing = T)) #sort(table(Data$PatientTransferredToHospitalName), decreasing = T)
-    #colnames(Tab) <- 'Antall pasienter'
+    OverfVektor <- sort(table(Data$OverfNavn), decreasing = T)
+    Tab <- cbind('Enhet' = c(names(OverfVektor), 'Totalt'),
+      'Antall pasienter' = c(as.numeric(OverfVektor), sum(OverfVektor)),
+      'Fordeling' = c(paste0(sprintf('%.1f', OverfVektor/sum(OverfVektor)*100), ' %'),'')) #sort(table(Data$PatientTransferredToHospitalName), decreasing = T)
+    tilfra <- c('til','fra')[overfFraSh]
+    #overfFraSh - overføring fra (1) eller til (0) den aktuelle enheten
+    colnames(Tab) <- c(paste(c('til','fra')[overfFraSh+1], shNavn, c('fra', 'til')[overfFraSh+1]), 
+                       'Antall pasienter', 'Fordeling')
     return(Tab)
 }
