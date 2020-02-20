@@ -496,7 +496,7 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='an
         # indMed <- which(as.numeric(RegData$SAPSII)>0) %i% 
         #   which(RegData$InnDato >= as.Date('2016-01-01', tz='UTC'))
         # RegData <- RegData[indMed,]
-        RegData <- FinnReinnleggelser(RegData=RegData)
+        #RegData <- FinnReinnleggelser(RegData=RegData)
         #RegData <- RegData[RegData$Reinn==2, ]
         RegData$Variabel <- RegData$PIM_Probability*100 #For å få samme format som SMR
         xAkseTxt <- 'Observert 30-dagers dødelighet / PIM-estimert dødelighet'

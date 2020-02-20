@@ -106,8 +106,10 @@ NIRUtvalgEnh <- function(RegData, datoFra=0, datoTil=0, minald=0, maxald=110, er
                   ' til ', if (N>0) {max(as.Date(RegData$InnDato), na.rm=T)} else {datoTil})} else {NULL},
             if (aar[1] > 0){paste0('Innleggelsesår: ', paste0(aar, collapse=', '))},
             if ((minald>0) | (maxald<110)) {
-                  paste0('Pasienter fra ', if (N>0) {sprintf('%.1f',min(RegData$Alder, na.rm=T))} else {minald}, 
-                         ' til ', if (N>0) {sprintf('%.1f',max(RegData$Alder, na.rm=T))} else {maxald}, ' år')},
+               paste0('Pasienter fra ', if (N>0) {min(RegData$Alder, na.rm=T)} else {minald}, 
+                      ' til ', if (N>0) {max(RegData$Alder, na.rm=T)} else {maxald}, ' år')},
+            # paste0('Pasienter fra ', if (N>0) {sprintf('%.1f',min(RegData$Alder, na.rm=T))} else {minald}, 
+            #              ' til ', if (N>0) {sprintf('%.1f',max(RegData$Alder, na.rm=T))} else {maxald}, ' år')},
             if (erMann %in% 0:1) {paste0('Kjønn: ', c('Kvinner', 'Menn')[erMann+1])},
             if (InnMaate %in% c(0,6,8)) {paste('Innmåte: ', 
                                                c('Elektivt',0,0,0,0,0, 'Akutt medisinsk',0, 'Akutt kirurgi')[InnMaate+1], sep='')},
