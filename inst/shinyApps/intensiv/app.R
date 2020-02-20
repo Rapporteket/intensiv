@@ -118,12 +118,14 @@ valgAndeler <- c('Alder minst 80 år' = 'alder_over80',
 
 # Define UI for application that draws figures
 ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
+  
   #span("Tab1", title="Short description  for the tab") ,
   #title = regTitle,
   title = div(a(includeHTML(system.file('www/logo.svg', package='rapbase'))),
               regTitle),
   windowTitle = regTitle,
   theme = "rap/bootstrap.css",
+  tabsetPanel(id = 'hovedark',
 
   
   
@@ -297,7 +299,7 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
            )
   ), #tab
  
-  #   #-------Utvalg, figurer (felles sidebar panel)----------    
+  #   #-------Utvalg, figurer (felles sidebarpanel)----------    
   
   #sidebarPanel(
   sidebarPanel(
@@ -305,12 +307,14 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
     h4('FELLES: Her kan man velge hvilken variabel man ønsker å se resultater for og gjøre ulike filtreringer.'),
     br(),
     
-    # conditionalPanel(
-    #   condition = "input.ark == 'Fordelinger' || 'input.ark == 'Andeler'",
+     conditionalPanel(
+       condition = "'input.hovedark == 'andeler'",
                      selectInput(inputId = "valgtVar", label="Velg variabel",
-                                 choices = valgFordeling),
-                     selectInput(inputId = "valgtVarAndelGrVar", label="Velg variabel",
-                                 choices = valgAndeler),
+                                 choices = valgFordeling)),
+       conditionalPanel(
+         condition = "input.hovedark == 'fordelinger' ",               
+         selectInput(inputId = "valgtVarAndelGrVar", label="Velg variabel",
+                                 choices = valgAndeler)),
      dateRangeInput(inputId = 'datovalg', start = startDato, end = idag,
                      label = "Tidsperiode", separator="t.o.m.", language="nb"),
       selectInput(inputId = "erMann", label="Kjønn",
@@ -342,7 +346,8 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
   
   tabPanel(p("Fordelinger", 
              title='Alder, Type opphold, Hemodynamisk overvåkning, Isolasjon, Liggetid, Nas, NEMS, Nyrebehandling,
-                 Primærårsak, Respiratortid, SAPSII, Spesielle tiltak, Donorer'),
+              Primærårsak, Respiratortid, SAPSII, Spesielle tiltak, Donorer'),
+           value="fordelinger",
            h2("Fordelingsfigurer", align='center'),
            # fluidRow(column(width = 3, #Første kolonne. Alternativ til sidebarLayout(sidebarPanel())
 
@@ -378,7 +383,8 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
   
   #-------Andeler----------      
   tabPanel(p("Andeler", title='Alder, Overlevelse, Isolasjon, Nyrebehandling, Reinnleggelse, Respiratorstøtte, Respiratortid,
-                 Utenfor vakttid, Hemodyn., Takeostomi, Donorer'),
+                Utenfor vakttid, Hemodyn., Takeostomi, Donorer'),
+           value = "andeler",
            h2("Sykehusvise andeler og utvikling over tid for valgt variabel", align='center'),
            h5("Hvilken variabel man ønsker å se resultater for, velges fra rullegardinmenyen
                     til venstre. Man kan også gjøre ulike filtreringer.", align='center'),
@@ -627,7 +633,7 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
 #  mainPanel(
 #  )        
 # )
-
+) #tabsetpanel
 )  #navbarPage
 
 
