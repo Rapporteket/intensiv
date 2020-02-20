@@ -48,6 +48,7 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='an
       varTxt <- 'hendelser'
 
       minald <- 0
+      maxald <- 110
       tittel <- 'Mangler tittel' 
       variable <- 'Ingen'
       #deltittel <- ''
@@ -485,9 +486,21 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='an
             RegData <- RegData[RegData$Reinn==2, ]
             RegData$Variabel <- RegData$SMR
             xAkseTxt <- 'Observert 30-dagers dødelighet / estimert dødelighet'
-            KImaal <- 0.7  #SMR <0.7 
-            KImaaltxt <- '<0.7'
             sortAvtagende <- FALSE
+      }
+      if (valgtVar == 'PIMdod') { #GjsnGrVar
+        #Tar ut reinnlagte på intensiv og  de med SAPSII=0 (ikke scorede) 
+        #De under 16år tas ut i NIRutvalg
+        #Reinn: #1:Ja, 2:Nei, 3:Ukjent, -1:Ikke utfylt
+        maxald <- min(15, maxald) 
+        # indMed <- which(as.numeric(RegData$SAPSII)>0) %i% 
+        #   which(RegData$InnDato >= as.Date('2016-01-01', tz='UTC'))
+        # RegData <- RegData[indMed,]
+        RegData <- FinnReinnleggelser(RegData=RegData)
+        #RegData <- RegData[RegData$Reinn==2, ]
+        RegData$Variabel <- RegData$PIM_Probability*100 #For å få samme format som SMR
+        xAkseTxt <- 'Observert 30-dagers dødelighet / PIM-estimert dødelighet'
+        sortAvtagende <- FALSE
       }
       if (valgtVar == 'trakeostomi') { #andelGrVar 
             #-1: Velg verdi, 1 = Nei, 2 = Ja – perkutan teknikk på intensiv/oppv., 3 = Ja – åpen teknikk (operativ)
@@ -683,7 +696,7 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='an
       
       RegData$Variabel <- as.numeric(RegData$Variabel)
       
-      UtData <- list(RegData=RegData, minald=minald,
+      UtData <- list(RegData=RegData, minald=minald, maxald=maxald,
                      grtxt=grtxt, cexgr=cexgr, varTxt=varTxt, xAkseTxt=xAkseTxt, KImaal=KImaal, KImaaltxt=KImaaltxt, 
                      retn=retn,tittel=tittel, flerevar=flerevar, variable=variable, sortAvtagende=sortAvtagende)
       #RegData inneholder nå variablene 'Variabel' og 'VariabelGr'

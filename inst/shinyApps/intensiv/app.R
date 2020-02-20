@@ -32,7 +32,7 @@ regTitle <- ifelse(paaServer,
 
 #---------Hente data------------
 if (paaServer) {
-  RegData <- NIRRegDataSQL(datoFra='2018-08-01') #, session = session) #datoFra = datoFra, datoTil = datoTil)
+  RegData <- NIRRegDataSQL(datoFra='2011-01-01') #, session = session) #datoFra = datoFra, datoTil = datoTil)
   PaarorData <- NIRpaarorDataSQL() 
   PaarorDataH <- KobleMedHoved(RegData, PaarorData, alleHovedskjema=F, alleSkjema2=F)
   qInfluensa <- 'SELECT ShNavn, RHF, PatientInRegistryGuid, FormDate,FormStatus, ICD10_1
@@ -515,10 +515,13 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
   
   #--------SMR--------------
   tabPanel('SMR',
-           h3('SMR: Standardisert mortalitetsratio', align='center'),
+           h3('Standardisert mortalitetsratio', align='center'),
            br(),
            sidebarPanel(
              width = 3,
+             selectInput(inputId = "valgtVarMort", label="Velg variabel",
+                        choices = c('SMR, SAPSII' = 'SMR',
+                                    'SMR: PIM' = 'PIMdod')),
              dateRangeInput(inputId = 'datovalgSMR', start = startDato, end = idag,
                             label = "Tidsperiode", separator="t.o.m.", language="nb"),
              selectInput(inputId = "erMannSMR", label="Kjønn",
@@ -1079,7 +1082,7 @@ server <- function(input, output, session) { #
       
 #--------------SMR----------------------------------
       output$SMRfig <- renderPlot({
-        NIRFigGjsnGrVar(RegData=RegData, preprosess = 0, valgtVar='SMR',
+        NIRFigGjsnGrVar(RegData=RegData, preprosess = 0, valgtVar = input$valgtVarMort, #valgtVar='SMR',
                         datoFra=input$datovalgSMR[1], datoTil=input$datovalgSMR[2],
                         minald=as.numeric(input$alderSMR[1]), maxald=as.numeric(input$alderSMR[2]),
                         erMann=as.numeric(input$erMannSMR))
@@ -1089,7 +1092,7 @@ server <- function(input, output, session) { #
       )
       
       observe({
-        dataUtSMR <- NIRFigGjsnGrVar(RegData=RegData, preprosess = 0, valgtVar='SMR',
+        dataUtSMR <- NIRFigGjsnGrVar(RegData=RegData, preprosess = 0, valgtVar=input$valgtVarMort,
                                      datoFra=input$datovalgSMR[1], datoTil=input$datovalgSMR[2],
                                      minald=as.numeric(input$alderSMR[1]), maxald=as.numeric(input$alderSMR[2]),
                                      erMann=as.numeric(input$erMannSMR), lagFig = 0)
