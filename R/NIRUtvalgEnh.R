@@ -63,8 +63,8 @@ NIRUtvalgEnh <- function(RegData, datoFra=0, datoTil=0, minald=0, maxald=110, er
       
       Ninn <- dim(RegData)[1]
       #if (enhetsUtvalg %in% 3:4) {grType <- RegData$ShType[indEgen1]}
-      #Hvis gruppetype ikke er valgt, settes denne lik egen:
-      if (grType==99) {grType <- RegData$ShType[match(reshID, RegData$ReshId)]}
+      #Hvis gruppetype ikke er valgt, settes denne lik egen: NEI da blir det trøbbel i figurene
+      #if (grType==99) {grType <- RegData$ShType[match(reshID, RegData$ReshId)]}
       indGrType <- switch(grType, #if (grType %in% 1:3) {switch(grType,
                                                 '1' = which(RegData$ShType %in% 1:2),
                                                 '2' = which(RegData$ShType %in% 1:2),

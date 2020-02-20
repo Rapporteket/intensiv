@@ -56,12 +56,12 @@ RegData <- FinnReinnleggelser(RegData) # Beregne reinnleggelser
 
 #RegData endres til 6 mnd:
 grType <- RegData$ShType[match(reshID, RegData$ReshId)]
+ShTypeEgenTxt <- c('lokal-/sentral', 'lokal-/sentral', 'region')[grType]
 NIRUtvalg <- NIRUtvalgEnh(RegData, reshID = reshID, enhetsUtvalg =1,
                           datoFra = datoFra6mnd, datoTil = datoTil)
 #Fra NIRUTvalg: utvalgTxt, ind, medSml, smltxt, hovedgrTxt, grTypeTxt, RegData
 RegData <- NIRUtvalg$RegData
 shtxt <- NIRUtvalg$hovedgrTxt
-ShTypeEgenTxt <- NIRUtvalg$grTypeTxt 
 ind <- NIRUtvalg$ind
 N <- dim(RegData)[1]
 
@@ -279,7 +279,7 @@ xtable(liggetidKj, digits=1, align=c('l', rep('r', ncol(liggetidKj))),
 \begin{figure}[ht]
 \centering              
 \includegraphics[scale=0.35]{PrimaryReasonAdmittedFordMnd.pdf}
-\caption{Hovudårsak til innlegging på intensiv (prosent per kategori) siste seks månader, eiga avdeling og alle andre \Sexpr{ShTypeEgenTxt}sjukehus.}
+\caption{Hovudårsak til innlegging på intensiv (prosent per kategori) siste seks månader, eiga avdeling og andre \Sexpr{ShTypeEgenTxt}sjukehus.}
 \end{figure}
 \end{frame}
 
