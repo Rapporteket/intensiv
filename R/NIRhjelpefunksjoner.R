@@ -348,7 +348,7 @@ tilretteleggKvalIndData <- function(RegData,
   '108308'='974747138',     #              Ålesund Kir
   '102673'='974747138')     #              Ålesund Med
   
-  IntensivKvalInd$SykehusOrgId <- as.character(nyID[as.character(IntensivKvalInd$ReshId)])
+  IntensivKvalInd$SykehusOrgNr <- as.character(nyID[as.character(IntensivKvalInd$ReshId)])
   return(IntensivKvalInd)
   
 }
