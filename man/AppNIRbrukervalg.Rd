@@ -15,7 +15,7 @@ Denne funksjonen beregner ikke noe. :-|
 \details{
 Mer info?
 
-@param id namespace for this module
+ @param id namespace for this module
  @param inputId id for brukervalget til den aktuelle figur/tabelltypen
  @param label Label for this module
 }

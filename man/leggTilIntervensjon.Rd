@@ -4,8 +4,11 @@
 \alias{leggTilIntervensjon}
 \title{Legge til indikator for intervensjon, pårørendeoppfølging}
 \usage{
-leggTilIntervensjon(RegData, startDatoIntervensjon = "2016-10-01",
-  sluttDatoIntervensjon = Sys.Date())
+leggTilIntervensjon(
+  RegData,
+  startDatoIntervensjon = "2016-10-01",
+  sluttDatoIntervensjon = Sys.Date()
+)
 }
 \arguments{
 \item{RegData}{Dataramme}

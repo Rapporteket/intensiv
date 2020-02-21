@@ -10,7 +10,7 @@
 #'
 #' @export
 #'
-NIRPreprosess <- function(RegData=RegData, lagreKvalIndData=0)	#, reshID=reshID)
+NIRPreprosess <- function(RegData=RegData)	#, reshID=reshID)
 {
       #Miljøparametre
       #print(Sys.getlocale())
@@ -36,13 +36,19 @@ NIRPreprosess <- function(RegData=RegData, lagreKvalIndData=0)	#, reshID=reshID)
       
       # Endre variabelnavn:
       #For enkelhetsskyld kalles Saps2Score som er Estimert mortalitet for SMR
+      #RegData$logit <- -7.7631 + 0.0737*RegData$Saps2ScoreNumber + 0.9971*log(RegData$Saps2ScoreNumber+1)
+      #RegData$Mort <- exp(RegData$logit)/(1+exp(RegData$logit))*100 # = Saps2Score = SMR
+      RegData$SapsSum <- with(RegData, Glasgow+Age+SystolicBloodPressure+HeartRate+Temperature+MvOrCpap+UrineOutput+
+              SerumUreaOrBun+Leukocytes+Potassium+Sodium+Hco3+Bilirubin+TypeOfAdmission)
+      head(RegData$SapsSum)
+      head(RegData$Saps2ScoreNumber)
+      names(RegData)[which(names(RegData) == 'Saps2Score')] <- 'SMR' #Saps2Score er SAPS estimert mortalitet
+      names(RegData)[which(names(RegData) == 'Saps2ScoreNumber')] <- 'SAPSII'
       names(RegData)[which(names(RegData) == 'DaysAdmittedIntensiv')] <- 'liggetid'
       names(RegData)[which(names(RegData) == 'Nems')] <- 'NEMS'
       names(RegData)[which(names(RegData) == 'PatientAge')] <- 'Alder'
       #	names(RegData)[which(names(RegData) == 'ReAdmitted')] <- 'Reinn'
       names(RegData)[which(names(RegData) == 'Respirator')] <- 'respiratortid'
-      names(RegData)[which(names(RegData) == 'Saps2Score')] <- 'SMR' #Saps2Score er SAPS estimert mortalitet
-      names(RegData)[which(names(RegData) == 'Saps2ScoreNumber')] <- 'SAPSII'
       names(RegData)[which(names(RegData) == 'TransferredStatus')] <- 'Overf'
       names(RegData)[which(names(RegData) == 'TypeOfAdmission')] <- 'InnMaate'
       names(RegData)[which(names(RegData) == 'ReshID')] <- 'ReshId'
@@ -68,13 +74,7 @@ NIRPreprosess <- function(RegData=RegData, lagreKvalIndData=0)	#, reshID=reshID)
       RegData$Kvartal <- ceiling(RegData$MndNum/3)
       RegData$Halvaar <- ceiling(RegData$MndNum/6)
       RegData$Aar <- 1900 + RegData$Innleggelsestidspunkt$year #strptime(RegData$Innleggelsestidspunkt, format="%Y")$year
-      #RegData$Mnd <- paste(RegData$InnDato$year-100,RegData$InnDato$mon+1, sep='.')
-      #verdiGML <- 0:11
-      #verdiNY <- c(1,1,1,2,2,2,3,3,3,4,4,4)
-      #mapping <- data.frame(verdiGML,verdiNY)
-      #RegData$Kvartal <- paste(RegData$InnDato$year-100, 
-      #                         mapping$verdiNY[match(RegData$InnDato$mon, mapping$verdiGML)], sep='.')
-      
+
       ##Kode om  pasienter som er overført til/fra egen avdeling til "ikke-overført"
       #1= ikke overført, 2= overført
       ind <- union(which(RegData$ReshId == RegData$PatientTransferredFromHospital),

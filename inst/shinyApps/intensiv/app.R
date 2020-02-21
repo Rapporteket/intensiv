@@ -7,6 +7,9 @@ library(lubridate)
 library(zoo)
 library(kableExtra)
 library(knitr)
+library(shinyjs)
+
+#https://cran.r-project.org/web/packages/expss/vignettes/tables-with-labels.html
 
 addResourcePath('rap', system.file('www', package='rapbase'))
 
@@ -27,6 +30,47 @@ regTitle <- ifelse(paaServer,
 #Sys.setlocale("LC_TIME", "nb_NO.UTF-8")
 #ibrary(shinyBS) # Additional Bootstrap Controls
 
+#---------Hente data------------
+if (paaServer) {
+  RegData <- NIRRegDataSQL(datoFra='2011-01-01') #, session = session) #datoFra = datoFra, datoTil = datoTil)
+  PaarorData <- NIRpaarorDataSQL() 
+  PaarorDataH <- KobleMedHoved(RegData, PaarorData, alleHovedskjema=F, alleSkjema2=F)
+  qInfluensa <- 'SELECT ShNavn, RHF, PatientInRegistryGuid, FormDate,FormStatus, ICD10_1
+                  from InfluensaFormDataContract'
+  InfluData <- rapbase::LoadRegData(registryName= "nir", query=qInfluensa, dbType="mysql")
+  
+  #repLogger(session = session, 'Hentet alle data fra intensivregisteret')
+} #hente data på server
+
+if (!exists('PaarorDataH')){
+  data('NIRRegDataSyn', package = 'intensiv')
+  #try(data(package = "intensiv"))
+}
+RegData <- NIRPreprosess(RegData = RegData)
+PaarorData <- NIRPreprosess(RegData = PaarorDataH) #Må først koble på hoveddata for å få ShType++
+
+
+#-----Definere utvalgsinnhold og evt. parametre som er statiske i appen----------
+
+#Definere utvalgsinnhold
+#sykehusNavn <- sort(c('',unique(RegData$ShNavn)), index.return=T)
+#sykehusValg <- c(0,unique(RegData$ReshId))[sykehusNavn$ix]
+sykehusNavn <- sort(unique(RegData$ShNavn), index.return=T)
+sykehusValg <- unique(RegData$ReshId)[sykehusNavn$ix]
+sykehusValg <- c(0,sykehusValg)
+names(sykehusValg) <- c('Ikke valgt',sykehusNavn$x)
+
+enhetsUtvalg <- c("Egen mot resten av landet"=1, 
+                  "Hele landet"=0, 
+                  "Egen enhet"=2,
+                  "Egen enhet mot egen sykehustype" = 3,
+                  "Egen sykehustype" = 4,
+                  "Egen sykehustype mot resten av landet" = 5,
+                  "Egen enhet mot egen region" = 6, 
+                  "Egen region" = 7,
+                  "Egen region mot resten" = 8)
+
+#enhetsUtvalgNavn <- 
 
 # Define UI for application that draws figures
 ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
@@ -36,13 +80,20 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
               regTitle),
   windowTitle = regTitle,
   theme = "rap/bootstrap.css",
-
+  id = 'hovedark',
+  
+  
+  
+  
   #--------------Startside------------------------------  
   tabPanel(p("Oversiktsside", 
              title= 'Nøkkeltall og samlerapporter'),
+           useShinyjs(),
+           
            #fluidRow(
            #column(width=5,
            h2('Velkommen til Rapporteket-Intensiv!', align='center'),
+           br(),
            sidebarPanel(
              width = 3,
              h3('Dokumenter med samling av resultater'),
@@ -67,11 +118,12 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                                  organization = uiOutput("appOrgName"),
                                  addUserInfo = TRUE),
              tags$head(tags$link(rel="shortcut icon", href="rap/favicon.ico")),
+             
              tabsetPanel(
                tabPanel('Startside',
-             
              h3(ifelse(paaServer, "","Merk at noen resultater kan se rare ut siden dette er syntetiske data!"), align='center' ),
-             h2("Nøkkeltall på intensiv"),
+             #h2("Nøkkeltall på intensiv"),
+             h3(uiOutput('NokkeltallUtvalgTxt')),
              selectInput(inputId = 'enhetsNivaaStart', label='Enhetsnivå',
                            choices = c("Egen enhet"=2, "Hele landet"=0, 
                                        "Egen sykehustype"=4, "Egen region"=7)
@@ -81,7 +133,7 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
            ),
            
            tabPanel('Brukerveiledning',
-                    h4('å Rapporteket kan du finne visualiseringer og oppsummeringer av de fleste 
+                    h4('På Rapporteket kan du finne visualiseringer og oppsummeringer av de fleste 
                        variabler som registreres i registeret. Hold musepekeren over en fane for 
                        å se hvilke variable/tema som er visualisert i fanen.'),
                     br(),
@@ -127,6 +179,10 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
   tabPanel(p("Aktivitet", title='Tabeller med registreringsoversikter, samt nøkkeltall'),
            #evt: span("Tab1",title="Short description  for the tab" )
            sidebarPanel(width=3,
+                        br(),
+                        br(),
+                        br(),
+                        
                         conditionalPanel(condition = "input.ark == 'Nøkkeltall' || input.ark == 'Ant. opphold' 
                                              || input.ark == 'Pasientar per år og avd.' ", 
                                          # || input.ark == 'Inklusjonskriterier' ",
@@ -147,11 +203,16 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                                                   "Egen sykehustype"=4, "Egen region"=7)
                           )),
                         conditionalPanel(
-                          condition = "input.ark == 'Dobbeltregistreringar'",
+                          condition = "input.ark == 'Dobbeltregistreringar' || 'input.ark == 'Overføringer'",
                           dateRangeInput(inputId = 'datovalgReg', start = startDato, end = idag,
                                          label = "Tidsperiode", separator="t.o.m.", language="nb")
-                        )
-                        
+                        ),
+                        conditionalPanel(
+                          condition = "input.ark == 'Overføringer'",
+                          selectInput(inputId = 'velgReshOverf', label='Velg eget Sykehus',
+                                    #selected = 0,
+                                    choices = sykehusValg)
+                        ),
            ),
            mainPanel(
              tabsetPanel(id='ark',
@@ -166,9 +227,21 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                                   tableOutput("tabAntPasSh5Aar")
                          ),
                          tabPanel('Nøkkeltall',
-                                  h2("Nøkkeltall på intensiv"),
+                                  h2('Nøkkeltall på intensiv'),
+                                  #h2(uiOutput('NokkeltallTxt'), align='center'), 
                                   br(),
                                   tableOutput('tabNokkeltall')
+                         ),
+                         tabPanel('Overføringer',
+                                  p(h2('Overføring av intensivpasienter',
+                                     align='center') ), 
+                                  #h2(uiOutput('egetShNavn')),
+                                  br(),
+                                  column(6,
+                                         tableOutput('tabOverfTil')
+                                  ),
+                                  column(6,
+                                         tableOutput('tabOverfFra'))
                          ),
                          # tabPanel('Inklusjonskriterier',
                          #   tabsetPanel(
@@ -193,9 +266,12 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
   tabPanel(p("Fordelinger", 
              title='Alder, Type opphold, Hemodynamisk overvåkning, Isolasjon, Liggetid, Nas, NEMS, Nyrebehandling,
                  Primærårsak, Respiratortid, SAPSII, Spesielle tiltak, Donorer'),
-           #"Fordelinger",
+           value = 'Fordelinger',
+           h2("Fordelingsfigurer", align='center'),
            # fluidRow(column(width = 3, #Første kolonne. Alternativ til sidebarLayout(sidebarPanel())
+
            sidebarPanel(
+             id = "brukervalg_fordeling",
              width = 3,
              h4('Her kan man velge hvilken variabel man ønsker å se resultater for og gjøre ulike filtreringer.'),
              br(),
@@ -204,6 +280,7 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                choices = c('Alder' = 'alder', 
                            'Bukleie' = 'bukleie',
                            'Hemodynamisk overvåkn.' = 'ExtendedHemodynamicMonitoring',
+                           'Frailty index' = 'frailtyIndex',
                            'Inklusjonskriterier' = 'inklKrit',
                            'Isolasjon, type' = 'isolering',
                            'Isolasjon, varighet' = 'isoleringDogn',
@@ -219,33 +296,38 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                            'Respiratortid, invasiv m/overf.' = 'respiratortidInvMoverf',
                            'Respiratortid, invasiv u/overf.' = 'respiratortidInvUoverf',
                            'SAPSII-skår (alvorlighet av sykd.)' = 'SAPSII',
+                           'SAPSII-skår (uten alderspoeng)' = 'SAPSIIuAlder',
                            'Spesielle tiltak' = 'spesTiltak',
                            'Type opphold' = 'InnMaate',
                            'Årsak, ikke donasjon ved opphevet intrakraniell sirk.' = 'OrganDonationCompletedReasonForNoStatus'
                )
              ),
-             dateRangeInput(inputId = 'datovalg', start = startDato, end = idag,
-                            label = "Tidsperiode", separator="t.o.m.", language="nb"),
-             selectInput(inputId = "erMann", label="Kjønn",
-                         choices = c("Begge"=2, "Menn"=1, "Kvinner"=0)
-             ),
-             sliderInput(inputId="alder", label = "Alder", min = 0,
-                         max = 110, value = c(0, 110)
-             ),
-             selectInput(inputId = 'enhetsUtvalg', label='Egen enhet og/eller landet',
-                         choices = c("Egen mot resten av landet"=1, 
-                                     "Hele landet"=0, 
-                                     "Egen enhet"=2,
-                                     "Egen enhet mot egen sykehustype" = 3,
-                                     "Egen sykehustype" = 4,
-                                     "Egen sykehustype mot resten av landet" = 5,
-                                     "Egen enhet mot egen region" = 6, 
-                                     "Egen region" = 7,
-                                     "Egen region mot resten" = 8)
-             )
-             #sliderInput(inputId="aar", label = "Årstall", min = 2012,  #min(RegData$Aar),
-             #           max = as.numeric(format(Sys.Date(), '%Y')), value = )
+             
+             # conditionalPanel(
+             #   #condition = "input.hovedark == 'Fordelinger' || input.hovedark == 'Andeler'",
+             #   condition = "input.hovedark == 'Andeler'",
+               dateRangeInput(inputId = 'datovalg', start = startDato, end = idag,
+                              label = "Tidsperiode", separator="t.o.m.", language="nb" #)
+               ),
+               selectInput(inputId = "erMann", label="Kjønn",
+                           choices = c("Begge"=2, "Menn"=1, "Kvinner"=0)
+               ),
+               sliderInput(inputId="alder", label = "Alder", min = 0,
+                           max = 110, value = c(0, 110)
+               ),
+               enhetsUtvalgValg <- 
+                 selectInput(inputId = 'enhetsUtvalg', label='Egen enhet og/eller landet',
+                             choices = enhetsUtvalg
+                 ),
+             selectInput(inputId = 'velgResh', label='Velg eget Sykehus',
+                         #selected = 0,
+                         choices = sykehusValg),
+               #sliderInput(inputId="aar", label = "Årstall", min = 2012,  #min(RegData$Aar),
+               #           max = as.numeric(format(Sys.Date(), '%Y')), value = ),
+             actionButton("reset_fordValg", label="Tilbakestill valg")
            ),
+           
+           
            mainPanel(
              tabsetPanel(
                tabPanel(
@@ -279,12 +361,14 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
   #-------Andeler----------      
   tabPanel(p("Andeler", title='Alder, Overlevelse, Isolasjon, Nyrebehandling, Reinnleggelse, Respiratorstøtte, Respiratortid,
                  Utenfor vakttid, Hemodyn., Takeostomi, Donorer'),
+           value = 'Andeler',
            h2("Sykehusvise andeler og utvikling over tid for valgt variabel", align='center'),
            h5("Hvilken variabel man ønsker å se resultater for, velges fra rullegardinmenyen
                     til venstre. Man kan også gjøre ulike filtreringer.", align='center'),
            br(),
            br(),
            sidebarPanel(
+             id = "brukervalg_andeler",
              width=3,
              selectInput(
                inputId = "valgtVarAndelGrVar", label="Velg variabel",
@@ -325,7 +409,8 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                          choices = c("Egen mot resten av landet"=1, "Hele landet"=0, "Egen enhet"=2)),
              selectInput(inputId = "tidsenhetAndelTid", label="Velg tidsenhet",
                          choices = rev(c('År'= 'Aar', 'Halvår' = 'Halvaar',
-                                         'Kvartal'='Kvartal', 'Måned'='Mnd')))
+                                         'Kvartal'='Kvartal', 'Måned'='Mnd'))),
+             actionButton("reset_andelValg", label="Tilbakestill valg")
            ),
            mainPanel(
              # fluidRow(column(6, plotOutput("andelTid"))),
@@ -370,6 +455,7 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
            h5("Hvilken variabel man ønsker å se resultater for, velges fra rullegardinmenyen
                   til venstre. (Man kan også gjøre ulike filtreringer.)", align='center'),
            sidebarPanel( 
+             id = "brukervalg_gjsn",
              width = 3,
              selectInput(inputId = "valgtVarGjsn", label="Velg variabel",
                          choices = c('Alder' = 'alder',
@@ -402,7 +488,8 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
              selectInput(inputId = "tidsenhetGjsn", label="Velg tidsenhet",
                          choices = rev(c('År'= 'Aar', 'Halvår' = 'Halvaar',
                                          'Kvartal'='Kvartal', 'Måned'='Mnd'))
-             )
+             ),
+             actionButton("reset_gjsnValg", label="Tilbakestill valg")
            ), #sidebarPanel/kolonna til venstre
            mainPanel(
              br(),
@@ -428,10 +515,13 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
   
   #--------SMR--------------
   tabPanel('SMR',
-           h3('SMR: Standardisert mortalitetsratio', align='center'),
+           h3('Standardisert mortalitetsratio', align='center'),
            br(),
            sidebarPanel(
              width = 3,
+             selectInput(inputId = "valgtVarMort", label="Velg variabel",
+                        choices = c('SMR, SAPSII' = 'SMR',
+                                    'SMR: PIM' = 'PIMdod')),
              dateRangeInput(inputId = 'datovalgSMR', start = startDato, end = idag,
                             label = "Tidsperiode", separator="t.o.m.", language="nb"),
              selectInput(inputId = "erMannSMR", label="Kjønn",
@@ -446,7 +536,7 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                tabPanel("Figur",
                         plotOutput("SMRfig")),
                tabPanel("Tabell",
-                        # uiOutput("tittelSMR"),
+                        uiOutput("tittelSMR"),
                         br(),
                         tableOutput("SMRtab"))
              )
@@ -455,7 +545,8 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
   
   #--------Type opphold--------------
   tabPanel('Type opphold',
-           h3('Type opphold'),
+           h3('Type opphold', align='center'),
+           br(),
            sidebarPanel(
              width = 3,
              dateRangeInput(inputId = 'datovalgInnMaate', start = startDato, end = idag,
@@ -585,22 +676,41 @@ server <- function(input, output, session) { #
 #-----------Div serveroppstart------------------  
   raplog::appLogger(session = session, msg = "Starter intensiv-app")
       
-  reshID <- reactive({ifelse(paaServer, as.numeric(rapbase::getUserReshId(session)), 109773)})
+  reshID <- ifelse(paaServer, as.numeric(rapbase::getUserReshId(session)), 109773)
   rolle <- reactive({ifelse(paaServer, rapbase::getUserRole(shinySession=session), 'SC')})
-  brukernavn <- reactive({ifelse(paaServer, rapbase::getUserName(shinySession=session), 'tullebukk')})
+  brukernavn <- reactive({ifelse(paaServer, rapbase::getUserName(shinySession=session), 'brukernavn')})
+  # reshID <- reactive({ifelse(paaServer, as.numeric(rapbase::getUserReshId(session)), 109773)})
+  # rolle <- reactive({ifelse(paaServer, rapbase::getUserRole(shinySession=session), 'SC')})
+  # brukernavn <- reactive({ifelse(paaServer, rapbase::getUserName(shinySession=session), 'brukernavn')})
   #userRole <- reactive({ifelse(onServer, rapbase::getUserRole(session), 'SC')})
   #output$reshID <- renderText({ifelse(paaServer, as.numeric(rapbase::getUserReshId(session)), 105460)}) #evt renderUI
+  #enhetsNavn <- reactive({ifelse(paaServer, rapbase::(shinySession=session), 'egen enhet')})
+  indReshEgen <- match(reshID, RegData$ReshId)
+  egetShNavn <- as.character(RegData$ShNavn[indReshEgen])
+  egetRHF <- as.character(RegData$RHF[indReshEgen])
+  egetHF <- as.character(RegData$HF[indReshEgen])
+  egenShType <- c('lokal-/sentralsykehus', '', 
+                       'universitetssykehus')[RegData$ShType[indReshEgen]]
+  egenLokalitet <- c(0, 2, 4, 7)
+  names(egenLokalitet) <- c('hele landet', egetShNavn, egenShType , egetRHF)
+  output$egetShNavn <- renderText(egetShNavn)
+
+  observe({if (rolle() != 'SC') { #
+    shinyjs::hide(id = 'velgResh')
+    shinyjs::hide(id = 'velgReshOverf')
+    #hideTab(inputId = "tabs_andeler", target = "Figur, sykehusvisning")
+  }
+  })
+  observeEvent(input$reset_fordValg, shinyjs::reset("brukervalg_fordeling"))
+  observeEvent(input$reset_andelValg, shinyjs::reset("brukervalg_andeler"))
+  observeEvent(input$reset_gjsnValg, shinyjs::reset("brukervalg_gjsn"))
   
-  # observe({if (rolle() != 'SC') { #
-  #   shinyjs::hide(id = 'velgResh')
-  #   shinyjs::hide(id = 'velgReshKval')
-  #   #hideTab(inputId = "tabs_andeler", target = "Figur, sykehusvisning")
-  # }
-  # })
   # widget
   if (paaServer) {
     output$appUserName <- renderText(rapbase::getUserFullName(session))
-    output$appOrgName <- renderText(paste0('rolle: ', rolle(), '<br> ReshID: ', reshID()) )}
+    output$appOrgName <- renderText(paste0('rolle: ', rolle(), 
+                                           '<br> ReshID: ', reshID,
+                                           '<br> Enhet: ', egetShNavn) )}
   
   # User info in widget
   userInfo <- rapbase::howWeDealWithPersonalData(session)
@@ -611,25 +721,6 @@ server <- function(input, output, session) { #
                html = TRUE, confirmButtonText = rapbase::noOptOutOk())
   })
   
-#---------Hente data  
-  if (paaServer) {
-    RegData <- NIRRegDataSQL(datoFra='2011-01-01') #, session = session) #datoFra = datoFra, datoTil = datoTil)
-    PaarorData <- NIRpaarorDataSQL() 
-    PaarorDataH <- KobleMedHoved(RegData, PaarorData, alleHovedskjema=F, alleSkjema2=F)
-    qInfluensa <- 'SELECT ShNavn, RHF, PatientInRegistryGuid, FormDate,FormStatus, ICD10_1
-                  from InfluensaFormDataContract'
-    InfluData <- rapbase::LoadRegData(registryName= "nir", query=qInfluensa, dbType="mysql")
-    
-    #repLogger(session = session, 'Hentet alle data fra intensivregisteret')
-  } #hente data på server
-  
-  if (!exists('PaarorDataH')){
-    data('NIRRegDataSyn', package = 'intensiv')
-    #try(data(package = "intensiv"))
-  }
-  RegData <- NIRPreprosess(RegData = RegData)
-  PaarorData <- NIRPreprosess(RegData = PaarorDataH) #Må først koble på hoveddata for å få ShType++
-  
   
       #--------startside--------------      
 #      output$tekstDash <- c('Figurer med kvalitetsindikatorer',
@@ -639,7 +730,7 @@ server <- function(input, output, session) { #
     filename = function(){ paste0('MndRapp', Sys.time(), '.pdf')}, 
     content = function(file){
       henteSamlerapporter(file, rnwFil="NIRmndRapp.Rnw", 
-                          reshID = reshID(), datoFra = startDato)
+                          reshID = reshID, datoFra = startDato)
     }
   )
   
@@ -647,7 +738,7 @@ server <- function(input, output, session) { #
     filename = function(){ paste0('NIRsamleRapp', Sys.time(), '.pdf')}, 
     content = function(file){
       henteSamlerapporter(file, rnwFil="NIRSamleRapp.Rnw",
-                  reshID = reshID(), datoFra = startDato)
+                  reshID = reshID, datoFra = startDato)
     }
   )
   
@@ -662,11 +753,15 @@ server <- function(input, output, session) { #
  # observe({
   #TESTING
   # tab <- t(tabNokkeltall(RegData=RegData, tidsenhet='Mnd',
-  #                        enhetsUtvalg=0, reshID=109773))
-           
+  #                        enhetsUtvalg=0, reshID=109773))#
+  output$NokkeltallUtvalgTxt <- renderText({
+    paste0('Nøkkeltall på intensiv, ', 
+              as.character(names(egenLokalitet[which(egenLokalitet==as.numeric(input$enhetsNivaaStart))])))
+    #paste0('Nøkkeltall på intensiv, ', as.character(names(egenLokalitet[which(egenLokalitet==4)])))
+  })    
    output$tabNokkeltallStart <- function() {
     tab <- t(tabNokkeltall(RegData=RegData, tidsenhet='Mnd',
-                           enhetsUtvalg=as.numeric(input$enhetsNivaaStart), reshID=reshID()))
+                           enhetsUtvalg=as.numeric(input$enhetsNivaaStart), reshID=reshID))
     kableExtra::kable(tab,
                       full_width=F,
                       digits = c(0,0,0,1,0,1,1,0,0,0,1,1,2,1)
@@ -677,9 +772,11 @@ server <- function(input, output, session) { #
       kable_styling(full_width = FALSE, position = 'left') #"hover",
   }
   
-  output$tabNokkeltall <- function() {#renderTable({
-            tab <- t(tabNokkeltall(RegData=RegData, tidsenhet=input$tidsenhetReg, datoTil=input$sluttDatoReg, 
-                      enhetsUtvalg=as.numeric(input$enhetsNivaa), reshID=reshID()))
+   #output$NokkeltallTxt <- renderText({paste0('Nøkkeltall på intensiv, ', egetShNavn)})
+   output$tabNokkeltall <- function() {#renderTable({
+            tab <- t(tabNokkeltall(RegData=RegData, tidsenhet=input$tidsenhetReg, 
+                                   datoTil=input$sluttDatoReg, 
+                      enhetsUtvalg=as.numeric(input$enhetsNivaa), reshID=reshID))
             #tab <- tabNokkeltall(RegData, tidsenhet='Mnd', datoTil, enhetsUtvalg=0, reshID=0)
             kableExtra::kable(tab, 
                               full_width=F, 
@@ -701,39 +798,63 @@ server <- function(input, output, session) { #
                    Aar=tabAntOpphSh5Aar(RegData=RegData, datoTil=input$sluttDatoReg))
            
       }, rownames = T, digits=0, spacing="xs" 
-      ) 
+      )
       
       output$tabAntPasSh5Aar <- renderTable({
             tabAntOpphPasSh5Aar(RegData=RegData, gr='pas', datoTil=input$sluttDatoReg)
       }, rownames = T, digits=0, spacing="xs")
       
+      output$tabOverfTil <- renderTable({
+        tab <- tabOverforinger(RegData=RegData, datoFra=input$datovalgReg[1], datoTil=input$datovalgReg[2], 
+                               reshID=reshID, velgAvd=input$velgReshOverf,  overfFraSh=0)
+        xtable::xtable(tab) #c('r','r','r')
+      }, rownames=F, colnames = T, align = 'r')
+      
+      output$tabOverfFra <- renderTable({
+        #tab <- tabOverforinger(RegData=RegData, reshID=reshID) 
+        tab <- tabOverforinger(RegData=RegData, datoFra=input$datovalgReg[1], datoTil=input$datovalgReg[2], 
+                                    reshID=reshID, velgAvd=input$velgReshOverf, overfFraSh=1)
+         xtable::xtable(tab, rownames=F)
+      }, rownames = F, colnames = T, align = 'r')
+      
+      #tabOverforinger(RegData, datoFra=Sys.Date()-365, datoTil=Sys.Date(), reshID=reshID, velgAvd=0, overfFraSh=1)
       output$tabDblReg <- renderTable({
-        tabDBL <- finnDblReg(RegData, reshID=reshID()) #tabDBL <- 
-        finnDblReg(RegData, reshID=reshID())
+        tabDBL <- finnDblReg(RegData, reshID=reshID) #tabDBL <- 
+        finnDblReg(RegData, reshID=reshID)
         #tabDBL <- knitr::kable(tabDBL, format='html', row.names = NA)
       }, spacing="xs") #rownames = T, 
 
       
       output$inklKrit <- renderPlot({
         NIRFigAndeler(RegData=RegData, preprosess = 0, valgtVar='inklKrit',
-                      reshID=reshID(), enhetsUtvalg=as.numeric(input$enhetsUtvalg),
+                      reshID=reshID, enhetsUtvalg=as.numeric(input$enhetsUtvalg),
                       datoFra=input$datovalg[1], datoTil=input$datovalg[2], session=session)
       }, height=800, width=800 #height = function() {session$clientData$output_fordelinger_width}
       )
   #})
 #------------Fordelinger---------------------  
+      
+      #   observeEvent(input$reset_xx, {
+      #    shinyjs::reset("enhetsUtvalg")
+      #    shinyjs::reset("alder")
+      # })
       output$fordelinger <- renderPlot({
             NIRFigAndeler(RegData=RegData, preprosess = 0, valgtVar=input$valgtVar,
-                                                      reshID=reshID(), enhetsUtvalg=as.numeric(input$enhetsUtvalg),
-                                                      datoFra=input$datovalg[1], datoTil=input$datovalg[2],
-                                                      minald=as.numeric(input$alder[1]), maxald=as.numeric(input$alder[2]),
-                                                      erMann=as.numeric(input$erMann), session = session)
+                          reshID=reshID, velgAvd = input$velgResh,
+                          enhetsUtvalg=as.numeric(input$enhetsUtvalg),
+                          datoFra=input$datovalg[1], datoTil=input$datovalg[2],
+                          minald=as.numeric(input$alder[1]), maxald=as.numeric(input$alder[2]),
+                          erMann=as.numeric(input$erMann), session = session)
       }, height=800, width=800 #height = function() {session$clientData$output_fordelinger_width}
       )
       
-      observe({      
+      observe({  
+        #print(input$hovedark)
+        #print(input$ark)
+        
             UtDataFord <- NIRFigAndeler(RegData=RegData, preprosess = 0, valgtVar=input$valgtVar,
-                                        reshID=reshID(), enhetsUtvalg=as.numeric(input$enhetsUtvalg),
+                                        reshID=reshID, enhetsUtvalg=as.numeric(input$enhetsUtvalg),
+                                        velgAvd = input$velgResh,
                                         datoFra=input$datovalg[1], datoTil=input$datovalg[2],
                                         minald=as.numeric(input$alder[1]), maxald=as.numeric(input$alder[2]),
                                         erMann=as.numeric(input$erMann), lagFig = 0, session = session)
@@ -743,7 +864,7 @@ server <- function(input, output, session) { #
 
             output$tittelFord <- renderUI({
                   tagList(
-                        h3(UtDataFord$tittel),
+                        h3(HTML(paste(UtDataFord$tittel, sep='<br />'))),
                         h5(HTML(paste0(UtDataFord$utvalgTxt, '<br />')))
                   )}) #, align='center'
             output$fordelingTab <- function() { #gr1=UtDataFord$hovedgrTxt, gr2=UtDataFord$smltxt renderTable(
@@ -781,7 +902,7 @@ server <- function(input, output, session) { #
             output$andelTid <- renderPlot({
                   
                   NIRFigAndelTid(RegData=RegData, preprosess = 0, valgtVar=input$valgtVarAndelGrVar,
-                                 reshID=reshID(),
+                                 reshID=reshID,
                                  datoFra=input$datovalgAndelGrVar[1], datoTil=input$datovalgAndelGrVar[2],
                                  minald=as.numeric(input$alderAndelGrVar[1]), maxald=as.numeric(input$alderAndelGrVar[2]),
                                  erMann=as.numeric(input$erMannAndelGrVar),
@@ -794,7 +915,7 @@ server <- function(input, output, session) { #
             observe({
                   #AndelTid
                   AndelerTid <- NIRFigAndelTid(RegData=RegData, preprosess = 0, valgtVar=input$valgtVarAndelGrVar,
-                                               reshID=reshID(),
+                                               reshID=reshID,
                                                datoFra=input$datovalgAndelGrVar[1], datoTil=input$datovalgAndelGrVar[2],
                                                minald=as.numeric(input$alderAndelGrVar[1]), maxald=as.numeric(input$alderAndelGrVar[2]),
                                                erMann=as.numeric(input$erMannAndelGrVar),
@@ -856,7 +977,7 @@ server <- function(input, output, session) { #
                   
                   output$tittelAndelGrVar <- renderUI({
                               tagList(
-                                    h3(AndelerShus$tittel),
+                                    h3(HTML(paste(AndelerShus$tittel, sep = '<br />'))),
                                     h5(HTML(paste0(AndelerShus$utvalgTxt, '<br />')))
                               )}) #, align='center'
             }) #observe
@@ -874,7 +995,7 @@ server <- function(input, output, session) { #
       
       output$gjsnTid <- renderPlot({
             NIRFigGjsnTid(RegData=RegData, preprosess = 0, valgtVar=input$valgtVarGjsn,
-                          reshID=reshID(),
+                          reshID=reshID,
                           datoFra=input$datovalgGjsn[1], datoTil=input$datovalgGjsn[2],
                           minald=as.numeric(input$alderGjsn[1]), maxald=as.numeric(input$alderGjsn[2]),
                           erMann=as.numeric(input$erMannGjsn), 
@@ -915,12 +1036,12 @@ server <- function(input, output, session) { #
         
         output$tittelGjsn <- renderUI(
           tagList(
-            h3(dataUtGjsnGrVar$tittel),
-            br(),
+            h3(HTML(paste(dataUtGjsnGrVar$tittel, '<br />'))),
+            #br(),
             h5(HTML(paste0(dataUtGjsnGrVar$utvalgTxt, '<br />')))
           ))
         dataUtGjsnTid <- NIRFigGjsnTid(RegData=RegData, preprosess = 0, valgtVar=input$valgtVarGjsn,
-                                       reshID=reshID(),
+                                       reshID=reshID,
                                        datoFra=input$datovalgGjsn[1], datoTil=input$datovalgGjsn[2],
                                        minald=as.numeric(input$alderGjsn[1]), maxald=as.numeric(input$alderGjsn[2]),
                                        erMann=as.numeric(input$erMannGjsn), 
@@ -961,7 +1082,7 @@ server <- function(input, output, session) { #
       
 #--------------SMR----------------------------------
       output$SMRfig <- renderPlot({
-        NIRFigGjsnGrVar(RegData=RegData, preprosess = 0, valgtVar='SMR',
+        NIRFigGjsnGrVar(RegData=RegData, preprosess = 0, valgtVar = input$valgtVarMort, #valgtVar='SMR',
                         datoFra=input$datovalgSMR[1], datoTil=input$datovalgSMR[2],
                         minald=as.numeric(input$alderSMR[1]), maxald=as.numeric(input$alderSMR[2]),
                         erMann=as.numeric(input$erMannSMR))
@@ -971,7 +1092,7 @@ server <- function(input, output, session) { #
       )
       
       observe({
-        dataUtSMR <- NIRFigGjsnGrVar(RegData=RegData, preprosess = 0, valgtVar='SMR',
+        dataUtSMR <- NIRFigGjsnGrVar(RegData=RegData, preprosess = 0, valgtVar=input$valgtVarMort,
                                      datoFra=input$datovalgSMR[1], datoTil=input$datovalgSMR[2],
                                      minald=as.numeric(input$alderSMR[1]), maxald=as.numeric(input$alderSMR[2]),
                                      erMann=as.numeric(input$erMannSMR), lagFig = 0)
@@ -990,8 +1111,7 @@ server <- function(input, output, session) { #
         }
         output$tittelSMR <- renderUI(
           tagList(
-            h3(dataUtSMR$tittel),
-            br(),
+            h4(HTML(paste(dataUtSMR$tittel, sep= '<br />'))),
             h5(HTML(paste0(dataUtSMR$utvalgTxt, '<br />')))
           ))
         
@@ -1043,7 +1163,6 @@ server <- function(input, output, session) { #
         }
       })
       
-      print(session)
       ## nye abonnement
       observeEvent (input$subscribe, { #MÅ HA
         owner <- rapbase::getUserName(session)
@@ -1072,7 +1191,7 @@ server <- function(input, output, session) { #
         
         fun <- "abonnement"  #"henteSamlerapporter"
         paramNames <- c('rnwFil', 'brukernavn', "reshID", "datoFra", 'datoTil')
-        paramValues <- c(rnwFil, brukernavn(), reshID(), startDato, as.character(datoTil)) #input$subscriptionFileFormat)
+        paramValues <- c(rnwFil, brukernavn(), reshID, startDato, as.character(datoTil)) #input$subscriptionFileFormat)
         
         test <- abonnement(rnwFil = 'NIRmndRapp.Rnw', brukernavn='IntensivBruker', reshID=109773, datoTil=Sys.Date())
         

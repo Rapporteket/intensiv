@@ -48,6 +48,7 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='an
       varTxt <- 'hendelser'
 
       minald <- 0
+      maxald <- 110
       tittel <- 'Mangler tittel' 
       variable <- 'Ingen'
       #deltittel <- ''
@@ -179,7 +180,20 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='an
                   RegData <- RegData[ which(RegData$Isolation %in% 1:5), ]             
                   RegData$Variabel[which(RegData$Isolation %in% 2:5)] <- 1
                   }
- }
+      }
+      
+      if (valgtVar=='frailtyIndex') { #Andeler
+        #1:9 Veldig sprek - Terminalt syk
+        tittel <- 'Skrøpelighets indeks ("frailty")'   
+        gr <- 1:9
+        RegData <- RegData[which((RegData$FrailtyIndex %in% gr)), ]  #Kun gyldige verdier: 0,6,8          
+        RegData$VariabelGr <- factor(RegData$FrailtyIndex, levels=gr)
+        grtxt <- c('Veldig sprek', 'Sprek', 'Ok', 'Sårbar', 'Lett skrøpelig', 'Moderat skrøpelig', 
+                   'Alvorlig skøpelig', 'Svært skrøpelig', 'Terminal') 
+        xAkseTxt <- 'Grad av skrøpelighet'
+        retn <- 'H'
+      }
+      
      if (valgtVar == 'isoleringDogn' ) {   # Andeler, 
             RegData <- RegData[which(RegData$InnDato>=as.Date('2015-01-01', tz='UTC')), ] 
             RegData <- RegData[which((RegData$Isolation %in% 2:5) & (RegData$IsolationDaysTotal>0)), ]   
@@ -300,6 +314,16 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='an
             sortAvtagende <- FALSE
       }
       
+      if (valgtVar == 'overfTil'){ #Overf: 1= ikke overført, 2= overført
+        tittel <- 'Pasienter overført TIL valgt(e) enheter'
+        ind <- which(RegData$Overf==2 & !is.na(RegData$PatientTransferredToHospitalName))
+        RegData <- RegData[ind,]
+        RegData$VariabelGr <- as.factor(RegData$PatientTransferredToHospitalName)
+        grtxt <- levels(RegData$VariabelGr)
+        retn <- 'H'
+        
+      }
+      
       if (valgtVar=='reinn') { #AndelGrVar, AndelTid
         
             #Andel reinnlagte kun hvor dette er registrert. #Tidligere: Ja=1, nei=2, ukjent=9
@@ -307,7 +331,7 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='an
             
             #Det er mange feil i variabelen ReAdmitted. Beregner derfor reinnleggelse basert på 
             #Innleggelsestidspunkt , DateDischargedIntensive og en PasientID
-            #29.06.18: Filtrer på kun ikke-overflyttede. (1= ikke overført, 2= overført)
+            #29.06.18: Filtrer på kun ikke-overflyttede. Overf: (1= ikke overført, 2= overført)
             RegData <- RegData[which(RegData$InnDato >= as.Date('2016-01-01', tz='UTC')) %i% 
                                      which(RegData$Overf==1), ]	
             RegData <- FinnReinnleggelser(RegData=RegData, PasientID = 'PasientID')
@@ -431,6 +455,21 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='an
             grtxt <- c('(0-10)','[10-20)','[20-30)','[30-40)','[40-50)','[50-60)','[60-70)','[70-80)','[80-90)','[90-100)','100+')  
             xAkseTxt <- 'SAPSII-skår'
       }
+      if (valgtVar=='SAPSIIuAlder') { #Andeler #GjsnGrVar
+        #Test:
+        #Tar ut SAPSII=0 (ikke scorede)
+        #og de under 16år (tas ut i NIRutvalg)
+        tittel <- 'Fordeling av SAPSII (u/alderspoeng)'
+        if (figurtype %in% c('gjsnGrVar', 'gjsnTid')) {
+          tittel <- 'SAPSII (u/alderspoeng)' }
+        minald <- max(16, minald)     #Bare voksne skal skåres
+        RegData <- RegData[which(as.numeric(RegData$SAPSII) > 0), ]
+        RegData$Variabel <- ifelse(RegData$Age >-1, RegData$SAPSII-RegData$Age, RegData$SAPSII)
+        gr <- c(seq(0, 100,10), 500) 
+        RegData$VariabelGr <- cut(RegData$Variabel, breaks=gr, include.lowest=TRUE, right=FALSE) 
+        grtxt <- c('(0-10)','[10-20)','[20-30)','[30-40)','[40-50)','[50-60)','[60-70)','[70-80)','[80-90)','[90-100)','100+')  
+        xAkseTxt <- 'SAPSII-skår u/alder'
+      }
       
       if (valgtVar == 'SMR') { #GjsnGrVar
             #Tar ut reinnlagte på intensiv og  de med SAPSII=0 (ikke scorede) 
@@ -447,9 +486,21 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='an
             RegData <- RegData[RegData$Reinn==2, ]
             RegData$Variabel <- RegData$SMR
             xAkseTxt <- 'Observert 30-dagers dødelighet / estimert dødelighet'
-            KImaal <- 0.7  #SMR <0.7 
-            KImaaltxt <- '<0.7'
             sortAvtagende <- FALSE
+      }
+      if (valgtVar == 'PIMdod') { #GjsnGrVar
+        #Tar ut reinnlagte på intensiv og  de med SAPSII=0 (ikke scorede) 
+        #De under 16år tas ut i NIRutvalg
+        #Reinn: #1:Ja, 2:Nei, 3:Ukjent, -1:Ikke utfylt
+        maxald <- min(15, maxald) 
+        # indMed <- which(as.numeric(RegData$SAPSII)>0) %i% 
+        #   which(RegData$InnDato >= as.Date('2016-01-01', tz='UTC'))
+        # RegData <- RegData[indMed,]
+        #RegData <- FinnReinnleggelser(RegData=RegData)
+        #RegData <- RegData[RegData$Reinn==2, ]
+        RegData$Variabel <- RegData$PIM_Probability*100 #For å få samme format som SMR
+        xAkseTxt <- 'Observert 30-dagers dødelighet / PIM-estimert dødelighet'
+        sortAvtagende <- FALSE
       }
       if (valgtVar == 'trakeostomi') { #andelGrVar 
             #-1: Velg verdi, 1 = Nei, 2 = Ja – perkutan teknikk på intensiv/oppv., 3 = Ja – åpen teknikk (operativ)
@@ -576,7 +627,7 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='an
             RegData$VariabelGr <- factor(RegData$PrimaryReasonAdmitted, levels=gr)
             grtxt <- c('Respiratorisk svikt', 'Sirk./kardiovaskulær svikt', 'Gastroenterologisk svikt', 
                        'Nevrologisk svikt', 'Sepsis', 'Skade/traume', 'Metabolsk/intoksikasjon', 'Hematologisk svikt', 
-                       'Nyresvikt', 'Postoperativt', 'Annet')
+                       'Nyresvikt', 'Postoperativt (komplikasjon \ntil anestesi/kirurgi)', 'Annet')
             cexgr <- 0.9
       } 
       #-------------- SAMMENSATTE variable
@@ -645,7 +696,7 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='an
       
       RegData$Variabel <- as.numeric(RegData$Variabel)
       
-      UtData <- list(RegData=RegData, minald=minald,
+      UtData <- list(RegData=RegData, minald=minald, maxald=maxald,
                      grtxt=grtxt, cexgr=cexgr, varTxt=varTxt, xAkseTxt=xAkseTxt, KImaal=KImaal, KImaaltxt=KImaaltxt, 
                      retn=retn,tittel=tittel, flerevar=flerevar, variable=variable, sortAvtagende=sortAvtagende)
       #RegData inneholder nå variablene 'Variabel' og 'VariabelGr'

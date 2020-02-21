@@ -7,10 +7,24 @@ f.eks. enheter. I øyeblikket benytter funksjonen bare 'ShNavn' som grupperingsv
 andre valg kan lett inkluderes. Funksjonen er tilrettelagt for også å kunne benytte "01-data", 
 dvs. kodede, anonymiserte data som benyttes til offentlige kvalitetsindikatorer.}
 \usage{
-NIRFigInnMaate(RegData, valgtVar = "InnMaate", datoFra = "2010-01-01",
-  datoTil = "3000-01-01", aar = 0, minald = 0, maxald = 110,
-  grType = 99, grVar = "ShNavn", InnMaate = 99, dodInt = "",
-  erMann = "", hentData = 0, preprosess = 1, outfile = "", ...)
+NIRFigInnMaate(
+  RegData,
+  valgtVar = "InnMaate",
+  datoFra = "2010-01-01",
+  datoTil = "3000-01-01",
+  aar = 0,
+  minald = 0,
+  maxald = 110,
+  grType = 99,
+  grVar = "ShNavn",
+  InnMaate = 99,
+  dodInt = "",
+  erMann = "",
+  hentData = 0,
+  preprosess = 1,
+  outfile = "",
+  ...
+)
 }
 \arguments{
 \item{RegData}{En dataramme med alle nødvendige variabler fra registeret}

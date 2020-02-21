@@ -4,10 +4,24 @@
 \alias{NIRFigPrePost}
 \title{Søylediagram som fordeling av valgt variabel, målt både før og etter hjerneslaget}
 \usage{
-NIRFigPrePost(RegData, valgtVar, datoFra = "2012-04-01",
-  datoTil = "2050-12-31", minald = 0, maxald = 110, erMann = "",
-  diagnose = "", innl4t = "", NIHSSinn = "", outfile = "", reshID,
-  enhetsUtvalg = 1, preprosess = 1, hentData = 0, ...)
+NIRFigPrePost(
+  RegData,
+  valgtVar,
+  datoFra = "2012-04-01",
+  datoTil = "2050-12-31",
+  minald = 0,
+  maxald = 110,
+  erMann = "",
+  diagnose = "",
+  innl4t = "",
+  NIHSSinn = "",
+  outfile = "",
+  reshID,
+  enhetsUtvalg = 1,
+  preprosess = 1,
+  hentData = 0,
+  ...
+)
 }
 \arguments{
 \item{RegData}{En dataramme med alle nødvendige variabler fra registeret}

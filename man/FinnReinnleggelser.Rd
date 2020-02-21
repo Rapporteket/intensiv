@@ -2,7 +2,7 @@
 % Please edit documentation in R/NIRhjelpefunksjoner.R
 \name{FinnReinnleggelser}
 \alias{FinnReinnleggelser}
-\title{Hjelpefunksjoner. Group of functions page title}
+\title{Fil med div hjelpefunksjoner.Group of functions Description section}
 \usage{
 FinnReinnleggelser(RegData, PasientID = "PasientID")
 }
@@ -15,11 +15,9 @@ FinnReinnleggelser(RegData, PasientID = "PasientID")
 Div hjelpefunksjoner
 }
 \description{
-Fil med div hjelpefunksjoner.Group of functions Description section
+Detaljer. kommer senereGroup of functions Details paragraph.
 }
 \details{
-Detaljer. kommer senereGroup of functions Details paragraph.
-
 Fil som inneholder hjelpefunksjoner. 
 FinnReinnleggelser beregner reinnleggelser fra DateAdmittedIntensive og DateDischargedIntensive
 SorterOgNavngiTidsEnhet Legger til tidsenhetene Aar, Halvaar, Mnd og Kvartal

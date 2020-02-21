@@ -21,7 +21,8 @@
 #' @export
 
 NIRUtvalgEnh <- function(RegData, datoFra=0, datoTil=0, minald=0, maxald=110, erMann='', InnMaate='', 
-                         aar=0, grType=99, enhetsUtvalg=0, reshID=0,  dodInt='', fargepalett='BlaaOff')    
+                         aar=0, grType=99, enhetsUtvalg=0, dodInt='', reshID=0, velgAvd=0, 
+                         fargepalett='BlaaOff')    
       # overfPas=99,
 {
       #OffAlleFarger <- c('#c6dbef', '#6baed6', '#4292c6', '#2171b5', '#084594', '#000059', '#FF7260', '#4D4D4D', '#737373', '#A6A6A6', '#DADADA')
@@ -31,6 +32,19 @@ NIRUtvalgEnh <- function(RegData, datoFra=0, datoTil=0, minald=0, maxald=110, er
       # Definer intersect-operator
       "%i%" <- intersect
       dodInt <- as.numeric(dodInt)
+      
+      #Velge hva som er eget sykehus
+      if ((reshID!=0) & (length(velgAvd)==1) & (velgAvd != 0)) {
+         reshID <- velgAvd}
+      
+      #Velge hvilke sykehus som skal være med:
+      if (velgAvd[1] != 0 & reshID==0) {
+         #if (enhetsUtvalg !=0) {stop("enhetsUtvalg må være 0 (alle)")}
+         #Utvalg på avdelinger:
+         #RegData <- RegData[which(as.character(RegData$ShNavn) %in% velgAvd),]
+         RegData <- RegData[which(as.numeric(RegData$ReshId) %in% as.numeric(velgAvd)),]
+         RegData$ShNavn <- as.factor(RegData$ShNavn)
+      }
       
       #Enhetsutvalg:
       #Når bare skal sammenlikne med sykehusgruppe eller region, eller ikke sammenlikne, 
@@ -49,6 +63,8 @@ NIRUtvalgEnh <- function(RegData, datoFra=0, datoTil=0, minald=0, maxald=110, er
       
       Ninn <- dim(RegData)[1]
       #if (enhetsUtvalg %in% 3:4) {grType <- RegData$ShType[indEgen1]}
+      #Hvis gruppetype ikke er valgt, settes denne lik egen: NEI da blir det trøbbel i figurene
+      #if (grType==99) {grType <- RegData$ShType[match(reshID, RegData$ReshId)]}
       indGrType <- switch(grType, #if (grType %in% 1:3) {switch(grType,
                                                 '1' = which(RegData$ShType %in% 1:2),
                                                 '2' = which(RegData$ShType %in% 1:2),
@@ -90,13 +106,16 @@ NIRUtvalgEnh <- function(RegData, datoFra=0, datoTil=0, minald=0, maxald=110, er
                   ' til ', if (N>0) {max(as.Date(RegData$InnDato), na.rm=T)} else {datoTil})} else {NULL},
             if (aar[1] > 0){paste0('Innleggelsesår: ', paste0(aar, collapse=', '))},
             if ((minald>0) | (maxald<110)) {
-                  paste0('Pasienter fra ', if (N>0) {sprintf('%.1f',min(RegData$Alder, na.rm=T))} else {minald}, 
-                         ' til ', if (N>0) {sprintf('%.1f',max(RegData$Alder, na.rm=T))} else {maxald}, ' år')},
+               paste0('Pasienter fra ', if (N>0) {min(RegData$Alder, na.rm=T)} else {minald}, 
+                      ' til ', if (N>0) {max(RegData$Alder, na.rm=T)} else {maxald}, ' år')},
+            # paste0('Pasienter fra ', if (N>0) {sprintf('%.1f',min(RegData$Alder, na.rm=T))} else {minald}, 
+            #              ' til ', if (N>0) {sprintf('%.1f',max(RegData$Alder, na.rm=T))} else {maxald}, ' år')},
             if (erMann %in% 0:1) {paste0('Kjønn: ', c('Kvinner', 'Menn')[erMann+1])},
             if (InnMaate %in% c(0,6,8)) {paste('Innmåte: ', 
                                                c('Elektivt',0,0,0,0,0, 'Akutt medisinsk',0, 'Akutt kirurgi')[InnMaate+1], sep='')},
             if (grType %in% 1:3) {paste0('Sykehustype: ', grTypetextstreng[grType])},
-            if (dodInt %in% 0:1) {paste0('Status ut fra intensiv: ', c('Levende','Død')[as.numeric(dodInt)+1])}
+            if (dodInt %in% 0:1) {paste0('Status ut fra intensiv: ', c('Levende','Død')[as.numeric(dodInt)+1])},
+            if (velgAvd[1] != 0 & reshID==0) {'Viser valgte sykehus'}
       )
       
       
@@ -112,6 +131,7 @@ NIRUtvalgEnh <- function(RegData, datoFra=0, datoTil=0, minald=0, maxald=110, er
                                        '8' = as.character(RegData$RHF[indEgen1]))
             }
       
+      if ((velgAvd[1] != 0) & (reshID==0)) {hovedgrTxt <-'Valgte sykehus'}
       
       ind <- list(Hoved=0, Rest=0, ShTypeEgen=0)
       smltxt <- '' #grTypeTxt      #Før: ''

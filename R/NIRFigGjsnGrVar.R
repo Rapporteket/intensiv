@@ -13,7 +13,6 @@
 #' Argumentet \emph{valgtVar} har følgende valgmuligheter:
 #'    \itemize{
 #'     \item alder: Pasientens alders 
-#'     \item SMR: Standardisert mortalitetsratio (Gir annen figurtype)
 #'     \item liggetid: Liggetid 
 #'     \item Nas: Skår for sykepleieraktiviteter. (Nursing Activities Score). Per døgn.
 #'     \item NEMS: Skår for ressursbruk per opphold. (Nine Equivalents of Nursing Manpower Use Score)
@@ -23,6 +22,8 @@
 #'     \item respiratortidInvMoverf: Respiratortid, invasiv m/overf.
 #'     \item respiratortidInvUoverf: Respiratortid, invasiv u/overf.
 #'     \item SAPSII: Skår for alvorlighetsgrad av sykdom.  (Simplified Acute Physiology Score II)
+#'     \item SMR: (SAPSII-estimert dødelighet) Standardisert mortalitetsratio (Gir annen figurtype)
+#'     \item PIMdod: PIM-estimert dødelighet (Gir annen figurtype)
 #'    }
 #'
 #' Detajer: Her bør man liste opp hvilke variable funksjonen benytter.
@@ -57,6 +58,7 @@ RegData <- NIRVarSpes$RegData
 
 #------- Gjøre utvalg
 minald <- max(NIRVarSpes$minald, minald)
+maxald <- min(NIRVarSpes$maxald, maxald)
 NIRUtvalg <- NIRUtvalgEnh(RegData=RegData, datoFra=datoFra, datoTil=datoTil, aar=aar, minald=minald, maxald=maxald, 
                           erMann=erMann, InnMaate=InnMaate, dodInt=dodInt, grType=grType) #overfPas=overfPas, 
 RegData <- NIRUtvalg$RegData
@@ -81,7 +83,9 @@ t1 <- switch(valgtMaal,
 tittel <- paste0(t1, NIRVarSpes$tittel) 
 			
 if( valgtVar =='SMR') {tittel <- c(paste0('SMR, ', NIRUtvalg$grTypeTxt, 'sykehus'),
-								'(uten reinnlagte pasienter)')}
+                                   '(uten reinnlagte pasienter)')}
+if( valgtVar =='PIMdod') {tittel <- paste0('PIM, ', NIRUtvalg$grTypeTxt, 'sykehus')}
+								#'(uten reinnlagte pasienter)')}
 
 Ngrtxt <- paste0(' (', as.character(Ngr),')') 
 indGrUt <- which(Ngr < Ngrense)
@@ -118,10 +122,11 @@ if (valgtMaal=='Med') {
 	} 
 	
 if (valgtMaal=='Gjsn') {	#Gjennomsnitt er standard, men må velges.
-	if (valgtVar=='SMR') { #Bør tas ut av Gjsn...?
+	if (valgtVar %in% c('PIMdod', 'SMR')) { #Bør tas ut av Gjsn...?
 		medKI <- 0
 		ObsGr <- tapply(RegData$Dod30, RegData[ ,grVar], mean, na.rm=T)
-		EstGr <- tapply(RegData$SMR, RegData[ ,grVar], mean, na.rm=T)
+		#EstGr <- tapply(RegData$SMR, RegData[ ,grVar], mean, na.rm=T)
+		EstGr <- tapply(RegData$Variabel, RegData[ ,grVar], mean, na.rm=T)
 		ind0 <- which(EstGr == 0)
 		Gjsn <- 100*ObsGr/EstGr  
 		if (length(ind0)>0) {Gjsn[ind0] <- 0}#Unngå å dele på 0
@@ -153,7 +158,7 @@ if (valgtMaal=='Gjsn') {	#Gjennomsnitt er standard, men må velges.
 #AndelerGr[indGrUt] <- -0.0001
 
 GrNavnSort <- paste0(names(Ngr)[sortInd], Ngrtxt[sortInd])
-if (valgtVar == 'SMR') {AntDes <- 2} else {AntDes <- 1} 
+if (valgtVar %in% c('SMR', 'PIMdod')) {AntDes <- 2} else {AntDes <- 1} 
 soyletxt <- sprintf(paste0('%.', AntDes,'f'), Midt) 
 #soyletxt <- c(sprintf(paste0('%.', AntDes,'f'), Midt[1:AntGr]), rep('',length(Ngr)-AntGr))
 indUT <- which(is.na(Midt))  #Rydd slik at bare benytter indGrUt
@@ -228,7 +233,7 @@ if (lagFig == 1) {
                   plot.new()
                   title(tittel)	#, line=-6)
                   legend('topleft',legend=utvalgTxt, bty='n', cex=0.9, text.col=farger[1])
-                  if (valgtMaal=='Med' & valgtVar =='SMR') {tekst <- 'Ugyldig parameterkombinasjon'   #valgtVar=='SMR'
+                  if (valgtMaal=='Med' & valgtVar %in% c('PIMdod', 'SMR')) {tekst <- 'Ugyldig parameterkombinasjon'   #valgtVar=='SMR'
                   } else {tekst <- 'For få registreringer i egen eller sammenligningsgruppe'}
                   text(0.5, 0.6, tekst, cex=1.2)
                   if ( outfile != '') {dev.off()}

@@ -56,12 +56,12 @@ RegData <- FinnReinnleggelser(RegData) # Beregne reinnleggelser
 
 #RegData endres til 6 mnd:
 grType <- RegData$ShType[match(reshID, RegData$ReshId)]
+ShTypeEgenTxt <- c('lokal-/sentral', 'lokal-/sentral', 'region')[grType]
 NIRUtvalg <- NIRUtvalgEnh(RegData, reshID = reshID, enhetsUtvalg =1,
                           datoFra = datoFra6mnd, datoTil = datoTil)
 #Fra NIRUTvalg: utvalgTxt, ind, medSml, smltxt, hovedgrTxt, grTypeTxt, RegData
 RegData <- NIRUtvalg$RegData
 shtxt <- NIRUtvalg$hovedgrTxt
-ShTypeEgenTxt <- NIRUtvalg$grTypeTxt 
 ind <- NIRUtvalg$ind
 N <- dim(RegData)[1]
 
@@ -110,16 +110,15 @@ Rapporten inneheld anonymiserte samledata. I tilfelle der utvalet inneheld få r
 
 Denne rapporten er utarbeidd på oppdrag frå Norsk intensivregister (NIR) og vert generert automatisk
 frå Rapporteket. Alle resultat er baserte på data frå registeret og er gyldige per rapportdato for
-opphald som er ferdigstilte i MRS. Uttrekket blir gjort for kvar kalendermånad, med ein knapp månads forseinking. Månadsrapport for januar vert sendt ut sist i februar, for februar sist i mars osv. Rapporten inneheld alle ferdigstilte opphald i MRS der innleggingstidspunktet på intensiv er i tidsrommet kl.00.00 den fyrste i aktuell månad til kl. 23.59 den siste i månaden. NIR-einingar
-som er ajour med registreringa, vil dermed kunne få nær fullstendige månadsrapportar
+opphald som er ferdigstilte i MRS. Rapporten inneheld alle ferdigstilte opphald i MRS der innleggingstidspunktet på intensiv er i tidsrommet kl.00.00 den fyrste i aktuell månad til kl. 23.59 den siste i månaden. NIR-einingar
+som er ajour med registreringa, vil dermed kunne få nær fullstendige månadsrapportar.
 
 
 For \Sexpr{shtxt} er siste ferdigstilte innleggingsdato i denne rapporten
 \Sexpr{maxDatoEget}.
 \par
 
-Denne rapporten kan óg hentast ved at ein loggar seg inn på Rapporteket-Intensiv og klikkar på "Månedsrapport". Det gjer at alle kan hente seg representative månadsrapportar når dei måtte
-ynskje. I Rapporteket kan ein óg  finne mange fleire figurar og tabellar, og gjere endringar i tidsintervall og samanlikningsgrunnlag.
+Denne rapporten kan hentast ved at ein loggar seg inn på Rapporteket-Intensiv og klikkar på "Månedsrapport". Det gjer at alle kan hente seg representative månadsrapportar når dei måtte ynskje. Ein kan óg abonnere på rapporten. Ein vél da sjølv kor ofte ein ynskjer rapporten. I Rapporteket kan ein óg finne mange fleire figurar og tabellar og gjere endringar i tidsintervall og samanlikningsgrunnlag.
  
 
 \end{frame}
@@ -163,7 +162,7 @@ ynskje. I Rapporteket kan ein óg  finne mange fleire figurar og tabellar, og gj
 tabBelegg <- tabBelegg(RegData=RegDataEget, datoTil=datoTil, tidsenhet=tidsenhet) #personIDvar='PasientID', 
 #parametre: RegData, tidsenhet='Aar', datoTil, enhetsUtvalg=0, reshID=0
 xtable(tabBelegg, digits=0, align=c('l', rep('r', ncol(tabBelegg))), 
-		caption=paste0('Antal opphald og liggedøger, ', shtxt,'.'), label='tab:RegEget')
+		caption=paste0('Tal på opphald og liggedøger, ', shtxt,'.'), label='tab:RegEget')
 
 @
 
@@ -280,7 +279,7 @@ xtable(liggetidKj, digits=1, align=c('l', rep('r', ncol(liggetidKj))),
 \begin{figure}[ht]
 \centering              
 \includegraphics[scale=0.35]{PrimaryReasonAdmittedFordMnd.pdf}
-\caption{Hovudårsak til innlegging på intensiv (prosent per kategori) siste seks månader, eiga avdeling og alle andre \Sexpr{ShTypeEgenTxt}sjukehus.}
+\caption{Hovudårsak til innlegging på intensiv (prosent per kategori) siste seks månader, eiga avdeling og andre \Sexpr{ShTypeEgenTxt}sjukehus.}
 \end{figure}
 \end{frame}
 
