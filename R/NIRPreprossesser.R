@@ -5,12 +5,14 @@
 #' av kvalitetsindikatorer og som kan legges ved pakken
 #'
 #' @inheritParams NIRFigAndeler
+#' @param barePaaror bare preprosesser variabler som brukes ved 
+#' analyse av pårørendedata 
 #'
 #' @return Data En liste med det filtrerte datasettet (og sykehusnavnet som tilsvarer reshID, ikke pt)
 #'
 #' @export
 #'
-NIRPreprosess <- function(RegData=RegData)	#, reshID=reshID)
+NIRPreprosess <- function(RegData=RegData, barePaaror=0)	#, reshID=reshID)
 {
       #Miljøparametre
       #print(Sys.getlocale())
@@ -21,10 +23,6 @@ NIRPreprosess <- function(RegData=RegData)	#, reshID=reshID)
       # Fra des. 2018 får Intensiv også kladd over fra  fra MRS/NHN.
       RegData <- RegData[RegData$FormStatus==2, ]
       
-      #devtools::load_all(quiet = TRUE)
-      #source('R/NIRhjelpefunksjoner.R', encoding = 'UTF-8')
-      #load_all(pkg = ".", reset = TRUE, recompile = FALSE, export_all = TRUE,
-      #          quiet = FALSE, create = NA)
       #Kjønn
       RegData$erMann <- RegData$PatientGender #1=Mann, 2=Kvinne, 0=Ukjent
       RegData$erMann[RegData$PatientGender == 0] <- NA
@@ -38,10 +36,11 @@ NIRPreprosess <- function(RegData=RegData)	#, reshID=reshID)
       #For enkelhetsskyld kalles Saps2Score som er Estimert mortalitet for SMR
       #RegData$logit <- -7.7631 + 0.0737*RegData$Saps2ScoreNumber + 0.9971*log(RegData$Saps2ScoreNumber+1)
       #RegData$Mort <- exp(RegData$logit)/(1+exp(RegData$logit))*100 # = Saps2Score = SMR
+      if (barePaaror==0){
       RegData$SapsSum <- with(RegData, Glasgow+Age+SystolicBloodPressure+HeartRate+Temperature+MvOrCpap+UrineOutput+
-              SerumUreaOrBun+Leukocytes+Potassium+Sodium+Hco3+Bilirubin+TypeOfAdmission)
-      head(RegData$SapsSum)
-      head(RegData$Saps2ScoreNumber)
+              SerumUreaOrBun+Leukocytes+Potassium+Sodium+Hco3+Bilirubin+TypeOfAdmission)}
+      #head(RegData$SapsSum)
+      #head(RegData$Saps2ScoreNumber)
       names(RegData)[which(names(RegData) == 'Saps2Score')] <- 'SMR' #Saps2Score er SAPS estimert mortalitet
       names(RegData)[which(names(RegData) == 'Saps2ScoreNumber')] <- 'SAPSII'
       names(RegData)[which(names(RegData) == 'DaysAdmittedIntensiv')] <- 'liggetid'

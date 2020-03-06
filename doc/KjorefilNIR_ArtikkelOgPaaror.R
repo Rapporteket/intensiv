@@ -38,22 +38,54 @@ load("A:/Intensiv/NIRdataPaaror.RData") #RegDataTEST, 2018-06-05
 
 
 #------------------FS-ICU, artikkel pårørendetilfredshet--------------------------------
+library(intensiv)
 datoPre1 <- '2015-10-01'
 datoPre2 <- '2015-12-31'
 datoPost1 <- '2016-10-01'
 datoPost2 <- '2016-12-31'
 
-   RegData <- NIRRegDataSQL(datoFra= datoPre1, datoTil = datoPost2) #, session = session) #datoFra = datoFra, datoTil = datoTil)
-   PaarorData <- NIRpaarorDataSQL(datoFra= datoPre1, datoTil = datoPost2) 
-   PaarorDataH <- KobleMedHoved(RegData, PaarorData, alleHovedskjema=F, alleSkjema2=F)
+   Hoved <- NIRRegDataSQL(datoFra= datoPre1, datoTil = datoPost2) #, session = session) #datoFra = datoFra, datoTil = datoTil)
+   PaarorData <- NIRpaarorDataSQL() #datoFra= datoPre1, datoTil = datoPost2) #, medH=1) Tar grusomt lang tid
+   PaarorDataH <- KobleMedHoved(Hoved, PaarorData, alleHovedskjema=F, alleSkjema2=F)
+   PaarorDataH <- NIRPreprosess(RegData = PaarorDataH) #Må først koble på hoveddata for å få ShType++
 
-RegData <- NIRPreprosess(RegData = RegData)
-PaarorData <- NIRPreprosess(RegData = PaarorDataH) #Må først koble på hoveddata for å få ShType++
+#Tar bort skjema registrert i "opplæringsperioden"
+indMellom <- which(PaarorDataH$InnDato > as.Date(datoPre2) & PaarorDataH$InnDato < as.Date(datoPost1) )
+PaarorDataH <- PaarorDataH[-indMellom, ]
 
+indPre <- which(PaarorDataH$InnDato >= as.Date(datoPre1) & PaarorDataH$InnDato <= as.Date(datoPre2))
+indPost <- which(PaarorDataH$InnDato >= as.Date(datoPost1) & PaarorDataH$InnDato <= as.Date(datoPost2))
+PaarorDataH$Post <- NA #'mellom'
+PaarorDataH$Post[indPre] <- 0 #'pre'
+PaarorDataH$Post[indPost] <- 1 #'post'
+table(PaarorDataH$Post, useNA = 'a')
 
+#Pasientkarakteristikker
 
+InnMaateTab <- table(PaarorDataH$InnMaate, PaarorDataH$Post)
+rownames(InnMaateTab) <- c('Planlagt operasjon','Akutt non-operativ', 'Akutt operasjon')
 
+#PrimaryReasonAdmitted ble innført 01.01.2016
+# PrimData <- NIRVarTilrettelegg(RegData = PaarorDataH, valgtVar = 'PrimaryReasonAdmitted')
+# table(PaarorDataH$PrimaryReasonAdmitted, PaarorDataH$Post)
+# PrimAarsakTab <- table(PrimData$RegData$VariabelGr, PrimData$RegData$Post)
+# rownames(PrimAarsakTab) <- PrimData$grtxt
 
+Tab <- round(rbind('Antall pasienter' = c(length(indPre), length(indPost)),
+   'Alder, gj.sn' = c(mean(PaarorDataH$Alder[indPre], na.rm = T), 
+                      mean(PaarorDataH$Alder[indPost], na.rm = T)),
+   'SAPSII' = c(mean(PaarorDataH$SMR[indPre], na.rm = T), 
+                mean(PaarorDataH$SMR[indPost], na.rm = T)),
+   InnMaateTab,
+'Liggetid (t), median' = c(median(PaarorDataH$liggetid[indPre], na.rm = T), 
+                           median(PaarorDataH$liggetid[indPost], na.rm = T)),
+'Død på intensivavd.' = c(sum(PaarorDataH$DischargedIntensiveStatus[indPre], na.rm = T), 
+                      sum(PaarorDataH$DischargedIntensiveStatus[indPost], na.rm = T))
+), 1)
+
+colnames(Tab) <- c('pre', 'post')
+xtable::xtable(Tab, digits=1, align=c('l','r','r'))
+#Hovedårsak, innleggelse - vis figur?
 
 
 

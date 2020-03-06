@@ -4,12 +4,13 @@
 #' Henter data for Intensivregisterets database
 #'
 #' @inheritParams NIRFigAndeler
+#' @param medH kobler på variabler fra hovedskjema
 #'
 #' @return Henter dataramma RegData for Intensivregisteret
 #' @export
 #'
 #'
-NIRpaarorDataSQL <- function(datoFra = '2015-12-01', datoTil = Sys.Date()) {
+NIRpaarorDataSQL <- function(datoFra = '2015-12-01', datoTil = Sys.Date(), medH=0) {
       
       
 varHoved <- c("UPPER(M.SkjemaGUID) AS SkjemaGUID
@@ -123,7 +124,7 @@ varPaaror <- 'Q.SkjemaGUID
 --  , Q.MinorVersion
 , Q.PatientInRegistryGuid'
 
-      query <- paste0('SELECT ',
+      queryH <- paste0('SELECT ',
                        varHoved,
                       varPaaror,
                       ' FROM QuestionaryFormDataContract Q
@@ -132,10 +133,15 @@ ON Q.HovedskjemaGUID = M.SkjemaGUID
 WHERE cast(DateAdmittedIntensive as date) BETWEEN \'', datoFra, '\' AND \'', datoTil, '\'')
 #UPPER(Q.HovedskjemaGUID) = UPPER(M.SkjemaGUID)
 
-      query <- paste0('SELECT ',
+      queryP <- paste0('SELECT ',
                       varPaaror,
-                      ' FROM QuestionaryFormDataContract Q')
+                      ' FROM QuestionaryFormDataContract Q
+                      WHERE cast(DateAdmittedIntensive as date) BETWEEN \'', datoFra, '\' AND \'', datoTil, '\'')
 
+      query <- switch(as.character(medH),
+                      '0' = queryP,
+                      '1' = queryH)
+      
       RegData <- rapbase::LoadRegData(registryName="nir", query=query, dbType="mysql")
       return(RegData)
 }
