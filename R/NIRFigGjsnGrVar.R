@@ -85,7 +85,7 @@ tittel <- paste0(t1, NIRVarSpes$tittel)
 if( valgtVar =='SMR') {tittel <- c(paste0('SMR, ', NIRUtvalg$grTypeTxt, 'sykehus'),
                                    '(uten reinnlagte pasienter)')}
 if( valgtVar =='PIMdod') {tittel <- paste0('PIM, ', NIRUtvalg$grTypeTxt, 'sykehus')}
-								#'(uten reinnlagte pasienter)')}
+								# (uten reinnlagte pasienter)')}
 
 Ngrtxt <- paste0(' (', as.character(Ngr),')') 
 indGrUt <- which(Ngr < Ngrense)

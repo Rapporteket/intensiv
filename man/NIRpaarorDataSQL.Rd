@@ -2,7 +2,8 @@
 % Please edit documentation in R/NIRpaarorDataSQL.R
 \name{NIRpaarorDataSQL}
 \alias{NIRpaarorDataSQL}
-\title{Henter data fra pårørendeskjema registrert for Intensiv}
+\title{Henter data fra pårørendeskjema registrert for Intensiv og kobler til 
+noen variabler fra hovedskjema.}
 \usage{
 NIRpaarorDataSQL(datoFra = "2015-12-01", datoTil = Sys.Date())
 }
@@ -15,5 +16,5 @@ NIRpaarorDataSQL(datoFra = "2015-12-01", datoTil = Sys.Date())
 Henter dataramma RegData for Intensivregisteret
 }
 \description{
-Henter data for Intensivregisteret fra "staging"
+Henter data for Intensivregisterets database
 }

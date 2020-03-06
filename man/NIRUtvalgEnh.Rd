@@ -15,8 +15,9 @@ NIRUtvalgEnh(
   aar = 0,
   grType = 99,
   enhetsUtvalg = 0,
-  reshID = 0,
   dodInt = "",
+  reshID = 0,
+  velgAvd = 0,
   fargepalett = "BlaaOff"
 )
 }
@@ -48,13 +49,13 @@ standard: alle (alt unntatt 0,6,8 / ikke spesifisert)}
 
 \item{enhetsUtvalg}{Gjør gruppeutvalg med eller uten sammenlikning. Se \strong{Details} for oversikt.}
 
-\item{reshID}{Parameter følger fra innlogging helseregister.no og angir
-hvilken enhet i spesialisthelsetjenesten brukeren tilhører}
-
 \item{dodInt}{Levende/død ut fra intensiv. 
 0: i live, 
 1: død,   
 alle: standard (alle andre verdier)}
+
+\item{reshID}{Parameter følger fra innlogging helseregister.no og angir
+hvilken enhet i spesialisthelsetjenesten brukeren tilhører}
 
 \item{fargepalett}{Hvilken fargepalett skal brukes i figurer (Standard: BlaaRapp)}
 }

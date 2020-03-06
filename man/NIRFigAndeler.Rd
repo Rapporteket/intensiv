@@ -21,6 +21,7 @@ NIRFigAndeler(
   preprosess = 1,
   hentData = 0,
   reshID = 0,
+  velgAvd = 0,
   enhetsUtvalg = 0,
   lagFig = 1,
   ...

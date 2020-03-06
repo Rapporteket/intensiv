@@ -1,6 +1,7 @@
-#' Henter data fra pårørendeskjema registrert for Intensiv
+#' Henter data fra pårørendeskjema registrert for Intensiv og kobler til 
+#' noen variabler fra hovedskjema.
 #'
-#' Henter data for Intensivregisteret fra "staging"
+#' Henter data for Intensivregisterets database
 #'
 #' @inheritParams NIRFigAndeler
 #'
