@@ -16,7 +16,7 @@ setwd('C:/registre/NIR/trunk/KvalKtrAvData')
 aggregate(NIRdata$PatientInRegistryKey, by=list(NIRdata$ShNavn, NIRdata$ShTypeTxt), FUN=length)
 aggregate(NIRdata$DaysAdmittedIntensiv, by=list(NIRdata$ShNavn, NIRdata$ShTypeTxt), FUN=length)
 
-#--------------------------------------SAMLERAPPORT/MndRapp/Influensa-----------------------------------
+#--------------------------------------SAMLERAPPORT/MndRapp/Influensa/Beredskap-----------------------------------
 rm(list=ls())
 library(knitr)
 library(intensiv)
@@ -69,13 +69,10 @@ InfluData <- InfluDataAlle[ ,variableTilTab]
 # tools::texi2pdf(file='NIRinfluensaUtenICD10.tex')
  knit('NIRinfluensa.Rnw', encoding = 'UTF-8')
  tools::texi2pdf(file='NIRinfluensa.tex')
-      #NIRSamleRapp for hver enkelt enhet (alle)
-#for (reshID in AlleResh ) {
-#	knit('NIRSamleRapp.Rnw')
-#	texi2pdf(file='NIRSamleRapp.tex')
-#	file.rename('NIRSamleRapp.pdf', paste0('NIRSamleRapp', reshID, '.pdf'))	#list.files(pattern="water_*.img", paste0("water_", 1:700))
-#}
 
+ knit('BeredskapCorona.Rnw', encoding = 'UTF-8')
+ tools::texi2pdf(file='NIRinfluensa.tex')
+ knitr::knit2pdf('BeredskapCorona.Rnw') #, encoding = 'UTF-8')
 
 #-------------------------------------LASTE DATA-----------------------------------------------
 rm(list=ls())

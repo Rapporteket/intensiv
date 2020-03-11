@@ -36,7 +36,7 @@ NIRPreprosess <- function(RegData=RegData, skjema=1)	#, reshID=reshID)
       #For enkelhetsskyld kalles Saps2Score som er Estimert mortalitet for SMR
       #RegData$logit <- -7.7631 + 0.0737*RegData$Saps2ScoreNumber + 0.9971*log(RegData$Saps2ScoreNumber+1)
       #RegData$Mort <- exp(RegData$logit)/(1+exp(RegData$logit))*100 # = Saps2Score = SMR
-      if (hoved==1){
+      if (skjema==1){
       RegData$SapsSum <- with(RegData, Glasgow+Age+SystolicBloodPressure+HeartRate+Temperature+MvOrCpap+UrineOutput+
               SerumUreaOrBun+Leukocytes+Potassium+Sodium+Hco3+Bilirubin+TypeOfAdmission)}
       #head(RegData$SapsSum)
@@ -60,7 +60,7 @@ NIRPreprosess <- function(RegData=RegData, skjema=1)	#, reshID=reshID)
       RegData$ShNavn <- trimws(as.character(RegData$ShNavn)) #Fjerner mellomrom (før) og etter navn
       if (skjema %in% 1:3){
         RegData$ShType[RegData$ShType ==2 ] <- 1	#Har nå kun type lokal/sentral og regional
-}
+        }
       #Riktig format på datovariable:
       #	RegData <- RegData[which(RegData$DateAdmittedIntensive!=''),]	#Tar ut registreringer som ikke har innleggelsesdato
       RegData$InnDato <- as.Date(RegData$DateAdmittedIntensive, tz= 'UTC', format="%Y-%m-%d") 

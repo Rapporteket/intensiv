@@ -13,6 +13,7 @@
 <<'initOpts',include=FALSE>>=
 knitr::opts_chunk$set(warnings=FALSE,echo=FALSE)
 knitr::opts_knit$set(root.dir = './')
+library(intensiv)
 library(xtable)
 library(lubridate)
 @
@@ -26,14 +27,18 @@ library(lubridate)
 
 #CoroData <- NIRberedskDataSQL(datoFra = '2019-09-30')
 CoroData <- read.table(file='A:/Intensiv/BeredskapTEST.csv', header=T, stringsAsFactors=FALSE, sep=';') #,encoding = 'UTF-8')
-CoroData <- NIRPreprosess(CoroData, hoved=0)
-CoroData$DateAdmittedIntensive
-CoroData$DateDischargedIntensive
-CoroData$FormDate
+CoroData$ShNavn <- CoroData$HealthUnitShortName
+CoroData <- NIRPreprosess(CoroData, skjema = 4)
+# CoroData$DateAdmittedIntensive
+# CoroData$DateDischargedIntensive
+# CoroData$FormDate
   
 #library(dplyr)
 datoStart <- '2020-03-01'
-CoroData$InnDato <- as.Date(CoroData$FormDate) #, tz='UTC', format = '%Y-%m-%d"')
+CoroData$InnDato <- as.Date(CoroData$DateAdmittedIntensive) #, tz='UTC', format = '%Y-%m-%d"')
+#NB: Har benyttet FormDate for influensa
+
+
 #Diagnosis
 # -1 = Velg verdi   
 # 100 = Påvist SARS-CoV-2
@@ -46,13 +51,19 @@ CoroData$InnDato <- as.Date(CoroData$FormDate) #, tz='UTC', format = '%Y-%m-%d"'
 # 107 = Mistenkt SARS-CoV-2 med annen organmanifestasjon
 #"Når ein opprettar eit Coronaskjema har ein per def. Mistanke om Corona. Vi meiner difor at skjema med verdi -1 også bør tellast med som mistenkt Corona." Antar dette også gjelder Corona.
 
+CoroData$Korona <- factor(NA, levels = c('Mistenkt', 'Bekreftet'))
+ CoroData$Korona[which(CoroData$Diagnosis %in% c(-1,104:107))] <- 'Mistenkt'
+ CoroData$Korona[which(CoroData$Diagnosis %in% 100:103)] <- 'Bekreftet'
+
 #Legge på tidsenheter
 CoroData$Aar <- format(CoroData$InnDato, '%Y')
 CoroData$UkeNr <- format(CoroData$InnDato, '%V')
 CoroData$UkeAar <- format(CoroData$InnDato, '%G.%V') #%G -The week-based year, %V - Week of the year as decimal number (01–53) as defined in ISO 8601
 CoroData$UkeAar <- as.factor(CoroData$UkeAar)
+CoroData$Dag <- format(CoroData$InnDato, '%d.%B')
 
-CoroData$RHF <- factor(CoroData$RHF)
+CoroData$RHF <- factor(sub('Helse ', '', CoroData$RHF))
+CoroData$erMann <- factor(CoroData$erMann, levels=0:1, labels=c('kvinner','menn'))
 
 indFerdig <- which(CoroData$FormStatus==2)
 antFerdig <- length(indFerdig)
@@ -73,12 +84,12 @@ Coronarapportering fra NIR}
 \begin{tiny}
 
 \begin{frame}[fragile] {Hva er dette?}
-Dette er en automagisk utsendt rapport fra Norsk Intensivregister (NIR).
+Dette er en automatisk generert rapport fra Norsk Intensivregister (NIR).
 Dokumentet inneholder oppsummering av Coronatilfeller hos pasienter som
 kvalifiserer for rapportering til NIR.
-Coronatilfellene er rapportert i eget skjema i registeret og det er data fra dette skjemaet som danner grunnlaget
+Coronatilfellene er rapportert i eget skjema i registeret, og data fra dette skjemaet danner grunnlaget
 for denne rapporten.
-Resultatene er oppsummert i tabeller som viser antall Coronatilfeller per uke.\\
+\\
 
 \bf{Merk at:}
 \begin{itemize}
@@ -86,7 +97,6 @@ Resultatene er oppsummert i tabeller som viser antall Coronatilfeller per uke.\\
 % \item Skjema uten spesifikasjon av diagnose, er kategorisert som mistenkte Coronatilfeller.
 \item Registrering av Coronatilfeller på intensivavdelinger ble innført 12.mars 2020.
 \item Rapporten er basert på alle registreringer til og med \Sexpr{Sys.Date()-1}. 
-% NB: Innleggelesesdato ser ut til å være identisk med FormDate!
 \end{itemize}
 
 \end{frame}
@@ -102,48 +112,36 @@ Resultatene er oppsummert i tabeller som viser antall Coronatilfeller per uke.\\
 
 # 1.	Totalt tal tilfeller. Fordeling etter alder, kjønn, helseregion. Prikke celler <3. Mogleg å lage «grove» alderskategoriar først, og forfine etter kvart som ein får fleire tilfeller?
 
-table(CoroData$RHF)
-table(CoroData$PatientGender)
-antAldGr <- N/5
-aldSteg <- round()
-aldGr <- quantile(x, probs = seq(0, 1, 0.25), na.rm = TRUE) #c(seq(0, 110, 10),110)
-  gr <- c(seq(0, 100, 10),150)		
-                  RegData$VariabelGr <- cut(CoroData$Alder, breaks=gr, include.lowest=TRUE, right=FALSE)	
-                  grtxt <- c('0-9','10-19','20-29','30-39','40-49','50-59','60-69','70-79','80-89','90-99','100+')
-                  
+        
 
-#Aggregere på RHF, UkeNr, Ant. bekreftet, Ant. mistenkt
-# tapply(CoroData[ ,c('RHF', 'UkeAar', "ICD10_1")], length)
-# table(CoroData[ ,c('RHF', 'Mistenkt', 'UkeNr')])      #CoroData$UkeNr, function(x) sum((CoroData$ICD10_1==10 | CoroData$ICD10_2==10)))
-#TabUkeRHF <- ftable(CoroData[ ,c('UkeAar', 'RHF', 'Corona')])     
-TabUkeRHF <- ftable(CoroData[ , c('UkeAar', 'RHF', 'Corona')], row.vars ='UkeAar') #, col.vars = c('RHF', 'Corona'))     
-TabUkeRHFFerdig <- ftable(CoroData[indFerdig , c('UkeAar', 'RHF', 'Corona')], row.vars ='UkeAar') #, col.vars = c('RHF', 'Corona'))     
-# MistenktUkeRHF<- dum[,,'Mistenkt']
-# addmargins(MistenktUkeRHF) #, margin = seq_along(dim(MistenktUkeRHF)), FUN = sum, quiet = FALSE)
-antUker <- dim(TabUkeRHF)[1]
-indAntRader <- max(1,(antUker-14)):(antUker+1)
+#TabUkeCoro <- table(CoroData[ ,c('UkeAar', 'Corona')])     
+#TabUkeCoroFerdig <- table(CoroData[indFerdig ,c('UkeAar', 'Corona')])      #CoroData$UkeNr, function(x) sum((CoroData$ICD10_1==10 | CoroData$ICD10_2==10)))
 
-TabUkeInflu <- table(CoroData[ ,c('UkeAar', 'Corona')])      #CoroData$UkeNr, function(x) sum((CoroData$ICD10_1==10 | CoroData$ICD10_2==10)))
-TabUkeInfluFerdig <- table(CoroData[indFerdig ,c('UkeAar', 'Corona')])      #CoroData$UkeNr, function(x) sum((CoroData$ICD10_1==10 | CoroData$ICD10_2==10)))
-
-TabUkeTot <- addmargins(TabUkeInflu) #cbind(TabUkeInflu, 'Tot. ant. skjema' = table(CoroData$UkeAar))
-row.names(TabUkeTot)[antUker+1] <- 'Sum, hele sesongen'
-TabUkeTotFerdig <- addmargins(TabUkeInfluFerdig) #cbind(TabUkeInflu, 'Tot. ant. skjema' = table(CoroData$UkeAar))
-row.names(TabUkeTotFerdig)[antUker+1] <- 'Sum, hele sesongen'
-#write.table(TabUkeTot, file = 'a:/Intensiv/CoronaHeleSesongen.csv', fileEncoding = 'UTF-8', sep = ';')
+#TabUkeTot <- addmargins(TabUkeCoro) #cbind(TabUkeCoro, 'Tot. ant. skjema' = table(CoroData$UkeAar))
+#row.names(TabUkeTot)[antUker+1] <- 'Sum, hele sesongen'
+#TabUkeTotFerdig <- addmargins(TabUkeCoroFerdig) #cbind(TabUkeCoro, 'Tot. ant. skjema' = table(CoroData$UkeAar))
+#row.names(TabUkeTotFerdig)[antUker+1] <- 'Sum, hele sesongen'
 @ 
 
+\begin{frame}[fragile] {Corona i regionene}
 
-\begin{frame}[fragile] {Corona i regionene, alle skjema}
-<<'TabUkeRHFalle', results='asis'>>=
-navnRHF <- attributes(TabUkeRHF)$col.vars$RHF
-navn2Influ <- attributes(TabUkeRHF)$col.vars$Corona
-navnUkenr <- attributes(TabUkeRHF)$row.vars$UkeAar
-TabUkeRHF <- as.matrix(TabUkeRHF)
-colnames(TabUkeRHF) <- rep(c('M','B'), length(levels(CoroData$RHF))) #letters[1:8]
+Registrerte tilfeller per dag og totalt antall tilfeller. 
+\textcolor{red}{Ref, influensaregistrering: "Når ein opprettar eit influensaskjema har ein per def. mistanke om influensa. Vi meiner difor at skjema med verdi -1 også bør tellast med som mistenkt influensa} 
+Jeg antar dette også gjelder Corona og teller med Diagnose=-1 (ikke angitt) som mistenkt tilfelle.
+
+<<'TabTot', results='asis'>>=
+#TabRHF <- table(CoroData$Dag, CoroData$RHF)
+#xtable::xtable(addmargins(TabRHF), digits=0, caption='Coronatilfeller per uke i hvert RHF')
+
+TabDagRHF <- ftable(CoroData[ , c('Dag', 'RHF', 'Korona')], row.vars ='Dag') #, col.vars = c('RHF', 'Influensa'))     
+
+navnRHF <- levels(CoroData$RHF)
+#navnMistBekr <- levels(CoroData$Korona)
+TabDagRHF <- as.matrix(TabDagRHF)
+colnames(TabDagRHF) <- rep(c('M','B'), length(navnRHF)) #letters[1:8]
 navnRHF <- sub('Helse ', '', navnRHF)
-TabUkeRHF <- rbind( TabUkeRHF, Sesongsum = colSums(TabUkeRHF))
-#TabUkeRHF <- addmargins(TabUkeRHF)
+#TabDagRHF <- rbind( TabDagRHF, Sesongsum = colSums(TabDagRHF))
+TabDagRHF <- addmargins(TabDagRHF, FUN=list(Totalt=sum, 'Hele landet' = sum), quiet=TRUE)
 
 add.to.row <- list(pos = list(-1), command = NULL)
 command <- paste0(paste0('& \\multicolumn{2}{l}{', navnRHF, '} ', collapse=''), '\\\\\n')
@@ -152,63 +150,129 @@ command <- paste0(paste0('& \\multicolumn{2}{l}{', navnRHF, '} ', collapse=''), 
       # '& \\multicolumn{2}{c}{A} & \\multicolumn{2}{c}{B} & \\multicolumn{2}{c}{C} & \\multicolumn{2}{c}{D}  \\\\\n' 
 #comment$command <- "\\hline\n{\\footnotesize B - bekreftet, M - mistenkt}\n"
 add.to.row$command <- command
-print(xtable::xtable(TabUkeRHF[indAntRader,], digits=0, #method='compact', #align=c('l', rep('r', ncol(alderDIV))),
-		caption=paste0('Coronatilfeller per uke og region (B - bekreftet, M - mistenkt)')),
+print(xtable::xtable(TabDagRHF, digits=0, #method='compact', #align=c('l', rep('r', ncol(alderDIV))),
+		caption=paste0('Intensivopphold per dag og region (B - bekreftet, M - mistenkt)')),
       #footnote= 'B-bekreftet, M-mistenkt',),
 		add.to.row = add.to.row,
 		sanitize.rownames.function = identity)
 
-#c(paste("\\hline\n", "{\\footnotesize Note: * signifies was 35 or less.}\n", sep = ""))
 
-#xtable::xtableFtable(TabUkeRHF, digits=0, method='compact', #align=c('l', rep('r', ncol(alderDIV))),
-#		caption='Bekreftet Corona per uke og region, 2019',
-#		sanitize.rownames.function = identity)
 
-#\multicolumn{number cols}{align}{text} % align: l,c,r
+
+
 
 @
 \end{frame}
 
-\begin{frame}[fragile] {Corona i regionene, ferdigstilte skjema}
-<<'TabUkeRHFferdigstilt', results='asis'>>=
-TabUkeRHFFerdig <- as.matrix(TabUkeRHFFerdig)
-colnames(TabUkeRHFFerdig) <- rep(c('M','B'),length(levels(CoroData$RHF))) #letters[1:8]
-#navnRHF <- sub('Helse ', '', navnRHF)
-TabUkeRHFFerdig <- rbind( TabUkeRHFFerdig, Sesongsum = colSums(TabUkeRHFFerdig))
 
-add.to.row <- list(pos = list(-1), command = NULL)
-command <- paste0(paste0('& \\multicolumn{2}{l}{', navnRHF, '} ', collapse=''), '\\\\\n')
-add.to.row$command <- command
-print(xtable::xtable(TabUkeRHFFerdig[indAntRader,], digits=0, 
-		caption=paste0('Coronatilfeller per uke og region, basert på kun ferdigstilte Coronaskjema, sesongen',
-sesongTxt,'. (B - bekreftet, M - mistenkt)')),
-		add.to.row = add.to.row,
-		sanitize.rownames.function = identity)
+\begin{frame}[fragile] {tilfeller registrert siste uke}
+
+Nye tilfeller registrert siste uke i hver helseregion. (Basert på FormDate)
+
+<<'TabFordelinger', results='asis'>>=
+CoroData$ukeOpprettet <- format(as.Date(CoroData$FormDate), '%V')
+
+indNye <- which(CoroData$ukeOpprettet == format(Sys.Date(), '%V'))
+TabRHF <- table(CoroData$Dag[indNye], CoroData$RHF[indNye])
+xtable::xtable(addmargins(TabRHF), digits=0, caption='Coronaopphold registrert inneværende uke')
+
 @
 
 \end{frame}
 
-\begin{frame}[fragile] {Corona, hele landet}
+\begin{frame}[fragile] {Antall døde}
+<<'Dod', results='asis'>>=
+indDod <- which(CoroData$DischargedIntensiveStatus==1)
+TabRHF <- table(CoroData$Dag[indDod], CoroData$RHF[indDod])
+xtable::xtable(addmargins(TabRHF), digits=0, caption='Antall døde per dag i hvert RHF')
 
-<<'TabUkeTot', results='asis'>>=
-print(xtable::xtable(TabUkeTot[indAntRader,], digits=0, #align=c('l', rep('r', ncol(TabUkeTot))),
-		caption=paste0('Antall Coronatilfeller.')),
-		#Totalt antall skjema er antall registrerte Coronaskjema.'),
-		sanitize.rownames.function = identity)
-@
-\end{frame}
-
-\begin{frame}[fragile] {Corona, hele landet (kun ferdigstilte skjema)}
-
-<<'TabUkeTotferdig', results='asis'>>=
-print(xtable::xtable(TabUkeTotFerdig[indAntRader,], digits=0, #align=c('l', rep('r', ncol(TabUkeTot))),
-		caption=paste0('Antall Coronatilfeller basert på ferdigstilte skjema.')),
-		#Totalt antall skjema er antall registrerte Coronaskjema.'),
-		sanitize.rownames.function = identity)
 @
 \end{frame}
 
 
+\begin{frame}[fragile] {Corona, kjønnsfordeling}
+<<'TabKjonn', results='asis'>>=
+TabKjonn <- table(CoroData$Dag, CoroData$erMann)
+xtable::xtable(addmargins(TabKjonn), 
+               digits=0,
+               caption='Smittede per uke, kvinner og menn')
+
+@
+\end{frame}
+
+\begin{frame}[fragile] {Corona, aldersfordeling}
+
+Mogleg å lage «grove» alderskategoriar først, og forfine etter kvart som ein får fleire tilfeller? 
+\textcolor{red}{Ja, det kan vi. Har nå lagt inn aldergruppesteg på 25. Det endres automatisk 
+til 10 når vi passerer 100 registreringer.}
+
+<<'TabAlder', results='asis'>>=
+#aldGr <- quantile(CoroData$Alder, probs = seq(0, 1, 0.5), na.rm = TRUE) #c(seq(0, 110, 10),110)
+gr <- seq(0, 90, ifelse(N<100, 25, 10) )
+CoroData$AldersGr <- cut(CoroData$Alder, breaks=c(gr, 110), include.lowest=TRUE, right=FALSE)	
+grtxt <- c('0-25', '25-50', "50-75", "75+")
+levels(CoroData$AldersGr) <- grtxt #c(levels(CoroData$AldersGr)[-length(gr)], paste0(max(gr),'+'))
+TabAlder <- table(CoroData$AldersGr, CoroData$RHF)    
+
+xtable::xtable(addmargins(TabAlder), 
+               digits = 0,
+               caption='Fordeling i aldersgrupper')
+@
+\end{frame}
+
+\begin{frame}[fragile] {Corona på respirator}
+Tal CoV-pasientar som ligg på respirator
+tal CoV-pasientar som ligg på ECMO. (Andel av total kapasitet?)
+\textcolor{red}{Mangler info om total kapasitet for avd/respirator/ECMO}
+
+Teller nå opp hvor mange som har vært i respirator/ECMO. Mangler visning av 
+antall som ligger på respirator/ECMO akkurat nå, kommer.. 
+
+<<'TabUkeRHFalle', results='asis'>>=
+AntIresp <- sum(CoroData$MechanicalRespirator==1, na.rm=T)
+AntIECMO <- sum(CoroData$EcmoDurationInHours>0, na.rm=T)
+TabHjelp <- rbind(
+  'Brukt respirator'= AntIresp*c(1, 100/N),
+  'Brukt ECMO'= AntIECMO*c(1, 100/N)
+) 
+ colnames(TabHjelp) <- c('Antall', 'Andel')
+TabHjelp[,'Andel'] <- paste0(sprintf('%.1f', TabHjelp[,2]),'%')
+xtable::xtable(TabHjelp, 
+               digits=0, 
+               align = c('l','r','r'),
+               caption='Pasienter som har brukt respirator/ECMO') 
+
+@
+
+\end{frame}
+
+\begin{frame}[fragile] {Risikofaktorer}
+IsHighNasalOxyenFlow
+
+
+<<'Risikofaktorer', results='asis'>>=
+TabRisiko <- cbind(
+Kreft = tapply(CoroData$IsCancerPatient, CoroData$Dag, FUN=sum, na.rm = T),
+'Nedsatt immunforsvar' = tapply(CoroData$IsImpairedImmuneSystemIncludingHivPatient, CoroData$Dag, FUN=sum, na.rm = T),
+Diabetes	= tapply(CoroData$IsDiabeticPatient, CoroData$Dag, FUN=sum, na.rm = T),
+Hjertesykdom = tapply(CoroData$IsHeartDiseaseIncludingHypertensionPatient, CoroData$Dag, FUN=sum, na.rm = T),
+'Fedme (KMI>30)' =	tapply(CoroData$IsObesePatient, CoroData$Dag, FUN=sum, na.rm = T),
+Astma	= tapply(CoroData$IsAsthmaticPatient, CoroData$Dag, FUN=sum, na.rm = T),
+'Kronisk lungesykdom' = tapply(CoroData$IsChronicLungDiseasePatient, CoroData$Dag, FUN=sum, na.rm = T),
+Nyresykdom =	tapply(CoroData$IsKidneyDiseaseIncludingFailurePatient, CoroData$Dag, FUN=sum, na.rm = T),
+Leversykdom = tapply(CoroData$IsLiverDiseaseIncludingFailurePatient, CoroData$Dag, FUN=sum, na.rm = T),
+'Nevrologisk/nevromusk.' = tapply(CoroData$IsChronicNeurologicNeuromuscularPatient, CoroData$Dag, FUN=sum, na.rm = T),
+Graviditet	= tapply(CoroData$IsPregnant, CoroData$Dag, FUN=sum, na.rm = T),
+'Røyker' =	tapply(CoroData$IsActiveSmoker, CoroData$Dag, FUN=sum, na.rm = T),
+'Opphold med risikofaktorer' = tapply(CoroData$IsRiskFactor, CoroData$Dag, FUN=sum, na.rm = T)
+)
+
+xtable::xtable(t(TabRisiko),
+               digits=0,
+               caption='Risikofaktorer')
+@
+
+\end{frame}
 
 \end{tiny}
 \end{document}
