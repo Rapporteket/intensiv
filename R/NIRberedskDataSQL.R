@@ -10,76 +10,74 @@
 #' @export
 #'
 #'
-NIRberedskDataSQL <- function(datoFra = '2020-03-01', datoTil = Sys.Date(), medH=0) {
+NIRberedskDataSQL <- function(datoFra = '2020-03-01', datoTil = Sys.Date()) {
       
       
-  varBeredsk <- c("UPPER(M.SkjemaGUID) AS SkjemaGUID
-              ,PasientGUID
-              ,Skjematype
-              ,SkjemaGUID
-              ,HovedskjemaGUID
-              ,UnitId
-              ,FormTypeId
-              ,FormStatus
-              ,FormDate
-              ,LastUpdate
-              ,RHF
-              ,HF
-              ,HealthUnitShortName
-              ,HealthUnitId
-              ,MigrationInformation
-              ,PatientAge
-              ,PatientGender
-              ,CurrentMunicipalNumber
-              ,MunicipalNumber
-              ,Municipal
-              ,PostalCode
-              ,DistrictCode
-              ,MoreThan24Hours
-              ,MechanicalRespirator
-              ,MechanicalRespiratorStart
-              ,MechanicalRespiratorEnd
-              ,EcmoStart
-              ,EcmoEnd
-              ,IsEcmoTreatmentAdministered
-              ,DeadPatientDuring24Hours
-              ,MovedPatientToAnotherIntensivDuring24Hours
-              ,Morsdato
-              ,VasoactiveInfusion
-              ,DateAdmittedIntensive
-              ,DateDischargedIntensive
-              ,DaysAdmittedIntensiv
-              ,AgeAdmitted
-              ,Fødselsdato
-              ,TransferredStatus
-              ,Diagnosis
-              ,DischargedIntensiveStatus
-              ,IsHighNasalOxyenFlow
-              ,IsRiskFactor
-              ,IsCancerPatient
-              ,IsImpairedImmuneSystemIncludingHivPatient
-              ,IsDiabeticPatient
-              ,IsHeartDiseaseIncludingHypertensionPatient
-              ,IsObesePatient
-              ,IsAsthmaticPatient
-              ,IsChronicLungDiseasePatient
-              ,IsKidneyDiseaseIncludingFailurePatient
-              ,IsLiverDiseaseIncludingFailurePatient
-              ,IsChronicNeurologicNeuromuscularPatient
-              ,IsPregnant
-              ,IsActiveSmoker
-              ,EcmoDurationInHours
-              ,MechanicalRespiratorDurationInHour")
+  varBeredsk <- c("UPPER(SkjemaGUID) AS SkjemaGUID
+,AddressQuality
+,AgeAdmitted
+,Astma
+-- ,Birthdate
+,CurrentMunicipalNumber
+,DateAdmittedIntensive
+,DateDischargedIntensive
+,DaysAdmittedIntensiv
+,DeadPatientDuring24Hours
+,Diabetes
+,Diagnosis
+,DischargedIntensivStatus
+,DistrictCode
+,EcmoEnd
+,EcmoStart
+,FormDate
+,FormStatus
+,FormTypeId
+,Graviditet
+,Helseenhet
+,HelseenhetID
+,HelseenhetKortnavn
+,HF
+,HovedskjemaGUID
+,IsActivSmoker
+,IsChronicLungDiseasePatient
+,IsChronicNeurologicNeuromuscularPatient
+,IsEcmoTreatmentAdministered
+,IsHeartDiseaseIncludingHypertensionPatient
+,IsImpairedImmuneSystemIncludingHivPatient
+,IsKidneyDiseaseIncludingFailurePatient
+,IsLiverDiseaseIncludingFailurePatient
+,IsObesePatient
+,IsRiskFactor
+,Kreft
+,LastUpdate
+,MajorVersion
+,MechanicalRespirator
+,MechanicalRespiratorEnd
+,MechanicalRespiratorStart
+,MinorVersion
+,MoreThan24Hours
+,Morsdato
+,MorsdatoOppdatert
+,MovedPatientToAnotherIntensivDuring24Hours
+,Municipal
+,MunicipalNumber
+,PatientAge
+,PatientGender
+,PatientInRegistryGuid
+-- ,PostalCode
+,RHF
+,ShNavn
+,SkjemaGUID
+,Sykehus
+,TransferredStatus
+,UnitId")
               
       
-      queryP <- paste0('SELECT ',
+      query <- paste0('SELECT ',
                       varBeredsk,
-                      ' FROM BeredskFormDataContract Q
+                      ' FROM ReadinessFormDataContract Q
                       WHERE cast(DateAdmittedIntensive as date) BETWEEN \'', datoFra, '\' AND \'', datoTil, '\'')
 
-      query <- switch(as.character(medH),
-                      '0' = queryP,
-                      '1' = queryH)
       
       RegData <- rapbase::LoadRegData(registryName="nir", query=query, dbType="mysql")
       return(RegData)

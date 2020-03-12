@@ -4,13 +4,13 @@
 \alias{NIRPreprosess}
 \title{Preprosesser data fra Intensivregisteret}
 \usage{
-NIRPreprosess(RegData = RegData, barePaaror = 0)
+NIRPreprosess(RegData = RegData, skjema = 1)
 }
 \arguments{
 \item{RegData}{En dataramme med alle nødvendige variabler fra registeret}
 
-\item{barePaaror}{bare preprosesser variabler som brukes ved 
-analyse av pårørendedata}
+\item{skjema}{hvilket skjema data som skal preprosesseres tilhører 
+1: hoved, 2: paaror, 3: influ, 4: beredsk}
 }
 \value{
 Data En liste med det filtrerte datasettet (og sykehusnavnet som tilsvarer reshID, ikke pt)

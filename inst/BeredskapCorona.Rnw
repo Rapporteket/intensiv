@@ -25,11 +25,15 @@ library(lubridate)
 
 #startOfMonth<- function(x) {as.Date(format(x, "%Y-%m-01")) }
 
-#CoroData <- NIRberedskDataSQL(datoFra = '2019-09-30')
-CoroData <- read.table(file='A:/Intensiv/ReadinessFormDataContract2020-03-12.csv', header=T, 
-                       stringsAsFactors=FALSE, sep=';',encoding = 'UTF-8')
+#CoroData <- read.table(file='A:/Intensiv/ReadinessFormDataContract2020-03-12.csv', header=T, 
+#                       stringsAsFactors=FALSE, sep=';',encoding = 'UTF-8')
 #BeredskapTEST.csv
-#CoroData$ShNavn <- CoroData$HealthUnitShortName
+if (!exists('CoroData')){
+  CoroData <- NIRberedskDataSQL(datoFra = '2019-09-30')
+}
+@
+
+<<'test', include=FALSE>>=
 CoroData <- NIRPreprosess(RegData=CoroData, skjema = 4)
 # CoroData$DateAdmittedIntensive
 # CoroData$DateDischargedIntensive

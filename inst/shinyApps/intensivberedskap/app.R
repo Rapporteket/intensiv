@@ -32,7 +32,7 @@ regTitle <- ifelse(paaServer,
 
 if (paaServer) {
   #CoroData <- NIRRegDataSQL(datoFra='2011-01-01', skjema=4) #, session = session) #datoFra = datoFra, datoTil = datoTil)
-  qCoro <- 'SELECT * ReadinessDataFormContract from InfluensaFormDataContract'
+  qCoro <- 'SELECT *  from ReadinessFormDataContract'
   CoroData <- rapbase::LoadRegData(registryName= "nir", query=qCoro, dbType="mysql")
   
   #repLogger(session = session, 'Hentet alle data fra intensivregisteret')
@@ -79,9 +79,9 @@ ui <- tagList(
                  br()
              ),
              mainPanel(width = 12,
-                       shinyalert::useShinyalert(),
-                       h3('Risikofaktorer'),
-                       tableOutput('tabRisikofaktorer')
+                       #shinyalert::useShinyalert(),
+                       #h3('Risikofaktorer'),
+                       #tableOutput('tabRisikofaktorer')
                        
                        # appNavbarUserWidget(user = uiOutput("appUserName"),
                        #                     organization = uiOutput("appOrgName")
