@@ -21,7 +21,8 @@ NIRPreprosess <- function(RegData=RegData, skjema=1)	#, reshID=reshID)
       
       #Kun ferdigstilte registreringer:
       # Fra des. 2018 får Intensiv også kladd over fra  fra MRS/NHN.
-      RegData <- RegData[RegData$FormStatus==2, ]
+  if (skjema %in% 1:2){
+      RegData <- RegData[RegData$FormStatus==2, ]}
       
       #Kjønn
       RegData$erMann <- RegData$PatientGender #1=Mann, 2=Kvinne, 0=Ukjent
@@ -52,6 +53,8 @@ NIRPreprosess <- function(RegData=RegData, skjema=1)	#, reshID=reshID)
       names(RegData)[which(names(RegData) == 'TypeOfAdmission')] <- 'InnMaate'
       names(RegData)[which(names(RegData) == 'ReshID')] <- 'ReshId'
       #names(RegData)[which(names(RegData) == 'PatientInRegistryGuid')] <- 'PasientID'
+      if (skjema==4){
+        names(RegData)[which(names(RegData) == 'UnitId')] <- 'ReshId'}
       #Avvik ml. test og prod-data:
       names(RegData)[
             names(RegData) %in% c('PatientInRegistryGuid', 'PasientGUID')] <- 'PasientID'

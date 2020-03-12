@@ -52,15 +52,6 @@ PaarorData <- NIRPreprosess(RegData = PaarorDataH) #Må først koble på hovedda
 
 #-----Definere utvalgsinnhold og evt. parametre som er statiske i appen----------
 
-indReshEgen <- match(reshID, RegData$ReshId)
-egetShNavn <- as.character(RegData$ShNavn[indReshEgen])
-egetRHF <- as.character(RegData$RHF[indReshEgen])
-egetHF <- as.character(RegData$HF[indReshEgen])
-egenShType <- c('lokal-/sentralsykehus', '', 
-                'universitetssykehus')[RegData$ShType[indReshEgen]]
-egenLokalitet <- c(0, 2, 4, 7)
-names(egenLokalitet) <- c('hele landet', egetShNavn, egenShType , egetRHF)
-
 
 #Definere utvalgsinnhold
 #sykehusNavn <- sort(c('',unique(RegData$ShNavn)), index.return=T)
@@ -695,14 +686,16 @@ server <- function(input, output, session) { #
   #userRole <- reactive({ifelse(onServer, rapbase::getUserRole(session), 'SC')})
   #output$reshID <- renderText({ifelse(paaServer, as.numeric(rapbase::getUserReshId(session)), 105460)}) #evt renderUI
   
-  # indReshEgen <- match(reshID, RegData$ReshId)
-  # egetShNavn <- as.character(RegData$ShNavn[indReshEgen])
-  # egetRHF <- as.character(RegData$RHF[indReshEgen])
-  # egetHF <- as.character(RegData$HF[indReshEgen])
-  # egenShType <- c('lokal-/sentralsykehus', '', 
-  #                      'universitetssykehus')[RegData$ShType[indReshEgen]]
-  # egenLokalitet <- c(0, 2, 4, 7)
-  # names(egenLokalitet) <- c('hele landet', egetShNavn, egenShType , egetRHF)
+  indReshEgen <- match(reshID, RegData$ReshId)
+  egetShNavn <- as.character(RegData$ShNavn[indReshEgen])
+  egetRHF <- as.character(RegData$RHF[indReshEgen])
+  egetHF <- as.character(RegData$HF[indReshEgen])
+  egenShType <- c('lokal-/sentralsykehus', '', 
+                  'universitetssykehus')[RegData$ShType[indReshEgen]]
+  egenLokalitet <- c(0, 2, 4, 7)
+  names(egenLokalitet) <- c('hele landet', egetShNavn, egenShType , egetRHF)
+  
+  
   output$egetShNavn <- renderText(egetShNavn)
 
   observe({if (rolle() != 'SC') { #
