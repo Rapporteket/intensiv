@@ -10,7 +10,7 @@
 #' @export
 #'
 #'
-NIRpaarorDataSQL <- function(datoFra = '2020-03-01', datoTil = Sys.Date(), medH=0) {
+NIRberedskDataSQL <- function(datoFra = '2020-03-01', datoTil = Sys.Date(), medH=0) {
       
       
   varBeredsk <- c("UPPER(M.SkjemaGUID) AS SkjemaGUID
