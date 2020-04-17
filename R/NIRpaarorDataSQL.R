@@ -135,8 +135,8 @@ NIRpaarorDataSQL <- function(datoFra = '2015-12-01', datoTil = Sys.Date(), medH=
   
   queryP <- paste0('SELECT ',
                    varPaaror,
-                   ' FROM QuestionaryFormDataContract Q
-                   WHERE cast(DateAdmittedIntensive as date) BETWEEN \'', datoFra, '\' AND \'', datoTil, '\'')
+                   ' FROM QuestionaryFormDataContract Q ')
+                   #WHERE cast(DateAdmittedIntensive as date) BETWEEN \'', datoFra, '\' AND \'', datoTil, '\'')
   
   query <- switch(as.character(medH),
                   '0' = queryP,
