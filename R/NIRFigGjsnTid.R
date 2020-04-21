@@ -229,9 +229,9 @@ if (medSml==1) {
 		paste0('95% konfidensintervall for ', NIRUtvalg$smltxt, ', N=', sum(Nrest, na.rm=T)))
 }
 h <- strheight(1, cex=cexgr)*0.7	#,  units='figure',
-b <- 1.1*strwidth(max(N, na.rm=T), cex=cexgr)/2	#length(tidNum)/30
+b <- 1.1*strwidth(max(Ngr, na.rm=T), cex=cexgr)/2	#length(tidNum)/30
 rect(tidNum-b, Midt-h, tidNum+b, Midt+h, border = fargeHovedRes, lwd=1)	#border=farger[4], col=farger[4]
-text(tidNum, Midt, N, col=fargeHovedRes, cex=cexgr) 	
+text(tidNum, Midt, Ngr, col=fargeHovedRes, cex=cexgr) 	
 
 #KImål
 lines(tidNum, rep(KImaal,length(tidNum)), col= '#FF7260', lwd=3)

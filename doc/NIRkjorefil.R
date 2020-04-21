@@ -25,7 +25,7 @@ setwd('C:/ResultattjenesteGIT/intensiv/inst/')
 setwd('/home/rstudio/intensiv/inst') 
 reshID=706078 #Tromsø med int: 601302, Ullevål Kir int: 109773, 102090 Ahus, 112044 Haukeland, 102673 Ålesund Med, Kristiansund: 706078 
 
-RegData <- NIRPreprosess(NIRRegDataSQL(datoFra = '2019-01-01'))
+RegData <- NIRPreprosess(NIRRegDataSQL(datoFra = '2020-01-01'))
 test <- unique(RegData[,c("ShNavn", "ReshId")])
 test[order(test[,1]),]
 
