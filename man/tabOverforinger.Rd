@@ -9,6 +9,7 @@ tabOverforinger(
   datoFra = Sys.Date() - 365,
   datoTil = Sys.Date(),
   reshID = 0,
+  velgAvd = 0,
   enhetsUtvalg = 2,
   overfFraSh = 1
 )

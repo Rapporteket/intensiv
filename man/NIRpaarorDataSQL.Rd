@@ -2,18 +2,21 @@
 % Please edit documentation in R/NIRpaarorDataSQL.R
 \name{NIRpaarorDataSQL}
 \alias{NIRpaarorDataSQL}
-\title{Henter data fra pårørendeskjema registrert for Intensiv}
+\title{Henter data fra pårørendeskjema registrert for Intensiv og kobler til 
+noen variabler fra hovedskjema.}
 \usage{
-NIRpaarorDataSQL(datoFra = "2015-12-01", datoTil = Sys.Date())
+NIRpaarorDataSQL(datoFra = "2015-12-01", datoTil = Sys.Date(), medH = 0)
 }
 \arguments{
 \item{datoFra}{Tidligste dato i utvalget (vises alltid i figuren).}
 
 \item{datoTil}{Seneste dato i utvalget (vises alltid i figuren).}
+
+\item{medH}{kobler på variabler fra hovedskjema}
 }
 \value{
 Henter dataramma RegData for Intensivregisteret
 }
 \description{
-Henter data for Intensivregisteret fra "staging"
+Henter data for Intensivregisterets database
 }

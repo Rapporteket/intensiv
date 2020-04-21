@@ -36,6 +36,59 @@ load("A:/Intensiv/NIRdataPaaror.RData") #RegDataTEST, 2018-06-05
 #InfoTot: Satisfaction with information domain score
 #BeslutningTot: Satisfaction with the decision-making process domain score
 
+
+#------------------FS-ICU, artikkel pårørendetilfredshet--------------------------------
+library(intensiv)
+datoPre1 <- '2015-10-01'
+datoPre2 <- '2015-12-31'
+datoPost1 <- '2016-10-01'
+datoPost2 <- '2016-12-31'
+
+   Hoved <- NIRRegDataSQL(datoFra= datoPre1, datoTil = datoPost2) #, session = session) #datoFra = datoFra, datoTil = datoTil)
+   PaarorData <- NIRpaarorDataSQL() #datoFra= datoPre1, datoTil = datoPost2) #, medH=1) Tar grusomt lang tid
+   PaarorDataH <- KobleMedHoved(Hoved, PaarorData, alleHovedskjema=F, alleSkjema2=F)
+   PaarorDataH <- NIRPreprosess(RegData = PaarorDataH) #Må først koble på hoveddata for å få ShType++
+
+#Tar bort skjema registrert i "opplæringsperioden"
+indMellom <- which(PaarorDataH$InnDato > as.Date(datoPre2) & PaarorDataH$InnDato < as.Date(datoPost1) )
+PaarorDataH <- PaarorDataH[-indMellom, ]
+
+indPre <- which(PaarorDataH$InnDato >= as.Date(datoPre1) & PaarorDataH$InnDato <= as.Date(datoPre2))
+indPost <- which(PaarorDataH$InnDato >= as.Date(datoPost1) & PaarorDataH$InnDato <= as.Date(datoPost2))
+PaarorDataH$Post <- NA #'mellom'
+PaarorDataH$Post[indPre] <- 0 #'pre'
+PaarorDataH$Post[indPost] <- 1 #'post'
+table(PaarorDataH$Post, useNA = 'a')
+
+#Pasientkarakteristikker
+
+InnMaateTab <- table(PaarorDataH$InnMaate, PaarorDataH$Post)
+rownames(InnMaateTab) <- c('Planlagt operasjon','Akutt non-operativ', 'Akutt operasjon')
+
+#PrimaryReasonAdmitted ble innført 01.01.2016
+# PrimData <- NIRVarTilrettelegg(RegData = PaarorDataH, valgtVar = 'PrimaryReasonAdmitted')
+# table(PaarorDataH$PrimaryReasonAdmitted, PaarorDataH$Post)
+# PrimAarsakTab <- table(PrimData$RegData$VariabelGr, PrimData$RegData$Post)
+# rownames(PrimAarsakTab) <- PrimData$grtxt
+
+Tab <- round(rbind('Antall pasienter' = c(length(indPre), length(indPost)),
+   'Alder, gj.sn' = c(mean(PaarorDataH$Alder[indPre], na.rm = T), 
+                      mean(PaarorDataH$Alder[indPost], na.rm = T)),
+   'SAPSII' = c(mean(PaarorDataH$SMR[indPre], na.rm = T), 
+                mean(PaarorDataH$SMR[indPost], na.rm = T)),
+   InnMaateTab,
+'Liggetid (t), median' = c(median(PaarorDataH$liggetid[indPre], na.rm = T), 
+                           median(PaarorDataH$liggetid[indPost], na.rm = T)),
+'Død på intensivavd.' = c(sum(PaarorDataH$DischargedIntensiveStatus[indPre], na.rm = T), 
+                      sum(PaarorDataH$DischargedIntensiveStatus[indPost], na.rm = T))
+), 1)
+
+colnames(Tab) <- c('pre', 'post')
+xtable::xtable(Tab, digits=1, align=c('l','r','r'))
+#Hovedårsak, innleggelse - vis figur?
+
+
+
 #--------------------------- Figurtilrettelegging og figur--------------------------------------
 
 rm(list=ls())
@@ -113,77 +166,3 @@ NIRFigGjsnPaaror(RegData=RegData, valgtVar=valgtVar, prePost=2, valgtMaal='Gjsn'
             
 
 
-beregneSkaarer <- function(RegData){
-      library(plyr)
-      
-      Del1 <- c('BehandlingHoeflighetRespektMedfoelelse',
-                'SymptomSmerte',
-                'SymptomPustebesvaer',
-                'SymptomUro',
-                'BehandlingBesvarerBehov',
-                'BehandlingBesvarerStoette',
-                'BehandlingSamarbeid',
-                'BehandlingBesvarerHoeflighetRespektMedfoelelse',
-                'SykepleierOmsorg',
-                'SykepleierKommunikasjon',
-                'LegeBehandling',
-                'AtmosfaerenIntensivAvd',
-                'AtmosfaerenPaaroerenderom',
-                'OmfangetAvBehandlingen')
-      Del2 <- c('LegeInformasjonFrekvens',
-                'SvarPaaSpoersmaal',
-                'ForklaringForstaaelse',
-                'InformasjonsAerlighet',
-                'InformasjonOmForloep',
-                'InformasjonsOverensstemmelse',
-                'BeslutningsInvolvering',
-                'BeslutningsStoette',
-                'BeslutningsKontroll',
-                'BeslutningsTid',
-                'LivsLengde',
-                'LivssluttKomfor',
-                'LivssluttStoette')
-      
-      Del1Skaar <- paste0(Del1,'Skaar')
-      Del2Skaar <- paste0(Del2,'Skaar')
-      RegData[,c(Del1Skaar,Del2Skaar)] <- NA
-      
-      #----- OM SPØRSMÅLENE----------
-      #-1: Ikke besvart 
-      #Del1: Alle spm 1-5, 6:ikke aktuelt
-      #Del2: Spm 1-6:  1-5, 6:ikke aktuelt
-      #Spm 7-13[-10]: 1-5, 
-      #Spm 10 1-2
-      #Dvs. alle spm har spenn 1-5, unntatt spm.10 del 2
-      #Spørsmål som skal snus: Del2, spm.7-13 1:5 = 0:100
-      
-      
-      #Standard: 1:5 -> 100:0
-      verdi5 <- c(100, 75, 50, 25, 0)
-      
-      Spm <- c(Del1,Del2[1:6])
-      Skaar <- paste0(Spm,'Skaar')
-      for (nr in 1:length(Spm)) { RegData[,Skaar[nr]] <- mapvalues(RegData[ ,Spm[nr]], 
-                                                                   from = c(-1,1:6), to = c(NA,verdi5,NA))}
-      
-      RegData[ ,Del2Skaar[10]] <- mapvalues(RegData[ ,Del2[10]], 
-                                            from = c(-1,1:2), to = c(NA,0,100))
-      
-      Spm <- Del2[c(7:9,11:13)]
-      Skaar <- paste0(Spm,'Skaar')
-      for (nr in 1:length(Spm)) { RegData[ ,Skaar[nr]] <-  mapvalues(RegData[ ,Spm[nr]], 
-                                                                     from = c(-1,1:5), to = c(NA,rev(verdi5)))}
-      
-      
-      #Each score is calculated by averaging available items, 
-      #provided the respondent answers at least 70% of the items in the respective scale
-      #NB: Legg inn sjekk på om nok observasjoner
-      #rowSums(is.na(RegData[ ,Del1Skaar])
-      
-      RegData$OmsorgTot <- rowMeans(RegData[ ,Del1Skaar], na.rm = T)
-      RegData$BeslutningTot <- rowMeans(RegData[ ,Del2Skaar[1:10]], na.rm = T)
-      RegData$FSICUtot <- rowMeans(RegData[ ,c(Del1Skaar, Del2Skaar[1:10])], na.rm = T)
-      
-      #write.table(RegData, file = paste0('A:/Intensiv/PaarorDataSkaar', Sys.Date(),'.csv'), row.names=FALSE, sep = ';', fileEncoding = "UTF-8")
-      return(RegData)
-}

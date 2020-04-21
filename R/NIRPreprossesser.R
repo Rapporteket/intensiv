@@ -5,12 +5,14 @@
 #' av kvalitetsindikatorer og som kan legges ved pakken
 #'
 #' @inheritParams NIRFigAndeler
+#' @param skjema hvilket skjema data som skal preprosesseres tilhører 
+#' 1: hoved, 2: paaror, 3: influ, 4: beredsk 
 #'
 #' @return Data En liste med det filtrerte datasettet (og sykehusnavnet som tilsvarer reshID, ikke pt)
 #'
 #' @export
 #'
-NIRPreprosess <- function(RegData=RegData)	#, reshID=reshID)
+NIRPreprosess <- function(RegData=RegData, skjema=1)	#, reshID=reshID)
 {
       #Miljøparametre
       #print(Sys.getlocale())
@@ -19,12 +21,9 @@ NIRPreprosess <- function(RegData=RegData)	#, reshID=reshID)
       
       #Kun ferdigstilte registreringer:
       # Fra des. 2018 får Intensiv også kladd over fra  fra MRS/NHN.
-      RegData <- RegData[RegData$FormStatus==2, ]
+  if (skjema %in% 1:2){
+      RegData <- RegData[RegData$FormStatus==2, ]}
       
-      #devtools::load_all(quiet = TRUE)
-      #source('R/NIRhjelpefunksjoner.R', encoding = 'UTF-8')
-      #load_all(pkg = ".", reset = TRUE, recompile = FALSE, export_all = TRUE,
-      #          quiet = FALSE, create = NA)
       #Kjønn
       RegData$erMann <- RegData$PatientGender #1=Mann, 2=Kvinne, 0=Ukjent
       RegData$erMann[RegData$PatientGender == 0] <- NA
@@ -38,10 +37,11 @@ NIRPreprosess <- function(RegData=RegData)	#, reshID=reshID)
       #For enkelhetsskyld kalles Saps2Score som er Estimert mortalitet for SMR
       #RegData$logit <- -7.7631 + 0.0737*RegData$Saps2ScoreNumber + 0.9971*log(RegData$Saps2ScoreNumber+1)
       #RegData$Mort <- exp(RegData$logit)/(1+exp(RegData$logit))*100 # = Saps2Score = SMR
+      if (skjema==1){
       RegData$SapsSum <- with(RegData, Glasgow+Age+SystolicBloodPressure+HeartRate+Temperature+MvOrCpap+UrineOutput+
-              SerumUreaOrBun+Leukocytes+Potassium+Sodium+Hco3+Bilirubin+TypeOfAdmission)
-      head(RegData$SapsSum)
-      head(RegData$Saps2ScoreNumber)
+              SerumUreaOrBun+Leukocytes+Potassium+Sodium+Hco3+Bilirubin+TypeOfAdmission)}
+      #head(RegData$SapsSum)
+      #head(RegData$Saps2ScoreNumber)
       names(RegData)[which(names(RegData) == 'Saps2Score')] <- 'SMR' #Saps2Score er SAPS estimert mortalitet
       names(RegData)[which(names(RegData) == 'Saps2ScoreNumber')] <- 'SAPSII'
       names(RegData)[which(names(RegData) == 'DaysAdmittedIntensiv')] <- 'liggetid'
@@ -53,14 +53,17 @@ NIRPreprosess <- function(RegData=RegData)	#, reshID=reshID)
       names(RegData)[which(names(RegData) == 'TypeOfAdmission')] <- 'InnMaate'
       names(RegData)[which(names(RegData) == 'ReshID')] <- 'ReshId'
       #names(RegData)[which(names(RegData) == 'PatientInRegistryGuid')] <- 'PasientID'
+      if (skjema==4){
+        names(RegData)[which(names(RegData) == 'UnitId')] <- 'ReshId'}
       #Avvik ml. test og prod-data:
       names(RegData)[
             names(RegData) %in% c('PatientInRegistryGuid', 'PasientGUID')] <- 'PasientID'
       
       # Riktig format
       RegData$ShNavn <- trimws(as.character(RegData$ShNavn)) #Fjerner mellomrom (før) og etter navn
-      RegData$ShType[RegData$ShType ==2 ] <- 1	#Har nå kun type lokal/sentral og regional
-      
+      if (skjema %in% 1:3){
+        RegData$ShType[RegData$ShType ==2 ] <- 1	#Har nå kun type lokal/sentral og regional
+        }
       #Riktig format på datovariable:
       #	RegData <- RegData[which(RegData$DateAdmittedIntensive!=''),]	#Tar ut registreringer som ikke har innleggelsesdato
       RegData$InnDato <- as.Date(RegData$DateAdmittedIntensive, tz= 'UTC', format="%Y-%m-%d") 

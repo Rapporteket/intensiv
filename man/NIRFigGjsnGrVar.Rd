@@ -44,7 +44,6 @@ TRUE: Ja (Standard)}
 Argumentet \emph{valgtVar} har følgende valgmuligheter:
    \itemize{
     \item alder: Pasientens alders 
-    \item SMR: Standardisert mortalitetsratio (Gir annen figurtype)
     \item liggetid: Liggetid 
     \item Nas: Skår for sykepleieraktiviteter. (Nursing Activities Score). Per døgn.
     \item NEMS: Skår for ressursbruk per opphold. (Nine Equivalents of Nursing Manpower Use Score)
@@ -54,6 +53,8 @@ Argumentet \emph{valgtVar} har følgende valgmuligheter:
     \item respiratortidInvMoverf: Respiratortid, invasiv m/overf.
     \item respiratortidInvUoverf: Respiratortid, invasiv u/overf.
     \item SAPSII: Skår for alvorlighetsgrad av sykdom.  (Simplified Acute Physiology Score II)
+    \item SMR: (SAPSII-estimert dødelighet) Standardisert mortalitetsratio (Gir annen figurtype)
+    \item PIMdod: PIM-estimert dødelighet (Gir annen figurtype)
    }
 
 Detajer: Her bør man liste opp hvilke variable funksjonen benytter.}
