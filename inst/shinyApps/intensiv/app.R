@@ -1056,7 +1056,7 @@ server <- function(input, output, session) { #
         #                                enhetsUtvalg = 2, reshID=reshID, datoFra = '2020-01-01')
         #print(input$enhetsUtvalgGjsn)
         
-          if (dataUtGjsnTid$N < 3) {
+          if (dataUtGjsnTid$N$Hoved < 3) {
             tabGjsnTid <- 'N<3'
             output$tabGjsnTid <- renderText('Færre enn 3 registreringer')
           } else {
