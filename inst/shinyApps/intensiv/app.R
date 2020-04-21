@@ -1052,27 +1052,35 @@ server <- function(input, output, session) { #
                                        tidsenhet = input$tidsenhetGjsn,
                                        enhetsUtvalg = input$enhetsUtvalgGjsn,
                                        session = session) #, lagFig=0)
-        #dataUtGjsnTid <- NIRFigGjsnTid(RegData=RegData, preprosess = 0, reshID=reshID, datoFra = '2019-01-01')
-        tabGjsnTid <- t(dataUtGjsnTid$AggVerdier)
-        grtxt <-dataUtGjsnTid$grtxt
-        if ((min(nchar(grtxt)) == 5) & (max(nchar(grtxt)) == 5)) {
-          grtxt <- paste(substr(grtxt, 1,3), substr(grtxt, 4,5))}
-        rownames(tabGjsnTid) <- grtxt
-        antKol <- ncol(tabGjsnTid)
-        navnKol <- colnames(tabGjsnTid) 
-        if (antKol==6) {colnames(tabGjsnTid) <- c(navnKol[1:3], navnKol[1:3])}
+        # dataUtGjsnTid <- NIRFigGjsnTid(RegData=RegData, preprosess = 1, maxald = 60 , 
+        #                                enhetsUtvalg = 2, reshID=reshID, datoFra = '2020-01-01')
+        #print(input$enhetsUtvalgGjsn)
         
-        output$tabGjsnTid <- function() {
-          kableExtra::kable(tabGjsnTid, format = 'html'
-                            , full_width=F
-                            , digits = 1 #c(0,1,1,1)[1:antKol]
-          ) %>%
-            add_header_above(c(" "=1, 'Egen enhet/gruppe' = 3, 'Resten' = 3)[1:(antKol/3+1)]) %>%
-            #add_header_above(c(" "=1, 'Egen enhet/gruppe' = 3, 'Resten' = 3)[1:(antKol/3+1)]) %>%
-            column_spec(column = 1, width_min = '7em') %>%
-            column_spec(column = 2:(antKol+1), width = '7em') %>%
-            row_spec(0, bold = T)
-        }
+          if (dataUtGjsnTid$N < 3) {
+            tabGjsnTid <- 'N<3'
+            output$tabGjsnTid <- renderText('Færre enn 3 registreringer')
+          } else {
+            tabGjsnTid <- t(dataUtGjsnTid$AggVerdier)
+            grtxt <-dataUtGjsnTid$grtxt
+            if ((min(nchar(grtxt)) == 5) & (max(nchar(grtxt)) == 5)) {
+              grtxt <- paste(substr(grtxt, 1,3), substr(grtxt, 4,5))}
+            rownames(tabGjsnTid) <- grtxt
+            antKol <- ncol(tabGjsnTid)
+            navnKol <- colnames(tabGjsnTid) 
+            if (antKol==6) {colnames(tabGjsnTid) <- c(navnKol[1:3], navnKol[1:3])}
+            output$tabGjsnTid <- function() {
+              kableExtra::kable(tabGjsnTid, format = 'html'
+                                , full_width=F
+                                , digits = 1 #c(0,1,1,1)[1:antKol]
+              ) %>%
+                add_header_above(c(" "=1, 'Egen enhet/gruppe' = 3, 'Resten' = 3)[1:(antKol/3+1)]) %>%
+                #add_header_above(c(" "=1, 'Egen enhet/gruppe' = 3, 'Resten' = 3)[1:(antKol/3+1)]) %>%
+                column_spec(column = 1, width_min = '7em') %>%
+                column_spec(column = 2:(antKol+1), width = '7em') %>%
+                row_spec(0, bold = T)
+            }
+          
+          }
         output$lastNed_tabGjsnTid <- downloadHandler(
           filename = function(){
             paste0(input$valgtVar, '_gjsnTid.csv')

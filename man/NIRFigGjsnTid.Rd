@@ -9,7 +9,7 @@ NIRFigGjsnTid(
   valgtVar = "alder",
   datoFra = "2011-01-01",
   datoTil = "3000-12-31",
-  tidsenhet = "Aar",
+  tidsenhet = "Mnd",
   minald = 0,
   maxald = 110,
   erMann = "",

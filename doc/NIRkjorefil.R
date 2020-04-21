@@ -26,6 +26,14 @@ setwd('/home/rstudio/intensiv/inst')
 reshID=706078 #Tromsø med int: 601302, Ullevål Kir int: 109773, 102090 Ahus, 112044 Haukeland, 102673 Ålesund Med, Kristiansund: 706078 
 
 RegData <- NIRPreprosess(NIRRegDataSQL(datoFra = '2019-01-01'))
+test <- unique(RegData[,c("ShNavn", "ReshId")])
+test[order(test[,1]),]
+
+dataUtGjsnTid <- NIRFigGjsnTid(RegData=RegData, preprosess = 0, tidsenhet = 'Aar',
+                               enhetsUtvalg = 2,
+                               reshID=700419, datoFra='2020-01-01')
+t(dataUtGjsnTid$AggVerdier)
+
 #ind <- intersect(which(RegData$CerebralCirculationAbolishedReasonForNo>-1))
 gr <- 0:8
 RegData <- RegData[which(RegData$CerebralCirculationAbolishedReasonForNo %in% gr),] 
@@ -189,24 +197,26 @@ NonInv <- tapply(RegData$NonInvasivVentilation[ind],RegData$Aar[ind], FUN=sum)
 #-------------------------------------- Parametre ----------------------------------------------------
 library(intensiv)
 setwd("C:/ResultattjenesteGIT/intensiv/")
-reshID=112044 #109773 #Tromsø med int: 601302, Ullevål Kir int: 109773, Haukeland ROE: 107717
+RegData <- NIRPreprosess(NIRRegDataSQL(datoFra = '2019-01-01'))
+reshID=700419 #109773 #Tromsø med int: 601302, Ullevål Kir int: 109773, Haukeland ROE: 107717
 minald <- 0 #(standard: 0)
-maxald <- 110	#(standard: 130, må være større enn minald!)
+maxald <- 40	#(standard: 130, må være større enn minald!)
 InnMaate <- '' #0-El, 6-Ak.m, 8-Ak.k, (alle - alt unntatt 0,6,8)
-valgtMaal = 'Med' #'Med' = median. 'Gjsn' = gjennomsnitt. Alt annet gir gjennomsnitt
-datoFra <- '2019-01-01'	# standard: 0	format: YYYY-MM-DD. Kan spesifisere bare første del, eks. YYYY el. YYYY-MM. 
-datoTil <- '2019-12-31'	# standard: 3000
+valgtMaal = 'Gjsn' #'Med' = median. 'Gjsn' = gjennomsnitt. Alt annet gir gjennomsnitt
+datoFra <- '2020-01-01'	# standard: 0	format: YYYY-MM-DD. Kan spesifisere bare første del, eks. YYYY el. YYYY-MM. 
+datoTil <- '2020-12-31'	# standard: 3000
 aar <- 0
 dodInt <- 9	# 0-i live, 1 -død, standard: alle (alle andre verdier)
 erMann <- ''	#Kjønn: 0-kvinner, 1-menn, standard: alle (alle andre verdier)
 overfPas <- ''    #Overført under pågående intensivbehandling?	1 = Nei, 2 = Ja
 grType <- 99	#1/2: sentral/lokal, 3:regional, 99:'alle'
-enhetsUtvalg <- 1	#0-8
+enhetsUtvalg <- 2	#0-8
 grVar <- 'ShNavn'
 tidsenhet <- 'Mnd'
 medKI <- 0
 offData <- 0
 outfile <- ''
+valgtVar <- 'alder'
 #Parameter for evt. kvalitetsmål? angis i Tilrettelegging
 
 

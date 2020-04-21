@@ -40,7 +40,7 @@
 #' @return Linjediagram som viser utvikling over tid for valgt variabel
 #'
 #' @export
-NIRFigGjsnTid <- function(RegData, valgtVar='alder', datoFra='2011-01-01', datoTil='3000-12-31', tidsenhet='Aar',
+NIRFigGjsnTid <- function(RegData, valgtVar='alder', datoFra='2011-01-01', datoTil='3000-12-31', tidsenhet='Mnd',
                     minald=0, maxald=110, erMann='', reshID=0, InnMaate='', dodInt='', tittel=1, 
                     outfile='',enhetsUtvalg=0, valgtMaal='Gjsn', preprosess=1, hentData=0,...){
   
@@ -77,9 +77,9 @@ NIRFigGjsnTid <- function(RegData, valgtVar='alder', datoFra='2011-01-01', datoT
   
   
 #------------------------Klargjøre tidsenhet--------------
-  N <- list(Hoved = dim(RegData)[1], Rest=0)
+  Ntest <- dim(RegData)[1]
   #N <- list(Hoved = 0, Rest =0)
-  if (N$Hoved>9) {
+  if (Ntest>2) {
             RegDataFunk <- SorterOgNavngiTidsEnhet(RegData=RegData, tidsenhet = tidsenhet)
             RegData <- RegDataFunk$RegData
             #tidtxt <- RegDataFunk$tidtxt
@@ -90,7 +90,7 @@ KIekstrem <- NULL
 
 AggVerdier <- list(Hoved = 0, Rest =0)
 ind <- NIRUtvalg$ind
-Ngr <- list(Hoved = length(ind$Hoved), Rest =length(ind$Rest))
+N <- list(Hoved = length(ind$Hoved), Rest =length(ind$Rest))
 
 #tidtxt <- min(RegData$Aar):max(RegData$Aar)
 #Erstattes av TidsEnhet: RegData$Aar <- factor(RegData$Aar, levels=tidtxt)
@@ -99,14 +99,14 @@ Ngr <- list(Hoved = length(ind$Hoved), Rest =length(ind$Rest))
 #AntTidsenh <- length(Aartxt)
 
 #Resultat for hovedgruppe
-N <- tapply(RegData[ind$Hoved ,'Variabel'], RegData[ind$Hoved, 'TidsEnhet'], length)
+Ngr <- tapply(RegData[ind$Hoved ,'Variabel'], RegData[ind$Hoved, 'TidsEnhet'], length)
 if (valgtMaal=='Med') {
 	MedIQR <- plot(RegData$TidsEnhet[ind$Hoved],RegData$Variabel[ind$Hoved],  notch=TRUE, plot=FALSE)
 	Midt <- as.numeric(MedIQR$stats[3, ])	#as.numeric(MedIQR$stats[3, sortInd])
 	Konf <- MedIQR$conf
 	#Hvis vil bruke vanlige konf.int:
-	#j <- ceiling(N/2 - 1.96*sqrt(N/4))
-	#k <- ceiling(N/2 + 1.96*sqrt(N/4))
+	#j <- ceiling(Ngr/2 - 1.96*sqrt(Ngr/4))
+	#k <- ceiling(Ngr/2 + 1.96*sqrt(Ngr/4))
 	#KIHele <- sort(RegData$Variabel)[c(j,k)]
 #The notches (if requested) extend to +/-1.58 IQR/sqrt(n). (Chambers et al. (1983, p. 62), given in McGill et al. (1978, p. 16).) 
 #They are based on asymptotic normality of the median and roughly equal sample sizes for the two medians being compared, 
@@ -115,7 +115,7 @@ if (valgtMaal=='Med') {
 } else {	#Gjennomsnitt blir standard.
 	Midt <- tapply(RegData[ind$Hoved ,'Variabel'], RegData[ind$Hoved, 'TidsEnhet'], mean, na.rm=T)
 	SD <- tapply(RegData[ind$Hoved ,'Variabel'], RegData[ind$Hoved, 'TidsEnhet'], sd, na.rm=T)
-	Konf <- rbind(Midt - 2*SD/sqrt(N), Midt + 2*SD/sqrt(N))
+	Konf <- rbind(Midt - 2*SD/sqrt(Ngr), Midt + 2*SD/sqrt(Ngr))
 }
 
 if (length(KIekstrem) == 0) {	#Hvis ikke KIekstrem definert i variabeldefinisjonen
@@ -141,7 +141,7 @@ Nrest <- tapply(RegData[ind$Rest ,'Variabel'], RegData[ind$Rest, 'TidsEnhet'], l
 	}
 }
 
-}
+} #Sjekk av N
 t1 <- switch(valgtMaal,
              Med = 'Median ',
              Gjsn = 'Gjennomsnittlig ')
@@ -253,7 +253,7 @@ mtext(utvalgTxt, side=3, las=1, cex=0.9, adj=0, col=farger[1], line=c(3+0.8*((Nu
 
 if ( outfile != '') {dev.off()}
 
+}	#end if statement for 0 observations
 return(invisible(FigDataParam))
 
-}	#end if statement for 0 observations
 }	#end function
