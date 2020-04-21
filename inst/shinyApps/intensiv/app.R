@@ -1052,8 +1052,8 @@ server <- function(input, output, session) { #
                                        tidsenhet = input$tidsenhetGjsn,
                                        enhetsUtvalg = input$enhetsUtvalgGjsn,
                                        session = session) #, lagFig=0)
-        dataUtGjsnTid <- NIRFigGjsnTid(RegData=RegData, preprosess = 0, maxald = 60 ,
-                                       enhetsUtvalg = 1, reshID=700419, datoFra = '2020-01-01')
+        #dataUtGjsnTid <- NIRFigGjsnTid(RegData=RegData, preprosess = 0, maxald = 60 ,
+         #                              enhetsUtvalg = 1, reshID=700419, datoFra = '2020-01-01')
         #print(input$enhetsUtvalgGjsn)
         
           if (dataUtGjsnTid$N$Hoved < 3) {
