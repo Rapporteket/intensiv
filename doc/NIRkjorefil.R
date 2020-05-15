@@ -25,9 +25,21 @@ setwd('C:/ResultattjenesteGIT/intensiv/inst/')
 setwd('/home/rstudio/intensiv/inst') 
 reshID=706078 #Tromsø med int: 601302, Ullevål Kir int: 109773, 102090 Ahus, 112044 Haukeland, 102673 Ålesund Med, Kristiansund: 706078 
 
-RegData <- NIRPreprosess(NIRRegDataSQL(datoFra = '2020-01-01'))
+RegData <- NIRPreprosess(NIRRegDataSQL(datoFra = '2019-01-01', datoTil = '2019-12-31'))
 test <- unique(RegData[,c("ShNavn", "ReshId")])
 test[order(test[,1]),]
+
+test <- RegData[RegData$PasientID == '094E63CD-3713-E911-A963-00155D0B4D06', 
+        c('DateAdmittedIntensive', 'DateDischargedIntensive', 'ShNavn')]
+test[order(test$DateAdmittedIntensive),]
+
+DataKalnes <- RegData[RegData$ReshId == 4209889, ] #c('PasientID', 'SkjemaGUID', 'InnDato')]
+DataKalnes <- FinnReinnleggelser(RegData = DataKalnes)
+table(DataKalnes$Reinn)
+pas <- DataKalnes$PasientID[DataKalnes$Reinn==1]
+DataPas <- DataKalnes[DataKalnes$PasientID %in% pas, c('PasientID', 'SkjemaGUID', 'InnDato','Reinn')]
+DataKalnes <- DataPas[order(DataPas$PasientID, DataPas$InnDato), ]
+write.table(DataKalnes, file='KalnesReinn.csv', fileEncoding = 'UTF-8', sep = ';', row.names = F)
 
 dataUtGjsnTid <- NIRFigGjsnTid(RegData=RegData, preprosess = 0, tidsenhet = 'Aar',
                                enhetsUtvalg = 2,
