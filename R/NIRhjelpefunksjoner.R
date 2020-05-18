@@ -32,7 +32,7 @@ FinnReinnleggelser <- function(RegData, PasientID='PasientID'){
                      as.POSIXlt(RegDataSort$DateDischargedIntensive[indPasFlereOpph-1], tz= 'UTC', format="%Y-%m-%d %H:%M:%S"),
                      units = 'hour')
       RegDataSort$Reinn <- 2 #Ikke reinnleggelse
-      RegDataSort$Reinn[RegDataSort$TidUtInn<72 & RegDataSort$TidUtInn >= 0] <- 1 #Reinnleggelse
+      RegDataSort$Reinn[RegDataSort$TidUtInn<72 & RegDataSort$TidUtInn >= 12] <- 1 #Reinnleggelse
       
       #Div testing:
       # indNeg <- which(RegDataSort$TidUtInn < 0)
