@@ -108,10 +108,19 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
              h3('Samlede resultater, egen enhet'),
              downloadButton(outputId = 'samleRapp.pdf', label='Last ned samlerapport', class = "butt"),
              br(),
-             br(),
-             br(),
              h3('Resultater fra influensaregistrering'),
-             downloadButton(outputId = 'influensaRapp.pdf', label='Last ned influensarapport', class = "butt")
+             downloadButton(outputId = 'influensaRapp.pdf', label='Last ned influensarapport', class = "butt"),
+             br(),
+             br(),
+             br(),
+             h2('Hente datauttrekk'),
+             dateRangeInput(inputId = 'datovalgData', start = startDato, end = idag,
+                            label = "Tidsperiode", separator="t.o.m.", language="nb"),
+             selectInput(inputId = 'velgReshData', label='Velg sykehus',
+                         selected = 0,
+                         choices = sykehusValg),
+             downloadButton(outputId = 'lastNed_dataDump', label='Last ned datadump')
+             
            ),
            mainPanel(
              shinyalert::useShinyalert(),
@@ -701,6 +710,7 @@ server <- function(input, output, session) { #
   observe({if (rolle() != 'SC') { #
     shinyjs::hide(id = 'velgResh')
     shinyjs::hide(id = 'velgReshOverf')
+    shinyjs::hide(id = 'velgReshData')
     #hideTab(inputId = "tabs_andeler", target = "Figur, sykehusvisning")
   }
   })
@@ -726,9 +736,6 @@ server <- function(input, output, session) { #
   
   
       #--------startside--------------      
-#      output$tekstDash <- c('Figurer med kvalitetsindikatorer',
-#                           'hente ned månedsrapport'),
-
   output$mndRapp.pdf <- downloadHandler(
     filename = function(){ paste0('MndRapp', Sys.time(), '.pdf')}, 
     content = function(file){
@@ -751,6 +758,36 @@ server <- function(input, output, session) { #
       henteSamlerapporter(file, rnwFil="NIRinfluensa.Rnw")
     }
   )
+  
+  #Datadump
+  observe({
+    RegDataReinn <- FinnReinnleggelser(RegData)
+     DataDump <- NIRUtvalgEnh(RegData=RegDataReinn, 
+                           datoFra = input$datovalgData[1],
+                          datoTil = input$datovalgData[2])$RegData
+    
+    
+    if (rolle() =='SC') {
+      valgtResh <- as.numeric(input$velgReshData)
+      ind <- if (valgtResh == 0) {1:dim(DataDump)[1]
+        } else {which(as.numeric(DataDump$ReshId) %in% as.numeric(valgtResh))}
+      tabDataDump <- DataDump[ind,]
+
+    } else {
+      tabDataDump <-
+        DataDump[which(DataDump$ReshId == reshID), ]
+      #output$test <- renderText(dim(tabDataDump)[1])
+    } #Tar bort PROM/PREM til egen avdeling
+
+    output$lastNed_dataDump <- downloadHandler(
+      filename = function(){'dataDumpNIR.csv'},
+      content = function(file, filename){write.csv2(tabDataDump, file, row.names = F, na = '')})
+  })   
+  
+  
+  
+  
+  
   
 #------------ Aktivitet (/Tabeller) --------
  # observe({
