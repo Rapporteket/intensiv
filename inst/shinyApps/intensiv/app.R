@@ -213,16 +213,13 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                                                   "Egen sykehustype"=4, "Egen region"=7)
                           )),
                         conditionalPanel(
-                          condition = "input.ark == 'Dobbeltregistreringar' || 'input.ark == 'Overføringer'",
+                          condition = "input.ark == 'Overføringer'", #|| input.ark == 'Dobbeltregistreringer'",   
                           dateRangeInput(inputId = 'datovalgReg', start = startDato, end = idag,
-                                         label = "Tidsperiode", separator="t.o.m.", language="nb")
-                        ),
-                        conditionalPanel(
-                          condition = "input.ark == 'Overføringer'",
+                                         label = "Tidsperiode", separator="t.o.m.", language="nb"),
                           selectInput(inputId = 'velgReshOverf', label='Velg eget Sykehus',
-                                    #selected = 0,
-                                    choices = sykehusValg)
-                        ),
+                                      #selected = 0,
+                                      choices = sykehusValg)
+                        )
            ),
            mainPanel(
              tabsetPanel(id='ark',

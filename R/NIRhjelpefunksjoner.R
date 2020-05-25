@@ -34,7 +34,7 @@ FinnReinnleggelser <- function(RegData, PasientID='PasientID'){
                      units = 'hour')
       RegDataSort$SmResh <- c(FALSE, RegDataSort$ReshId[2:N] == RegDataSort$ReshId[1:N-1])
       RegDataSort$Reinn <- 2 #Ikke reinnleggelse
-      RegDataSort$Reinn[RegDataSort$TidUtInn<72 & RegDataSort$TidUtInn >= 12] <- 1 #Reinnleggelse
+      RegDataSort$Reinn[RegDataSort$TidUtInn<72 & RegDataSort$TidUtInn >= 0] <- 1 #Reinnleggelse
       RegDataSort$Reinn[!(RegDataSort$SmResh)] <- 2
       
       #Div testing:
