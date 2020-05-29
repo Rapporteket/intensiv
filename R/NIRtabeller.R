@@ -291,7 +291,7 @@ tabOverforinger <- function(RegData, datoFra=Sys.Date()-365, datoTil=Sys.Date(),
       'Fordeling' = c(paste0(sprintf('%.1f', OverfVektor/sum(OverfVektor)*100), ' %'),'')) #sort(table(Data$PatientTransferredToHospitalName), decreasing = T)
     tilfra <- c('til','fra')[overfFraSh]
     #overfFraSh - overføring fra (1) eller til (0) den aktuelle enheten
-    colnames(Tab) <- c(paste(c('til','fra')[overfFraSh+1], shNavn, c('fra', 'til')[overfFraSh+1]), 
+    colnames(Tab) <- c(paste(c('til','fra:')[overfFraSh+1], shNavn, c('fra', 'til:')[overfFraSh+1]), 
                        'Antall pasienter', 'Fordeling')
     return(Tab)
 }

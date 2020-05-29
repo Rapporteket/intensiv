@@ -17,24 +17,28 @@ FinnReinnleggelser <- function(RegData, PasientID='PasientID'){
       #SJEKK Bare innleggelser fra 2016 som skal ha reinnleggelse??
       #RegData <- RegData[
       #      as.POSIXlt(RegData$DateAdmittedIntensive, format="%Y-%m-%d %H:%M:%S") >= as.POSIXlt('2016-01-01'), ]
-      
+      N <- dim(RegData)[1]
+      RegData$PasientID <- RegData[ ,PasientID]
       #TabAntOpph <- table(RegData$PasientID) #Tar relativt lang tid.
       #TabFlereOpph <- TabAntOpph[TabAntOpph>1]
       #indPasFlereOpph <- which(RegData$PasientID %in% names(TabFlereOpph))  #Tar relativt lang tid.
-      RegDataSort <- RegData[order(RegData[ ,PasientID], RegData$DateAdmittedIntensive,     #Denne tar mest tid
+      RegDataSort <- RegData[order(RegData$PasientID, RegData$DateAdmittedIntensive,     #Denne tar mest tid
                                    RegData$DateDischargedIntensive), ]
       #RegDataSort$AntOpph <- ave(RegDataSort$PasientID, RegDataSort$PasientID, FUN=length)
-      RegDataSort$OpphNr <- ave(RegDataSort[ ,PasientID], RegDataSort[ ,PasientID], FUN=seq_along)
+      RegDataSort$OpphNr <- ave(RegDataSort$PasientID, RegDataSort$PasientID, FUN=seq_along)
       indPasFlereOpph <- which(RegDataSort$OpphNr>1) #intersect(which(RegDataSort$AntOpph>1), which(RegDataSort$OpphNr>1))
       RegDataSort$TidUtInn <- NA
       RegDataSort$TidUtInn[indPasFlereOpph] <- 
             difftime(as.POSIXlt(RegDataSort$DateAdmittedIntensive[indPasFlereOpph], tz= 'UTC', format="%Y-%m-%d %H:%M:%S"),
                      as.POSIXlt(RegDataSort$DateDischargedIntensive[indPasFlereOpph-1], tz= 'UTC', format="%Y-%m-%d %H:%M:%S"),
                      units = 'hour')
+      RegDataSort$SmResh <- c(FALSE, RegDataSort$ReshId[2:N] == RegDataSort$ReshId[1:N-1])
       RegDataSort$Reinn <- 2 #Ikke reinnleggelse
       RegDataSort$Reinn[RegDataSort$TidUtInn<72 & RegDataSort$TidUtInn >= 0] <- 1 #Reinnleggelse
+      RegDataSort$Reinn[!(RegDataSort$SmResh)] <- 2
       
       #Div testing:
+      #RegDataSort[indPasFlereOpph[1:20], c('OpphNr',"TidUtInn", 'ReshId','SmResh','Reinn', 'PasientID')]
       # indNeg <- which(RegDataSort$TidUtInn < 0)
       # TabDobbeltRegSjekk <- RegDataSort[sort(c(indNeg-1,indNeg)), ]
       # write.table(TabDobbeltRegSjekk, file='TabDobbeltRegSjekk.csv', row.names = F, sep = ';')
