@@ -2,6 +2,7 @@
 #NB: For å få lagt ut app'en på Shinyapps, må Github-pakkene (intensiv og rapbase) være installert fra Github.
 #devtools::install_github(ref = 'rel', repo = 'Rapporteket/intensiv')
 library(intensiv)
+library(intensivberedskap)
 library(shiny)
 library(lubridate)
 library(zoo)
@@ -32,7 +33,7 @@ regTitle <- ifelse(paaServer,
 
 #---------Hente data------------
 if (paaServer) {
-  RegData <- NIRRegDataSQL(datoFra='2011-01-01') #, session = session) #datoFra = datoFra, datoTil = datoTil)
+  RegData <- NIRRegDataSQL(datoFra='2019-01-01') #, session = session) #datoFra = datoFra, datoTil = datoTil)
   PaarorData <- NIRpaarorDataSQL() 
   PaarorDataH <- KobleMedHoved(RegData, PaarorData, alleHovedskjema=F, alleSkjema2=F)
   qInfluensa <- 'SELECT ShNavn, RHF, PatientInRegistryGuid, FormDate,FormStatus, ICD10_1
@@ -46,10 +47,18 @@ if (!exists('PaarorDataH')){
   data('NIRRegDataSyn', package = 'intensiv')
   #try(data(package = "intensiv"))
 }
-RegData <- NIRPreprosess(RegData = RegData)
+
+#------Med Covid
+#IntDataRaa <- intensiv::NIRRegDataSQL(datoFra = forsteReg)
+BeredRaa <- intensivberedskap::NIRberedskDataSQL() #CoroDataRaa[ ,-which(names(CoroDataRaa) %in% varFellesInt)]
+IntMberedData <- merge(RegData, BeredRaa, suffixes = c('','Covid'),
+                     by.x = 'SkjemaGUID', by.y = 'HovedskjemaGUID', all.x = F, all.y=T)
+RegData <- IntMberedData
+
+
 PaarorData <- NIRPreprosess(RegData = PaarorDataH) #Må først koble på hoveddata for å få ShType++
-
-
+RegData <- NIRPreprosess(RegData = RegData)
+RegData <- RegData[RegData$Overf==1, ]
 #-----Definere utvalgsinnhold og evt. parametre som er statiske i appen----------
 
 
@@ -93,7 +102,9 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
            
            #fluidRow(
            #column(width=5,
-           h2('Velkommen til Rapporteket-Intensiv!', align='center'),
+           h2('Velkommen til kvikk-fix-løsning for å se på Covid-resultater!', 
+              align='center', col='red'),
+           #h2('Velkommen til Rapporteket-Intensiv!', align='center'),
            br(),
            sidebarPanel(
              width = 3,
