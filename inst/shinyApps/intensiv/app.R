@@ -2,7 +2,6 @@
 #NB: For å få lagt ut app'en på Shinyapps, må Github-pakkene (intensiv og rapbase) være installert fra Github.
 #devtools::install_github(ref = 'rel', repo = 'Rapporteket/intensiv')
 library(intensiv)
-library(intensivberedskap)
 library(shiny)
 library(lubridate)
 library(zoo)
@@ -48,17 +47,13 @@ if (!exists('PaarorDataH')){
   #try(data(package = "intensiv"))
 }
 
-#------Med Covid
-#IntDataRaa <- intensiv::NIRRegDataSQL(datoFra = forsteReg)
-BeredRaa <- intensivberedskap::NIRberedskDataSQL() #CoroDataRaa[ ,-which(names(CoroDataRaa) %in% varFellesInt)]
-IntMberedData <- merge(RegData, BeredRaa, suffixes = c('','Covid'),
-                     by.x = 'SkjemaGUID', by.y = 'HovedskjemaGUID', all.x = F, all.y=T)
-RegData <- IntMberedData
 
-
+antPaaror <- dim(PaarorDataH)[1]
+if (antPaaror>0) {
 PaarorData <- NIRPreprosess(RegData = PaarorDataH) #Må først koble på hoveddata for å få ShType++
+}
 RegData <- NIRPreprosess(RegData = RegData)
-RegData <- RegData[RegData$Overf==1, ]
+#RegData <- RegData[RegData$Overf==1, ]
 #-----Definere utvalgsinnhold og evt. parametre som er statiske i appen----------
 
 
@@ -102,9 +97,7 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
            
            #fluidRow(
            #column(width=5,
-           h2('Velkommen til kvikk-fix-løsning for å se på Covid-resultater!', 
-              align='center', col='red'),
-           #h2('Velkommen til Rapporteket-Intensiv!', align='center'),
+           h2('Velkommen til Rapporteket-Intensiv!', align='center'),
            br(),
            sidebarPanel(
              width = 3,
@@ -1182,14 +1175,14 @@ server <- function(input, output, session) { #
       }, height = function() {2.2*session$clientData$output_innMaate_height},
       width = function() {0.7*session$clientData$output_innMaate_width}) #, height=900, width=700)
       
-      
+      if (antPaaror>0){
       output$paarorFord <- renderPlot(
         NIRFigPrePostPaaror(RegData=PaarorData, preprosess = 0, valgtVar=input$valgtVarPaarorFord,
                             startDatoIntervensjon = input$startDatoIntervensjon,
                             datoFra=input$datovalgPaarorFord[1], datoTil=input$datovalgPaarorFord[2],
                             erMann=as.numeric(input$erMannPaarorFord,session=session)
         ), width=800, height = 800 #execOnResize=TRUE, 
-      )
+      )}
     
       
       
