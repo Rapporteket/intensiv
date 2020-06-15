@@ -32,7 +32,7 @@ regTitle <- ifelse(paaServer,
 
 #---------Hente data------------
 if (paaServer) {
-  RegData <- NIRRegDataSQL(datoFra='2011-01-01') #, session = session) #datoFra = datoFra, datoTil = datoTil)
+  RegData <- NIRRegDataSQL(datoFra='2019-01-01') #, session = session) #datoFra = datoFra, datoTil = datoTil)
   PaarorData <- NIRpaarorDataSQL() 
   PaarorDataH <- KobleMedHoved(RegData, PaarorData, alleHovedskjema=F, alleSkjema2=F)
   qInfluensa <- 'SELECT ShNavn, RHF, PatientInRegistryGuid, FormDate,FormStatus, ICD10_1
@@ -46,10 +46,14 @@ if (!exists('PaarorDataH')){
   data('NIRRegDataSyn', package = 'intensiv')
   #try(data(package = "intensiv"))
 }
-RegData <- NIRPreprosess(RegData = RegData)
+
+
+antPaaror <- dim(PaarorDataH)[1]
+if (antPaaror>0) {
 PaarorData <- NIRPreprosess(RegData = PaarorDataH) #Må først koble på hoveddata for å få ShType++
-
-
+}
+RegData <- NIRPreprosess(RegData = RegData)
+#RegData <- RegData[RegData$Overf==1, ]
 #-----Definere utvalgsinnhold og evt. parametre som er statiske i appen----------
 
 
@@ -1171,14 +1175,14 @@ server <- function(input, output, session) { #
       }, height = function() {2.2*session$clientData$output_innMaate_height},
       width = function() {0.7*session$clientData$output_innMaate_width}) #, height=900, width=700)
       
-      
+      if (antPaaror>0){
       output$paarorFord <- renderPlot(
         NIRFigPrePostPaaror(RegData=PaarorData, preprosess = 0, valgtVar=input$valgtVarPaarorFord,
                             startDatoIntervensjon = input$startDatoIntervensjon,
                             datoFra=input$datovalgPaarorFord[1], datoTil=input$datovalgPaarorFord[2],
                             erMann=as.numeric(input$erMannPaarorFord,session=session)
         ), width=800, height = 800 #execOnResize=TRUE, 
-      )
+      )}
     
       
       
