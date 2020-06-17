@@ -1,8 +1,8 @@
 Package: intensiv
 Type: Package
 Title: Resultatrapporter for Intensivregisteret
-Version: 2.2.2
-Date: 2020-05-19
+Version: 2.2.3
+Date: 2020-06-15
 Author: Authors@R: c(person("Olsen", "Lena", email =
     "Lena.Ringstad.Olsen@unn.no", role = c("cre", "aut")), person("Edvardsen",
     "Are", email = "are.edvardsen@helse- nord.no", role = c("aut")))
