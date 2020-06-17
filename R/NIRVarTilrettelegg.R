@@ -348,7 +348,7 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='an
       if (valgtVar == 'respiratortid') { #andeler, gjsnGrVar, GjsnTid
             RegData <- RegData[which(RegData$respiratortid>0), ] # & (RegData$InnDato>=as.Date('2016-01-01', tz='UTC'))), ] 
             RegData$Variabel  <- as.numeric(RegData$respiratortid)
-            tittel <- 'Respiratortid'
+            tittel <- 'Respiratortid, totalt'
             if (figurtype %in% c('gjsnGrVar', 'gjsnTid')) {
                   tittel <- 'respiratortid'}                       
             gr <- c(0, 1, 2, 3, 4, 5, 6, 7, 14, 1000)#c(0, exp(seq(0,log(30),length.out = 6)), 500),1)
