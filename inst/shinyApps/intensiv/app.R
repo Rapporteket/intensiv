@@ -32,7 +32,7 @@ regTitle <- ifelse(paaServer,
 
 #---------Hente data------------
 if (paaServer) {
-  RegData <- NIRRegDataSQL(datoFra='2019-01-01') #, session = session) #datoFra = datoFra, datoTil = datoTil)
+  RegData <- NIRRegDataSQL() #, session = session) #datoFra = datoFra, datoTil = datoTil)
   PaarorData <- NIRpaarorDataSQL() 
   PaarorDataH <- KobleMedHoved(RegData, PaarorData, alleHovedskjema=F, alleSkjema2=F)
   qInfluensa <- 'SELECT ShNavn, RHF, PatientInRegistryGuid, FormDate,FormStatus, ICD10_1
