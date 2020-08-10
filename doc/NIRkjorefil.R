@@ -490,7 +490,7 @@ RegisterData[indMatchRegData,]
 
 
 merge(TransportData[k,],
-      RegisterData[ind,c('Fnr', "DateAndTimeAdmittedIntensive")]
+      RegisterData[ind,c('Fnr', "DateAndTimeAdmittedIntensive")])
 
 
 PersnrMatch <- TransportData$Personnummer[indPersMatch]
@@ -556,6 +556,60 @@ tab <- rbind(
 )
 colnames(tab) <- c('Levende', 'Død')
 t(tab)
+
+#----------------------- INFLUENSA ------------------------------------------
+
+NIRInfluDataSQL <- function(datoFra = '2019-09-25', datoTil = Sys.Date()) {
+  
+  query <- paste0('SELECT 
+                  *
+                  # ShNavn,
+                  # RHF,
+                  # PatientInRegistryGuid,
+                  # FormDate,
+                  # ICD10_1,
+                  # FormStatus
+            FROM InfluensaFormDataContract
+            WHERE cast(FormDate as date) BETWEEN \'', datoFra, '\' AND \'', datoTil, '\'')
+  #WHERE cast(DateAdmittedIntensive as date) >= \'', datoFra, '\' AND DateAdmittedIntensive <= \'', datoTil, '\'')  
+  
+  RegData <- rapbase::LoadRegData(registryName = "nir", query, dbType = "mysql")
+  return(RegData)
+}  
+
+InfluData <- NIRInfluDataSQL(datoFra = '2018-09-20')
+
+InfluData$Influensa <- factor(NA, levels = c('Mistenkt', 'Bekreftet'))
+#--Identifiser J10 og J11 i ICD10-variablene.
+InfluData$Influensa[which(InfluData$ICD10_1 %in% c(-1,13:16))] <- 'Mistenkt'
+InfluData$Influensa[which(InfluData$ICD10_1 %in% c(9:12))] <- 'Bekreftet'
+
+#Legge på tidsenheter
+InfluData$InnDato <- as.Date(InfluData$FormDate) #, tz='UTC', format = '%Y-%m-%d"')
+InfluData$Aar <- format(InfluData$InnDato, '%Y')
+InfluData$UkeNr <- as.factor(format(InfluData$InnDato, '%V'))
+#InfluData$UkeNr <- factor(InfluData$UkeNr, levels=c(min(InfluData$UkeNr):max(InfluData$UkeNr)))
+InfluData$UkeAar <- format(InfluData$InnDato, '%G.%V') #%G -The week-based year, %V - Week of the year as decimal number (01–53) as defined in ISO 8601
+InfluData$UkeAar <- as.factor(InfluData$UkeAar)
+InfluData$Sesong <- NA
+InfluData$Sesong[which(InfluData$InnDato> '2018-09-20' & InfluData$InnDato < '2019-05-20')] <- '2018/19' 
+InfluData$Sesong[which(InfluData$InnDato >= '2019-09-30' & InfluData$InnDato < '2020-05-18')] <- '2019/20' 
+
+  gr <- c(0, 15, 25, 60, 80,150)
+  InfluData$AlderGr <- cut(InfluData$AgeAdmitted, breaks=gr, include.lowest=TRUE, right=FALSE)
+  #Aldersfordeling for BEKREFTEDE tilfeller.
+  InfluDataBekr <- InfluData[which(InfluData$Influensa=='Bekreftet'), ]
+TabAlderSes <- table(InfluDataBekr$AlderGr, InfluDataBekr$Sesong)   
+TabAlderSes <- addmargins(TabAlderSes)
+write.table(TabAlderSes, file='InfluPrUke.csv', fileEncoding = 'UTF-8', sep = ';', row.names = F)
+
+# indFerdig <- which(InfluData$FormStatus==2)
+# antFerdig <- length(indFerdig)
+# antSkjema <- dim(InfluData)[1]
+
+TabUkeInflu <- table(InfluData[ ,c('UkeAar', 'Influensa')])      #InfluData$UkeNr, function(x) sum((InfluData$ICD10_1==10 | InfluData$ICD10_2==10)))
+TabUkeTot <- addmargins(TabUkeInflu) #cbind(TabUkeInflu, 'Tot. ant. skjema' = table(InfluData$UkeAar))
+write.table(TabUkeTot, file='InfluPrUke.csv', fileEncoding = 'UTF-8', sep = ';', row.names = F)
 
 
 
