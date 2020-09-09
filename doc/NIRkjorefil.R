@@ -601,7 +601,7 @@ InfluData$Sesong[which(InfluData$InnDato >= '2019-09-30' & InfluData$InnDato < '
   InfluDataBekr <- InfluData[which(InfluData$Influensa=='Bekreftet'), ]
 TabAlderSes <- table(InfluDataBekr$AlderGr, InfluDataBekr$Sesong)   
 TabAlderSes <- addmargins(TabAlderSes)
-write.table(TabAlderSes, file='InfluPrUke.csv', fileEncoding = 'UTF-8', sep = ';', row.names = F)
+write.table(TabAlderSes, file='TabAlderSes.csv', fileEncoding = 'UTF-8', sep = ';', row.names = T)
 
 # indFerdig <- which(InfluData$FormStatus==2)
 # antFerdig <- length(indFerdig)
@@ -609,7 +609,7 @@ write.table(TabAlderSes, file='InfluPrUke.csv', fileEncoding = 'UTF-8', sep = ';
 
 TabUkeInflu <- table(InfluData[ ,c('UkeAar', 'Influensa')])      #InfluData$UkeNr, function(x) sum((InfluData$ICD10_1==10 | InfluData$ICD10_2==10)))
 TabUkeTot <- addmargins(TabUkeInflu) #cbind(TabUkeInflu, 'Tot. ant. skjema' = table(InfluData$UkeAar))
-write.table(TabUkeTot, file='InfluPrUke.csv', fileEncoding = 'UTF-8', sep = ';', row.names = F)
+write.table(TabUkeTot, file='InfluPrUke.csv', fileEncoding = 'UTF-8', sep = ';', row.names = T)
 
 
 
