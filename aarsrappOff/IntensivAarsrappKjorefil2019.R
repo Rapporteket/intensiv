@@ -19,7 +19,7 @@ write.table(RegDataAarCSV, file = 'A:/Intensiv/NIRaarsrapp2019.csv', row.names =
             fileEncoding = 'UTF-8', sep = ';')
 
 
-load("A:/Intensiv/NIRaarsrapp2018.Rdata")
+load("A:/Intensiv/NIRaarsrapp2019.Rdata")
 #PaarorDataH <- PaarorDataH2018
 #load('A:/Intensiv/PaarorRegData2018.RData')
 setwd('P:/Registerinfo og historie/intensiv/aarsrappOff')
@@ -41,14 +41,12 @@ for (valgtVar in variable) {
                  outfile=outfile)
 }
 
-valgtVar <- 'inklKrit' #, spesTiltak
-NIRFigAndeler(RegData=RegData, valgtVar='spesTiltak', datoFra=datoFra1aar, datoTil=datoTil)
 
 NIRFigAndeler(RegData=RegData, valgtVar='liggetid', dodInt=1, datoFra=datoFra1aar, datoTil=datoTil, 
               outfile='liggetidDod_ford.pdf') 
 NIRFigAndeler(RegData=RegData, valgtVar='spesTiltak', datoFra=datoFra1aar, datoTil=datoTil, grType = 3,
               outfile='spesTiltak_ford.pdf') 
-#Pårørende
+#Pårørende - ikke gjort for 2019
 NIRFigAndeler(RegData=PaarorDataH2018, valgtVar='BehandlingHoeflighetRespektMedfoelelse', datoFra=datoFra1aar, datoTil=datoTil, 
               outfile='BehandlingHoeflighetRespektMedfoelelse_Ford.pdf') 
 #--------------------------------------- AndelGrVar ----------------------------------
@@ -150,9 +148,9 @@ tabBeleggNtot <- cbind(tabBeleggN, rowSums(tabBeleggN))
 colnames(tabBeleggNtot) <- c('lokal-/sentral', 'region', 'alle')
 
 xtable(tabBeleggNtot, digits=0, align=c('l', rep('r', ncol(tabBeleggNtot))), 
-       caption='Antal opphald og liggedøger i 2018.', label='tab:RegEget')
+       caption='Antal opphald og liggedøger i 2019.', label='tab:RegEget')
 
-NIRFigGjsnTid(RegData = RegData1aar, valgtVar = 'NEMS', tidsenhet = 'Mnd', valgtMaal = 'Med', outfile = 'NEMStest.pdf')
+#NIRFigGjsnTid(RegData = RegData1aar, valgtVar = 'NEMS', tidsenhet = 'Mnd', valgtMaal = 'Med', outfile = 'NEMStest.pdf')
 library(lubridate)
 #Antall opphold
 tabDum <- tabAntOpphShMnd(RegData=RegData1aar, datoTil=datoTil, antMnd=12)
@@ -165,7 +163,8 @@ xtable(table(RegData1aar$ShNavn), align=c('l','r'), #row.names=F,
 #Aktivitet/Nøkkeltall
 tabNokkeltall <- tabNokkeltall(RegData=RegData1aar, datoTil=datoTil) #, tidsenhet='Mnd' 
 xtable(tabNokkeltall, digits= 1, align=c('l', rep('r', ncol(tabNokkeltall))), #row.names=F,
-       caption = 'Samla tal på intensivopphald og aktivitet i NIR 2018')
+       caption = 'Samla tal på intensivopphald og aktivitet i NIR 2019')
+#Legg til  \resizebox{\columnwidth}{!}{ \begin{tabular}... }
 
 
 
@@ -176,6 +175,12 @@ tabKj <- table(RegDataPre[RegDataPre$erMann==1 , c('Aar', 'ShType')])
 kjLandet <- prop.table(table(RegDataPre[ , c('Aar', "erMann")]),1)
 AndelMenn <- 100*cbind(tabKj/tabShTypeAar,
                        kjLandet[,'1'])
+#AndelMennShType <- prop.table(table(RegDataPre[ , c("erMann",'ShType')]),2)[2,]
+AndelMenn <- rbind(AndelMenn,
+                 'Alle år' = 100*c(prop.table(table(RegDataPre[ , c("erMann",'ShType')]),2)[2,],
+                            prop.table(table(RegDataPre[ , "erMann"]))[2])
+)
+
 colnames(AndelMenn) <- c('Lok./Sentral', 'Region', 'Hele landet')
 xtable(AndelMenn, digits=1, align=c('l', rep('r', ncol(AndelMenn))), 
        caption='Andel (prosent) av oppholdene som er menn.', label='tab:KjonnAar')
