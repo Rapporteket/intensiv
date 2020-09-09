@@ -174,9 +174,10 @@ NIRFigAndeler  <- function(RegData=0, valgtVar='alder', datoFra='2011-01-01', da
             Nfig$Hoved <- ifelse(min(N$Hoved)==max(N$Hoved),
                                  min(N$Hoved[1]), 
                                  paste0(min(N$Hoved),'-',max(N$Hoved)))
-            Nfig$Rest <- ifelse(min(N$Rest)==max(N$Rest),
+            if (NIRUtvalg$medSml==1){
+              Nfig$Rest <- ifelse(min(N$Rest)==max(N$Rest),
                                 min(N$Rest[1]), 
-                                paste0(min(N$Rest),'-',max(N$Rest)))
+                                paste0(min(N$Rest),'-',max(N$Rest)))}
       } else {
             Nfig <- N}
       grtxt2 <- paste0(sprintf('%.1f',AggVerdier$Hoved), '%') #paste0('(', sprintf('%.1f',AggVerdier$Hoved), '%)')
