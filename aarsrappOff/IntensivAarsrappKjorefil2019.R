@@ -36,8 +36,8 @@ variable <- c('OrganDonationCompletedReasonForNoStatus', 'CerebralCirculationAbo
               'inklKrit','liggetid','InnMaate','NEMS24', 'Nas24','respiratortidNonInv',
                    'SAPSII', 'nyreBeh', 'nyreBehTid','spesTiltak') #, 'respiratortidInvMoverf')
 for (valgtVar in variable) {
-      outfile <- paste0(valgtVar, '_Ford.pdf')
-      NIRFigAndeler(RegData=RegData, valgtVar=valgtVar, datoFra=datoFra1aar, datoTil=datoTil, 
+   outfile <- paste0(valgtVar, '_Ford.pdf')
+   NIRFigAndeler(RegData=RegData, valgtVar=valgtVar, datoFra=datoFra1aar, datoTil=datoTil, 
                  outfile=outfile)
 }
 
@@ -128,8 +128,30 @@ for (grType in 2:3) {
 NIRFigGjsnGrVar(RegData=RegData, valgtVar='liggetid', valgtMaal=valgtMaal, dodInt=1, 
                 grType=3, datoFra=datoFra1aar, datoTil=datoTil, outfile='liggetidDod3_MedPerSh.pdf')
 
+#-- Pårørende
 
+RegData <- NIRRegDataSQL(datoFra = '2019-01-01', datoTil = '2019-12-31') #, session = session) #datoFra = datoFra, datoTil = datoTil)
+PaarorData <- NIRpaarorDataSQL(datoFra = '2019-01-01') 
+PaarorDataH <- KobleMedHoved(RegData, PaarorData, alleHovedskjema=F, alleSkjema2=F)
+PaarorDataH <- NIRPreprosess(PaarorDataH)
 
+Totalskaarer <- c('SumScoreSatisfactionCare', 'SumScoreSatisfactionDecision', 'SumScoreAllQuestions')
+Del1 <- c('BehandlingHoeflighetRespektMedfoelelse', 'SymptomSmerte', 'SymptomPustebesvaer',
+          'SymptomUro', 'BehandlingBesvarerBehov', 'BehandlingBesvarerStoette',
+          'BehandlingSamarbeid', 'BehandlingBesvarerHoeflighetRespektMedfoelelse',
+          'SykepleierOmsorg', 'SykepleierKommunikasjon', 'LegeBehandling',
+          'AtmosfaerenIntensivAvd', 'AtmosfaerenPaaroerenderom', 'OmfangetAvBehandlingen')
+Del2 <- c('LegeInformasjonFrekvens', 'SvarPaaSpoersmaal', 'ForklaringForstaaelse',
+          'InformasjonsAerlighet', 'InformasjonOmForloep', 'InformasjonsOverensstemmelse',
+          'BeslutningsInvolvering', 'BeslutningsStoette', 'BeslutningsKontroll',
+          'BeslutningsTid', 'LivsLengde', 'LivssluttKomfor', 'LivssluttStoette')
+variable <- c(Del1, Del2)
+
+for (valgtVar in variable) {
+   outfile <- paste0('Paaror', valgtVar, '_Ford.pdf')
+   NIRFigPrePostPaaror(RegData=RegData, valgtVar=valgtVar, datoFra=datoFra1aar, datoTil=datoTil, 
+                 outfile=outfile)
+}
 
 #-------------------------------Tabeller--------------------------------
 #Belegg 
