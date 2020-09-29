@@ -145,12 +145,14 @@ Del2 <- c('LegeInformasjonFrekvens', 'SvarPaaSpoersmaal', 'ForklaringForstaaelse
           'InformasjonsAerlighet', 'InformasjonOmForloep', 'InformasjonsOverensstemmelse',
           'BeslutningsInvolvering', 'BeslutningsStoette', 'BeslutningsKontroll',
           'BeslutningsTid', 'LivsLengde', 'LivssluttKomfor', 'LivssluttStoette')
-variable <- c(Del1, Del2)
+variable <- c(Del1, Del2, Totalskaarer)
 
 for (valgtVar in variable) {
    outfile <- paste0('Paaror', valgtVar, '_Ford.pdf')
-   NIRFigPrePostPaaror(RegData=RegData, valgtVar=valgtVar, datoFra=datoFra1aar, datoTil=datoTil, 
-                 outfile=outfile)
+   # NIRFigPrePostPaaror(RegData=PaarorDataH, valgtVar=valgtVar, datoFra=datoFra1aar, datoTil=datoTil, 
+   #               outfile=outfile, preprosess = 0)
+   NIRFigAndeler(RegData=PaarorDataH, valgtVar=valgtVar, datoFra=datoFra1aar, datoTil=datoTil, 
+                       outfile=outfile, preprosess = 0)
 }
 
 #-------------------------------Tabeller--------------------------------

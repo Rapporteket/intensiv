@@ -116,7 +116,19 @@ NIRFigAndeler  <- function(RegData=0, valgtVar='alder', datoFra='2011-01-01', da
       
  #     "%i%" <- intersect
       #--------------- Definere variable ------------------------------
-   if (valgtVar %in% c('BehandlingHoeflighetRespektMedfoelelse')){
+   Totalskaarer <- c('SumScoreSatisfactionCare', 'SumScoreSatisfactionDecision', 'SumScoreAllQuestions')
+   Del1 <- c('BehandlingHoeflighetRespektMedfoelelse', 'SymptomSmerte', 'SymptomPustebesvaer',
+             'SymptomUro', 'BehandlingBesvarerBehov', 'BehandlingBesvarerStoette',
+             'BehandlingSamarbeid', 'BehandlingBesvarerHoeflighetRespektMedfoelelse',
+             'SykepleierOmsorg', 'SykepleierKommunikasjon', 'LegeBehandling',
+             'AtmosfaerenIntensivAvd', 'AtmosfaerenPaaroerenderom', 'OmfangetAvBehandlingen')
+   Del2 <- c('LegeInformasjonFrekvens', 'SvarPaaSpoersmaal', 'ForklaringForstaaelse',
+             'InformasjonsAerlighet', 'InformasjonOmForloep', 'InformasjonsOverensstemmelse',
+             'BeslutningsInvolvering', 'BeslutningsStoette', 'BeslutningsKontroll',
+             'BeslutningsTid', 'LivsLengde', 'LivssluttKomfor', 'LivssluttStoette')
+   PaarorVar <- c(Del1, Del2, Totalskaarer)
+   
+   if (valgtVar %in% PaarorVar){
       NIRVarSpes <- NIRVarTilretteleggPaaror(RegData=RegData, valgtVar=valgtVar, figurtype='andeler')
    } else {
       NIRVarSpes <- NIRVarTilrettelegg(RegData=RegData, valgtVar=valgtVar, figurtype='andeler')

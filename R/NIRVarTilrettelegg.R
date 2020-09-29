@@ -681,7 +681,17 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='an
 
 #---------------- PÅRØRENDESKJEMA----------------------------------
       
-    
+      Totalskaarer <- c('SumScoreSatisfactionCare', 'SumScoreSatisfactionDecision', 'SumScoreAllQuestions')
+      Del1 <- c('BehandlingHoeflighetRespektMedfoelelse', 'SymptomSmerte', 'SymptomPustebesvaer',
+                'SymptomUro', 'BehandlingBesvarerBehov', 'BehandlingBesvarerStoette',
+                'BehandlingSamarbeid', 'BehandlingBesvarerHoeflighetRespektMedfoelelse',
+                'SykepleierOmsorg', 'SykepleierKommunikasjon', 'LegeBehandling',
+                'AtmosfaerenIntensivAvd', 'AtmosfaerenPaaroerenderom', 'OmfangetAvBehandlingen')
+      Del2 <- c('LegeInformasjonFrekvens', 'SvarPaaSpoersmaal', 'ForklaringForstaaelse',
+                'InformasjonsAerlighet', 'InformasjonOmForloep', 'InformasjonsOverensstemmelse',
+                'BeslutningsInvolvering', 'BeslutningsStoette', 'BeslutningsKontroll',
+                'BeslutningsTid', 'LivsLengde', 'LivssluttKomfor', 'LivssluttStoette')
+      variable <- c(Del1, Del2, Totalskaarer)
       
       # if (valgtVar == 'BehandlingHoeflighetRespektMedfoelelse') { #andeler, 
       #   RegData <- RegData[which(RegData$respiratortid>0), ] # & (RegData$InnDato>=as.Date('2016-01-01', tz='UTC'))), ] 
