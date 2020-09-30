@@ -64,6 +64,12 @@ for (grType in 2:3) {
                             datoTil=datoTil, grType=grType, outfile=outfile)
       }
 }
+# #Organdonorer av døde: OrganDonationCompletedStatus
+# #Organdonorer, av alle med opphevet intrakran. sirk.': 'OrganDonationCompletedCirc',
+# NIRFigAndelerGrVar(RegData=RegData, valgtVar=valgtVar, datoFra=datoFra1aar, Ngrense=10,
+#                    datoTil=datoTil, grType=grType, outfile=outfile)
+
+
 #---------------------AndelTid----------------------------------------------
 
 variable <- c('dod30d', 'liggetidDod')
@@ -106,7 +112,6 @@ NIRFigGjsnTid(RegData=RegData, valgtVar='liggetid', datoFra=datoFra, datoTil=dat
 valgtMaal <- 'Med'
 #variable <- 'respiratortidNonInv'	#'SMR', alder, liggetid, respiratortid,  SAPSII, 'NEMS', 'Nas24'
 #Nye: respiratortidInvMoverf, respiratortidInvUoverf, respiratortidNonInv
-variable <- 'respiratortidInvUoverf'
 variable <- c('alder', 'liggetid', 'respiratortid','NEMS', 'NEMS24', 'Nas24', 
               'respiratortidInvMoverf', 'respiratortidNonInv', 'SAPSII',
               'respiratortidInvUoverf')
@@ -117,11 +122,13 @@ for (grType in 2:3) {
                          grType=grType, datoFra=datoFra1aar, datoTil=datoTil, outfile=outfile) 
       }
       NIRFigGjsnGrVar(RegData=RegData, valgtVar='SMR', grType=grType, 
-                      datoFra=datoFra1aar, datoTil=datoTil, outfile=paste0('SMR',grType, '_PrSh.pdf'))
+                      datoFra=datoFra1aar, datoTil=datoTil, outfile=paste0(valgtVar,grType, '_PrSh.pdf'))
       NIRFigGjsnGrVar(RegData=RegData, valgtVar='liggetid', valgtMaal=valgtMaal, dodInt=1, 
                       grType=grType, datoFra=datoFra1aar, datoTil=datoTil, 
                       outfile=paste0('liggetidDod',grType,'_MedPerSh.pdf'))
 }
+NIRFigGjsnGrVar(RegData=RegData, valgtVar='SMR', 
+                datoFra=datoFra1aar, datoTil=datoTil, outfile='SMR_PrSh.pdf')
 
 NIRFigGjsnGrVar(RegData=RegData, valgtVar='liggetid', valgtMaal=valgtMaal, dodInt=1, 
                 grType=3, datoFra=datoFra1aar, datoTil=datoTil, outfile='liggetidDod3_MedPerSh.pdf')

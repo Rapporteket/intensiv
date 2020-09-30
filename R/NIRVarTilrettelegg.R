@@ -487,6 +487,9 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='an
             RegData$Variabel <- RegData$SMR
             xAkseTxt <- 'Observert 30-dagers dødelighet / estimert dødelighet'
             sortAvtagende <- FALSE
+            KImaal <- 0.7  #Reinnleggelser <4% 
+            KImaaltxt <- '< 0.7'
+            
       }
       if (valgtVar == 'PIMdod') { #GjsnGrVar
         #Tar ut reinnlagte på intensiv og  de med SAPSII=0 (ikke scorede) 
