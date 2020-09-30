@@ -18,7 +18,7 @@ RegDataAarCSV <- NIRPreprosess(RegData)
 write.table(RegDataAarCSV, file = 'A:/Intensiv/NIRaarsrapp2019.csv', row.names = F, col.names=T, 
             fileEncoding = 'UTF-8', sep = ';')
 
-
+RegData <- NIRRegDataSQL()
 load("A:/Intensiv/NIRaarsrapp2019.Rdata")
 #PaarorDataH <- PaarorDataH2018
 #load('A:/Intensiv/PaarorRegData2018.RData')
@@ -123,12 +123,22 @@ for (grType in 2:3) {
                       outfile=paste0('liggetidDod',grType,'_MedPerSh.pdf'))
 }
 
-
-
 NIRFigGjsnGrVar(RegData=RegData, valgtVar='liggetid', valgtMaal=valgtMaal, dodInt=1, 
                 grType=3, datoFra=datoFra1aar, datoTil=datoTil, outfile='liggetidDod3_MedPerSh.pdf')
 
-#-- Pårørende
+# Figurar for gjennomsnittleg og median respiratortid for non-invasiv og invasiv respiratorstøtte med overførte pasientar. Figurer per sykehus
+NIRFigGjsnGrVar(RegData=RegData, valgtVar='respiratortidInvMoverf', valgtMaal='Med', 
+                datoFra=datoFra1aar, datoTil=datoTil, outfile='respiratortidInvMoverf_MedPrSh.pdf')
+NIRFigGjsnGrVar(RegData=RegData, valgtVar='respiratortidInvMoverf', valgtMaal='Gjsn', 
+                datoFra=datoFra1aar, datoTil=datoTil, outfile='respiratortidInvMoverf_GjsnPrSh.pdf')
+NIRFigGjsnGrVar(RegData=RegData, valgtVar='respiratortidNonInv', valgtMaal='Med', 
+                datoFra=datoFra1aar, datoTil=datoTil, outfile='respiratortidNonInv_MedPrSh.pdf')
+NIRFigGjsnGrVar(RegData=RegData, valgtVar='respiratortidNonInv', valgtMaal='Gjsn', 
+                datoFra=datoFra1aar, datoTil=datoTil, outfile='respiratortidNonInv_GjsnPrSh.pdf')
+
+                
+
+#-- Pårørende----------------------------------------------------------
 
 RegData <- NIRRegDataSQL(datoFra = '2019-01-01', datoTil = '2019-12-31') #, session = session) #datoFra = datoFra, datoTil = datoTil)
 PaarorData <- NIRpaarorDataSQL(datoFra = '2019-01-01') 
