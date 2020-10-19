@@ -113,7 +113,7 @@ WHERE cast(DateAdmittedIntensive as date) BETWEEN \'', datoFra, '\' AND \'', dat
   # query <- paste0('select * from MainFormDataContract
   # WHERE cast(DateAdmittedIntensive as date) BETWEEN \'', datoFra='2020-01-01', '\' AND \'', datoTil=Sys.Date(), '\'')
   
-  RegData <- rapbase::LoadRegData(registryName= "nir", query=query, dbType="mysql")
+  RegData <- rapbase::loadRegData(registryName= "nir", query=query, dbType="mysql")
   
   
   
