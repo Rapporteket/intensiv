@@ -245,8 +245,11 @@ valgteAar <- 2016:2019
 DataTilSKDE <- dataTilOffVisning(RegData = NIRData, valgtVar='reinn', aar=valgteAar,
                                  ResPort=0, indID = 'intensiv_innlegg_72t', filUt = 'intensiv_innlegg_72t')
 
+DataTilSKDE <- dataTilOffVisning(RegData = NIRData, valgtVar='respiratortidInvUoverf', aar=valgteAar,
+                                 ResPort=0, indID = 'intensiv_inv_vent', filUt = 'intensiv_inv_vent')
 
-intensiv_inv_vent
+
+
 
 
 
