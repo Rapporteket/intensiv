@@ -230,23 +230,23 @@ xtable(AndelMenn, digits=1, align=c('l', rep('r', ncol(AndelMenn))),
 
 #--------------------------------------Data til offentlig visning (SKDE, Resultatportalen)-------------------------------------
 
-library(rygg)
+library(intensiv)
 library(magrittr)
 NIRData <- NIRPreprosess(RegData = NIRRegDataSQL(datoFra = '2016-01-01'))
 
-valgteAar <- 2011:2020
+valgteAar <- 2016:2019
 
 # indikatorID <- c('intensiv1', 'intensiv2')
 # kvalIndParam <- c('reinn', 'respiratortidInvMoverf')
 
 
 # DataTilRes <- dataTilOffVisning(RegData = NIRData, valgtVar='reinn', #aar=valgteAar,
-#                                 ResPort=1, indID = 'intensiv1', filUt = 'reinnleggelse')
-DataTilSKDE <- dataTilOffVisning(RegData = NIRData, valgtVar='reinn', #aar=valgteAar,
-                                 ResPort=0, indID = 'int_reinnleggelse', filUt = 'reinnleggelse')
+#                                 ResPort=1, indID = 'intensiv1', filUt = 'intensiv_innlegg_72t')
+DataTilSKDE <- dataTilOffVisning(RegData = NIRData, valgtVar='reinn', aar=valgteAar,
+                                 ResPort=0, indID = 'intensiv_innlegg_72t', filUt = 'intensiv_innlegg_72t')
 
 
-
+intensiv_inv_vent
 
 
 

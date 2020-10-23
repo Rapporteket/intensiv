@@ -245,7 +245,7 @@ abonnement <- function(rnwFil, brukernavn='tullebukk', reshID=0,
 #' @param valgtVar - beinsmLavPre, peropKompDura, sympVarighUtstr, p.t. 10 kvalitetsind.
 #' @param indID indikator-id, eks. 'ind1', 'ind2', osv.
 #' @param ResPort 1-hvis data til resultatportalen (standard), 0-data til SKDE-viser
-#' @inheritParams RyggUtvalgEnh
+#' @inheritParams NIRUtvalgEnh
 #' @return Datafil til Resultatportalen
 #' @export
 
@@ -257,15 +257,16 @@ dataTilOffVisning <- function(RegData = RegData, valgtVar, datoFra='2016-01-01',
   #                     reinn = 'andelGrVar',
   #                     respiratortidInvMoverf = 'gjsnGrVar')
   
-  # resultatVariabler <- c('Aar', "ShNavn", "ReshId", "Variabel") #'KvalIndId', 
+  resultatVariabler <- c('Aar', "ShNavn", "ReshId", "Variabel") #'KvalIndId', 
   
   filUt <- paste0('Intensiv', ifelse(filUt=='dummy',  valgtVar, filUt), c('_SKDE', '_ResPort')[ResPort+1],'.csv')
-  DataVarSpes <- RyggVarTilrettelegg(RegData=RegData, valgtVar=valgtVar, figurtype = 'andelGrVar')
-  RegData <- NIRVarTilrettelegg(RegData=DataVarSpes, valgtVar=valgtVar, 
-                                figurtype=figurtype)$RegData[ , resultatVariabler]
+  DataVarSpes <- NIRVarTilrettelegg(RegData=RegData, valgtVar=valgtVar, figurtype = 'andelGrVar')$RegData
+  RegDataUt <- NIRUtvalgEnh(RegData=DataVarSpes, aar = aar)$RegData[ , resultatVariabler]
   
   # IntensivKvalInd <- data.frame(NULL) #Aar=NULL, ShNavn=NULL)
   # 
+  # indikatorID <- c('intensiv1', 'intensiv2')
+  # kvalIndParam <- c('reinn', 'respiratortidInvMoverf')
   # indikatorID <- c('intensiv1', 'intensiv2')
   # kvalIndParam <- c('reinn', 'respiratortidInvMoverf')
     
@@ -273,7 +274,7 @@ dataTilOffVisning <- function(RegData = RegData, valgtVar, datoFra='2016-01-01',
     if (ResPort == 1){
     #Variabler: Aar	ReshId	Teller Ind1	Nevner Ind1	  AarID	   Indikator
     #          2014	103469	  0	          1	       2014103469	  ind1
-    RegDataUt <- RegData[,c('Aar', "ReshId", "ShNavn", "Variabel")]
+    #RegDataUt <- RegData[,c('Aar', "ReshId", "ShNavn", "Variabel")]
     RegDataUt<- dplyr::rename(RegDataUt, Teller = Variabel)
     RegDataUt$AarID <- paste0(RegDataUt$Aar, RegDataUt$ReshId)
     RegDataUt$Indikator <- indID
@@ -282,7 +283,7 @@ dataTilOffVisning <- function(RegData = RegData, valgtVar, datoFra='2016-01-01',
   
   if (ResPort == 0){
     #Variabler: year, orgnr, var, denominator, ind_id
-    RegDataUt <- RegData #[,c('Aar', "ReshId", "Variabel")]
+    #RegDataUt <- RegData #[,c('Aar', "ReshId", "Variabel")]
     RegDataUt$ind_id <- indID
     RegDataUt$denominator <- 1
     # nytt navn = gammelt navn
@@ -337,6 +338,7 @@ dataTilOffVisning <- function(RegData = RegData, valgtVar, datoFra='2016-01-01',
   '103149'='974795477',        #          Sandnessjøen
   '102026'='974633191',         #                Skien
   '4201313'='974749025',          #   St. Olav Hovedint
+  '106572'='974749025',   # St. Olav Med int
   '114282'='974703300',         #            Stavanger
   '700720'='974795787',      #Tromsø Intensivmedisinsk
   '700619'='974795787',     #         Tromsø Kir. int.
@@ -357,11 +359,11 @@ dataTilOffVisning <- function(RegData = RegData, valgtVar, datoFra='2016-01-01',
   
   RegDataUt$orgnr <- as.character(nyID[as.character(RegDataUt$ReshId)])
   RegDataUt <- RegDataUt[ ,c('year', 'orgnr', 'var', 'denominator', 'ind_id')]
+  #unique(RegDataUt[ ,c("orgnr", 'ReshId', "ShNavn")])
 }
 
-#write.table(RegDataUt, file = filUt, sep = ';', row.names = F) #, fileEncoding = 'UTF-8')
+write.table(RegDataUt, file = filUt, sep = ';', row.names = F) #, fileEncoding = 'UTF-8')
 return(invisible(RegDataUt)) # return(IntensivKvalInd)
-
-  
 }
+  
   
