@@ -241,15 +241,17 @@ valgteAar <- 2016:2019
 
 
 # DataTilRes <- dataTilOffVisning(RegData = NIRData, valgtVar='reinn', #aar=valgteAar,
-#                                 ResPort=1, indID = 'intensiv1', filUt = 'intensiv_innlegg_72t')
+#                                  ResPort=1, indID = 'intensiv1', filUt = 'intensiv_innlegg_72t')
+DataTilRes <- dataTilOffVisning(RegData = NIRData, valgtVar='respiratortidInvUoverf', #aar=valgteAar,
+                                ResPort=1, indID = 'intensiv2', filUt = 'inv_vent_Uoverf')
+
 DataTilSKDE <- dataTilOffVisning(RegData = NIRData, valgtVar='reinn', aar=valgteAar,
-                                 ResPort=0, indID = 'intensiv_innlegg_72t', filUt = 'intensiv_innlegg_72t')
+                                 ResPort=0, indID = 'intensiv_innlegg_72t', filUt = 'innlegg_72t')
 
-DataTilSKDE <- dataTilOffVisning(RegData = NIRData, valgtVar='respiratortidInvUoverf', aar=valgteAar,
-                                 ResPort=0, indID = 'intensiv_inv_vent', filUt = 'intensiv_inv_vent')
+DataTilSKDE <- dataTilOffVisning(RegData = NIRData, valgtVar='respiratortidInvUoverf', aar=valgteAar, #'respiratortidInvMoverf'
+                                 ResPort=0, indID = 'intensiv_inv_vent', filUt = 'inv_vent')
 
-
-
+tapply(DataTilSKDE$var, INDEX = DataTilSKDE$year, FUN = mean)
 
 
 

@@ -259,7 +259,7 @@ dataTilOffVisning <- function(RegData = RegData, valgtVar, datoFra='2016-01-01',
   
   resultatVariabler <- c('Aar', "ShNavn", "ReshId", "Variabel") #'KvalIndId', 
   
-  filUt <- paste0('Intensiv', ifelse(filUt=='dummy',  valgtVar, filUt), c('_SKDE', '_ResPort')[ResPort+1],'.csv')
+  filUt <- paste0('Intensiv_', ifelse(filUt=='dummy',  valgtVar, filUt), c('_SKDE', '_ResPort')[ResPort+1],'.csv')
   DataVarSpes <- NIRVarTilrettelegg(RegData=RegData, valgtVar=valgtVar, figurtype = 'andelGrVar')$RegData
   RegDataUt <- NIRUtvalgEnh(RegData=DataVarSpes, aar = aar)$RegData[ , resultatVariabler]
   
