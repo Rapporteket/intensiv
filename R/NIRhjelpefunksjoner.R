@@ -241,54 +241,57 @@ abonnement <- function(rnwFil, brukernavn='tullebukk', reshID=0,
 }
 
 
-#' Funksjon for å tilrettelegge kvalitetsindikatordata. Data skal  
-#' være på forma 0-1 for "andelsvariabler". For indikatorer som baserers på gjennomsnitt/median,
-#' må faktiske observasjoner benyttes. 
-#'
-#' @param RegData dataramme
-#' @param datoFra startdato
-#' @param datoTil sluttdato
-#'
-#' @return
+#' @param filUt tilnavn for utdatatabell (fjern?)
+#' @param valgtVar - beinsmLavPre, peropKompDura, sympVarighUtstr, p.t. 10 kvalitetsind.
+#' @param indID indikator-id, eks. 'ind1', 'ind2', osv.
+#' @param ResPort 1-hvis data til resultatportalen (standard), 0-data til SKDE-viser
+#' @inheritParams RyggUtvalgEnh
+#' @return Datafil til Resultatportalen
 #' @export
-tilretteleggKvalIndData <- function(RegData, 
-                                    datoFra='2016-01-01', datoTil=Sys.Date()){
-  # datoFra='2018-01-01'
-  # datoTil=Sys.Date()
-  # RegData <- NIRRegDataSQL(datoFra = datoFra, datoTil = datoTil)
-  # RegData <- NIRPreprosess(RegData=RegData)
-  # data <- tilretteleggKvalIndData (RegData, datoFra='2016-01-01', datoTil=Sys.Date())
+
+dataTilOffVisning <- function(RegData = RegData, valgtVar, datoFra='2016-01-01', datoTil=Sys.Date(), 
+                              aar=0, 
+                              indID = 'indDummy', ResPort=1, filUt='dummy'){
   
-  resultatVariabler <- c('Aar', "ShNavn", "ReshId", "Variabel") #'KvalIndId', 
-  IntensivKvalInd <- data.frame(NULL) #Aar=NULL, ShNavn=NULL)
+  # figurtype <- switch(valgtVar,
+  #                     reinn = 'andelGrVar',
+  #                     respiratortidInvMoverf = 'gjsnGrVar')
   
-  kvalIndParam <- c('reinn', 'respiratortidInvMoverf')
-  indikatorID <- c('intensiv1', 'intensiv2')
-  valgtVar <- 'respiratortidInvMoverf'
+  # resultatVariabler <- c('Aar', "ShNavn", "ReshId", "Variabel") #'KvalIndId', 
   
-  for (valgtVar in kvalIndParam){
+  filUt <- paste0('Intensiv', ifelse(filUt=='dummy',  valgtVar, filUt), c('_SKDE', '_ResPort')[ResPort+1],'.csv')
+  DataVarSpes <- RyggVarTilrettelegg(RegData=RegData, valgtVar=valgtVar, figurtype = 'andelGrVar')
+  RegData <- NIRVarTilrettelegg(RegData=DataVarSpes, valgtVar=valgtVar, 
+                                figurtype=figurtype)$RegData[ , resultatVariabler]
+  
+  # IntensivKvalInd <- data.frame(NULL) #Aar=NULL, ShNavn=NULL)
+  # 
+  # indikatorID <- c('intensiv1', 'intensiv2')
+  # kvalIndParam <- c('reinn', 'respiratortidInvMoverf')
     
-    figurtype <- switch(valgtVar,
-                           reinn = 'andelGrVar',
-                        respiratortidInvMoverf = 'gjsnGrVar')
-                        
     
-    Data <- NIRVarTilrettelegg(RegData=RegData, valgtVar=valgtVar, 
-                               figurtype=figurtype)$RegData[ , resultatVariabler]
-    #Data <- NIRUtvalgEnh(RegData = Data, datoFra = datoFra, datoTil = datoTil)$RegData
-    #NIRKvalInd1 <- Data
-    Data$kvalIndID <- indikatorID[which(kvalIndParam == valgtVar)]
-    
-    IntensivKvalInd <- rbind(IntensivKvalInd, Data)
+    if (ResPort == 1){
+    #Variabler: Aar	ReshId	Teller Ind1	Nevner Ind1	  AarID	   Indikator
+    #          2014	103469	  0	          1	       2014103469	  ind1
+    RegDataUt <- RegData[,c('Aar', "ReshId", "ShNavn", "Variabel")]
+    RegDataUt<- dplyr::rename(RegDataUt, Teller = Variabel)
+    RegDataUt$AarID <- paste0(RegDataUt$Aar, RegDataUt$ReshId)
+    RegDataUt$Indikator <- indID
+    RegDataUt$Nevner <- 1
   }
   
-  
-  
-  
-  #Mappe om fra resh til organisasjonsnummer
-  ShOversikt <- unique(RegData[ ,c('ReshId', 'ShNavn')], row.names=F)[order(unique(RegData$ShNavn)), ]
-
-#  ReshId - orgID, resh per 2020-02-19                
+  if (ResPort == 0){
+    #Variabler: year, orgnr, var, denominator, ind_id
+    RegDataUt <- RegData #[,c('Aar', "ReshId", "Variabel")]
+    RegDataUt$ind_id <- indID
+    RegDataUt$denominator <- 1
+    # nytt navn = gammelt navn
+    RegDataUt <- dplyr::rename(RegDataUt,
+                               year = Aar,
+                               var = Variabel)
+    
+    #Legge på orgID ("Sykehusviser")
+    #ReshId	orgnr	RapporteketNavn	SKDEnavn
   nyID <- c('102090'='974588951',               #AHUS - Intensiv
   '4205696'='974588951',        #         AHUS - Postop
   '111487'='974588951',         #                 Aker
@@ -352,8 +355,13 @@ tilretteleggKvalIndData <- function(RegData,
   '108308'='974747138',     #              Ålesund Kir
   '102673'='974747138')     #              Ålesund Med
   
-  IntensivKvalInd$SykehusOrgNr <- as.character(nyID[as.character(IntensivKvalInd$ReshId)])
-  return(IntensivKvalInd)
+  RegDataUt$orgnr <- as.character(nyID[as.character(RegDataUt$ReshId)])
+  RegDataUt <- RegDataUt[ ,c('year', 'orgnr', 'var', 'denominator', 'ind_id')]
+}
+
+#write.table(RegDataUt, file = filUt, sep = ';', row.names = F) #, fileEncoding = 'UTF-8')
+return(invisible(RegDataUt)) # return(IntensivKvalInd)
+
   
 }
   

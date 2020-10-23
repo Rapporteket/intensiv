@@ -227,16 +227,24 @@ xtable(AndelMenn, digits=1, align=c('l', rep('r', ncol(AndelMenn))),
        caption='Andel (prosent) av oppholdene som er menn.', label='tab:KjonnAar')
 
 
-#--------------------------------------OFFENTLIGGJØRING, 2016-------------------------------------
+
+#--------------------------------------Data til offentlig visning (SKDE, Resultatportalen)-------------------------------------
+
+library(rygg)
+library(magrittr)
+NIRData <- NIRPreprosess(RegData = NIRRegDataSQL(datoFra = '2016-01-01'))
+
+valgteAar <- 2011:2020
+
+# indikatorID <- c('intensiv1', 'intensiv2')
+# kvalIndParam <- c('reinn', 'respiratortidInvMoverf')
 
 
-NIRFigGjsnGrVar(RegData=RegData, valgtVar='respiratortidInvMoverf', datoFra=datoFra1aar, 
-                datoTil=datoTil, grType=1, outfile='Respiratortid_loksent.pdf')
-NIRFigGjsnGrVar(RegData=RegData, valgtVar='respiratortidInvMoverf', datoFra=datoFra1aar, valgtMaal = 'Gjsn',
-                datoTil=datoTil, grType=3, outfile='test.png') #Respiratortid_region_Fig2bNy.pdf')
+# DataTilRes <- dataTilOffVisning(RegData = NIRData, valgtVar='reinn', #aar=valgteAar,
+#                                 ResPort=1, indID = 'intensiv1', filUt = 'reinnleggelse')
+DataTilSKDE <- dataTilOffVisning(RegData = NIRData, valgtVar='reinn', #aar=valgteAar,
+                                 ResPort=0, indID = 'int_reinnleggelse', filUt = 'reinnleggelse')
 
-NIRFigAndelerGrVar(RegData=RegData, valgtVar='reinn', datoFra=datoFra1aar, 
-                   datoTil=datoTil, grType=1, outfile='Reinnlegging_loksent.pdf')
 
 
 
