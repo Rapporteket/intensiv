@@ -359,7 +359,7 @@ dataTilOffVisning <- function(RegData = RegData, valgtVar, datoFra='2016-01-01',
   
   RegDataUt$orgnr <- as.character(nyID[as.character(RegDataUt$ReshId)])
   RegDataUt <- RegDataUt[ ,c('year', 'orgnr', 'var', 'denominator', 'ind_id')]
-  #unique(RegDataUt[ ,c("orgnr", 'ReshId', "ShNavn")])
+  #ShResh <- unique(RegDataUt[ ,c("orgnr", 'ReshId', "ShNavn")])
 }
 
 write.table(RegDataUt, file = filUt, sep = ';', row.names = F) #, fileEncoding = 'UTF-8')
