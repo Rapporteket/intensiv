@@ -240,8 +240,8 @@ valgteAar <- 2016:2019
 # kvalIndParam <- c('reinn', 'respiratortidInvMoverf')
 alleSh
 
-# DataTilRes <- dataTilOffVisning(RegData = NIRData, valgtVar='reinn', #aar=valgteAar,
-#                                  ResPort=1, indID = 'intensiv1', filUt = 'intensiv_innlegg_72t')
+DataTilRes <- dataTilOffVisning(RegData = NIRData, valgtVar='reinn', #aar=valgteAar,
+                                 ResPort=1, indID = 'intensiv1', filUt = 'innlegg_72t')
 
 DataTilSKDE <- dataTilOffVisning(RegData = NIRData, valgtVar='reinn', aar=valgteAar,
                                  ResPort=0, indID = 'intensiv_innlegg_72t', filUt = 'innlegg_72t')
