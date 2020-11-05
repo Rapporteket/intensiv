@@ -37,7 +37,7 @@ if (paaServer) {
   PaarorDataH <- KobleMedHoved(RegData, PaarorData, alleHovedskjema=F, alleSkjema2=F)
   qInfluensa <- 'SELECT ShNavn, RHF, PatientInRegistryGuid, FormDate,FormStatus, ICD10_1
                   from InfluensaFormDataContract'
-  InfluData <- rapbase::LoadRegData(registryName= "nir", query=qInfluensa, dbType="mysql")
+  InfluData <- rapbase::loadRegData(registryName= "nir", query=qInfluensa, dbType="mysql")
   
   #repLogger(session = session, 'Hentet alle data fra intensivregisteret')
 } #hente data på server

@@ -51,6 +51,7 @@ NIRUtvalgEnh <- function(RegData, datoFra=0, datoTil=0, minald=0, maxald=110, er
       #trengs ikke data for hele landet:
       reshID <- as.numeric(reshID)
       indEgen1 <- match(reshID, RegData$ReshId)
+      enhetsUtvalg <- ifelse(reshID==0 | is.na(indEgen1), 0, enhetsUtvalg )
       grTypeEgen <- RegData$ShType[indEgen1]
       if (enhetsUtvalg %in% c(2,3,4,6,7)) {	
             RegData <- switch(as.character(enhetsUtvalg),
