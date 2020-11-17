@@ -916,7 +916,8 @@ server <- function(input, output, session) { #
       )
       
       observe({  
-        #print(input$hovedark)
+        # print(input$valgtVar)
+        # print(sort(names(RegData)))
         #print(input$ark)
         
             UtDataFord <- NIRFigAndeler(RegData=RegData, preprosess = 0, valgtVar=input$valgtVar,

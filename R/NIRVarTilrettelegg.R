@@ -695,7 +695,7 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='an
                 'InformasjonsAerlighet', 'InformasjonOmForloep', 'InformasjonsOverensstemmelse',
                 'BeslutningsInvolvering', 'BeslutningsStoette', 'BeslutningsKontroll',
                 'BeslutningsTid', 'LivsLengde', 'LivssluttKomfor', 'LivssluttStoette')
-      variable <- c(Del1, Del2, Totalskaarer)
+      #variable <- c(Del1, Del2, Totalskaarer)
       
       # if (valgtVar == 'BehandlingHoeflighetRespektMedfoelelse') { #andeler, 
       #   RegData <- RegData[which(RegData$respiratortid>0), ] # & (RegData$InnDato>=as.Date('2016-01-01', tz='UTC'))), ] 

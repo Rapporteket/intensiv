@@ -248,16 +248,17 @@ NIRFigInnMaate (RegData=RegData, valgtVar='InnMaate', minald=0, maxald=130, dato
 #I tillegg kanskje vi skal vise utvikling over tid for valgt sykehus og sykehustype?
 
 
-#--------------------------------------- Andeler ----------------------------------
+#--------------------------------------- Fordelinger ----------------------------------
 valgtVar <- 'inklKrit'	#'alder', 'liggetid', 'respiratortid',  'SAPSII', 'NEMS24', 'Nas24', 'InnMaate'
                               #Nye: PrimaryReasonAdmitted, inklKrit, respiratortidNonInv, respiratortidInv
                               #nyreBeh, nyreBehTid, ExtendedHemodynamicMonitoring, isolering, isoleringDogn, 
                               #spesTiltak
                               #Nye, aug-18: CerebralCirculationAbolishedReasonForNo, OrganDonationCompletedReasonForNoStatus
                               #Nye: 'utenforVakttidInn'
-Utdata <- NIRFigAndeler(RegData=RegData, valgtVar='CerebralCirculationAbolishedReasonForNo', datoFra=datoFra, datoTil=datoTil,
+RegData <- NIRPreprosess(NIRRegDataSQL())
+Utdata <- NIRFigAndeler(RegData=RegData, preprosess = 0, valgtVar='inklKrit', #datoFra=datoFra, datoTil=datoTil,
               #minald=minald, maxald=maxald,   InnMaate=InnMaate, dodInt=dodInt,erMann=erMann, 
-              outfile='', reshID=109773, enhetsUtvalg=6, lagFig=1)
+              outfile='', reshID=109773, enhetsUtvalg=0, lagFig=1)
 
 outfile <- '' #paste0(valgtVar,'_Ford', '.png')
 NIRFigAndeler(RegData=RegData, valgtVar=valgtVar, minald=minald, maxald=maxald,  datoFra=datoFra, 
