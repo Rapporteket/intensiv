@@ -41,13 +41,12 @@ datoFraMnd <- format(datoTil, "%Y-%m-01")
 
 tidsenhet <- 'Mnd'
 preprosess <- 0
-hentData <- 0
 
 if (!exists('RegData')){
       RegData <- NIRRegDataSQL(datoFra = datoFra1Aar, datoTil = datoTil)
 	  #RegData er data fra siste år.
 }
-RegDataRaa <- RegData #For å kunne "tilbakestille" RegData
+#RegDataRaa <- RegData #For å kunne "tilbakestille" RegData
 
 RegData <- NIRPreprosess(RegData=RegData)
 RegData <- NIRUtvalgEnh(RegData=RegData, datoFra=datoFra1Aar)$RegData
