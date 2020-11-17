@@ -40,10 +40,12 @@ NIRPreprosess <- function(RegData=RegData, skjema=1)	#, reshID=reshID)
       if (skjema==1){
         names(RegData)[which(names(RegData) == 'PatientAge')] <- 'Alder'
         RegData$SapsSum <- with(RegData, Glasgow+Age+SystolicBloodPressure+HeartRate+Temperature+MvOrCpap+UrineOutput+
-              SerumUreaOrBun+Leukocytes+Potassium+Sodium+Hco3+Bilirubin+TypeOfAdmission)}
-      RegData$SapsSum[RegData$Alder<16] <- 0
-      RegData$Saps2Score[RegData$Alder<16] <- 0
-      RegData$Saps2ScoreNumber[RegData$Alder<16] - 0
+              SerumUreaOrBun+Leukocytes+Potassium+Sodium+Hco3+Bilirubin+TypeOfAdmission)
+      }
+      # RegData$SapsSum[RegData$Alder<16] <- 0
+      # RegData$Saps2Score[RegData$Alder<16] <- 0
+      # RegData$Saps2ScoreNumber[RegData$Alder<16] - 0
+      RegData[which(RegData$Alder<16), c('SapsSum', 'Saps2Score', 'Saps2ScoreNumber')] <- 0
       names(RegData)[which(names(RegData) == 'Saps2Score')] <- 'SMR' #Saps2Score er SAPS estimert mortalitet
       names(RegData)[which(names(RegData) == 'Saps2ScoreNumber')] <- 'SAPSII'
       names(RegData)[which(names(RegData) == 'DaysAdmittedIntensiv')] <- 'liggetid'
@@ -98,20 +100,30 @@ NIRPreprosess <- function(RegData=RegData, skjema=1)	#, reshID=reshID)
       RegData$Dod365[which(difftime(as.Date(RegData$Morsdato, format="%Y-%m-%d %H:%M:%S"), 
                                    as.Date(RegData$InnDato), units='days')< 365)] <- 1
       
-      #Konvertere boolske variable fra tekst til boolske variable...
-      TilLogiskeVar <- function(Skjema){
-            verdiGML <- c('True','False')
-            verdiNY <- c(TRUE,FALSE)
-            mapping <- data.frame(verdiGML,verdiNY)
-            LogVar <- names(Skjema)[which(Skjema[1,] %in% verdiGML)]
-            if (length(LogVar)>0) {
-                  for (k in 1:length(LogVar)) {
-                        Skjema[,LogVar[k]] <- mapping$verdiNY[match(Skjema[,LogVar[k]], mapping$verdiGML)]
-                  }}
-            return(Skjema)
-      }
       
-      RegData <- TilLogiskeVar(RegData)
+      #Konvertere boolske variable fra tekst til boolske variable...
+      # TilLogiskeVar <- function(Skjema){
+      #       verdiGML <- c('True','False')
+      #       verdiNY <- c(TRUE,FALSE)
+      #       mapping <- data.frame(verdiGML,verdiNY)
+      #       LogVar <- names(Skjema)[which(Skjema[1,] %in% verdiGML)]
+      #       if (length(LogVar)>0) {
+      #             for (k in 1:length(LogVar)) {
+      #                   Skjema[,LogVar[k]] <- mapping$verdiNY[match(Skjema[,LogVar[k]], mapping$verdiGML)]
+      #             }}
+      #       return(Skjema)
+      # }
+      # 
+      # RegData <- TilLogiskeVar(RegData)
+      
+      LogVarSjekk <- names(RegData)[unique(which(RegData[1,] %in% c('True','False')), which(RegData[15,] %in% c('True','False')))]
+      LogVar <- unique(c(LogVarSjekk,
+                         "Eeg", "EcmoEcla", "Hyperbar", "Iabp", "Icp", "Impella", "Intermitterende", 
+                         "Kontinuerlig", "Leverdialyse", "No", "Oscillator", "Sofa", "TerapetiskHypotermi"))
+      
+      RegData[, intersect(names(RegData), LogVar)] <-
+        apply(RegData[, intersect(names(RegData), LogVar)], 2, as.logical)
+      
       
       
       return(invisible(RegData))

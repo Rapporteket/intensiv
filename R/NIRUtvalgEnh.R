@@ -14,14 +14,46 @@
 #'    	}							
 #'    				
 #' @inheritParams NIRFigAndeler
+#' @param valgtVar Hvilken variabel som skal visualiseres. Se \strong{Details} for oversikt.
+#' @param datoFra Tidligste dato i utvalget (vises alltid i figuren). Standard 2019-01-01. 
+#' Registeret inneholder registreringer f.o.m. 2011
+#' @param datoTil Seneste dato i utvalget (vises alltid i figuren).
+#' @param erMann Kjønn, standard: alt annet enn 0/1 gir begge kjønn
+#'          0: Kvinner
+#'          1: Menn
+#' @param minald Alder, fra og med (Standardverdi: 0)
+#' @param maxald Alder, til og med (Standardverdi: 110)
+#' @param outfile Navn på fil figuren skrives til. Standard: '' (Figur skrives
+#'    til systemets standard utdataenhet (som regel skjerm))
+#' @param InnMaate 
+#'				0: Elektivt, 
+#'				6: Akutt medisinsk, 
+#'				8: Akutt kirurgisk, 
+#'				standard: alle (alt unntatt 0,6,8 / ikke spesifisert)
+#' @param dodInt Levende/død ut fra intensiv. 
+#'				0: i live, 
+#'				1: død,   
+#'				alle: standard (alle andre verdier)
+#' @param overfPas Overført under pågående intensivbehandling? 
+#'				1 = Pasienten er ikke overført
+#'				2 = Pasienten er overført
+#'	@param velgDiag Velge diagnose. 0-alle, 1-Bekreftede Covid-pasienter
+#' @param grType Gjør gruppeutvalg på sykehustype
+#'                      1: lokal-/sentralsykehus
+#'                      2: lokal-/sentralsykehus
+#'                      3: regionsykehus
+#'                      99: alle (standard)
+#' @param reshID Parameter følger fra innlogging helseregister.no og angir
+#'    hvilken enhet i spesialisthelsetjenesten brukeren tilhører
+#' @param enhetsUtvalg Gjør gruppeutvalg med eller uten sammenlikning. Se \strong{Details} for oversikt.
 #' @param fargepalett Hvilken fargepalett skal brukes i figurer (Standard: BlaaRapp)
 #'
 #' @return UtData En liste bestående av det filtrerte datasettet, utvalgstekst for figur og tekststreng som angir fargepalett
 #'
 #' @export
 
-NIRUtvalgEnh <- function(RegData, datoFra=0, datoTil=0, minald=0, maxald=110, erMann='', InnMaate='', 
-                         aar=0, grType=99, enhetsUtvalg=0, dodInt='', reshID=0, velgAvd=0, 
+NIRUtvalgEnh <- function(RegData, datoFra='2011-01-01', datoTil=Sys.Date(), minald=0, maxald=110, erMann='', InnMaate='', 
+                         aar=0, grType=99, enhetsUtvalg=0, dodInt='', reshID=0, velgAvd=0, velgDiag=0,
                          fargepalett='BlaaOff')    
       # overfPas=99,
 {
@@ -88,9 +120,10 @@ NIRUtvalgEnh <- function(RegData, datoFra=0, datoTil=0, minald=0, maxald=110, er
       } else {1:Ninn}
       indDod <- if (dodInt %in% 0:1) {which(as.numeric(RegData$DischargedIntensiveStatus)==dodInt)
       } else {1:Ninn}
+      indDiag <- if (velgDiag ==1) {which(RegData$Bekreftet==1)} else {1:Ninn}
       
       
-      indMed <- indDatoFra %i% indDatoTil %i% indAld %i% indKj %i% indInnMaate %i% indDod #%i% indGrType
+      indMed <- indDatoFra %i% indDatoTil %i% indAld %i% indKj %i% indInnMaate %i% indDod %i% indDiag #%i% indGrType
       
       RegData <- RegData[indMed,]
       
@@ -112,6 +145,7 @@ NIRUtvalgEnh <- function(RegData, datoFra=0, datoTil=0, minald=0, maxald=110, er
             # paste0('Pasienter fra ', if (N>0) {sprintf('%.1f',min(RegData$Alder, na.rm=T))} else {minald}, 
             #              ' til ', if (N>0) {sprintf('%.1f',max(RegData$Alder, na.rm=T))} else {maxald}, ' år')},
             if (erMann %in% 0:1) {paste0('Kjønn: ', c('Kvinner', 'Menn')[erMann+1])},
+            if (velgDiag == 1) {paste0('Diagnose: Bekreftet Covid-19')},
             if (InnMaate %in% c(0,6,8)) {paste('Innmåte: ', 
                                                c('Elektivt',0,0,0,0,0, 'Akutt medisinsk',0, 'Akutt kirurgi')[InnMaate+1], sep='')},
             if (grType %in% 1:3) {paste0('Sykehustype: ', grTypetextstreng[grType])},

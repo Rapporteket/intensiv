@@ -36,7 +36,7 @@
 NIRFigGjsnGrVar <- function(RegData, valgtVar, preprosess=1, hentData=0, valgtMaal='Gjsn', 
                   minald=0, maxald=110, datoFra='2011-01-01', datoTil='3000-01-01', aar=0,
                   grType=99, InnMaate=99, dodInt='', erMann='', grVar='ShNavn', medKI=1, 
-                  lagFig=1, outfile='',...) {
+                  velgDiag=0, lagFig=1, outfile='',...) {
       
   if ("session" %in% names(list(...))) {
     raplog::repLogger(session = list(...)[["session"]], msg = paste0("AndelGrVar: ", valgtVar))
@@ -60,7 +60,7 @@ RegData <- NIRVarSpes$RegData
 minald <- max(NIRVarSpes$minald, minald)
 maxald <- min(NIRVarSpes$maxald, maxald)
 NIRUtvalg <- NIRUtvalgEnh(RegData=RegData, datoFra=datoFra, datoTil=datoTil, aar=aar, minald=minald, maxald=maxald, 
-                          erMann=erMann, InnMaate=InnMaate, dodInt=dodInt, grType=grType) #overfPas=overfPas, 
+                          erMann=erMann, InnMaate=InnMaate, dodInt=dodInt, grType=grType, velgDiag=velgDiag) #overfPas=overfPas, 
 RegData <- NIRUtvalg$RegData
 utvalgTxt <- NIRUtvalg$utvalgTxt
 

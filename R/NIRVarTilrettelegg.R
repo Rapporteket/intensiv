@@ -168,7 +168,8 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='an
       
       if (valgtVar=='isolering') { #Andeler, andelerGrVar
             #-1 = Velg verdi, 1 = Ingen, 2 = Kontaktsmitte, 3 = Luftsmitte
-            tittel <- 'Andel av opphold med registrert isolasjon av pasient'   
+            tittel <- 'Andel av opphold med registrert isolasjon av pasient'
+            retn <- 'H'
          if (figurtype=='andeler') {
                   gr <- c(-1,1:5)
                   RegData <- RegData[ which((RegData$Isolation %in% gr)), ]             

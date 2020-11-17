@@ -52,42 +52,12 @@
 #'                 andelPP (andel før og etter), 
 #'                 gjsnGrVar (sentralmål i hver kategori av grupperingsvariabel, eks. sykehus),
 #'                 gjsnTid (sentralmål per tidsenhet, eks. år, måned)
-#' @param valgtVar Hvilken variabel som skal visualiseres. Se \strong{Details} for oversikt.
-#' @param datoFra Tidligste dato i utvalget (vises alltid i figuren).
-#' @param datoTil Seneste dato i utvalget (vises alltid i figuren).
-#' @param erMann Kjønn, standard: alt annet enn 0/1 gir begge kjønn
-#'          0: Kvinner
-#'          1: Menn
-#' @param minald Alder, fra og med (Standardverdi: 0)
-#' @param maxald Alder, til og med (Standardverdi: 110)
-#' @param outfile Navn på fil figuren skrives til. Standard: '' (Figur skrives
-#'    til systemets standard utdataenhet (som regel skjerm))
-#' @param reshID Parameter følger fra innlogging helseregister.no og angir
-#'    hvilken enhet i spesialisthelsetjenesten brukeren tilhører
-#' @param enhetsUtvalg Gjør gruppeutvalg med eller uten sammenlikning. Se \strong{Details} for oversikt.
 #' @param preprosess Preprosesser data
 #'                 FALSE: Nei
 #'                 TRUE: Ja (Standard)
 #' @param hentData Gjør spørring mot database
 #'                 0: Nei, RegData gis som input til funksjonen (Standard)
 #'                 1: Ja
-#' @param InnMaate 
-#'				0: Elektivt, 
-#'				6: Akutt medisinsk, 
-#'				8: Akutt kirurgisk, 
-#'				standard: alle (alt unntatt 0,6,8 / ikke spesifisert)
-#' @param dodInt Levende/død ut fra intensiv. 
-#'				0: i live, 
-#'				1: død,   
-#'				alle: standard (alle andre verdier)
-#' @param overfPas Overført under pågående intensivbehandling? 
-#'				1 = Pasienten er ikke overført
-#'				2 = Pasienten er overført
-#' @param grType Gjør gruppeutvalg på sykehustype
-#'                      1: lokal-/sentralsykehus
-#'                      2: lokal-/sentralsykehus
-#'                      3: regionsykehus
-#'                      99: alle (standard)
 #' @param lagFig Angir om figur skal lages eller ikke 0-ikke lag, 1-lag
 #' 								
 #' @return Søylediagram (fordeling) av valgt variabel. De enkelte verdiene kan også sendes med.
@@ -95,7 +65,7 @@
 #' @export
 
 NIRFigAndeler  <- function(RegData=0, valgtVar='alder', datoFra='2011-01-01', datoTil='3000-12-31', aar=0, 
-                           overfPas=0, minald=0, maxald=110, erMann='',InnMaate='', dodInt='',outfile='', 
+                           overfPas=0, minald=0, maxald=110, erMann='',InnMaate='', dodInt='', velgDiag=0, outfile='', 
                            grType=99,  preprosess=1, hentData=0, reshID=0, velgAvd=0, enhetsUtvalg=0, lagFig=1, ...) { #, session='')	{
     
    if ("session" %in% names(list(...))) {
@@ -138,7 +108,7 @@ NIRFigAndeler  <- function(RegData=0, valgtVar='alder', datoFra='2011-01-01', da
       
       
       NIRUtvalg <- NIRUtvalgEnh(RegData=RegData, datoFra=datoFra, datoTil=datoTil, aar=aar, 
-                                minald=minald, maxald=maxald, 
+                                minald=minald, maxald=maxald, velgDiag = velgDiag,
                                 erMann=erMann, InnMaate=InnMaate, dodInt=dodInt, 
                                 reshID=reshID, grType=grType, enhetsUtvalg=enhetsUtvalg,
                                 velgAvd=velgAvd) #overfPas = overfPas,

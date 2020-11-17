@@ -32,12 +32,24 @@ regTitle <- ifelse(paaServer,
 
 #---------Hente data------------
 if (paaServer) {
-  RegData <- NIRRegDataSQL() #, session = session) #datoFra = datoFra, datoTil = datoTil)
+  IntData <- NIRRegDataSQL() #, session = session) #datoFra = datoFra, datoTil = datoTil)
   PaarorData <- NIRpaarorDataSQL() 
-  PaarorDataH <- KobleMedHoved(RegData, PaarorData, alleHovedskjema=F, alleSkjema2=F)
+  PaarorDataH <- KobleMedHoved(IntData, PaarorData, alleHovedskjema=F, alleSkjema2=F)
   qInfluensa <- 'SELECT ShNavn, RHF, PatientInRegistryGuid, FormDate,FormStatus, ICD10_1
                   from InfluensaFormDataContract'
   InfluData <- rapbase::loadRegData(registryName= "nir", query=qInfluensa, dbType="mysql")
+  
+  #Covid-skjema:
+  qCovid <- paste0('SELECT HovedskjemaGUID, FormStatus, Diagnosis
+                  FROM ReadinessFormDataContract')
+  CovidData <- rapbase::loadRegData(registryName= "nir", query=qCovid, dbType="mysql")
+                  
+  CovidData$HovedskjemaGUID <- toupper(CovidData$HovedskjemaGUID)
+  CovidData$Bekreftet <- 0
+  CovidData$Bekreftet[which(CovidData$Diagnosis %in% 100:103)] <- 1
+  
+  RegData <- merge(IntData, CovidData[ ,-which(names(CovidData) == 'Diagnosis')], suffixes = c('','Cov'),
+        by.x = 'SkjemaGUID', by.y = 'HovedskjemaGUID', all.x = T, all.y=F)
   
   #repLogger(session = session, 'Hentet alle data fra intensivregisteret')
 } #hente data på server
@@ -54,6 +66,7 @@ PaarorData <- NIRPreprosess(RegData = PaarorDataH) #Må først koble på hovedda
 }
 RegData <- NIRPreprosess(RegData = RegData)
 #RegData <- RegData[RegData$Overf==1, ]
+
 #-----Definere utvalgsinnhold og evt. parametre som er statiske i appen----------
 
 
@@ -75,7 +88,9 @@ enhetsUtvalg <- c("Egen mot resten av landet"=1,
                   "Egen region" = 7,
                   "Egen region mot resten" = 8)
 
-#enhetsUtvalgNavn <- 
+covidValg <- c('Alle pasienter' = 0,
+                  'Covid-pasienter' = 1)
+velgCovidTxt <- 'Velg diagnose (covid-pasienter)'
 
 # Define UI for application that draws figures
 ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
@@ -201,7 +216,9 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                                              || input.ark == 'Pasientar per år og avd.' ", 
                                          # || input.ark == 'Inklusjonskriterier' ",
                                          dateInput(inputId = 'sluttDatoReg', label = 'Velg sluttdato', language="nb",
-                                                   value = Sys.Date(), max = Sys.Date())
+                                                   value = Sys.Date(), max = Sys.Date()),
+                                         selectInput(inputId = "covidvalgReg", label= velgCovidTxt,
+                                                     choices = covidValg)
                         ),
                         # selectInput(inputId = "tidsenhet", label="Velg tidsenhet",
                         #             choices = rev(c('År'= 'Aar', 'Halvår' = 'Halvaar',
@@ -326,6 +343,8 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                sliderInput(inputId="alder", label = "Alder", min = 0,
                            max = 110, value = c(0, 110)
                ),
+             selectInput(inputId = "covidvalg", label= velgCovidTxt,
+                         choices = covidValg),
                enhetsUtvalgValg <- 
                  selectInput(inputId = 'enhetsUtvalg', label='Egen enhet og/eller landet',
                              choices = enhetsUtvalg
@@ -414,6 +433,8 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                          choices = c("Begge"=2, "Menn"=1, "Kvinner"=0)),
              sliderInput(inputId="alderAndelGrVar", label = "Alder", min = 0,
                          max = 110, value = c(0, 110)),
+             selectInput(inputId = "covidvalgAndeler", label= velgCovidTxt,
+                         choices = covidValg),
              br(),
              p(em('Følgende utvalg gjelder bare figuren som viser utvikling over tid')),
              selectInput(inputId = 'enhetsUtvalgAndelTid', label='Egen enhet og/eller landet',
@@ -491,6 +512,8 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
              ),
              selectInput(inputId = "sentralmaal", label="Velg gjennomsnitt/median ",
                          choices = c("Gjennomsnitt"='Gjsn', "Median"='Med')),
+             selectInput(inputId = "covidvalgGjsn", label= velgCovidTxt,
+                         choices = covidValg),
              br(),
              p(em('Følgende utvalg gjelder bare figuren som viser utvikling over tid')),
              selectInput(inputId = 'enhetsUtvalgGjsn', label='Egen enhet og/eller landet',
@@ -815,7 +838,8 @@ server <- function(input, output, session) { #
   
    #output$NokkeltallTxt <- renderText({paste0('Nøkkeltall på intensiv, ', egetShNavn)})
    output$tabNokkeltall <- function() {#renderTable({
-            tab <- t(tabNokkeltall(RegData=RegData, tidsenhet=input$tidsenhetReg, 
+     RegDataCov <- NIRUtvalgEnh(RegData=RegData, velgDiag = as.numeric(input$covidvalgReg))$RegData
+            tab <- t(tabNokkeltall(RegData=RegDataCov, tidsenhet=input$tidsenhetReg, 
                                    datoTil=input$sluttDatoReg, 
                       enhetsUtvalg=as.numeric(input$enhetsNivaa), reshID=reshID))
             #tab <- tabNokkeltall(RegData, tidsenhet='Mnd', datoTil, enhetsUtvalg=0, reshID=0)
@@ -834,9 +858,10 @@ server <- function(input, output, session) { #
       }#,rownames=T, digits=0 )
       
       output$tabAntOpphSh <- renderTable({
+        RegDataCov <- NIRUtvalgEnh(RegData=RegData, velgDiag = as.numeric(input$covidvalgReg))$RegData
             tab <- switch(input$tidsenhetReg,
-                   Mnd=tabAntOpphShMnd(RegData=RegData, datoTil=input$sluttDatoReg, antMnd=12), #input$datovalgTab[2])  
-                   Aar=tabAntOpphSh5Aar(RegData=RegData, datoTil=input$sluttDatoReg))
+                   Mnd=tabAntOpphShMnd(RegData=RegDataCov, datoTil=input$sluttDatoReg, antMnd=12), #input$datovalgTab[2])  
+                   Aar=tabAntOpphSh5Aar(RegData=RegDataCov, datoTil=input$sluttDatoReg))
            
       }, rownames = T, digits=0, spacing="xs" 
       )
@@ -885,7 +910,8 @@ server <- function(input, output, session) { #
                           enhetsUtvalg=as.numeric(input$enhetsUtvalg),
                           datoFra=input$datovalg[1], datoTil=input$datovalg[2],
                           minald=as.numeric(input$alder[1]), maxald=as.numeric(input$alder[2]),
-                          erMann=as.numeric(input$erMann), session = session)
+                          erMann=as.numeric(input$erMann), velgDiag = as.numeric(input$covidvalg),
+                          session = session)
       }, height=800, width=800 #height = function() {session$clientData$output_fordelinger_width}
       )
       
@@ -898,7 +924,9 @@ server <- function(input, output, session) { #
                                         velgAvd = input$velgResh,
                                         datoFra=input$datovalg[1], datoTil=input$datovalg[2],
                                         minald=as.numeric(input$alder[1]), maxald=as.numeric(input$alder[2]),
-                                        erMann=as.numeric(input$erMann), lagFig = 0, session = session)
+                                        erMann=as.numeric(input$erMann), 
+                                        velgDiag = as.numeric(input$covidvalg),
+                                        lagFig = 0, session = session)
             #RegData <- NIRRegDataSQL(datoFra = '2018-01-01')
             #UtDataFord <- NIRFigAndeler(RegData=RegData, valgtVar='bukleie', reshID=109773, enhetsUtvalg=0 ) 
             tab <- lagTabavFig(UtDataFraFig = UtDataFord)
@@ -936,7 +964,9 @@ server <- function(input, output, session) { #
             NIRFigAndelerGrVar(RegData=RegData, preprosess = 0, valgtVar=input$valgtVarAndelGrVar,
                                datoFra=input$datovalgAndelGrVar[1], datoTil=input$datovalgAndelGrVar[2],
                                minald=as.numeric(input$alderAndelGrVar[1]), maxald=as.numeric(input$alderAndelGrVar[2]),
-                               erMann=as.numeric(input$erMannAndelGrVar), session=session)
+                               erMann=as.numeric(input$erMannAndelGrVar), 
+                               velgDiag = as.numeric(input$covidvalgAndeler),
+                               session=session)
       }, height = 800, width=700 #height = function() {session$clientData$output_andelerGrVarFig_width} #})
       )
       
@@ -947,6 +977,7 @@ server <- function(input, output, session) { #
                                  datoFra=input$datovalgAndelGrVar[1], datoTil=input$datovalgAndelGrVar[2],
                                  minald=as.numeric(input$alderAndelGrVar[1]), maxald=as.numeric(input$alderAndelGrVar[2]),
                                  erMann=as.numeric(input$erMannAndelGrVar),
+                                 velgDiag = as.numeric(input$covidvalgAndeler),
                                  tidsenhet = input$tidsenhetAndelTid,
                                  enhetsUtvalg = input$enhetsUtvalgAndelTid,
                                  session=session)
@@ -955,11 +986,13 @@ server <- function(input, output, session) { #
             
             observe({
                   #AndelTid
+              
                   AndelerTid <- NIRFigAndelTid(RegData=RegData, preprosess = 0, valgtVar=input$valgtVarAndelGrVar,
                                                reshID=reshID,
                                                datoFra=input$datovalgAndelGrVar[1], datoTil=input$datovalgAndelGrVar[2],
                                                minald=as.numeric(input$alderAndelGrVar[1]), maxald=as.numeric(input$alderAndelGrVar[2]),
                                                erMann=as.numeric(input$erMannAndelGrVar),
+                                               velgDiag = as.numeric(input$covidvalgAndeler),
                                                tidsenhet = input$tidsenhetAndelTid,
                                                enhetsUtvalg = input$enhetsUtvalgAndelTid, 
                                                lagFig=0, session=session)
@@ -991,6 +1024,7 @@ server <- function(input, output, session) { #
                                                     datoFra=input$datovalgAndelGrVar[1], datoTil=input$datovalgAndelGrVar[2],
                                                     minald=as.numeric(input$alderAndelGrVar[1]), maxald=as.numeric(input$alderAndelGrVar[2]),
                                                     erMann=as.numeric(input$erMannAndelGrVar), 
+                                                    velgDiag = as.numeric(input$covidvalgAndeler),
                                                     lagFig = 0, session=session)
                   tabAndelerShus <- cbind(Antall=AndelerShus$Ngr$Hoved,
                                           Andeler = AndelerShus$AggVerdier$Hoved)
@@ -1030,6 +1064,7 @@ server <- function(input, output, session) { #
                             datoFra=input$datovalgGjsn[1], datoTil=input$datovalgGjsn[2],
                             minald=as.numeric(input$alderGjsn[1]), maxald=as.numeric(input$alderGjsn[2]),
                             erMann=as.numeric(input$erMannGjsn),
+                            velgDiag = as.numeric(input$covidvalgGjsn),
                             valgtMaal = input$sentralmaal)
       }, height=900, width=700
       )
@@ -1040,6 +1075,7 @@ server <- function(input, output, session) { #
                           datoFra=input$datovalgGjsn[1], datoTil=input$datovalgGjsn[2],
                           minald=as.numeric(input$alderGjsn[1]), maxald=as.numeric(input$alderGjsn[2]),
                           erMann=as.numeric(input$erMannGjsn), 
+                          velgDiag = as.numeric(input$covidvalgGjsn),
                           valgtMaal = input$sentralmaal,
                           tidsenhet = input$tidsenhetGjsn,
                           enhetsUtvalg = input$enhetsUtvalgGjsn,
@@ -1052,6 +1088,7 @@ server <- function(input, output, session) { #
                                            datoFra=input$datovalgGjsn[1], datoTil=input$datovalgGjsn[2],
                                            minald=as.numeric(input$alderGjsn[1]), maxald=as.numeric(input$alderGjsn[2]),
                                            erMann=as.numeric(input$erMannGjsn),
+                                           velgDiag = as.numeric(input$covidvalgGjsn),
                                            valgtMaal = input$sentralmaal, lagFig = 0)
         tabGjsnGrVar <- cbind(Antall = dataUtGjsnGrVar$Ngr$Hoved,
                               Sentralmål = dataUtGjsnGrVar$AggVerdier$Hoved)
@@ -1086,13 +1123,13 @@ server <- function(input, output, session) { #
                                        datoFra=input$datovalgGjsn[1], datoTil=input$datovalgGjsn[2],
                                        minald=as.numeric(input$alderGjsn[1]), maxald=as.numeric(input$alderGjsn[2]),
                                        erMann=as.numeric(input$erMannGjsn), 
+                                       velgDiag = as.numeric(input$covidvalgGjsn),
                                        valgtMaal = input$sentralmaal,
                                        tidsenhet = input$tidsenhetGjsn,
                                        enhetsUtvalg = input$enhetsUtvalgGjsn,
                                        session = session) #, lagFig=0)
         #dataUtGjsnTid <- NIRFigGjsnTid(RegData=RegData, preprosess = 0, maxald = 60 ,
          #                              enhetsUtvalg = 1, reshID=700419, datoFra = '2020-01-01')
-        #print(input$enhetsUtvalgGjsn)
         
           if (dataUtGjsnTid$N$Hoved < 3) {
             tabGjsnTid <- 'N<3'
@@ -1230,12 +1267,10 @@ server <- function(input, output, session) { #
         if (input$subscriptionRep == "Samlerapport") {
           synopsis <- "Intensiv/Rapporteket: Samlerapport"
           rnwFil <- "NIRSamleRapp.Rnw" #Navn på fila
-          #print(rnwFil)
         }
         if (input$subscriptionRep == "Influensaresultater") {
           synopsis <- "Intensiv/Rapporteket: influensaresultater"
           rnwFil <- "NIRinfluensa.Rnw" #Navn på fila
-          #print(rnwFil)
         }
         
         fun <- "abonnement"  #"henteSamlerapporter"

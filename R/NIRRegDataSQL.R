@@ -3,12 +3,13 @@
 #' Henter data for Intensivregisteret fra "staging"
 #'
 #' @inheritParams NIRFigAndeler
+#' @inheritParams NIRUtvalg
 #'
 #' @return Henter dataramma RegData for Intensivregisteret
 #' @export
 #'
 #'
-NIRRegDataSQL <- function(datoFra = '2011-01-01', datoTil = '2099-01-01') { #,session='') {
+NIRRegDataSQL <- function(datoFra = '2019-01-01', datoTil = '2099-01-01') { #,session='') {
   
   #raplog::repLogger(session = session, 'Hentet alle data fra intensivregisteret')
 
