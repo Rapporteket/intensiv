@@ -37,10 +37,8 @@ library(lubridate)
 #startOfMonth<- function(x) {as.Date(format(x, "%Y-%m-01")) }
 
 if (!exists('InfluDataAlle')){
-      NIRInfluDataSQL <- function(datoFra = '2019-09-25', datoTil = '2099-01-01') {
+      NIRInfluDataSQL <- function(datoFra = '2020-09-28', datoTil = Sys.Date()) {
             
-            registryName <- "nir"
-            dbType <- "mysql"
             query <- paste0('SELECT 
                   ShNavn,
                   RHF,
@@ -52,19 +50,19 @@ if (!exists('InfluDataAlle')){
             WHERE cast(FormDate as date) BETWEEN \'', datoFra, '\' AND \'', datoTil, '\'')
             #WHERE cast(DateAdmittedIntensive as date) >= \'', datoFra, '\' AND DateAdmittedIntensive <= \'', datoTil, '\'')  
             
-            RegData <- rapbase::LoadRegData(registryName, query, dbType)
+            RegData <- rapbase::loadRegData(registryName = "nir", query = query, dbType = "mysql")
             return(RegData)
       }  
       
-      InfluData <- NIRInfluDataSQL(datoFra = '2019-09-30')
+      InfluData <- NIRInfluDataSQL(datoFra = '2020-09-28')
 }
 #library(dplyr)
 #InfluData <- read.table(file='A:/Intensiv/InfluensaFormDataContract2019-05-24.csv', header=T, stringsAsFactors=FALSE, sep=';',encoding = 'UTF-8')
 
-datoU40 <- '2019-09-30'
+datoU40 <- '2020-09-28'
 InfluData$InnDato <- as.Date(InfluData$FormDate) #, tz='UTC', format = '%Y-%m-%d"')
 InfluData <- InfluData[which(InfluData$InnDato >= datoU40), ]  #NIRUtvalgEnh(RegData=InfluData, datoFra = '2019-09-30')$RegData
-sesongTxt <- ' 2019/20'	
+sesongTxt <- ' 2020/21'	
 #ICD10_1
 # -1 = Velg verdi   
 # 9 = J10 Influensa som skyldes identifisert sesongvariabelt influensavirus                                             
@@ -102,7 +100,7 @@ antSkjema <- dim(InfluData)[1]
 \begin{document}
 
 \title[Influensa \\\today] {%\textit{Influensadata, NIR} \\
-Influensarapportering fra NIR, sesongen 2019/20 }
+Influensarapportering fra NIR, sesongen 2020/21 }
 
 \maketitle
 
@@ -123,7 +121,7 @@ Resultatene er oppsummert i tabeller som viser antall influensatilfeller per uke
 \begin{itemize}
 % \item Tabellene skiller ikke på om et skjema er ferdigstilt eller ikke. Det er \Sexpr{antSkjema-antFerdig} av de \Sexpr{antSkjema} % skjemaene som ikke er ferdigstilt.
 \item Skjema uten spesifikasjon av diagnose, er kategorisert som mistenkte influensatilfeller.
-\item Start av influensasesongen 2019/20 er uke 40 i 2019.
+\item Start av influensasesongen 2020/21 er uke 40 i 2020.
 \item Rapporten er basert på alle registreringer til og med \Sexpr{Sys.Date()-1}. 
 % NB: Innleggelesesdato ser ut til å være identisk med FormDate!
 \end{itemize}
