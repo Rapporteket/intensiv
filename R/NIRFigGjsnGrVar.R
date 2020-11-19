@@ -36,7 +36,7 @@
 NIRFigGjsnGrVar <- function(RegData, valgtVar, preprosess=1, hentData=0, valgtMaal='Gjsn', 
                   minald=0, maxald=110, datoFra='2011-01-01', datoTil='3000-01-01', aar=0,
                   grType=99, InnMaate=99, dodInt='', erMann='', grVar='ShNavn', medKI=1, 
-                  lagFig=1, outfile='',...) {
+                  velgDiag=0, lagFig=1, outfile='',...) {
       
   if ("session" %in% names(list(...))) {
     raplog::repLogger(session = list(...)[["session"]], msg = paste0("AndelGrVar: ", valgtVar))
@@ -60,7 +60,7 @@ RegData <- NIRVarSpes$RegData
 minald <- max(NIRVarSpes$minald, minald)
 maxald <- min(NIRVarSpes$maxald, maxald)
 NIRUtvalg <- NIRUtvalgEnh(RegData=RegData, datoFra=datoFra, datoTil=datoTil, aar=aar, minald=minald, maxald=maxald, 
-                          erMann=erMann, InnMaate=InnMaate, dodInt=dodInt, grType=grType) #overfPas=overfPas, 
+                          erMann=erMann, InnMaate=InnMaate, dodInt=dodInt, grType=grType, velgDiag=velgDiag) #overfPas=overfPas, 
 RegData <- NIRUtvalg$RegData
 utvalgTxt <- NIRUtvalg$utvalgTxt
 
@@ -187,19 +187,12 @@ GjsnGrVarData <- list(AggVerdier=AggVerdier, #Endres til Soyleverdi? Evt. AggVer
                          Ngr=Ngr,
                          grtxt2='', 
 				 medKI=medKI,
-				 KImaal = NIRVarSpes$KImaal,
-                         soyletxt=soyletxt,
-                         grtxt=GrNavnSort,
-				 valgtMaal=valgtMaal,
+				                 soyletxt=soyletxt,
+  			 valgtMaal=valgtMaal,
                          tittel=tittel,    #NIRVarSpes$tittel, 
                          #yAkseTxt=yAkseTxt, 
                          retn='H', 
-                         xAkseTxt=xAkseTxt,
-                         grTypeTxt=grTypeTxt,			 
-                         utvalgTxt=utvalgTxt, 
-                         fargepalett=NIRUtvalg$fargepalett, 
-                         medSml=NIRUtvalg$medSml, 
-                         smltxt=NIRUtvalg$smltxt)
+                         medSml=NIRUtvalg$medSml)
 
 
 #FigDataParam skal inn som enkeltparametre i funksjonskallet
@@ -293,7 +286,7 @@ if (lagFig == 1) {
                         }
                         lines(x=rep(AggTot, 2), y=c(minpos, maxpos), col=farger[1], lwd=2.5) #y=c(0, max(pos)+0.55), 
                         #Linje for kvalitetsindikatormål:
-                        if (!is.na(KImaal)) { 
+                        if ((valgtMaal=='Med' & valgtVar == 'respiratortidInvMoverf') | valgtVar == 'SMR') { #(!is.na(KImaal)) { 
                               lines(x=rep(KImaal, 2), y=c(minpos, maxpos), col= '#FF7260', lwd=2.5) #y=c(0, max(pos)+0.55), 
                               text(x=KImaal, y=maxpos+0.6, paste0('Mål:', KImaaltxt), cex=0.9*cexgr, col= '#FF7260',adj=c(0.5,0)) 
                         }

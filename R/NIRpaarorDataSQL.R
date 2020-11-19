@@ -142,6 +142,6 @@ NIRpaarorDataSQL <- function(datoFra = '2015-12-01', datoTil = Sys.Date(), medH=
                   '0' = queryP,
                   '1' = queryH)
   
-  RegData <- rapbase::LoadRegData(registryName="nir", query=query, dbType="mysql")
+  RegData <- rapbase::loadRegData(registryName="nir", query=query, dbType="mysql")
   return(RegData)
 }

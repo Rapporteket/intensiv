@@ -23,7 +23,7 @@ NIRVarTilretteleggPaaror  <- function(RegData, valgtVar, grVar='ShNavn', figurty
       
       #----------- Figurparametre ------------------------------
       cexgr <- 1	#Kan endres for enkeltvariable
-      retn <- 'V'		#Vertikal som standard. 'H' angis evt. for enkeltvariable
+      retn <- 'H'		#Vertikal som standard. 'H' angis evt. for enkeltvariable
       flerevar <- 0
       grtxt <- ''		#Spesifiseres for hver enkelt variabel
       grtxt2 <- ''	#Spesifiseres evt. for hver enkelt variabel
@@ -232,7 +232,6 @@ NIRVarTilretteleggPaaror  <- function(RegData, valgtVar, grVar='ShNavn', figurty
       UtData <- list(RegData=RegData, minald=minald,
                      grtxt=grtxt, cexgr=cexgr, varTxt=varTxt, xAkseTxt=xAkseTxt, KImaal=KImaal, KImaaltxt=KImaaltxt, 
                      retn=retn,tittel=tittel, flerevar=flerevar, variable=variable, sortAvtagende=sortAvtagende)
-      #RegData inneholder nå variablene 'Variabel' og 'VariabelGr'
       return(invisible(UtData)) 
       
 }

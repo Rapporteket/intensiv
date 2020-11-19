@@ -168,7 +168,8 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='an
       
       if (valgtVar=='isolering') { #Andeler, andelerGrVar
             #-1 = Velg verdi, 1 = Ingen, 2 = Kontaktsmitte, 3 = Luftsmitte
-            tittel <- 'Andel av opphold med registrert isolasjon av pasient'   
+            tittel <- 'Andel av opphold med registrert isolasjon av pasient'
+            retn <- 'H'
          if (figurtype=='andeler') {
                   gr <- c(-1,1:5)
                   RegData <- RegData[ which((RegData$Isolation %in% gr)), ]             
@@ -487,6 +488,9 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='an
             RegData$Variabel <- RegData$SMR
             xAkseTxt <- 'Observert 30-dagers dødelighet / estimert dødelighet'
             sortAvtagende <- FALSE
+            KImaal <- 0.7  #Reinnleggelser <4% 
+            KImaaltxt <- '< 0.7'
+            
       }
       if (valgtVar == 'PIMdod') { #GjsnGrVar
         #Tar ut reinnlagte på intensiv og  de med SAPSII=0 (ikke scorede) 
@@ -681,7 +685,17 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='an
 
 #---------------- PÅRØRENDESKJEMA----------------------------------
       
-    
+      Totalskaarer <- c('SumScoreSatisfactionCare', 'SumScoreSatisfactionDecision', 'SumScoreAllQuestions')
+      Del1 <- c('BehandlingHoeflighetRespektMedfoelelse', 'SymptomSmerte', 'SymptomPustebesvaer',
+                'SymptomUro', 'BehandlingBesvarerBehov', 'BehandlingBesvarerStoette',
+                'BehandlingSamarbeid', 'BehandlingBesvarerHoeflighetRespektMedfoelelse',
+                'SykepleierOmsorg', 'SykepleierKommunikasjon', 'LegeBehandling',
+                'AtmosfaerenIntensivAvd', 'AtmosfaerenPaaroerenderom', 'OmfangetAvBehandlingen')
+      Del2 <- c('LegeInformasjonFrekvens', 'SvarPaaSpoersmaal', 'ForklaringForstaaelse',
+                'InformasjonsAerlighet', 'InformasjonOmForloep', 'InformasjonsOverensstemmelse',
+                'BeslutningsInvolvering', 'BeslutningsStoette', 'BeslutningsKontroll',
+                'BeslutningsTid', 'LivsLengde', 'LivssluttKomfor', 'LivssluttStoette')
+      #variable <- c(Del1, Del2, Totalskaarer)
       
       # if (valgtVar == 'BehandlingHoeflighetRespektMedfoelelse') { #andeler, 
       #   RegData <- RegData[which(RegData$respiratortid>0), ] # & (RegData$InnDato>=as.Date('2016-01-01', tz='UTC'))), ] 

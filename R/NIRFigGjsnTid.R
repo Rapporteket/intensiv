@@ -41,8 +41,8 @@
 #'
 #' @export
 NIRFigGjsnTid <- function(RegData, valgtVar='alder', datoFra='2011-01-01', datoTil='3000-12-31', tidsenhet='Mnd',
-                    minald=0, maxald=110, erMann='', reshID=0, InnMaate='', dodInt='', tittel=1, 
-                    outfile='',enhetsUtvalg=0, valgtMaal='Gjsn', preprosess=1, hentData=0,...){
+                    minald=0, maxald=110, erMann='', reshID=0, InnMaate='', dodInt='', velgDiag=0,
+                    tittel=1, outfile='',enhetsUtvalg=0, valgtMaal='Gjsn', preprosess=1, hentData=0,...){
   
   
   if ("session" %in% names(list(...))) {
@@ -65,7 +65,7 @@ NIRFigGjsnTid <- function(RegData, valgtVar='alder', datoFra='2011-01-01', datoT
   
   
   NIRUtvalg <- NIRUtvalgEnh(RegData=RegData, datoFra=datoFra, datoTil=datoTil, #aar=aar, 
-							minald=minald, maxald=maxald, 
+							minald=minald, maxald=maxald, velgDiag=velgDiag,
 							erMann=erMann, InnMaate=InnMaate, dodInt=dodInt, 
 							reshID=reshID, enhetsUtvalg=enhetsUtvalg) #overfPas = overfPas,
   RegData <- NIRUtvalg$RegData
