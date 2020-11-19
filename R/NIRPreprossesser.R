@@ -6,7 +6,7 @@
 #'
 #' @inheritParams NIRFigAndeler
 #' @param skjema hvilket skjema data som skal preprosesseres tilhører 
-#' 1: hoved, 2: paaror, 3: influ, 4: beredsk 
+#' 1: hoved, 2: paaror, 3: influ, 4: beredsk (beredsk har egen preprosess-fil)
 #'
 #' @return Data En liste med det filtrerte datasettet (og sykehusnavnet som tilsvarer reshID, ikke pt)
 #'
@@ -19,6 +19,12 @@ NIRPreprosess <- function(RegData=RegData, skjema=1)	#, reshID=reshID)
       #Sys.setlocale("LC_TIME", "nb_NO.UTF-8")   
       #print(paste('Etter at satt "nb_NO.UTF-8": ', Sys.getlocale()))
       
+  # RegData1 <- rapbase::loadRegData(registryName="nir", query='SELECT * FROM MainFormDataContract', dbType="mysql") #intensiv::NIRRegDataSQL()
+  # RegData2 <- rapbase::loadRegData(registryName="nir", query='SELECT * FROM QuestionaryFormDataContract', dbType="mysql")
+  # RegData3 <- rapbase::loadRegData(registryName="nir", query='SELECT * FROM InfluensaFormDataContract', dbType="mysql")
+  # RegData4 <- rapbase::loadRegData(registryName="nir", query='SELECT * FROM ReadinessFormDataContract', dbType="mysql")
+  
+  
       #Kun ferdigstilte registreringer:
       # Fra des. 2018 får Intensiv også kladd over fra  fra MRS/NHN.
   if (skjema %in% 1:2){
@@ -38,14 +44,20 @@ NIRPreprosess <- function(RegData=RegData, skjema=1)	#, reshID=reshID)
       #RegData$logit <- -7.7631 + 0.0737*RegData$Saps2ScoreNumber + 0.9971*log(RegData$Saps2ScoreNumber+1)
       #RegData$Mort <- exp(RegData$logit)/(1+exp(RegData$logit))*100 # = Saps2Score = SMR
       if (skjema==1){
-        names(RegData)[which(names(RegData) == 'PatientAge')] <- 'Alder'
+        LogVarSjekk <- names(RegData)[which(RegData[1,] %in% c('True','False'))]
+        LogVar <- unique(c(LogVarSjekk,
+                           "Eeg", "EcmoEcla", "Hyperbar", "Iabp", "Icp", "Impella", "Intermitterende", 
+                           "Kontinuerlig", "Leverdialyse", "No", "Oscillator", "Sofa", "TerapetiskHypotermi"))
+        RegData[, intersect(names(RegData), LogVar)] <- 
+          apply(RegData[, intersect(names(RegData), LogVar)], 2, as.logical)
+        
         RegData$SapsSum <- with(RegData, Glasgow+Age+SystolicBloodPressure+HeartRate+Temperature+MvOrCpap+UrineOutput+
               SerumUreaOrBun+Leukocytes+Potassium+Sodium+Hco3+Bilirubin+TypeOfAdmission)
+        RegData[which(RegData$Alder<16), c('SapsSum', 'Saps2Score', 'Saps2ScoreNumber')] <- 0
       }
-      # RegData$SapsSum[RegData$Alder<16] <- 0
-      # RegData$Saps2Score[RegData$Alder<16] <- 0
-      # RegData$Saps2ScoreNumber[RegData$Alder<16] - 0
-      RegData[which(RegData$Alder<16), c('SapsSum', 'Saps2Score', 'Saps2ScoreNumber')] <- 0
+      
+      names(RegData)[which(names(RegData) == 'PatientAge')] <- 'Alder'
+      names(RegData)[which(names(RegData) == 'AgeAdmitted')] <- 'Alder' #AgeAdmitted blir gyldig hvis denne finnes
       names(RegData)[which(names(RegData) == 'Saps2Score')] <- 'SMR' #Saps2Score er SAPS estimert mortalitet
       names(RegData)[which(names(RegData) == 'Saps2ScoreNumber')] <- 'SAPSII'
       names(RegData)[which(names(RegData) == 'DaysAdmittedIntensiv')] <- 'liggetid'
@@ -55,12 +67,11 @@ NIRPreprosess <- function(RegData=RegData, skjema=1)	#, reshID=reshID)
       names(RegData)[which(names(RegData) == 'TransferredStatus')] <- 'Overf'
       names(RegData)[which(names(RegData) == 'TypeOfAdmission')] <- 'InnMaate'
       names(RegData)[which(names(RegData) == 'ReshID')] <- 'ReshId'
-      #names(RegData)[which(names(RegData) == 'PatientInRegistryGuid')] <- 'PasientID'
-      if (skjema==4){
-        names(RegData)[which(names(RegData) == 'UnitId')] <- 'ReshId'}
-      #Avvik ml. test og prod-data:
       names(RegData)[
-            names(RegData) %in% c('PatientInRegistryGuid', 'PasientGUID')] <- 'PasientID'
+        names(RegData) %in% c('PatientInRegistryGuid', 'PasientGUID')] <- 'PasientID'
+      
+      if (skjema==4){names(RegData)[which(names(RegData) == 'UnitId')] <- 'ReshId'}
+      
       
       # Riktig format
       RegData$ShNavn <- trimws(as.character(RegData$ShNavn)) #Fjerner mellomrom (før) og etter navn
@@ -89,6 +100,7 @@ NIRPreprosess <- function(RegData=RegData, skjema=1)	#, reshID=reshID)
       
       
       #En "overlever": Person som er i live 30 dager etter innleggelse.
+      if (skjema %in% c(1,3)){
       RegData$Dod30 <- 0
       RegData$Dod30[which(difftime(as.Date(RegData$Morsdato, format="%Y-%m-%d %H:%M:%S"), 
                                    as.Date(RegData$InnDato), units='days')< 30)] <- 1
@@ -100,29 +112,17 @@ NIRPreprosess <- function(RegData=RegData, skjema=1)	#, reshID=reshID)
       RegData$Dod365[which(difftime(as.Date(RegData$Morsdato, format="%Y-%m-%d %H:%M:%S"), 
                                    as.Date(RegData$InnDato), units='days')< 365)] <- 1
       
+      }
       
-      #Konvertere boolske variable fra tekst til boolske variable...
-      # TilLogiskeVar <- function(Skjema){
-      #       verdiGML <- c('True','False')
-      #       verdiNY <- c(TRUE,FALSE)
-      #       mapping <- data.frame(verdiGML,verdiNY)
-      #       LogVar <- names(Skjema)[which(Skjema[1,] %in% verdiGML)]
-      #       if (length(LogVar)>0) {
-      #             for (k in 1:length(LogVar)) {
-      #                   Skjema[,LogVar[k]] <- mapping$verdiNY[match(Skjema[,LogVar[k]], mapping$verdiGML)]
-      #             }}
-      #       return(Skjema)
-      # }
-      # 
-      # RegData <- TilLogiskeVar(RegData)
-      
-      LogVarSjekk <- names(RegData)[unique(which(RegData[1,] %in% c('True','False')), which(RegData[15,] %in% c('True','False')))]
-      LogVar <- unique(c(LogVarSjekk,
-                         "Eeg", "EcmoEcla", "Hyperbar", "Iabp", "Icp", "Impella", "Intermitterende", 
-                         "Kontinuerlig", "Leverdialyse", "No", "Oscillator", "Sofa", "TerapetiskHypotermi"))
-      
-      RegData[, intersect(names(RegData), LogVar)] <-
-        apply(RegData[, intersect(names(RegData), LogVar)], 2, as.logical)
+      if (skjema==3){
+        RegData$Influensa <- factor(NA, levels = c('Mistenkt', 'Bekreftet'))
+        #--Identifiser J10 og J11 i ICD10-variablene.
+        indBekreftet <- which(RegData$ICD10_1 %in% c(9:12))
+        indMistenkt <- which(RegData$ICD10_1 %in% c(-1,13:16))
+        RegData$Influensa[indMistenkt] <- 'Mistenkt'
+        RegData$Influensa[indBekreftet] <- 'Bekreftet'
+        
+      }
       
       
       
