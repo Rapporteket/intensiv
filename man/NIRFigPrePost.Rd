@@ -7,8 +7,8 @@
 NIRFigPrePost(
   RegData,
   valgtVar,
-  datoFra = "2012-04-01",
-  datoTil = "2050-12-31",
+  datoFra = "2011-01-01",
+  datoTil = Sys.Date(),
   minald = 0,
   maxald = 110,
   erMann = "",
@@ -32,7 +32,8 @@ Bosituasjon: Bosituasjon ved innleggelse og 3 mnd etter slaget
 Toalett: Toalettbesok før innleggelse og 3 mnd etter slaget 
 Forflytning: Evne til forflytning før innleggelse og 3 mnd etter slaget}
 
-\item{datoFra}{Tidligste dato i utvalget (vises alltid i figuren).}
+\item{datoFra}{Tidligste dato i utvalget (vises alltid i figuren). Standard 2019-01-01. 
+Registeret inneholder registreringer f.o.m. 2011}
 
 \item{datoTil}{Seneste dato i utvalget (vises alltid i figuren).}
 

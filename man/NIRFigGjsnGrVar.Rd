@@ -21,6 +21,7 @@ NIRFigGjsnGrVar(
   erMann = "",
   grVar = "ShNavn",
   medKI = 1,
+  velgDiag = 0,
   lagFig = 1,
   outfile = "",
   ...
@@ -63,7 +64,8 @@ Detajer: Her bør man liste opp hvilke variable funksjonen benytter.}
 
 \item{maxald}{Alder, til og med (Standardverdi: 110)}
 
-\item{datoFra}{Tidligste dato i utvalget (vises alltid i figuren).}
+\item{datoFra}{Tidligste dato i utvalget (vises alltid i figuren). Standard 2019-01-01. 
+Registeret inneholder registreringer f.o.m. 2011}
 
 \item{datoTil}{Seneste dato i utvalget (vises alltid i figuren).}
 
@@ -86,6 +88,8 @@ alle: standard (alle andre verdier)}
 \item{erMann}{Kjønn, standard: alt annet enn 0/1 gir begge kjønn
 0: Kvinner
 1: Menn}
+
+\item{velgDiag}{Velge diagnose. 0-alle, 1-Bekreftede Covid-pasienter}
 
 \item{lagFig}{Angir om figur skal lages eller ikke 0-ikke lag, 1-lag}
 

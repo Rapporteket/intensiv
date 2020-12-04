@@ -9,8 +9,6 @@ NIRVarTilrettelegg(RegData, valgtVar, grVar = "ShNavn", figurtype = "andeler")
 \arguments{
 \item{RegData}{En dataramme med alle nødvendige variabler fra registeret}
 
-\item{valgtVar}{Hvilken variabel som skal visualiseres. Se \strong{Details} for oversikt.}
-
 \item{figurtype}{Hvilken figurtype det skal tilrettelegges variable for: 
 'andeler', 'andelGrVar', 'andelTid', 'gjsnGrVar', 'gjsnTid'}
 }

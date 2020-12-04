@@ -16,6 +16,7 @@ NIRFigGjsnTid(
   reshID = 0,
   InnMaate = "",
   dodInt = "",
+  velgDiag = 0,
   tittel = 1,
   outfile = "",
   enhetsUtvalg = 0,
@@ -30,7 +31,8 @@ NIRFigGjsnTid(
 
 \item{valgtVar}{Hvilken variabel som skal visualiseres}
 
-\item{datoFra}{Tidligste dato i utvalget (vises alltid i figuren).}
+\item{datoFra}{Tidligste dato i utvalget (vises alltid i figuren). Standard 2019-01-01. 
+Registeret inneholder registreringer f.o.m. 2011}
 
 \item{datoTil}{Seneste dato i utvalget (vises alltid i figuren).}
 
@@ -54,6 +56,8 @@ standard: alle (alt unntatt 0,6,8 / ikke spesifisert)}
 0: i live, 
 1: død,   
 alle: standard (alle andre verdier)}
+
+\item{velgDiag}{Velge diagnose. 0-alle, 1-Bekreftede Covid-pasienter}
 
 \item{outfile}{Navn på fil figuren skrives til. Standard: '' (Figur skrives
 til systemets standard utdataenhet (som regel skjerm))}
