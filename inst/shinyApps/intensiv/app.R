@@ -32,7 +32,7 @@ regTitle <- ifelse(paaServer,
 
 #---------Hente data------------
 if (paaServer) {
-  IntData <- NIRRegDataSQL() #, session = session) #datoFra = datoFra, datoTil = datoTil)
+  IntData <- NIRRegDataSQL(datoFra = '2011-01-01') #, session = session) #datoFra = datoFra, datoTil = datoTil)
   PaarorData <- NIRpaarorDataSQL() 
   PaarorDataH <- KobleMedHoved(IntData, PaarorData, alleHovedskjema=F, alleSkjema2=F)
   qInfluensa <- 'SELECT ShNavn, RHF, PatientInRegistryGuid, FormDate,FormStatus, ICD10_1
@@ -128,6 +128,7 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
              downloadButton(outputId = 'samleRapp.pdf', label='Last ned samlerapport', class = "butt"),
              br(),
              h3('Resultater fra influensaregistrering'),
+             h6('(Inntil det kommer registreringer fra inneværende sesong, vil rapporten vise tall fra forrige sesong.)'),
              downloadButton(outputId = 'influensaRapp.pdf', label='Last ned influensarapport', class = "butt"),
              br(),
              br(),
