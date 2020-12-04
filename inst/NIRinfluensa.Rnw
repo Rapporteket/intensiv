@@ -36,8 +36,8 @@ library(lubridate)
 
 #startOfMonth<- function(x) {as.Date(format(x, "%Y-%m-01")) }
 
-if (!exists('InfluData')){
-      NIRInfluDataSQL <- function(datoFra = '2020-09-28', datoTil = Sys.Date()) {
+#if (!exists('InfluData')){
+      NIRInfluDataSQL <- function(datoFra = '2015-09-28', datoTil = Sys.Date()) {
 
             query <- paste0('SELECT
                   ShNavn,
@@ -54,15 +54,18 @@ if (!exists('InfluData')){
             return(RegData)
       }
 
-      InfluData <- NIRInfluDataSQL(datoFra = '2020-09-28')
-}
+            InfluData <- NIRInfluDataSQL()
+            #InfluData <- InfluData[which(as.Date(InfluData$FormDate) < '2020-05-01'), ]
+            sisteReg <- max(as.Date(InfluData$FormDate))
+            datoU40 <- ifelse(sisteReg >= '2020-09-28', '2020-09-28', '2019-09-30')
+            startDato <- datoU40 #ifelse(sisteReg >= datoU40, '2020-09-28', '2019-09-30')
+            InfluData <- InfluData[which(as.Date(InfluData$FormDate) >= startDato), ]
+#}
 #library(dplyr)
 #InfluData <- read.table(file='A:/Intensiv/InfluensaFormDataContract2019-05-24.csv', header=T, stringsAsFactors=FALSE, sep=';',encoding = 'UTF-8')
-
-datoU40 <- '2020-09-28'
 InfluData$InnDato <- as.Date(InfluData$FormDate) #, tz='UTC', format = '%Y-%m-%d"')
 InfluData <- InfluData[which(InfluData$InnDato >= datoU40), ]  #NIRUtvalgEnh(RegData=InfluData, datoFra = '2019-09-30')$RegData
-sesongTxt <- ' 2020/21'
+sesongTxt <- ifelse(sisteReg >= '2020-09-28', ' 2020/21', '2019/2020')
 #ICD10_1
 # -1 = Velg verdi
 # 9 = J10 Influensa som skyldes identifisert sesongvariabelt influensavirus
@@ -100,7 +103,7 @@ antSkjema <- dim(InfluData)[1]
 \begin{document}
 
 \title[Influensa \\\today] {%\textit{Influensadata, NIR} \\
-Influensarapportering fra NIR, sesongen 2020/21 }
+Influensarapportering fra NIR, sesongen \Sexpr{sesongTxt} }
 
 \maketitle
 
@@ -121,7 +124,7 @@ Resultatene er oppsummert i tabeller som viser antall influensatilfeller per uke
 \begin{itemize}
 % \item Tabellene skiller ikke på om et skjema er ferdigstilt eller ikke. Det er \Sexpr{antSkjema-antFerdig} av de \Sexpr{antSkjema} % skjemaene som ikke er ferdigstilt.
 \item Skjema uten spesifikasjon av diagnose, er kategorisert som mistenkte influensatilfeller.
-\item Start av influensasesongen 2020/21 er uke 40 i 2020.
+\item Start av influensasesongen er uke 40.
 \item Rapporten er basert på alle registreringer til og med \Sexpr{Sys.Date()-1}.
 \item Bare uker hvor det er registrerte tilfeller, vises i tabellene. (Dvs. uker med 0 registreringer vises ikke.)
 % NB: Innleggelesesdato ser ut til å være identisk med FormDate!
@@ -180,7 +183,8 @@ command <- paste0(paste0('& \\multicolumn{2}{l}{', navnRHF, '} ', collapse=''), 
 #comment$command <- "\\hline\n{\\footnotesize B - bekreftet, M - mistenkt}\n"
 add.to.row$command <- command
 print(xtable::xtable(TabUkeRHF[indAntRader,], digits=0, #method='compact', #align=c('l', rep('r', ncol(alderDIV))),
-		caption=paste0('Influensatilfeller per uke og region sesongen', sesongTxt,' (B - bekreftet, M - mistenkt)')),
+		caption=paste0('Influensatilfeller per uke og region sesongen', sesongTxt,' (B - bekreftet, M - mistenkt)',
+		               ' Uker med 0 tilfeller vises ikke.')),
       #footnote= 'B-bekreftet, M-mistenkt',),
 		add.to.row = add.to.row,
 		sanitize.rownames.function = identity)

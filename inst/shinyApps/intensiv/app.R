@@ -128,6 +128,7 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
              downloadButton(outputId = 'samleRapp.pdf', label='Last ned samlerapport', class = "butt"),
              br(),
              h3('Resultater fra influensaregistrering'),
+             h6('(Inntil det kommer registreringer fra inneværende sesong, vil rapporten vise tall fra forrige sesong.)'),
              downloadButton(outputId = 'influensaRapp.pdf', label='Last ned influensarapport', class = "butt"),
              br(),
              br(),
