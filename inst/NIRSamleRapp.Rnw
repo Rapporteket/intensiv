@@ -140,8 +140,8 @@ og kan genereres av intensivregisterets databasebrukerne på \textit{helseregist
 
 
 <<LasteData, echo=FALSE, eval=T>>=
-datoFra <- '2018-01-01'	
-fraAar <- '2018'
+datoFra <- '2020-01-01'	
+fraAar <- '2020'
 datoFraNorsk <- format.Date(datoFra, format='%d.%m%.%Y')
 if (!exists('NIRdata')){
   if (exists('RegData')) {
