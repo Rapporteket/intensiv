@@ -82,8 +82,8 @@ if (valgtVar %in% c('NIHSSTrombolyse','NIHSSTrombektomi')) {
 }
 
 #Tar ut de med manglende registrering av valgt variabel og gjør utvalg
-NIRUtvalg <- NIRUtvalg(RegData=RegData, datoFra=datoFra, datoTil=datoTil, minald=minald, maxald=maxald, 
-		erMann=erMann, diagnose=diagnose, innl4t=innl4t, NIHSSinn=NIHSSinn)
+NIRUtvalg <- NIRUtvalgEnh(RegData=RegData, datoFra=datoFra, datoTil=datoTil, minald=minald, maxald=maxald, 
+		erMann=erMann)
 RegData <- NIRUtvalg$RegData
 utvalgTxt <- NIRUtvalg$utvalgTxt
 

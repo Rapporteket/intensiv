@@ -122,6 +122,11 @@ NIRPreprosess <- function(RegData=RegData, skjema=1)	#, reshID=reshID)
         RegData$Influensa[indMistenkt] <- 'Mistenkt'
         RegData$Influensa[indBekreftet] <- 'Bekreftet'
         
+        InfluData$Sesong <- 'diverse'
+        InfluData$Sesong[(InfluData$InnDato >= '2018-10-01') & (InfluData$InnDato <= '2019-05-19')] <- '2018-19'
+        InfluData$Sesong[(InfluData$InnDato >= '2019-09-30') & (InfluData$InnDato <= '2020-05-17')] <- '2019-20'
+        InfluData$Sesong[(InfluData$InnDato >= '2020-09-28') & (InfluData$InnDato <= '2021-05-23')] <- '2020-21'
+        InfluData$Sesong <- factor(InfluData$Sesong,levels = c('2018-19', '2019-20', '2020-21', 'diverse'))
       }
       
       

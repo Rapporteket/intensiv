@@ -241,6 +241,7 @@ abonnement <- function(rnwFil, brukernavn='tullebukk', reshID=0,
 }
 
 
+#' Generere data til resultatportalen eller sykehusviser
 #' @param filUt tilnavn for utdatatabell (fjern?)
 #' @param valgtVar - beinsmLavPre, peropKompDura, sympVarighUtstr, p.t. 10 kvalitetsind.
 #' @param indID indikator-id, eks. 'ind1', 'ind2', osv.

@@ -7,7 +7,7 @@
 NIRFigAndelerGrVar(
   RegData,
   valgtVar = "dod30d",
-  datoFra = "2010-01-01",
+  datoFra = "2011-01-01",
   datoTil = "3000-01-01",
   aar = 0,
   minald = 0,
@@ -15,6 +15,7 @@ NIRFigAndelerGrVar(
   aldGr = 0,
   medKI = 0,
   Ngrense = 10,
+  velgDiag = 0,
   grType = 99,
   grVar = "ShNavn",
   InnMaate = 99,
@@ -33,13 +34,16 @@ NIRFigAndelerGrVar(
 
 \item{valgtVar}{Hvilken variabel som skal visualiseres. Se \strong{Details} for oversikt.}
 
-\item{datoFra}{Tidligste dato i utvalget (vises alltid i figuren).}
+\item{datoFra}{Tidligste dato i utvalget (vises alltid i figuren). Standard 2019-01-01. 
+Registeret inneholder registreringer f.o.m. 2011}
 
 \item{datoTil}{Seneste dato i utvalget (vises alltid i figuren).}
 
 \item{minald}{Alder, fra og med (Standardverdi: 0)}
 
 \item{maxald}{Alder, til og med (Standardverdi: 110)}
+
+\item{velgDiag}{Velge diagnose. 0-alle, 1-Bekreftede Covid-pasienter}
 
 \item{grType}{Gjør gruppeutvalg på sykehustype
 1: lokal-/sentralsykehus

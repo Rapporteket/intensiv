@@ -10,7 +10,7 @@ NIRPreprosess(RegData = RegData, skjema = 1)
 \item{RegData}{En dataramme med alle nødvendige variabler fra registeret}
 
 \item{skjema}{hvilket skjema data som skal preprosesseres tilhører 
-1: hoved, 2: paaror, 3: influ, 4: beredsk}
+1: hoved, 2: paaror, 3: influ, 4: beredsk (beredsk har egen preprosess-fil)}
 }
 \value{
 Data En liste med det filtrerte datasettet (og sykehusnavnet som tilsvarer reshID, ikke pt)

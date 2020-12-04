@@ -6,8 +6,8 @@
 \usage{
 NIRUtvalgEnh(
   RegData,
-  datoFra = 0,
-  datoTil = 0,
+  datoFra = "2011-01-01",
+  datoTil = Sys.Date(),
   minald = 0,
   maxald = 110,
   erMann = "",
@@ -18,13 +18,15 @@ NIRUtvalgEnh(
   dodInt = "",
   reshID = 0,
   velgAvd = 0,
+  velgDiag = 0,
   fargepalett = "BlaaOff"
 )
 }
 \arguments{
 \item{RegData}{En dataramme med alle nødvendige variabler fra registeret}
 
-\item{datoFra}{Tidligste dato i utvalget (vises alltid i figuren).}
+\item{datoFra}{Tidligste dato i utvalget (vises alltid i figuren). Standard 2019-01-01. 
+Registeret inneholder registreringer f.o.m. 2011}
 
 \item{datoTil}{Seneste dato i utvalget (vises alltid i figuren).}
 
@@ -57,7 +59,18 @@ alle: standard (alle andre verdier)}
 \item{reshID}{Parameter følger fra innlogging helseregister.no og angir
 hvilken enhet i spesialisthelsetjenesten brukeren tilhører}
 
+\item{velgDiag}{Velge diagnose. 0-alle, 1-Bekreftede Covid-pasienter}
+
 \item{fargepalett}{Hvilken fargepalett skal brukes i figurer (Standard: BlaaRapp)}
+
+\item{valgtVar}{Hvilken variabel som skal visualiseres. Se \strong{Details} for oversikt.}
+
+\item{outfile}{Navn på fil figuren skrives til. Standard: '' (Figur skrives
+til systemets standard utdataenhet (som regel skjerm))}
+
+\item{overfPas}{Overført under pågående intensivbehandling? 
+1 = Pasienten er ikke overført
+2 = Pasienten er overført}
 }
 \value{
 UtData En liste bestående av det filtrerte datasettet, utvalgstekst for figur og tekststreng som angir fargepalett
