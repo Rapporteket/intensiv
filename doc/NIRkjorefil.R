@@ -8,6 +8,12 @@ blaa <- c('#084594','#2171b5','#4292c6','#6baed6','#c6dbef')  #Mørk til lys				
 graa <- c('#4D4D4D','#737373','#A6A6A6','#DADADA')  #Mørk til lys          																# Fire graatoner
 kontrast <- '#FF7260'; moerkeblaa <- '#000059'                																# Spesialfarger
 
+
+datoFra <- '2020-09-01'
+datoTil=Sys.Date()
+reshID <- 706078
+tellInfluensa(datoFra='2018-09-01', datoTil=Sys.Date(), reshID=reshID)
+
 #--------------------------------------Kvalitetskontroll - ikke operativ-----------------------------------
 rm(list=ls()) 
 library(knitr)
