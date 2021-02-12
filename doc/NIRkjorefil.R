@@ -32,6 +32,26 @@ setwd('/home/rstudio/intensiv/inst')
 reshID=706078 #Tromsø med int: 601302, Ullevål Kir int: 109773, 102090 Ahus, 112044 Haukeland, 102673 Ålesund Med, Kristiansund: 706078 
 
 RegData <- NIRPreprosess(NIRRegDataSQL(datoFra = '2020-01-01', datoTil = '2020-12-31'))
+
+
+# Kan du gje oss tal på registrerte pasientar nasjonalt i Norsk intensivregister med denne avgrensinga:
+#   1.       Fylte 80 år eller eldre ved innlegging intensiv i perioden 01.07.16-30.06.18 (truleg kring 5000)
+# Kor mange av desse er framleis i live slik det er oppdatert i registeret i dag?
+  
+RegData <- NIRPreprosess(NIRRegDataSQL(datoFra = '2016-07-16', datoTil = '2018-06-18'))
+RegData <- NIRUtvalgEnh(RegData = RegData, minald = 80)$RegData  
+antall <- length(unique(RegData$PasientID))
+ind <- which(is.na(RegData$Morsdato))
+table(RegData$DischargedIntensiveStatus)
+table(RegData$Dod30)
+table(RegData$Dod90)
+table(RegData$Dod365)
+table(!is.na(RegData$Morsdato))
+
+levendeNaa <- length(unique(RegData$PasientID[is.na(RegData$Morsdato)]))  
+
+
+  
 # test <- unique(RegData[,c("ShNavn", "ReshId")])
 # test[order(test[,1]),]
 RegData <- FinnReinnleggelser(RegData)
