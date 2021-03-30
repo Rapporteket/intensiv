@@ -1,7 +1,7 @@
 #' Funksjon som genererer en figur med fordeling av innkomsttype
-#for hvert sykehus. Funksjon som genererer en figur med AggVerdier av en gitt variabel for ei valgt gruppering, 
-#' f.eks. enheter. I øyeblikket benytter funksjonen bare 'ShNavn' som grupperingsvariabel, men 
-#' andre valg kan lett inkluderes. Funksjonen er tilrettelagt for også å kunne benytte "01-data", 
+#for hvert sykehus. Funksjon som genererer en figur med AggVerdier av en gitt variabel for ei valgt gruppering,
+#' f.eks. enheter. I øyeblikket benytter funksjonen bare 'ShNavn' som grupperingsvariabel, men
+#' andre valg kan lett inkluderes. Funksjonen er tilrettelagt for også å kunne benytte "01-data",
 #' dvs. kodede, anonymiserte data som benyttes til offentlige kvalitetsindikatorer.
 #'
 #' Funksjonen benytter funksjonene: NIRRegDataSQL, NIRPreprosess, NIRVarTilrettelegg, NIRUtvalgEnh
@@ -12,29 +12,29 @@
 #' @inheritParams NIRFigAndeler
 #' @param tittel: Hvis vil angi tittel direkte
 #' @param utvalgsInfo: Hvis datafil lagret med utvalgsinfo
-#' 
+#'
 #' @return Søylediagram med AggVerdier av valgt variabel for hvert sykehus
 #'
 #' @export
 
 
-NIRFigInnMaate <- function(RegData, valgtVar='InnMaate', datoFra='2010-01-01', datoTil='3000-01-01', aar=0, 
-                            minald=0, maxald=110, 
+NIRFigInnMaate <- function(RegData, valgtVar='InnMaate', datoFra='2010-01-01', datoTil='3000-01-01', aar=0,
+                            minald=0, maxald=110, velgDiag=0,
                             grType=99, grVar='ShNavn', InnMaate=99, dodInt='', erMann='', hentData=0,
-                            preprosess=1, outfile='', ...) 
+                            preprosess=1, outfile='', ...)
 {
   if ("session" %in% names(list(...))) {
     raplog::repLogger(session = list(...)[["session"]], msg = paste0("FigInnMaate: ", valgtVar))
   }
-      if (hentData == 1) {		
+      if (hentData == 1) {
             RegData <- NIRRegDataSQL(datoFra, datoTil)
       }
-      
+
       # Hvis RegData ikke har blitt preprosessert. (I samledokument gjøre dette i samledokumentet)
       if (preprosess){
             RegData <- NIRPreprosess(RegData=RegData) #, reshID=reshID)
       }
-      
+
 #------- Tilrettelegge variable
 #NIRVarSpes <- NIRVarTilrettelegg(RegData=RegData, valgtVar=valgtVar, figurtype = 'gjsnGrVar')
 #RegData <- NIRVarSpes$RegData
@@ -49,8 +49,9 @@ NIRFigInnMaate <- function(RegData, valgtVar='InnMaate', datoFra='2010-01-01', d
 
 #------- Gjøre utvalg
 #minald <- max(NIRVarSpes$minald, minald)
-NIRUtvalg <- NIRUtvalgEnh(RegData=RegData, datoFra=datoFra, datoTil=datoTil, aar=aar, minald=minald, maxald=maxald, 
-                          erMann=erMann, InnMaate=InnMaate, dodInt=dodInt, grType=grType) #overfPas=overfPas, 
+NIRUtvalg <- NIRUtvalgEnh(RegData=RegData, datoFra=datoFra, datoTil=datoTil, aar=aar,
+                          minald=minald, maxald=maxald, velgDiag = velgDiag,
+                          erMann=erMann, InnMaate=InnMaate, dodInt=dodInt, grType=grType) #overfPas=overfPas,
 RegData <- NIRUtvalg$RegData
 utvalgTxt <- NIRUtvalg$utvalgTxt
 
@@ -64,9 +65,9 @@ if (dim(RegData)[1] >= 0) {
 } else {
 	Nsh <- 0}
 
-Ngrense <- 10	
+Ngrense <- 10
 
-			
+
 #-----------Figur---------------------------------------
 if 	( max(Nsh) < Ngrense)	{#Dvs. hvis ALLE er mindre enn grensa.
 	rapFigurer::figtype(outfile)
@@ -90,7 +91,7 @@ N <- dim(RegData)[1]
 
 
 	dataTab <- ftable(RegData[ ,c('ShNavn', valgtVar)])/rep(Nsh,3)*100
-	dataTab[indShUt,] <-NA 
+	dataTab[indShUt,] <-NA
 	sortInd <- order(dataTab[,2])
 	dataAlle <- table(RegData$Variabel)/N*100
 ShNavnSort <- names(Nsh)[sortInd]	#c(names(Nsh)[sortInd],'')
@@ -100,7 +101,7 @@ NshtxtSort <- Nshtxt[sortInd]
 if (grType %in% 1:3) {xkr <- 1} else {xkr <- 0.75}
 cexShNavn <- 1.2
 
-FigTypUt <- rapFigurer::figtype(outfile, height=3*800, fargepalett=NIRUtvalg$fargepalett)	
+FigTypUt <- rapFigurer::figtype(outfile, height=3*800, fargepalett=NIRUtvalg$fargepalett)
 farger <- FigTypUt$farger
 #Tilpasse marger for å kunne skrive utvalgsteksten
 NutvTxt <- length(utvalgTxt)
@@ -111,10 +112,10 @@ par('fig'=c(vmarg, 1, 0, 1-0.02*(NutvTxt-1)))	#Har alltid datoutvalg med
 ymin <- 0.5/xkr^4	#Fordi avstand til x-aksen av en eller annen grunn øker når antall sykehus øker
 ymax <- 0.2+1.2*length(Nsh)
 tittelpos <- 1
-		
+
 	#Legger til resultat for hele gruppa. Og legger til en tom etter for å få plass til legend
-	pos <- barplot(cbind(as.numeric(dataAlle), rep(0,3), t(dataTab[sortInd,])), horiz=T, beside=FALSE, 
-			border=NA, col=farger[1:3], 
+	pos <- barplot(cbind(as.numeric(dataAlle), rep(0,3), t(dataTab[sortInd,])), horiz=T, beside=FALSE,
+			border=NA, col=farger[1:3],
 			main='', font.main=1, xlab='', ylim=c(ymin, 1.05*ymax+2), las=1, cex.names=xkr) 	# ylim=c(0.05, 1.24)*length(Nsh),xlim=c(0,ymax), cex.axis=0.9, cex.names=0.8*xkr,
 	ShNavnSort <- c('alle i visninga', '', ShNavnSort) #NIRUtvalg$grTypeTxt
 	NshtxtSort<- c(paste0('N=', N), '', NshtxtSort)
@@ -134,7 +135,7 @@ mtext(utvalgTxt, side=3, las=1, cex=0.9, adj=0, col=farger[1], line=c(3+0.8*((Nu
 
 
 
-par('fig'=c(0, 1, 0, 1)) 
+par('fig'=c(0, 1, 0, 1))
 #savePlot(outfile, type=filtype)
 if ( outfile != '') {dev.off()}
 #----------------------------------------------------------------------------------

@@ -221,10 +221,7 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                                          selectInput(inputId = "covidvalgReg", label= velgCovidTxt,
                                                      choices = covidValg)
                         ),
-                        # selectInput(inputId = "tidsenhet", label="Velg tidsenhet",
-                        #             choices = rev(c('År'= 'Aar', 'Halvår' = 'Halvaar',
-                        #                             'Kvartal'='Kvartal', 'Måned'='Mnd'))),
-                        conditionalPanel(
+                       conditionalPanel(
                           condition = "input.ark == 'Nøkkeltall' || input.ark == 'Ant. opphold'",
                           selectInput(inputId = "tidsenhetReg", label="Velg tidsenhet",
                                       choices = rev(c('År'= 'Aar', 'Måned'='Mnd')))),
@@ -272,16 +269,7 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                                   column(6,
                                          tableOutput('tabOverfFra'))
                          ),
-                         # tabPanel('Inklusjonskriterier',
-                         #   tabsetPanel(
-                         #     tabPanel('Figur',
-                         #              plotOutput('inklKrit')) #,
-                         #     # tabPanel(
-                         #     #   'Tabell',
-                         #     #   uiOutput("tittelFord"),
-                         #     #   tableOutput('fordelingTab'))
-                         #   ),
-                         tabPanel('Dobbeltregistreringer',
+                          tabPanel('Dobbeltregistreringer',
                                   h2("Mulige dobbeltregistreringer"),
                                   tableOutput("tabDblReg")
                          )
@@ -355,7 +343,11 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                          choices = sykehusValg),
                #sliderInput(inputId="aar", label = "Årstall", min = 2012,  #min(RegData$Aar),
                #           max = as.numeric(format(Sys.Date(), '%Y')), value = ),
-             actionButton("reset_fordValg", label="Tilbakestill valg")
+             actionButton("reset_fordValg", label="Tilbakestill valg"),
+             br(),
+             selectInput(inputId = "bildeformatFord",
+                         label = "Velg format for nedlasting av figur",
+                         choices = c('pdf', 'png', 'jpg', 'bmp', 'tif', 'svg'))
            ),
 
 
@@ -364,6 +356,7 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                tabPanel(
                  'Figur',
                  plotOutput('fordelinger')),
+               downloadButton('LastNedFigFord', label='Velg format og last ned figur'),
                tabPanel(
                  'Tabell',
                  uiOutput("tittelFord"),
@@ -373,21 +366,6 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
              )
            )
   ), #tab Fordelinger
-
-  # mainPanel(tabsetPanel(id = "tabs_andeler",
-  #                       tabPanel("Figur, tidssvisning",
-  #                                plotOutput("fig_andel_tid", height="auto"),
-  #                                downloadButton("lastNedBilde_tid", "Last ned figur")),
-  #                       tabPanel("Tabell, tidssvisning",
-  #                                uiOutput("utvalg_tid"),
-  #                                tableOutput("Tabell_tid"), downloadButton("lastNed_tid", "Last ned tabell")),
-  #                       tabPanel("Figur, sykehusvisning",
-  #                                plotOutput("fig_andel_grvar", height="auto"),
-  #                                downloadButton("lastNedBilde_sykehus_andel", "Last ned figur")),
-  #                       tabPanel("Tabell, sykehusvisning",
-  #                                uiOutput("utvalg_sykehus_andel"),
-  #                                tableOutput("Tabell_sykehus_andel"), downloadButton("lastNed_sykehus_andel", "Last ned tabell"))
-  # )),
 
   #-------Andeler----------
   tabPanel(p("Andeler", title='Alder, Overlevelse, Isolasjon, Nyrebehandling, Reinnleggelse, Respiratorstøtte, Respiratortid,
@@ -402,7 +380,7 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
              id = "brukervalg_andeler",
              width=3,
              selectInput(
-               inputId = "valgtVarAndelGrVar", label="Velg variabel",
+               inputId = "valgtVarAndel", label="Velg variabel",
                choices = c('Alder minst 80 år' = 'alder_over80',
                            'Alder under 18år' = 'alder_u18',
                            'Bukleie' = 'bukleie',
@@ -428,13 +406,13 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                            'Trakeostomi, åpen' = 'trakAapen'
                            )
              ),
-             dateRangeInput(inputId = 'datovalgAndelGrVar', start = startDato, end = idag,
+             dateRangeInput(inputId = 'datovalgAndel', start = startDato, end = idag,
                             label = "Tidsperiode", separator="t.o.m.", language="nb"),
-             selectInput(inputId = "erMannAndelGrVar", label="Kjønn",
+             selectInput(inputId = "erMannAndel", label="Kjønn",
                          choices = c("Begge"=2, "Menn"=1, "Kvinner"=0)),
-             sliderInput(inputId="alderAndelGrVar", label = "Alder", min = 0,
+             sliderInput(inputId="alderAndel", label = "Alder", min = 0,
                          max = 110, value = c(0, 110)),
-             selectInput(inputId = "covidvalgAndeler", label= velgCovidTxt,
+             selectInput(inputId = "covidvalgAndel", label= velgCovidTxt,
                          choices = covidValg),
              br(),
              p(em('Følgende utvalg gjelder bare figuren som viser utvikling over tid')),
@@ -445,28 +423,22 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                                          'Kvartal'='Kvartal', 'Måned'='Mnd'))),
              actionButton("reset_andelValg", label="Tilbakestill valg"),
              br(),
-             selectInput(inputId = "bildeformatAndelGrVar",
+             selectInput(inputId = "bildeformatAndel",
                          label = "Velg format for nedlasting av figur",
                          choices = c('pdf', 'png', 'jpg', 'bmp', 'tif', 'svg'))
 
            ),
            mainPanel(
-             # fluidRow(column(6, plotOutput("andelTid"))),
-             # br(),
-             # br(),
-             # fluidRow(
-             #       column(6, plotOutput("andelerGrVar") ) #, div(style = "height:100px")) #height='1000px') # '400px'
-             # )
              tabsetPanel(
                tabPanel(
                  "Figurer",
-                 #column(10,
                  h3(em("Utvikling over tid")),
                  plotOutput("andelTid", height = 'auto'),
+                 downloadButton('LastNedFigAndelTid', label='Velg format og last ned figur'),
                  br(),
                  h3(em("Sykehusvise resultater")),
                  plotOutput("andelerGrVar", height='auto'),
-                 downloadButton('LastNedFigAndelGrVar', label='Last ned figur'),
+                 downloadButton('LastNedFigAndelGrVar', label='Velg format og last ned figur'),
                  h5('Velg format til venstre')
                ),
                tabPanel("Tabeller",
@@ -522,6 +494,10 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                          choices = c("Gjennomsnitt"='Gjsn', "Median"='Med')),
              selectInput(inputId = "covidvalgGjsn", label= velgCovidTxt,
                          choices = covidValg),
+             selectInput(inputId = "bildeformatGjsn",
+                         label = "Velg format for nedlasting av figur",
+                         choices = c('pdf', 'png', 'jpg', 'bmp', 'tif', 'svg')),
+             actionButton("reset_gjsnValg", label="Tilbakestill valg"),
              br(),
              p(em('Følgende utvalg gjelder bare figuren som viser utvikling over tid')),
              selectInput(inputId = 'enhetsUtvalgGjsn', label='Egen enhet og/eller landet',
@@ -530,15 +506,17 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
              selectInput(inputId = "tidsenhetGjsn", label="Velg tidsenhet",
                          choices = rev(c('År'= 'Aar', 'Halvår' = 'Halvaar',
                                          'Kvartal'='Kvartal', 'Måned'='Mnd'))
-             ),
-             actionButton("reset_gjsnValg", label="Tilbakestill valg")
+             )
            ), #sidebarPanel/kolonna til venstre
            mainPanel(
              br(),
              tabsetPanel(
                tabPanel("Figurer",
-                        plotOutput("gjsnTid"),
-                        plotOutput("gjsnGrVar")),
+                        plotOutput("gjsnTid", height = 'auto'),
+                        downloadButton(outputId = 'LastNedFigGjsnTid', label='Last ned figur'),
+                        plotOutput("gjsnGrVar", height = 'auto'),
+                        downloadButton(outputId = 'LastNedFigGjsnGrVar', label='Last ned figur')
+             ),
                tabPanel("Tabeller",
                         uiOutput("tittelGjsn"),
                         br(),
@@ -564,6 +542,8 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
              selectInput(inputId = "valgtVarMort", label="Velg variabel",
                         choices = c('SMR, SAPSII' = 'SMR',
                                     'SMR: PIM' = 'PIMdod')),
+             selectInput(inputId = "covidvalgSMR", label= velgCovidTxt,
+                         choices = covidValg),
              dateRangeInput(inputId = 'datovalgSMR', start = startDato, end = idag,
                             label = "Tidsperiode", separator="t.o.m.", language="nb"),
              selectInput(inputId = "erMannSMR", label="Kjønn",
@@ -572,15 +552,18 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
              sliderInput(inputId="alderSMR", label = "Alder", min = 0,
                          max = 110, value = c(0, 110)
              ),
-             selectInput(inputId = "bildeformatSMR",
+             br(),
+             conditionalPanel(
+               condition = "input.SMRfigtab == 'Figur' ",
+               selectInput(inputId = "bildeformatSMR",
                          label = "Velg format for nedlasting av figur",
                          choices = c('pdf', 'png', 'jpg', 'bmp', 'tif', 'svg')),
-             downloadButton('LastNedFigSMR', label='Last ned figur')
+             downloadButton('LastNedFigSMR', label='Last ned figur'))
            ),
            mainPanel(
-             tabsetPanel(
+             tabsetPanel(id='SMRfigtab',
                tabPanel("Figur",
-                          plotOutput("SMRfig") #, height="auto"
+                          plotOutput("SMRfig") #, height="auto")
                         # h5('Velg figurformat i nedtrekksmeny i venstre panel'),)
                         ),
                tabPanel("Tabell",
@@ -604,7 +587,14 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
              ),
              sliderInput(inputId="alderInnMaate", label = "Alder", min = 0,
                          max = 110, value = c(0, 110)
-             )
+             ),
+             selectInput(inputId = "covidvalgInnMaate", label= velgCovidTxt,
+                         choices = covidValg),
+             br(),
+             selectInput(inputId = "bildeformatTypeOpph",
+                         label = "Velg format for nedlasting av figur",
+                         choices = c('pdf', 'png', 'jpg', 'bmp', 'tif', 'svg')),
+             downloadButton('LastNedFigTypeOpph', label='Last ned figur')
            ),
            mainPanel(
              plotOutput('innMaate')
@@ -728,9 +718,6 @@ server <- function(input, output, session) { #
   rolle <- reactive({ifelse(paaServer, rapbase::getUserRole(shinySession=session), 'SC')})
   brukernavn <- reactive({ifelse(paaServer, rapbase::getUserName(shinySession=session), 'brukernavn')})
   # reshID <- reactive({ifelse(paaServer, as.numeric(rapbase::getUserReshId(session)), 109773)})
-  # rolle <- reactive({ifelse(paaServer, rapbase::getUserRole(shinySession=session), 'SC')})
-  # brukernavn <- reactive({ifelse(paaServer, rapbase::getUserName(shinySession=session), 'brukernavn')})
-  #userRole <- reactive({ifelse(onServer, rapbase::getUserRole(session), 'SC')})
   #output$reshID <- renderText({ifelse(paaServer, as.numeric(rapbase::getUserReshId(session)), 105460)}) #evt renderUI
 
   indReshEgen <- match(reshID, RegData$ReshId)
@@ -741,7 +728,6 @@ server <- function(input, output, session) { #
                   'universitetssykehus')[RegData$ShType[indReshEgen]]
   egenLokalitet <- c(0, 2, 4, 7)
   names(egenLokalitet) <- c('hele landet', egetShNavn, egenShType , egetRHF)
-
 
   output$egetShNavn <- renderText(egetShNavn)
 
@@ -829,13 +815,9 @@ server <- function(input, output, session) { #
 
 #------------ Aktivitet (/Tabeller) --------
  # observe({
-  #TESTING
-  # tab <- t(tabNokkeltall(RegData=RegData, tidsenhet='Mnd',
-  #                        enhetsUtvalg=0, reshID=109773))#
   output$NokkeltallUtvalgTxt <- renderText({
     paste0('Nøkkeltall på intensiv, ',
               as.character(names(egenLokalitet[which(egenLokalitet==as.numeric(input$enhetsNivaaStart))])))
-    #paste0('Nøkkeltall på intensiv, ', as.character(names(egenLokalitet[which(egenLokalitet==4)])))
   })
    output$tabNokkeltallStart <- function() {
     tab <- t(tabNokkeltall(RegData=RegData, tidsenhet='Mnd',
@@ -914,10 +896,6 @@ server <- function(input, output, session) { #
   #})
 #------------Fordelinger---------------------
 
-      #   observeEvent(input$reset_xx, {
-      #    shinyjs::reset("enhetsUtvalg")
-      #    shinyjs::reset("alder")
-      # })
       output$fordelinger <- renderPlot({
             NIRFigAndeler(RegData=RegData, preprosess = 0, valgtVar=input$valgtVar,
                           reshID=reshID, velgAvd = input$velgResh,
@@ -929,11 +907,24 @@ server <- function(input, output, session) { #
       }, height=800, width=800 #height = function() {session$clientData$output_fordelinger_width}
       )
 
-      observe({
-        # print(input$valgtVar)
-        # print(sort(names(RegData)))
-        #print(input$ark)
+      output$LastNedFigFord <- downloadHandler(
+        filename = function(){
+          paste0('FigurFord_', Sys.time(), '.', input$bildeformatFord)
+        },
+        content = function(file){
+          NIRFigAndeler(RegData=RegData, preprosess = 0, valgtVar=input$valgtVar,
+                        reshID=reshID, velgAvd = input$velgResh,
+                        enhetsUtvalg=as.numeric(input$enhetsUtvalg),
+                        datoFra=input$datovalg[1], datoTil=input$datovalg[2],
+                        minald=as.numeric(input$alder[1]), maxald=as.numeric(input$alder[2]),
+                        erMann=as.numeric(input$erMann), velgDiag = as.numeric(input$covidvalg),
+                        session = session,
+                             outfile = file)
+        }
+      )
 
+
+      observe({
             UtDataFord <- NIRFigAndeler(RegData=RegData, preprosess = 0, valgtVar=input$valgtVar,
                                         reshID=reshID, enhetsUtvalg=as.numeric(input$enhetsUtvalg),
                                         velgAvd = input$velgResh,
@@ -942,8 +933,6 @@ server <- function(input, output, session) { #
                                         erMann=as.numeric(input$erMann),
                                         velgDiag = as.numeric(input$covidvalg),
                                         lagFig = 0, session = session)
-            #RegData <- NIRRegDataSQL(datoFra = '2018-01-01')
-            #UtDataFord <- NIRFigAndeler(RegData=RegData, valgtVar='bukleie', reshID=109773, enhetsUtvalg=0 )
             tab <- lagTabavFig(UtDataFraFig = UtDataFord)
 
             output$tittelFord <- renderUI({
@@ -976,52 +965,69 @@ server <- function(input, output, session) { #
 
 #---------Andeler-------------------------
       output$andelerGrVar <- renderPlot({
-            NIRFigAndelerGrVar(RegData=RegData, preprosess = 0, valgtVar=input$valgtVarAndelGrVar,
-                               datoFra=input$datovalgAndelGrVar[1], datoTil=input$datovalgAndelGrVar[2],
-                               minald=as.numeric(input$alderAndelGrVar[1]), maxald=as.numeric(input$alderAndelGrVar[2]),
-                               erMann=as.numeric(input$erMannAndelGrVar),
-                               velgDiag = as.numeric(input$covidvalgAndeler),
+            NIRFigAndelerGrVar(RegData=RegData, preprosess = 0, valgtVar=input$valgtVarAndel,
+                               datoFra=input$datovalgAndel[1], datoTil=input$datovalgAndel[2],
+                               minald=as.numeric(input$alderAndel[1]), maxald=as.numeric(input$alderAndel[2]),
+                               erMann=as.numeric(input$erMannAndel),
+                               velgDiag = as.numeric(input$covidvalgAndel),
                                session=session)
       }, height = 800, width=700 #height = function() {session$clientData$output_andelerGrVarFig_width} #})
       )
 
       output$LastNedFigAndelGrVar <- downloadHandler(
         filename = function(){
-          paste0('FigurAndelEnh_', Sys.time(), '.', input$bildeformatAndelGrVar)
+          paste0('FigurAndelEnh_', Sys.time(), '.', input$bildeformatAndel)
         },
         content = function(file){
-          NIRFigAndelerGrVar(RegData=RegData, preprosess = 0, valgtVar=input$valgtVarAndelGrVar,
-                             datoFra=input$datovalgAndelGrVar[1], datoTil=input$datovalgAndelGrVar[2],
-                             minald=as.numeric(input$alderAndelGrVar[1]), maxald=as.numeric(input$alderAndelGrVar[2]),
-                             erMann=as.numeric(input$erMannAndelGrVar),
-                             velgDiag = as.numeric(input$covidvalgAndeler),
+          NIRFigAndelerGrVar(RegData=RegData, preprosess = 0, valgtVar=input$valgtVarAndel,
+                             datoFra=input$datovalgAndel[1], datoTil=input$datovalgAndel[2],
+                             minald=as.numeric(input$alderAndel[1]), maxald=as.numeric(input$alderAndel[2]),
+                             erMann=as.numeric(input$erMannAndel),
+                             velgDiag = as.numeric(input$covidvalgAndel),
                           outfile = file)
         }
       )
 
             output$andelTid <- renderPlot({
 
-                  NIRFigAndelTid(RegData=RegData, preprosess = 0, valgtVar=input$valgtVarAndelGrVar,
+                  NIRFigAndelTid(RegData=RegData, preprosess = 0, valgtVar=input$valgtVarAndel,
                                  reshID=reshID,
-                                 datoFra=input$datovalgAndelGrVar[1], datoTil=input$datovalgAndelGrVar[2],
-                                 minald=as.numeric(input$alderAndelGrVar[1]), maxald=as.numeric(input$alderAndelGrVar[2]),
-                                 erMann=as.numeric(input$erMannAndelGrVar),
-                                 velgDiag = as.numeric(input$covidvalgAndeler),
+                                 datoFra=input$datovalgAndel[1], datoTil=input$datovalgAndel[2],
+                                 minald=as.numeric(input$alderAndel[1]), maxald=as.numeric(input$alderAndel[2]),
+                                 erMann=as.numeric(input$erMannAndel),
+                                 velgDiag = as.numeric(input$covidvalgAndel),
                                  tidsenhet = input$tidsenhetAndelTid,
                                  enhetsUtvalg = input$enhetsUtvalgAndelTid,
                                  session=session)
             }, height = 300, width = 1000
             )
 
+            output$LastNedFigAndelTid <- downloadHandler(
+              filename = function(){
+                paste0('FigurAndelTid_',input$valgtVarAndel, Sys.time(), '.', input$bildeformatAndel)
+              },
+              content = function(file){
+                NIRFigAndelTid(RegData=RegData, preprosess = 0, valgtVar=input$valgtVarAndel,
+                                   reshID=reshID,
+                                   datoFra=input$datovalgAndel[1], datoTil=input$datovalgAndel[2],
+                                   minald=as.numeric(input$alderAndel[1]), maxald=as.numeric(input$alderAndel[2]),
+                                   erMann=as.numeric(input$erMannAndel),
+                                   velgDiag = as.numeric(input$covidvalgAndel),
+                                   tidsenhet = input$tidsenhetAndelTid,
+                                   enhetsUtvalg = input$enhetsUtvalgAndelTid,
+                                   session=session,
+                                   outfile = file)
+              }
+            )
             observe({
                   #AndelTid
 
-                  AndelerTid <- NIRFigAndelTid(RegData=RegData, preprosess = 0, valgtVar=input$valgtVarAndelGrVar,
+                  AndelerTid <- NIRFigAndelTid(RegData=RegData, preprosess = 0, valgtVar=input$valgtVarAndel,
                                                reshID=reshID,
-                                               datoFra=input$datovalgAndelGrVar[1], datoTil=input$datovalgAndelGrVar[2],
-                                               minald=as.numeric(input$alderAndelGrVar[1]), maxald=as.numeric(input$alderAndelGrVar[2]),
-                                               erMann=as.numeric(input$erMannAndelGrVar),
-                                               velgDiag = as.numeric(input$covidvalgAndeler),
+                                               datoFra=input$datovalgAndel[1], datoTil=input$datovalgAndel[2],
+                                               minald=as.numeric(input$alderAndel[1]), maxald=as.numeric(input$alderAndel[2]),
+                                               erMann=as.numeric(input$erMannAndel),
+                                               velgDiag = as.numeric(input$covidvalgAndel),
                                                tidsenhet = input$tidsenhetAndelTid,
                                                enhetsUtvalg = input$enhetsUtvalgAndelTid,
                                                lagFig=0, session=session)
@@ -1049,18 +1055,15 @@ server <- function(input, output, session) { #
 
 
                   #AndelGrVar
-                  AndelerShus <- NIRFigAndelerGrVar(RegData=RegData, preprosess = 0, valgtVar=input$valgtVarAndelGrVar,
-                                                    datoFra=input$datovalgAndelGrVar[1], datoTil=input$datovalgAndelGrVar[2],
-                                                    minald=as.numeric(input$alderAndelGrVar[1]), maxald=as.numeric(input$alderAndelGrVar[2]),
-                                                    erMann=as.numeric(input$erMannAndelGrVar),
-                                                    velgDiag = as.numeric(input$covidvalgAndeler),
+                  AndelerShus <- NIRFigAndelerGrVar(RegData=RegData, preprosess = 0, valgtVar=input$valgtVarAndel,
+                                                    datoFra=input$datovalgAndel[1], datoTil=input$datovalgAndel[2],
+                                                    minald=as.numeric(input$alderAndel[1]), maxald=as.numeric(input$alderAndel[2]),
+                                                    erMann=as.numeric(input$erMannAndel),
+                                                    velgDiag = as.numeric(input$covidvalgAndel),
                                                     lagFig = 0, session=session)
                   tabAndelerShus <- cbind(Antall=AndelerShus$Ngr$Hoved,
                                           Andeler = AndelerShus$AggVerdier$Hoved)
 
-                  # output$andelerGrVarTab <- renderTable({
-                  #       tabAndelerShus}, rownames=T, spacing="xs" #,height='60%' #width='60%',
-                  # )
                   output$andelerGrVarTab <- function() { #gr1=UtDataFord$hovedgrTxt, gr2=UtDataFord$smltxt renderTable(
                         antKol <- ncol(tabAndelerShus)
                         kableExtra::kable(tabAndelerShus, format = 'html'
@@ -1097,6 +1100,20 @@ server <- function(input, output, session) { #
                             valgtMaal = input$sentralmaal)
       }, height=900, width=700
       )
+            output$LastNedFigGjsnGrVar <- downloadHandler(
+              filename = function(){
+                paste0('FigurGjsnGrVar_',input$valgtVarGjsn , Sys.time(), '.', input$bildeformatGjsn)
+              },
+              content = function(file){
+                NIRFigGjsnGrVar(RegData=RegData, preprosess = 0, valgtVar=input$valgtVarGjsn,
+                                datoFra=input$datovalgGjsn[1], datoTil=input$datovalgGjsn[2],
+                                minald=as.numeric(input$alderGjsn[1]), maxald=as.numeric(input$alderGjsn[2]),
+                                erMann=as.numeric(input$erMannGjsn),
+                                velgDiag = as.numeric(input$covidvalgGjsn),
+                                valgtMaal = input$sentralmaal,
+                               outfile = file)
+              }
+            )
 
       output$gjsnTid <- renderPlot({
             NIRFigGjsnTid(RegData=RegData, preprosess = 0, valgtVar=input$valgtVarGjsn,
@@ -1112,6 +1129,24 @@ server <- function(input, output, session) { #
       }, height=400, width = 1200
       )
 
+      output$LastNedFigGjsnTid <- downloadHandler(
+        filename = function(){
+          paste0('FigurGjsnTid',input$valgtVarGjsn , Sys.time(), '.', input$bildeformatGjsn)
+        },
+        content = function(file){
+          NIRFigGjsnTid(RegData=RegData, preprosess = 0, valgtVar=input$valgtVarGjsn,
+                        reshID=reshID,
+                        datoFra=input$datovalgGjsn[1], datoTil=input$datovalgGjsn[2],
+                        minald=as.numeric(input$alderGjsn[1]), maxald=as.numeric(input$alderGjsn[2]),
+                        erMann=as.numeric(input$erMannGjsn),
+                        velgDiag = as.numeric(input$covidvalgGjsn),
+                        valgtMaal = input$sentralmaal,
+                        tidsenhet = input$tidsenhetGjsn,
+                        enhetsUtvalg = input$enhetsUtvalgGjsn,
+                        session=session,
+                          outfile = file)
+        }
+      )
       observe({
         dataUtGjsnGrVar <- NIRFigGjsnGrVar(RegData=RegData, preprosess = 0, valgtVar=input$valgtVarGjsn,
                                            datoFra=input$datovalgGjsn[1], datoTil=input$datovalgGjsn[2],
@@ -1197,11 +1232,14 @@ server <- function(input, output, session) { #
 
 #--------------SMR----------------------------------
       output$SMRfig <- renderPlot({
+        #NIRFigGjsnGrVar(RegData=RegData, preprosess = 0, valgtVar = 'alder')
         NIRFigGjsnGrVar(RegData=RegData, preprosess = 0, valgtVar = input$valgtVarMort, #valgtVar='SMR',
                         datoFra=input$datovalgSMR[1], datoTil=input$datovalgSMR[2],
                         minald=as.numeric(input$alderSMR[1]), maxald=as.numeric(input$alderSMR[2]),
-                        erMann=as.numeric(input$erMannSMR))
-      }, #heigth = 8000, width=800
+                        erMann=as.numeric(input$erMannSMR),
+                        velgDiag = as.numeric(input$covidvalgSMR)
+                    )
+      }, #, height=900, width=700 #heigth = 8000, width=800
       height = function() {2.2*session$clientData$output_SMRfig_height}, #
       width = function() {0.8*session$clientData$output_SMRfig_width}
       )
@@ -1215,6 +1253,7 @@ server <- function(input, output, session) { #
                           datoFra=input$datovalgSMR[1], datoTil=input$datovalgSMR[2],
                           minald=as.numeric(input$alderSMR[1]), maxald=as.numeric(input$alderSMR[2]),
                           erMann=as.numeric(input$erMannSMR),
+                          velgDiag = as.numeric(input$covidvalgSMR),
                              outfile = file)
         }
       )
@@ -1224,6 +1263,7 @@ server <- function(input, output, session) { #
         dataUtSMR <- NIRFigGjsnGrVar(RegData=RegData, preprosess = 0, valgtVar=input$valgtVarMort,
                                      datoFra=input$datovalgSMR[1], datoTil=input$datovalgSMR[2],
                                      minald=as.numeric(input$alderSMR[1]), maxald=as.numeric(input$alderSMR[2]),
+                                     velgDiag = as.numeric(input$covidvalgSMR),
                                      erMann=as.numeric(input$erMannSMR), lagFig = 0)
         output$SMRtab <- function() {
           tabSMR <- cbind(Antall = dataUtSMR$Ngr$Hoved,
@@ -1251,9 +1291,25 @@ server <- function(input, output, session) { #
                        datoFra=input$datovalgInnMaate[1], datoTil=input$datovalgInnMaate[2],
                        minald=as.numeric(input$alderInnMaate[1]), maxald=as.numeric(input$alderInnMaate[2]),
                        erMann=as.numeric(input$erMannInnMaate),
+                       velgDiag= as.numeric(input$covidvalgInnMaate),
                        session=session)
       }, height = function() {2.2*session$clientData$output_innMaate_height},
       width = function() {0.7*session$clientData$output_innMaate_width}) #, height=900, width=700)
+
+      output$LastNedFigTypeOpph <- downloadHandler(
+        filename = function(){
+          paste0('FigurTypeOpph_', Sys.time(), '.', input$bildeformatTypeOpph)
+        },
+        content = function(file){
+          NIRFigInnMaate(RegData=RegData, preprosess=0, valgtVar='InnMaate',
+                         datoFra=input$datovalgInnMaate[1], datoTil=input$datovalgInnMaate[2],
+                         minald=as.numeric(input$alderInnMaate[1]), maxald=as.numeric(input$alderInnMaate[2]),
+                         erMann=as.numeric(input$erMannInnMaate),
+                         velgDiag= as.numeric(input$covidvalgInnMaate),
+                       session=session,
+                          outfile = file)
+        }
+      )
 
       if (antPaaror>0){
       output$paarorFord <- renderPlot(
