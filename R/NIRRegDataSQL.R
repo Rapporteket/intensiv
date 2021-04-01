@@ -10,12 +10,12 @@
 #'
 #'
 NIRRegDataSQL <- function(datoFra = '2019-01-01', datoTil = '2099-01-01') { #,session='') {
-  
+
   #raplog::repLogger(session = session, 'Hentet alle data fra intensivregisteret')
 
-  
+
   #	DischargedHospitalStatus,
-  
+
   query <- paste0('SELECT
   Age,
 	Bilirubin,
@@ -45,7 +45,7 @@ HF,
       ICD10_3,
       ICD10_4,
       ICD10_5,
-      Icp, 
+      Icp,
       Impella,
       Intermitterende,
       IntermitterendeDays,
@@ -53,6 +53,12 @@ HF,
       Isolation,
       IsolationDaysTotal,
       KidneyReplacingTreatment,
+      KompHypoglykemi,
+      KompPneumotoraks,
+      KompLuftveisproblem,
+      KompDekubitus,
+      KomIngen,
+      KompIkkeUtfylt,
       Kontinuerlig,
       KontinuerligDays,
       Leukocytes,
@@ -109,14 +115,14 @@ RHF,
 FROM
 	MainFormDataContract
 WHERE cast(DateAdmittedIntensive as date) BETWEEN \'', datoFra, '\' AND \'', datoTil, '\'')
-  #WHERE cast(DateAdmittedIntensive as date) >= \'', datoFra, '\' AND DateAdmittedIntensive <= \'', datoTil, '\'')  
+  #WHERE cast(DateAdmittedIntensive as date) >= \'', datoFra, '\' AND DateAdmittedIntensive <= \'', datoTil, '\'')
 
   # query <- paste0('select * from MainFormDataContract
   # WHERE cast(DateAdmittedIntensive as date) BETWEEN \'', datoFra='2020-01-01', '\' AND \'', datoTil=Sys.Date(), '\'')
-  
+
   RegData <- rapbase::loadRegData(registryName= "nir", query=query, dbType="mysql")
-  
-  
-  
+
+
+
     return(RegData)
 }

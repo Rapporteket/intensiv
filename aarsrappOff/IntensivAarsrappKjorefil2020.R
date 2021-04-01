@@ -33,6 +33,7 @@ NIRFigInnMaate(RegData=RegData, valgtVar='InnMaate', datoFra=datoFra1aar, datoTi
 
 #--------------------------------------- Andeler ----------------------------------
 
+NIRFigAndeler(RegData=NIRRegDataSQL(), valgtVar='komplikasjoner', enhetsUtvalg = 0)
 variable <- c('OrganDonationCompletedReasonForNoStatus', 'CerebralCirculationAbolishedReasonForNo',
               'inklKrit','liggetid','InnMaate','NEMS24', 'Nas24','respiratortidNonInv',
                    'SAPSII', 'nyreBeh', 'nyreBehTid','spesTiltak') #, 'respiratortidInvMoverf')
@@ -55,7 +56,7 @@ NIRFigAndeler(RegData=RegData, valgtVar='spesTiltak', datoFra=datoFra1aar, datoT
 
 
 variable <- c('OrganDonationCompletedCirc', 'OrganDonationCompletedStatus',
-              'dod30d', 'dodeIntensiv', 'trakeostomi','reinn')
+              'dod30d', 'dodeIntensiv', 'trakeostomi','reinn', 'komplReg', 'invasivVent')
 for (grType in 2:3) {
       for (valgtVar in variable) {
             outfile <- paste0(valgtVar, grType, 'PrSh.pdf')

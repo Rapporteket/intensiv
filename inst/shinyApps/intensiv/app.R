@@ -301,6 +301,7 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                            'Inklusjonskriterier' = 'inklKrit',
                            'Isolasjon, type' = 'isolering',
                            'Isolasjon, varighet' = 'isoleringDogn',
+                           'Komplikasjoner' = 'komplikasjoner',
                            'Liggetid' = 'liggetid',
                            'Nas-skår (sykepleierakt.)' = 'Nas24',
                            'NEMS-skår (ressursbruk)' = 'NEMS24',
@@ -355,7 +356,7 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
              tabsetPanel(
                tabPanel(
                  'Figur',
-                 plotOutput('fordelinger')),
+                 plotOutput('fordelinger', height = 'auto')),
                downloadButton('LastNedFigFord', label='Velg format og last ned figur'),
                tabPanel(
                  'Tabell',
@@ -388,9 +389,12 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                            'Døde innen 90 dager' = 'dod90d',
                            'Døde innen ett år' = 'dod365d',
                            'Døde på intensiv' = 'dodeIntensiv',
+                           'Frailty index registrert' = 'frailtyIndex',
                            'Invasiv respiratortid < 2,5 døgn, m/overførte' = 'respiratortidInvMoverf',
                            'Invasiv respiratortid < 2,5 døgn, u/overførte' = 'respiratortidInvUoverf',
                            'Isolasjon av pasient' = 'isolering',
+                           'Invasiv ventilasjon' = 'invasivVent',
+                           'Komplikasjonsregistrering' = 'komplReg',
                            'Liggetid, døde' = 'liggetidDod',
                            'Menn' = 'erMann',
                            'Nyreerstattende behandling' = 'nyreBeh',
