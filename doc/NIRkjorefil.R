@@ -31,7 +31,8 @@ setwd('C:/ResultattjenesteGIT/intensiv/inst/')
 setwd('/home/rstudio/intensiv/inst')
 reshID=706078 #Tromsø med int: 601302, Ullevål Kir int: 109773, 102090 Ahus, 112044 Haukeland, 102673 Ålesund Med, Kristiansund: 706078
 
-RegData <- NIRPreprosess(NIRRegDataSQL(datoFra = '2020-01-01', datoTil = '2020-12-31'))
+RegData <- NIRPreprosess(NIRRegDataSQL(datoFra = '2021-01-01', datoTil = '2021-12-31'))
+
 
 
 # Kan du gje oss tal på registrerte pasientar nasjonalt i Norsk intensivregister med denne avgrensinga:
