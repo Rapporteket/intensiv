@@ -60,6 +60,8 @@ PaarorDataH$Post[indPre] <- 0 #'pre'
 PaarorDataH$Post[indPost] <- 1 #'post'
 table(PaarorDataH$Post, useNA = 'a')
 
+write.table()
+
 #Pasientkarakteristikker
 
 InnMaateTab <- table(PaarorDataH$InnMaate, PaarorDataH$Post)
@@ -88,7 +90,9 @@ xtable::xtable(Tab, digits=1, align=c('l','r','r'))
 #Hovedårsak, innleggelse - vis figur?
 
 
-
+table(PaarorDataH$SumScoreAllQuestions != -1, PaarorDataH$Post)
+table(PaarorDataH$SumScoreSatisfactionCare != -1, PaarorDataH$Post)
+table(PaarorDataH$SumScoreSatisfactionDecision != -1, PaarorDataH$Post)
 #--------------------------- Figurtilrettelegging og figur--------------------------------------
 
 rm(list=ls())

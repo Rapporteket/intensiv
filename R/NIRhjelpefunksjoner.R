@@ -163,6 +163,27 @@ KobleMedHoved <- function(HovedSkjema, Skjema2, alleHovedskjema=F, alleSkjema2=F
   return(data)
 }
 
+#' Telle antall influensaskjema for en gitt periode
+#'
+#' @param datoFra fra og med dato
+#' @param datoTil til og med dato
+#' @param reshID resh for aktuell enhet
+#'
+#' @return
+#' @export
+#'
+tellInfluensa <- function(datoFra='2020-09-01', datoTil=Sys.Date(), reshID=0){
+  q <- paste0('SELECT *
+  FROM InfluensaFormDataContract
+WHERE cast(DateAdmittedIntensive as date) BETWEEN \'', datoFra, '\' AND \'', datoTil, '\'')
+  RegData <- rapbase::loadRegData(registryName= "nir", query=q)
+  
+  antReg <- sum(RegData$UnitId == reshID)
+  
+  txt <- paste0('Antall influensaskjema registrert i perioden ', datoFra, ' - ', datoTil, 
+                ' for ReshId ', reshID, ' er: ', antReg )
+  return(txt)
+}
     
 #' Funksjon som produserer rapporten som skal sendes til mottager.
 #'
