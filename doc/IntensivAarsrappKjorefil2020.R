@@ -19,7 +19,7 @@ write.table(RegDataAarCSV, file = 'A:/Intensiv/NIRaarsrapp2019.csv', row.names =
             fileEncoding = 'UTF-8', sep = ';')
 
 RegData <- NIRRegDataSQL(datoFra=datoFra, datoTil=datoTil)
-load("A:/Intensiv/NIRaarsrapp2019.Rdata")
+#load("A:/Intensiv/NIRaarsrapp2019.Rdata")
 #PaarorDataH <- PaarorDataH2018
 #load('A:/Intensiv/PaarorRegData2018.RData')
 setwd('/home/rstudio/intensiv/aarsrappOff')
@@ -31,12 +31,14 @@ NIRFigInnMaate(RegData=RegData, datoFra=datoFra1aar, datoTil = datoTil,
 NIRFigInnMaate(RegData=RegData, valgtVar='InnMaate', datoFra=datoFra1aar, datoTil = datoTil,
                grType=3, outfile='InnMaateReg.pdf')
 
-#--------------------------------------- Andeler ----------------------------------
+#--------------------------------------- Fordelinger ----------------------------------
 
-NIRFigAndeler(RegData=NIRRegDataSQL(), valgtVar='komplikasjoner', enhetsUtvalg = 0)
+#NIRFigAndeler(RegData=NIRRegDataSQL(), valgtVar='komplikasjoner', enhetsUtvalg = 0)
 variable <- c('OrganDonationCompletedReasonForNoStatus', 'CerebralCirculationAbolishedReasonForNo',
-              'inklKrit','liggetid','InnMaate','NEMS24', 'Nas24','respiratortidNonInv',
+              'frailtyIndex', 'inklKrit','liggetid','InnMaate','komplikasjoner',
+              'NEMS24', 'Nas24','respiratortidNonInv',
                    'SAPSII', 'nyreBeh', 'nyreBehTid','spesTiltak') #, 'respiratortidInvMoverf')
+variable <-
 for (valgtVar in variable) {
    outfile <- paste0(valgtVar, '_Ford.pdf')
    NIRFigAndeler(RegData=RegData, valgtVar=valgtVar, datoFra=datoFra1aar, datoTil=datoTil,
@@ -57,6 +59,7 @@ NIRFigAndeler(RegData=RegData, valgtVar='spesTiltak', datoFra=datoFra1aar, datoT
 
 variable <- c('OrganDonationCompletedCirc', 'OrganDonationCompletedStatus',
               'dod30d', 'dodeIntensiv', 'trakeostomi','reinn', 'komplReg', 'invasivVent')
+variable <- 'frailtyIndex'
 for (grType in 2:3) {
       for (valgtVar in variable) {
             outfile <- paste0(valgtVar, grType, 'PrSh.pdf')
@@ -73,6 +76,7 @@ for (grType in 2:3) {
 #---------------------AndelTid----------------------------------------------
 
 variable <- c('dod30d', 'liggetidDod')
+
 for (valgtVar in variable){
       outfile <- paste0(valgtVar, '_AndelTid.pdf')
       NIRFigAndelTid(RegData=RegData, valgtVar=valgtVar, datoFra=datoFra, datoTil=datoTil,
@@ -147,8 +151,8 @@ NIRFigGjsnGrVar(RegData=RegData, valgtVar='respiratortidNonInv', valgtMaal='Gjsn
 
 #-- Pårørende----------------------------------------------------------
 
-RegData <- NIRRegDataSQL(datoFra = '2019-01-01', datoTil = '2019-12-31') #, session = session) #datoFra = datoFra, datoTil = datoTil)
-PaarorData <- NIRpaarorDataSQL(datoFra = '2019-01-01')
+RegData <- NIRRegDataSQL(datoFra = datoFra1aar, datoTil = datoTil) #, session = session) #datoFra = datoFra, datoTil = datoTil)
+PaarorData <- NIRpaarorDataSQL(datoFra = datoFra1aar)
 PaarorDataH <- KobleMedHoved(RegData, PaarorData, alleHovedskjema=F, alleSkjema2=F)
 PaarorDataH <- NIRPreprosess(PaarorDataH)
 
@@ -198,7 +202,7 @@ tabDum <- tabAntOpphShMnd(RegData=RegData1aar, datoTil=datoTil, antMnd=12)
 table(RegData1aar$ShNavn) #[ ,c('ShNavn' ,'Aar')])
 RegData1aar$ShNavn
 xtable(table(RegData1aar$ShNavn), align=c('l','r'), #row.names=F,
-       caption = 'Tal på registrerte opphald')
+       caption = 'Intensivopphald per år')
 
 
 #Aktivitet/Nøkkeltall
@@ -238,16 +242,10 @@ valgteAar <- 2016:2019
 
 # indikatorID <- c('intensiv1', 'intensiv2')
 # kvalIndParam <- c('reinn', 'respiratortidInvMoverf')
-alleSh
-
-DataTilRes <- dataTilOffVisning(RegData = NIRData, valgtVar='reinn', #aar=valgteAar,
-                                 ResPort=1, indID = 'intensiv1', filUt = 'innlegg_72t')
 
 DataTilSKDE <- dataTilOffVisning(RegData = NIRData, valgtVar='reinn', aar=valgteAar,
                                  ResPort=0, indID = 'intensiv_innlegg_72t', filUt = 'innlegg_72t')
 
-DataTilRes <- dataTilOffVisning(RegData = NIRData, valgtVar='respiratortidInvUoverf', #aar=valgteAar,
-                                ResPort=1, indID = 'intensiv2', filUt = 'inv_vent_Uoverf')
 DataTilSKDE <- dataTilOffVisning(RegData = NIRData, valgtVar='respiratortidInvUoverf', aar=valgteAar, #'respiratortidInvMoverf'
                                  ResPort=0, indID = 'intensiv_inv_vent', filUt = 'inv_vent')
 

@@ -91,7 +91,7 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='an
       if (valgtVar=='dod30d') { #AndelTid,AndelerGrVar
             RegData$Variabel <- RegData$Dod30
             varTxt <- 'pasienter som døde'
-            tittel <- 'Opphold der pasienten døde innen 30 dager etter innleggelse'
+            tittel <- 'Opph. der pasienten døde innen 30 dager etter innleggelse'
             sortAvtagende <- FALSE
       }
       if (valgtVar=='dod90d') { #AndelTid,AndelerGrVar
@@ -689,7 +689,7 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='an
         tittel <- 'Komplikasjoner'
         RegData$KompTot <- (rowSums(RegData[ ,c('KompHypoglykemi',	'KompPneumotoraks',	'KompLuftveisproblem',
                               'KompDekubitus')])>0)
-        grtxt <- c('Alvorlig hypoglykemi',	'Pneumotoraks',	'Luftveisproblem, /n trakealtube/kanyle',
+        grtxt <- c('Alvorlig hypoglykemi',	'Pneumotoraks',	'Luftveisproblem, \ntrakealtube/kanyle',
                    'Dekubitus', 'Minst én kompl.')
         variable <- c('KompHypoglykemi',	'KompPneumotoraks',	'KompLuftveisproblem',
                        'KompDekubitus',	'KompTot')

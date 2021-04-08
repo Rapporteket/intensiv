@@ -99,7 +99,7 @@ ShNavnSort <- names(Nsh)[sortInd]	#c(names(Nsh)[sortInd],'')
 NshtxtSort <- Nshtxt[sortInd]
 
 #--------------------------FIGUR---------------------------------------------------
-if (grType %in% 1:3) {xkr <- 1} else {xkr <- 0.75}
+if (grType %in% 1:3) {xkr <- 0.95} else {xkr <- 0.75}
 cexShNavn <- 1.2
 
 FigTypUt <- rapFigurer::figtype(outfile, height=3*800, fargepalett=NIRUtvalg$fargepalett)
@@ -120,8 +120,8 @@ tittelpos <- 1
 			main='', font.main=1, xlab='', ylim=c(ymin, 1.05*ymax+2), las=1, cex.names=xkr) 	# ylim=c(0.05, 1.24)*length(Nsh),xlim=c(0,ymax), cex.axis=0.9, cex.names=0.8*xkr,
 	ShNavnSort <- c('alle i visninga', '', ShNavnSort) #NIRUtvalg$grTypeTxt
 	NshtxtSort<- c(paste0('N=', N), '', NshtxtSort)
-		legend(x=50, y=1.05*ymax+2, c('Planlagt operasjon','Akutt non-operativ', 'Akutt operasjon'), xjust=0.5, yjust=0.5,	#inset=0.01,# max(pos)*1.01 x=50, y=ymax,
-			fill=farger[1:3], border=farger[1:3], ncol=3, bty='n')	#cex=0.9,  ncol=6,
+		legend(x=50, y=1.05*ymax+2, grtxt, xjust=0.5, yjust=0.5,	#inset=0.01,# max(pos)*1.01 x=50, y=ymax,
+			fill=farger[1:3], border=farger[1:3], ncol=3, bty='n', cex=0.8) #,  ncol=6, #c('Planlagt operasjon','Akutt non-operativ', 'Akutt operasjon')
 	xmax <- 100
 	mtext('(sortert på andel "Akutt non-op.")', line=0.5, cex=1)
 
