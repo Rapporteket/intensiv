@@ -1,12 +1,12 @@
 #' Fil med div hjelpefunksjoner.Group of functions Description section
-#' 
+#'
 #' Detaljer. kommer senereGroup of functions Details paragraph.
 #'
-#' Fil som inneholder hjelpefunksjoner. 
+#' Fil som inneholder hjelpefunksjoner.
 #' FinnReinnleggelser beregner reinnleggelser fra DateAdmittedIntensive og DateDischargedIntensive
 #' SorterOgNavngiTidsEnhet Legger til tidsenhetene Aar, Halvaar, Mnd og Kvartal
-#' 
-#' 
+#'
+#'
 #' @param RegData data
 #' @param PasientID Variabelen som angir pasientidentifikasjon
 #' @return Div hjelpefunksjoner
@@ -28,7 +28,7 @@ FinnReinnleggelser <- function(RegData, PasientID='PasientID'){
       RegDataSort$OpphNr <- ave(RegDataSort$PasientID, RegDataSort$PasientID, FUN=seq_along)
       indPasFlereOpph <- which(RegDataSort$OpphNr>1) #intersect(which(RegDataSort$AntOpph>1), which(RegDataSort$OpphNr>1))
       RegDataSort$TidUtInn <- NA
-      RegDataSort$TidUtInn[indPasFlereOpph] <- 
+      RegDataSort$TidUtInn[indPasFlereOpph] <-
             difftime(as.POSIXlt(RegDataSort$DateAdmittedIntensive[indPasFlereOpph], tz= 'UTC', format="%Y-%m-%d %H:%M:%S"),
                      as.POSIXlt(RegDataSort$DateDischargedIntensive[indPasFlereOpph-1], tz= 'UTC', format="%Y-%m-%d %H:%M:%S"),
                      units = 'hour')
@@ -36,23 +36,23 @@ FinnReinnleggelser <- function(RegData, PasientID='PasientID'){
       RegDataSort$Reinn <- 2 #Ikke reinnleggelse
       RegDataSort$Reinn[RegDataSort$TidUtInn<72 & RegDataSort$TidUtInn >= 0] <- 1 #Reinnleggelse
       RegDataSort$Reinn[!(RegDataSort$SmResh)] <- 2
-      
+
       #Div testing:
       #RegDataSort[indPasFlereOpph[1:20], c('OpphNr',"TidUtInn", 'ReshId','SmResh','Reinn', 'PasientID')]
       # indNeg <- which(RegDataSort$TidUtInn < 0)
       # TabDobbeltRegSjekk <- RegDataSort[sort(c(indNeg-1,indNeg)), ]
       # write.table(TabDobbeltRegSjekk, file='TabDobbeltRegSjekk.csv', row.names = F, sep = ';')
       # write.table(RegDataSort, file='RegDataSort.csv', row.names = F, sep = ';')
-      # RegDataSort[1:20,]               
+      # RegDataSort[1:20,]
       # table(RegDataSort$ReAdmitted)
       # table(RegDataSort$Reinn)
-      # RegDataSort$PasientID[1:20,]               
+      # RegDataSort$PasientID[1:20,]
       # RegDataSort$TidUtInn[indNeg[1:5]]
       return(RegDataSort)
 }
 
 #' Tilrettelegge tidsenhetvariabel:
-#' @param RegData 
+#' @param RegData
 #' @param tidsenhet 'Aar' (standard), 'Halvaar', 'Kvartal', 'Mnd'
 #' @param tab husker ikke hva denne gjør...
 #'
@@ -68,24 +68,24 @@ SorterOgNavngiTidsEnhet <- function(RegData, tidsenhet='Aar', tab=0) {
                                       Halvaar = RegData$Halvaar-min(RegData$Halvaar[RegData$Aar==min(RegData$Aar)])+1+
                                             (RegData$Aar-min(RegData$Aar))*2
       )
-      format.Date(seq(from=as.Date('2018-01-01'), 
+      format.Date(seq(from=as.Date('2018-01-01'),
                       to=as.Date('2018-09-01'), by='month'), format = '%b%y')
-      
+
       tidtxt <- switch(tidsenhet,
                        #Mnd = paste(substr(RegData$Aar[match(1:max(RegData$TidsEnhetSort), RegData$TidsEnhetSort)], 3,4),
                         #           sprintf('%02.0f', RegData$Mnd[match(1:max(RegData$TidsEnhetSort), RegData$TidsEnhetSort)]), sep='.'),
                        #Mnd = RegData$MndAar[match(1:max(RegData$TidsEnhetSort), RegData$TidsEnhetSort)],
-                       # Mnd = format.Date(seq(from=min(as.Date(RegData$InnDato), na.rm = T), 
+                       # Mnd = format.Date(seq(from=min(as.Date(RegData$InnDato), na.rm = T),
                        #                       to=max(as.Date(RegData$InnDato), na.rm = T), by='month'), format = '%b%y'),
                        #Henter fullt månedsnavn og forkorter etterpå.
-                       Mnd = format.Date(seq(from=lubridate::floor_date(as.Date(min(as.Date(RegData$InnDato), na.rm = T)), 'month'), 
+                       Mnd = format.Date(seq(from=lubridate::floor_date(as.Date(min(as.Date(RegData$InnDato), na.rm = T)), 'month'),
                                          to=max(as.Date(RegData$InnDato), na.rm = T), by='month'), format = '%B%y'), #Hele måneden
                        Kvartal = paste(substr(RegData$Aar[match(1:max(RegData$TidsEnhetSort), RegData$TidsEnhetSort)], 3,4),
                                        sprintf('%01.0f', RegData$Kvartal[match(1:max(RegData$TidsEnhetSort), RegData$TidsEnhetSort)]), sep='-'),
                        Halvaar = paste(substr(RegData$Aar[match(1:max(RegData$TidsEnhetSort), RegData$TidsEnhetSort)], 3,4),
                                        sprintf('%01.0f', RegData$Halvaar[match(1:max(RegData$TidsEnhetSort), RegData$TidsEnhetSort)]), sep='-'),
                        Aar = as.character(RegData$Aar[match(1:max(RegData$TidsEnhetSort), RegData$TidsEnhetSort)]))
-      
+
       substrRight <- function(x, n){substr(x, nchar(x)-n+1, nchar(x))}
       if (tidsenhet=='Mnd') {tidtxt <- paste0(substr(tidtxt, 1,3), ' '[tab], substrRight(tidtxt, 2))}
       #RegData$TidsEnhetSort <- factor(RegData$TidsEnhetSort, levels=1:max(RegData$TidsEnhetSort), labels=tidtxt)
@@ -95,9 +95,9 @@ SorterOgNavngiTidsEnhet <- function(RegData, tidsenhet='Aar', tab=0) {
 #table(a)
 
 #      måned og år som faktor i riktig rekkefølge og med alle måneder inkludert
-#      RegData$MndAar <- factor(format(RegData $HovedDato, format='%b-%y'), 
+#      RegData$MndAar <- factor(format(RegData $HovedDato, format='%b-%y'),
       #levels = format(seq(as.Date(datoFra),as.Date(datoTil), by="month"), "%b-%y"))
-      
+
       #RegData$TidsEnhet <- RegData$TidsEnhetSort
       #levels(RegData$TidsEnhet) <- tidtxt
       UtData <- list('RegData'=RegData, 'tidtxt'=tidtxt)
@@ -121,23 +121,23 @@ lageTulleData <- function(RegData, varBort='', antSh=26, antObs=20000) {
       fordelingPasienter <- sample(1:10,antSh, replace = TRUE)
       RegData$ShNavn <- sample(sykehus, prob=fordelingPasienter/sum(fordelingPasienter), size=dim(RegData)[1], replace = TRUE)
       RegDataSyn <- synthpop::syn(RegData, method = "sample", seed = 500) #Trekker med tilbakelegging
-      RegData <- data.frame(RegDataSyn$syn) 
+      RegData <- data.frame(RegDataSyn$syn)
 	  return(RegData)
 }
 
 #' Legge til indikator for intervensjon, pårørendeoppfølging
 #' @param RegData Dataramme
-#' @param startDatoIntervensjon startdato for intervensjon. Foreslått verdi '2016-01-01' basert 
+#' @param startDatoIntervensjon startdato for intervensjon. Foreslått verdi '2016-01-01' basert
 #' på de første studiene som ble gjort med pårørendeskjema
-#' @param sluttDatoIntervensjon sluttdato for 
+#' @param sluttDatoIntervensjon sluttdato for
 #' @export
-leggTilIntervensjon <- function(RegData, #startDatoPre='2011-01-01', sluttDatoPre='2016-10-01', 
+leggTilIntervensjon <- function(RegData, #startDatoPre='2011-01-01', sluttDatoPre='2016-10-01',
                                  startDatoIntervensjon='2016-10-01', sluttDatoIntervensjon=Sys.Date()){
       RegData$Intervensjon <- 0
       RegData$Intervensjon[intersect(which(RegData$InnDato >= as.Date(startDatoIntervensjon)),
                                      which(RegData$InnDato <= as.Date(sluttDatoIntervensjon)))] <- 1
       return(RegData)
-} 
+}
 
 #' Automatisk linjebryting av lange tekstetiketter
 #' @param x En tekststreng eller vektor av tekststrenger
@@ -157,7 +157,7 @@ delTekst <- function(x, len) #x -tekststreng/vektor av tekststrenger, len - Leng
 KobleMedHoved <- function(HovedSkjema, Skjema2, alleHovedskjema=F, alleSkjema2=F) {
   #HovedSkjema <- plyr::rename(HovedSkjema, c('FormDate' = 'FormDateHoved'))
   varBegge <- intersect(names(HovedSkjema),names(Skjema2)) ##Variabelnavn som finnes i begge datasett
-  Skjema2 <- Skjema2[ , c("HovedskjemaGUID", names(Skjema2)[!(names(Skjema2) %in% varBegge)])]  #"SkjemaGUID",   
+  Skjema2 <- Skjema2[ , c("HovedskjemaGUID", names(Skjema2)[!(names(Skjema2) %in% varBegge)])]  #"SkjemaGUID",
   data <- merge(HovedSkjema, Skjema2, suffixes = c('','_S2'),
                 by.x = 'SkjemaGUID', by.y = 'HovedskjemaGUID', all.x = alleHovedskjema, all.y=alleSkjema2)
   return(data)
@@ -177,46 +177,46 @@ tellInfluensa <- function(datoFra='2020-09-01', datoTil=Sys.Date(), reshID=0){
   FROM InfluensaFormDataContract
 WHERE cast(DateAdmittedIntensive as date) BETWEEN \'', datoFra, '\' AND \'', datoTil, '\'')
   RegData <- rapbase::loadRegData(registryName= "nir", query=q)
-  
+
   antReg <- sum(RegData$UnitId == reshID)
-  
-  txt <- paste0('Antall influensaskjema registrert i perioden ', datoFra, ' - ', datoTil, 
+
+  txt <- paste0('Antall influensaskjema registrert i perioden ', datoFra, ' - ', datoTil,
                 ' for ReshId ', reshID, ' er: ', antReg )
   return(txt)
 }
-    
+
 #' Funksjon som produserer rapporten som skal sendes til mottager.
 #'
 #' @param rnwFil Navn på fila som skal kjøres. Angis uten ending (\emph{dvs uten  ".Rnw"})
 #' @param reshID Aktuell reshid
-#' @param filnavn sdf  
+#' @param filnavn sdf
 #' @param datoFra dato
 #' @param parametre Liste med valgfrie parametre, avhengig av type rapport
 #'
 #' @return Full path of file produced
 #' @export
 
-henteSamlerapporter <- function(filnavn, rnwFil, reshID=0, 
+henteSamlerapporter <- function(filnavn, rnwFil, reshID=0,
                                 datoFra=Sys.Date()-180, datoTil=Sys.Date()) {
     Rpakke <- 'intensiv'
     tmpFile <- paste0('tmp',rnwFil)
     src <- normalizePath(system.file(rnwFil, package=Rpakke))
     # gå til tempdir. Har ikke skriverettigheter i arbeidskatalog
-    #owd <- 
+    #owd <-
       setwd(tempdir())
     file.copy(src, tmpFile, overwrite = TRUE)
-    
+
     knitr::knit2pdf(tmpFile)
-    
+
     gc() #Opprydning gc-"garbage collection"
     file.copy(paste0(substr(tmpFile, 1, nchar(tmpFile)-3), 'pdf'), filnavn)
     # file.rename(paste0(substr(tmpFile, 1, nchar(tmpFile)-3), 'pdf'), file)
 }
 
 #' Funksjon som produserer rapporten som skal sendes til mottager.
-#' (The actual call to this function is made through do.call and 
+#' (The actual call to this function is made through do.call and
 #' has the effect of providing the parameters as class
-#' \emph{list}. Verdier gis inn som listeparametre 
+#' \emph{list}. Verdier gis inn som listeparametre
 #'
 #' @param rnwFil Navn på fila som skal kjøres. Angis MED filending (\emph{dvs "filnavn.Rnw"})
 #' @param reshID Aktuell reshid
@@ -226,11 +226,11 @@ henteSamlerapporter <- function(filnavn, rnwFil, reshID=0,
 #' @return Full path of file produced
 #' @export
 
-abonnement <- function(rnwFil, brukernavn='tullebukk', reshID=0, 
+abonnement <- function(rnwFil, brukernavn='tullebukk', reshID=0,
                                 datoFra=Sys.Date()-180, datoTil=Sys.Date()) {
-  
+
   #function(baseName, reshId, registryName,author, hospitalName, type) {
-    
+
   datoFra <- datoFra[[1]]
   datoTil <- datoTil[[1]]
   reshID <- reshID[[1]]
@@ -244,17 +244,17 @@ abonnement <- function(rnwFil, brukernavn='tullebukk', reshID=0,
   tmpFile <- paste0(filbase, Sys.Date(),'_',digest::digest(brukernavn), '.Rnw')
   src <- normalizePath(system.file(rnwFil, package='intensiv'))
   # gå til tempdir. Har ikke skriverettigheter i arbeidskatalog
-  #owd <- 
+  #owd <-
   setwd(tempdir())
   dir <- getwd()
   file.copy(src, tmpFile, overwrite = TRUE)
-  knitr::knit2pdf(input=tmpFile) 
-  
+  knitr::knit2pdf(input=tmpFile)
+
   #gc() #Opprydning gc-"garbage collection"
   utfil <- paste0(dir, '/', substr(tmpFile, 1, nchar(tmpFile)-3), 'pdf')
-  #utfil <- file.copy(from = paste0(substr(tmpFile, 1, nchar(tmpFile)-3), 'pdf'), 
+  #utfil <- file.copy(from = paste0(substr(tmpFile, 1, nchar(tmpFile)-3), 'pdf'),
    #         to = paste0(filbase, digest::digest(brukernavn),'.pdf')) #filnavn)
-  
+
   raplog::subLogger(author = brukernavn, registryName = 'Norsk Intensivregister',
                     reshId = reshID[[1]],
                     msg = paste("Leverer: ", utfil))
@@ -271,28 +271,22 @@ abonnement <- function(rnwFil, brukernavn='tullebukk', reshID=0,
 #' @return Datafil til Resultatportalen
 #' @export
 
-dataTilOffVisning <- function(RegData = RegData, valgtVar, datoFra='2016-01-01', datoTil=Sys.Date(), 
-                              aar=0, 
+dataTilOffVisning <- function(RegData = RegData, valgtVar, datoFra='2016-01-01', datoTil=Sys.Date(),
+                              aar=0,
                               indID = 'indDummy', ResPort=1, filUt='dummy'){
-  
+
   # figurtype <- switch(valgtVar,
   #                     reinn = 'andelGrVar',
   #                     respiratortidInvMoverf = 'gjsnGrVar')
-  
-  resultatVariabler <- c('Aar', "ShNavn", "ReshId", "Variabel") #'KvalIndId', 
-  
+
+  resultatVariabler <- c('Aar', "ShNavn", "ReshId", "Variabel") #'KvalIndId',
+
   filUt <- paste0('Intensiv_', ifelse(filUt=='dummy',  valgtVar, filUt), c('_SKDE', '_ResPort')[ResPort+1],'.csv')
   DataVarSpes <- NIRVarTilrettelegg(RegData=RegData, valgtVar=valgtVar, figurtype = 'andelGrVar')$RegData
   RegDataUt <- NIRUtvalgEnh(RegData=DataVarSpes, aar = aar)$RegData[ , resultatVariabler]
-  
-  # IntensivKvalInd <- data.frame(NULL) #Aar=NULL, ShNavn=NULL)
-  # 
-  # indikatorID <- c('intensiv1', 'intensiv2')
-  # kvalIndParam <- c('reinn', 'respiratortidInvMoverf')
-  # indikatorID <- c('intensiv1', 'intensiv2')
-  # kvalIndParam <- c('reinn', 'respiratortidInvMoverf')
-    
-    
+
+
+
     if (ResPort == 1){
     #Variabler: Aar	ReshId	Teller Ind1	Nevner Ind1	  AarID	   Indikator
     #          2014	103469	  0	          1	       2014103469	  ind1
@@ -302,7 +296,7 @@ dataTilOffVisning <- function(RegData = RegData, valgtVar, datoFra='2016-01-01',
     RegDataUt$Indikator <- indID
     RegDataUt$Nevner <- 1
   }
-  
+
   if (ResPort == 0){
     #Variabler: year, orgnr, var, denominator, ind_id
     #RegDataUt <- RegData #[,c('Aar', "ReshId", "Variabel")]
@@ -312,7 +306,7 @@ dataTilOffVisning <- function(RegData = RegData, valgtVar, datoFra='2016-01-01',
     RegDataUt <- dplyr::rename(RegDataUt,
                                year = Aar,
                                var = Variabel)
-    
+
     #Legge på orgID ("Sykehusviser")
     #ReshId	orgnr	RapporteketNavn	SKDEnavn
   nyID <- c('102090'='974588951',               #AHUS - Intensiv
@@ -361,6 +355,7 @@ dataTilOffVisning <- function(RegData = RegData, valgtVar, datoFra='2016-01-01',
   '102026'='974633191',         #                Skien
   '4201313'='974749025',          #   St. Olav Hovedint
   '106572'='974749025',   # St. Olav Med int
+  '4205574'='974749025',  #St. Olav Med lunge
   '114282'='974703300',         #            Stavanger
   '700720'='974795787',      #Tromsø Intensivmedisinsk
   '700619'='974795787',     #         Tromsø Kir. int.
@@ -378,7 +373,7 @@ dataTilOffVisning <- function(RegData = RegData, valgtVar, datoFra='2016-01-01',
   '4209764'='974747545',     #                    Volda
   '108308'='974747138',     #              Ålesund Kir
   '102673'='974747138')     #              Ålesund Med
-  
+
   RegDataUt$orgnr <- as.character(nyID[as.character(RegDataUt$ReshId)])
   RegDataUt <- RegDataUt[ ,c('year', 'orgnr', 'var', 'denominator', 'ind_id')]
   #ShResh <- unique(RegDataUt[ ,c("orgnr", 'ReshId', "ShNavn")])
@@ -387,5 +382,4 @@ dataTilOffVisning <- function(RegData = RegData, valgtVar, datoFra='2016-01-01',
 write.table(RegDataUt, file = filUt, sep = ';', row.names = F) #, fileEncoding = 'UTF-8')
 return(invisible(RegDataUt)) # return(IntensivKvalInd)
 }
-  
-  
+

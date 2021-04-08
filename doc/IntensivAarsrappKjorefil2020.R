@@ -238,7 +238,7 @@ library(intensiv)
 library(magrittr)
 NIRData <- NIRPreprosess(RegData = NIRRegDataSQL(datoFra = '2016-01-01'))
 
-valgteAar <- 2016:2019
+valgteAar <- 2016:2020
 
 # indikatorID <- c('intensiv1', 'intensiv2')
 # kvalIndParam <- c('reinn', 'respiratortidInvMoverf')
