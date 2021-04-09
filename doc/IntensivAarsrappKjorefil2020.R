@@ -236,17 +236,14 @@ xtable(AndelMenn, digits=1, align=c('l', rep('r', ncol(AndelMenn))),
 
 library(intensiv)
 library(magrittr)
-NIRData <- NIRPreprosess(RegData = NIRRegDataSQL(datoFra = '2016-01-01'))
+NIRData <- NIRPreprosess(RegData = NIRRegDataSQL(datoFra = '2016-01-01', datoTil = '2020-12-31'))
 
-valgteAar <- 2016:2020
+#valgteAar <- 2016:2020
 
-# indikatorID <- c('intensiv1', 'intensiv2')
-# kvalIndParam <- c('reinn', 'respiratortidInvMoverf')
-
-DataTilSKDE <- dataTilOffVisning(RegData = NIRData, valgtVar='reinn', aar=valgteAar,
+DataTilSKDE <- dataTilOffVisning(RegData = NIRData, valgtVar='reinn', #aar=valgteAar,
                                  ResPort=0, indID = 'intensiv_innlegg_72t', filUt = 'innlegg_72t')
 
-DataTilSKDE <- dataTilOffVisning(RegData = NIRData, valgtVar='respiratortidInvUoverf', aar=valgteAar, #'respiratortidInvMoverf'
+DataTilSKDE <- dataTilOffVisning(RegData = NIRData, valgtVar='respiratortidInvUoverf', #aar=valgteAar, #'respiratortidInvMoverf'
                                  ResPort=0, indID = 'intensiv_inv_vent', filUt = 'inv_vent')
 
 tapply(DataTilSKDE$var, INDEX = DataTilSKDE$year, FUN = mean)
