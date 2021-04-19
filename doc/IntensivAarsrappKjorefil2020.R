@@ -80,7 +80,7 @@ variable <- c('dod30d', 'liggetidDod')
 for (valgtVar in variable){
       outfile <- paste0(valgtVar, '_AndelTid.pdf')
       NIRFigAndelTid(RegData=RegData, valgtVar=valgtVar, datoFra=datoFra, datoTil=datoTil,
-                     outfile=outfile)
+                     tidsenhet = 'Aar', outfile=outfile)
 }
 
 #---------------------GjsnTid----------------------------------------------
@@ -96,7 +96,7 @@ variable <- c('NEMS', 'respiratortid', 'alder', 'liggetid', 'SAPSII')
 for (valgtVar in variable) {
       outfile <- paste0(valgtVar, 'MedTid.pdf')
       NIRFigGjsnTid(RegData=RegData, valgtVar=valgtVar, datoFra=datoFra, datoTil=datoTil,
-                    valgtMaal=valgtMaal, outfile=outfile)
+                    valgtMaal=valgtMaal, tidsenhet= 'Aar, outfile=outfile)
 }
 NIRFigGjsnTid(RegData=RegData, valgtVar='liggetid', datoFra=datoFra, datoTil=datoTil,
               valgtMaal=valgtMaal, dodInt=1, outfile='liggetidDod_MedTid.pdf')

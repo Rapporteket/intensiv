@@ -153,30 +153,45 @@ NIRFigGjsnGrVar(RegData=RegData, valgtVar='respiratortidNonInv', valgtMaal='Gjsn
                 datoFra=datoFra1aar, datoTil=datoTil, outfile='Cov_respiratortidNonInv_GjsnPrSh.pdf')
 
 #-------------------------Tabeller----------------------
-
+#Nøkkeltall
+#Risikofaktorer
+library(xtable)
 library(intensivberedskap)
 BeredIntDataRaa <- NIRberedskDataSQL(datoFra = '2020-01-01', datoTil = '2020-12-31', kobleInt = 1)
+RegData <- BeredIntDataRaa
 BeredIntData <- NIRPreprosessBeredsk(RegData = BeredIntDataRaa, kobleInt = 1, aggPers = 0)
 
 BeredDataRaa <- NIRberedskDataSQL(datoFra = '2020-01-01', datoTil = '2020-12-31', kobleInt = 0)
 BeredData <- NIRPreprosessBeredsk(RegData = BeredDataRaa, kobleInt = 0, aggPers = 0)
 #RegData <- BeredDataRaa
 
+#Hvor mange mangler intensivskjema?
+manglerInt <- ManglerIntSkjema(datoTil = '2020-12-31')
+
+
 tab <- oppsumFerdigeRegTab(RegData=BeredData)$Tab
+xtable(tab, align=c('l', 'r', 'r', 'c', 'r', 'r'))
+
+#Nøkkeltall
 #Evt. legg til andel som får nyreerstattende behandling og tid med nyreerstattende behandling.
 #Skill på intermitterende og kontinuerlig
-
+RegData <- BeredIntData
 
 N <- dim(RegData)[1]
 ##MechanicalRespirator Fått respiratorstøtte. Ja=1, nei=2,
 AntBruktResp <- sum(RegData$MechanicalRespirator==1, na.rm=T)
 AntBruktECMO <- sum(RegData$ECMOTid>0, na.rm=T)
-#AntUtInt <- sum(RegData$DateDischargedIntensive>0, na.rm=T)
 Liggetid <- summary(RegData$Liggetid, na.rm = T)
 RespTid <- summary(RegData$RespTid, na.rm = T)
 ECMOtid <- summary(RegData$ECMOTid, na.rm = T)
 Alder <- summary(RegData$Alder, na.rm = T)
 AntDod <- sum(RegData$DischargedIntensiveStatus==1, na.rm=T)
+
+NyreKont <- summary(RegData$KontinuerligDays, na.rm = T)
+AntKont <- sum(RegData$KontinuerligDays>0, na.rm = T)
+NyreInter <- summary(RegData$IntermitterendeDays, na.rm = T)
+AntInter <- sum(RegData$IntermitterendeDays>0, na.rm = T)
+
 
 med_IQR <- function(x){
   c(sprintf('%.1f',x[4]), sprintf('%.1f',x[3]), paste(sprintf('%.1f',x[2]), sprintf('%.1f',x[5]), sep=' - '))
@@ -184,18 +199,24 @@ med_IQR <- function(x){
 TabFerdigeReg <- rbind(
   'ECMO-tid (døgn)' = c(med_IQR(ECMOtid), AntBruktECMO*(c(1, 100/N))),
   'Respiratortid (døgn)' = c(med_IQR(RespTid), AntBruktResp*(c(1, 100/N))),
+  'Nyreerstattenede beh., kont.' = c(med_IQR(NyreKont), AntKont*(c(1, 100/N))),
+  'Nyreerstattenede beh., int.' = c(med_IQR(NyreInter), AntInter*(c(1, 100/N))),
   'Liggetid (døgn)' = c(med_IQR(Liggetid), N, ''),
   'Alder (år)' = c(med_IQR(Alder), N, ''),
   'Døde' = c('','','',AntDod, paste0(sprintf('%.f',100*AntDod/N),'%'))
 )
 #TabFerdigeReg[TabFerdigeReg==NA]<-""
-colnames(TabFerdigeReg) <- c('Gj.sn', 'Median', 'IQR', 'Antall pasienter', 'Andel pasienter')
-TabFerdigeReg[c(1:2),'Andel pasienter'] <-
-  paste0(sprintf('%.0f', as.numeric(TabFerdigeReg[c(1:2),'Andel pasienter'])),'%')
+colnames(TabFerdigeReg) <- c('Gj.sn', 'Median', 'IQR', 'Antall opphold', 'Andel opphold')
+TabFerdigeReg[c(1:4),'Andel opphold'] <-
+  paste0(sprintf('%.1f', as.numeric(TabFerdigeReg[c(1:4),'Andel opphold'])),'%')
 xtable::xtable(TabFerdigeReg,
                digits=0,
                align = c('l','r','r','c', 'r','r'),
-               caption='Ferdigstilte pasienter
-                 IQR (Inter quartile range) - 50% av pasientene er i dette intervallet.')
+               caption='IQR (Inter quartile range) - 50% av pasientene er i dette intervallet.')
 
-
+length(unique(RegData$PasientID))
+#------Risikofaktorer
+tabRisiko <- RisikofaktorerTab(RegData = BeredData)
+xtable(tabRisiko$Tab, align=c('l', 'r', 'r'))
+tabRisiko$utvalgTxt
+AntPas <- length(unique(BeredData$PasientID))
