@@ -9,20 +9,20 @@ NIRVarTilrettelegg(RegData, valgtVar, grVar = "ShNavn", figurtype = "andeler")
 \arguments{
 \item{RegData}{En dataramme med alle nødvendige variabler fra registeret}
 
-\item{figurtype}{Hvilken figurtype det skal tilrettelegges variable for: 
+\item{figurtype}{Hvilken figurtype det skal tilrettelegges variable for:
 'andeler', 'andelGrVar', 'andelTid', 'gjsnGrVar', 'gjsnTid'}
 }
 \value{
-Definisjon av valgt variabel, samt flere andre parametre som 
+Definisjon av valgt variabel, samt flere andre parametre som
 tittel, xAkseTxt, sortAvtagende (standard: TRUE)
       #Kan her definere opp alle aktuelle grupperingsvariable og deres tekst.
 Variabeltyper: Numeriske, kategoriske, indikator
 For hver valgtVar: Definer og gjør utvalg for variabelen
 }
 \description{
-Denne funksjonen gjør utvalg og tilrettelegger variable (gitt ved valgtVar) til videre bruk. 
-Videre bruk kan eksempelvis være beregning av AggVerdier eller gjennomsnitt. 
+Denne funksjonen gjør utvalg og tilrettelegger variable (gitt ved valgtVar) til videre bruk.
+Videre bruk kan eksempelvis være beregning av AggVerdier eller gjennomsnitt.
 Funksjonen gjør også filtreringer som å fjerne ugyldige verdier for den valgte variabelen, samt ta høyde for avhengigheter med
-andre variable. Det er også her man angir aksetekster og titler for den valgte variabelen. 
+andre variable. Det er også her man angir aksetekster og titler for den valgte variabelen.
 Her kan mye hentes til analysebok
 }

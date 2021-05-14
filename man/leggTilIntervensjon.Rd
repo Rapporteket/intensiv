@@ -13,7 +13,7 @@ leggTilIntervensjon(
 \arguments{
 \item{RegData}{Dataramme}
 
-\item{startDatoIntervensjon}{startdato for intervensjon. Foreslått verdi '2016-01-01' basert 
+\item{startDatoIntervensjon}{startdato for intervensjon. Foreslått verdi '2016-01-01' basert
 på de første studiene som ble gjort med pårørendeskjema}
 
 \item{sluttDatoIntervensjon}{sluttdato for}

@@ -3,8 +3,8 @@
 \name{NIRFigInnMaate}
 \alias{NIRFigInnMaate}
 \title{Funksjon som genererer en figur med fordeling av innkomsttype
-f.eks. enheter. I øyeblikket benytter funksjonen bare 'ShNavn' som grupperingsvariabel, men 
-andre valg kan lett inkluderes. Funksjonen er tilrettelagt for også å kunne benytte "01-data", 
+f.eks. enheter. I øyeblikket benytter funksjonen bare 'ShNavn' som grupperingsvariabel, men
+andre valg kan lett inkluderes. Funksjonen er tilrettelagt for også å kunne benytte "01-data",
 dvs. kodede, anonymiserte data som benyttes til offentlige kvalitetsindikatorer.}
 \usage{
 NIRFigInnMaate(
@@ -15,6 +15,7 @@ NIRFigInnMaate(
   aar = 0,
   minald = 0,
   maxald = 110,
+  velgDiag = 0,
   grType = 99,
   grVar = "ShNavn",
   InnMaate = 99,
@@ -39,6 +40,8 @@ Registeret inneholder registreringer f.o.m. 2011}
 \item{minald}{Alder, fra og med (Standardverdi: 0)}
 
 \item{maxald}{Alder, til og med (Standardverdi: 110)}
+
+\item{velgDiag}{Velge diagnose. 0-alle, 1-Bekreftede Covid-pasienter}
 
 \item{grType}{Gjør gruppeutvalg på sykehustype
 1: lokal-/sentralsykehus
