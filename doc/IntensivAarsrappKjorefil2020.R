@@ -96,7 +96,7 @@ variable <- c('NEMS', 'respiratortid', 'alder', 'liggetid', 'SAPSII')
 for (valgtVar in variable) {
       outfile <- paste0(valgtVar, 'MedTid.pdf')
       NIRFigGjsnTid(RegData=RegData, valgtVar=valgtVar, datoFra=datoFra, datoTil=datoTil,
-                    valgtMaal=valgtMaal, tidsenhet= 'Aar, outfile=outfile)
+                    valgtMaal=valgtMaal, tidsenhet= 'Aar', outfile=outfile)
 }
 NIRFigGjsnTid(RegData=RegData, valgtVar='liggetid', datoFra=datoFra, datoTil=datoTil,
               valgtMaal=valgtMaal, dodInt=1, outfile='liggetidDod_MedTid.pdf')
