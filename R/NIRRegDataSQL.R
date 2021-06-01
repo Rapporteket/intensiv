@@ -32,6 +32,7 @@ NIRRegDataSQL <- function(datoFra = '2019-01-01', datoTil = '2099-01-01') { #,se
       Eeg,
       EcmoEcla,
       ExtendedHemodynamicMonitoring,
+      FirstTimeClosed,
       FormStatus,
       FrailtyIndex,
       Glasgow,

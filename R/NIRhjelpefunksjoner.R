@@ -52,7 +52,7 @@ FinnReinnleggelser <- function(RegData, PasientID='PasientID'){
 }
 
 #' Tilrettelegge tidsenhetvariabel:
-#' @param RegData
+#' @param RegData dataramme
 #' @param tidsenhet 'Aar' (standard), 'Halvaar', 'Kvartal', 'Mnd'
 #' @param tab husker ikke hva denne gjør...
 #'

@@ -294,6 +294,7 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
              br(),
              selectInput(
                inputId = "valgtVar", label="Velg variabel",
+               selected = c('Registreringsforsinkelse' = 'regForsinkelse'),
                choices = c('Alder' = 'alder',
                            'Bukleie' = 'bukleie',
                            'Hemodynamisk overvåkn.' = 'ExtendedHemodynamicMonitoring',
@@ -309,6 +310,7 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                            'Nyreerstattende beh., varighet' = 'nyreBehTid',
                            'Potensielle donorer, årsak ikke påvist opph. sirkulasjon' = 'CerebralCirculationAbolishedReasonForNo',
                            'Primærårsak' = 'PrimaryReasonAdmitted',
+                           'Registreringsforsinkelse' = 'regForsinkelse',
                            'Respiratortid' = 'respiratortid',
                            'Respiratortid, ikke-invasiv' = 'respiratortidNonInv',
                            'Respiratortid, invasiv m/overf.' = 'respiratortidInvMoverf',
@@ -400,6 +402,7 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                            'Nyreerstattende behandling' = 'nyreBeh',
                            'Organdonorer, av døde' = 'OrganDonationCompletedStatus',
                            'Organdonorer, av alle med opphevet intrakran. sirk.' = 'OrganDonationCompletedCirc',
+                           'Registreringsforsinkelse' = 'regForsinkelse',
                            'Reinnleggelse' = 'reinn',
                            'Respiratorstøtte' = 'respStotte',
                            'Respiratortid, døde' = 'respiratortidDod',
