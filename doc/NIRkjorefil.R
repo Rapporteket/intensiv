@@ -645,4 +645,27 @@ TabUkeTot <- addmargins(TabUkeInflu) #cbind(TabUkeInflu, 'Tot. ant. skjema' = ta
 write.table(TabUkeTot, file='InfluPrUke.csv', fileEncoding = 'UTF-8', sep = ';', row.names = T)
 
 
+#reshider
+# 106271                Haukel. Postop
+# 106285                   Haukel. TIO
+# 109363               Haukel. Brannsk
+# 112044              Haukel. KSK Int.
+ 
+# Jeg teller 33 opphold totalt på KSK i mitt uttrekk. Rapporteket viser 18+13 = 31 opphold.
+# IntData <- NIRRegDataSQL(datoFra = '2011-01-01') #, session = session) #datoFra = datoFra, datoTil = datoTil)
 
+IntData <- NIRRegDataSQL()
+CovidData <- intensivberedskap::NIRberedskDataSQL()
+CovidData$HovedskjemaGUID <- toupper(CovidData$HovedskjemaGUID)
+CovidData$Bekreftet <- 0
+CovidData$Bekreftet[which(CovidData$Diagnosis %in% 100:103)] <- 1
+table(CovidData$ShNavn) #KSK 33
+sort(CovidData[CovidData$UnitId==112044 , "DateAdmittedIntensive"]) #KSK 33
+CovidData <- CovidData[CovidData$UnitId==112044,]
+
+RegData <- merge(IntData, CovidData[ ,-which(names(CovidData) == 'Diagnosis')], suffixes = c('','Cov'),
+                 by.x = 'SkjemaGUID', by.y = 'HovedskjemaGUID', all.x = T, all.y=F)
+setdiff(CovidData$HovedskjemaGUID, IntData$SkjemaGUID)
+table(RegData$Bekreftet)
+unique(RegData$ShNavn)
+table(CovidData$Bekreftet)

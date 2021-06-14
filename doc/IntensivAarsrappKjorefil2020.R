@@ -25,10 +25,6 @@ RegData <- NIRRegDataSQL(datoFra=datoFra, datoTil=datoTil)
 setwd('/home/rstudio/intensiv/aarsrappOff')
 
 
-#Etterbestilling
-regForsinkelse
-
-
 #Innkomstmåte (egen fig.) reg/sentLok
 NIRFigInnMaate(RegData=RegData, datoFra=datoFra1aar, datoTil = datoTil,
                grType=1, outfile='InnMaateLokSen.pdf')
@@ -62,8 +58,9 @@ NIRFigAndeler(RegData=RegData, valgtVar='spesTiltak', datoFra=datoFra1aar, datoT
 
 
 variable <- c('OrganDonationCompletedCirc', 'OrganDonationCompletedStatus',
-              'dod30d', 'dodeIntensiv', 'frailtyIndex', 'trakeostomi','reinn', 'komplReg', 'invasivVent')
-variable <-'regForsinkelse'
+              'dod30d', 'dodeIntensiv', 'frailtyIndex', 'trakeostomi', 'regForsinkelse', 'reinn', 
+              'komplReg', 'invasivVent', 'trakeostomi')
+variable <-'dod30d'
 for (grType in 2:3) {
       for (valgtVar in variable) {
             outfile <- paste0(valgtVar, grType, 'PrSh.pdf')
@@ -209,11 +206,6 @@ xtable(table(RegData1aar$ShNavn), align=c('l','r'), #row.names=F,
        caption = 'Intensivopphald per år')
 
 
-#Aktivitet/Nøkkeltall
-tabNokkeltall <- tabNokkeltall(RegData=RegData1aar, datoTil=datoTil) #, tidsenhet='Mnd'
-xtable(tabNokkeltall, digits= 1, align=c('l', rep('r', ncol(tabNokkeltall))), #row.names=F,
-       caption = 'Samla tal på intensivopphald og aktivitet i NIR 2019')
-#Legg til  \resizebox{\columnwidth}{!}{ \begin{tabular}... }
 
 
 
@@ -233,6 +225,97 @@ AndelMenn <- rbind(AndelMenn,
 colnames(AndelMenn) <- c('Lok./Sentral', 'Region', 'Hele landet')
 xtable(AndelMenn, digits=1, align=c('l', rep('r', ncol(AndelMenn))),
        caption='Andel (prosent) av oppholdene som er menn.', label='tab:KjonnAar')
+
+
+#Aktivitet/Nøkkeltall
+
+#Legge til nivå
+Nivaa <- c(
+   '4205696' = '1', # Akershus univ.sykehus, Postoperativ
+   '108897' = '1', # Diakonhjemmet sykehus, Postop/intensivavd 
+   '100180' = '1', # Haraldsplass diakonale sykehus, Med intensiv postoperativ
+   '106271' = '1', # Haukeland, KSK Postoperativ
+   '107717' = '1', # Haukeland, Lunge 1,Respiratorisk Overvakingseining (ROE)
+   '4208892' = '1', # Lovisenberg Diakonale, MIO
+   '705757' = '1', # OUS, Radiumhospitalet - Postop og intensivavd 
+   '109779' = '1', # OUS, Ullevål - Nevrointensiv
+   '109778' = '1', # OUS, Ullevål - Postoperativ
+   '4205574' = '1', # St. Olavs Hospital - Medisin- og lungeovervåkning 
+   '102090' = '2', # Akershus univ.sykehus, Intensiv (generell)
+   '105282' = '2', # Førde sentralsjukehus
+   '101858' = '2', # Hammerfest Sykehus, Akuttmed avd, Intensiv
+   '100273' = '2', # Haugesund sjukehus, Intensiv
+   '109363' = '2', # Haukeland, Brannskadeavdelinga 
+   '106285' = '2', # Haukeland, KSK Thoraxkirurgisk intensiv (TIO)
+   '105048' = '2', # Haukeland, Medisinsk intensiv og overvaking (MIO)
+   '103015' = '2', # Helgelands. Mo i Rana
+   '103141' = '2', # Helgelands. Mosjøen
+   '103149' = '2', # Helgelands.Sandnessjøen
+   '102250' = '2', # Helse NT Levanger
+   '105893' = '2', # Helse NT Namsos
+   '101830' = '2', # Kirkenes sykehus, Akuttmed avd, Intesniv
+   '706078' = '2', # Kristiansund sykehus, Intensiv (felles)
+   '706079' = '2', # Molde sykehus, Intensiv (felles)
+   '4210053' = '2', # Nordlandssykehuset, Bodø - Intensivavdelingen (generell)
+   '110867' = '2', # Nordlandssykehuset, Vesterålen - Intensiv Stokmarknes
+   '111487' = '2', # OUS, Aker - Postoperativ og intensiv 
+   '111449' = '2', # OUS, Ullevål - Barneintensiv
+   '109877' = '2', # OUS, Ullevål - Hjertekirurgisk postoperativ
+   '4205969' = '2', # OUS, Ullevål - Hjertemedisinsk intensiv
+   '109870' = '2', # OUS, Ullevål - Medisinsk intensiv
+   '106572' = '2', # St. Olavs Hospital - Hjertemedisinsk intensiv 
+   '114282' = '2', # Stavanger univ.sjkehus - Intensiv 2M (generell) 
+   '4208715' = '2', # Sykehuset i Kongsberg, Intensiv
+   '103948' = '2', # Sykehuset i Vestfold, Tønsberg, Intensivmed. seksjon  
+   '108609' = '2', # Sykehuset Innlandet, Akuttmed. Elverum
+   '108618' = '2', # Sykehuset Innlandet, Akuttmed. Gjøvik
+   '108610' = '2', # Sykehuset Innlandet, Akuttmed. Hamar,
+   '108626' = '2', # Sykehuset Innlandet, Akuttmed. Lillehammer 
+   '102026' = '2', # Sykehuset Telem. Skien, Akuttmed avd, Intensv 
+   '4209889' = '2', # Sykehuset Østfold Kalnes, Intensiv
+   '104450' = '2', # Sørlandet s. Arendal, Intensivenheten 
+   '114240' = '2', # Sørlandet s. Kristiansand, Intensivenheten
+   '700617' = '2', # UNN, Harstad - Intensiv 
+   '700618' = '2', # UNN, Narvik
+   '601302' = '2', # UNN, Tromsø Medisinsk intensiv- og hjerteoppvåkning
+   '103090' = '2', # Vestre Viken HF, Bærum sykehus, Int.
+   '103620' = '2', # Vestre Viken HF, Drammen sykeh. Avd. for anest. og int.med
+   '103539' = '2', # Vestre Viken, HF, Ringerike sykeh. Intensivavdelingen 
+   '4209764' = '2', # Volda sjukehus, Intensiv (felles)
+   '108308' = '2', # Ålesund sjukehus Kir.int.
+   '102673' = '2', # Ålesund sjukehus Med.int.
+   '112044' = '3', # Haukeland, KSK Intensiv (Generell)
+   '705576' = '3', # OUS, Rikshospitalet - Barneintensiv
+   '706929' = '3', # OUS, Rikshospitalet - Generell Intensiv. 2
+   '705577' = '3', # OUS, Rikshospitalet - Generell Intensiv 1
+   '109773' = '3', # OUS, Ullevål - Generell intensiv 
+   '4201313' = '3', # St Olavs Hospital - Hovedintensiv 
+   '700720' = '3' # UNN, Tromsø - Intensivavdelingen (generell intensiv)
+)
+
+RegData1aar$Nivaa <- as.character(Nivaa[as.character(RegData1aar$ReshId)])
+# head(RegData1aar$Nivaa)
+# table(RegData1aar$Nivaa, useNA = 'a')
+# unique(RegData1aar[is.na(RegData1aar$Nivaa), c("ReshId", "ShNavn")])
+# table(RegData1aar[is.na(RegData1aar$Nivaa), c("ReshId", "ShNavn")])
+# table(RegData1aar$ReshId[is.na(RegData1aar$Nivaa)])
+# RegData <- NIRPreprosess(RegData = RegData)
+# ftable(RegData[,c('ShNavn', 'Aar')])
+# sjekk <- unique(RegData[, c("ReshId", "ShNavn")])
+# sjekk[order(as.character(sjekk$ShNavn)),]
+
+tabNokkeltall <- tabNokkeltall(RegData=RegData1aar, datoTil=datoTil) #, tidsenhet='Mnd'
+xtable(tabNokkeltall, digits= 1, align=c('l', rep('r', ncol(tabNokkeltall))), #row.names=F,
+       caption = 'Samla tal på intensivopphald og aktivitet i NIR')
+
+for (nivaa in 1:3) {
+   nivaa
+   RegDataNivaa <- RegData1aar[RegData1aar$Nivaa == nivaa, ]
+   tabNokkeltall <- tabNokkeltall(RegData=RegDataNivaa, datoTil=datoTil) #, tidsenhet='Mnd'
+   print(xtable(tabNokkeltall, digits= 1, align=c('l', rep('r', ncol(tabNokkeltall))), #row.names=F,
+          caption = paste0('Samla tal på intensivopphald og aktivitet i NIR, einingar nivå ', nivaa)))
+}
+#Legg til  \resizebox{\columnwidth}{!}{ \begin{tabular}... }
 
 
 
