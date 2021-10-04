@@ -27,6 +27,7 @@ regTitle <- ifelse(paaServer,
                    'NORSK INTENSIVREGISTER',
                    'Norsk Intensivregister med FIKTIVE data')
 
+
 #Sys.setlocale("LC_TIME", "nb_NO.UTF-8")
 #ibrary(shinyBS) # Additional Bootstrap Controls
 
