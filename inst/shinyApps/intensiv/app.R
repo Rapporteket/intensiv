@@ -1418,7 +1418,7 @@ server <- function(input, output, session) { #
       registryName <- "nir"
       ## brukerkontroller
       rapbase::exportUCServer(
-        "nirExport", registryName,
+        "nirExport", registryName, repoName = "intensiv",
         eligible = (rapbase::getUserRole(session) == "SC")
       )
       ## veileding
