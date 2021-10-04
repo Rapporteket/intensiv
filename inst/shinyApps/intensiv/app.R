@@ -693,6 +693,18 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                uiOutput("subscriptionContent")
              )
            )
+  ),
+
+  shiny::tabPanel(
+    "Eksport",
+    shiny::sidebarLayout(
+      shiny::sidebarPanel(
+        rapbase::exportUCInput("nirExport")
+      ),
+      shiny::mainPanel(
+        rapbase::exportGuideUI("nirExportGuide")
+      )
+    )
   )
 
 
@@ -1402,6 +1414,15 @@ server <- function(input, output, session) { #
       })
 
 
+      # Eksport
+      registryName <- "nir"
+      ## brukerkontroller
+      rapbase::exportUCServer(
+        "nirExport", registryName,
+        eligible = (rapbase::getUserRole(session) == "SC")
+      )
+      ## veileding
+      rapbase::exportGuideServer("nirExportGuide", registryName)
 
 
 
