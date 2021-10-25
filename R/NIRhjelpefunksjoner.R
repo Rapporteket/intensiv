@@ -198,7 +198,7 @@ WHERE cast(DateAdmittedIntensive as date) BETWEEN \'', datoFra, '\' AND \'', dat
 
 henteSamlerapporter <- function(filnavn, rnwFil, reshID=0,
                                 datoFra=Sys.Date()-180, datoTil=Sys.Date()) {
-    Rpakke <- 'intensiv'
+    Rpakke <- ifelse(rnwFil==as.character('NIRinfluensa.Rnw'), 'intensivberedskap', 'intensiv')
     tmpFile <- paste0('tmp',rnwFil)
     src <- normalizePath(system.file(rnwFil, package=Rpakke))
     # gå til tempdir. Har ikke skriverettigheter i arbeidskatalog
