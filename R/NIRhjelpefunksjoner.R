@@ -198,7 +198,7 @@ WHERE cast(DateAdmittedIntensive as date) BETWEEN \'', datoFra, '\' AND \'', dat
 
 henteSamlerapporter <- function(filnavn, rnwFil, reshID=0,
                                 datoFra=Sys.Date()-180, datoTil=Sys.Date()) {
-    Rpakke <- 'intensiv'
+    Rpakke <- ifelse(rnwFil==as.character('NIRinfluensa.Rnw'), 'intensivberedskap', 'intensiv')
     tmpFile <- paste0('tmp',rnwFil)
     src <- normalizePath(system.file(rnwFil, package=Rpakke))
     # gå til tempdir. Har ikke skriverettigheter i arbeidskatalog
@@ -230,10 +230,11 @@ abonnement <- function(rnwFil, brukernavn='tullebukk', reshID=0,
                                 datoFra=Sys.Date()-180, datoTil=Sys.Date()) {
 
   #function(baseName, reshId, registryName,author, hospitalName, type) {
-
-  datoFra <- datoFra[[1]]
-  datoTil <- datoTil[[1]]
-  reshID <- reshID[[1]]
+#Ikke lenger i liste..
+  #datoFra <- datoFra[[1]]
+  #datoTil <- datoTil[[1]]
+  #reshID <- reshID[[1]]
+  Rpakke <- ifelse(rnwFil==as.character('NIRinfluensa.Rnw'), 'intensivberedskap', 'intensiv')
   raplog::subLogger(author = brukernavn, registryName = 'Norsk Intensivregister',
                     reshId = reshID[[1]],
                     msg = "starter Abonnement: månedsrapport")
@@ -242,7 +243,7 @@ abonnement <- function(rnwFil, brukernavn='tullebukk', reshID=0,
   #                     msg = "Subscription report: stent/prosedyre")
   filbase <- substr(rnwFil, 1, nchar(rnwFil)-4)
   tmpFile <- paste0(filbase, Sys.Date(),'_',digest::digest(brukernavn), '.Rnw')
-  src <- normalizePath(system.file(rnwFil, package='intensiv'))
+  src <- normalizePath(system.file(rnwFil, package=Rpakke))
   # gå til tempdir. Har ikke skriverettigheter i arbeidskatalog
   #owd <-
   setwd(tempdir())

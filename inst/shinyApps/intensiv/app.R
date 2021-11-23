@@ -35,9 +35,9 @@ if (paaServer) {
   IntData <- NIRRegDataSQL(datoFra = '2011-01-01') #, session = session) #datoFra = datoFra, datoTil = datoTil)
   PaarorData <- NIRpaarorDataSQL()
   PaarorDataH <- KobleMedHoved(IntData, PaarorData, alleHovedskjema=F, alleSkjema2=F)
-  qInfluensa <- 'SELECT ShNavn, RHF, PatientInRegistryGuid, FormDate,FormStatus, ICD10_1
-                  from InfluensaFormDataContract'
-  InfluData <- rapbase::loadRegData(registryName= "nir", query=qInfluensa, dbType="mysql")
+  # qInfluensa <- 'SELECT ShNavn, RHF, PatientInRegistryGuid, FormDate,FormStatus, ICD10_1
+  #                 from InfluensaFormDataContract'
+  # InfluData <- rapbase::loadRegData(registryName= "nir", query=qInfluensa, dbType="mysql")
 
   #Covid-skjema:
   qCovid <- paste0('SELECT HovedskjemaGUID, FormStatus, Diagnosis
@@ -790,6 +790,7 @@ server <- function(input, output, session) { #
     }
   )
 
+  #test <- henteSamlerapporter('file.pdf', rnwFil="NIRinfluensa.Rnw")
   #Datadump
   observe({
     RegDataReinn <- FinnReinnleggelser(RegData)
