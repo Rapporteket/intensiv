@@ -709,8 +709,6 @@ tabPanel(p("Registeradministrasjon", title='Registeradministrasjonens side'),
          mainPanel(
            rapbase::exportGuideUI("intensivExportGuide")
          )
-         #  ) #Eksport-tab
-         # ) #tabsetPanel
 ) #tab SC
 
 )  #navbarPage
@@ -1408,7 +1406,9 @@ server <- function(input, output, session) { #
 
         #----------- Eksport ----------------
         ## brukerkontroller
-        rapbase::exportUCServer("intensivExport", registryName = "intensiv")
+        rapbase::exportUCServer("intensivExport", registryName = "intensiv",
+                                eligible = (rapbase::getUserRole(session) == "SC")
+                                )
         ## veileding
         rapbase::exportGuideServer("intensivExportGuide", registryName = "intensiv")
 
