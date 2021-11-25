@@ -673,6 +673,7 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
   ), #tab Pårørende
 
 
+  #-----------Abonnement--------------------------------
   tabPanel(p("Abonnement",
              title='Bestill automatisk utsending av rapporter på e-post'),
            sidebarLayout(
@@ -709,6 +710,16 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
   ),
 
 #-------Registeradministrasjon----------
+
+  # shiny::tabPanel(
+  #   "Eksport",
+  #   shiny::sidebarLayout(
+  #     shiny::sidebarPanel(
+  #       rapbase::exportUCInput("nirExport")),
+  #     shiny::mainPanel(
+  #       rapbase::exportGuideUI("nirExportGuide"))
+  #   )
+  # ),
 tabPanel(p("Registeradministrasjon", title='Registeradministrasjonens side'),
          value = "Registeradministrasjon",
          h3('Bare synlig for SC-bruker'),
@@ -1413,30 +1424,24 @@ server <- function(input, output, session) { #
 
 #Registeradministrasjon
 
-      #if (rolle() == 'SC') {
-
-
       # Eksport
-      registryName <- "nir"
-      ## brukerkontroller
-      rapbase::exportUCServer(
-        "nirExport", registryName, repoName = "intensiv",
-        eligible = (rapbase::getUserRole(session) == "SC")
-      )
-      ## veileding
-      rapbase::exportGuideServer("nirExportGuide", registryName)
+      # registryName <- "nir"
+      # ## brukerkontroller
+      # rapbase::exportUCServer(
+      #   "nirExport", registryName, repoName = "intensiv",
+      #   eligible = (rapbase::getUserRole(session) == "SC")
+      # )
+      # ## veileding
+      # rapbase::exportGuideServer("nirExportGuide", registryName)
 
         #----------- Eksport ----------------
         ## brukerkontroller
         rapbase::exportUCServer("intensivExport", registryName = "intensiv",
+                                repoName = "intensiv",
                                 eligible = (rapbase::getUserRole(session) == "SC")
                                 )
         ## veileding
         rapbase::exportGuideServer("intensivExportGuide", registryName = "intensiv")
-
-
-     # }
-      
 
 
 } #serverdel
