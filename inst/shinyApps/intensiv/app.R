@@ -36,9 +36,9 @@ if (paaServer) {
   IntData <- NIRRegDataSQL(datoFra = '2011-01-01') #, session = session) #datoFra = datoFra, datoTil = datoTil)
   PaarorData <- NIRpaarorDataSQL()
   PaarorDataH <- KobleMedHoved(IntData, PaarorData, alleHovedskjema=F, alleSkjema2=F)
-  qInfluensa <- 'SELECT ShNavn, RHF, PatientInRegistryGuid, FormDate,FormStatus, ICD10_1
-                  from InfluensaFormDataContract'
-  InfluData <- rapbase::loadRegData(registryName= "nir", query=qInfluensa, dbType="mysql")
+  # qInfluensa <- 'SELECT ShNavn, RHF, PatientInRegistryGuid, FormDate,FormStatus, ICD10_1
+  #                 from InfluensaFormDataContract'
+  # InfluData <- rapbase::loadRegData(registryName= "nir", query=qInfluensa, dbType="mysql")
 
   #Covid-skjema:
   qCovid <- paste0('SELECT HovedskjemaGUID, FormStatus, Diagnosis
@@ -706,27 +706,23 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
         rapbase::exportGuideUI("nirExportGuide")
       )
     )
-  )
+  ),
 
-
-
-
-
-
-
-
-
-
-
-#------------Influensa-----------------------------
-# tabPanel(p("Inluensa", title='Resultater fra influensaregistrering'),
-#          h2('Resultater fra influensaregistrering', align = 'center'),
-#  mainPanel(
-#  )
-# )
+#-------Registeradministrasjon----------
+tabPanel(p("Registeradministrasjon", title='Registeradministrasjonens side'),
+         value = "Registeradministrasjon",
+         h3('Bare synlig for SC-bruker'),
+         br(),
+         h3("Eksport av krypterte data"),
+         sidebarPanel(
+           rapbase::exportUCInput("intensivExport")
+         ),
+         mainPanel(
+           rapbase::exportGuideUI("intensivExportGuide")
+         )
+) #tab SC
 
 )  #navbarPage
-
 
 #----------------- Define server logic ----------
 server <- function(input, output, session) { #
@@ -755,7 +751,7 @@ server <- function(input, output, session) { #
     shinyjs::hide(id = 'velgResh')
     shinyjs::hide(id = 'velgReshOverf')
     shinyjs::hide(id = 'velgReshData')
-    #hideTab(inputId = "tabs_andeler", target = "Figur, sykehusvisning")
+    hideTab(inputId = "hovedark", target = "Registeradministrasjon")
   }
   })
   observeEvent(input$reset_fordValg, shinyjs::reset("brukervalg_fordeling"))
@@ -803,6 +799,7 @@ server <- function(input, output, session) { #
     }
   )
 
+  #test <- henteSamlerapporter('file.pdf', rnwFil="NIRinfluensa.Rnw")
   #Datadump
   observe({
     RegDataReinn <- FinnReinnleggelser(RegData)
@@ -811,7 +808,7 @@ server <- function(input, output, session) { #
                           datoTil = input$datovalgData[2])$RegData
 
 
-    if (rolle() =='SC') {
+    if (rolle() == 'SC') {
       valgtResh <- as.numeric(input$velgReshData)
       ind <- if (valgtResh == 0) {1:dim(DataDump)[1]
         } else {which(as.numeric(DataDump$ReshId) %in% as.numeric(valgtResh))}
@@ -1414,6 +1411,10 @@ server <- function(input, output, session) { #
         rv$subscriptionTab <- rapbase::makeUserSubscriptionTab(session)
       })
 
+#Registeradministrasjon
+
+      #if (rolle() == 'SC') {
+
 
       # Eksport
       registryName <- "nir"
@@ -1425,6 +1426,17 @@ server <- function(input, output, session) { #
       ## veileding
       rapbase::exportGuideServer("nirExportGuide", registryName)
 
+        #----------- Eksport ----------------
+        ## brukerkontroller
+        rapbase::exportUCServer("intensivExport", registryName = "intensiv",
+                                eligible = (rapbase::getUserRole(session) == "SC")
+                                )
+        ## veileding
+        rapbase::exportGuideServer("intensivExportGuide", registryName = "intensiv")
+
+
+     # }
+      
 
 
 } #serverdel
