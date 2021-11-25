@@ -27,6 +27,7 @@ regTitle <- ifelse(paaServer,
                    'NORSK INTENSIVREGISTER',
                    'Norsk Intensivregister med FIKTIVE data')
 
+
 #Sys.setlocale("LC_TIME", "nb_NO.UTF-8")
 #ibrary(shinyBS) # Additional Bootstrap Controls
 
@@ -695,7 +696,17 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
            )
   ),
 
-
+  shiny::tabPanel(
+    "Eksport",
+    shiny::sidebarLayout(
+      shiny::sidebarPanel(
+        rapbase::exportUCInput("nirExport")
+      ),
+      shiny::mainPanel(
+        rapbase::exportGuideUI("nirExportGuide")
+      )
+    )
+  ),
 
 #-------Registeradministrasjon----------
 tabPanel(p("Registeradministrasjon", title='Registeradministrasjonens side'),
@@ -1404,6 +1415,17 @@ server <- function(input, output, session) { #
 
       #if (rolle() == 'SC') {
 
+
+      # Eksport
+      registryName <- "nir"
+      ## brukerkontroller
+      rapbase::exportUCServer(
+        "nirExport", registryName, repoName = "intensiv",
+        eligible = (rapbase::getUserRole(session) == "SC")
+      )
+      ## veileding
+      rapbase::exportGuideServer("nirExportGuide", registryName)
+
         #----------- Eksport ----------------
         ## brukerkontroller
         rapbase::exportUCServer("intensivExport", registryName = "intensiv",
@@ -1411,6 +1433,7 @@ server <- function(input, output, session) { #
                                 )
         ## veileding
         rapbase::exportGuideServer("intensivExportGuide", registryName = "intensiv")
+
 
      # }
       
