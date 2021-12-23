@@ -697,17 +697,6 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
            )
   ),
 
-  shiny::tabPanel(
-    "Eksport",
-    shiny::sidebarLayout(
-      shiny::sidebarPanel(
-        rapbase::exportUCInput("nirExport")
-      ),
-      shiny::mainPanel(
-        rapbase::exportGuideUI("nirExportGuide")
-      )
-    )
-  ),
 
 #-------Registeradministrasjon----------
 
@@ -723,14 +712,33 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
 tabPanel(p("Registeradministrasjon", title='Registeradministrasjonens side'),
          value = "Registeradministrasjon",
          h3('Bare synlig for SC-bruker'),
-         br(),
-         h3("Eksport av krypterte data"),
-         sidebarPanel(
-           rapbase::exportUCInput("intensivExport")
-         ),
-         mainPanel(
-           rapbase::exportGuideUI("intensivExportGuide")
+
+         tabsetPanel(
+           tabPanel(
+             h3("Utsendinger"),
+                    #title = "Utsending av rapporter",
+                    sidebarLayout(
+                      sidebarPanel(
+                        rapbase::autoReportOrgInput("NIRuts"),
+                        rapbase::autoReportInput("NIRuts")
+                      ),
+                      mainPanel(
+                        rapbase::autoReportUI("NIRuts")
+                      )
+                    )
+           ),
+           tabPanel(
+             h3("Eksport av krypterte data"),
+           sidebarLayout(
+             sidebarPanel(
+               rapbase::exportUCInput("intensivExport")
+             ),
+             shiny::mainPanel(
+               rapbase::exportGuideUI("intensivExportGuide")
+             )
+           )
          )
+         ) #tabset
 ) #tab SC
 
 )  #navbarPage
@@ -1434,7 +1442,48 @@ server <- function(input, output, session) { #
       # ## veileding
       # rapbase::exportGuideServer("nirExportGuide", registryName)
 
-        #----------- Eksport ----------------
+
+#-------------Registeradministrasjon -----------------
+
+      #---Utsendinger---------------
+      ## liste med orgnr og navn
+
+      # sykehusNavn <- sort(unique(as.character(HovedSkjema$ShNavn)), index.return=T)
+      # orgs <- c(0, unique(HovedSkjema$ReshId)[sykehusNavn$ix])
+      # names(orgs) <- c('Alle',sykehusNavn$x)
+      orgs <- as.list(sykehusValg)
+
+      ## liste med metadata for rapport
+      reports <- list(
+        MndRapp = list(
+          synopsis = "Månedsrapport",
+          fun = "abonnement",
+          paramNames = c('rnwFil', "reshID"),
+          paramValues = c('NIRmndRapp.Rnw', 0)
+        ),
+        SamleRapp = list(
+          synopsis = "Rapport med samling av div. resultater",
+          fun = "abonnement",
+          paramNames = c('rnwFil', "reshID"),
+          paramValues = c('NIRSamleRapp.Rnw', 'Alle')
+        )
+      )
+      #abonnement(rnwFil, brukernavn='tullebukk', reshID=0, datoFra=Sys.Date()-180, datoTil=Sys.Date())
+
+      org <- rapbase::autoReportOrgServer("NIRuts", orgs)
+
+      # oppdatere reaktive parametre, for å få inn valgte verdier (overskrive de i report-lista)
+      paramNames <- shiny::reactive("reshID")
+      paramValues <- shiny::reactive(org$value())
+
+      rapbase::autoReportServer(
+        id = "NIRuts", registryName = "intensiv", type = "dispatchment",
+        org = org$value, paramNames = paramNames, paramValues = paramValues,
+        reports = reports, orgs = orgs, eligible = TRUE
+      )
+
+
+              #----------- Eksport ----------------
         ## brukerkontroller
         rapbase::exportUCServer("intensivExport", registryName = "intensiv",
                                 repoName = "intensiv",
