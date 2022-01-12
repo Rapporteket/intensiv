@@ -1362,7 +1362,7 @@ server <- function(input, output, session) { #
       ## reaktive verdier for å holde rede på endringer som skjer mens
       ## applikasjonen kjører
       rv <- reactiveValues(
-        subscriptionTab = rapbase::makeUserSubscriptionTab(session))
+        subscriptionTab = rapbase::makeAutoReportTab()(session))
 
       ## lag tabell over gjeldende status for abonnement
       output$activeSubscriptions <- DT::renderDataTable(
@@ -1420,37 +1420,19 @@ server <- function(input, output, session) { #
                                   email = email, organization = organization,
                                   runDayOfYear = runDayOfYear, interval = interval,
                                   intervalName = intervalName)
-        rv$subscriptionTab <- rapbase::makeUserSubscriptionTab(session)
+        rv$subscriptionTab <- rapbase::makeAutoReportTab()(session)
       })
 
       ## slett eksisterende abonnement
       observeEvent(input$del_button, {
         selectedRepId <- strsplit(input$del_button, "_")[[1]][2]
         rapbase::deleteAutoReport(selectedRepId)
-        rv$subscriptionTab <- rapbase::makeUserSubscriptionTab(session)
+        rv$subscriptionTab <- rapbase::makeAutoReportTab()(session)
       })
-
-#Registeradministrasjon
-
-      # Eksport
-      # registryName <- "nir"
-      # ## brukerkontroller
-      # rapbase::exportUCServer(
-      #   "nirExport", registryName, repoName = "intensiv",
-      #   eligible = (rapbase::getUserRole(session) == "SC")
-      # )
-      # ## veileding
-      # rapbase::exportGuideServer("nirExportGuide", registryName)
-
 
 #-------------Registeradministrasjon -----------------
 
       #---Utsendinger---------------
-      ## liste med orgnr og navn
-
-      # sykehusNavn <- sort(unique(as.character(HovedSkjema$ShNavn)), index.return=T)
-      # orgs <- c(0, unique(HovedSkjema$ReshId)[sykehusNavn$ix])
-      # names(orgs) <- c('Alle',sykehusNavn$x)
       orgs <- as.list(sykehusValg)
 
       ## liste med metadata for rapport
@@ -1483,7 +1465,7 @@ server <- function(input, output, session) { #
       )
 
 
-              #----------- Eksport ----------------
+      #----------- Eksport ----------------
         ## brukerkontroller
         rapbase::exportUCServer("intensivExport", registryName = "intensiv",
                                 repoName = "intensiv",
