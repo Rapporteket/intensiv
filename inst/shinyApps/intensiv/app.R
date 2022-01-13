@@ -1467,11 +1467,11 @@ server <- function(input, output, session) { #
 
       #----------- Eksport ----------------
         ## brukerkontroller
-        # rapbase::exportUCServer("intensivExport", registryName = "intensiv",
-        #                         repoName = "intensiv",
-        #                         eligible = (rapbase::getUserRole(session) == "SC")
-        #                         )
-      rapbase::exportUCServer("intensivExport", "intensiv")
+        rapbase::exportUCServer("intensivExport", registryName = "nir",
+                                repoName = "intensiv",
+                                eligible = (rapbase::getUserRole(session) == "SC")
+                                )
+      #rapbase::exportUCServer("intensivExport", "intensiv")
         ## veileding
         rapbase::exportGuideServer("intensivExportGuide", registryName = "intensiv")
 
