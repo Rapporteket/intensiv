@@ -747,7 +747,7 @@ tabPanel(p("Registeradministrasjon", title='Registeradministrasjonens side'),
 server <- function(input, output, session) { #
 
 #-----------Div serveroppstart------------------
-  raplog::appLogger(session = session, msg = "Starter intensiv-app")
+  rapbase::appLogger(session = session, msg = "Starter intensiv-app")
 
   reshID <- ifelse(paaServer, as.numeric(rapbase::getUserReshId(session)), 109773)
   rolle <- reactive({ifelse(paaServer, rapbase::getUserRole(shinySession=session), 'SC')})
@@ -1362,7 +1362,7 @@ server <- function(input, output, session) { #
       ## reaktive verdier for å holde rede på endringer som skjer mens
       ## applikasjonen kjører
       rv <- reactiveValues(
-        subscriptionTab = rapbase::makeAutoReportTab()(session))
+        subscriptionTab = rapbase::makeAutoReportTab(session)) #makeAutoReportTab()(session))
 
       ## lag tabell over gjeldende status for abonnement
       output$activeSubscriptions <- DT::renderDataTable(
@@ -1420,14 +1420,14 @@ server <- function(input, output, session) { #
                                   email = email, organization = organization,
                                   runDayOfYear = runDayOfYear, interval = interval,
                                   intervalName = intervalName)
-        rv$subscriptionTab <- rapbase::makeAutoReportTab()(session)
+        rv$subscriptionTab <- rapbase::makeAutoReportTab(session) #makeAutoReportTab()(session)
       })
 
       ## slett eksisterende abonnement
       observeEvent(input$del_button, {
         selectedRepId <- strsplit(input$del_button, "_")[[1]][2]
         rapbase::deleteAutoReport(selectedRepId)
-        rv$subscriptionTab <- rapbase::makeAutoReportTab()(session)
+        rv$subscriptionTab <- rapbase::makeAutoReportTab(session) #makeAutoReportTab()(session)
       })
 
 #-------------Registeradministrasjon -----------------
