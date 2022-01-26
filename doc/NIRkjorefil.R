@@ -650,7 +650,7 @@ write.table(TabUkeTot, file='InfluPrUke.csv', fileEncoding = 'UTF-8', sep = ';',
 # 106285                   Haukel. TIO
 # 109363               Haukel. Brannsk
 # 112044              Haukel. KSK Int.
- 
+
 # Jeg teller 33 opphold totalt på KSK i mitt uttrekk. Rapporteket viser 18+13 = 31 opphold.
 # IntData <- NIRRegDataSQL(datoFra = '2011-01-01') #, session = session) #datoFra = datoFra, datoTil = datoTil)
 
@@ -669,3 +669,24 @@ setdiff(CovidData$HovedskjemaGUID, IntData$SkjemaGUID)
 table(RegData$Bekreftet)
 unique(RegData$ShNavn)
 table(CovidData$Bekreftet)
+
+
+# Resultater til intensiv, Helse-Nord
+#Aktivitet per år 2018-2020. RHF, HF, sykehus/avdeling.
+RegDataRaa <- NIRRegDataSQL(datoFra = '2018-01-01', datoTil = '2021-12-31')
+RegDataNord <- RegDataRaa[RegDataRaa$RHF == 'Helse Nord', ]
+RegData <- NIRPreprosess(RegDataNord)
+table(RegData$ShNavn)
+
+library(dplyr)
+Data <- RegData %>% dplyr::group_by(HF, ShNavn) %>%
+  dplyr::summarise(
+    '2018' = sum(Aar==2018),
+    '2019' = sum(Aar==2019),
+    '2020' = sum(Aar==2020),
+    '2021' = sum(Aar==2021))
+
+write.table(Data, file = 'Aktivitet.csv', sep = ';')
+
+Tab <- table(RegData[,c('HF', 'ShNavn', 'Aar')], dnn = 0)
+TabAar <- ftable(Tab, row.vars = c('HF', 'ShNavn'), exclude = 0)
