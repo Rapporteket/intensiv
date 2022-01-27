@@ -8,15 +8,15 @@
 #'
 #' @inheritParams NIRFigAndeler
 #' @inheritParams NIRFigAndelerGrVar
-#' @param valgtMaal 'Med' = median. Alt annet gir gjennomsnitt 
+#' @param valgtMaal 'Med' = median. Alt annet gir gjennomsnitt
 #'
 #' Argumentet \emph{valgtVar} har følgende valgmuligheter:
 #'    \itemize{
-#'     \item alder: Pasientens alders 
-#'     \item liggetid: Liggetid 
+#'     \item alder: Pasientens alders
+#'     \item liggetid: Liggetid
 #'     \item Nas: Skår for sykepleieraktiviteter. (Nursing Activities Score). Per døgn.
 #'     \item NEMS: Skår for ressursbruk per opphold. (Nine Equivalents of Nursing Manpower Use Score)
-#'     \item NEMS24: NEMS-skår per døgn. 
+#'     \item NEMS24: NEMS-skår per døgn.
 #'     \item respiratortid: Tid tilbrakt i respirator
 #'     \item respiratortidNonInv: Respiratortid, ikke-invasiv
 #'     \item respiratortidInvMoverf: Respiratortid, invasiv m/overf.
@@ -33,15 +33,15 @@
 #' @export
 
 
-NIRFigGjsnGrVar <- function(RegData, valgtVar, preprosess=1, hentData=0, valgtMaal='Gjsn', 
+NIRFigGjsnGrVar <- function(RegData, valgtVar, preprosess=1, hentData=0, valgtMaal='Gjsn',
                   minald=0, maxald=110, datoFra='2011-01-01', datoTil='3000-01-01', aar=0,
-                  grType=99, InnMaate=99, dodInt='', erMann='', grVar='ShNavn', medKI=1, 
+                  grType=99, InnMaate=99, dodInt='', erMann='', grVar='ShNavn', medKI=1,
                   velgDiag=0, lagFig=1, outfile='',...) {
-      
+
   if ("session" %in% names(list(...))) {
-    raplog::repLogger(session = list(...)[["session"]], msg = paste0("AndelGrVar: ", valgtVar))
-  }     
-if (hentData == 1) {		
+    rapbase::repLogger(session = list(...)[["session"]], msg = paste0("AndelGrVar: ", valgtVar))
+  }
+if (hentData == 1) {
   RegData <- NIRRegDataSQL(datoFra, datoTil)
 }
 
@@ -59,12 +59,12 @@ RegData <- NIRVarSpes$RegData
 #------- Gjøre utvalg
 minald <- max(NIRVarSpes$minald, minald)
 maxald <- min(NIRVarSpes$maxald, maxald)
-NIRUtvalg <- NIRUtvalgEnh(RegData=RegData, datoFra=datoFra, datoTil=datoTil, aar=aar, minald=minald, maxald=maxald, 
-                          erMann=erMann, InnMaate=InnMaate, dodInt=dodInt, grType=grType, velgDiag=velgDiag) #overfPas=overfPas, 
+NIRUtvalg <- NIRUtvalgEnh(RegData=RegData, datoFra=datoFra, datoTil=datoTil, aar=aar, minald=minald, maxald=maxald,
+                          erMann=erMann, InnMaate=InnMaate, dodInt=dodInt, grType=grType, velgDiag=velgDiag) #overfPas=overfPas,
 RegData <- NIRUtvalg$RegData
 utvalgTxt <- NIRUtvalg$utvalgTxt
 
-Ngrense <- 10		
+Ngrense <- 10
 '%i%' <- intersect
 
 RegData[ ,grVar] <- as.factor(RegData[ ,grVar])
@@ -80,23 +80,23 @@ t1 <- switch(valgtMaal,
 
 
 #tittel <- paste0(t1, valgtVar, ', ', NIRUtvalg$grTypeTxt, 'sykehus')
-tittel <- paste0(t1, NIRVarSpes$tittel) 
-			
+tittel <- paste0(t1, NIRVarSpes$tittel)
+
 if( valgtVar =='SMR') {tittel <- c(paste0('SMR, ', NIRUtvalg$grTypeTxt, 'sykehus'),
                                    '(uten reinnlagte pasienter)')}
 if( valgtVar =='PIMdod') {tittel <- paste0('PIM, ', NIRUtvalg$grTypeTxt, 'sykehus')}
 								# (uten reinnlagte pasienter)')}
 
-Ngrtxt <- paste0(' (', as.character(Ngr),')') 
+Ngrtxt <- paste0(' (', as.character(Ngr),')')
 indGrUt <- which(Ngr < Ngrense)
 if (length(indGrUt)==0) { indGrUt <- 0}
-Ngrtxt[indGrUt] <- paste0(' (<', Ngrense,')')	
+Ngrtxt[indGrUt] <- paste0(' (<', Ngrense,')')
 N <- dim(RegData)[1]
 
-KIHele <- c(0,0)    
+KIHele <- c(0,0)
 KIned <- c(0,0)
 KIhele <- c(0,0)
-		
+
 
 dummy0 <- NA #-0.0001
 #Kommer ut ferdig sortert!
@@ -104,7 +104,7 @@ if (valgtMaal=='Med') {
 	MedIQR <- plot(RegData[ ,grVar], RegData$Variabel, notch=TRUE, plot=FALSE)
 	MedIQR$stats[ ,indGrUt] <- dummy0
 	MedIQR$conf[ ,indGrUt] <- dummy0
-	sortInd <- order( MedIQR$stats[3,], decreasing=NIRVarSpes$sortAvtagende, na.last = FALSE) 
+	sortInd <- order( MedIQR$stats[3,], decreasing=NIRVarSpes$sortAvtagende, na.last = FALSE)
 	Midt <- as.numeric(MedIQR$stats[3, sortInd])
 	KIned <- MedIQR$conf[1, sortInd]
 	KIopp <- MedIQR$conf[2, sortInd]
@@ -115,12 +115,12 @@ if (valgtMaal=='Med') {
 	#j <- ceiling(N/2 - 1.96*sqrt(N/4))
 	#k <- ceiling(N/2 + 1.96*sqrt(N/4))
 	#KIHele <- sort(RegData$Variabel)[c(j,k)]
-#The notches (if requested) extend to +/-1.58 IQR/sqrt(n). (Chambers et al. (1983, p. 62), given in McGill et al. (1978, p. 16).) 
-#They are based on asymptotic normality of the median and roughly equal sample sizes for the two medians being compared, 
-#and are said to be rather insensitive to the underlying distributions of the samples. The idea appears to be to give 
-#roughly a 95% confidence interval for the difference in two medians. 	
-	} 
-	
+#The notches (if requested) extend to +/-1.58 IQR/sqrt(n). (Chambers et al. (1983, p. 62), given in McGill et al. (1978, p. 16).)
+#They are based on asymptotic normality of the median and roughly equal sample sizes for the two medians being compared,
+#and are said to be rather insensitive to the underlying distributions of the samples. The idea appears to be to give
+#roughly a 95% confidence interval for the difference in two medians.
+	}
+
 if (valgtMaal=='Gjsn') {	#Gjennomsnitt er standard, men må velges.
 	if (valgtVar %in% c('PIMdod', 'SMR')) { #Bør tas ut av Gjsn...?
 		medKI <- 0
@@ -128,7 +128,7 @@ if (valgtMaal=='Gjsn') {	#Gjennomsnitt er standard, men må velges.
 		#EstGr <- tapply(RegData$SMR, RegData[ ,grVar], mean, na.rm=T)
 		EstGr <- tapply(RegData$Variabel, RegData[ ,grVar], mean, na.rm=T)
 		ind0 <- which(EstGr == 0)
-		Gjsn <- 100*ObsGr/EstGr  
+		Gjsn <- 100*ObsGr/EstGr
 		if (length(ind0)>0) {Gjsn[ind0] <- 0}#Unngå å dele på 0
 		#Vi benytter ikke konf.int for SMR. Setter alle SE lik 0
 		     #TestPoGr <- which((Ngr*ObsGr-3*sqrt(Ngr*ObsGr*(1-ObsGr)) <= 0) | (Ngr*ObsGr+3*sqrt(Ngr*ObsGr*(1-ObsGr)) > Ngr))
@@ -144,10 +144,10 @@ if (valgtMaal=='Gjsn') {	#Gjennomsnitt er standard, men må velges.
 		MidtHele <- mean(RegData$Variabel)	#mean(RegData$Variabel)
 		KIHele <- MidtHele + sd(RegData$Variabel)/sqrt(N)*c(-2,2)
 	}
-      
+
 	Gjsn[indGrUt] <- dummy0
 	SE[indGrUt] <- 0
-	sortInd <- order(Gjsn, decreasing=NIRVarSpes$sortAvtagende, na.last = FALSE) 
+	sortInd <- order(Gjsn, decreasing=NIRVarSpes$sortAvtagende, na.last = FALSE)
 	Midt <- Gjsn[sortInd] #as.numeric(Gjsn[sortInd])
 	KIned <- Gjsn[sortInd] - 2*SE[sortInd]
 	KIopp <- Gjsn[sortInd] + 2*SE[sortInd]
@@ -158,8 +158,8 @@ if (valgtMaal=='Gjsn') {	#Gjennomsnitt er standard, men må velges.
 #AndelerGr[indGrUt] <- -0.0001
 
 GrNavnSort <- paste0(names(Ngr)[sortInd], Ngrtxt[sortInd])
-if (valgtVar %in% c('SMR', 'PIMdod')) {AntDes <- 2} else {AntDes <- 1} 
-soyletxt <- sprintf(paste0('%.', AntDes,'f'), Midt) 
+if (valgtVar %in% c('SMR', 'PIMdod')) {AntDes <- 2} else {AntDes <- 1}
+soyletxt <- sprintf(paste0('%.', AntDes,'f'), Midt)
 #soyletxt <- c(sprintf(paste0('%.', AntDes,'f'), Midt[1:AntGr]), rep('',length(Ngr)-AntGr))
 indUT <- which(is.na(Midt))  #Rydd slik at bare benytter indGrUt
 soyletxt[indUT] <- ''
@@ -172,7 +172,7 @@ AggTot <- MidtHele
 KImaal <- NIRVarSpes$KImaal
 KImaaltxt <- NIRVarSpes$KImaaltxt
 xAkseTxt <- NIRVarSpes$xAkseTxt
-grTypeTxt <- NIRUtvalg$grTypeTxt			
+grTypeTxt <- NIRUtvalg$grTypeTxt
 utvalgTxt <- NIRUtvalg$utvalgTxt
 fargepalett <- NIRUtvalg$fargepalett
 smltxt <- NIRUtvalg$smltxt
@@ -183,42 +183,42 @@ grtxt <- GrNavnSort
 #Se NIRFigSoyler for forklaring av innhold i lista GjsnGrVarData
 GjsnGrVarData <- list(AggVerdier=AggVerdier, #Endres til Soyleverdi? Evt. AggVerdier
                         AggTot=MidtHele, #Til AggVerdiTot?
-                         N=list(Hoved=N), 
+                         N=list(Hoved=N),
                          Ngr=Ngr,
-                         grtxt2='', 
+                         grtxt2='',
 				 medKI=medKI,
 				                 soyletxt=soyletxt,
   			 valgtMaal=valgtMaal,
-                         tittel=tittel,    #NIRVarSpes$tittel, 
-                         #yAkseTxt=yAkseTxt, 
-                         retn='H', 
+                         tittel=tittel,    #NIRVarSpes$tittel,
+                         #yAkseTxt=yAkseTxt,
+                         retn='H',
                          medSml=NIRUtvalg$medSml)
 
 
 #FigDataParam skal inn som enkeltparametre i funksjonskallet
 if (lagFig == 1) {
       cexgr <- 1-length(soyletxt)/200
-      # NIRFigSoyler(RegData, AggVerdier=AggVerdier, AggTot=MidtHele, Ngr=Ngr, N=list(Hoved=N), cexgr=cexgr, 
+      # NIRFigSoyler(RegData, AggVerdier=AggVerdier, AggTot=MidtHele, Ngr=Ngr, N=list(Hoved=N), cexgr=cexgr,
       #              tittel=tittel, valgtMaal=valgtMaal,
-      #              smltxt=NIRUtvalg$smltxt, yAkseTxt=yAkseTxt,utvalgTxt=NIRUtvalg$utvalgTxt, 
-      #              grTypeTxt=NIRUtvalg$grTypeTxt,  fargepalett=NIRUtvalg$fargepalett, grtxt=GrNavnSort, 
+      #              smltxt=NIRUtvalg$smltxt, yAkseTxt=yAkseTxt,utvalgTxt=NIRUtvalg$utvalgTxt,
+      #              grTypeTxt=NIRUtvalg$grTypeTxt,  fargepalett=NIRUtvalg$fargepalett, grtxt=GrNavnSort,
       #              soyletxt=soyletxt,  grVar=grVar, medKI=medKI, KImaal = NIRVarSpes$KImaal,
       #              medSml=NIRUtvalg$medSml, xAkseTxt=NIRVarSpes$xAkseTxt, outfile=outfile)
-      # 
-      # 
-      # NIRFigSoyler <- function(RegData, AggVerdier, AggTot=0, Ngr, tittel='mangler tittel', smltxt='', N, retn='H', 
-      #                          yAkseTxt='', utvalgTxt='', grTypeTxt='', soyletxt='', grtxt, grtxt2='', hovedgrTxt='', 
-      #                          grVar='', valgtMaal='Andel', figurtype='', cexgr=1, medSml=0, fargepalett='BlaaOff', xAkseTxt='', 
+      #
+      #
+      # NIRFigSoyler <- function(RegData, AggVerdier, AggTot=0, Ngr, tittel='mangler tittel', smltxt='', N, retn='H',
+      #                          yAkseTxt='', utvalgTxt='', grTypeTxt='', soyletxt='', grtxt, grtxt2='', hovedgrTxt='',
+      #                          grVar='', valgtMaal='Andel', figurtype='', cexgr=1, medSml=0, fargepalett='BlaaOff', xAkseTxt='',
       #                          medKI=0, KImaal = NA, KImaaltxt = '', outfile='') { #Ngr=list(Hoved=0)
-      #       
-      #       
+      #
+      #
             #---------------------------------------FRA FIGANDELER, FigGjsnGrVar og FigAndelGrVar--------------------------
             #Hvis for få observasjoner..
-            
+
             if ((N$Hoved < 5) | (dim(RegData)[1]<5))
                   #| ((enhetsUtvalg %in% c(1,3)) & length(which(RegData$ReshId == reshID))<5)) #(dim(RegData)[1]-N$Hoved <5) )
                   #       if (dim(RegData)[1] < 10 | ((enhetsUtvalg %in% c(1,3)) & length(which(RegData$ReshId == reshID))<5) )
-                  #|(grVar=='' & length(which(RegData$ReshId == reshID))<5 & enhetsUtvalg %in% c(1,3))) 
+                  #|(grVar=='' & length(which(RegData$ReshId == reshID))<5 & enhetsUtvalg %in% c(1,3)))
             {
                   #-----------Figur---------------------------------------
                   FigTypUt <-rapFigurer::figtype(outfile)  #FigTypUt <- rapFigurer::figtype(outfile)
@@ -230,21 +230,21 @@ if (lagFig == 1) {
                   } else {tekst <- 'For få registreringer i egen eller sammenligningsgruppe'}
                   text(0.5, 0.6, tekst, cex=1.2)
                   if ( outfile != '') {dev.off()}
-                  
+
             } else {
-                  
-                  
+
+
                   #Plottspesifikke parametre:
                   #Høyde må avhenge av antall grupper
                   hoyde <- ifelse(length(AggVerdier$Hoved)>20, 3*800, 3*600)
-                  FigTypUt <- rapFigurer::figtype(outfile, height=hoyde, fargepalett=fargepalett)	
+                  FigTypUt <- rapFigurer::figtype(outfile, height=hoyde, fargepalett=fargepalett)
                   #Tilpasse marger for å kunne skrive utvalgsteksten
                   NutvTxt <- length(utvalgTxt)
                   vmarg <- min(1,max(0, strwidth(grtxt, units='figure', cex=cexgr)*0.75))
                   #NB: strwidth oppfører seg ulikt avh. av device...
                   par('fig'=c(vmarg, 1, 0, 1-0.02*(NutvTxt-1)))	#Har alltid datoutvalg med
-                  
-                  
+
+
                   farger <- FigTypUt$farger
                   fargeHoved <- ifelse(grVar %in% c('ShNavn'), farger[4], farger[1])
                   fargeRest <- farger[3]
@@ -252,14 +252,14 @@ if (lagFig == 1) {
                   antGr <- length(grtxt)
                   lwdRest <- 3	#tykkelse på linja som repr. landet
                   cexleg <- 0.9	#Størrelse på legendtekst
-                  
-                  
-                  #Definerer disse i beregningsfunksjonen?  
+
+
+                  #Definerer disse i beregningsfunksjonen?
                   xmax <- max(c(AggVerdier$Hoved, AggVerdier$Rest),na.rm=T)*1.2
                   xmax <- ifelse(valgtMaal=='Andel', min(xmax, 100), xmax) 	#100 som maks bare hvis andelsfigur..
                   ymin <- 0.3 #0.5/cexgr^4	#0.05*antGr #Fordi avstand til x-aksen av en eller annen grunn øker når antall sykehus øker
-                  ymax <- 0.4+1.25*length(AggVerdier$Hoved) #c(0.3/xkr^4,  0.3+1.25*length(Midt)), 0.2+1.2*length(AggVerdier$Hoved) 
-                  
+                  ymax <- 0.4+1.25*length(AggVerdier$Hoved) #c(0.3/xkr^4,  0.3+1.25*length(Midt)), 0.2+1.2*length(AggVerdier$Hoved)
+
                   #Må def. pos først for å få strek for hele gruppa bak søylene
                   ### reverserer for å slippe å gjøre det på konf.int
                   pos <- rev(barplot(rev(as.numeric(AggVerdier$Hoved)), horiz=T, xlim=c(0,xmax), ylim=c(ymin, ymax), #, plot=FALSE)
@@ -271,12 +271,12 @@ if (lagFig == 1) {
                   posOK <- pos[indOK]
                   minpos <- min(posOK)-0.7
                   maxpos <- max(posOK)+0.7
-                  
-                   
+
+
                         grTypeTxt <- ifelse(grType %in% 1:3, NIRUtvalg$grTypeTxt, 'alle ') #smltxt
                         mtext(at=posOver, paste0('(N)' ), side=2, las=1, cex=cexgr, adj=1, line=0.25)
                         #Linje for hele landet/utvalget:
-                        if (medKI == 1) {	
+                        if (medKI == 1) {
                               #Legge på konf.int for hele populasjonen
                               #options(warn=-1)	#Unngå melding om KI med lengde 0
                               KIHele <- AggVerdier$KIHele
@@ -284,52 +284,52 @@ if (lagFig == 1) {
                               polygon(c(rep(KIHele[1],2), rep(KIHele[2],2)), col=farger[3], border=farger[3],
                                       c(minpos, maxpos, maxpos, minpos))
                         }
-                        lines(x=rep(AggTot, 2), y=c(minpos, maxpos), col=farger[1], lwd=2.5) #y=c(0, max(pos)+0.55), 
+                        lines(x=rep(AggTot, 2), y=c(minpos, maxpos), col=farger[1], lwd=2.5) #y=c(0, max(pos)+0.55),
                         #Linje for kvalitetsindikatormål:
-                        if ((valgtMaal=='Med' & valgtVar == 'respiratortidInvMoverf') | valgtVar == 'SMR') { #(!is.na(KImaal)) { 
-                              lines(x=rep(KImaal, 2), y=c(minpos, maxpos), col= '#FF7260', lwd=2.5) #y=c(0, max(pos)+0.55), 
-                              text(x=KImaal, y=maxpos+0.6, paste0('Mål:', KImaaltxt), cex=0.9*cexgr, col= '#FF7260',adj=c(0.5,0)) 
+                        if ((valgtMaal=='Med' & valgtVar == 'respiratortidInvMoverf') | valgtVar == 'SMR') { #(!is.na(KImaal)) {
+                              lines(x=rep(KImaal, 2), y=c(minpos, maxpos), col= '#FF7260', lwd=2.5) #y=c(0, max(pos)+0.55),
+                              text(x=KImaal, y=maxpos+0.6, paste0('Mål:', KImaaltxt), cex=0.9*cexgr, col= '#FF7260',adj=c(0.5,0))
                         }
                         barplot(rev(as.numeric(AggVerdier$Hoved)), horiz=TRUE, beside=TRUE, las=1, add=TRUE,
                                 col=fargeHoved, border=NA, cex.names=cexgr) #, xlim=c(0, xmax), ylim=c(ymin,ymax)
                         soyleXpos <- 1.15*xmax*max(strwidth(soyletxt, units='figure')) # cex=cexgr
                         text(x=soyleXpos, y=pos+0.1, soyletxt, las=1, cex=cexgr, adj=1, col=farger[1])	#AggVerdier, hvert sykehus
-                        if (medKI == 1) {	
+                        if (medKI == 1) {
                                     #Legge på konf.int for hver enkelt gruppe/sykehus
-                              arrows(x0=AggVerdier$Hoved, y0=pos, x1=AggVerdier$KIopp, y1=pos, 
+                              arrows(x0=AggVerdier$Hoved, y0=pos, x1=AggVerdier$KIopp, y1=pos,
                                      length=0.5/max(pos), code=2, angle=90, lwd=1, col=farger[1])
-                              arrows(x0=AggVerdier$Hoved, y0=pos, x1=AggVerdier$KIned, y1=pos, 
+                              arrows(x0=AggVerdier$Hoved, y0=pos, x1=AggVerdier$KIned, y1=pos,
                                      length=0.5/max(pos), code=2, angle=90, lwd=1, col=farger[1])
                         }
-                        
-                  
+
+
                   #------Tegnforklaring (legend)--------
-                        if (medKI == 0) { 
+                        if (medKI == 0) {
                               TXT <- paste0(grTypeTxt, 'sykehus ', sprintf('%.1f', AggTot), ', N=', N$Hoved)
                               legend(xmax/4, posOver+posDiff, TXT, fill=NA,  border=NA, lwd=2.5,xpd=TRUE,
                                      col=farger[1], cex=cexleg, seg.len=0.6, merge=TRUE, bty='n')
                         } else {
-                              TXT <- c(paste0(grTypeTxt, 'sykehus ', sprintf('%.1f', AggTot), ', N=', N$Hoved), 
-                                       paste0('95% konf.int., ', grTypeTxt, 'sykehus (', 
+                              TXT <- c(paste0(grTypeTxt, 'sykehus ', sprintf('%.1f', AggTot), ', N=', N$Hoved),
+                                       paste0('95% konf.int., ', grTypeTxt, 'sykehus (',
                                               sprintf('%.1f', KIHele[1]), '-', sprintf('%.1f', KIHele[2]), ')'))
                               legend(xmax/4, posOver, TXT, yjust=0, xpd=TRUE, fill=c(NA, farger[3]),  border=NA, lwd=2.5,  #inset=c(-0.1,0),
                                      col=c(farger[1], farger[3]), cex=cexleg, seg.len=0.6, merge=TRUE, bty='n') #+2*posDiff
                         }
-                  
+
                   #Legge på gruppe/søylenavn
-                  mtext(at=pos+0.05, text=grtxt, side=2, las=1, cex=cexgr, adj=1, line=0.25) 
-                  
-                  
+                  mtext(at=pos+0.05, text=grtxt, side=2, las=1, cex=cexgr, adj=1, line=0.25)
+
+
                   title(tittel, line=1.5) #cex.main=1.3)
-                  
+
                   #Tekst som angir hvilket utvalg som er gjort
                   avst <- 0.8
                   utvpos <- 3	#Startlinje for teksten
                   mtext(utvalgTxt, side=3, las=1, cex=0.9, adj=0, col=farger[1], line=c(3+0.8*((NutvTxt-1):0)))
-                  
-                  par('fig'=c(0, 1, 0, 1)) 
+
+                  par('fig'=c(0, 1, 0, 1))
                   if ( outfile != '') {dev.off()}
-                  
+
             }  #Figur
 } #Funksjon
 

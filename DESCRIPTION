@@ -17,8 +17,7 @@ Depends:
     rapbase (>= 1.0.0)
 Remotes: 
       Rapporteket/rapbase,
-      Rapporteket/rapFigurer,
-      Rapporteket/raplog
+      Rapporteket/rapFigurer
 Suggests:
     rmarkdown,
     testthat, 
@@ -33,7 +32,6 @@ Imports:
     plyr,
     rapbase,
     rapFigurer,
-    raplog,
     shiny,
     shinyalert,
     xtable,

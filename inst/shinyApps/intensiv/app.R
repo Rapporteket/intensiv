@@ -786,12 +786,12 @@ server <- function(input, output, session) { #
 
   # User info in widget
   userInfo <- rapbase::howWeDealWithPersonalData(session)
-  observeEvent(input$userInfo, {
-    shinyalert::shinyalert("Dette vet Rapporteket om deg:", userInfo,
-               type = "", imageUrl = "rap/logo.svg",
-               closeOnEsc = TRUE, closeOnClickOutside = TRUE,
-               html = TRUE, confirmButtonText = rapbase::noOptOutOk())
-  })
+  # observeEvent(input$userInfo, {
+  #   shinyalert::shinyalert("Dette vet Rapporteket om deg:", userInfo,
+  #              type = "", imageUrl = "rap/logo.svg",
+  #              closeOnEsc = TRUE, closeOnClickOutside = TRUE,
+  #              html = TRUE, confirmButtonText = rapbase::noOptOutOk())
+  # })
 
 
       #--------startside--------------

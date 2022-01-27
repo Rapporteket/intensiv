@@ -24,7 +24,7 @@ NIRFigInnMaate <- function(RegData, valgtVar='InnMaate', datoFra='2010-01-01', d
                             preprosess=1, outfile='', ...)
 {
   if ("session" %in% names(list(...))) {
-    raplog::repLogger(session = list(...)[["session"]], msg = paste0("FigInnMaate: ", valgtVar))
+    rapbase::repLogger(session = list(...)[["session"]], msg = paste0("FigInnMaate: ", valgtVar))
   }
       if (hentData == 1) {
             RegData <- NIRRegDataSQL(datoFra, datoTil)
