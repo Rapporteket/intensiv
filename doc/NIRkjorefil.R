@@ -673,7 +673,7 @@ table(CovidData$Bekreftet)
 
 # Resultater til intensiv, Helse-Nord
 #Aktivitet per år 2018-2020. RHF, HF, sykehus/avdeling.
-RegDataRaa <- NIRRegDataSQL(datoFra = '2018-01-01', datoTil = '2021-12-31')
+RegDataRaa <- NIRRegDataSQL(datoFra = '2018-01-01', datoTil = '2022-12-31')
 RegDataNord <- RegDataRaa[RegDataRaa$RHF == 'Helse Nord', ]
 RegData <- NIRPreprosess(RegDataNord)
 table(RegData$ShNavn)
@@ -684,9 +684,10 @@ Data <- RegData %>% dplyr::group_by(HF, ShNavn) %>%
     '2018' = sum(Aar==2018),
     '2019' = sum(Aar==2019),
     '2020' = sum(Aar==2020),
-    '2021' = sum(Aar==2021))
+    '2021' = sum(Aar==2021),
+    '2022' = sum(Aar==2022))
 
-write.table(Data, file = 'Aktivitet.csv', sep = ';')
+write.table(Data, file = 'Aktivitet22.csv', sep = ';')
 
 Tab <- table(RegData[,c('HF', 'ShNavn', 'Aar')], dnn = 0)
 TabAar <- ftable(Tab, row.vars = c('HF', 'ShNavn'), exclude = 0)
