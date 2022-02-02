@@ -127,7 +127,7 @@ sykehusnavn <- c('Helse Nord RHF',unique(RegData$HelseenhetKortnavn))
 
 for (sykehus in sykehusnavn) {
  # print(paste0('<br /> ','__', sykehus, '__'))
-   print('<br /> ')
+#   print('<br /> ')
   test <- tabNokkeltallNord(RegData=RegData, sykehus = sykehus)
   print(test)
 }
