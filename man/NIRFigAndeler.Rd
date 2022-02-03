@@ -33,12 +33,12 @@ NIRFigAndeler(
 
 \item{valgtVar}{Hvilken variabel som skal visualiseres. Se \strong{Details} for oversikt.}
 
-\item{datoFra}{Tidligste dato i utvalget (vises alltid i figuren). Standard 2019-01-01. 
+\item{datoFra}{Tidligste dato i utvalget (vises alltid i figuren). Standard 2019-01-01.
 Registeret inneholder registreringer f.o.m. 2011}
 
 \item{datoTil}{Seneste dato i utvalget (vises alltid i figuren).}
 
-\item{overfPas}{Overført under pågående intensivbehandling? 
+\item{overfPas}{Overført under pågående intensivbehandling?
 1 = Pasienten er ikke overført
 2 = Pasienten er overført}
 
@@ -50,17 +50,17 @@ Registeret inneholder registreringer f.o.m. 2011}
 0: Kvinner
 1: Menn}
 
-\item{InnMaate}{0: Elektivt, 
-6: Akutt medisinsk, 
-8: Akutt kirurgisk, 
+\item{InnMaate}{0: Elektivt,
+6: Akutt medisinsk,
+8: Akutt kirurgisk,
 standard: alle (alt unntatt 0,6,8 / ikke spesifisert)}
 
-\item{dodInt}{Levende/død ut fra intensiv. 
-0: i live, 
-1: død,   
+\item{dodInt}{Levende/død ut fra intensiv.
+0: i live,
+1: død,
 alle: standard (alle andre verdier)}
 
-\item{velgDiag}{Velge diagnose. 0-alle, 1-Bekreftede Covid-pasienter}
+\item{velgDiag}{Velge diagnose. 0-alle, 1-Bekreftede Covid-pasienter, 2-alle unntatt Covid-pasienter}
 
 \item{outfile}{Navn på fil figuren skrives til. Standard: '' (Figur skrives
 til systemets standard utdataenhet (som regel skjerm))}
@@ -86,11 +86,11 @@ hvilken enhet i spesialisthelsetjenesten brukeren tilhører}
 
 \item{lagFig}{Angir om figur skal lages eller ikke 0-ikke lag, 1-lag}
 
-\item{figurtype}{Hvilken figurtype som ønskes ut: 
-andel (fordelingsfigurer), 
-andelGrVar (andel i hver kategori av grupperingsvariabel, eks. sykehus), 
-andelTid (andel per tidsenhet, eks. år, måned), 
-andelPP (andel før og etter), 
+\item{figurtype}{Hvilken figurtype som ønskes ut:
+andel (fordelingsfigurer),
+andelGrVar (andel i hver kategori av grupperingsvariabel, eks. sykehus),
+andelTid (andel per tidsenhet, eks. år, måned),
+andelPP (andel før og etter),
 gjsnGrVar (sentralmål i hver kategori av grupperingsvariabel, eks. sykehus),
 gjsnTid (sentralmål per tidsenhet, eks. år, måned)}
 }
@@ -109,13 +109,13 @@ og NIRFigSoyler
 
 Argumentet \emph{valgtVar} har følgende valgmuligheter:
    \itemize{
-    \item alder: Aldersfordeling, 10-årige grupper 
+    \item alder: Aldersfordeling, 10-årige grupper
     \item ExtendedHemodynamicMonitoring: Hemodynamisk overvåkn.
     \item inklKrit: Andeler for de 5 inklusjonskriteriene
     \item InnMaate: Hastegrad inn på intensiv (Elektivt, Akutt medisinsk, Akutt kirurgisk)
     \item isolering: Isolasjon, type
     \item isoleringDogn Isolasjon, varighet
-    \item liggetid: Liggetid 
+    \item liggetid: Liggetid
     \item NEMS: Skår for ressursbruk. (Nine Equivalents of Nursing Manpower Use Score)
     \item Nas: Skår for sykepleieraktiviteter. (Nursing Activities Score)
     \item nyreBeh: Nyrebeh., type

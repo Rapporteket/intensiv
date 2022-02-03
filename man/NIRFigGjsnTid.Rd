@@ -31,7 +31,7 @@ NIRFigGjsnTid(
 
 \item{valgtVar}{Hvilken variabel som skal visualiseres}
 
-\item{datoFra}{Tidligste dato i utvalget (vises alltid i figuren). Standard 2019-01-01. 
+\item{datoFra}{Tidligste dato i utvalget (vises alltid i figuren). Standard 2019-01-01.
 Registeret inneholder registreringer f.o.m. 2011}
 
 \item{datoTil}{Seneste dato i utvalget (vises alltid i figuren).}
@@ -47,17 +47,17 @@ Registeret inneholder registreringer f.o.m. 2011}
 \item{reshID}{Parameter følger fra innlogging helseregister.no og angir
 hvilken enhet i spesialisthelsetjenesten brukeren tilhører}
 
-\item{InnMaate}{0: Elektivt, 
-6: Akutt medisinsk, 
-8: Akutt kirurgisk, 
+\item{InnMaate}{0: Elektivt,
+6: Akutt medisinsk,
+8: Akutt kirurgisk,
 standard: alle (alt unntatt 0,6,8 / ikke spesifisert)}
 
-\item{dodInt}{Levende/død ut fra intensiv. 
-0: i live, 
-1: død,   
+\item{dodInt}{Levende/død ut fra intensiv.
+0: i live,
+1: død,
 alle: standard (alle andre verdier)}
 
-\item{velgDiag}{Velge diagnose. 0-alle, 1-Bekreftede Covid-pasienter}
+\item{velgDiag}{Velge diagnose. 0-alle, 1-Bekreftede Covid-pasienter, 2-alle unntatt Covid-pasienter}
 
 \item{outfile}{Navn på fil figuren skrives til. Standard: '' (Figur skrives
 til systemets standard utdataenhet (som regel skjerm))}
@@ -85,12 +85,12 @@ I bakgrunn vises konfidensintervall for det man har valt å sammenlikne med.
 \details{
 Argumentet \emph{valgtVar} har følgende valgmuligheter:
    \itemize{
-    \item alder: Pasientens alders 
+    \item alder: Pasientens alders
     \item SMR: Standardisert mortalitetsratio (Gir annen figurtype)
-    \item liggetid: Liggetid 
+    \item liggetid: Liggetid
     \item Nas: Skår for sykepleieraktiviteter. (Nursing Activities Score). Per døgn.
     \item NEMS: Skår for ressursbruk per opphold. (Nine Equivalents of Nursing Manpower Use Score)
-    \item NEMS24: NEMS-skår per døgn. 
+    \item NEMS24: NEMS-skår per døgn.
     \item respiratortid: Tid tilbrakt i respirator
     \item respiratortidNonInv: Respiratortid, ikke-invasiv
     \item respiratortidInvMoverf: Respiratortid, invasiv m/overf.
@@ -105,8 +105,8 @@ Argumentet \emph{enhetsUtvalg} har følgende valgmuligheter:
     \item 3: Egen enhet mot egen sykehustype
     \item 4: Egen sykehustype
     \item 5: Egen sykehustype mot resten av landet
-    \item 6: Egen enhet mot egen region 
-    \item 7: Egen region 
+    \item 6: Egen enhet mot egen region
+    \item 7: Egen region
    \item 8: Egen region mot resten [
    	}
 }

@@ -18,6 +18,7 @@ NIRRegDataSQL <- function(datoFra = '2019-01-01', datoTil = '2099-01-01') { #,se
 
   query <- paste0('SELECT
   Age,
+  AgeAdmitted,
 	Bilirubin,
       BrainDamage,
       Bukleie,
@@ -80,7 +81,7 @@ HF,
       -- PasientGUID,
       PatientInRegistryGuid,
       -- PatientInRegistryGUID,
-      PatientAge,
+      -- PatientAge,
       PatientGender,
       PatientTransferredFromHospital,
       PatientTransferredFromHospitalName,

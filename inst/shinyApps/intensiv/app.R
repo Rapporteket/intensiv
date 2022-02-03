@@ -90,7 +90,8 @@ enhetsUtvalg <- c("Egen mot resten av landet"=1,
                   "Egen region mot resten" = 8)
 
 covidValg <- c('Alle pasienter' = 0,
-                  'Covid-pasienter' = 1)
+                  'Covid-pasienter' = 1,
+               'Alle unntatt Covid-pasienter' = 2)
 velgCovidTxt <- 'Velg diagnose (covid-pasienter)'
 
 # Define UI for application that draws figures

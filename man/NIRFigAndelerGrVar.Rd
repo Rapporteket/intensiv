@@ -34,7 +34,7 @@ NIRFigAndelerGrVar(
 
 \item{valgtVar}{Hvilken variabel som skal visualiseres. Se \strong{Details} for oversikt.}
 
-\item{datoFra}{Tidligste dato i utvalget (vises alltid i figuren). Standard 2019-01-01. 
+\item{datoFra}{Tidligste dato i utvalget (vises alltid i figuren). Standard 2019-01-01.
 Registeret inneholder registreringer f.o.m. 2011}
 
 \item{datoTil}{Seneste dato i utvalget (vises alltid i figuren).}
@@ -43,7 +43,7 @@ Registeret inneholder registreringer f.o.m. 2011}
 
 \item{maxald}{Alder, til og med (Standardverdi: 110)}
 
-\item{velgDiag}{Velge diagnose. 0-alle, 1-Bekreftede Covid-pasienter}
+\item{velgDiag}{Velge diagnose. 0-alle, 1-Bekreftede Covid-pasienter, 2-alle unntatt Covid-pasienter}
 
 \item{grType}{Gjør gruppeutvalg på sykehustype
 1: lokal-/sentralsykehus
@@ -51,14 +51,14 @@ Registeret inneholder registreringer f.o.m. 2011}
 3: regionsykehus
 99: alle (standard)}
 
-\item{InnMaate}{0: Elektivt, 
-6: Akutt medisinsk, 
-8: Akutt kirurgisk, 
+\item{InnMaate}{0: Elektivt,
+6: Akutt medisinsk,
+8: Akutt kirurgisk,
 standard: alle (alt unntatt 0,6,8 / ikke spesifisert)}
 
-\item{dodInt}{Levende/død ut fra intensiv. 
-0: i live, 
-1: død,   
+\item{dodInt}{Levende/død ut fra intensiv.
+0: i live,
+1: død,
 alle: standard (alle andre verdier)}
 
 \item{erMann}{Kjønn, standard: alt annet enn 0/1 gir begge kjønn
@@ -92,9 +92,9 @@ til systemets standard utdataenhet (som regel skjerm))}
 Søylediagram med AggVerdier av valgt variabel for hvert sykehus
 }
 \description{
-Funksjon som genererer en figur med AggVerdier av en gitt variabel for ei valgt gruppering, 
-f.eks. enheter. I øyeblikket benytter funksjonen bare 'ShNavn' som grupperingsvariabel, men 
-andre valg kan lett inkluderes. Funksjonen er tilrettelagt for også å kunne benytte "01-data", 
+Funksjon som genererer en figur med AggVerdier av en gitt variabel for ei valgt gruppering,
+f.eks. enheter. I øyeblikket benytter funksjonen bare 'ShNavn' som grupperingsvariabel, men
+andre valg kan lett inkluderes. Funksjonen er tilrettelagt for også å kunne benytte "01-data",
 dvs. kodede, anonymiserte data som benyttes til offentlige kvalitetsindikatorer.
 }
 \details{
@@ -105,10 +105,10 @@ over andel av innkomsttype ved hver enhet, dvs. ei fordeling av de tre innkomstt
 For andre "valgtVar" viser figuren andel av den valgte variabelen for hver enhet.
 Argumentet \emph{valgtVar} har følgende valgmuligheter:
    \itemize{
-    \item alder_u18: Pasienter under 18 år 
+    \item alder_u18: Pasienter under 18 år
     \item alder_over80: Pasienter over 80 år (>=80)
     \item dod30d: Pasienter som dør innen 30 dager etter innleggelse
-    \item dodeIntensiv: Pasienter som dør på intensivavdelinga. 
+    \item dodeIntensiv: Pasienter som dør på intensivavdelinga.
     \item ExtendedHemodynamicMonitoring: Utvidet hemodyn. overvåkning
     \item innMaate: Hastegrad inn på intensiv (Elektivt, Akutt medisinsk, Akutt kirurgisk)
 	Dette valget viser en annen figurtype.

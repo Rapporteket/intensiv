@@ -40,15 +40,15 @@ TRUE: Ja (Standard)}
 0: Nei, RegData gis som input til funksjonen (Standard)
 1: Ja}
 
-\item{valgtMaal}{'Med' = median. Alt annet gir gjennomsnitt 
+\item{valgtMaal}{'Med' = median. Alt annet gir gjennomsnitt
 
 Argumentet \emph{valgtVar} har følgende valgmuligheter:
    \itemize{
-    \item alder: Pasientens alders 
-    \item liggetid: Liggetid 
+    \item alder: Pasientens alders
+    \item liggetid: Liggetid
     \item Nas: Skår for sykepleieraktiviteter. (Nursing Activities Score). Per døgn.
     \item NEMS: Skår for ressursbruk per opphold. (Nine Equivalents of Nursing Manpower Use Score)
-    \item NEMS24: NEMS-skår per døgn. 
+    \item NEMS24: NEMS-skår per døgn.
     \item respiratortid: Tid tilbrakt i respirator
     \item respiratortidNonInv: Respiratortid, ikke-invasiv
     \item respiratortidInvMoverf: Respiratortid, invasiv m/overf.
@@ -64,7 +64,7 @@ Detajer: Her bør man liste opp hvilke variable funksjonen benytter.}
 
 \item{maxald}{Alder, til og med (Standardverdi: 110)}
 
-\item{datoFra}{Tidligste dato i utvalget (vises alltid i figuren). Standard 2019-01-01. 
+\item{datoFra}{Tidligste dato i utvalget (vises alltid i figuren). Standard 2019-01-01.
 Registeret inneholder registreringer f.o.m. 2011}
 
 \item{datoTil}{Seneste dato i utvalget (vises alltid i figuren).}
@@ -75,21 +75,21 @@ Registeret inneholder registreringer f.o.m. 2011}
 3: regionsykehus
 99: alle (standard)}
 
-\item{InnMaate}{0: Elektivt, 
-6: Akutt medisinsk, 
-8: Akutt kirurgisk, 
+\item{InnMaate}{0: Elektivt,
+6: Akutt medisinsk,
+8: Akutt kirurgisk,
 standard: alle (alt unntatt 0,6,8 / ikke spesifisert)}
 
-\item{dodInt}{Levende/død ut fra intensiv. 
-0: i live, 
-1: død,   
+\item{dodInt}{Levende/død ut fra intensiv.
+0: i live,
+1: død,
 alle: standard (alle andre verdier)}
 
 \item{erMann}{Kjønn, standard: alt annet enn 0/1 gir begge kjønn
 0: Kvinner
 1: Menn}
 
-\item{velgDiag}{Velge diagnose. 0-alle, 1-Bekreftede Covid-pasienter}
+\item{velgDiag}{Velge diagnose. 0-alle, 1-Bekreftede Covid-pasienter, 2-alle unntatt Covid-pasienter}
 
 \item{lagFig}{Angir om figur skal lages eller ikke 0-ikke lag, 1-lag}
 

@@ -67,8 +67,8 @@ NIRPreprosess <- function(RegData=RegData, skjema=1)	#, reshID=reshID)
         RegData[which(RegData$Alder<16), c('SapsSum', 'Saps2Score', 'Saps2ScoreNumber')] <- 0
       }
 
-      names(RegData)[which(names(RegData) == 'PatientAge')] <- 'Alder'
-      names(RegData)[which(names(RegData) == 'AgeAdmitted')] <- 'Alder' #AgeAdmitted blir gyldig hvis denne finnes
+      #names(RegData)[which(names(RegData) == 'PatientAge')] <- 'Alder' #Uten desimal
+      names(RegData)[which(names(RegData) == 'AgeAdmitted')] <- 'Alder' #Én desimal
       names(RegData)[which(names(RegData) == 'Saps2Score')] <- 'SMR' #Saps2Score er SAPS estimert mortalitet
       names(RegData)[which(names(RegData) == 'Saps2ScoreNumber')] <- 'SAPSII'
       names(RegData)[which(names(RegData) == 'DaysAdmittedIntensiv')] <- 'liggetid'

@@ -31,7 +31,7 @@ NIRFigAndelTid(
 
 \item{valgtVar}{Hvilken variabel som skal visualiseres. Se \strong{Details} for oversikt.}
 
-\item{datoFra}{Tidligste dato i utvalget (vises alltid i figuren). Standard 2019-01-01. 
+\item{datoFra}{Tidligste dato i utvalget (vises alltid i figuren). Standard 2019-01-01.
 Registeret inneholder registreringer f.o.m. 2011}
 
 \item{datoTil}{Seneste dato i utvalget (vises alltid i figuren).}
@@ -46,17 +46,17 @@ Registeret inneholder registreringer f.o.m. 2011}
 0: Kvinner
 1: Menn}
 
-\item{InnMaate}{0: Elektivt, 
-6: Akutt medisinsk, 
-8: Akutt kirurgisk, 
+\item{InnMaate}{0: Elektivt,
+6: Akutt medisinsk,
+8: Akutt kirurgisk,
 standard: alle (alt unntatt 0,6,8 / ikke spesifisert)}
 
-\item{dodInt}{Levende/død ut fra intensiv. 
-0: i live, 
-1: død,   
+\item{dodInt}{Levende/død ut fra intensiv.
+0: i live,
+1: død,
 alle: standard (alle andre verdier)}
 
-\item{velgDiag}{Velge diagnose. 0-alle, 1-Bekreftede Covid-pasienter}
+\item{velgDiag}{Velge diagnose. 0-alle, 1-Bekreftede Covid-pasienter, 2-alle unntatt Covid-pasienter}
 
 \item{reshID}{Parameter følger fra innlogging helseregister.no og angir
 hvilken enhet i spesialisthelsetjenesten brukeren tilhører}
@@ -86,10 +86,10 @@ filtrert på de utvalg som er gjort.
 \details{
 Argumentet \emph{valgtVar} har følgende valgmuligheter:
    \itemize{
-    \item alder_u18: Pasienter under 18 år 
+    \item alder_u18: Pasienter under 18 år
     \item alder_over80: Pasienter over 80 år (>=80)
     \item dod30d: Pasienter som dør innen 30 dager etter innleggelse
-    \item dodeIntensiv: Pasienter som dør på intensivavdelinga. 
+    \item dodeIntensiv: Pasienter som dør på intensivavdelinga.
     \item ExtendedHemodynamicMonitoring: Utvidet hemodyn. overvåkning
  \item isolering: Isolasjon av pasient
  \item liggetidDod: Liggetid, døde
