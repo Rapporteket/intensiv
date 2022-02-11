@@ -12,7 +12,7 @@ tabAntOpphShMnd(
 )
 }
 \arguments{
-\item{RegData}{En dataramme med alle nødvendige variabler fra registeret}
+\item{RegData}{Dataramme}
 
 \item{datoTil}{Seneste dato i utvalget (vises alltid i figuren).}
 
