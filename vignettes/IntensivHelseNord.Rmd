@@ -151,8 +151,8 @@ for (var in variabler) {
 
 ManglendeReg <- function(RegDataAlleVar){ #, aar)
   as.data.frame(RegDataAlleVar %>% 
-  #filter(Aar==aar) %>% 
-  #dplyr::group_by(HF, ShNavn) %>%
+  filter(Aar==aar) %>% 
+  dplyr::group_by(HF, ShNavn) %>%
   dplyr::summarise(.groups = 'rowwise',
     AntReg = n(),
     ChronicDiseases = sum(ChronicDiseases==-1),
@@ -175,7 +175,7 @@ ManglendeReg <- function(RegDataAlleVar){ #, aar)
 # for (aar in 2018:2020) {
  TabManglReg <- ManglendeReg(RegDataAlleVar=RegDataAlleVar)
  PstNord <- round(100*(TabManglReg[, variabler]/TabManglReg[, 'AntReg']), 1)
- write.table(cbind(TabManglReg, Pst), file = paste0('DatakvalSMR_Nord.csv'), sep = ';')
+ write.table(cbind(TabManglReg, PstNord), file = paste0('DatakvalSMR_Nord.csv'), sep = ';')
  
  
  TabManglReg <- ManglendeReg(RegDataAlleVar=RegDataAndre)
@@ -242,11 +242,5 @@ for (sykehus in sykehusnavn) {
        caption = paste('Nøkkeltall for intensivopphold i ', sykehus, ':'))
   print(Tab)
 }
-
-```
-
-
-```{r Datakvalitet, echo=FALSE, results = 'asis'} 
-RegData$
 
 ```
