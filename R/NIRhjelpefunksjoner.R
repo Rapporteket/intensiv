@@ -235,12 +235,9 @@ abonnement <- function(rnwFil, brukernavn='tullebukk', reshID=0,
   #datoTil <- datoTil[[1]]
   #reshID <- reshID[[1]]
   Rpakke <- ifelse(rnwFil==as.character('NIRinfluensa.Rnw'), 'intensivberedskap', 'intensiv')
-  rapbase::subLogger(author = brukernavn, registryName = 'Norsk Intensivregister',
+  raplog::subLogger(author = brukernavn, registryName = 'Norsk Intensivregister',
                     reshId = reshID[[1]],
                     msg = "starter Abonnement: månedsrapport")
-  # rapbase::subLogger(author = author[[1]], registryName = registryName[[1]],
-  #                     reshId = reshId[[1]],
-  #                     msg = "Subscription report: stent/prosedyre")
   filbase <- substr(rnwFil, 1, nchar(rnwFil)-4)
   tmpFile <- paste0(filbase, Sys.Date(),'_',digest::digest(brukernavn), '.Rnw')
   src <- normalizePath(system.file(rnwFil, package=Rpakke))
@@ -256,7 +253,7 @@ abonnement <- function(rnwFil, brukernavn='tullebukk', reshID=0,
   #utfil <- file.copy(from = paste0(substr(tmpFile, 1, nchar(tmpFile)-3), 'pdf'),
    #         to = paste0(filbase, digest::digest(brukernavn),'.pdf')) #filnavn)
 
-  rapbase::subLogger(author = brukernavn, registryName = 'Norsk Intensivregister',
+  raplog::subLogger(author = brukernavn, registryName = 'Norsk Intensivregister',
                     reshId = reshID[[1]],
                     msg = paste("Leverer: ", utfil))
   return(utfil)

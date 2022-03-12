@@ -145,7 +145,6 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
 
            ),
            mainPanel(
-             shinyalert::useShinyalert(),
              appNavbarUserWidget(user = uiOutput("appUserName"),
                                  organization = uiOutput("appOrgName"),
                                  addUserInfo = TRUE),
