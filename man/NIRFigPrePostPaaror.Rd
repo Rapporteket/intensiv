@@ -79,11 +79,11 @@ hvilken enhet i spesialisthelsetjenesten brukeren tilhører}
 
 \item{lagFig}{Angir om figur skal lages eller ikke 0-ikke lag, 1-lag}
 
-\item{valgtMaal}{'Med' = median. Alt annet gir gjennomsnitt 
+\item{valgtMaal}{'Med' = median. Alt annet gir gjennomsnitt
 
 Argumentet \emph{valgtVar} har følgende valgmuligheter:
    \itemize{
-    \item alder: Pasientens alders 
+    \item alder: Pasientens alders
     \item SAPSII: Skår for alvorlighetsgrad av sykdom.  (Simplified Acute Physiology Score II)
    }
 

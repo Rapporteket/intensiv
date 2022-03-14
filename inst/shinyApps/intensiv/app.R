@@ -52,7 +52,7 @@ if (paaServer) {
   RegData <- merge(IntData, CovidData[ ,-which(names(CovidData) == 'Diagnosis')], suffixes = c('','Cov'),
         by.x = 'SkjemaGUID', by.y = 'HovedskjemaGUID', all.x = T, all.y=F)
 
-  #repLogger(session = session, 'Hentet alle data fra intensivregisteret')
+  repLogger(session = session, 'Hentet alle data fra intensivregisteret')
 } #hente data på server
 
 if (!exists('PaarorDataH')){

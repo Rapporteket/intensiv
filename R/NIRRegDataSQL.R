@@ -3,7 +3,7 @@
 #' Henter data for Intensivregisteret fra "staging"
 #'
 #' @inheritParams NIRFigAndeler
-#' @inheritParams NIRUtvalg
+#' @inheritParams NIRUtvalgEnh
 #'
 #' @return Henter dataramma RegData for Intensivregisteret
 #' @export
@@ -123,7 +123,7 @@ WHERE cast(DateAdmittedIntensive as date) BETWEEN \'', datoFra, '\' AND \'', dat
 
   RegData <- rapbase::loadRegData(registryName= "nir", query=query, dbType="mysql")
 
-  rapbase::repLogger(session = session, 'Hentet alle data fra intensivregisteret')
+  #rapbase::repLogger(session = session, 'Hentet alle data fra intensivregisteret')
 
 
 
