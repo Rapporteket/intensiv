@@ -229,33 +229,23 @@ henteSamlerapporter <- function(filnavn, rnwFil, reshID=0,
 abonnement <- function(rnwFil, brukernavn='tullebukk', reshID=0,
                                 datoFra=Sys.Date()-180, datoTil=Sys.Date()) {
 
-  #function(baseName, reshId, registryName,author, hospitalName, type) {
-#Ikke lenger i liste..
-  #datoFra <- datoFra[[1]]
-  #datoTil <- datoTil[[1]]
-  #reshID <- reshID[[1]]
   Rpakke <- ifelse(rnwFil==as.character('NIRinfluensa.Rnw'), 'intensivberedskap', 'intensiv')
-  raplog::subLogger(author = brukernavn, registryName = 'Norsk Intensivregister',
-                    reshId = reshID[[1]],
-                    msg = "starter Abonnement: månedsrapport")
+  # raplog::subLogger(author = brukernavn, registryName = 'Norsk Intensivregister',
+  #                   reshId = reshID[[1]],
+  #                   msg = "starter Abonnement: månedsrapport")
   filbase <- substr(rnwFil, 1, nchar(rnwFil)-4)
   tmpFile <- paste0(filbase, Sys.Date(),'_',digest::digest(brukernavn), '.Rnw')
   src <- normalizePath(system.file(rnwFil, package=Rpakke))
   # gå til tempdir. Har ikke skriverettigheter i arbeidskatalog
-  #owd <-
   setwd(tempdir())
   dir <- getwd()
   file.copy(src, tmpFile, overwrite = TRUE)
   knitr::knit2pdf(input=tmpFile)
-
-  #gc() #Opprydning gc-"garbage collection"
   utfil <- paste0(dir, '/', substr(tmpFile, 1, nchar(tmpFile)-3), 'pdf')
-  #utfil <- file.copy(from = paste0(substr(tmpFile, 1, nchar(tmpFile)-3), 'pdf'),
-   #         to = paste0(filbase, digest::digest(brukernavn),'.pdf')) #filnavn)
 
-  raplog::subLogger(author = brukernavn, registryName = 'Norsk Intensivregister',
-                    reshId = reshID[[1]],
-                    msg = paste("Leverer: ", utfil))
+  # raplog::subLogger(author = brukernavn, registryName = 'Norsk Intensivregister',
+  #                   reshId = reshID[[1]],
+  #                   msg = paste("Leverer: ", utfil))
   return(utfil)
 }
 

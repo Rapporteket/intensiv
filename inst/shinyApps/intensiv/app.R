@@ -52,7 +52,6 @@ if (paaServer) {
   RegData <- merge(IntData, CovidData[ ,-which(names(CovidData) == 'Diagnosis')], suffixes = c('','Cov'),
         by.x = 'SkjemaGUID', by.y = 'HovedskjemaGUID', all.x = T, all.y=F)
 
-  repLogger(session = session, 'Hentet alle data fra intensivregisteret')
 } #hente data på server
 
 if (!exists('PaarorDataH')){
@@ -1412,7 +1411,7 @@ server <- function(input, output, session) { #
         paramNames <- c('rnwFil', 'brukernavn', "reshID", "datoFra", 'datoTil')
         paramValues <- c(rnwFil, brukernavn(), reshID, startDato, as.character(datoTil)) #input$subscriptionFileFormat)
 
-        test <- abonnement(rnwFil = 'NIRmndRapp.Rnw', brukernavn='IntensivBruker', reshID=109773, datoTil=Sys.Date())
+        #test <- abonnement(rnwFil = 'NIRmndRapp.Rnw', brukernavn='IntensivBruker', reshID=109773, datoTil=Sys.Date())
 
         rapbase::createAutoReport(synopsis = synopsis, package = "intensiv",
                                   fun = fun, paramNames = paramNames,
@@ -1438,13 +1437,13 @@ server <- function(input, output, session) { #
       ## liste med metadata for rapport
       reports <- list(
         MndRapp = list(
-          synopsis = "Månedsrapport",
+          synopsis = "Rapporteket-Intensiv: Månadsrapport",
           fun = "abonnement",
           paramNames = c('rnwFil', "reshID"),
           paramValues = c('NIRmndRapp.Rnw', 0)
         ),
         SamleRapp = list(
-          synopsis = "Rapport med samling av div. resultater",
+          synopsis = "Rapporteket-Intensiv: Rapport, div. resultater",
           fun = "abonnement",
           paramNames = c('rnwFil', "reshID"),
           paramValues = c('NIRSamleRapp.Rnw', 'Alle')
