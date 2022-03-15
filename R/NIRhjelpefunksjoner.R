@@ -230,9 +230,9 @@ abonnement <- function(rnwFil, brukernavn='tullebukk', reshID=0,
                                 datoFra=Sys.Date()-180, datoTil=Sys.Date()) {
 
   Rpakke <- ifelse(rnwFil==as.character('NIRinfluensa.Rnw'), 'intensivberedskap', 'intensiv')
-  # raplog::subLogger(author = brukernavn, registryName = 'Norsk Intensivregister',
-  #                   reshId = reshID[[1]],
-  #                   msg = "starter Abonnement: månedsrapport")
+  raplog::subLogger(author = brukernavn, registryName = 'Norsk Intensivregister',
+                    reshId = reshID,
+                    msg = paste0("1 starter Abonnement:", rnwFil ))
   filbase <- substr(rnwFil, 1, nchar(rnwFil)-4)
   tmpFile <- paste0(filbase, Sys.Date(),'_',digest::digest(brukernavn), '.Rnw')
   src <- normalizePath(system.file(rnwFil, package=Rpakke))
@@ -240,12 +240,15 @@ abonnement <- function(rnwFil, brukernavn='tullebukk', reshID=0,
   setwd(tempdir())
   dir <- getwd()
   file.copy(src, tmpFile, overwrite = TRUE)
+  raplog::subLogger(author = brukernavn, registryName = 'Norsk Intensivregister',
+                    reshId = reshID,
+                    msg = paste0("2 Klar til å strikke", tmpFile))
   knitr::knit2pdf(input=tmpFile)
   utfil <- paste0(dir, '/', substr(tmpFile, 1, nchar(tmpFile)-3), 'pdf')
 
-  # raplog::subLogger(author = brukernavn, registryName = 'Norsk Intensivregister',
-  #                   reshId = reshID[[1]],
-  #                   msg = paste("Leverer: ", utfil))
+  raplog::subLogger(author = brukernavn, registryName = 'Norsk Intensivregister',
+                    reshId = reshID,
+                    msg = paste("3 Leverer: ", utfil))
   return(utfil)
 }
 

@@ -1361,7 +1361,7 @@ server <- function(input, output, session) { #
       ## reaktive verdier for å holde rede på endringer som skjer mens
       ## applikasjonen kjører
       rv <- reactiveValues(
-        subscriptionTab = rapbase::makeAutoReportTab(session)) #makeAutoReportTab()(session))
+        subscriptionTab = rapbase::makeAutoReportTab(session))
 
       ## lag tabell over gjeldende status for abonnement
       output$activeSubscriptions <- DT::renderDataTable(
@@ -1395,23 +1395,22 @@ server <- function(input, output, session) { #
         email <- rapbase::getUserEmail(session)
         if (input$subscriptionRep == "Månedsrapport") {
           synopsis <- "Intensiv/Rapporteket: månedsrapport"
-          rnwFil <- "NIRmndRapp.Rnw" #Navn på fila
-          #print(rnwFil)
+          rnwFil <- "NIRmndRapp.Rnw"
         }
         if (input$subscriptionRep == "Samlerapport") {
           synopsis <- "Intensiv/Rapporteket: Samlerapport"
-          rnwFil <- "NIRSamleRapp.Rnw" #Navn på fila
+          rnwFil <- "NIRSamleRapp.Rnw"
         }
         if (input$subscriptionRep == "Influensaresultater") {
           synopsis <- "Intensiv/Rapporteket: influensaresultater"
-          rnwFil <- "NIRinfluensa.Rnw" #Navn på fila
+          rnwFil <- "NIRinfluensa.Rnw"
         }
 
         fun <- "abonnement"  #"henteSamlerapporter"
         paramNames <- c('rnwFil', 'brukernavn', "reshID", "datoFra", 'datoTil')
         paramValues <- c(rnwFil, brukernavn(), reshID, startDato, as.character(datoTil)) #input$subscriptionFileFormat)
 
-        #test <- abonnement(rnwFil = 'NIRmndRapp.Rnw', brukernavn='IntensivBruker', reshID=109773, datoTil=Sys.Date())
+        #test <- intensiv::abonnement(rnwFil = 'NIRSamleRapp.Rnw', brukernavn='IntensivBruker', reshID=109773, datoTil=Sys.Date())
 
         rapbase::createAutoReport(synopsis = synopsis, package = "intensiv",
                                   fun = fun, paramNames = paramNames,
