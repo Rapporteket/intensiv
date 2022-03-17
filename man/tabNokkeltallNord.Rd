@@ -9,13 +9,7 @@ tabNokkeltallNord(RegData, tidsenhet = "Aar", sykehus = "Alle")
 \arguments{
 \item{RegData}{dataramme}
 
-\item{tidsenhet}{velg: Aar, Halvaar, Kvartal, Mnd (standard)}
-
-\item{datoTil}{sluttdato}
-
-\item{enhetsUtvalg}{enhetsutvalg}
-
-\item{reshID}{enhetens resh-id}
+\item{sykehus}{HelseenhetKortnavn eller HF-navn}
 }
 \description{
 Nøkkeltall (antall opph., pasienter,  intensivdøgn, samt div oversiktstall)

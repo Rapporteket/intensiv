@@ -9,25 +9,14 @@ output:
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 library(intensiv)
-# library(lubridate)
-# library(dplyr)
 library(kableExtra)
 library(tidyverse)
 datoFra <- '2018-01-01'
 datoTil <- '2020-12-31'
 RegData <- NIRRegDataSQL(datoFra = datoFra, datoTil = datoTil)
-#For å få med sykehusnavn 
-# query <- paste0('SELECT * FROM MainFormDataContract
-# WHERE cast(DateAdmittedIntensive as date) BETWEEN \'', datoFra, '\' AND \'', datoTil, '\'')
-# RegData <- rapbase::loadRegData(registryName="nir", query=query, dbType="mysql")
-
 RegData <- RegData[RegData$RHF == 'Helse Nord', ]
 RegData <- NIRPreprosess(RegData)
 
-#Komplikasjoner:
-RegData$KompTot <- (rowSums(RegData[ ,c('KompHypoglykemi',	'KompPneumotoraks',	'KompLuftveisproblem',
-                              'KompDekubitus')])>0)
-#grtxt <- c('Alvorlig hypoglykemi',	'Pneumotoraks',	'Luftveisproblem, \ntrakealtube/kanyle', 'Dekubitus', 'Minst én kompl.')
 
 KjonnPst <- paste(sprintf('%.1f', prop.table(table(RegData$erMann))*100), '%')
 N <- dim(RegData)[1]
@@ -41,17 +30,9 @@ respStotte <- sprintf('%.1f', 100*sum(RegData$MechanicalRespirator==1)/N)
 iLiveUt <- sprintf('%.1f', 100*sum(RegData$DischargedIntensiveStatus==0)/N) #0: I live, 1: Død intensiv
 iLive30d <- sprintf('%.1f', 100*sum(RegData$Dod30==0)/N)
 
-        
-
 alderDIV <- summary(RegData$Alder)[1:6]
 names(alderDIV) <- c('Minimum:', '25% av pasientene er under:', 'Median:','Gjennsomsnitt:',
 		'25% av pasientene er over:', 'Maksimum:')
-
-
-# xtable(alderDIV, digits=1, align=c('l', rep('r', ncol(alderDIV))), 
-# 		caption='Aldersfordeling (år)',
-# 		label='tab:Alderskarakteristikker')
-
 
 ```
 _Alle tall er hentet fra NiPaR - Norsk Intensiv- og Pandemiregister_ \
@@ -69,7 +50,7 @@ Data <- RegData %>% dplyr::group_by(HF, ShNavn) %>%
     )
 #print(as.table(Data))
 kableExtra::kable(Data)
-# write.table(Data, file = 'Aktivitet22.csv', sep = ';')
+write.table(Data, file = 'Aktivitet22.csv', sep = ';')
 # Tab <- table(RegData[,c('HF', 'ShNavn', 'Aar')], dnn = 0)
 # TabAar <- ftable(Tab, row.vars = c('HF', 'ShNavn'), exclude = 0)
 
@@ -151,7 +132,7 @@ for (var in variabler) {
 
 ManglendeReg <- function(RegDataAlleVar){ #, aar)
   as.data.frame(RegDataAlleVar %>% 
-  filter(Aar==aar) %>% 
+  #filter(Aar==aar) %>% 
   dplyr::group_by(HF, ShNavn) %>%
   dplyr::summarise(.groups = 'rowwise',
     AntReg = n(),
@@ -227,20 +208,41 @@ _Mekanisk ventilasjon_ = på respirator
 Andel opphold med _komplikasjon_, er definert som et opphold hvor det her oppstått minst én av følgende komplikasjoner: 
 Alvorlig hypoglykemi,	pneumotoraks,	luftveisproblem, trakealtube/kanyle, dekubitus 
 
+### Nøkkeltall, HF i Helse-Nord RHF
+```{r Nøkkeltall_HF, echo=FALSE, results = 'asis'} 
 
-```{r Nøkkeltall, echo=FALSE, results = 'asis'} 
+sykehusnavn <- c('Helse Nord RHF', sort(unique(RegData$HF)))
 
-sykehusnavn <- c('Helse Nord RHF', sort(unique(RegData$HelseenhetKortnavn)))
+for (sykehus in sykehusnavn) {
+  
+ Tab <- tabNokkeltallNord(RegData = RegData, sykehus=sykehus)
+  shfilnavn <- gsub(" ", "_", sykehus) #gsub("y", "NEW", x) 
+  write.table(as.table(Tab), row.names = T, fileEncoding = 'UTF-8',
+              file = paste0('~/speil/intensivstrategi/Nokkeltall_', shfilnavn, '.csv'), sep = ';')
+  TabUt <- kableExtra::kbl(Tab,  digits= 1, #format='html', #align=c('l', rep('r', ncol(tabNokkeltall))), #row.names=F,
+                         label = paste0('tab:Nokkeltall', sykehus),
+       caption = paste('Nøkkeltall for intensivopphold i ', sykehus, ':'))
+  print(TabUt)
+}
+
+```
+\newpage
+
+### Nøkkeltall, intensivavdelinger i Helse-Nord RHF
+```{r Nøkkeltall_intavd, echo=FALSE, results = 'asis'} 
+
+sykehusnavn <- sort(unique(RegData$HelseenhetKortnavn))
 #Tab <- tabNokkeltallNord(RegData = RegData, sykehus=sykehusnavn[3])
 
 for (sykehus in sykehusnavn) {
-  #print(dim(RegData[1]))
   
   Tab <- tabNokkeltallNord(RegData = RegData, sykehus=sykehus)
-  Tab <- kableExtra::kbl(Tab,  digits= 1, #format='html', #align=c('l', rep('r', ncol(tabNokkeltall))), #row.names=F,
+  shfilnavn <- gsub(" ", "_", sykehus) #gsub("y", "NEW", x) 
+  write.table(Tab, file = paste0('~/speil/intensivstrategi/Nokkeltall, ', shfilnavn, '.csv'), sep = ';')
+  TabUt <- kableExtra::kbl(Tab,  digits= 1, #format='html', #align=c('l', rep('r', ncol(tabNokkeltall))), #row.names=F,
                          label = paste0('tab:Nokkeltall', sykehus),
        caption = paste('Nøkkeltall for intensivopphold i ', sykehus, ':'))
-  print(Tab)
+  print(TabUt)
 }
 
 ```

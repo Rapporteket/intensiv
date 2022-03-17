@@ -14,6 +14,36 @@ datoTil=Sys.Date()
 reshID <- 706078
 tellInfluensa(datoFra='2018-09-01', datoTil=Sys.Date(), reshID=reshID)
 
+
+library(intensiv)
+library(kableExtra)
+library(tidyverse)
+datoFra <- '2018-01-01'
+datoTil <- '2020-12-31'
+RegData <- NIRRegDataSQL(datoFra = datoFra, datoTil = datoTil)
+RegData <- RegData[RegData$RHF == 'Helse Nord', ]
+RegData <- NIRPreprosess(RegData)
+setwd('~/speil/intensivstrategi/')
+sykehusnavn <- c('Helse Nord RHF', sort(unique(RegData$HF)))
+
+for (sykehus in sykehusnavn) {
+  Tab <- tabNokkeltallNord(RegData = RegData, sykehus=sykehus)
+  shfilnavn <- gsub(" ", "_", sykehus) #gsub("y", "NEW", x)
+  write.table(as.table(Tab), row.names = T, fileEncoding = 'UTF-8',
+              file = paste0('Nokkeltall_', shfilnavn, '.csv'), sep = ';')
+}
+
+sykehusnavn <- sort(unique(RegData$HelseenhetKortnavn))
+for (sykehus in sykehusnavn) {
+  Tab <- tabNokkeltallNord(RegData = RegData, sykehus=sykehus)
+  shfilnavn <- gsub(" ", "_", sykehus) #gsub("y", "NEW", x)
+  write.table(Tab, file = paste0('Nokkeltall, ', shfilnavn, '.csv'), sep = ';')
+}
+
+
+
+
+
 #--------------------------------------Kvalitetskontroll - ikke operativ-----------------------------------
 rm(list=ls())
 library(knitr)
