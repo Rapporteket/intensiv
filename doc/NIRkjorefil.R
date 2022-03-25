@@ -14,6 +14,36 @@ datoTil=Sys.Date()
 reshID <- 706078
 tellInfluensa(datoFra='2018-09-01', datoTil=Sys.Date(), reshID=reshID)
 
+
+library(intensiv)
+library(kableExtra)
+library(tidyverse)
+datoFra <- '2018-01-01'
+datoTil <- '2020-12-31'
+RegData <- NIRRegDataSQL(datoFra = datoFra, datoTil = datoTil)
+RegData <- RegData[RegData$RHF == 'Helse Nord', ]
+RegData <- NIRPreprosess(RegData)
+setwd('~/speil/intensivstrategi/')
+sykehusnavn <- c('Helse Nord RHF', sort(unique(RegData$HF)))
+
+for (sykehus in sykehusnavn) {
+  Tab <- tabNokkeltallNord(RegData = RegData, sykehus=sykehus)
+  shfilnavn <- gsub(" ", "_", sykehus) #gsub("y", "NEW", x)
+  write.table(as.table(Tab), row.names = T, fileEncoding = 'UTF-8',
+              file = paste0('Nokkeltall_', shfilnavn, '.csv'), sep = ';')
+}
+
+sykehusnavn <- sort(unique(RegData$HelseenhetKortnavn))
+for (sykehus in sykehusnavn) {
+  Tab <- tabNokkeltallNord(RegData = RegData, sykehus=sykehus)
+  shfilnavn <- gsub(" ", "_", sykehus) #gsub("y", "NEW", x)
+  write.table(Tab, file = paste0('Nokkeltall, ', shfilnavn, '.csv'), sep = ';')
+}
+
+
+
+
+
 #--------------------------------------Kvalitetskontroll - ikke operativ-----------------------------------
 rm(list=ls())
 library(knitr)
@@ -645,4 +675,49 @@ TabUkeTot <- addmargins(TabUkeInflu) #cbind(TabUkeInflu, 'Tot. ant. skjema' = ta
 write.table(TabUkeTot, file='InfluPrUke.csv', fileEncoding = 'UTF-8', sep = ';', row.names = T)
 
 
+#reshider
+# 106271                Haukel. Postop
+# 106285                   Haukel. TIO
+# 109363               Haukel. Brannsk
+# 112044              Haukel. KSK Int.
 
+# Jeg teller 33 opphold totalt på KSK i mitt uttrekk. Rapporteket viser 18+13 = 31 opphold.
+# IntData <- NIRRegDataSQL(datoFra = '2011-01-01') #, session = session) #datoFra = datoFra, datoTil = datoTil)
+
+IntData <- NIRRegDataSQL()
+CovidData <- intensivberedskap::NIRberedskDataSQL()
+CovidData$HovedskjemaGUID <- toupper(CovidData$HovedskjemaGUID)
+CovidData$Bekreftet <- 0
+CovidData$Bekreftet[which(CovidData$Diagnosis %in% 100:103)] <- 1
+table(CovidData$ShNavn) #KSK 33
+sort(CovidData[CovidData$UnitId==112044 , "DateAdmittedIntensive"]) #KSK 33
+CovidData <- CovidData[CovidData$UnitId==112044,]
+
+RegData <- merge(IntData, CovidData[ ,-which(names(CovidData) == 'Diagnosis')], suffixes = c('','Cov'),
+                 by.x = 'SkjemaGUID', by.y = 'HovedskjemaGUID', all.x = T, all.y=F)
+setdiff(CovidData$HovedskjemaGUID, IntData$SkjemaGUID)
+table(RegData$Bekreftet)
+unique(RegData$ShNavn)
+table(CovidData$Bekreftet)
+
+
+# Resultater til intensiv, Helse-Nord
+#Aktivitet per år 2018-2020. RHF, HF, sykehus/avdeling.
+RegDataRaa <- NIRRegDataSQL(datoFra = '2018-01-01', datoTil = '2022-12-31')
+RegDataNord <- RegDataRaa[RegDataRaa$RHF == 'Helse Nord', ]
+RegData <- NIRPreprosess(RegDataNord)
+table(RegData$ShNavn)
+
+library(dplyr)
+Data <- RegData %>% dplyr::group_by(HF, ShNavn) %>%
+  dplyr::summarise(
+    '2018' = sum(Aar==2018),
+    '2019' = sum(Aar==2019),
+    '2020' = sum(Aar==2020),
+    '2021' = sum(Aar==2021),
+    '2022' = sum(Aar==2022))
+
+write.table(Data, file = 'Aktivitet22.csv', sep = ';')
+
+Tab <- table(RegData[,c('HF', 'ShNavn', 'Aar')], dnn = 0)
+TabAar <- ftable(Tab, row.vars = c('HF', 'ShNavn'), exclude = 0)

@@ -12,11 +12,11 @@ tabAntOpphShMnd(
 )
 }
 \arguments{
-\item{RegData}{}
+\item{RegData}{Dataramme}
 
 \item{datoTil}{Seneste dato i utvalget (vises alltid i figuren).}
 
-\item{datoFra}{Tidligste dato i utvalget (vises alltid i figuren). Standard 2019-01-01. 
+\item{datoFra}{Tidligste dato i utvalget (vises alltid i figuren). Standard 2019-01-01.
 Registeret inneholder registreringer f.o.m. 2011}
 
 \item{antMnd}{antall måneder som skal vises}

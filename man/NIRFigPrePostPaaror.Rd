@@ -32,7 +32,7 @@ NIRFigPrePostPaaror(
 
 \item{valgtVar}{Hvilken variabel som skal visualiseres. Se \strong{Details} for oversikt.}
 
-\item{datoFra}{Tidligste dato i utvalget (vises alltid i figuren). Standard 2019-01-01. 
+\item{datoFra}{Tidligste dato i utvalget (vises alltid i figuren). Standard 2019-01-01.
 Registeret inneholder registreringer f.o.m. 2011}
 
 \item{datoTil}{Seneste dato i utvalget (vises alltid i figuren).}
@@ -45,14 +45,14 @@ Registeret inneholder registreringer f.o.m. 2011}
 0: Kvinner
 1: Menn}
 
-\item{InnMaate}{0: Elektivt, 
-6: Akutt medisinsk, 
-8: Akutt kirurgisk, 
+\item{InnMaate}{0: Elektivt,
+6: Akutt medisinsk,
+8: Akutt kirurgisk,
 standard: alle (alt unntatt 0,6,8 / ikke spesifisert)}
 
-\item{dodInt}{Levende/død ut fra intensiv. 
-0: i live, 
-1: død,   
+\item{dodInt}{Levende/død ut fra intensiv.
+0: i live,
+1: død,
 alle: standard (alle andre verdier)}
 
 \item{outfile}{Navn på fil figuren skrives til. Standard: '' (Figur skrives
@@ -79,11 +79,11 @@ hvilken enhet i spesialisthelsetjenesten brukeren tilhører}
 
 \item{lagFig}{Angir om figur skal lages eller ikke 0-ikke lag, 1-lag}
 
-\item{valgtMaal}{'Med' = median. Alt annet gir gjennomsnitt 
+\item{valgtMaal}{'Med' = median. Alt annet gir gjennomsnitt
 
 Argumentet \emph{valgtVar} har følgende valgmuligheter:
    \itemize{
-    \item alder: Pasientens alders 
+    \item alder: Pasientens alders
     \item SAPSII: Skår for alvorlighetsgrad av sykdom.  (Simplified Acute Physiology Score II)
    }
 

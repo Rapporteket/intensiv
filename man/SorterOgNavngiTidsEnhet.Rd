@@ -7,7 +7,7 @@
 SorterOgNavngiTidsEnhet(RegData, tidsenhet = "Aar", tab = 0)
 }
 \arguments{
-\item{RegData}{}
+\item{RegData}{dataramme}
 
 \item{tidsenhet}{'Aar' (standard), 'Halvaar', 'Kvartal', 'Mnd'}
 

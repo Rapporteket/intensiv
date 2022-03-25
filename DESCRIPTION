@@ -1,8 +1,8 @@
 Package: intensiv
 Type: Package
 Title: Resultatrapporter for Intensivregisteret
-Version: 2.4.0
-Date: 2021-06-04
+Version: 2.5.0
+Date: 2022-03-25
 Author: Authors@R: c(person("Olsen", "Lena", email =
     "Lena.Ringstad.Olsen@unn.no", role = c("cre", "aut")), person("Edvardsen",
     "Are", email = "are.edvardsen@helse- nord.no", role = c("aut")))
@@ -16,9 +16,8 @@ Depends:
     R (>= 3.5.0),
     rapbase (>= 1.0.0)
 Remotes: 
-      Rapporteket/rapbase,
-      Rapporteket/rapFigurer,
-      Rapporteket/raplog
+       Rapporteket/rapbase@*release,
+      Rapporteket/rapFigurer
 Suggests:
     rmarkdown,
     testthat, 
@@ -33,10 +32,9 @@ Imports:
     plyr,
     rapbase,
     rapFigurer,
-    raplog,
     shiny,
     shinyalert,
     xtable,
     zoo
 VignetteBuilder: knitr
-RoxygenNote: 7.1.1
+RoxygenNote: 7.1.2

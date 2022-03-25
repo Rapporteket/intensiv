@@ -3,7 +3,7 @@
 \name{abonnement}
 \alias{abonnement}
 \title{Funksjon som produserer rapporten som skal sendes til mottager.
-(The actual call to this function is made through do.call and 
+(The actual call to this function is made through do.call and
 has the effect of providing the parameters as class
 \emph{list}. Verdier gis inn som listeparametre}
 \usage{
@@ -29,7 +29,7 @@ Full path of file produced
 }
 \description{
 Funksjon som produserer rapporten som skal sendes til mottager.
-(The actual call to this function is made through do.call and 
+(The actual call to this function is made through do.call and
 has the effect of providing the parameters as class
 \emph{list}. Verdier gis inn som listeparametre
 }

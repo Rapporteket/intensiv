@@ -91,7 +91,7 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='an
       if (valgtVar=='dod30d') { #AndelTid,AndelerGrVar
             RegData$Variabel <- RegData$Dod30
             varTxt <- 'pasienter som døde'
-            tittel <- 'Opphold der pasienten døde innen 30 dager etter innleggelse'
+            tittel <- 'Andel døde 30 dager etter innleggelse'
             sortAvtagende <- FALSE
       }
       if (valgtVar=='dod90d') { #AndelTid,AndelerGrVar
@@ -331,6 +331,24 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='an
         retn <- 'H'
 
       }
+      
+      if (valgtVar == 'regForsinkelse') {  #Fordeling, Andeler, 
+        
+        RegData$RegForsink <- as.numeric(difftime(RegData$FirstTimeClosed,
+                                                  RegData$DateDischargedIntensive, units = 'weeks'))
+        RegData <- RegData[which(RegData$RegForsink>0), ] 
+        tittel <- switch(figurtype, 
+                         andeler = 'Tid fra utskriving til ferdigstilt registrering',
+                         andelGrVar = 'Ferdigstilt registrering innen 1 uke etter utskriving')
+        subtxt <- 'døgn'
+        gr <- c(0:4,13, 26, 52, 100) #gr <- c(seq(0, 90, 10), 1000)
+        RegData$VariabelGr <- cut(RegData$RegForsink, breaks = gr, include.lowest = TRUE, right = TRUE)
+        grtxt <- c(levels(RegData$VariabelGr)[1:(length(gr)-2)], '>1 år')
+        RegData$Variabel[which(7*RegData$RegForsink < 7)] <- 1
+        cexgr <- 0.9
+        xAkseTxt <- 'uker'
+      }
+      
 
       if (valgtVar=='reinn') { #AndelGrVar, AndelTid
 
@@ -689,7 +707,7 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='an
         tittel <- 'Komplikasjoner'
         RegData$KompTot <- (rowSums(RegData[ ,c('KompHypoglykemi',	'KompPneumotoraks',	'KompLuftveisproblem',
                               'KompDekubitus')])>0)
-        grtxt <- c('Alvorlig hypoglykemi',	'Pneumotoraks',	'Luftveisproblem, /n trakealtube/kanyle',
+        grtxt <- c('Alvorlig hypoglykemi',	'Pneumotoraks',	'Luftveisproblem, \ntrakealtube/kanyle',
                    'Dekubitus', 'Minst én kompl.')
         variable <- c('KompHypoglykemi',	'KompPneumotoraks',	'KompLuftveisproblem',
                        'KompDekubitus',	'KompTot')

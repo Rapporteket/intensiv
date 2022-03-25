@@ -27,6 +27,7 @@ regTitle <- ifelse(paaServer,
                    'NORSK INTENSIVREGISTER',
                    'Norsk Intensivregister med FIKTIVE data')
 
+
 #Sys.setlocale("LC_TIME", "nb_NO.UTF-8")
 #ibrary(shinyBS) # Additional Bootstrap Controls
 
@@ -35,9 +36,9 @@ if (paaServer) {
   IntData <- NIRRegDataSQL(datoFra = '2011-01-01') #, session = session) #datoFra = datoFra, datoTil = datoTil)
   PaarorData <- NIRpaarorDataSQL()
   PaarorDataH <- KobleMedHoved(IntData, PaarorData, alleHovedskjema=F, alleSkjema2=F)
-  qInfluensa <- 'SELECT ShNavn, RHF, PatientInRegistryGuid, FormDate,FormStatus, ICD10_1
-                  from InfluensaFormDataContract'
-  InfluData <- rapbase::loadRegData(registryName= "nir", query=qInfluensa, dbType="mysql")
+  # qInfluensa <- 'SELECT ShNavn, RHF, PatientInRegistryGuid, FormDate,FormStatus, ICD10_1
+  #                 from InfluensaFormDataContract'
+  # InfluData <- rapbase::loadRegData(registryName= "nir", query=qInfluensa, dbType="mysql")
 
   #Covid-skjema:
   qCovid <- paste0('SELECT HovedskjemaGUID, FormStatus, Diagnosis
@@ -51,7 +52,6 @@ if (paaServer) {
   RegData <- merge(IntData, CovidData[ ,-which(names(CovidData) == 'Diagnosis')], suffixes = c('','Cov'),
         by.x = 'SkjemaGUID', by.y = 'HovedskjemaGUID', all.x = T, all.y=F)
 
-  #repLogger(session = session, 'Hentet alle data fra intensivregisteret')
 } #hente data på server
 
 if (!exists('PaarorDataH')){
@@ -89,7 +89,8 @@ enhetsUtvalg <- c("Egen mot resten av landet"=1,
                   "Egen region mot resten" = 8)
 
 covidValg <- c('Alle pasienter' = 0,
-                  'Covid-pasienter' = 1)
+                  'Covid-pasienter' = 1,
+               'Alle unntatt Covid-pasienter' = 2)
 velgCovidTxt <- 'Velg diagnose (covid-pasienter)'
 
 # Define UI for application that draws figures
@@ -143,7 +144,6 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
 
            ),
            mainPanel(
-             shinyalert::useShinyalert(),
              appNavbarUserWidget(user = uiOutput("appUserName"),
                                  organization = uiOutput("appOrgName"),
                                  addUserInfo = TRUE),
@@ -294,6 +294,7 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
              br(),
              selectInput(
                inputId = "valgtVar", label="Velg variabel",
+               selected = c('Registreringsforsinkelse' = 'regForsinkelse'),
                choices = c('Alder' = 'alder',
                            'Bukleie' = 'bukleie',
                            'Hemodynamisk overvåkn.' = 'ExtendedHemodynamicMonitoring',
@@ -309,6 +310,7 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                            'Nyreerstattende beh., varighet' = 'nyreBehTid',
                            'Potensielle donorer, årsak ikke påvist opph. sirkulasjon' = 'CerebralCirculationAbolishedReasonForNo',
                            'Primærårsak' = 'PrimaryReasonAdmitted',
+                           'Registreringsforsinkelse' = 'regForsinkelse',
                            'Respiratortid' = 'respiratortid',
                            'Respiratortid, ikke-invasiv' = 'respiratortidNonInv',
                            'Respiratortid, invasiv m/overf.' = 'respiratortidInvMoverf',
@@ -400,6 +402,7 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                            'Nyreerstattende behandling' = 'nyreBeh',
                            'Organdonorer, av døde' = 'OrganDonationCompletedStatus',
                            'Organdonorer, av alle med opphevet intrakran. sirk.' = 'OrganDonationCompletedCirc',
+                           'Registreringsforsinkelse' = 'regForsinkelse',
                            'Reinnleggelse' = 'reinn',
                            'Respiratorstøtte' = 'respStotte',
                            'Respiratortid, døde' = 'respiratortidDod',
@@ -669,6 +672,7 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
   ), #tab Pårørende
 
 
+  #-----------Abonnement--------------------------------
   tabPanel(p("Abonnement",
              title='Bestill automatisk utsending av rapporter på e-post'),
            sidebarLayout(
@@ -690,33 +694,59 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                uiOutput("subscriptionContent")
              )
            )
-  )
+  ),
 
 
+#-------Registeradministrasjon----------
 
+  # shiny::tabPanel(
+  #   "Eksport",
+  #   shiny::sidebarLayout(
+  #     shiny::sidebarPanel(
+  #       rapbase::exportUCInput("nirExport")),
+  #     shiny::mainPanel(
+  #       rapbase::exportGuideUI("nirExportGuide"))
+  #   )
+  # ),
+tabPanel(p("Registeradministrasjon", title='Registeradministrasjonens side'),
+         value = "Registeradministrasjon",
+         h3('Bare synlig for SC-bruker'),
 
-
-
-
-
-
-
-
-#------------Influensa-----------------------------
-# tabPanel(p("Inluensa", title='Resultater fra influensaregistrering'),
-#          h2('Resultater fra influensaregistrering', align = 'center'),
-#  mainPanel(
-#  )
-# )
+         tabsetPanel(
+           tabPanel(
+             h3("Utsendinger"),
+                    #title = "Utsending av rapporter",
+                    sidebarLayout(
+                      sidebarPanel(
+                        rapbase::autoReportOrgInput("NIRuts"),
+                        rapbase::autoReportInput("NIRuts")
+                      ),
+                      mainPanel(
+                        rapbase::autoReportUI("NIRuts")
+                      )
+                    )
+           ),
+           tabPanel(
+             h3("Eksport av krypterte data"),
+           sidebarLayout(
+             sidebarPanel(
+               rapbase::exportUCInput("intensivExport")
+             ),
+             shiny::mainPanel(
+               rapbase::exportGuideUI("intensivExportGuide")
+             )
+           )
+         )
+         ) #tabset
+) #tab SC
 
 )  #navbarPage
-
 
 #----------------- Define server logic ----------
 server <- function(input, output, session) { #
 
 #-----------Div serveroppstart------------------
-  raplog::appLogger(session = session, msg = "Starter intensiv-app")
+  rapbase::appLogger(session = session, msg = "Starter intensiv-app")
 
   reshID <- ifelse(paaServer, as.numeric(rapbase::getUserReshId(session)), 109773)
   rolle <- reactive({ifelse(paaServer, rapbase::getUserRole(shinySession=session), 'SC')})
@@ -739,7 +769,7 @@ server <- function(input, output, session) { #
     shinyjs::hide(id = 'velgResh')
     shinyjs::hide(id = 'velgReshOverf')
     shinyjs::hide(id = 'velgReshData')
-    #hideTab(inputId = "tabs_andeler", target = "Figur, sykehusvisning")
+    hideTab(inputId = "hovedark", target = "Registeradministrasjon")
   }
   })
   observeEvent(input$reset_fordValg, shinyjs::reset("brukervalg_fordeling"))
@@ -755,12 +785,12 @@ server <- function(input, output, session) { #
 
   # User info in widget
   userInfo <- rapbase::howWeDealWithPersonalData(session)
-  observeEvent(input$userInfo, {
-    shinyalert::shinyalert("Dette vet Rapporteket om deg:", userInfo,
-               type = "", imageUrl = "rap/logo.svg",
-               closeOnEsc = TRUE, closeOnClickOutside = TRUE,
-               html = TRUE, confirmButtonText = rapbase::noOptOutOk())
-  })
+  # observeEvent(input$userInfo, {
+  #   shinyalert::shinyalert("Dette vet Rapporteket om deg:", userInfo,
+  #              type = "", imageUrl = "rap/logo.svg",
+  #              closeOnEsc = TRUE, closeOnClickOutside = TRUE,
+  #              html = TRUE, confirmButtonText = rapbase::noOptOutOk())
+  # })
 
 
       #--------startside--------------
@@ -787,6 +817,7 @@ server <- function(input, output, session) { #
     }
   )
 
+  #test <- henteSamlerapporter('file.pdf', rnwFil="NIRinfluensa.Rnw")
   #Datadump
   observe({
     RegDataReinn <- FinnReinnleggelser(RegData)
@@ -795,7 +826,7 @@ server <- function(input, output, session) { #
                           datoTil = input$datovalgData[2])$RegData
 
 
-    if (rolle() =='SC') {
+    if (rolle() == 'SC') {
       valgtResh <- as.numeric(input$velgReshData)
       ind <- if (valgtResh == 0) {1:dim(DataDump)[1]
         } else {which(as.numeric(DataDump$ReshId) %in% as.numeric(valgtResh))}
@@ -1330,7 +1361,7 @@ server <- function(input, output, session) { #
       ## reaktive verdier for å holde rede på endringer som skjer mens
       ## applikasjonen kjører
       rv <- reactiveValues(
-        subscriptionTab = rapbase::makeUserSubscriptionTab(session))
+        subscriptionTab = rapbase::makeAutoReportTab(session))
 
       ## lag tabell over gjeldende status for abonnement
       output$activeSubscriptions <- DT::renderDataTable(
@@ -1363,24 +1394,23 @@ server <- function(input, output, session) { #
         )
         email <- rapbase::getUserEmail(session)
         if (input$subscriptionRep == "Månedsrapport") {
-          synopsis <- "Intensiv/Rapporteket: månedsrapport"
-          rnwFil <- "NIRmndRapp.Rnw" #Navn på fila
-          #print(rnwFil)
+          synopsis <- "Intensiv/Rapporteket: månedsrapport, abonnement"
+          rnwFil <- "NIRmndRapp.Rnw"
         }
         if (input$subscriptionRep == "Samlerapport") {
-          synopsis <- "Intensiv/Rapporteket: Samlerapport"
-          rnwFil <- "NIRSamleRapp.Rnw" #Navn på fila
+          synopsis <- "Intensiv/Rapporteket: Samlerapport, abonnement"
+          rnwFil <- "NIRSamleRapp.Rnw"
         }
         if (input$subscriptionRep == "Influensaresultater") {
-          synopsis <- "Intensiv/Rapporteket: influensaresultater"
-          rnwFil <- "NIRinfluensa.Rnw" #Navn på fila
+          synopsis <- "Intensiv/Rapporteket: influensaresultater, abonnement"
+          rnwFil <- "NIRinfluensa.Rnw"
         }
 
         fun <- "abonnement"  #"henteSamlerapporter"
         paramNames <- c('rnwFil', 'brukernavn', "reshID", "datoFra", 'datoTil')
         paramValues <- c(rnwFil, brukernavn(), reshID, startDato, as.character(datoTil)) #input$subscriptionFileFormat)
 
-        test <- abonnement(rnwFil = 'NIRmndRapp.Rnw', brukernavn='IntensivBruker', reshID=109773, datoTil=Sys.Date())
+        #test <- intensiv::abonnement(rnwFil = 'NIRSamleRapp.Rnw', brukernavn='IntensivBruker', reshID=109773, datoTil=Sys.Date())
 
         rapbase::createAutoReport(synopsis = synopsis, package = "intensiv",
                                   fun = fun, paramNames = paramNames,
@@ -1388,19 +1418,60 @@ server <- function(input, output, session) { #
                                   email = email, organization = organization,
                                   runDayOfYear = runDayOfYear, interval = interval,
                                   intervalName = intervalName)
-        rv$subscriptionTab <- rapbase::makeUserSubscriptionTab(session)
+        rv$subscriptionTab <- rapbase::makeAutoReportTab(session) #makeAutoReportTab()(session)
       })
 
       ## slett eksisterende abonnement
       observeEvent(input$del_button, {
         selectedRepId <- strsplit(input$del_button, "_")[[1]][2]
         rapbase::deleteAutoReport(selectedRepId)
-        rv$subscriptionTab <- rapbase::makeUserSubscriptionTab(session)
+        rv$subscriptionTab <- rapbase::makeAutoReportTab(session) #makeAutoReportTab()(session)
       })
 
+#-------------Registeradministrasjon -----------------
+
+      #---Utsendinger---------------
+      orgs <- as.list(sykehusValg)
+
+      ## liste med metadata for rapport
+      reports <- list(
+        MndRapp = list(
+          synopsis = "Rapporteket-Intensiv: Månadsrapport",
+          fun = "abonnement",
+          paramNames = c('rnwFil', "reshID"),
+          paramValues = c('NIRmndRapp.Rnw', 0)
+        ),
+        SamleRapp = list(
+          synopsis = "Rapporteket-Intensiv: Rapport, div. resultater",
+          fun = "abonnement",
+          paramNames = c('rnwFil', "reshID"),
+          paramValues = c('NIRSamleRapp.Rnw', 'Alle')
+        )
+      )
+      #abonnement(rnwFil, brukernavn='tullebukk', reshID=0, datoFra=Sys.Date()-180, datoTil=Sys.Date())
+
+      org <- rapbase::autoReportOrgServer("NIRuts", orgs)
+
+      # oppdatere reaktive parametre, for å få inn valgte verdier (overskrive de i report-lista)
+      paramNames <- shiny::reactive("reshID")
+      paramValues <- shiny::reactive(org$value())
+
+      rapbase::autoReportServer(
+        id = "NIRuts", registryName = "intensiv", type = "dispatchment",
+        org = org$value, paramNames = paramNames, paramValues = paramValues,
+        reports = reports, orgs = orgs, eligible = TRUE
+      )
 
 
-
+      #----------- Eksport ----------------
+        ## brukerkontroller
+        rapbase::exportUCServer("intensivExport", registryName = "nir",
+                                repoName = "intensiv",
+                                eligible = (rapbase::getUserRole(session) == "SC")
+                                )
+      #rapbase::exportUCServer("intensivExport", "intensiv")
+        ## veileding
+        rapbase::exportGuideServer("intensivExportGuide", registryName = "intensiv")
 
 } #serverdel
 

@@ -24,7 +24,7 @@ tabOverforinger(
 \item{reshID}{Parameter følger fra innlogging helseregister.no og angir
 hvilken enhet i spesialisthelsetjenesten brukeren tilhører}
 
-\item{enhetsUtvalg}{}
+\item{enhetsUtvalg}{Gjør gruppeutvalg med eller uten sammenlikning. Se \strong{Details} for oversikt.}
 
 \item{overfFraSh}{- overføring fra (1) eller til (0) den aktuelle enheten}
 }

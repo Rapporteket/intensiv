@@ -3,7 +3,7 @@
 #' Henter data for Intensivregisteret fra "staging"
 #'
 #' @inheritParams NIRFigAndeler
-#' @inheritParams NIRUtvalg
+#' @inheritParams NIRUtvalgEnh
 #'
 #' @return Henter dataramma RegData for Intensivregisteret
 #' @export
@@ -11,13 +11,12 @@
 #'
 NIRRegDataSQL <- function(datoFra = '2019-01-01', datoTil = '2099-01-01') { #,session='') {
 
-  #raplog::repLogger(session = session, 'Hentet alle data fra intensivregisteret')
-
 
   #	DischargedHospitalStatus,
 
   query <- paste0('SELECT
   Age,
+  AgeAdmitted,
 	Bilirubin,
       BrainDamage,
       Bukleie,
@@ -32,11 +31,13 @@ NIRRegDataSQL <- function(datoFra = '2019-01-01', datoTil = '2099-01-01') { #,se
       Eeg,
       EcmoEcla,
       ExtendedHemodynamicMonitoring,
+      FirstTimeClosed,
       FormStatus,
       FrailtyIndex,
       Glasgow,
       Hco3,
       HeartRate,
+      HelseenhetKortnavn,
 HF,
       Hyperbar,
       Iabp,
@@ -78,7 +79,7 @@ HF,
       -- PasientGUID,
       PatientInRegistryGuid,
       -- PatientInRegistryGUID,
-      PatientAge,
+      -- PatientAge,
       PatientGender,
       PatientTransferredFromHospital,
       PatientTransferredFromHospitalName,
@@ -121,6 +122,8 @@ WHERE cast(DateAdmittedIntensive as date) BETWEEN \'', datoFra, '\' AND \'', dat
   # WHERE cast(DateAdmittedIntensive as date) BETWEEN \'', datoFra='2020-01-01', '\' AND \'', datoTil=Sys.Date(), '\'')
 
   RegData <- rapbase::loadRegData(registryName= "nir", query=query, dbType="mysql")
+
+  #rapbase::repLogger(session = session, 'Hentet alle data fra intensivregisteret')
 
 
 

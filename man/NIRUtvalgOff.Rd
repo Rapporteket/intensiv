@@ -21,9 +21,9 @@ NIRUtvalgOff(
 0: Kvinner
 1: Menn}
 
-\item{InnMaate}{0: Elektivt, 
-6: Akutt medisinsk, 
-8: Akutt kirurgisk, 
+\item{InnMaate}{0: Elektivt,
+6: Akutt medisinsk,
+8: Akutt kirurgisk,
 standard: alle (alt unntatt 0,6,8 / ikke spesifisert)}
 
 \item{grType}{Gjør gruppeutvalg på sykehustype

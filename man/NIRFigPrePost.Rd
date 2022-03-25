@@ -29,10 +29,10 @@ NIRFigPrePost(
 \item{valgtVar}{Hvilken variabel som skal visualiseres
 Boligforh: Boligforhold ved innleggelse og 3 mnd etter slaget
 Bosituasjon: Bosituasjon ved innleggelse og 3 mnd etter slaget
-Toalett: Toalettbesok før innleggelse og 3 mnd etter slaget 
+Toalett: Toalettbesok før innleggelse og 3 mnd etter slaget
 Forflytning: Evne til forflytning før innleggelse og 3 mnd etter slaget}
 
-\item{datoFra}{Tidligste dato i utvalget (vises alltid i figuren). Standard 2019-01-01. 
+\item{datoFra}{Tidligste dato i utvalget (vises alltid i figuren). Standard 2019-01-01.
 Registeret inneholder registreringer f.o.m. 2011}
 
 \item{datoTil}{Seneste dato i utvalget (vises alltid i figuren).}

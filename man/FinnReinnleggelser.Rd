@@ -18,7 +18,7 @@ Div hjelpefunksjoner
 Detaljer. kommer senereGroup of functions Details paragraph.
 }
 \details{
-Fil som inneholder hjelpefunksjoner. 
+Fil som inneholder hjelpefunksjoner.
 FinnReinnleggelser beregner reinnleggelser fra DateAdmittedIntensive og DateDischargedIntensive
 SorterOgNavngiTidsEnhet Legger til tidsenhetene Aar, Halvaar, Mnd og Kvartal
 }
