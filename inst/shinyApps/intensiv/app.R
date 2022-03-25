@@ -1394,15 +1394,15 @@ server <- function(input, output, session) { #
         )
         email <- rapbase::getUserEmail(session)
         if (input$subscriptionRep == "Månedsrapport") {
-          synopsis <- "Intensiv/Rapporteket: månedsrapport"
+          synopsis <- "Intensiv/Rapporteket: månedsrapport, abonnement"
           rnwFil <- "NIRmndRapp.Rnw"
         }
         if (input$subscriptionRep == "Samlerapport") {
-          synopsis <- "Intensiv/Rapporteket: Samlerapport"
+          synopsis <- "Intensiv/Rapporteket: Samlerapport, abonnement"
           rnwFil <- "NIRSamleRapp.Rnw"
         }
         if (input$subscriptionRep == "Influensaresultater") {
-          synopsis <- "Intensiv/Rapporteket: influensaresultater"
+          synopsis <- "Intensiv/Rapporteket: influensaresultater, abonnement"
           rnwFil <- "NIRinfluensa.Rnw"
         }
 
