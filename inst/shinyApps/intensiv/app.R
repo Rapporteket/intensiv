@@ -310,7 +310,8 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                            'Nyreerstattende beh., varighet' = 'nyreBehTid',
                            'Potensielle donorer, årsak ikke påvist opph. sirkulasjon' = 'CerebralCirculationAbolishedReasonForNo',
                            'Primærårsak' = 'PrimaryReasonAdmitted',
-                           'Registreringsforsinkelse' = 'regForsinkelse',
+                           'Registreringsforsinkelse, innleggelse' = 'regForsinkelseInn',
+                           'Registreringsforsinkelse, ferdigstillelse' = 'regForsinkelse',
                            'Respiratortid' = 'respiratortid',
                            'Respiratortid, ikke-invasiv' = 'respiratortidNonInv',
                            'Respiratortid, invasiv m/overf.' = 'respiratortidInvMoverf',
@@ -358,8 +359,8 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
              tabsetPanel(
                tabPanel(
                  'Figur',
-                 plotOutput('fordelinger', height = 'auto')),
-               downloadButton('LastNedFigFord', label='Velg format og last ned figur'),
+                 plotOutput('fordelinger', height = 'auto'),
+                 downloadButton('LastNedFigFord', label='Velg format og last ned figur')),
                tabPanel(
                  'Tabell',
                  uiOutput("tittelFord"),
@@ -402,7 +403,8 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                            'Nyreerstattende behandling' = 'nyreBeh',
                            'Organdonorer, av døde' = 'OrganDonationCompletedStatus',
                            'Organdonorer, av alle med opphevet intrakran. sirk.' = 'OrganDonationCompletedCirc',
-                           'Registreringsforsinkelse' = 'regForsinkelse',
+                           'Registreringsforsinkelse, innleggelse' = 'regForsinkelseInn',
+                           'Registreringsforsinkelse, ferdigstillelse' = 'regForsinkelse',
                            'Reinnleggelse' = 'reinn',
                            'Respiratorstøtte' = 'respStotte',
                            'Respiratortid, døde' = 'respiratortidDod',
@@ -944,7 +946,7 @@ server <- function(input, output, session) { #
 
       output$LastNedFigFord <- downloadHandler(
         filename = function(){
-          paste0('FigurFord_', Sys.time(), '.', input$bildeformatFord)
+          paste0('FigurFord_', input$valgtVar, Sys.Date(), '.', input$bildeformatFord)
         },
         content = function(file){
           NIRFigAndeler(RegData=RegData, preprosess = 0, valgtVar=input$valgtVar,
@@ -953,11 +955,9 @@ server <- function(input, output, session) { #
                         datoFra=input$datovalg[1], datoTil=input$datovalg[2],
                         minald=as.numeric(input$alder[1]), maxald=as.numeric(input$alder[2]),
                         erMann=as.numeric(input$erMann), velgDiag = as.numeric(input$covidvalg),
-                        session = session,
-                             outfile = file)
+                        outfile = file)
         }
       )
-
 
       observe({
             UtDataFord <- NIRFigAndeler(RegData=RegData, preprosess = 0, valgtVar=input$valgtVar,

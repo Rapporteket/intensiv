@@ -331,24 +331,34 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='an
         retn <- 'H'
 
       }
-      
-      if (valgtVar == 'regForsinkelse') {  #Fordeling, Andeler, 
-        
-        RegData$RegForsink <- as.numeric(difftime(RegData$FirstTimeClosed,
+
+      if (valgtVar %in% c('regForsinkelseInn', 'regForsinkelse')) {  #Fordeling, Andeler,
+
+        RegData$RegForsink <- switch(valgtVar,
+          'regForsinkelseInn' = as.numeric(difftime(RegData$CreationDate,
+                                                 RegData$DateAdmittedIntensive, units = 'weeks')),
+          'regForsinkelse' = as.numeric(difftime(RegData$FirstTimeClosed,
                                                   RegData$DateDischargedIntensive, units = 'weeks'))
-        RegData <- RegData[which(RegData$RegForsink>0), ] 
-        tittel <- switch(figurtype, 
-                         andeler = 'Tid fra utskriving til ferdigstilt registrering',
-                         andelGrVar = 'Ferdigstilt registrering innen 1 uke etter utskriving')
+        )
+        RegData <- RegData[which(RegData$RegForsink>0), ]
+        tittel <- switch(figurtype,
+                         andeler = ifelse(valgtVar == 'regForsinkelse',
+                                          'Tid fra utskriving til ferdigstilt registrering',
+                                          'Tid fra innleggelse til opprettet skjema'),
+                         andelGrVar = ifelse(valgtVar == 'regForsinkelse',
+                                             'Ferdigstilt registrering innen 1 uke etter utskriving',
+                                             'Opprettet skjema innen 1 uke etter innleggelse')
+        )
+
         subtxt <- 'døgn'
         gr <- c(0:4,13, 26, 52, 100) #gr <- c(seq(0, 90, 10), 1000)
         RegData$VariabelGr <- cut(RegData$RegForsink, breaks = gr, include.lowest = TRUE, right = TRUE)
         grtxt <- c(levels(RegData$VariabelGr)[1:(length(gr)-2)], '>1 år')
-        RegData$Variabel[which(7*RegData$RegForsink < 7)] <- 1
+        RegData$Variabel[which(RegData$RegForsink < 1)] <- 1
         cexgr <- 0.9
         xAkseTxt <- 'uker'
       }
-      
+
 
       if (valgtVar=='reinn') { #AndelGrVar, AndelTid
 
