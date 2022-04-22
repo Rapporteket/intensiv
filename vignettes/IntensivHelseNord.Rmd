@@ -112,7 +112,7 @@ SAPS-II-skår beregnes ut fra:
 - Innleggelsesmåte/hastegrad: InnMaate
 
 
-```{r SMR, echo=FALSE, , include=FALSE} 
+```{r SMR-beregninger, echo=FALSE, , include=FALSE} 
 # , results = 'asis'
 #Datasjekk:
 query <- paste0('select * from MainFormDataContract
@@ -170,7 +170,26 @@ ManglendeReg <- function(RegDataAlleVar){ #, aar)
 # 
 # }
 
+#SMR for alle RHF:
+OpphCovAlle <- intensivberedskap::NIRPreprosessBeredsk(intensivberedskap::NIRberedskDataSQL(datoTil = '2021-12-31'), 
+                                                       aggPers = 0)
+RegDataAlle <- NIRPreprosess(NIRRegDataSQL(datoFra = datoFra, datoTil = '2021-12-31'))
+RegDataCovAlle <- merge(RegDataAlle, OpphCovAlle[ , c('Bekreftet', 'HovedskjemaGUID', 'FormStatus')], suffixes = c('','Cov'),
+        by.x = 'SkjemaGUID', by.y = 'HovedskjemaGUID', all.x = T, all.y=F)
 
+dataUtSMR_RHF <- intensiv::NIRFigGjsnGrVar(RegData=RegDataCovAlle, preprosess = 0,
+                             valgtVar='SMR',
+                             grVar = 'RHF',
+                             aar = 2020,
+                             #datoFra='2018-01-01', datoTil='2020-12-31',
+                             velgDiag = 2, #Alle unntatt covid-opphold
+                             )
+tabSMR_RHF <- cbind(Antall = dataUtSMR_RHF$Ngr$Hoved,
+                          SMR = dataUtSMR_RHF$AggVerdier$Hoved)
+utvalgRHF <- dataUtSMR_RHF$utvalgTxt
+tittelRHF <- dataUtSMR_RHF$tittel
+
+#Helse-Nord RHF:
 dataUtSMR <- intensiv::NIRFigGjsnGrVar(RegData=RegDataCov, preprosess = 0,
                              valgtVar='SMR',
                              datoFra='2018-01-01', datoTil='2020-12-31',

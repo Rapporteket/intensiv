@@ -1,5 +1,9 @@
 #Til analysebok:
 #Liggetid og respiratortid for pasienter som ikke er overført mellom sykehus.
+#4.april ble årsrapportdata-fil lagt ut på Rapporteket/intensiv. Den ble fjernet med en commit ca en halvtime etterpå, men lå i historien
+#til ca 19:30 på kvelden, hvor den også ble fjernet fra historien
+#Det har til dags dato (6.april 2022) ikke vært gjort noen "fork" av repositoriet.
+#Alle 6 kloninger som ble gjort 4.april, ble gjort av meg, under bruker olonkin og lenaringstado.
 
 #Alle off.farger:
 

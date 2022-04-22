@@ -413,7 +413,8 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                            'Utvidet hemodyn. overvåkning' = 'ExtendedHemodynamicMonitoring',
                            'Trakeostomi' = 'trakeostomi',
                            'Trakeostomi, åpen' = 'trakAapen'
-                           )
+                           ),
+               selected = 'regForsinkelseInn',
              ),
              dateRangeInput(inputId = 'datovalgAndel', start = startDato, end = idag,
                             label = "Tidsperiode", separator="t.o.m.", language="nb"),
