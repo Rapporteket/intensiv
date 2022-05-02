@@ -2,24 +2,33 @@
 
 rm(list=ls())
 library(intensiv)
+aarsrappAar <- 2021
 datoFra <- '2011-01-01'
-datoTil <- '2021-12-31'	#
-datoFra1aar <- '2021-01-01'
-
-## DATA HENTET 31.MARS 2022
-
-#------Klargjøre årsrapportfil-------------
-# RegData <- NIRPreprosess(NIRRegDataSQL())
-# indDato <- intersect(which(as.Date(RegData$DateAdmittedIntensive) >= as.Date(datoFra, tz= 'UTC')),
-#                          which(as.Date(RegData$DateAdmittedIntensive) <= as.Date(datoTil, tz= 'UTC')))
-# RegData <- RegData[indDato,]
-# save(RegData, file = 'IntensivAarsrapp2021.RData')
-# RegDataAarCSV <- NIRPreprosess(RegData)
-# write.table(RegDataAarCSV, file = 'A:/Intensiv/NIRaarsrapp2019.csv', row.names = F, col.names=T,
-#             fileEncoding = 'UTF-8', sep = ';')
-
+datoTil <- paste0(aarsrappAar, '-12-31')
+datoFra1aar <- paste0(aarsrappAar, '-01-01')
 setwd('~/speil/aarsrapp/intensiv/')
 RegData <- NIRRegDataSQL(datoFra=datoFra, datoTil=datoTil)
+RegData1aar <- NIRRegDataSQL(datoFra=datoFra1aar, datoTil=datoTil)
+reshBort21 <- c(4215368, 100132) #, 700620, 700619, 700419)
+RegData1aar <- RegData1aar[-which(RegData1aar$ReshID %in% reshBort21), ]
+
+## DATA HENTET 25.april 2022, forrige 31.MARS 2022
+
+#I gammel korrespondanse mellom MW og meg finner jeg vi blir enige om å skjule RH-felles for at ingen skal registrere noe der.
+#Den enheten er der heller ikke registrert noen tidligere opphold på, da vi på OUS om å flytte alle oppholdene over til RH1 og RH2. Tromsø kir int sin gamle RESH kan jeg ikke finne noe sted eller i arkivet i NIR-mappestrukturen.
+
+# RegData <- NIRPreprosess(RegData)
+# table(RegData$ShNavn, RegData$Aar)
+# test <- unique(RegData[ ,c('ShNavn', 'ReshId')])
+# test[order(test$ShNavn),]
+# table(test$ShNavn)
+
+#Ny enhet, fjernes for årsrapp 2022: Kongsvinger 4215368 og Telemark 100132
+#Fjern fra figurer for 2021: RH samlet og Tromso kir int
+#Tromsø Postop                700620
+#Tromsø Kir. int.             700619
+#RH samlet  700419
+
 
 #--------------------------------------- Fordelinger ----------------------------------
 
@@ -30,16 +39,44 @@ variabler <- c('OrganDonationCompletedReasonForNoStatus',
                    'SAPSII', 'nyreBeh', 'nyreBehTid','spesTiltak')
 for (valgtVar in variabler) {
    outfile <- paste0(valgtVar, '_Ford.pdf')
-   NIRFigAndeler(RegData=RegData, valgtVar=valgtVar, datoFra=datoFra1aar, datoTil=datoTil,
+   NIRFigAndeler(RegData=RegData1aar, valgtVar=valgtVar,
                  outfile=outfile)
 }
 
 
 #Tar ut apr02:  NIRFigAndeler(RegData=RegData, valgtVar='liggetid', dodInt=1, datoFra=datoFra1aar, datoTil=datoTil,
 #               outfile='liggetidDod_ford.pdf')
-NIRFigAndeler(RegData=RegData, valgtVar='spesTiltak', datoFra=datoFra1aar, datoTil=datoTil, grType = 3,
+NIRFigAndeler(RegData=RegData1aar, valgtVar='spesTiltak', grType = 3,
               outfile='spesTiltak_ford.pdf')
 #Pårørende - ikke gjort for 2019
+#---------------------AndelTid----------------------------------------------
+
+# variabler <- c('dod30d') #Tar ut apr02: , 'liggetidDod')
+#
+# for (valgtVar in variabler){
+#   outfile <- paste0(valgtVar, '_AndelTid.pdf')
+#   NIRFigAndelTid(RegData=RegData, valgtVar=valgtVar,
+#                  tidsenhet = 'Aar', outfile=outfile)
+# }
+
+#---------------------GjsnTid----------------------------------------------
+# Alder, hele landet
+# Liggetid, hele landet
+# Liggetid, død
+# SAPSII
+
+variabler <- c('NEMS', 'respiratortid', 'alder', 'liggetid', 'SAPSII')
+
+for (valgtVar in variabler) {
+  outfile <- paste0(valgtVar, 'MedTid.pdf')
+  NIRFigGjsnTid(RegData=RegData, valgtVar=valgtVar, datoFra=datoFra, datoTil=datoTil,
+                valgtMaal='Med', tidsenhet= 'Aar', outfile=outfile)
+}
+#Tar ut apr02:  NIRFigGjsnTid(RegData=RegData, valgtVar='liggetid', datoFra=datoFra, datoTil=datoTil,
+#               valgtMaal=valgtMaal, dodInt=1, outfile='liggetidDod_MedTid.pdf')
+
+
+
 #--------------------------------------- AndelGrVar ----------------------------------
 # Reinnleggelser reg/sentlok
 # Død innen 30 dager reg/sentLok
@@ -47,15 +84,14 @@ NIRFigAndeler(RegData=RegData, valgtVar='spesTiltak', datoFra=datoFra1aar, datoT
 
 
 #Tatt ut apr02: 'dod30d',  'dodeIntensiv', 'frailtyIndex', 'invasivVent', 'komplReg',
-variable <- c('OrganDonationCompletedCirc', 'OrganDonationCompletedStatus',
+variabler <- c('dod30d', 'OrganDonationCompletedCirc', 'OrganDonationCompletedStatus',
                'trakeostomi', 'regForsinkelse', 'reinn',
                'trakeostomi')
-
 for (grType in 2:3) {
-      for (valgtVar in variable) {
+      for (valgtVar in variabler) {
             outfile <- paste0(valgtVar, grType, 'PrSh.pdf')
-            NIRFigAndelerGrVar(RegData=RegData, valgtVar=valgtVar, datoFra=datoFra1aar, Ngrense=10,
-                            datoTil=datoTil, grType=grType, outfile=outfile)
+            NIRFigAndelerGrVar(RegData=RegData1aar, valgtVar=valgtVar, Ngrense=10,
+                            grType=grType, outfile=outfile)
       }
 }
 
@@ -67,34 +103,6 @@ for (grType in 2:3) {
 # NIRFigAndelerGrVar(RegData=RegData, valgtVar=valgtVar, datoFra=datoFra1aar, Ngrense=10,
 #                    datoTil=datoTil, grType=grType, outfile=outfile)
 
-
-#---------------------AndelTid----------------------------------------------
-
-variable <- c('dod30d') #Tar ut apr02: , 'liggetidDod')
-
-for (valgtVar in variable){
-      outfile <- paste0(valgtVar, '_AndelTid.pdf')
-      NIRFigAndelTid(RegData=RegData, valgtVar=valgtVar, datoFra=datoFra, datoTil=datoTil,
-                     tidsenhet = 'Aar', outfile=outfile)
-}
-
-#---------------------GjsnTid----------------------------------------------
-# Alder, hele landet
-# Liggetid, hele landet
-# Liggetid, død
-# SAPSII
-
-valgtMaal <- 'Med'
-variable <- c('NEMS', 'respiratortid', 'alder', 'liggetid', 'SAPSII')
-
-
-for (valgtVar in variable) {
-      outfile <- paste0(valgtVar, 'MedTid.pdf')
-      NIRFigGjsnTid(RegData=RegData, valgtVar=valgtVar, datoFra=datoFra, datoTil=datoTil,
-                    valgtMaal=valgtMaal, tidsenhet= 'Aar', outfile=outfile)
-}
-#Tar ut apr02:  NIRFigGjsnTid(RegData=RegData, valgtVar='liggetid', datoFra=datoFra, datoTil=datoTil,
-#               valgtMaal=valgtMaal, dodInt=1, outfile='liggetidDod_MedTid.pdf')
 
 #--------------------------------------- SENTRALMÅL per enhet----------------------------------
 # Alder reg/lokSen
@@ -108,29 +116,27 @@ for (valgtVar in variable) {
 # SAPSII, reg/lokSent
 
 
-valgtMaal <- 'Med'
 #Tar ut apr22: 'liggetid', 'NEMS', 'respiratortid', 'respiratortidInvUoverf'
 #Nye20: respiratortidInvMoverf, respiratortidInvUoverf, respiratortidNonInv
-variable <- c('alder',  'NEMS24', 'Nas24',
-              'respiratortidInvMoverf',  'SAPSII') #'respiratortidNonInv',
+variabler <- c('alder',  'NEMS24', 'Nas24',
+              'respiratortidInvMoverf',  'respiratortidNonInv', 'SAPSII')
 for (grType in 2:3) {
-      for (valgtVar in variable){ #
+      for (valgtVar in variabler){ #
             outfile <- paste0(valgtVar,grType, '_MedPrSh.pdf')
-            NIRFigGjsnGrVar(RegData=RegData, valgtVar=valgtVar, valgtMaal=valgtMaal,
-                         grType=grType, datoFra=datoFra1aar, datoTil=datoTil, outfile=outfile)
+            NIRFigGjsnGrVar(RegData=RegData1aar, valgtVar=valgtVar, valgtMaal='Med',
+                         grType=grType, outfile=outfile)
       }
-      NIRFigGjsnGrVar(RegData=RegData, valgtVar='SMR', grType=grType,
-                      datoFra=datoFra1aar, datoTil=datoTil, outfile=paste0(valgtVar,grType, '_PrSh.pdf'))
-      # Tar ut apr22: NIRFigGjsnGrVar(RegData=RegData, valgtVar='liggetid', valgtMaal=valgtMaal, dodInt=1,
+
+      # Tar ut apr22: NIRFigGjsnGrVar(RegData=RegData, valgtVar='liggetid', valgtMaal='Med', dodInt=1,
       #                 grType=grType, datoFra=datoFra1aar, datoTil=datoTil,
       #                 outfile=paste0('liggetidDod',grType,'_MedPerSh.pdf'))
 }
 
-NIRFigGjsnGrVar(RegData=RegData, valgtVar='SMR',
-                datoFra=datoFra1aar, datoTil=datoTil, outfile='SMR_PrSh.pdf')
+NIRFigGjsnGrVar(RegData=RegData1aar, valgtVar='respiratortidInvUoverf', valgtMaal='Med',
+                outfile='respiratortidInvUoverf_MedPrSh.pdf')
 
-NIRFigGjsnGrVar(RegData=RegData, valgtVar='liggetid', valgtMaal=valgtMaal, dodInt=1,
-                grType=3, datoFra=datoFra1aar, datoTil=datoTil, outfile='liggetidDod3_MedPerSh.pdf')
+NIRFigGjsnGrVar(RegData=RegData1aar, valgtVar='SMR',
+                outfile='SMR_PrSh.pdf')
 
 
 
@@ -139,10 +145,10 @@ NIRFigGjsnGrVar(RegData=RegData, valgtVar='liggetid', valgtMaal=valgtMaal, dodIn
 #                 datoFra=datoFra1aar, datoTil=datoTil, outfile='respiratortidInvMoverf_MedPrSh.pdf')
 #Tar ut apr02: NIRFigGjsnGrVar(RegData=RegData, valgtVar='respiratortidInvMoverf', valgtMaal='Gjsn',
 #                 datoFra=datoFra1aar, datoTil=datoTil, outfile='respiratortidInvMoverf_GjsnPrSh.pdf')
-NIRFigGjsnGrVar(RegData=RegData, valgtVar='respiratortidNonInv', valgtMaal='Med',
-                datoFra=datoFra1aar, datoTil=datoTil, outfile='respiratortidNonInv_MedPrSh.pdf')
-NIRFigGjsnGrVar(RegData=RegData, valgtVar='respiratortidNonInv', valgtMaal='Gjsn',
-                datoFra=datoFra1aar, datoTil=datoTil, outfile='respiratortidNonInv_GjsnPrSh.pdf')
+NIRFigGjsnGrVar(RegData=RegData1aar, valgtVar='respiratortidNonInv', valgtMaal='Med',
+                outfile='respiratortidNonInv_MedPrSh.pdf')
+NIRFigGjsnGrVar(RegData=RegData1aar, valgtVar='respiratortidNonInv', valgtMaal='Gjsn',
+                outfile='respiratortidNonInv_GjsnPrSh.pdf')
 
 
 #Innkomstmåte (egen fig.) reg/sentLok - ikke i bruk. Tar ut apr02
@@ -151,41 +157,38 @@ NIRFigGjsnGrVar(RegData=RegData, valgtVar='respiratortidNonInv', valgtMaal='Gjsn
 # NIRFigInnMaate(RegData=RegData, valgtVar='InnMaate', datoFra=datoFra1aar, datoTil = datoTil,
 #                grType=3, outfile='InnMaateReg.pdf')
 
-
-
-#-- Pårørende----------------------------------------------------------
-
-RegData <- NIRRegDataSQL(datoFra = datoFra1aar, datoTil = datoTil) #, session = session) #datoFra = datoFra, datoTil = datoTil)
-PaarorData <- NIRpaarorDataSQL(datoFra = datoFra1aar)
-PaarorDataH <- KobleMedHoved(RegData, PaarorData, alleHovedskjema=F, alleSkjema2=F)
-PaarorDataH <- NIRPreprosess(PaarorDataH)
-
-Totalskaarer <- c('SumScoreSatisfactionCare', 'SumScoreSatisfactionDecision', 'SumScoreAllQuestions')
-Del1 <- c('BehandlingHoeflighetRespektMedfoelelse', 'SymptomSmerte', 'SymptomPustebesvaer',
-          'SymptomUro', 'BehandlingBesvarerBehov', 'BehandlingBesvarerStoette',
-          'BehandlingSamarbeid', 'BehandlingBesvarerHoeflighetRespektMedfoelelse',
-          'SykepleierOmsorg', 'SykepleierKommunikasjon', 'LegeBehandling',
-          'AtmosfaerenIntensivAvd', 'AtmosfaerenPaaroerenderom', 'OmfangetAvBehandlingen')
-Del2 <- c('LegeInformasjonFrekvens', 'SvarPaaSpoersmaal', 'ForklaringForstaaelse',
-          'InformasjonsAerlighet', 'InformasjonOmForloep', 'InformasjonsOverensstemmelse',
-          'BeslutningsInvolvering', 'BeslutningsStoette', 'BeslutningsKontroll',
-          'BeslutningsTid', 'LivsLengde', 'LivssluttKomfor', 'LivssluttStoette')
-variable <- c(Del1, Del2, Totalskaarer)
-
-for (valgtVar in variable) {
-   outfile <- paste0('Paaror', valgtVar, '_Ford.pdf')
-   # NIRFigPrePostPaaror(RegData=PaarorDataH, valgtVar=valgtVar, datoFra=datoFra1aar, datoTil=datoTil,
-   #               outfile=outfile, preprosess = 0)
-   NIRFigAndeler(RegData=PaarorDataH, valgtVar=valgtVar, datoFra=datoFra1aar, datoTil=datoTil,
-                       outfile=outfile, preprosess = 0)
-}
+# #-- Pårørende----------------------------------------------------------
+#
+# RegData <- NIRRegDataSQL(datoFra = datoFra1aar, datoTil = datoTil) #, session = session) #datoFra = datoFra, datoTil = datoTil)
+# PaarorData <- NIRpaarorDataSQL(datoFra = datoFra1aar)
+# PaarorDataH <- KobleMedHoved(RegData, PaarorData, alleHovedskjema=F, alleSkjema2=F)
+# PaarorDataH <- NIRPreprosess(PaarorDataH)
+#
+# Totalskaarer <- c('SumScoreSatisfactionCare', 'SumScoreSatisfactionDecision', 'SumScoreAllQuestions')
+# Del1 <- c('BehandlingHoeflighetRespektMedfoelelse', 'SymptomSmerte', 'SymptomPustebesvaer',
+#           'SymptomUro', 'BehandlingBesvarerBehov', 'BehandlingBesvarerStoette',
+#           'BehandlingSamarbeid', 'BehandlingBesvarerHoeflighetRespektMedfoelelse',
+#           'SykepleierOmsorg', 'SykepleierKommunikasjon', 'LegeBehandling',
+#           'AtmosfaerenIntensivAvd', 'AtmosfaerenPaaroerenderom', 'OmfangetAvBehandlingen')
+# Del2 <- c('LegeInformasjonFrekvens', 'SvarPaaSpoersmaal', 'ForklaringForstaaelse',
+#           'InformasjonsAerlighet', 'InformasjonOmForloep', 'InformasjonsOverensstemmelse',
+#           'BeslutningsInvolvering', 'BeslutningsStoette', 'BeslutningsKontroll',
+#           'BeslutningsTid', 'LivsLengde', 'LivssluttKomfor', 'LivssluttStoette')
+# variable <- c(Del1, Del2, Totalskaarer)
+#
+# for (valgtVar in variable) {
+#    outfile <- paste0('Paaror', valgtVar, '_Ford.pdf')
+#    # NIRFigPrePostPaaror(RegData=PaarorDataH, valgtVar=valgtVar, datoFra=datoFra1aar, datoTil=datoTil,
+#    #               outfile=outfile, preprosess = 0)
+#    NIRFigAndeler(RegData=PaarorDataH, valgtVar=valgtVar, datoFra=datoFra1aar, datoTil=datoTil,
+#                        outfile=outfile, preprosess = 0)
+# }
 
 #-------------------------------Tabeller--------------------------------
 #Belegg
+library(intensiv)
 library(xtable)
-RegData1aar <- NIRPreprosess(RegData)
-Utvalg <- NIRUtvalgEnh(RegData1aar, datoFra = datoFra1aar, datoTil = datoTil)
-RegData1aar <- Utvalg$RegData
+RegData1aar <- NIRPreprosess(RegData1aar)
 
 tabBeleggN <- rbind(
             'Ferdigstilte intensivopphald' = tapply(RegData1aar$PasientID, RegData1aar$ShType, FUN=length),
@@ -197,14 +200,12 @@ tabBeleggNtot <- cbind(tabBeleggN, rowSums(tabBeleggN))
 colnames(tabBeleggNtot) <- c('lokal-/sentral', 'region', 'alle')
 
 xtable(tabBeleggNtot, digits=0, align=c('l', rep('r', ncol(tabBeleggNtot))),
-       caption='Antal opphald og liggedøger i 2019.', label='tab:RegEget')
+       caption='Antal opphald og liggedøger i 2021.', label='tab:RegEget')
 
-#NIRFigGjsnTid(RegData = RegData1aar, valgtVar = 'NEMS', tidsenhet = 'Mnd', valgtMaal = 'Med', outfile = 'NEMStest.pdf')
-library(lubridate)
+
+
 #Antall opphold
-tabDum <- tabAntOpphShMnd(RegData=RegData1aar, datoTil=datoTil, antMnd=12)
-table(RegData1aar$ShNavn) #[ ,c('ShNavn' ,'Aar')])
-RegData1aar$ShNavn
+library(lubridate)
 xtable(table(RegData1aar$ShNavn), align=c('l','r'), #row.names=F,
        caption = 'Intensivopphald per år')
 
@@ -310,6 +311,7 @@ RegData1aar$Nivaa <- as.character(Nivaa[as.character(RegData1aar$ReshId)])
 tabNokkeltall <- tabNokkeltall(RegData=RegData1aar, datoTil=datoTil) #, tidsenhet='Mnd'
 xtable(tabNokkeltall, digits= 1, align=c('l', rep('r', ncol(tabNokkeltall))), #row.names=F,
        caption = 'Samla tal på intensivopphald og aktivitet i NIR')
+
 
 for (nivaa in 1:3) {
    nivaa
