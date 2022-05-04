@@ -77,9 +77,6 @@ under18Cov <- sprintf('%.1f', 100*sum(OpphCov$Alder<18)/N)
 over80Cov <- sprintf('%.1f', 100*sum(OpphCov$Alder > 80)/N)
 medLiggetidCov <- round(median(OpphCov$Liggetid, na.rm = T), 1)
 
-respStotte <- sprintf('%.1f', 100*sum(RegData$MechanicalRespirator==1)/N)
-
-
 ```
 
 
@@ -153,7 +150,6 @@ ManglendeReg <- function(RegDataAlleVar){ #, aar)
     InnMaate = sum(InnMaate==-1)
   ) )}
 
-# for (aar in 2018:2020) {
  TabManglReg <- ManglendeReg(RegDataAlleVar=RegDataAlleVar)
  PstNord <- round(100*(TabManglReg[, variabler]/TabManglReg[, 'AntReg']), 1)
  write.table(cbind(TabManglReg, PstNord), file = paste0('DatakvalSMR_Nord.csv'), sep = ';')
@@ -167,8 +163,6 @@ ManglendeReg <- function(RegDataAlleVar){ #, aar)
    Nord = PstNord,
    Resten = PstAndre)
  )
-# 
-# }
 
 #SMR for alle RHF:
 OpphCovAlle <- intensivberedskap::NIRPreprosessBeredsk(intensivberedskap::NIRberedskDataSQL(datoTil = '2021-12-31'), 
