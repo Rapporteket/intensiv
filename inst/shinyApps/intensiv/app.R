@@ -9,8 +9,6 @@ library(kableExtra)
 library(knitr)
 library(shinyjs)
 
-#https://cran.r-project.org/web/packages/expss/vignettes/tables-with-labels.html
-
 addResourcePath('rap', system.file('www', package='rapbase'))
 
 context <- Sys.getenv("R_RAP_INSTANCE") #Blir tom hvis jobber lokalt
@@ -27,9 +25,6 @@ regTitle <- ifelse(paaServer,
                    'NORSK INTENSIVREGISTER',
                    'Norsk Intensivregister med FIKTIVE data')
 
-
-#Sys.setlocale("LC_TIME", "nb_NO.UTF-8")
-#ibrary(shinyBS) # Additional Bootstrap Controls
 
 #---------Hente data------------
 if (paaServer) {
@@ -95,8 +90,6 @@ velgCovidTxt <- 'Velg diagnose (covid-pasienter)'
 
 # Define UI for application that draws figures
 ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
-  #span("Tab1", title="Short description  for the tab") ,
-  #title = regTitle,
   title = div(a(includeHTML(system.file('www/logo.svg', package='rapbase'))),
               regTitle),
   windowTitle = regTitle,
@@ -104,15 +97,11 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
   id = 'hovedark',
 
 
-
-
   #--------------Startside------------------------------
   tabPanel(p("Oversiktsside",
              title= 'Nøkkeltall og samlerapporter'),
            useShinyjs(),
 
-           #fluidRow(
-           #column(width=5,
            h2('Velkommen til Rapporteket-Intensiv!', align='center'),
            br(),
            sidebarPanel(
