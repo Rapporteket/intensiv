@@ -124,22 +124,19 @@ NIRFigAndelTid <- function(RegData, valgtVar='alder_u18', datoFra='2011-01-01', 
                   AggVerdier$Rest <- SUMAarHendRest/SUMAarRest*100
             }
 
-            #grtxt <- paste0(rev(NIRVarSpes$grtxt), ' (', rev(sprintf('%.1f',AggVerdier$Hoved)), '%)')
             grtxt2 <- paste0('(', sprintf('%.1f',AggVerdier$Hoved), '%)')
             yAkseTxt <- 'Andel (%)'
             vektor <- c('Aar','Halvaar','Kvartal','Mnd')
-            xAkseTxt <- paste0(c('Innleggelsesår', 'Innleggelsesår', 'Innleggelseskvartal', 'Innleggelsesmåned')
-                               [which(tidsenhet==vektor)])
+            xAkseTxt <- c('Innleggelsesår', 'Innleggelsesår', 'Innleggelseskvartal',
+                          'Innleggelsesmåned')[which(tidsenhet==vektor)]
 
             FigDataParam <- list(AggVerdier=AggVerdier, N=N,
                                  Ngr=Ngr,
                                  KImaal <- KImaal,
                                  KImaaltxt <- KImaaltxt,
-                                 #soyletxt=soyletxt,
                                  grtxt=levels(RegData$TidsEnhet),
                                  grtxt2=grtxt2,
                                  varTxt=varTxt,
-                                 #tidtxt=tidtxt, #NIRVarSpes$grtxt,
                                  tittel=tittel,
                                  retn='V',
                                  xAkseTxt=xAkseTxt,
@@ -186,8 +183,8 @@ NIRFigAndelTid <- function(RegData, valgtVar='alder_u18', datoFra='2011-01-01', 
 
                   ymax <- min(119, 1.25*max(c(AggVerdier$Hoved, AggVerdier$Rest),na.rm=T))
                   plot(xskala, AggVerdier$Hoved,  font.main=1,  type='o', pch="'", col='white', #type='o',
-                       xlim= c(0.9,xmax+0.1), xaxt='n', frame.plot = FALSE,  #xaxp=c(min(tidtxt), max(tidtxt),length(tidtxt)-1)
-                       cex=2, xlab='Innleggelsesår', ylab="Andel (%)", ylim=c(0,ymax), yaxs = 'i')
+                       xlim= c(0.9,xmax+0.1), xaxt='n', frame.plot = FALSE,
+                       cex=2, xlab=xAkseTxt, ylab="Andel (%)", ylim=c(0,ymax), yaxs = 'i')
 
                   #Legge på linjer i plottet.
                   grid(nx = NA, ny = NULL, col = farger[4], lty = "solid")
@@ -231,9 +228,10 @@ NIRFigAndelTid <- function(RegData, valgtVar='alder_u18', datoFra='2011-01-01', 
       }
 
       if (lagFig == 1) {
+        print(xAkseTxt)
             FigAndelTid(RegData, AggVerdier, Ngr, tittel=tittel, hovedgrTxt=NIRUtvalg$hovedgrTxt,
                         smltxt=NIRUtvalg$smltxt, Ngr = Ngr, KImaal = KImaal, KImaaltxt=KImaaltxt, N=N, retn='V',
-                        utvalgTxt=utvalgTxt, varTxt=varTxt, grtxt2=grtxt2, medSml=medSml, #tidtxt=tidtxt,
+                        utvalgTxt=utvalgTxt, varTxt=varTxt, grtxt2=grtxt2, medSml=medSml,
                         xAkseTxt=xAkseTxt, yAkseTxt=yAkseTxt,
                         outfile=outfile)
       }

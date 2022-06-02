@@ -377,8 +377,10 @@ valgtVar <- 'reinn'	#'alder_u18', 'alder_over80', 'dod30d', 'dodeIntensiv', 'lig
 outfile <- '' #paste0(valgtVar, '.png')
 
 AndelerTid <- NIRFigAndelTid(RegData=RegData, preprosess = 0, reshID = 706078, tidsenhet = 'Mnd', enhetsUtvalg = 1)
+AndelerTid$xAkseTxt
 
 tabAndelTid <- lagTabavFig(UtDataFraFig = AndelerTid)
+
 
 NIRFigAndelTid(RegData=RegData, valgtVar=valgtVar, datoFra=datoFra, datoTil=datoTil, tidsenhet = tidsenhet,
 		minald=minald, maxald=maxald, erMann=erMann,InnMaate=InnMaate, dodInt=dodInt,
