@@ -228,7 +228,6 @@ NIRFigAndelTid <- function(RegData, valgtVar='alder_u18', datoFra='2011-01-01', 
       }
 
       if (lagFig == 1) {
-        print(xAkseTxt)
             FigAndelTid(RegData, AggVerdier, Ngr, tittel=tittel, hovedgrTxt=NIRUtvalg$hovedgrTxt,
                         smltxt=NIRUtvalg$smltxt, Ngr = Ngr, KImaal = KImaal, KImaaltxt=KImaaltxt, N=N, retn='V',
                         utvalgTxt=utvalgTxt, varTxt=varTxt, grtxt2=grtxt2, medSml=medSml,
