@@ -1072,7 +1072,7 @@ server <- function(input, output, session) { #
                   }
                   output$lastNed_tabAndelTid <- downloadHandler(
                     filename = function(){
-                      paste0(input$valgtVar, '_andelTid.csv')
+                      paste0(input$valgtVarAndel, '_andelTid.csv')
                     },
                     content = function(file, filename){
                       write.csv2(tabAndelTid, file, row.names = T, na = '')
@@ -1101,7 +1101,7 @@ server <- function(input, output, session) { #
                   }
                   output$lastNed_tabAndelGrVar <- downloadHandler(
                     filename = function(){
-                      paste0(input$valgtVar, '_andelGrVar.csv')
+                      paste0(input$valgtVarAndel, '_andelGrVar.csv')
                     },
                     content = function(file, filename){
                       write.csv2(tabAndelerShus, file, row.names = T, na = '')
@@ -1195,7 +1195,7 @@ server <- function(input, output, session) { #
 
         output$lastNed_tabGjsnGrVar <- downloadHandler(
           filename = function(){
-            paste0(input$valgtVar, '_gjsnGrVar.csv')
+            paste0(input$valgtVarGjsn, '_gjsnGrVar.csv')
           },
           content = function(file, filename){
             write.csv2(tabGjsnGrVar, file, row.names = T, na = '')
@@ -1247,7 +1247,7 @@ server <- function(input, output, session) { #
           }
         output$lastNed_tabGjsnTid <- downloadHandler(
           filename = function(){
-            paste0(input$valgtVar, '_gjsnTid.csv')
+            paste0(input$valgtVarGjsn, '_gjsnTid.csv')
           },
           content = function(file, filename){
             write.csv2(tabGjsnTid, file, row.names = T, na = '')

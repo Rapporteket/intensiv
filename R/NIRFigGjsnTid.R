@@ -82,7 +82,6 @@ NIRFigGjsnTid <- function(RegData, valgtVar='alder', datoFra='2011-01-01', datoT
   if (Ntest>2) {
             RegDataFunk <- SorterOgNavngiTidsEnhet(RegData=RegData, tidsenhet = tidsenhet)
             RegData <- RegDataFunk$RegData
-            #tidtxt <- RegDataFunk$tidtxt
             tidNum <- min(RegData$TidsEnhetSort, na.rm=T):max(RegData$TidsEnhetSort, na.rm = T) #as.numeric(levels(RegData$TidsEnhetSort))
 
 #--------------- Gjøre beregninger ------------------------------
@@ -91,12 +90,6 @@ KIekstrem <- NULL
 AggVerdier <- list(Hoved = 0, Rest =0)
 ind <- NIRUtvalg$ind
 N <- list(Hoved = length(ind$Hoved), Rest =length(ind$Rest))
-
-#tidtxt <- min(RegData$Aar):max(RegData$Aar)
-#Erstattes av TidsEnhet: RegData$Aar <- factor(RegData$Aar, levels=tidtxt)
-#Aartxt <- min(RegData$Aar):max(RegData$Aar)
-#RegData$Aar <- factor(RegData$Aar, levels=Aartxt)
-#AntTidsenh <- length(Aartxt)
 
 #Resultat for hovedgruppe
 Ngr <- tapply(RegData[ind$Hoved ,'Variabel'], RegData[ind$Hoved, 'TidsEnhet'], length)
@@ -152,23 +145,14 @@ if (valgtMaal=='Med') {maaltxt <- 'Median ' } else {maaltxt <- 'Gjennomsnitt '}
 ResData <- round(rbind(Midt, Konf, MidtRest, KonfRest), 1)
 rownames(ResData) <- c(maaltxt, 'KImin', 'KImaks',
                        paste0(maaltxt, 'Resten'), 'KImin, Resten', 'KImaks, Resten')[1:(3*(medSml+1))]
-#UtData <- list(paste0(toString(NIRVarSpes$tittel),'.'), ResData )
-#names(UtData) <- c('tittel', 'Data')
 
 FigDataParam <- list(AggVerdier=ResData,
                      N=N,
                      Ngr=Ngr,
                      KImaal <- KImaal,
                      KImaaltxt <- KImaaltxt,
-                     #soyletxt=soyletxt,
                      grtxt=levels(RegData$TidsEnhet),
-                     #grtxt2=grtxt2,
-                     #varTxt=varTxt,
-                     #tidtxt=tidtxt, #NIRVarSpes$grtxt,
                      tittel=NIRVarSpes$tittel,
-                     #retn='V',
-                    # xAkseTxt=xAkseTxt,
-                     #yAkseTxt=yAkseTxt,
                      utvalgTxt=utvalgTxt,
                      fargepalett=NIRUtvalg$fargepalett,
                      medSml=medSml,
@@ -191,9 +175,9 @@ rapFigurer::figtype(outfile)
 xmin <- min(tidNum)-0.5
 xmax <- max(tidNum)+0.5
 cexgr <- 0.9	#Kan endres for enkeltvariable
-ymin <- 0.9*min(KonfRest, Konf, na.rm=TRUE)	#ymin1 - 2*h
-ymax <- 1.1*max(KonfRest, Konf, na.rm=TRUE)	#ymax1 + 2*h
-ytxt <- maaltxt #paste0(maaltxt, ytxt1, sep='')
+ymin <-ifelse(is.na(KImaal), 0.9*min(KonfRest, Konf, na.rm=TRUE), 0)
+ymax <- 1.1*max(KonfRest, Konf, na.rm=TRUE)
+ytxt <- maaltxt
 
 #Plottspesifikke parametre:
 FigTypUt <- rapFigurer::figtype(outfile, fargepalett=NIRUtvalg$fargepalett)
