@@ -199,19 +199,6 @@ NIRFigAndeler  <- function(RegData=0, valgtVar='alder', datoFra='2011-01-01', da
 
 
       if (lagFig == 1) {
-            #cexgr <- 1-ifelse(AntGr>20, 0.25*AntGr/60, 0)
-            # NIRFigSoyler(RegData, AggVerdier, Ngr, tittel=tittel, hovedgrTxt=hovedgrTxt,
-            #              smltxt=smltxt, grTypeTxt=grTypeTxt, Ngr = Ngr, KImaal=KImaal,
-            #              N=Nfig, retn=retn, utvalgTxt=utvalgTxt, grtxt=grtxt, grtxt2=grtxt2,
-            #              medSml=medSml, cexgr=cexgr, xAkseTxt=xAkseTxt, yAkseTxt=yAkseTxt,
-            #              outfile=outfile, figurtype=figurtype)
-            #
-            # NIRFigSoyler <- function(RegData, AggVerdier, AggTot=0, Ngr, tittel='mangler tittel', smltxt='', N, retn='H',
-            #                          yAkseTxt='', utvalgTxt='', grTypeTxt='', soyletxt='', grtxt, grtxt2='', hovedgrTxt='',
-            #                          grVar='', valgtMaal='Andel', figurtype='', cexgr=1, medSml=0, fargepalett='BlaaOff', xAkseTxt='',
-            #                          medKI=0, KImaal = NA, KImaaltxt = '', outfile='') { #Ngr=list(Hoved=0)
-            #
-
             #---------------------------------------FRA FIGANDELER, FigGjsnGrVar og FigAndelGrVar--------------------------
             #Hvis for få observasjoner..
 

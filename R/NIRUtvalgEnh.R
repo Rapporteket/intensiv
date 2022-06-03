@@ -127,7 +127,7 @@ NIRUtvalgEnh <- function(RegData, datoFra='2011-01-01', datoTil=Sys.Date(), mina
         } else {1:Ninn}
 
 
-      indMed <- indDatoFra %i% indDatoTil %i% indAld %i% indKj %i% indInnMaate %i% indDod %i% indDiag #%i% indGrType
+      indMed <- indDatoFra %i% indDatoTil %i% indAld %i% indKj %i% indInnMaate %i% indDod %i% indDiag %i% indAar #%i% indGrType
 
       RegData <- RegData[indMed,]
 
