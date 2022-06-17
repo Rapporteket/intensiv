@@ -331,10 +331,10 @@ DataTilSKDE <- dataTilOffVisning(RegData = NIRData, valgtVar='respiratortidInvUo
 
 #tapply(DataTilSKDE$var, INDEX = DataTilSKDE$year, FUN = mean)
 
-#----Kvalitetsindikatorer på enhetsnivå
 
 setwd('~/speil/aarsrapp/intensiv/dataNettsider/')
 
+#----Kvalitetsindikatorer, PANDEMI
 KvalInd_Pand <- read.table(file = 'ki-isolasjon.csv',fileEncoding = 'utf8', sep = ';', header = TRUE)
 #unique(KvalInd_Pand[, c('UnitId', 'HealthUnitShortName')])
 KvalInd_Pand$orgnr <- as.character(nyID[as.character(KvalInd_Pand$UnitId)]) #Kopier nyID fra dataTilOffVisning
@@ -347,6 +347,8 @@ KvalInd_Pand$context <- 'caregiver'
 write.table(KvalInd_Pand, file = 'KvalIndPand.csv', sep = ';', row.names = F)
 #table(KvalInd_Pand$orgnr, useNA = 'a')
 
+
+#----Kvalitetsindikatorer på enhetsnivå
 KvalIndFil <- read.table(file = 'Kvalitetsindikatorer_NIR_2021_v2.csv',fileEncoding = 'latin1', sep = ';', header = TRUE) #, row.names = FALSE)
 # nye <- setdiff(unique(as.character(KvalIndFil$resh_id)), names(nyID))
 # KvalIndFil[which(KvalIndFil$resh_id %in% nye), c("resh_id", "namn")]
@@ -356,8 +358,8 @@ RegData <- KvalIndFil[, c("resh_id", "tverrfagleg_gjennomgang", "rutinenotat", "
 RegData$primarvakt <- dplyr::recode(RegData$primarvakt, '2' = 1L, '3'= 0L)
 variabler <- c( "tverrfagleg_gjennomgang", "rutinenotat",  "data_nir")
 RegData[ , variabler][RegData[,variabler] == 2] <- 0
-#table(RegData$data_nir)
 RegData$orgnr <- as.character(nyID[as.character(RegData$resh_id)])
+#table(RegData$orgnr, useNA = 'a')
 
 RegDataUt <- tidyr::pivot_longer(
   data = RegData[,-1],
