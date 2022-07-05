@@ -319,8 +319,7 @@ for (nivaa in 1:3) {
 setwd('~/speil/aarsrapp/intensiv/dataNettsider/')
 library(intensiv)
 library(magrittr)
-NIRData <- NIRPreprosess(RegData = NIRRegDataSQL(datoFra = '2021-01-01', datoTil = '2021-12-31'))
-aar <- 2021
+NIRData <- NIRPreprosess(RegData = NIRRegDataSQL(datoFra = '2016-01-01', datoTil = '2021-12-31'))
 
 DataTilSKDE <- dataTilOffVisning(RegData = NIRData, valgtVar='reinn', #aar=valgteAar,
                                  indID = 'intensiv_innlegg_72t', filUt = 'innlegg_72t')
@@ -335,6 +334,7 @@ DataTilSKDE <- dataTilOffVisning(RegData = NIRData, valgtVar='respiratortidInvUo
 setwd('~/speil/aarsrapp/intensiv/dataNettsider/')
 
 #----Kvalitetsindikatorer, PANDEMI
+#NB: Får kun data fra 2021. Husk å først laste ned tidligere data fra nettsidene, legge til de nye og så laste opp igjen.
 KvalInd_Pand <- read.table(file = 'ki-isolasjon.csv',fileEncoding = 'utf8', sep = ';', header = TRUE)
 #unique(KvalInd_Pand[, c('UnitId', 'HealthUnitShortName')])
 KvalInd_Pand$orgnr <- as.character(nyID[as.character(KvalInd_Pand$UnitId)]) #Kopier nyID fra dataTilOffVisning
