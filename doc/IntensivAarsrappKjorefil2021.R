@@ -378,7 +378,7 @@ write.table(RegDataUt, file = 'KvalIndEnhNivaa.csv', sep = ';', row.names = F)
 xx <- unique(KvalInd_Pand[, c('HealthUnitShortName', 'UnitId')])
 yy <- xx[order(xx$HealthUnitShortName),]
 nyID <- c(
-'102090' = '974588951', #Ahus
+'102090' = '974706490', #Ahus
 '111487' = '974588951', #Aker
 '4211747' = '979873190', #Alta
 '700263' = '974631091', #Arendal
