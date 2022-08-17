@@ -276,7 +276,7 @@ dataTilOffVisning <- function(RegData = RegData, valgtVar, #datoFra='2016-01-01'
 
     #Legge på orgID ("Sykehusviser")
     #ReshId	orgnr	RapporteketNavn	SKDEnavn
-  nyID <- c('102090'='974706490', #AHUS - Intensiv 974706490, 974706490
+  nyID <- c('102090'='974706490', #AHUS - Intensiv
   '4215368' = '974706490', #AHUS - Kongsvinger
   '4205696'='974706490', #AHUS - Postop
   '111487'='974588951', #Aker

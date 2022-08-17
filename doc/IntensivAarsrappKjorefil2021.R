@@ -337,7 +337,7 @@ setwd('~/speil/aarsrapp/intensiv/dataNettsider/')
 #NB: Får kun data fra 2021. Husk å først laste ned tidligere data fra nettsidene, legge til de nye og så laste opp igjen.
 KvalInd_Pand <- read.table(file = 'ki-isolasjon.csv',fileEncoding = 'utf8', sep = ';', header = TRUE)
 #unique(KvalInd_Pand[, c('UnitId', 'HealthUnitShortName')])
-KvalInd_Pand$orgnr <- as.character(nyID[as.character(KvalInd_Pand$UnitId)]) #Kopier nyID fra dataTilOffVisning
+KvalInd_Pand$orgnr <- as.character(nyIDpand[as.character(KvalInd_Pand$UnitId)]) #nyIDpand SE LENGRE NED
 KvalInd_Pand$var <- ifelse(KvalInd_Pand$teller,1,0)
 KvalInd_Pand$year <- KvalInd_Pand$innlagt_aar
 KvalInd_Pand <- KvalInd_Pand[KvalInd_Pand$year==2021, c('orgnr', 'var', 'year')]
@@ -349,7 +349,7 @@ write.table(KvalInd_Pand, file = 'KvalIndPand.csv', sep = ';', row.names = F)
 
 
 #----Kvalitetsindikatorer på enhetsnivå
-KvalIndFil <- read.table(file = 'Kvalitetsindikatorer_NIR_2021_v2.csv',fileEncoding = 'latin1', sep = ';', header = TRUE) #, row.names = FALSE)
+KvalIndFil <- read.table(file = 'Kvalitetsindikatorer_NIR_2021_v2raa.csv',fileEncoding = 'latin1', sep = ';', header = TRUE) #, row.names = FALSE)
 # nye <- setdiff(unique(as.character(KvalIndFil$resh_id)), names(nyID))
 # KvalIndFil[which(KvalIndFil$resh_id %in% nye), c("resh_id", "namn")]
 
@@ -377,7 +377,7 @@ write.table(RegDataUt, file = 'KvalIndEnhNivaa.csv', sep = ';', row.names = F)
 #Pandemi:
 xx <- unique(KvalInd_Pand[, c('HealthUnitShortName', 'UnitId')])
 yy <- xx[order(xx$HealthUnitShortName),]
-nyID <- c(
+nyIDpand <- c(
 '102090' = '974706490', #Ahus
 '111487' = '974588951', #Aker
 '4211747' = '979873190', #Alta
