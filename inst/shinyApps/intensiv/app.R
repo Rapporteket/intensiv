@@ -97,7 +97,7 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
   id = 'hovedark',
 
 
-  #--------------Startside------------------------------
+#--------------Startside------------------------------
   tabPanel(p("Oversiktsside",
              title= 'Nøkkeltall og samlerapporter'),
            useShinyjs(),
@@ -728,7 +728,27 @@ tabPanel(p("Registeradministrasjon", title='Registeradministrasjonens side'),
                rapbase::exportGuideUI("intensivExportGuide")
              )
            )
-         )
+         ),
+         tabPanel('Nøkkeltall',
+                  sidebarLayout(
+                  sidebarPanel(
+                    dateInput(inputId = 'datoValgNok', label = 'Tidsperiode',
+                              start = startDato, end = idag,
+                              separator="t.o.m.", language="nb"),
+                    selectInput(inputId = "covidvalgNok", label= velgCovidTxt,
+                                           choices = covidValg),
+                    selectInput(inputId = "enhetNok", label= 'Velg enhet',
+                                choices =   c('Alle',
+                                              unique(RegData$RHF),
+                                              unique(RegData$HF),
+                                              unique(RegData$HelseenhetKortnavn))
+                                )),
+                  mainPanel(
+                  h2('Nøkkeltall, for valgt HF/RHF'),
+                  br(),
+                  tableOutput('tabNokkeltallUtvidet')
+                  ))
+         ),
          ) #tabset
 ) #tab SC
 
@@ -859,7 +879,6 @@ server <- function(input, output, session) { #
       kable_styling(full_width = FALSE, position = 'left') #"hover",
   }
 
-   #output$NokkeltallTxt <- renderText({paste0('Nøkkeltall på intensiv, ', egetShNavn)})
    output$tabNokkeltall <- function() {#renderTable({
      RegDataCov <- NIRUtvalgEnh(RegData=RegData, velgDiag = as.numeric(input$covidvalgReg))$RegData
             tab <- t(tabNokkeltall(RegData=RegDataCov, tidsenhet=input$tidsenhetReg,
@@ -871,14 +890,33 @@ server <- function(input, output, session) { #
                               digits = c(0,0,0,1,0,1,1,0,0,0,1,1,2,1)
                              ) %>%
                   column_spec(column = 1, width_min = '4em', width_max = 10) %>%
-                  #column_spec(column = 1, width = '4em') %>%
                   column_spec(column = 2:(ncol(tab)), width = '4em')  %>%
-                  #column_spec(column = 2:(ncol(tab)), width_min = '7em', width_max = '7em') %>%
                   row_spec(0, bold = T, align = 'c') %>%
                   kable_styling(full_width = FALSE, position = 'left') #"hover",
 
 
       }#,rownames=T, digits=0 )
+
+   tabNokkeltallUtvidet <- output$tabNokkeltallUtvidet <- function() {
+     RegDataCov <- NIRUtvalgEnh(RegData=RegData, velgDiag = as.numeric(input$covidvalgReg))$RegData
+     tab <- t(tabNokkeltallUtvid(RegData=RegDataCov,
+                                 tidsenhet=input$tidsenhetReg,
+                                 datoFra = input$datoValgNok[1],
+                                 datoTil = input$datoValgNok[2],
+                                sykehus=input$enhetNok)
+              )
+     tab <- tabNokkeltallUtvidet(RegData, tidsenhet='Aar')
+     kableExtra::kable(tab,
+                       full_width=F,
+                       digits = c(0,0,0,1,0,1,1,0,0,0,1,1,2,1)
+     ) %>%
+       column_spec(column = 1, width_min = '4em', width_max = 10) %>%
+       column_spec(column = 2:(ncol(tab)), width = '4em')  %>%
+       row_spec(0, bold = T, align = 'c') %>%
+       kable_styling(full_width = FALSE, position = 'left') #"hover",
+
+
+   }
 
       output$tabAntOpphSh <- renderTable({
         RegDataCov <- NIRUtvalgEnh(RegData=RegData, velgDiag = as.numeric(input$covidvalgReg))$RegData

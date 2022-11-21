@@ -223,19 +223,25 @@ tabNokkeltall <- function(RegData, tidsenhet='Mnd', datoTil=Sys.Date(), enhetsUt
 #' @param RegData dataramme
 #' @param sykehus HelseenhetKortnavn eller HF-navn
 #' @export
-tabNokkeltallNord <- function(RegData, tidsenhet = 'Aar', sykehus='Alle') {
+tabNokkeltallUtvid <- function(RegData, tidsenhet = 'Aar', sykehus='Alle',
+                               datoFra='2016-01-01', datoTil=Sys.Date()) {
+
+  RegData <- SorterOgNavngiTidsEnhet(RegData, tidsenhet=tidsenhet, tab=1)$RegData
+  RegData <  NIRUtvalgEnh(RegData = RegData, datoFra = datoFra, datoTil = datoTil)$RegData
 
   #Komplikasjoner:
   RegData$KompTot <- (rowSums(RegData[ ,c('KompHypoglykemi',	'KompPneumotoraks',	'KompLuftveisproblem',
                                           'KompDekubitus')])>0)
 
-  RegData <- SorterOgNavngiTidsEnhet(RegData, tidsenhet=tidsenhet, tab=1)$RegData
 
-    if (sykehus %in% unique(RegData$HelseenhetKortnavn)) {
-    RegData <- RegData[RegData$HelseenhetKortnavn == sykehus, ]
-    }
+  if (sykehus %in% unique(RegData$RHF)) {
+    RegData <- RegData[RegData$RHF == sykehus, ]
+  }
   if (sykehus %in% unique(RegData$HF)) {
     RegData <- RegData[RegData$HF == sykehus, ]
+  }
+  if (sykehus %in% unique(RegData$HelseenhetKortnavn)) {
+    RegData <- RegData[RegData$HelseenhetKortnavn == sykehus, ]
   }
 
   indLigget <- which(RegData$liggetid>0)
