@@ -2,16 +2,13 @@
 % Please edit documentation in R/NIRhjelpefunksjoner.R
 \name{dataTilOffVisning}
 \alias{dataTilOffVisning}
-\title{Generere data til resultatportalen eller sykehusviser}
+\title{Generere data til interaktive nettsider SKDE}
 \usage{
 dataTilOffVisning(
   RegData = RegData,
   valgtVar,
-  datoFra = "2016-01-01",
-  datoTil = Sys.Date(),
   aar = 0,
   indID = "indDummy",
-  ResPort = 1,
   filUt = "dummy"
 )
 }
@@ -20,20 +17,13 @@ dataTilOffVisning(
 
 \item{valgtVar}{- beinsmLavPre, peropKompDura, sympVarighUtstr, p.t. 10 kvalitetsind.}
 
-\item{datoFra}{Tidligste dato i utvalget (vises alltid i figuren). Standard 2019-01-01.
-Registeret inneholder registreringer f.o.m. 2011}
-
-\item{datoTil}{Seneste dato i utvalget (vises alltid i figuren).}
-
 \item{indID}{indikator-id, eks. 'ind1', 'ind2', osv.}
-
-\item{ResPort}{1-hvis data til resultatportalen (standard), 0-data til SKDE-viser}
 
 \item{filUt}{tilnavn for utdatatabell (fjern?)}
 }
 \value{
-Datafil til Resultatportalen
+Datafil til interaktive nettsider, SKDE
 }
 \description{
-Generere data til resultatportalen eller sykehusviser
+Generere data til interaktive nettsider SKDE
 }
