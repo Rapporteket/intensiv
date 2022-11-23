@@ -30,24 +30,32 @@ regTitle <- ifelse(paaServer,
 if (paaServer) {
   IntData <- NIRRegDataSQL(datoFra = '2011-01-01') #, session = session) #datoFra = datoFra, datoTil = datoTil)
   PaarorData <- NIRpaarorDataSQL()
-  PaarorDataH <- KobleMedHoved(IntData, PaarorData, alleHovedskjema=F, alleSkjema2=F)
-  # qInfluensa <- 'SELECT ShNavn, RHF, PatientInRegistryGuid, FormDate,FormStatus, ICD10_1
-  #                 from InfluensaFormDataContract'
-  # InfluData <- rapbase::loadRegData(registryName= "nir", query=qInfluensa, dbType="mysql")
 
   #Covid-skjema:
   qCovid <- paste0('SELECT HovedskjemaGUID, FormStatus, Diagnosis
                   FROM ReadinessFormDataContract')
   CovidData <- rapbase::loadRegData(registryName= "nir", query=qCovid, dbType="mysql")
 
-  CovidData$HovedskjemaGUID <- toupper(CovidData$HovedskjemaGUID)
-  CovidData$Bekreftet <- 0
-  CovidData$Bekreftet[which(CovidData$Diagnosis %in% 100:103)] <- 1
+} else { #hente data på server
 
-  RegData <- merge(IntData, CovidData[ ,-which(names(CovidData) == 'Diagnosis')], suffixes = c('','Cov'),
-        by.x = 'SkjemaGUID', by.y = 'HovedskjemaGUID', all.x = T, all.y=F)
+  IntData <- read.table(paste0('C:/Registerdata/nipar/MainFormDataContract2022-11-14.csv'), sep=';',
+                                stringsAsFactors=FALSE, header=T, encoding = 'UTF-8')
+  PaarorData <- read.table(paste0('C:/Registerdata/nipar/QuestionaryFormDataContract2022-11-14.csv'), sep=';',
+                           stringsAsFactors=FALSE, header=T, encoding = 'UTF-8')
+  #Covid-skjema:
+  CovidData <- read.table(paste0('C:/Registerdata/nipar/ReadinessFormDataContract2022-11-14.csv'), sep=';',
+                          stringsAsFactors=FALSE, header=T, encoding = 'UTF-8')
+}
 
-} #hente data på server
+PaarorDataH <- KobleMedHoved(IntData, PaarorData, alleHovedskjema=F, alleSkjema2=F)
+CovidData$HovedskjemaGUID <- toupper(CovidData$HovedskjemaGUID)
+CovidData$Bekreftet <- 0
+CovidData$Bekreftet[which(CovidData$Diagnosis %in% 100:103)] <- 1
+
+RegData <- merge(IntData, CovidData[ ,-which(names(CovidData) == 'Diagnosis')], suffixes = c('','Cov'),
+                 by.x = 'SkjemaGUID', by.y = 'HovedskjemaGUID', all.x = T, all.y=F)
+
+
 
 if (!exists('PaarorDataH')){
   data('NIRRegDataSyn', package = 'intensiv')
@@ -732,7 +740,7 @@ tabPanel(p("Registeradministrasjon", title='Registeradministrasjonens side'),
          tabPanel('Nøkkeltall',
                   sidebarLayout(
                   sidebarPanel(
-                    dateInput(inputId = 'datoValgNok', label = 'Tidsperiode',
+                    dateRangeInput(inputId = 'datoValgNok', label = 'Tidsperiode',
                               start = startDato, end = idag,
                               separator="t.o.m.", language="nb"),
                     selectInput(inputId = "covidvalgNok", label= velgCovidTxt,
@@ -758,7 +766,7 @@ tabPanel(p("Registeradministrasjon", title='Registeradministrasjonens side'),
 server <- function(input, output, session) { #
 
 #-----------Div serveroppstart------------------
-  rapbase::appLogger(session = session, msg = "Starter intensiv-app")
+  #rapbase::appLogger(session = session, msg = "Starter intensiv-app")
 
   reshID <- ifelse(paaServer, as.numeric(rapbase::getUserReshId(session)), 109773)
   rolle <- reactive({ifelse(paaServer, rapbase::getUserRole(shinySession=session), 'SC')})
@@ -797,13 +805,6 @@ server <- function(input, output, session) { #
 
   # User info in widget
   userInfo <- rapbase::howWeDealWithPersonalData(session)
-  # observeEvent(input$userInfo, {
-  #   shinyalert::shinyalert("Dette vet Rapporteket om deg:", userInfo,
-  #              type = "", imageUrl = "rap/logo.svg",
-  #              closeOnEsc = TRUE, closeOnClickOutside = TRUE,
-  #              html = TRUE, confirmButtonText = rapbase::noOptOutOk())
-  # })
-
 
       #--------startside--------------
   output$mndRapp.pdf <- downloadHandler(
@@ -900,7 +901,7 @@ server <- function(input, output, session) { #
    tabNokkeltallUtvidet <- output$tabNokkeltallUtvidet <- function() {
      RegDataCov <- NIRUtvalgEnh(RegData=RegData, velgDiag = as.numeric(input$covidvalgReg))$RegData
      tab <- t(tabNokkeltallUtvid(RegData=RegDataCov,
-                                 tidsenhet=input$tidsenhetReg,
+                                 tidsenhet=input$tidsenhetNok,
                                  datoFra = input$datoValgNok[1],
                                  datoTil = input$datoValgNok[2],
                                 sykehus=input$enhetNok)
