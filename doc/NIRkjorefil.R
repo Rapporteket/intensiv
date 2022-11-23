@@ -19,6 +19,7 @@ reshID <- 706078
 tellInfluensa(datoFra='2018-09-01', datoTil=Sys.Date(), reshID=reshID)
 
 
+
 library(intensiv)
 library(kableExtra)
 library(tidyverse)

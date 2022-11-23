@@ -739,8 +739,8 @@ tabPanel(p("Registeradministrasjon", title='Registeradministrasjonens side'),
            )
          ),
          tabPanel(h4('Nøkkeltall'),
-                  sidebarLayout(
-                  sidebarPanel(
+                 # sidebarLayout(
+                  #sidebarPanel(
                     dateRangeInput(inputId = 'datoValgNok', label = 'Tidsperiode',
                               start = '2018-01-01', end = idag, #startDato
                               separator="t.o.m.", language="nb"),
@@ -751,13 +751,14 @@ tabPanel(p("Registeradministrasjon", title='Registeradministrasjonens side'),
                                               unique(RegData$RHF),
                                               unique(RegData$HF),
                                               unique(RegData$HelseenhetKortnavn))
-                                )),
-                  mainPanel(
+                  #              )
+                  ),
+                  #mainPanel(
                   h2('Nøkkeltall, for valgt HF/RHF'),
                   br(),
                   tableOutput('tabNokkeltallUtvidet')
-                  ))
-         ),
+                  ) #)
+#         ),
          ) #tabset
 ) #tab SC
 
@@ -802,11 +803,11 @@ server <- function(input, output, session) { #
     output$appUserName <- renderText(rapbase::getUserFullName(session))
     output$appOrgName <- renderText(paste0('rolle: ', rolle(),
                                            '<br> ReshID: ', reshID,
-                                           '<br> Enhet: ', egetShNavn) )}
+                                           '<br> Enhet: ', egetShNavn) )
 
   # User info in widget
   userInfo <- rapbase::howWeDealWithPersonalData(session)
-
+  }
       #--------startside--------------
   output$mndRapp.pdf <- downloadHandler(
     filename = function(){ paste0('MndRapp', Sys.time(), '.pdf')},
@@ -887,20 +888,20 @@ server <- function(input, output, session) { #
                                    datoTil=input$sluttDatoReg,
                       enhetsUtvalg=as.numeric(input$enhetsNivaa), reshID=reshID))
             #tab <- tabNokkeltall(RegData, tidsenhet='Mnd', datoTil, enhetsUtvalg=0, reshID=0)
-            kableExtra::kable(tab,
+            t(kableExtra::kable(tab,
                               full_width=F,
-                              digits = c(0,0,0,1,0,1,1,0,0,0,1,1,2,1)
+                              digits = c(0,0,0,1,0,1,1,0,0,0,1,1,1,1,0,1,0,1,2,1,0)
                              ) %>%
                   column_spec(column = 1, width_min = '4em', width_max = 10) %>%
                   column_spec(column = 2:(ncol(tab)), width = '4em')  %>%
                   row_spec(0, bold = T, align = 'c') %>%
-                  kable_styling(full_width = FALSE, position = 'left') #"hover",
+                  kable_styling(full_width = FALSE, position = 'left')) #"hover",
 
 
       }#,rownames=T, digits=0 )
 
    tabNokkeltallUtvidet <- output$tabNokkeltallUtvidet <- function() {
-     RegDataCov <- NIRUtvalgEnh(RegData=RegData, velgDiag = as.numeric(input$covidvalgReg))$RegData
+     RegDataCov <- NIRUtvalgEnh(RegData=RegData, velgDiag = as.numeric(input$covidvalgNok))$RegData
      tab <- t(tabNokkeltallUtvid(RegData=RegDataCov,
                                  #tidsenhet=input$tidsenhetNok,
                                  datoFra = input$datoValgNok[1],
