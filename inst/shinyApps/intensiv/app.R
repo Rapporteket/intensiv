@@ -756,13 +756,12 @@ tabPanel(p("Registeradministrasjon", title='Registeradministrasjonens side'),
                                               unique(RegData$RHF),
                                               unique(RegData$HF),
                                               unique(RegData$HelseenhetKortnavn))
-                  #              )
-                  ),
-                                 )
-                          ),
+                    )
+                  ))),
                  #mainPanel(
                   br(),
-                  tableOutput('tabNokkeltallUtvidet')
+                  tableOutput('tabNokkeltallUtvidet'),
+                 downloadButton(outputId = 'lastNed_tabNokkel', label='Last ned tabell')
                   ) #)
 #         ),
          ) #tabset
@@ -906,6 +905,8 @@ server <- function(input, output, session) { #
 
       }#,rownames=T, digits=0 )
 
+
+
    tabNokkeltallUtvidet <- output$tabNokkeltallUtvidet <- function() {
      RegDataCov <- NIRUtvalgEnh(RegData=RegData, velgDiag = as.numeric(input$covidvalgNok))$RegData
      tab <- t(tabNokkeltallUtvid(RegData=RegDataCov,
@@ -924,6 +925,13 @@ server <- function(input, output, session) { #
        row_spec(0, bold = T, align = 'c') %>%
        kable_styling(full_width = FALSE, position = 'left') #"hover",
    }
+
+   output$lastNed_tabNokkel <- downloadHandler(
+     filename = function(){'NokkelTall.csv'
+     },
+     content = function(file, filename){
+       write.csv2(tab, file, row.names = F, na = '')
+     })
 
       output$tabAntOpphSh <- renderTable({
         RegDataCov <- NIRUtvalgEnh(RegData=RegData, velgDiag = as.numeric(input$covidvalgReg))$RegData
