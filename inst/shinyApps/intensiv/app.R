@@ -907,7 +907,7 @@ server <- function(input, output, session) { #
                                  datoTil = input$datoValgNok[2],
                                 sykehus=input$enhetNok)
               )
-     tab <- intensiv::tabNokkeltallUtvid(RegData=RegData, datoFra = '2017-01-01', tidsenhet='Aar')
+     #tab <- intensiv::tabNokkeltallUtvid(RegData=RegData, datoFra = '2017-01-01', tidsenhet='Aar')
      kableExtra::kable(tab,
                        full_width=F,
                        digits = c(0,0,0,1,0,1,1,0,0,0,1,1,2,1)
@@ -916,8 +916,6 @@ server <- function(input, output, session) { #
        column_spec(column = 2:(ncol(tab)), width = '4em')  %>%
        row_spec(0, bold = T, align = 'c') %>%
        kable_styling(full_width = FALSE, position = 'left') #"hover",
-
-
    }
 
       output$tabAntOpphSh <- renderTable({
