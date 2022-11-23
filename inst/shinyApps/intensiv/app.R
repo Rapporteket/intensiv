@@ -741,7 +741,12 @@ tabPanel(p("Registeradministrasjon", title='Registeradministrasjonens side'),
          tabPanel(h4('Nøkkeltall'),
                  # sidebarLayout(
                   #sidebarPanel(
-                    dateRangeInput(inputId = 'datoValgNok', label = 'Tidsperiode',
+                 fluidRow(class = "text-center",
+                          column(width = 6,
+                                 column(6, offset = 3,
+                 h2('Nøkkeltall, for valgt HF/RHF'),
+                 h4('Gjør utvalg'),
+                 dateRangeInput(inputId = 'datoValgNok', label = 'Tidsperiode',
                               start = '2018-01-01', end = idag, #startDato
                               separator="t.o.m.", language="nb"),
                     selectInput(inputId = "covidvalgNok", label= velgCovidTxt,
@@ -753,8 +758,9 @@ tabPanel(p("Registeradministrasjon", title='Registeradministrasjonens side'),
                                               unique(RegData$HelseenhetKortnavn))
                   #              )
                   ),
-                  #mainPanel(
-                  h2('Nøkkeltall, for valgt HF/RHF'),
+                                 )
+                          ),
+                 #mainPanel(
                   br(),
                   tableOutput('tabNokkeltallUtvidet')
                   ) #)
@@ -890,7 +896,7 @@ server <- function(input, output, session) { #
             #tab <- tabNokkeltall(RegData, tidsenhet='Mnd', datoTil, enhetsUtvalg=0, reshID=0)
             t(kableExtra::kable(tab,
                               full_width=F,
-                              digits = c(0,0,0,1,0,1,1,0,0,0,1,1,1,1,0,1,0,1,2,1,0)
+                              digits = c(0,0,0,1,0,1,1,0,0,0,1,1,2,1)
                              ) %>%
                   column_spec(column = 1, width_min = '4em', width_max = 10) %>%
                   column_spec(column = 2:(ncol(tab)), width = '4em')  %>%
@@ -911,7 +917,7 @@ server <- function(input, output, session) { #
      #tab <- intensiv::tabNokkeltallUtvid(RegData=RegData, datoFra = '2017-01-01', tidsenhet='Aar')
      kableExtra::kable(tab,
                        full_width=F,
-                       digits = c(0,0,0,1,0,1,1,0,0,0,1,1,2,1)
+                       digits = c(0,0,0,1,0,1,1,0,0,0,1,1,1,1,0,1,0,1,2,1,0)
      ) %>%
        column_spec(column = 1, width_min = '4em', width_max = 10) %>%
        column_spec(column = 2:(ncol(tab)), width = '4em')  %>%
