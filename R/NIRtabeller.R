@@ -227,7 +227,7 @@ tabNokkeltallUtvid <- function(RegData, tidsenhet = 'Aar', sykehus='Alle',
                                datoFra='2016-01-01', datoTil=Sys.Date()) {
 
   RegData <- SorterOgNavngiTidsEnhet(RegData, tidsenhet=tidsenhet, tab=1)$RegData
-  RegData <  NIRUtvalgEnh(RegData = RegData, datoFra = datoFra, datoTil = datoTil)$RegData
+  RegData <-  NIRUtvalgEnh(RegData = RegData, datoFra = datoFra, datoTil = datoTil)$RegData
 
   #Komplikasjoner:
   RegData$KompTot <- (rowSums(RegData[ ,c('KompHypoglykemi',	'KompPneumotoraks',	'KompLuftveisproblem',

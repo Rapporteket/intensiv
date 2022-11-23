@@ -40,6 +40,7 @@ if (paaServer) {
 
   IntData <- read.table(paste0('C:/Registerdata/nipar/MainFormDataContract2022-11-14.csv'), sep=';',
                                 stringsAsFactors=FALSE, header=T, encoding = 'UTF-8')
+  #IntData <- IntData[!is.na(IntData$DateAdmittedIntensive),]
   PaarorData <- read.table(paste0('C:/Registerdata/nipar/QuestionaryFormDataContract2022-11-14.csv'), sep=';',
                            stringsAsFactors=FALSE, header=T, encoding = 'UTF-8')
   #Covid-skjema:
@@ -68,7 +69,7 @@ if (antPaaror>0) {
 PaarorData <- NIRPreprosess(RegData = PaarorDataH) #Må først koble på hoveddata for å få ShType++
 }
 RegData <- NIRPreprosess(RegData = RegData)
-#RegData <- RegData[RegData$Overf==1, ]
+RegData <- RegData[!is.na(RegData$Aar), ]
 
 #-----Definere utvalgsinnhold og evt. parametre som er statiske i appen----------
 
@@ -714,7 +715,7 @@ tabPanel(p("Registeradministrasjon", title='Registeradministrasjonens side'),
 
          tabsetPanel(
            tabPanel(
-             h3("Utsendinger"),
+             h4("Utsendinger"),
                     #title = "Utsending av rapporter",
                     sidebarLayout(
                       sidebarPanel(
@@ -727,7 +728,7 @@ tabPanel(p("Registeradministrasjon", title='Registeradministrasjonens side'),
                     )
            ),
            tabPanel(
-             h3("Eksport av krypterte data"),
+             h4("Eksport av krypterte data"),
            sidebarLayout(
              sidebarPanel(
                rapbase::exportUCInput("intensivExport")
@@ -737,11 +738,11 @@ tabPanel(p("Registeradministrasjon", title='Registeradministrasjonens side'),
              )
            )
          ),
-         tabPanel('Nøkkeltall',
+         tabPanel(h4('Nøkkeltall'),
                   sidebarLayout(
                   sidebarPanel(
                     dateRangeInput(inputId = 'datoValgNok', label = 'Tidsperiode',
-                              start = startDato, end = idag,
+                              start = '2018-01-01', end = idag, #startDato
                               separator="t.o.m.", language="nb"),
                     selectInput(inputId = "covidvalgNok", label= velgCovidTxt,
                                            choices = covidValg),
@@ -901,12 +902,12 @@ server <- function(input, output, session) { #
    tabNokkeltallUtvidet <- output$tabNokkeltallUtvidet <- function() {
      RegDataCov <- NIRUtvalgEnh(RegData=RegData, velgDiag = as.numeric(input$covidvalgReg))$RegData
      tab <- t(tabNokkeltallUtvid(RegData=RegDataCov,
-                                 tidsenhet=input$tidsenhetNok,
+                                 #tidsenhet=input$tidsenhetNok,
                                  datoFra = input$datoValgNok[1],
                                  datoTil = input$datoValgNok[2],
                                 sykehus=input$enhetNok)
               )
-     tab <- tabNokkeltallUtvidet(RegData, tidsenhet='Aar')
+     #tab <- intensiv::tabNokkeltallUtvid(RegData=RegData, tidsenhet='Aar')
      kableExtra::kable(tab,
                        full_width=F,
                        digits = c(0,0,0,1,0,1,1,0,0,0,1,1,2,1)

@@ -729,9 +729,10 @@ datoFra <- paste0(aarFra, '-01-01')
 datoTil <- paste0(aarTil, '-12-31')
 RegDataLandet <- read.table(paste0('C:/Registerdata/nipar/MainFormDataContract2022-11-14.csv'), sep=';',
                                              stringsAsFactors=FALSE, header=T, encoding = 'UTF-8')
+RegDataLandet <- NIRPreprosess(RegData=RegDataLandet)
 RegDataVest <- RegDataLandet[RegDataLandet$RHF == 'Helse Vest', ]
-RegDataVest <- NIRPreprosess(RegData=RegDataVest)
-RegData <- NIRUtvalgEnh(RegData=RegDataVest, datoFra=datoFra, datoTil=datoTil)$RegData
+test <- NIRUtvalgEnh(RegData = RegDataLandet, datoFra='2016-01-01', datoTil='2022-11-23')$RegData
+test2 <-  NIRUtvalgEnh(RegData = RegDataLandet, datoFra='2016-01-01', datoTil='2022-11-23')$RegData
 
 
 Data <- RegData %>% dplyr::group_by(HF, ShNavn) %>%
@@ -747,9 +748,13 @@ write.table(Data, file = 'Aktivitet18_21.csv', sep = ';')
 
 ## Nøkkeltall, HF i Helse-Vest RHF
 sykehusnavn <- c('Helse Vest RHF', sort(unique(RegData$HF)))
+Tab <- tabNokkeltallUtvid(RegData = RegData, sykehus=sykehusnavn[4])
+RegData <-  NIRUtvalgEnh(RegData = RegData, datoFra = datoFra, datoTil = datoTil)$RegData
+
+
 
 for (sykehus in sykehusnavn) {
-  Tab <- tabNokkeltallNord(RegData = RegData, sykehus=sykehus)
+  Tab <- tabNokkeltallUtvid(RegData = RegData, sykehus=sykehus)
   shfilnavn <- gsub(" ", "_", sykehus)
   write.table(as.table(Tab), row.names = T, fileEncoding = 'latin1', #'UTF-8',
               file = paste0('p:/Registerinfo og historie/intensiv/intensivstrategi/Nokkeltall_', shfilnavn, '.csv'), sep = ';')

@@ -169,7 +169,7 @@ KobleMedHoved <- function(HovedSkjema, Skjema2, alleHovedskjema=F, alleSkjema2=F
 #' @param datoTil til og med dato
 #' @param reshID resh for aktuell enhet
 #'
-#' @return
+#' @return Tekst med ant. influensaskjema
 #' @export
 #'
 tellInfluensa <- function(datoFra='2020-09-01', datoTil=Sys.Date(), reshID=0){
