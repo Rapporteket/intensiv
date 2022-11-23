@@ -755,6 +755,9 @@ tabPanel(p("Registeradministrasjon", title='Registeradministrasjonens side'),
                                               unique(RegData$HelseenhetKortnavn))),
                  #mainPanel(
                   br(),
+                 h4('Andel opphold med *komplikasjon*, er definert som et opphold hvor det har
+                    oppstått minst én av følgende komplikasjoner:
+                    Alvorlig hypoglykemi, pneumotoraks, luftveisproblem, trakealtube/kanyle, dekubitus'),
                   tableOutput('tabNokkeltallUtvidet'),
                  downloadButton(outputId = 'lastNed_tabNokkel', label='Last ned tabell')
                   ) #)
