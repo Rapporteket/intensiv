@@ -930,6 +930,11 @@ server <- function(input, output, session) { #
      filename = function(){'NokkelTall.csv'
      },
      content = function(file, filename){
+       RegDataCov <- NIRUtvalgEnh(RegData=RegData, velgDiag = as.numeric(input$covidvalgNok))$RegData
+       tab <- t(tabNokkeltallUtvid(RegData=RegDataCov,
+                                   datoFra = input$datoValgNok[1],
+                                   datoTil = input$datoValgNok[2],
+                                   sykehus=input$enhetNok))
        write.csv2(tab, file, row.names = F, na = '')
      })
 
