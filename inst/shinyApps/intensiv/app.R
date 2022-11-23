@@ -907,7 +907,7 @@ server <- function(input, output, session) { #
                                  datoTil = input$datoValgNok[2],
                                 sykehus=input$enhetNok)
               )
-     #tab <- intensiv::tabNokkeltallUtvid(RegData=RegData, tidsenhet='Aar')
+     tab <- intensiv::tabNokkeltallUtvid(RegData=RegData, datoFra = '2017-01-01', tidsenhet='Aar')
      kableExtra::kable(tab,
                        full_width=F,
                        digits = c(0,0,0,1,0,1,1,0,0,0,1,1,2,1)
