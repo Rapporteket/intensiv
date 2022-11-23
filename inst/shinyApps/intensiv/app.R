@@ -741,10 +741,7 @@ tabPanel(p("Registeradministrasjon", title='Registeradministrasjonens side'),
          tabPanel(h4('Nøkkeltall'),
                  # sidebarLayout(
                   #sidebarPanel(
-                 fluidRow(class = "text-center",
-                          column(width = 6,
-                                 column(6, offset = 3,
-                 h2('Nøkkeltall, for valgt HF/RHF'),
+                 h2('Nøkkeltall, for valgt HF/RHF', align='center'),
                  h4('Gjør utvalg'),
                  dateRangeInput(inputId = 'datoValgNok', label = 'Tidsperiode',
                               start = '2018-01-01', end = idag, #startDato
@@ -755,9 +752,7 @@ tabPanel(p("Registeradministrasjon", title='Registeradministrasjonens side'),
                                 choices =   c('Alle',
                                               unique(RegData$RHF),
                                               unique(RegData$HF),
-                                              unique(RegData$HelseenhetKortnavn))
-                    )
-                  ))),
+                                              unique(RegData$HelseenhetKortnavn))),
                  #mainPanel(
                   br(),
                   tableOutput('tabNokkeltallUtvidet'),
