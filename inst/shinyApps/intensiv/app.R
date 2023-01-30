@@ -9,8 +9,6 @@ library(kableExtra)
 library(knitr)
 library(shinyjs)
 
-#https://cran.r-project.org/web/packages/expss/vignettes/tables-with-labels.html
-
 addResourcePath('rap', system.file('www', package='rapbase'))
 
 context <- Sys.getenv("R_RAP_INSTANCE") #Blir tom hvis jobber lokalt
@@ -28,31 +26,37 @@ regTitle <- ifelse(paaServer,
                    'Norsk Intensivregister med FIKTIVE data')
 
 
-#Sys.setlocale("LC_TIME", "nb_NO.UTF-8")
-#ibrary(shinyBS) # Additional Bootstrap Controls
-
 #---------Hente data------------
 if (paaServer) {
   IntData <- NIRRegDataSQL(datoFra = '2011-01-01') #, session = session) #datoFra = datoFra, datoTil = datoTil)
   PaarorData <- NIRpaarorDataSQL()
-  PaarorDataH <- KobleMedHoved(IntData, PaarorData, alleHovedskjema=F, alleSkjema2=F)
-  # qInfluensa <- 'SELECT ShNavn, RHF, PatientInRegistryGuid, FormDate,FormStatus, ICD10_1
-  #                 from InfluensaFormDataContract'
-  # InfluData <- rapbase::loadRegData(registryName= "nir", query=qInfluensa, dbType="mysql")
 
   #Covid-skjema:
   qCovid <- paste0('SELECT HovedskjemaGUID, FormStatus, Diagnosis
                   FROM ReadinessFormDataContract')
   CovidData <- rapbase::loadRegData(registryName= "nir", query=qCovid, dbType="mysql")
 
-  CovidData$HovedskjemaGUID <- toupper(CovidData$HovedskjemaGUID)
-  CovidData$Bekreftet <- 0
-  CovidData$Bekreftet[which(CovidData$Diagnosis %in% 100:103)] <- 1
+} else { #hente data på server
 
-  RegData <- merge(IntData, CovidData[ ,-which(names(CovidData) == 'Diagnosis')], suffixes = c('','Cov'),
-        by.x = 'SkjemaGUID', by.y = 'HovedskjemaGUID', all.x = T, all.y=F)
+  IntData <- read.table(paste0('C:/Registerdata/nipar/MainFormDataContract2022-11-14.csv'), sep=';',
+                                stringsAsFactors=FALSE, header=T, encoding = 'UTF-8')
+  #IntData <- IntData[!is.na(IntData$DateAdmittedIntensive),]
+  PaarorData <- read.table(paste0('C:/Registerdata/nipar/QuestionaryFormDataContract2022-11-14.csv'), sep=';',
+                           stringsAsFactors=FALSE, header=T, encoding = 'UTF-8')
+  #Covid-skjema:
+  CovidData <- read.table(paste0('C:/Registerdata/nipar/ReadinessFormDataContract2022-11-14.csv'), sep=';',
+                          stringsAsFactors=FALSE, header=T, encoding = 'UTF-8')
+}
 
-} #hente data på server
+PaarorDataH <- KobleMedHoved(IntData, PaarorData, alleHovedskjema=F, alleSkjema2=F)
+CovidData$HovedskjemaGUID <- toupper(CovidData$HovedskjemaGUID)
+CovidData$Bekreftet <- 0
+CovidData$Bekreftet[which(CovidData$Diagnosis %in% 100:103)] <- 1
+
+RegData <- merge(IntData, CovidData[ ,-which(names(CovidData) == 'Diagnosis')], suffixes = c('','Cov'),
+                 by.x = 'SkjemaGUID', by.y = 'HovedskjemaGUID', all.x = T, all.y=F)
+
+
 
 if (!exists('PaarorDataH')){
   data('NIRRegDataSyn', package = 'intensiv')
@@ -65,7 +69,7 @@ if (antPaaror>0) {
 PaarorData <- NIRPreprosess(RegData = PaarorDataH) #Må først koble på hoveddata for å få ShType++
 }
 RegData <- NIRPreprosess(RegData = RegData)
-#RegData <- RegData[RegData$Overf==1, ]
+RegData <- RegData[!is.na(RegData$Aar), ]
 
 #-----Definere utvalgsinnhold og evt. parametre som er statiske i appen----------
 
@@ -95,8 +99,6 @@ velgCovidTxt <- 'Velg diagnose (covid-pasienter)'
 
 # Define UI for application that draws figures
 ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
-  #span("Tab1", title="Short description  for the tab") ,
-  #title = regTitle,
   title = div(a(includeHTML(system.file('www/logo.svg', package='rapbase'))),
               regTitle),
   windowTitle = regTitle,
@@ -104,15 +106,11 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
   id = 'hovedark',
 
 
-
-
-  #--------------Startside------------------------------
+#--------------Startside------------------------------
   tabPanel(p("Oversiktsside",
              title= 'Nøkkeltall og samlerapporter'),
            useShinyjs(),
 
-           #fluidRow(
-           #column(width=5,
            h2('Velkommen til Rapporteket-Intensiv!', align='center'),
            br(),
            sidebarPanel(
@@ -717,7 +715,7 @@ tabPanel(p("Registeradministrasjon", title='Registeradministrasjonens side'),
 
          tabsetPanel(
            tabPanel(
-             h3("Utsendinger"),
+             h4("Utsendinger"),
                     #title = "Utsending av rapporter",
                     sidebarLayout(
                       sidebarPanel(
@@ -730,7 +728,7 @@ tabPanel(p("Registeradministrasjon", title='Registeradministrasjonens side'),
                     )
            ),
            tabPanel(
-             h3("Eksport av krypterte data"),
+             h4("Eksport av krypterte data"),
            sidebarLayout(
              sidebarPanel(
                rapbase::exportUCInput("intensivExport")
@@ -739,7 +737,31 @@ tabPanel(p("Registeradministrasjon", title='Registeradministrasjonens side'),
                rapbase::exportGuideUI("intensivExportGuide")
              )
            )
-         )
+         ),
+         tabPanel(h4('Nøkkeltall'),
+                 # sidebarLayout(
+                  #sidebarPanel(
+                 h2('Nøkkeltall, for valgt HF/RHF', align='center'),
+                 h4('Gjør utvalg'),
+                 dateRangeInput(inputId = 'datoValgNok', label = 'Tidsperiode',
+                              start = '2018-01-01', end = idag, #startDato
+                              separator="t.o.m.", language="nb"),
+                    selectInput(inputId = "covidvalgNok", label= velgCovidTxt,
+                                           choices = covidValg),
+                    selectInput(inputId = "enhetNok", label= 'Velg enhet',
+                                choices =   c('Alle',
+                                              unique(RegData$RHF),
+                                              unique(RegData$HF),
+                                              unique(RegData$HelseenhetKortnavn))),
+                 #mainPanel(
+                  br(),
+                 h4('Andel opphold med *komplikasjon*, er definert som et opphold hvor det har
+                    oppstått minst én av følgende komplikasjoner:
+                    Alvorlig hypoglykemi, pneumotoraks, luftveisproblem, trakealtube/kanyle, dekubitus'),
+                  tableOutput('tabNokkeltallUtvidet'),
+                 downloadButton(outputId = 'lastNed_tabNokkel', label='Last ned tabell')
+                  ) #)
+#         ),
          ) #tabset
 ) #tab SC
 
@@ -749,7 +771,7 @@ tabPanel(p("Registeradministrasjon", title='Registeradministrasjonens side'),
 server <- function(input, output, session) { #
 
 #-----------Div serveroppstart------------------
-  rapbase::appLogger(session = session, msg = "Starter intensiv-app")
+  #rapbase::appLogger(session = session, msg = "Starter intensiv-app")
 
   reshID <- ifelse(paaServer, as.numeric(rapbase::getUserReshId(session)), 109773)
   rolle <- reactive({ifelse(paaServer, rapbase::getUserRole(shinySession=session), 'SC')})
@@ -784,18 +806,11 @@ server <- function(input, output, session) { #
     output$appUserName <- renderText(rapbase::getUserFullName(session))
     output$appOrgName <- renderText(paste0('rolle: ', rolle(),
                                            '<br> ReshID: ', reshID,
-                                           '<br> Enhet: ', egetShNavn) )}
+                                           '<br> Enhet: ', egetShNavn) )
 
   # User info in widget
   userInfo <- rapbase::howWeDealWithPersonalData(session)
-  # observeEvent(input$userInfo, {
-  #   shinyalert::shinyalert("Dette vet Rapporteket om deg:", userInfo,
-  #              type = "", imageUrl = "rap/logo.svg",
-  #              closeOnEsc = TRUE, closeOnClickOutside = TRUE,
-  #              html = TRUE, confirmButtonText = rapbase::noOptOutOk())
-  # })
-
-
+  }
       #--------startside--------------
   output$mndRapp.pdf <- downloadHandler(
     filename = function(){ paste0('MndRapp', Sys.time(), '.pdf')},
@@ -870,26 +885,56 @@ server <- function(input, output, session) { #
       kable_styling(full_width = FALSE, position = 'left') #"hover",
   }
 
-   #output$NokkeltallTxt <- renderText({paste0('Nøkkeltall på intensiv, ', egetShNavn)})
    output$tabNokkeltall <- function() {#renderTable({
      RegDataCov <- NIRUtvalgEnh(RegData=RegData, velgDiag = as.numeric(input$covidvalgReg))$RegData
             tab <- t(tabNokkeltall(RegData=RegDataCov, tidsenhet=input$tidsenhetReg,
                                    datoTil=input$sluttDatoReg,
                       enhetsUtvalg=as.numeric(input$enhetsNivaa), reshID=reshID))
             #tab <- tabNokkeltall(RegData, tidsenhet='Mnd', datoTil, enhetsUtvalg=0, reshID=0)
-            kableExtra::kable(tab,
+            t(kableExtra::kable(tab,
                               full_width=F,
                               digits = c(0,0,0,1,0,1,1,0,0,0,1,1,2,1)
                              ) %>%
                   column_spec(column = 1, width_min = '4em', width_max = 10) %>%
-                  #column_spec(column = 1, width = '4em') %>%
                   column_spec(column = 2:(ncol(tab)), width = '4em')  %>%
-                  #column_spec(column = 2:(ncol(tab)), width_min = '7em', width_max = '7em') %>%
                   row_spec(0, bold = T, align = 'c') %>%
-                  kable_styling(full_width = FALSE, position = 'left') #"hover",
+                  kable_styling(full_width = FALSE, position = 'left')) #"hover",
 
 
       }#,rownames=T, digits=0 )
+
+
+
+   tabNokkeltallUtvidet <- output$tabNokkeltallUtvidet <- function() {
+     RegDataCov <- NIRUtvalgEnh(RegData=RegData, velgDiag = as.numeric(input$covidvalgNok))$RegData
+     tab <- t(tabNokkeltallUtvid(RegData=RegDataCov,
+                                 #tidsenhet=input$tidsenhetNok,
+                                 datoFra = input$datoValgNok[1],
+                                 datoTil = input$datoValgNok[2],
+                                sykehus=input$enhetNok)
+              )
+     #tab <- intensiv::tabNokkeltallUtvid(RegData=RegData, datoFra = '2017-01-01', tidsenhet='Aar')
+     kableExtra::kable(tab,
+                       full_width=F,
+                       digits = c(0,0,0,1,0,1,1,0,0,0,1,1,1,1,0,1,0,1,2,1,0)
+     ) %>%
+       column_spec(column = 1, width_min = '4em', width_max = 10) %>%
+       column_spec(column = 2:(ncol(tab)), width = '4em')  %>%
+       row_spec(0, bold = T, align = 'c') %>%
+       kable_styling(full_width = FALSE, position = 'left') #"hover",
+   }
+
+   output$lastNed_tabNokkel <- downloadHandler(
+     filename = function(){'NokkelTall.csv'
+     },
+     content = function(file, filename){
+       RegDataCov <- NIRUtvalgEnh(RegData=RegData, velgDiag = as.numeric(input$covidvalgNok))$RegData
+       tab <- t(tabNokkeltallUtvid(RegData=RegDataCov,
+                                   datoFra = input$datoValgNok[1],
+                                   datoTil = input$datoValgNok[2],
+                                   sykehus=input$enhetNok))
+       write.csv2(tab, file, row.names = F, na = '')
+     })
 
       output$tabAntOpphSh <- renderTable({
         RegDataCov <- NIRUtvalgEnh(RegData=RegData, velgDiag = as.numeric(input$covidvalgReg))$RegData
@@ -1083,7 +1128,7 @@ server <- function(input, output, session) { #
                   }
                   output$lastNed_tabAndelTid <- downloadHandler(
                     filename = function(){
-                      paste0(input$valgtVar, '_andelTid.csv')
+                      paste0(input$valgtVarAndel, '_andelTid.csv')
                     },
                     content = function(file, filename){
                       write.csv2(tabAndelTid, file, row.names = T, na = '')
@@ -1112,7 +1157,7 @@ server <- function(input, output, session) { #
                   }
                   output$lastNed_tabAndelGrVar <- downloadHandler(
                     filename = function(){
-                      paste0(input$valgtVar, '_andelGrVar.csv')
+                      paste0(input$valgtVarAndel, '_andelGrVar.csv')
                     },
                     content = function(file, filename){
                       write.csv2(tabAndelerShus, file, row.names = T, na = '')
@@ -1206,7 +1251,7 @@ server <- function(input, output, session) { #
 
         output$lastNed_tabGjsnGrVar <- downloadHandler(
           filename = function(){
-            paste0(input$valgtVar, '_gjsnGrVar.csv')
+            paste0(input$valgtVarGjsn, '_gjsnGrVar.csv')
           },
           content = function(file, filename){
             write.csv2(tabGjsnGrVar, file, row.names = T, na = '')
@@ -1258,7 +1303,7 @@ server <- function(input, output, session) { #
           }
         output$lastNed_tabGjsnTid <- downloadHandler(
           filename = function(){
-            paste0(input$valgtVar, '_gjsnTid.csv')
+            paste0(input$valgtVarGjsn, '_gjsnTid.csv')
           },
           content = function(file, filename){
             write.csv2(tabGjsnTid, file, row.names = T, na = '')

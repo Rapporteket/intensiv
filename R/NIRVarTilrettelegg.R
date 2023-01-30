@@ -34,24 +34,16 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='an
       grtxt <- ''		#Spesifiseres for hver enkelt variabel
       grtxt2 <- ''	#Spesifiseres evt. for hver enkelt variabel
       grNavn <- ''
-      varTxt <- ''
+      varTxt <- 'hendelser'
       xAkseTxt <- ''	#Benevning
-      yAkseTxt <- ''
-      pktTxt <- '' #(evt. søyletekst)
-      txtEtiketter  <- ''	#legend
-      verdier <- ''	#AggVerdier, gjennomsnitt, ...
-      verdiTxt <- '' 	#pstTxt, ...
-      strIfig <- ''		#cex
       sortAvtagende <- TRUE  #Sortering av resultater
       KImaal <- NA
       KImaaltxt=''
-      varTxt <- 'hendelser'
 
       minald <- 0
       maxald <- 110
       tittel <- 'Mangler tittel'
       variable <- 'Ingen'
-      #deltittel <- ''
       RegData$Variabel <- 0
 
 
@@ -111,7 +103,6 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='an
         #Kun pasienter med invasiv støtte'
         indVentil <-  which(RegData$InvasivVentilation>0) %i%
           which(RegData$InnDato>=as.Date('2015-01-01', tz='UTC'))
-        #indPotBuk <- which(RegData$Bukleie >-1)
         RegData <- RegData[indVentil, ] #'%i%' indPotBuk
         indBukleie <- which(RegData$Bukleie>0)
         if (figurtype == 'andeler') {	#Fordelingsfigur
@@ -152,20 +143,17 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='an
                   RegData <- RegData[ which(RegData$ExtendedHemodynamicMonitoring %in% 1:3), ]
                   RegData$Variabel[which(RegData$ExtendedHemodynamicMonitoring %in% 2:3)] <- 1
                   }
-            #xAkseTxt <- ''
       }
       if (valgtVar=='ExtendedHemodynamicMonitoringPA') { #andelerGrVar
             tittel <- 'Utvidet hemodynamisk monitorering, PA'
             RegData <- RegData[which((RegData$ExtendedHemodynamicMonitoring %in% 2:3)), ]
             RegData$Variabel[which(RegData$ExtendedHemodynamicMonitoring == 3)] <- 1
             grtxt <- c('Ikke svart', 'Nei','Piccokateter o.l', 'Pulmonaliskateter')
-            #xAkseTxt <- ''
       }
       if (valgtVar == 'invasivVent'){ #andelerGrVar/Tid
         tittel <- 'Invasiv ventilering (av alle ventilerte), inkl.overf'
         RegData <- RegData[which(RegData$InnDato>=as.Date('2015-01-01', tz='UTC')), ]
         RegData <- RegData[which(RegData$InvasivVentilation>0 | RegData$NonInvasivVentilation>0),]
-        #sum(RegData$InvasivVentilation>0 | RegData$NonInvasivVentilation>0, na.rm = T)
         RegData$Variabel[which(RegData$InvasivVentilation>0)] <- 1
 }
 
@@ -466,7 +454,7 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='an
             RegData$Variabel<-RegData$respiratortid
             RegData$Variabel2<-as.numeric(RegData$DischargedIntensiveStatus)*RegData$respiratortid
             varTxt <- 'pasienter som døde'
-            tittel <- 'Andel av total respiratortid brukt på dem som dør på intensiv'
+            tittel <- 'Andel av total respiratortid brukt på de som dør på intensiv'
       }
 
       if (valgtVar=='respStotte') { #AndelGrVar, AndelTid
@@ -562,15 +550,13 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='an
 
       if (valgtVar == 'utenforVakttidInn') { #AndelGrVar
             ind <- union(which(RegData$Innleggelsestidspunkt$hour<8), which(RegData$Innleggelsestidspunkt$hour>=17) )
-            #head(RegData$Innleggelsestidspunkt[ind])
             RegData$Variabel[ind] <- 1
             varTxt <- 'utskrevet kl 17-08'
-            tittel <- 'Pasienter innlagt utenfor vakttid (<8, >=17)'
+            tittel <- 'Pasienter innlagt utenfor vakttid'
             sortAvtagende <- FALSE
       }
       if (valgtVar == 'utenforVakttidUt') { #AndelGrVar
             ind <- union(which(RegData$DateDischargedIntensive$hour<8), which(RegData$DateDischargedIntensive$hour>=17) )
-            #head(RegData$Innleggelsestidspunkt[ind])
             RegData$Variabel[ind] <- 1
             varTxt <- 'utskrevet kl 17-08'
             tittel <- 'Pasienter utskrevet utenfor vakttid (<8, >=17)'

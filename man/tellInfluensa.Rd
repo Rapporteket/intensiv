@@ -13,9 +13,6 @@ tellInfluensa(datoFra = "2020-09-01", datoTil = Sys.Date(), reshID = 0)
 
 \item{reshID}{resh for aktuell enhet}
 }
-\value{
-
-}
 \description{
 Telle antall influensaskjema for en gitt periode
 }

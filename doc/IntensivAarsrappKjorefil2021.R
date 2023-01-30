@@ -298,15 +298,6 @@ Nivaa <- c(
 )
 
 RegData1aar$Nivaa <- as.character(Nivaa[as.character(RegData1aar$ReshId)])
-# head(RegData1aar$Nivaa)
-# table(RegData1aar$Nivaa, useNA = 'a')
-# unique(RegData1aar[is.na(RegData1aar$Nivaa), c("ReshId", "ShNavn")])
-# table(RegData1aar[is.na(RegData1aar$Nivaa), c("ReshId", "ShNavn")])
-# table(RegData1aar$ReshId[is.na(RegData1aar$Nivaa)])
-# RegData <- NIRPreprosess(RegData = RegData)
-# ftable(RegData[,c('ShNavn', 'Aar')])
-# sjekk <- unique(RegData[, c("ReshId", "ShNavn")])
-# sjekk[order(as.character(sjekk$ShNavn)),]
 
 tabNokkeltall <- tabNokkeltall(RegData=RegData1aar, datoTil=datoTil) #, tidsenhet='Mnd'
 xtable(tabNokkeltall, digits= 1, align=c('l', rep('r', ncol(tabNokkeltall))), #row.names=F,
@@ -325,23 +316,120 @@ for (nivaa in 1:3) {
 
 
 #--------------------------------------Data til offentlig visning (SKDE, Resultatportalen)-------------------------------------
-
+setwd('~/speil/aarsrapp/intensiv/dataNettsider/')
 library(intensiv)
 library(magrittr)
-NIRData <- NIRPreprosess(RegData = NIRRegDataSQL(datoFra = '2016-01-01', datoTil = '2020-12-31'))
-
-#valgteAar <- 2016:2020
+NIRData <- NIRPreprosess(RegData = NIRRegDataSQL(datoFra = '2016-01-01', datoTil = '2021-12-31'))
 
 DataTilSKDE <- dataTilOffVisning(RegData = NIRData, valgtVar='reinn', #aar=valgteAar,
-                                 ResPort=0, indID = 'intensiv_innlegg_72t', filUt = 'innlegg_72t')
+                                 indID = 'intensiv_innlegg_72t', filUt = 'innlegg_72t')
+#table(DataTilSKDE$orgnr, useNA = 'a')
 
 DataTilSKDE <- dataTilOffVisning(RegData = NIRData, valgtVar='respiratortidInvUoverf', #aar=valgteAar, #'respiratortidInvMoverf'
-                                 ResPort=0, indID = 'intensiv_inv_vent', filUt = 'inv_vent')
+                                 indID = 'intensiv_inv_vent', filUt = 'inv_vent')
 
-tapply(DataTilSKDE$var, INDEX = DataTilSKDE$year, FUN = mean)
-
-
+#tapply(DataTilSKDE$var, INDEX = DataTilSKDE$year, FUN = mean)
 
 
+setwd('~/speil/aarsrapp/intensiv/dataNettsider/')
+
+#----Kvalitetsindikatorer, PANDEMI
+#NB: Får kun data fra 2021. Husk å først laste ned tidligere data fra nettsidene, legge til de nye og så laste opp igjen.
+KvalInd_Pand <- read.table(file = 'ki-isolasjon.csv',fileEncoding = 'utf8', sep = ';', header = TRUE)
+#unique(KvalInd_Pand[, c('UnitId', 'HealthUnitShortName')])
+KvalInd_Pand$orgnr <- as.character(nyIDpand[as.character(KvalInd_Pand$UnitId)]) #nyIDpand SE LENGRE NED
+KvalInd_Pand$var <- ifelse(KvalInd_Pand$teller,1,0)
+KvalInd_Pand$year <- KvalInd_Pand$innlagt_aar
+KvalInd_Pand <- KvalInd_Pand[KvalInd_Pand$year==2021, c('orgnr', 'var', 'year')]
+KvalInd_Pand$ind_id <- 'pandemi_isolasjon'
+KvalInd_Pand$denominator <- 1
+KvalInd_Pand$context <- 'caregiver'
+write.table(KvalInd_Pand, file = 'KvalIndPand.csv', sep = ';', row.names = F)
+#table(KvalInd_Pand$orgnr, useNA = 'a')
 
 
+#----Kvalitetsindikatorer på enhetsnivå
+KvalIndFil <- read.table(file = 'Kvalitetsindikatorer_NIR_2021_v2raa.csv',fileEncoding = 'latin1', sep = ';', header = TRUE) #, row.names = FALSE)
+# nye <- setdiff(unique(as.character(KvalIndFil$resh_id)), names(nyID))
+# KvalIndFil[which(KvalIndFil$resh_id %in% nye), c("resh_id", "namn")]
+
+#Dataomorganisering
+RegData <- KvalIndFil[, c("resh_id", "tverrfagleg_gjennomgang", "rutinenotat", "primarvakt", "data_nir")]
+RegData$primarvakt <- dplyr::recode(RegData$primarvakt, '2' = 1L, '3'= 0L)
+variabler <- c( "tverrfagleg_gjennomgang", "rutinenotat",  "data_nir")
+RegData[ , variabler][RegData[,variabler] == 2] <- 0
+RegData$orgnr <- as.character(nyID[as.character(RegData$resh_id)])
+#table(RegData$orgnr, useNA = 'a')
+
+RegDataUt <- tidyr::pivot_longer(
+  data = RegData[,-1],
+  cols = c("tverrfagleg_gjennomgang", "rutinenotat", "primarvakt", "data_nir"),
+  names_to = 'ind_id'
+  ,values_to = 'var'
+)
+
+RegDataUt$ind_id <- paste0('intensiv_', RegDataUt$ind_id)
+RegDataUt$denominator <- 1
+RegDataUt$year <- 2021
+RegDataUt$context <- 'caregiver'
+write.table(RegDataUt, file = 'KvalIndEnhNivaa.csv', sep = ';', row.names = F)
+
+#Pandemi:
+xx <- unique(KvalInd_Pand[, c('HealthUnitShortName', 'UnitId')])
+yy <- xx[order(xx$HealthUnitShortName),]
+nyIDpand <- c(
+'102090' = '974706490', #Ahus
+'111487' = '974588951', #Aker
+'4211747' = '979873190', #Alta
+'700263' = '974631091', #Arendal
+'4209961' = '974795361', #Bodø
+'4204083' = '974705788', #Bærum
+'108897' = '974116804', #Diakonhjemmet
+'4204082' = '974631326', #Drammen
+'705464' = '974631768', #Elverum
+'700265' = '974595214', #Flekkefjord
+'700928' = '974744570', #Førde
+'705476' = '974632535', #Gjøvik
+'103580' = '874606162', #Hallingdal
+'705465' = '974724960', #Hamar
+'4211748' = '974795833', #Hammerfest
+'100176' = '974316285', #Haraldsplass
+'700617' = '974795639', #Harstad
+'102909' = '974724774', #Haugesund
+'4207827' = '974557746', #Haukeland
+'100085' =  '983974732', #Helse Førde HF
+'4209222' = '974633752', #Kalnes
+'4211750' = '974795930', #Kirkenes
+'700138' = '974575396', #Klinikk fysikalsk medisin og rehabilitering (Stavern)
+'4204085' = '974631385', #Kongsberg
+'700264' = '974733013', #Kristiansand
+'4216807' = '974746948', #Kristiansund
+'102250' = '974754118', #Levanger
+'705467' = '874632562', #Lillehammer
+'4209963' = '974795558', #Lofoten
+'108279' = '974207532', #Lovisenberg
+'103000' = '974745089', #Lærdal
+'4210647' = '974795515', #Mo i Rana
+'4216808' = '974745569', #Molde
+'4210648' = '974795485', #Mosjøen
+'105893' = '974753898', #Namsos
+'700618' = '974795396', #Narvik
+'103001' = '974745364', #Nordfjord
+'705757' = '974707152', #Radiumhospitalet
+'705577' = '874716782', #Rikshospitalet
+'4204084' = '974631407', #Ringerike
+'4210649' = '974795477', #Sandnessjøen
+'102026' = '974633191', #Skien
+'4201313' = '974749025', #St. Olav
+'100320' =  '883974832', #St. Olavs Hospital HF
+'114282' = '974703300', #Stavanger
+'103081' = '974742985', #Stord
+'700720' = '974795787', #Tromsø
+'705469' = '974725215', #Tynset
+'103948' = '974589095', #Tønsberg
+'109870' = '974589095', #Ullevål
+'4209964' = '974795574', #Vesterålen
+'4216810' = '974747545', #Volda
+'102939' = '974743272', #Voss
+'4216811' = '974747138' #Ålesund'
+)

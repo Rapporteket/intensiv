@@ -11,33 +11,38 @@ knitr::opts_chunk$set(echo = TRUE)
 library(intensiv)
 library(kableExtra)
 library(tidyverse)
-datoFra <- '2018-01-01'
-datoTil <- '2020-12-31'
-RegData <- NIRRegDataSQL(datoFra = datoFra, datoTil = datoTil)
-RegData <- RegData[RegData$RHF == 'Helse Nord', ]
-RegData <- NIRPreprosess(RegData)
+aarFra <- 2018
+aarTil <- 2021
+datoFra <- paste0(aarFra, '-01-01')
+datoTil <- paste0(aarTil, '-12-31')
+RegDataLandet <- NIRRegDataSQL(datoFra = datoFra, datoTil = datoTil)
+RegDataLandet <- NIRPreprosess(RegData=RegDataLandet)
+# RegDataLandet20_21 <- NIRUtvalgEnh(RegData=RegDataLandet, aar = c(2020,2021))$RegData
+RegData <- RegDataLandet[RegDataLandet$RHF == 'Helse Nord', ]
+#RegData20_21 <- NIRUtvalgEnh(RegData=RegData, aar = c(2020,2021))$RegData
 
 
-KjonnPst <- paste(sprintf('%.1f', prop.table(table(RegData$erMann))*100), '%')
-N <- dim(RegData)[1]
-under18 <- sprintf('%.1f', 100*sum(RegData$Alder<18)/N)
-over80 <- sprintf('%.1f', 100*sum(RegData$Alder > 80)/N)
-medAlder <- median(RegData$Alder, na.rm = T)
-medLiggetid <- median(RegData$liggetid, na.rm = T)
+#Med Covid:
+OpphCovLandet <- intensivberedskap::NIRPreprosessBeredsk(
+  intensivberedskap::NIRberedskDataSQL(datoTil = datoTil), 
+  aggPers = 0)
+RegDataCovLandet <- merge(RegDataLandet, OpphCovLandet, suffixes = c('','Cov'),
+        by.x = 'SkjemaGUID', by.y = 'HovedskjemaGUID', all.x = T, all.y=F)
+RegDataCov <- RegDataCovLandet[RegDataCovLandet$RHF == 'Helse Nord', ]
+# RegDataCovLandet <- merge(RegDataLandet, OpphCovLandet[ , c('Bekreftet', 'HovedskjemaGUID', 'FormStatus')], suffixes = c('','Cov'),
+#         by.x = 'SkjemaGUID', by.y = 'HovedskjemaGUID', all.x = T, all.y=F)
+# RegDataCov <- merge(RegData, OpphCov[ , c('Bekreftet', 'HovedskjemaGUID', 'FormStatus')], suffixes = c('','Cov'),
+#          by.x = 'SkjemaGUID', by.y = 'HovedskjemaGUID', all.x = T, all.y=F)
 
-respStotte <- sprintf('%.1f', 100*sum(RegData$MechanicalRespirator==1)/N)
+#OpphCovRaa <- intensivberedskap::NIRberedskDataSQL(datoFra = '2020-03-01', datoTil = datoTil, kobleInt=1) 
+#OpphCovLandet <- intensivberedskap::NIRPreprosessBeredsk(OpphCovRaa, aggPers = 0)
 
-iLiveUt <- sprintf('%.1f', 100*sum(RegData$DischargedIntensiveStatus==0)/N) #0: I live, 1: Død intensiv
-iLive30d <- sprintf('%.1f', 100*sum(RegData$Dod30==0)/N)
-
-alderDIV <- summary(RegData$Alder)[1:6]
-names(alderDIV) <- c('Minimum:', '25% av pasientene er under:', 'Median:','Gjennsomsnitt:',
-		'25% av pasientene er over:', 'Maksimum:')
 
 ```
-_Alle tall er hentet fra NiPaR - Norsk Intensiv- og Pandemiregister_ \
 
-## Aktivitet
+*Alle tall er hentet fra NiPaR - Norsk Intensiv- og Pandemiregister*\
+
+# Aktivitet
 
 ```{r Aktivitet, echo=FALSE, results='asis'}
 Data <- RegData %>% dplyr::group_by(HF, ShNavn) %>%
@@ -45,78 +50,55 @@ Data <- RegData %>% dplyr::group_by(HF, ShNavn) %>%
     '2018' = sum(Aar==2018),
     '2019' = sum(Aar==2019),
     '2020' = sum(Aar==2020),
-    #'2021' = sum(Aar==2021),
+    '2021' = sum(Aar==2021),
     #'2022' = sum(Aar==2022)
     )
 #print(as.table(Data))
 kableExtra::kable(Data)
-write.table(Data, file = 'Aktivitet22.csv', sep = ';')
-# Tab <- table(RegData[,c('HF', 'ShNavn', 'Aar')], dnn = 0)
+write.table(Data, file = 'Aktivitet18_21.csv', sep = ';')
+#Test: 
+#Tab <- table(RegDataLandet[,c('HelseenhetKortnavn', 'Aar')], dnn = 0)
 # TabAar <- ftable(Tab, row.vars = c('HF', 'ShNavn'), exclude = 0)
 
-```
-
-## Oversiktstall
-
-For perioden 2018-19 var `r KjonnPst[1]` av intensivpasientane kvinner og `r KjonnPst[2]` menn. Median alder var `r medAlder`. Pasienter over 80 år stod for `r over80` \% av alle intensivopphold, og barn under 18 år stod for `r under18` \% av alle intensivopphold. Median liggjetid var `r medLiggetid` døger. Andel  pasienter som fekk respiratorstøtte var `r respStotte` \%. Ved `r iLiveUt` \% av oppholdene på intensiv ble pasientene utskrivne fra intensiv i live, og `r iLive30d` \% var i live 30 dagar etter innleggelse på intensiv. 
-
-```{r Covid-pasienter, include=FALSE}
-OpphCovRaa <- intensivberedskap::NIRberedskDataSQL(datoTil = '2020-12-31')
-OpphCovRaa <- OpphCovRaa[OpphCovRaa$RHF == 'Helse Nord', ]
-OpphCov <- intensivberedskap::NIRPreprosessBeredsk(OpphCovRaa, aggPers = 0)
-
-RegDataCov <- merge(RegData, OpphCov[ , c('Bekreftet', 'HovedskjemaGUID', 'FormStatus')], suffixes = c('','Cov'),
-        by.x = 'SkjemaGUID', by.y = 'HovedskjemaGUID', all.x = T, all.y=F)
-
-
-
-KjonnPstCov <- paste(sprintf('%.1f', prop.table(table(OpphCov$erMann))*100), '%')
-N <- dim(OpphCov)[1]
-medAlderCov <- round(median(OpphCov$Alder, na.rm = T), 1)
-under18Cov <- sprintf('%.1f', 100*sum(OpphCov$Alder<18)/N)
-over80Cov <- sprintf('%.1f', 100*sum(OpphCov$Alder > 80)/N)
-medLiggetidCov <- round(median(OpphCov$Liggetid, na.rm = T), 1)
-
-respStotte <- sprintf('%.1f', 100*sum(RegData$MechanicalRespirator==1)/N)
-
 
 ```
 
+## Oversiktstall,
 
-__Intensivopphold i 2020 hvor pasienten er innlagt med Covid-19__ \
-For pasienter med covid-19 er det registrert `r dim(OpphCov)[1]` intensivopphold fordelt på `r length(unique(OpphCov$PersonId))` pasienter i 2020. Andel opphold med kvinneleg pasient var `r KjonnPstCov[1]` og del opphold med mannleg pasient var `r KjonnPstCov[2]`. 
-Median alder var `r medAlderCov` år og median liggetid på intensiv var `r medLiggetidCov` døgn. For `r over80Cov` % av oppholdene var alder ved innlegging på intensiv 80 år eller høyere, mens alder var under 18 år i `r under18Cov` \% av oppholdene.\
-\
+Alle tall som var listet opp i tekst her, er flyttet til nøkkeltalltabell.
 
-## SMR - standardisert mortalitetsratio \
+
+
+# SMR - standardisert mortalitetsratio 
+
 SMR er faktisk dødelighet delt på estimert dødelighet ut fra SAPS-II-skår.
 
 SMR er avhengig av korrekt skåring av SAPS-II. NIPaR har de senre år avdekket at skåring av SAPS-II kan inneholde feil. En bør derfor være varsom med tolkninga av SMR, og være oppmerksam på at feil skåring både kan skape og maskere variasjon, både mellom enheter og pasientgrupper.
 
 SAPS-II-skår beregnes ut fra:
 
-- Kroniske sykdommer:	ChronicDiseases
-- Glasgow Coma Scale (GCS):	Glasgow
-- Alder ved innleggelse:	Age
-- Systolisk blodtrykk:	SystolicBloodPressure
-- Pulsfrekvens:	HeartRate
-- Temperatur:	Temperature
-- Respirasjonsstøtte/CPAP/PaO2/FiO2–ratio (kPa) de 24 første timene:	MvOrCpap
-- Urinproduksjon/24 timer:	UrineOutput
-- S-karbamid (mmol/L):	SerumUreaOrBun
-- Leukocytter (x10^9/L):	Leukocytes
-- S-Kalium (mmol/L):	Potassium
-- S-Natrium (mmol/L):	Sodium
-- S-HCO3:	Hco3
-- S-Bilirubin (mikromol/L):	Bilirubin
-- Innleggelsesmåte/hastegrad: InnMaate
+-   Kroniske sykdommer: ChronicDiseases
+-   Glasgow Coma Scale (GCS): Glasgow
+-   Alder ved innleggelse: Age
+-   Systolisk blodtrykk: SystolicBloodPressure
+-   Pulsfrekvens: HeartRate
+-   Temperatur: Temperature
+-   Respirasjonsstøtte/CPAP/PaO2/FiO2--ratio (kPa) de 24 første timene: MvOrCpap
+-   Urinproduksjon/24 timer: UrineOutput
+-   S-karbamid (mmol/L): SerumUreaOrBun
+-   Leukocytter (x10\^9/L): Leukocytes
+-   S-Kalium (mmol/L): Potassium
+-   S-Natrium (mmol/L): Sodium
+-   S-HCO3: Hco3
+-   S-Bilirubin (mikromol/L): Bilirubin
+-   Innleggelsesmåte/hastegrad: InnMaate
 
 
-```{r SMR-beregninger, echo=FALSE, , include=FALSE} 
+```{r Datasjekk, echo=FALSE, include=FALSE}
 # , results = 'asis'
 #Datasjekk:
 query <- paste0('select * from MainFormDataContract
-  WHERE cast(DateAdmittedIntensive as date) BETWEEN \'', datoFra='2018-01-01', '\' AND \'', datoTil='2020-12-31', '\'')
+  WHERE cast(DateAdmittedIntensive as date) BETWEEN \'', datoFra='2018-01-01', '\' AND \'', datoTil=datoTil, '\'')
 RegDataAlleVar <- rapbase::loadRegData(registryName= "nir", query=query, dbType="mysql")
 RegDataAndre <-  NIRPreprosess(RegDataAlleVar[RegDataAlleVar$RHF != 'Helse Nord', ])
 RegDataAlleVar <-  NIRPreprosess(RegDataAlleVar[RegDataAlleVar$RHF == 'Helse Nord', ])
@@ -153,7 +135,6 @@ ManglendeReg <- function(RegDataAlleVar){ #, aar)
     InnMaate = sum(InnMaate==-1)
   ) )}
 
-# for (aar in 2018:2020) {
  TabManglReg <- ManglendeReg(RegDataAlleVar=RegDataAlleVar)
  PstNord <- round(100*(TabManglReg[, variabler]/TabManglReg[, 'AntReg']), 1)
  write.table(cbind(TabManglReg, PstNord), file = paste0('DatakvalSMR_Nord.csv'), sep = ';')
@@ -167,20 +148,15 @@ ManglendeReg <- function(RegDataAlleVar){ #, aar)
    Nord = PstNord,
    Resten = PstAndre)
  )
-# 
-# }
+```
 
-#SMR for alle RHF:
-OpphCovAlle <- intensivberedskap::NIRPreprosessBeredsk(intensivberedskap::NIRberedskDataSQL(datoTil = '2021-12-31'), 
-                                                       aggPers = 0)
-RegDataAlle <- NIRPreprosess(NIRRegDataSQL(datoFra = datoFra, datoTil = '2021-12-31'))
-RegDataCovAlle <- merge(RegDataAlle, OpphCovAlle[ , c('Bekreftet', 'HovedskjemaGUID', 'FormStatus')], suffixes = c('','Cov'),
-        by.x = 'SkjemaGUID', by.y = 'HovedskjemaGUID', all.x = T, all.y=F)
 
-dataUtSMR_RHF <- intensiv::NIRFigGjsnGrVar(RegData=RegDataCovAlle, preprosess = 0,
+```{r SMR-beregninger, echo=FALSE, include=FALSE}
+
+dataUtSMR_RHF <- intensiv::NIRFigGjsnGrVar(RegData=RegDataCovLandet, preprosess = 0,
                              valgtVar='SMR',
                              grVar = 'RHF',
-                             aar = 2020,
+                             aar = 2021,
                              #datoFra='2018-01-01', datoTil='2020-12-31',
                              velgDiag = 2, #Alle unntatt covid-opphold
                              )
@@ -190,9 +166,10 @@ utvalgRHF <- dataUtSMR_RHF$utvalgTxt
 tittelRHF <- dataUtSMR_RHF$tittel
 
 #Helse-Nord RHF:
+
 dataUtSMR <- intensiv::NIRFigGjsnGrVar(RegData=RegDataCov, preprosess = 0,
                              valgtVar='SMR',
-                             datoFra='2018-01-01', datoTil='2020-12-31',
+                             datoFra='2018-01-01', datoTil=datoTil,
                              velgDiag = 2, #Alle unntatt covid-opphold
                              )
 tabSMR <- cbind(Antall = dataUtSMR$Ngr$Hoved,
@@ -201,7 +178,6 @@ tittel <- dataUtSMR$tittel
 utvalg <- dataUtSMR$utvalgTxt
         
 ```
-
 
 
 ```{r Tabell SMR, echo=FALSE, results = 'asis'}
@@ -216,26 +192,68 @@ utvalg <- dataUtSMR$utvalgTxt
   #row_spec(0, bold = T)
         #}
 ```
+\clearpage
 \newpage
 
-## Nøkkeltall
-Basert på oppsummeringstabell, Tab. 3.3, årsrapp 2020. \
-Har lagt til median alder, andel opphold med komplikasjoner og 30-dagers dødelighet 
 
-_Mekanisk ventilasjon_ = på respirator 
 
-Andel opphold med _komplikasjon_, er definert som et opphold hvor det her oppstått minst én av følgende komplikasjoner: 
-Alvorlig hypoglykemi,	pneumotoraks,	luftveisproblem, trakealtube/kanyle, dekubitus 
+# Nøkkeltall
 
-### Nøkkeltall, HF i Helse-Nord RHF
-```{r Nøkkeltall_HF, echo=FALSE, results = 'asis'} 
+Tabellene er basert på oppsummeringstabell, Tab. 3.3, årsrapp 2020.\
+En rekke variabler er lagt til.
+
+*Mekanisk ventilasjon* = på respirator
+
+Andel opphold med *komplikasjon*, er definert som et opphold hvor det her oppstått minst én av følgende komplikasjoner: Alvorlig hypoglykemi, pneumotoraks, luftveisproblem, trakealtube/kanyle, dekubitus
+
+
+
+
+
+
+
+
+## Nøkkeltall, pasienter innlagt pga Covid-19
+
+Alle tall er vel ikke interessante, men det er enklest å ta med alt, så plukker dere ut det dere trenger.
+
+
+
+```{r Nøkkeltall_covid_Nord, echo=FALSE, results = 'asis'}
+
+  Tab <- tabNokkeltallNord(RegData = RegDataCov[which(RegDataCov$Bekreftet==1),]) 
+  write.table(Tab, file = paste0('~/speil/intensivstrategi/NokkeltallNordCov.csv'), sep = ';')
+  TabUt <- kableExtra::kbl(Tab,  digits= 1, #format='html', 
+                           caption = paste('Nøkkeltall intensivopphold, Covid-pasienter i Helse Nord'))
+  print(TabUt)
+  
+```
+
+
+
+```{r Nøkkeltall_covid_landet, echo=FALSE, results = 'asis'}
+  
+    Tab <- tabNokkeltallNord(RegData = RegDataCovLandet[which(RegDataCovLandet$Bekreftet==1),])
+  write.table(Tab, file = paste0('~/speil/intensivstrategi/NokkeltallLandetCov.csv'), sep = ';')
+  TabUt <- kableExtra::kbl(Tab,  digits= 1, 
+                           caption = paste('Nøkkeltall intensivopphold, Covid-pasienter hele landet'))
+  print(TabUt)
+
+```
+
+
+\newpage
+
+
+## Nøkkeltall, HF i Helse-Nord RHF
+
+```{r Nøkkeltall_HF, echo=FALSE, results = 'asis'}
 
 sykehusnavn <- c('Helse Nord RHF', sort(unique(RegData$HF)))
 
 for (sykehus in sykehusnavn) {
-  
  Tab <- tabNokkeltallNord(RegData = RegData, sykehus=sykehus)
-  shfilnavn <- gsub(" ", "_", sykehus) #gsub("y", "NEW", x) 
+  shfilnavn <- gsub(" ", "_", sykehus)  
   write.table(as.table(Tab), row.names = T, fileEncoding = 'UTF-8',
               file = paste0('~/speil/intensivstrategi/Nokkeltall_', shfilnavn, '.csv'), sep = ';')
   TabUt <- kableExtra::kbl(Tab,  digits= 1, #format='html', #align=c('l', rep('r', ncol(tabNokkeltall))), #row.names=F,
@@ -245,16 +263,17 @@ for (sykehus in sykehusnavn) {
 }
 
 ```
+
 \newpage
 
-### Nøkkeltall, intensivavdelinger i Helse-Nord RHF
-```{r Nøkkeltall_intavd, echo=FALSE, results = 'asis'} 
+## Nøkkeltall, intensivavdelinger i Helse-Nord RHF
+
+```{r Nøkkeltall_intavd, echo=FALSE, results = 'asis'}
 
 sykehusnavn <- sort(unique(RegData$HelseenhetKortnavn))
 #Tab <- tabNokkeltallNord(RegData = RegData, sykehus=sykehusnavn[3])
 
 for (sykehus in sykehusnavn) {
-  
   Tab <- tabNokkeltallNord(RegData = RegData, sykehus=sykehus)
   shfilnavn <- gsub(" ", "_", sykehus) #gsub("y", "NEW", x) 
   write.table(Tab, file = paste0('~/speil/intensivstrategi/Nokkeltall, ', shfilnavn, '.csv'), sep = ';')
