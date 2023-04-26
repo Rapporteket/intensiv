@@ -28,7 +28,7 @@ regTitle <- ifelse(paaServer,
 
 #---------Hente data------------
 if (paaServer) {
-  IntData <- NIRRegDataSQL(datoFra = '2011-01-01') #, session = session) #datoFra = datoFra, datoTil = datoTil)
+  IntData <- NIRRegDataSQL(datoFra = '2011-01-01') 
   PaarorData <- NIRpaarorDataSQL()
 
   #Covid-skjema:
@@ -40,7 +40,6 @@ if (paaServer) {
 
   IntData <- read.table(paste0('C:/Registerdata/nipar/MainFormDataContract2022-11-14.csv'), sep=';',
                                 stringsAsFactors=FALSE, header=T, encoding = 'UTF-8')
-  #IntData <- IntData[!is.na(IntData$DateAdmittedIntensive),]
   PaarorData <- read.table(paste0('C:/Registerdata/nipar/QuestionaryFormDataContract2022-11-14.csv'), sep=';',
                            stringsAsFactors=FALSE, header=T, encoding = 'UTF-8')
   #Covid-skjema:
@@ -75,8 +74,6 @@ RegData <- RegData[!is.na(RegData$Aar), ]
 
 
 #Definere utvalgsinnhold
-#sykehusNavn <- sort(c('',unique(RegData$ShNavn)), index.return=T)
-#sykehusValg <- c(0,unique(RegData$ReshId))[sykehusNavn$ix]
 sykehusNavn <- sort(unique(RegData$ShNavn), index.return=T)
 sykehusValg <- unique(RegData$ReshId)[sykehusNavn$ix]
 sykehusValg <- c(0,sykehusValg)
@@ -142,11 +139,10 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
 
            ),
            mainPanel(
+             tags$head(tags$link(rel="shortcut icon", href="rap/favicon.ico")),
              appNavbarUserWidget(user = uiOutput("appUserName"),
                                  organization = uiOutput("appOrgName"),
                                  addUserInfo = TRUE),
-             tags$head(tags$link(rel="shortcut icon", href="rap/favicon.ico")),
-
              tabsetPanel(
                tabPanel('Startside',
              h3(ifelse(paaServer, "","Merk at noen resultater kan se rare ut siden dette er syntetiske data!"), align='center' ),
@@ -810,6 +806,13 @@ server <- function(input, output, session) { #
 
   # User info in widget
   userInfo <- rapbase::howWeDealWithPersonalData(session)
+  observeEvent(input$userInfo, {
+    shinyalert::shinyalert("Dette vet Rapporteket om deg:", userInfo,
+                           type = "", imageUrl = "rap/logo.svg",
+                           closeOnEsc = TRUE, closeOnClickOutside = TRUE,
+                           html = TRUE, confirmButtonText = rapbase::noOptOutOk())
+  })
+  
   }
       #--------startside--------------
   output$mndRapp.pdf <- downloadHandler(
