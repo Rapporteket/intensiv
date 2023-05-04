@@ -223,19 +223,25 @@ tabNokkeltall <- function(RegData, tidsenhet='Mnd', datoTil=Sys.Date(), enhetsUt
 #' @param RegData dataramme
 #' @param sykehus HelseenhetKortnavn eller HF-navn
 #' @export
-tabNokkeltallNord <- function(RegData, tidsenhet = 'Aar', sykehus='Alle') {
+tabNokkeltallUtvid <- function(RegData, tidsenhet = 'Aar', sykehus='Alle',
+                               datoFra='2016-01-01', datoTil=Sys.Date()) {
+
+  RegData <-  NIRUtvalgEnh(RegData = RegData, datoFra = datoFra, datoTil = datoTil)$RegData
+  RegData <- SorterOgNavngiTidsEnhet(RegData, tidsenhet=tidsenhet, tab=1)$RegData
 
   #Komplikasjoner:
   RegData$KompTot <- (rowSums(RegData[ ,c('KompHypoglykemi',	'KompPneumotoraks',	'KompLuftveisproblem',
                                           'KompDekubitus')])>0)
 
-  RegData <- SorterOgNavngiTidsEnhet(RegData, tidsenhet=tidsenhet, tab=1)$RegData
 
-    if (sykehus %in% unique(RegData$HelseenhetKortnavn)) {
-    RegData <- RegData[RegData$HelseenhetKortnavn == sykehus, ]
-    }
+  if (sykehus %in% unique(RegData$RHF)) {
+    RegData <- RegData[RegData$RHF == sykehus, ]
+  }
   if (sykehus %in% unique(RegData$HF)) {
     RegData <- RegData[RegData$HF == sykehus, ]
+  }
+  if (sykehus %in% unique(RegData$HelseenhetKortnavn)) {
+    RegData <- RegData[RegData$HelseenhetKortnavn == sykehus, ]
   }
 
   indLigget <- which(RegData$liggetid>0)
@@ -267,6 +273,14 @@ tabNokkeltallNord <- function(RegData, tidsenhet = 'Aar', sykehus='Alle') {
                              RegData$TidsEnhet[indNEMS], FUN=sum, na.rm=T),
     'Alder (median)' = tapply(RegData$Alder,
                               RegData$TidsEnhet, FUN=median, na.rm=T),
+    'Alder over 80 år(%)' = tapply(RegData$Alder>=80,
+                              RegData$TidsEnhet,
+                              FUN=function(x) sum(x, na.rm=T)/length(x)*100),
+    'Alder under 18 år (%)' = tapply(RegData$Alder<18,
+                                  RegData$TidsEnhet,
+                                  FUN=function(x) sum(x, na.rm=T)/length(x)*100),
+    'Menn (%)' = tapply((RegData$erMann==1), RegData$TidsEnhet,
+                          FUN=function(x) sum(x, na.rm=T)/length(x)*100),
     'Døde (%)' = tapply((RegData$DischargedIntensiveStatus==1), RegData$TidsEnhet,
                         FUN=function(x) sum(x, na.rm=T)/length(x)*100),
     'Død innen 30 dager (%)' = tapply((RegData$Dod30==1), RegData$TidsEnhet,

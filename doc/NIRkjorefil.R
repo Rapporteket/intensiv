@@ -19,16 +19,17 @@ reshID <- 706078
 tellInfluensa(datoFra='2018-09-01', datoTil=Sys.Date(), reshID=reshID)
 
 
+
 library(intensiv)
 library(kableExtra)
 library(tidyverse)
 datoFra <- '2018-01-01'
 datoTil <- '2020-12-31'
 RegData <- NIRRegDataSQL(datoFra = datoFra, datoTil = datoTil)
-RegData <- RegData[RegData$RHF == 'Helse Nord', ]
+RegData <- RegData[RegData$RHF == 'Helse Vest', ]
 RegData <- NIRPreprosess(RegData)
 setwd('~/speil/intensivstrategi/')
-sykehusnavn <- c('Helse Nord RHF', sort(unique(RegData$HF)))
+sykehusnavn <- c('Helse Vest RHF', sort(unique(RegData$HF)))
 
 for (sykehus in sykehusnavn) {
   Tab <- tabNokkeltallNord(RegData = RegData, sykehus=sykehus)
@@ -714,16 +715,56 @@ RegDataNord <- RegDataRaa[RegDataRaa$RHF == 'Helse Nord', ]
 RegData <- NIRPreprosess(RegDataNord)
 table(RegData$ShNavn)
 
-library(dplyr)
-Data <- RegData %>% dplyr::group_by(HF, ShNavn) %>%
-  dplyr::summarise(
-    '2018' = sum(Aar==2018),
-    '2019' = sum(Aar==2019),
-    '2020' = sum(Aar==2020),
-    '2021' = sum(Aar==2021),
-    '2022' = sum(Aar==2022))
-
-write.table(Data, file = 'Aktivitet22.csv', sep = ';')
-
 Tab <- table(RegData[,c('HF', 'ShNavn', 'Aar')], dnn = 0)
 TabAar <- ftable(Tab, row.vars = c('HF', 'ShNavn'), exclude = 0)
+
+
+#---------Intensivstrategi, Helse Vest---------------------------------
+
+library(intensiv)
+library(kableExtra)
+library(tidyverse)
+aarFra <- 2019
+aarTil <- 2021
+datoFra <- paste0(aarFra, '-01-01')
+datoTil <- paste0(aarTil, '-12-31')
+RegDataLandet <- read.table(paste0('C:/Registerdata/nipar/MainFormDataContract2022-11-14.csv'), sep=';',
+                                             stringsAsFactors=FALSE, header=T, encoding = 'UTF-8')
+RegDataLandet <- NIRPreprosess(RegData=RegDataLandet)
+RegDataVest <- RegDataLandet[RegDataLandet$RHF == 'Helse Vest', ]
+test <- NIRUtvalgEnh(RegData = RegDataLandet, datoFra='2016-01-01', datoTil='2022-11-23')$RegData
+test2 <-  NIRUtvalgEnh(RegData = RegDataLandet, datoFra='2016-01-01', datoTil='2022-11-23')$RegData
+
+
+Data <- RegData %>% dplyr::group_by(HF, ShNavn) %>%
+  dplyr::summarise(.groups = 'rowwise',
+                   '2019' = sum(Aar==2019),
+                   '2020' = sum(Aar==2020),
+                   '2021' = sum(Aar==2021),
+                   #'2022' = sum(Aar==2022)
+  )
+kableExtra::kable(Data)
+write.table(Data, file = 'Aktivitet18_21.csv', sep = ';')
+
+
+## Nøkkeltall, HF i Helse-Vest RHF
+sykehusnavn <- c('Helse Vest RHF', sort(unique(RegData$HF)))
+Tab <- tabNokkeltallUtvid(RegData = RegData, sykehus=sykehusnavn[4])
+RegData <-  NIRUtvalgEnh(RegData = RegData, datoFra = datoFra, datoTil = datoTil)$RegData
+
+
+
+for (sykehus in sykehusnavn) {
+  Tab <- tabNokkeltallUtvid(RegData = RegData, sykehus=sykehus)
+  shfilnavn <- gsub(" ", "_", sykehus)
+  write.table(as.table(Tab), row.names = T, fileEncoding = 'latin1', #'UTF-8',
+              file = paste0('p:/Registerinfo og historie/intensiv/intensivstrategi/Nokkeltall_', shfilnavn, '.csv'), sep = ';')
+  TabUt <- kableExtra::kbl(Tab,  digits= 1, #format='html', #align=c('l', rep('r', ncol(tabNokkeltall))), #row.names=F,
+                           label = paste0('tab:Nokkeltall', sykehus),
+                           caption = paste('Nøkkeltall for intensivopphold i ', sykehus, ':'))
+  print(TabUt)
+}
+
+
+
+
