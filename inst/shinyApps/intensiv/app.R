@@ -9,8 +9,6 @@ library(kableExtra)
 library(knitr)
 library(shinyjs)
 
-#https://cran.r-project.org/web/packages/expss/vignettes/tables-with-labels.html
-
 addResourcePath('rap', system.file('www', package='rapbase'))
 
 context <- Sys.getenv("R_RAP_INSTANCE") #Blir tom hvis jobber lokalt
@@ -27,9 +25,6 @@ regTitle <- ifelse(paaServer,
                    'NORSK INTENSIVREGISTER',
                    'Norsk Intensivregister med FIKTIVE data')
 
-
-#Sys.setlocale("LC_TIME", "nb_NO.UTF-8")
-#ibrary(shinyBS) # Additional Bootstrap Controls
 
 #---------Hente data------------
 if (paaServer) {
@@ -95,8 +90,6 @@ velgCovidTxt <- 'Velg diagnose (covid-pasienter)'
 
 # Define UI for application that draws figures
 ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
-  #span("Tab1", title="Short description  for the tab") ,
-  #title = regTitle,
   title = div(a(includeHTML(system.file('www/logo.svg', package='rapbase'))),
               regTitle),
   windowTitle = regTitle,
@@ -104,15 +97,11 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
   id = 'hovedark',
 
 
-
-
   #--------------Startside------------------------------
   tabPanel(p("Oversiktsside",
              title= 'Nøkkeltall og samlerapporter'),
            useShinyjs(),
 
-           #fluidRow(
-           #column(width=5,
            h2('Velkommen til Rapporteket-Intensiv!', align='center'),
            br(),
            sidebarPanel(
@@ -310,7 +299,8 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                            'Nyreerstattende beh., varighet' = 'nyreBehTid',
                            'Potensielle donorer, årsak ikke påvist opph. sirkulasjon' = 'CerebralCirculationAbolishedReasonForNo',
                            'Primærårsak' = 'PrimaryReasonAdmitted',
-                           'Registreringsforsinkelse' = 'regForsinkelse',
+                           'Registreringsforsinkelse, innleggelse' = 'regForsinkelseInn',
+                           'Registreringsforsinkelse, ferdigstillelse' = 'regForsinkelse',
                            'Respiratortid' = 'respiratortid',
                            'Respiratortid, ikke-invasiv' = 'respiratortidNonInv',
                            'Respiratortid, invasiv m/overf.' = 'respiratortidInvMoverf',
@@ -358,8 +348,8 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
              tabsetPanel(
                tabPanel(
                  'Figur',
-                 plotOutput('fordelinger', height = 'auto')),
-               downloadButton('LastNedFigFord', label='Velg format og last ned figur'),
+                 plotOutput('fordelinger', height = 'auto'),
+                 downloadButton('LastNedFigFord', label='Velg format og last ned figur')),
                tabPanel(
                  'Tabell',
                  uiOutput("tittelFord"),
@@ -402,7 +392,8 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                            'Nyreerstattende behandling' = 'nyreBeh',
                            'Organdonorer, av døde' = 'OrganDonationCompletedStatus',
                            'Organdonorer, av alle med opphevet intrakran. sirk.' = 'OrganDonationCompletedCirc',
-                           'Registreringsforsinkelse' = 'regForsinkelse',
+                           'Registreringsforsinkelse, innleggelse' = 'regForsinkelseInn',
+                           'Registreringsforsinkelse, ferdigstillelse' = 'regForsinkelse',
                            'Reinnleggelse' = 'reinn',
                            'Respiratorstøtte' = 'respStotte',
                            'Respiratortid, døde' = 'respiratortidDod',
@@ -411,7 +402,8 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                            'Utvidet hemodyn. overvåkning' = 'ExtendedHemodynamicMonitoring',
                            'Trakeostomi' = 'trakeostomi',
                            'Trakeostomi, åpen' = 'trakAapen'
-                           )
+                           ),
+               selected = 'regForsinkelseInn',
              ),
              dateRangeInput(inputId = 'datovalgAndel', start = startDato, end = idag,
                             label = "Tidsperiode", separator="t.o.m.", language="nb"),
@@ -944,7 +936,7 @@ server <- function(input, output, session) { #
 
       output$LastNedFigFord <- downloadHandler(
         filename = function(){
-          paste0('FigurFord_', Sys.time(), '.', input$bildeformatFord)
+          paste0('FigurFord_', input$valgtVar, Sys.Date(), '.', input$bildeformatFord)
         },
         content = function(file){
           NIRFigAndeler(RegData=RegData, preprosess = 0, valgtVar=input$valgtVar,
@@ -953,11 +945,9 @@ server <- function(input, output, session) { #
                         datoFra=input$datovalg[1], datoTil=input$datovalg[2],
                         minald=as.numeric(input$alder[1]), maxald=as.numeric(input$alder[2]),
                         erMann=as.numeric(input$erMann), velgDiag = as.numeric(input$covidvalg),
-                        session = session,
-                             outfile = file)
+                        outfile = file)
         }
       )
-
 
       observe({
             UtDataFord <- NIRFigAndeler(RegData=RegData, preprosess = 0, valgtVar=input$valgtVar,
@@ -1082,7 +1072,7 @@ server <- function(input, output, session) { #
                   }
                   output$lastNed_tabAndelTid <- downloadHandler(
                     filename = function(){
-                      paste0(input$valgtVar, '_andelTid.csv')
+                      paste0(input$valgtVarAndel, '_andelTid.csv')
                     },
                     content = function(file, filename){
                       write.csv2(tabAndelTid, file, row.names = T, na = '')
@@ -1111,7 +1101,7 @@ server <- function(input, output, session) { #
                   }
                   output$lastNed_tabAndelGrVar <- downloadHandler(
                     filename = function(){
-                      paste0(input$valgtVar, '_andelGrVar.csv')
+                      paste0(input$valgtVarAndel, '_andelGrVar.csv')
                     },
                     content = function(file, filename){
                       write.csv2(tabAndelerShus, file, row.names = T, na = '')
@@ -1205,7 +1195,7 @@ server <- function(input, output, session) { #
 
         output$lastNed_tabGjsnGrVar <- downloadHandler(
           filename = function(){
-            paste0(input$valgtVar, '_gjsnGrVar.csv')
+            paste0(input$valgtVarGjsn, '_gjsnGrVar.csv')
           },
           content = function(file, filename){
             write.csv2(tabGjsnGrVar, file, row.names = T, na = '')
@@ -1257,7 +1247,7 @@ server <- function(input, output, session) { #
           }
         output$lastNed_tabGjsnTid <- downloadHandler(
           filename = function(){
-            paste0(input$valgtVar, '_gjsnTid.csv')
+            paste0(input$valgtVarGjsn, '_gjsnTid.csv')
           },
           content = function(file, filename){
             write.csv2(tabGjsnTid, file, row.names = T, na = '')

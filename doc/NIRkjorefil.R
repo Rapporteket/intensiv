@@ -1,5 +1,9 @@
 #Til analysebok:
 #Liggetid og respiratortid for pasienter som ikke er overført mellom sykehus.
+#4.april ble årsrapportdata-fil lagt ut på Rapporteket/intensiv. Den ble fjernet med en commit ca en halvtime etterpå, men lå i historien
+#til ca 19:30 på kvelden, hvor den også ble fjernet fra historien
+#Det har til dags dato (6.april 2022) ikke vært gjort noen "fork" av repositoriet.
+#Alle 6 kloninger som ble gjort 4.april, ble gjort av meg, under bruker olonkin og lenaringstado.
 
 #Alle off.farger:
 
@@ -373,8 +377,10 @@ valgtVar <- 'reinn'	#'alder_u18', 'alder_over80', 'dod30d', 'dodeIntensiv', 'lig
 outfile <- '' #paste0(valgtVar, '.png')
 
 AndelerTid <- NIRFigAndelTid(RegData=RegData, preprosess = 0, reshID = 706078, tidsenhet = 'Mnd', enhetsUtvalg = 1)
+AndelerTid$xAkseTxt
 
 tabAndelTid <- lagTabavFig(UtDataFraFig = AndelerTid)
+
 
 NIRFigAndelTid(RegData=RegData, valgtVar=valgtVar, datoFra=datoFra, datoTil=datoTil, tidsenhet = tidsenhet,
 		minald=minald, maxald=maxald, erMann=erMann,InnMaate=InnMaate, dodInt=dodInt,
