@@ -397,6 +397,7 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                            'Nyreerstattende behandling' = 'nyreBeh',
                            'Organdonorer, av døde' = 'OrganDonationCompletedStatus',
                            'Organdonorer, av alle med opphevet intrakran. sirk.' = 'OrganDonationCompletedCirc',
+                           'Potensielle donorer' = 'potDonor',
                            'Registreringsforsinkelse, innleggelse' = 'regForsinkelseInn',
                            'Registreringsforsinkelse, ferdigstillelse' = 'regForsinkelse',
                            'Reinnleggelse' = 'reinn',

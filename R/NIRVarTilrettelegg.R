@@ -397,9 +397,7 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='an
       }
       if (valgtVar == 'respiratortidInvMoverf') { #Andeler #GjsnGrVar #AndelGrVar, GjsnTid
             #InvasivVentilation (pusterør/åpnet lufterør)
-            #ind <- intersect(
              ind <- which(RegData$InvasivVentilation>0) %i%  which(RegData$InnDato>=as.Date('2015-01-01', tz='UTC'))
-                    #     ,which(RegData$Overf ==1))
             RegData <- RegData[ind,]
             if (figurtype %in% c('andeler', 'gjsnGrVar', 'gjsnTid')) {
                   RegData$Variabel  <- as.numeric(RegData$InvasivVentilation)
@@ -410,16 +408,16 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='an
             if (figurtype == 'andeler') {tittel <- 'Invasiv ventilasjon (inkl. overførte pasienter)'}
             if (figurtype %in% c('andelTid', 'andelGrVar')) {
                   RegData$Variabel[which(RegData$InvasivVentilation < 2.5)] <- 1
-                  #KImaal <- 50 #Over 50% med respiratortid <2,5døgn
-                  #KImaaltxt <- '>50'
+                  KImaal <- 50 #Over 50% med respiratortid <2,5døgn
+                  KImaaltxt <- '>50'
                   tittel <- 'Invasiv ventilasjon < 2,5 døgn (inkl. overførte pasienter)'}     #AndelGrVar, AndelTid
             gr <- c(0, 1, 2, 3, 4, 5, 6, 7, 14, 1000) #c(0, exp(seq(0,log(30),length.out = 6)), 500),1)
             RegData$VariabelGr <- cut(RegData$InvasivVentilation, breaks=gr, include.lowest=TRUE, right=FALSE)
             grtxt <- c('(0-1)','[1-2)','[2-3)','[3-4)','[4-5)','[5-6)','[6-7)','[7-14)','14+')
             xAkseTxt <- 'ventilasjonstid (døgn)'
             varTxt <- 'med inv.ventilasjon < 2,5 døgn'
-            #KImaal <- 2.5 #Median respiratortid <2,5døgn
-            sortAvtagende <- TRUE      #Rekkefølge
+            KImaal <- 2.5 #Median respiratortid <2,5døgn
+            sortAvtagende <- FALSE      #Rekkefølge
       }
       if (valgtVar == 'respiratortidInvUoverf') { #Andeler #GjsnGrVar #AndelGrVar, GjsnTid
             #InvasivVentilation (pusterør/åpnet lufterør), uten overførte pasienter
@@ -575,7 +573,8 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='an
       }
 # 2.	Andel donorar av pasientar med oppheva intrakraniell sirkulasjon (per eining – samanlikna mot same ShType)
       if (valgtVar == 'OrganDonationCompletedCirc') { #andelGrVar, andelTid
-            #Ble det påvist opphevet intrakraniell sirkulasjon?	CerebralCirculationAbolished
+        RegData <- RegData[which(RegData$DischargedIntensiveStatus == 1),] #Døde
+        #Ble det påvist opphevet intrakraniell sirkulasjon?	CerebralCirculationAbolished
             #1:ja, 2:nei, -1: tom
             #OrganDonationCompletedStatus - Ble organdonasjon gjennomført?
             #1:ja, 2:nei, -1: tom
@@ -636,6 +635,18 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='an
             xAkseTxt <- 'Andel (%)'
             cexgr <- 0.9
       }
+      if (valgtVar == 'potDonor') { #andelGrVar, andelTid
+        #Ble det påvist opphevet intrakraniell sirkulasjon?	CerebralCirculationAbolished
+        #1:ja, 2:nei, -1: tom
+       # RegData <- RegData[which(RegData$CerebralCirculationAbolished == 1),] #Opphevet sirkulasjon
+        RegData <- RegData[which(RegData$DischargedIntensiveStatus == 1),] #Døde
+        retn <- 'H'
+        tittel <- 'Potensielle donorer'
+        varTxt <- 'donorer'
+        RegData$Variabel[which(RegData$BrainDamage == 1)] <- 1
+        cexgr <- 0.9
+      }
+      
 
 
       #---------------KATEGORISKE

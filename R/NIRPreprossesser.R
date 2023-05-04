@@ -125,20 +125,20 @@ NIRPreprosess <- function(RegData=RegData, skjema=1)	#, reshID=reshID)
 
       }
 
-      if (skjema==3){
-        RegData$Influensa <- factor(NA, levels = c('Mistenkt', 'Bekreftet'))
-        #--Identifiser J10 og J11 i ICD10-variablene.
-        indBekreftet <- which(RegData$ICD10_1 %in% c(9:12))
-        indMistenkt <- which(RegData$ICD10_1 %in% c(-1,13:16))
-        RegData$Influensa[indMistenkt] <- 'Mistenkt'
-        RegData$Influensa[indBekreftet] <- 'Bekreftet'
-
-        InfluData$Sesong <- 'diverse'
-        InfluData$Sesong[(InfluData$InnDato >= '2018-10-01') & (InfluData$InnDato <= '2019-05-19')] <- '2018-19'
-        InfluData$Sesong[(InfluData$InnDato >= '2019-09-30') & (InfluData$InnDato <= '2020-05-17')] <- '2019-20'
-        InfluData$Sesong[(InfluData$InnDato >= '2020-09-28') & (InfluData$InnDato <= '2021-05-23')] <- '2020-21'
-        InfluData$Sesong <- factor(InfluData$Sesong,levels = c('2018-19', '2019-20', '2020-21', 'diverse'))
-      }
+      # if (skjema==3){ #- dette gjøres i pakken intensivberedskap SJEKK og slett
+      #   RegData$Influensa <- factor(NA, levels = c('Mistenkt', 'Bekreftet'))
+      #   #--Identifiser J10 og J11 i ICD10-variablene.
+      #   indBekreftet <- which(RegData$ICD10_1 %in% c(9:12))
+      #   indMistenkt <- which(RegData$ICD10_1 %in% c(-1,13:16))
+      #   RegData$Influensa[indMistenkt] <- 'Mistenkt'
+      #   RegData$Influensa[indBekreftet] <- 'Bekreftet'
+      # 
+      #   InfluData$Sesong <- 'diverse'
+      #   InfluData$Sesong[(InfluData$InnDato >= '2018-10-01') & (InfluData$InnDato <= '2019-05-19')] <- '2018-19'
+      #   InfluData$Sesong[(InfluData$InnDato >= '2019-09-30') & (InfluData$InnDato <= '2020-05-17')] <- '2019-20'
+      #   InfluData$Sesong[(InfluData$InnDato >= '2020-09-28') & (InfluData$InnDato <= '2021-05-23')] <- '2020-21'
+      #   InfluData$Sesong <- factor(InfluData$Sesong,levels = c('2018-19', '2019-20', '2020-21', 'diverse'))
+      # }
 
 
 
