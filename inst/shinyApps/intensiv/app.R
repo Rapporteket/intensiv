@@ -201,32 +201,29 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
 
   #-----Registreringsoversikter------------
   tabPanel(p("Aktivitet", title='Tabeller med registreringsoversikter, samt nøkkeltall'),
-           #evt: span("Tab1",title="Short description  for the tab" )
            sidebarPanel(width=3,
                         br(),
                         br(),
                         br(),
-
                         conditionalPanel(condition = "input.ark == 'Nøkkeltall' || input.ark == 'Ant. opphold'
                                              || input.ark == 'Pasientar per år og avd.' ",
-                                         # || input.ark == 'Inklusjonskriterier' ",
                                          dateInput(inputId = 'sluttDatoReg', label = 'Velg sluttdato', language="nb",
                                                    value = Sys.Date(), max = Sys.Date()),
                                          selectInput(inputId = "covidvalgReg", label= velgCovidTxt,
                                                      choices = covidValg)
-                        ),
+                        ), 
                        conditionalPanel(
                           condition = "input.ark == 'Nøkkeltall' || input.ark == 'Ant. opphold'",
                           selectInput(inputId = "tidsenhetReg", label="Velg tidsenhet",
                                       choices = rev(c('År'= 'Aar', 'Måned'='Mnd')))),
                         conditionalPanel(
-                          condition = "input.ark == 'Nøkkeltall'", #  || input.ark == 'Inklusjonskriterier' ",
-                          selectInput(inputId = 'enhetsNivaa', label='Enhetsnivå',
+                          condition = "input.ark == 'Nøkkeltall'", 
+                          selectInput(inputId = 'enhetsNivaaReg', label='Enhetsnivå',
                                       choices = c("Hele landet"=0, "Egen enhet"=2,
                                                   "Egen sykehustype"=4, "Egen region"=7)
                           )),
                         conditionalPanel(
-                          condition = "input.ark == 'Overføringer'", #|| input.ark == 'Dobbeltregistreringer'",
+                          condition = "input.ark == 'Overføringer'", 
                           dateRangeInput(inputId = 'datovalgReg', start = startDato, end = idag,
                                          label = "Tidsperiode", separator="t.o.m.", language="nb"),
                           selectInput(inputId = 'velgReshOverf', label='Velg eget Sykehus',
@@ -247,9 +244,8 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                                   tableOutput("tabAntPasSh5Aar")
                          ),
                          tabPanel('Nøkkeltall',
-                                  h2('Nøkkeltall på intensiv'),
-                                  #h2(uiOutput('NokkeltallTxt'), align='center'),
-                                  br(),
+                                  #h2('Nøkkeltall på intensiv'),
+                                  h2(uiOutput('NokkeltallTxtReg'), align='center'),
                                   tableOutput('tabNokkeltall')
                          ),
                          tabPanel('Overføringer',
@@ -267,8 +263,8 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                                   h2("Mulige dobbeltregistreringer"),
                                   tableOutput("tabDblReg")
                          )
-             )
-           )
+             ) #tabset
+           ) #main
   ), #tab
 
 
@@ -871,14 +867,15 @@ server <- function(input, output, session) { #
 
 
 #------------ Aktivitet (/Tabeller) --------
- # observe({
+ 
   output$NokkeltallUtvalgTxt <- renderText({
     paste0('Nøkkeltall på intensiv, ',
-              as.character(names(egenLokalitet[which(egenLokalitet==as.numeric(input$enhetsNivaaStart))])))
+                as.character(names(egenLokalitet[which(egenLokalitet==as.numeric(input$enhetsNivaaStart))])))
   })
    output$tabNokkeltallStart <- function() {
     tab <- t(tabNokkeltall(RegData=RegData, tidsenhet='Mnd',
-                           enhetsUtvalg=as.numeric(input$enhetsNivaaStart), reshID=reshID))
+                           enhetsUtvalg=as.numeric(input$enhetsNivaaStart), 
+                           reshID=reshID))
     kableExtra::kable(tab,
                       full_width=F,
                       digits = c(0,0,0,1,0,1,1,0,0,0,1,1,2,1)
@@ -886,30 +883,35 @@ server <- function(input, output, session) { #
       column_spec(column = 1, width_min = '4em', width_max = 10) %>%
       column_spec(column = 2:(ncol(tab)), width = '4em')  %>%
       row_spec(0, bold = T, align = 'c') %>%
-      kable_styling(full_width = FALSE, position = 'left') #"hover",
+      kable_styling(full_width = FALSE, position = 'left') 
   }
 
-   output$tabNokkeltall <- function() {#renderTable({
+  # observe({
+   output$NokkeltallTxtReg <- renderText({
+     paste0('Nøkkeltall på intensiv, ',
+            as.character(names(egenLokalitet[which(egenLokalitet==as.numeric(input$enhetsNivaaReg))])))
+   })
+   
+   output$tabNokkeltall <- function() {
      RegDataCov <- NIRUtvalgEnh(RegData=RegData, velgDiag = as.numeric(input$covidvalgReg))$RegData
-            tab <- t(tabNokkeltall(RegData=RegDataCov, tidsenhet=input$tidsenhetReg,
-                                   datoTil=input$sluttDatoReg,
-                      enhetsUtvalg=as.numeric(input$enhetsNivaa), reshID=reshID))
-            #tab <- tabNokkeltall(RegData, tidsenhet='Mnd', datoTil, enhetsUtvalg=0, reshID=0)
-            t(kableExtra::kable(tab,
-                              full_width=F,
-                              digits = c(0,0,0,1,0,1,1,0,0,0,1,1,2,1)
-                             ) %>%
+     tab <- t(tabNokkeltall(RegData=RegDataCov, 
+                                     tidsenhet=input$tidsenhetReg,
+                                     datoTil=input$sluttDatoReg,
+                                     enhetsUtvalg=as.numeric(input$enhetsNivaaReg), 
+                                     reshID=reshID))
+       kableExtra::kable(tab,
+                         full_width=F,
+                         digits = c(0,0,0,1,0,1,1,0,0,0,1,1,2,1)
+                         ) %>%
                   column_spec(column = 1, width_min = '4em', width_max = 10) %>%
                   column_spec(column = 2:(ncol(tab)), width = '4em')  %>%
                   row_spec(0, bold = T, align = 'c') %>%
-                  kable_styling(full_width = FALSE, position = 'left')) #"hover",
-
-
-      }#,rownames=T, digits=0 )
+                  kable_styling(full_width = FALSE, position = 'left')
+      } # ,rownames=T, digits=0 )
 
 
 
-   tabNokkeltallUtvidet <- output$tabNokkeltallUtvidet <- function() {
+   output$tabNokkeltallUtvidet <- function() {
      RegDataCov <- NIRUtvalgEnh(RegData=RegData, velgDiag = as.numeric(input$covidvalgNok))$RegData
      tab <- t(tabNokkeltallUtvid(RegData=RegDataCov,
                                  #tidsenhet=input$tidsenhetNok,
@@ -917,7 +919,6 @@ server <- function(input, output, session) { #
                                  datoTil = input$datoValgNok[2],
                                 sykehus=input$enhetNok)
               )
-     #tab <- intensiv::tabNokkeltallUtvid(RegData=RegData, datoFra = '2017-01-01', tidsenhet='Aar')
      kableExtra::kable(tab,
                        full_width=F,
                        digits = c(0,0,0,1,0,1,1,0,0,0,1,1,1,1,0,1,0,1,2,1,0)

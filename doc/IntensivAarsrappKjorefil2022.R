@@ -158,13 +158,14 @@ tabBeleggN <- rbind(
             'Ferdigstilte intensivopphald' = tapply(RegData1aar$PasientID, RegData1aar$ShType, FUN=length),
             'Registrerte pasientar' = tapply(RegData1aar$PasientID, RegData1aar$ShType,
                                              FUN=function(x) length(unique(x))),
-            'Tal intensivdøger' = round(as.numeric(tapply(RegData1aar$liggetid, RegData1aar$ShType, sum, na.rm=T)),0)
+            'Tal intensivdøger' = round(as.numeric(tapply(RegData1aar$liggetid, RegData1aar$ShType, sum, na.rm=T)),0),
+            'Gjennomsnittleg liggjetid' = round(tapply(RegData1aar$liggetid, RegData1aar$ShType, mean, na.rm=T),1)
       )
-tabBeleggNtot <- cbind(tabBeleggN, rowSums(tabBeleggN))
+tabBeleggNtot <- cbind(tabBeleggN, c(rowSums(tabBeleggN)[1:3], round(mean(RegData1aar$liggetid, na.rm=T),1)))
 colnames(tabBeleggNtot) <- c('lokal-/sentral', 'region', 'alle')
 
 xtable(tabBeleggNtot, digits=0, align=c('l', rep('r', ncol(tabBeleggNtot))),
-       caption='Antal opphald og liggedøger i 2021.', label='tab:RegEget')
+       caption= paste0('Antal opphald og liggedøger i ',aarsrappAar, '.'), label='tab:RegEget')
 
 
 
