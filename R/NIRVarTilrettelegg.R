@@ -19,13 +19,8 @@
 #'
 
 NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='andeler'){
-      #, datoFra='2011-01-01', datoTil='3000-12-31',
-      #		minald=0, maxald=110, erMann='',InnMaate='', dodInt='',outfile='',
-      #		preprosess=1, hentData=0, reshID, enhetsUtvalg=1)
-
 
       "%i%" <- intersect
-
 
       #----------- Figurparametre ------------------------------
       cexgr <- 1	#Kan endres for enkeltvariable
@@ -241,15 +236,15 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='an
             tittel <- 'Andel av total liggetid brukt på dem som dør på intensiv'
       }
 
-      if (valgtVar=='Nas24') { #Fordeling, GjsnGrVar
-            tittel <- 'Nas per døgn'   #GjsnGrVar henter tittel fra NIRGjsnVar
+      if (valgtVar=='NAS24') { #Fordeling, GjsnGrVar
+            tittel <- 'NAS per døgn'   #GjsnGrVar henter tittel fra NIRGjsnVar
             RegData$Variabel <- RegData$Nas/RegData$liggetid
             indMed <- which(RegData$Variabel <= 177) %i% which( (RegData$liggetid > 8/24) & (RegData$Nas>0))
             RegData <- RegData[indMed, ]
             gr <- c(seq(0, 160, 20),500)
             RegData$VariabelGr <- cut(RegData$Variabel, breaks=gr, include.lowest=TRUE, right=FALSE)
             grtxt <- c('(0-20)','[20-40)','[40-60)','[60-80)','[80-100)','[100-120)','[120-140)','[140-160)',  '160+')
-            xAkseTxt <- 'Nas-score/døgn'
+            xAkseTxt <- 'NAS-score/døgn'
       }
       if (valgtVar=='NEMS') { #GjsnGrVar
             #Inkluderer: opphald lenger enn 24 timar og det faktisk er skåra NEMS-poeng.
