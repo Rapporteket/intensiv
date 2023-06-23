@@ -11,7 +11,6 @@ RegData <- NIRPreprosess(NIRRegDataSQL(datoFra=datoFra, datoTil=datoTil))
 RegData1aar <- NIRPreprosess(NIRRegDataSQL(datoFra=datoFra1aar, datoTil=datoTil))
 #Fjernes for årsrapp 2022: Telemark 100132 - ingen registreringer
 
-table(RegData$ReshID)
 ## DATA HENTET 24.april 2023
 #SkjemaGUID 6A5D7672-A706-426C-9900-D760AC9EA61B manglerresh/enhetstilhørighet
 
@@ -31,11 +30,15 @@ variabler <- c('OrganDonationCompletedReasonForNoStatus',
                'frailtyIndex', 'inklKrit','liggetid','InnMaate',
               'NEMS24', 'Nas24', 'regForsinkelse', 'respiratortidNonInv',
               'SAPSII', 'nyreBeh', 'nyreBehTid','spesTiltak')
+
 for (valgtVar in variabler) {
    outfile <- paste0(valgtVar, '_Ford.pdf')
    NIRFigAndeler(RegData=RegData1aar, preprosess = 0, valgtVar=valgtVar,
                  outfile=outfile)
 }
+
+NIRFigAndeler(RegData=RegData1aar, preprosess = 0, valgtVar='CerebralCirculationAbolishedReasonForNo',
+              outfile='CerebralCirculationAbolishedReasonForNo_Ford.pdf')
 
 #Lagt til mai -23
 variabler <- 'komplikasjoner' #c('frailtyIndex', )
@@ -47,8 +50,8 @@ for (grType in 2:3) {
   }
 }
 
-  NIRFigAndeler(RegData=RegData1aar, preprosess = 0, valgtVar='spesTiltak', grType = 3,
-              outfile='spesTiltak_ford.pdf')
+  # NIRFigAndeler(RegData=RegData1aar, preprosess = 0, valgtVar='spesTiltak', grType = 3,
+  #             outfile='spesTiltak_ford.pdf')
 
 #------ AndelTid-ingen ---------------------------------------------
 
@@ -81,6 +84,10 @@ for (grType in 2:3) {
       }
 }
 
+NIRFigAndelerGrVar(RegData=RegData1aar, preprosess = 0, valgtVar='OrganDonationCompletedCirc', 
+                     Ngrense=10, outfile='OrganDonationCompletedCircPrSh.pdf')
+
+
 # #Organdonorer av døde: OrganDonationCompletedStatus
 # #Organdonorer, av alle med opphevet intrakran. sirk.': 'OrganDonationCompletedCirc',
 
@@ -99,13 +106,19 @@ for (grType in 2:3) {
 
 NIRFigGjsnGrVar(RegData=RegData1aar, preprosess = 0, valgtVar='Nas24', valgtMaal='Med')
 
+#KvalInd:
+NIRFigGjsnGrVar(RegData=RegData1aar, preprosess = 0, valgtVar='SMR'
+                ,outfile='SMR_PrSh.pdf')
 
+#KvalInd:
 #årsrapp 22: Endret fra 'respiratortidInvUoverf'. SJEKK AT MÅLNIVÅ MED
 NIRFigGjsnGrVar(RegData=RegData1aar, preprosess = 0, valgtVar='respiratortidInvMoverf', valgtMaal='Med',
                 outfile='respiratortidInvMoverf_MedPrSh.pdf') 
 
-NIRFigGjsnGrVar(RegData=RegData1aar, preprosess = 0, valgtVar='SMR'
-                 ,outfile='SMR_PrSh.pdf')
+#14.juni 2023: Ønsker nå uten overføringer
+NIRFigGjsnGrVar(RegData=RegData1aar, preprosess = 0, valgtVar='respiratortidInvUoverf', valgtMaal='Med',
+                outfile='respiratortidInvUoverf_MedPrSh.pdf')
+
 
 
 
@@ -147,6 +160,35 @@ NIRFigGjsnGrVar(RegData=RegData1aar, preprosess = 0, valgtVar='respiratortidNonI
 #    NIRFigAndeler(RegData=PaarorDataH, valgtVar=valgtVar, datoFra=datoFra1aar, datoTil=datoTil,
 #                        outfile=outfile, preprosess = 0)
 # }
+
+#-------------------------------Tall 2022--------------------------------
+# For alle intensivpasientar i 2022
+# Gjennomsnitt og median alder med KI
+# GjSn: 62,5 KI: 62,2-62,8
+# Median: 68,4 KI:68,1-68,7
+# 
+# Del over 80 år: 16,9%
+# under 18 år:5,5%
+# 
+# Gjennomsnitt invasiv respiratortid med KI:
+#   UTEN overførte: 0,9 KI 0,8-1,0
+#   
+# Del nyreerstattande behandling (totalt): 
+#   Andel av opphold: 5,5%
+# Del døde ved utskriving frå intensiv: 10,5%
+# Del døde etter 30 dagar: 21,3%
+# 
+# 
+# For pandemipasientar på intensiv i 2022 (beredskap)
+# (Hentet fra Rapporteket-Intensiv og filtrert på Covid-pasienter)
+# Del kvinner og menn: 735/1160
+# Median alder med KI: 66,5 KI: 65,5-67,5
+# Del døde ved utskriving frå intensiv: 18,9%
+# Del døde etter 30 dagar: 31,6%
+
+
+  
+
 
 #-------------------------------Tabeller--------------------------------
 #Belegg
@@ -264,8 +306,9 @@ Nivaa <- c(
 RegData1aar$Nivaa <- as.character(Nivaa[as.character(RegData1aar$ReshId)])
 
 tabNokkeltall <- tabNokkeltall(RegData=RegData1aar, datoTil=datoTil) #, tidsenhet='Mnd'
-xtable(tabNokkeltall, digits= 1, align=c('l', rep('r', ncol(tabNokkeltall))), #row.names=F,
-       caption = 'Samla tal på intensivopphald og aktivitet i NIR')
+xtable::xtable(tabNokkeltall, digits= 1, align=c('l', rep('r', ncol(tabNokkeltall))), #row.names=F,
+               label = 'tab:nokkel',
+               caption = paste0('Samla tal på intensivopphald og aktivitet i NIR, ', aarsrappAar))
 
 
 for (nivaa in 1:3) {
@@ -295,7 +338,7 @@ DataTilSKDE <- dataTilOffVisning(RegData = NIRData, valgtVar='respiratortidInvUo
 #tapply(DataTilSKDE$var, INDEX = DataTilSKDE$year, FUN = mean)
 
 
-setwd('~/speil/aarsrapp/intensiv/dataNettsider/')
+setwd('c:/Registerinfo/NETTsider/')
 
 #----Kvalitetsindikatorer, PANDEMI
 #NB: Får kun data fra 2021. Husk å først laste ned tidligere data fra nettsidene, legge til de nye og så laste opp igjen.
@@ -313,13 +356,13 @@ write.table(KvalInd_Pand, file = 'KvalIndPand.csv', sep = ';', row.names = F)
 
 
 #----Kvalitetsindikatorer på enhetsnivå
-KvalIndFil <- read.table(file = 'Kvalitetsindikatorer_NIR_2021_v2raa.csv',fileEncoding = 'latin1', sep = ';', header = TRUE) #, row.names = FALSE)
-# nye <- setdiff(unique(as.character(KvalIndFil$resh_id)), names(nyID))
-# KvalIndFil[which(KvalIndFil$resh_id %in% nye), c("resh_id", "namn")]
+KvalIndFil <- read.table(file = 'KvalindNIR_2022_manuell.csv',fileEncoding = 'UTF-8', sep = ';', header = TRUE) #, row.names = FALSE)
+nye <- setdiff(unique(as.character(KvalIndFil$resh_id)), names(nyID))
+KvalIndFil[which(KvalIndFil$resh_id %in% nye), c("resh_id", "namn")]
 
 #Dataomorganisering
 RegData <- KvalIndFil[, c("resh_id", "tverrfagleg_gjennomgang", "rutinenotat", "primarvakt", "data_nir")]
-RegData$primarvakt <- dplyr::recode(RegData$primarvakt, '2' = 1L, '3'= 0L)
+#RegData$primarvakt <- dplyr::recode(RegData$primarvakt, '2' = 1L, '3'= 0L)
 variabler <- c( "tverrfagleg_gjennomgang", "rutinenotat",  "data_nir")
 RegData[ , variabler][RegData[,variabler] == 2] <- 0
 RegData$orgnr <- as.character(nyID[as.character(RegData$resh_id)])
@@ -339,6 +382,10 @@ RegDataUt$context <- 'caregiver'
 write.table(RegDataUt, file = 'KvalIndEnhNivaa.csv', sep = ';', row.names = F)
 
 #Pandemi:
+#Nevner er TRUE for alle ferdigstilte pandemiskjema hvor "ArsakInnleggelse" = 1
+#Teller er alle ferdigstilte pandemiskjema hvor Nevner er TRUE og "Isolert" = 1.
+#Indikatoren er på oppholdsnivå og ikke pasientnivå.  
+
 xx <- unique(KvalInd_Pand[, c('HealthUnitShortName', 'UnitId')])
 yy <- xx[order(xx$HealthUnitShortName),]
 nyIDpand <- c(

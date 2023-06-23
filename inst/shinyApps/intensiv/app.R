@@ -418,7 +418,7 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
              br(),
              p(em('Følgende utvalg gjelder bare figuren som viser utvikling over tid')),
              selectInput(inputId = 'enhetsUtvalgAndelTid', label='Egen enhet og/eller landet',
-                         choices = c("Egen mot resten av landet"=1, "Hele landet"=0, "Egen enhet"=2)),
+                         choices = enhetsUtvalg), #c("Egen mot resten av landet"=1, "Hele landet"=0, "Egen enhet"=2)),
              selectInput(inputId = "tidsenhetAndelTid", label="Velg tidsenhet",
                          choices = rev(c('År'= 'Aar', 'Halvår' = 'Halvaar',
                                          'Kvartal'='Kvartal', 'Måned'='Mnd'))),
@@ -502,7 +502,7 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
              br(),
              p(em('Følgende utvalg gjelder bare figuren som viser utvikling over tid')),
              selectInput(inputId = 'enhetsUtvalgGjsn', label='Egen enhet og/eller landet',
-                         choices = c("Egen mot resten av landet"=1, "Hele landet"=0, "Egen enhet"=2)
+                         choices = enhetsUtvalg #c("Egen mot resten av landet"=1, "Hele landet"=0, "Egen enhet"=2)
              ),
              selectInput(inputId = "tidsenhetGjsn", label="Velg tidsenhet",
                          choices = rev(c('År'= 'Aar', 'Halvår' = 'Halvaar',
