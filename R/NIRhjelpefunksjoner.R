@@ -230,7 +230,7 @@ abonnement <- function(rnwFil, brukernavn='tullebukk', reshID=0,
                                 datoFra=Sys.Date()-180, datoTil=Sys.Date()) {
 
   Rpakke <- ifelse(rnwFil==as.character('NIRinfluensa.Rnw'), 'intensivberedskap', 'intensiv')
-  #raplog::subLogger(author = brukernavn, registryName = 'Norsk Intensivregister',
+  #rapbase::subLogger(author = brukernavn, registryName = 'Norsk Intensivregister',
   #                  reshId = reshID,
   #                  msg = paste0("1 starter Abonnement:", rnwFil ))
   filbase <- substr(rnwFil, 1, nchar(rnwFil)-4)
@@ -240,13 +240,13 @@ abonnement <- function(rnwFil, brukernavn='tullebukk', reshID=0,
   setwd(tempdir())
   dir <- getwd()
   file.copy(src, tmpFile, overwrite = TRUE)
-  #raplog::subLogger(author = brukernavn, registryName = 'Norsk Intensivregister',
+  #rapbase::subLogger(author = brukernavn, registryName = 'Norsk Intensivregister',
   #                  reshId = reshID,
   #                  msg = paste0("2 Klar til å strikke", tmpFile))
   knitr::knit2pdf(input=tmpFile)
   utfil <- paste0(dir, '/', substr(tmpFile, 1, nchar(tmpFile)-3), 'pdf')
 
-  #raplog::subLogger(author = brukernavn, registryName = 'Norsk Intensivregister',
+  #rapbase::subLogger(author = brukernavn, registryName = 'Norsk Intensivregister',
   #                  reshId = reshID,
   #                  msg = paste("3 Leverer: ", utfil))
   return(utfil)
@@ -273,12 +273,16 @@ dataTilOffVisning <- function(RegData = RegData, valgtVar, #datoFra='2016-01-01'
     RegDataUt <- dplyr::rename(RegDataUt,
                                year = Aar,
                                var = Variabel)
-
+                  
+                          
+                     
+                 
     #Legge på orgID ("Sykehusviser")
     #ReshId	orgnr	RapporteketNavn	SKDEnavn
   nyID <- c('102090'='974706490', #AHUS - Intensiv
   '4215368' = '974706490', #AHUS - Kongsvinger
   '4205696'='974706490', #AHUS - Postop
+  '100089'='974706490', #Akershus universitetssykehus HF
   '111487'='974588951', #Aker
   '104450'='974631091', #Arendal
   '4210053'='974795361', #Bodø
@@ -297,9 +301,11 @@ dataTilOffVisning <- function(RegData = RegData, valgtVar, #datoFra='2016-01-01'
   '109363'='974557746', #Haukel. Brannsk, Feil resh
   '112044'='974557746', #Haukel. KSK Int.
   '105048'='974557746', #Haukel. MIO
+  '107930'='974557746', #Haukel. MOE  
   '106271'='974557746', #Haukel. Postop
   '107717'='974557746', #Haukel. ROE
   '106285'='974557746', #Haukel. TIO
+  '100082'='983974724', #Helse Bergen HF  NB: HF-resh
   '4209889'='974633752', #KalnesØstf.
   '101830'='974795930', #Kirkenes
   '4208715'='974631385', #Kongsberg
@@ -319,6 +325,7 @@ dataTilOffVisning <- function(RegData = RegData, valgtVar, #datoFra='2016-01-01'
   '705577'='874716782', #RH Gen Int 1
   '706929'='874716782', #RH Gen Int 2
   '700419'='874716782', #RH samlet
+  '705699'='874716782', #RH Thorax 1 
   '103539'='974631407', #Ringerike
   '103149'='974795477', #Sandnessjøen
   '102026'='974633191', #Skien
@@ -328,11 +335,14 @@ dataTilOffVisning <- function(RegData = RegData, valgtVar, #datoFra='2016-01-01'
   '105790' = '974749025', #St. Olavs hospital - Nevrointensiv
   '114282'='974703300', #Stavanger
   '701785'='974703300', #Stavanger univ.sjukehus - Postop. 1G
+  '4207985'='974742985', #Stord 
+  '100132'='983975267', #Sykehuset Telemark HF NB: HF-resh
   '700720'='974795787', #Tromsø Intensivmedisinsk
   '700619'='974795787', #Tromsø Kir. int.
   '601302'='974795787', #Tromsø Med int
   '700620'='974795787', #Tromsø Postop
   '103948'='974633574', #Tønsberg
+  '105101'='974633574', #Tønsberg Med. Over.
   '109870'='974589095', #Ullevål Akuttmed Int
   '111449'='974589095', #Ullevål Barneint
   '109773'='974589095', #Ullevål Gen int

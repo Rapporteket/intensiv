@@ -111,11 +111,7 @@ NIRFigGjsnGrVar(RegData=RegData1aar, preprosess = 0, valgtVar='SMR'
                 ,outfile='SMR_PrSh.pdf')
 
 #KvalInd:
-#årsrapp 22: Endret fra 'respiratortidInvUoverf'. SJEKK AT MÅLNIVÅ MED
-NIRFigGjsnGrVar(RegData=RegData1aar, preprosess = 0, valgtVar='respiratortidInvMoverf', valgtMaal='Med',
-                outfile='respiratortidInvMoverf_MedPrSh.pdf') 
-
-#14.juni 2023: Ønsker nå uten overføringer
+#årsrapp 22: Etter litt fram og tilbake endte vi på 'respiratortidInvUoverf'. 
 NIRFigGjsnGrVar(RegData=RegData1aar, preprosess = 0, valgtVar='respiratortidInvUoverf', valgtMaal='Med',
                 outfile='respiratortidInvUoverf_MedPrSh.pdf')
 
@@ -323,46 +319,36 @@ for (nivaa in 1:3) {
 
 
 #--------------------------------------Data til offentlig visning (SKDE, Resultatportalen)-------------------------------------
-setwd('~/speil/aarsrapp/intensiv/dataNettsider/')
+setwd('~/Aarsrappresultater/NETTsider/')
 library(intensiv)
 library(magrittr)
-NIRData <- NIRPreprosess(RegData = NIRRegDataSQL(datoFra = '2016-01-01', datoTil = '2021-12-31'))
+NIRData <- NIRPreprosess(RegData = NIRRegDataSQL(datoFra = '2016-01-01'))
+NIRData <- NIRData[-which(NIRData$ShNavn ==''), ]
 
-DataTilSKDE <- dataTilOffVisning(RegData = NIRData, valgtVar='reinn', #aar=valgteAar,
+#nyResh <- setdiff(unique(NIRData$ReshId), names(nyID))
+#unique(NIRData[which(NIRData$ReshId %in% nyResh),c("ShNavn", "ReshId")])
+
+ind1 <- dataTilOffVisning(RegData = NIRData, valgtVar='reinn', 
                                  indID = 'intensiv_innlegg_72t', filUt = 'innlegg_72t')
-#table(DataTilSKDE$orgnr, useNA = 'a')
 
-DataTilSKDE <- dataTilOffVisning(RegData = NIRData, valgtVar='respiratortidInvUoverf', #aar=valgteAar, #'respiratortidInvMoverf'
+ind2 <- dataTilOffVisning(RegData = NIRData, valgtVar='respiratortidInvUoverf', # respiratortidInvMoverf
                                  indID = 'intensiv_inv_vent', filUt = 'inv_vent')
 
+NIRindFraReg <- rbind(ind1, ind2)
+
+write.table(NIRindFraReg, file = 'NIRindFraReg.csv', sep = ';', row.names = F)
 #tapply(DataTilSKDE$var, INDEX = DataTilSKDE$year, FUN = mean)
 
-
-setwd('c:/Registerinfo/NETTsider/')
-
-#----Kvalitetsindikatorer, PANDEMI
-#NB: Får kun data fra 2021. Husk å først laste ned tidligere data fra nettsidene, legge til de nye og så laste opp igjen.
-KvalInd_Pand <- read.table(file = 'ki-isolasjon.csv',fileEncoding = 'utf8', sep = ';', header = TRUE)
-#unique(KvalInd_Pand[, c('UnitId', 'HealthUnitShortName')])
-KvalInd_Pand$orgnr <- as.character(nyIDpand[as.character(KvalInd_Pand$UnitId)]) #nyIDpand SE LENGRE NED
-KvalInd_Pand$var <- ifelse(KvalInd_Pand$teller,1,0)
-KvalInd_Pand$year <- KvalInd_Pand$innlagt_aar
-KvalInd_Pand <- KvalInd_Pand[KvalInd_Pand$year==2021, c('orgnr', 'var', 'year')]
-KvalInd_Pand$ind_id <- 'pandemi_isolasjon'
-KvalInd_Pand$denominator <- 1
-KvalInd_Pand$context <- 'caregiver'
-write.table(KvalInd_Pand, file = 'KvalIndPand.csv', sep = ';', row.names = F)
-#table(KvalInd_Pand$orgnr, useNA = 'a')
 
 
 #----Kvalitetsindikatorer på enhetsnivå
 KvalIndFil <- read.table(file = 'KvalindNIR_2022_manuell.csv',fileEncoding = 'UTF-8', sep = ';', header = TRUE) #, row.names = FALSE)
-nye <- setdiff(unique(as.character(KvalIndFil$resh_id)), names(nyID))
-KvalIndFil[which(KvalIndFil$resh_id %in% nye), c("resh_id", "namn")]
+#nye <- setdiff(unique(as.character(KvalIndFil$resh_id)), names(nyID))
+#KvalIndFil[which(KvalIndFil$resh_id %in% nye), c("resh_id", "namn")]
 
 #Dataomorganisering
 RegData <- KvalIndFil[, c("resh_id", "tverrfagleg_gjennomgang", "rutinenotat", "primarvakt", "data_nir")]
-#RegData$primarvakt <- dplyr::recode(RegData$primarvakt, '2' = 1L, '3'= 0L)
+RegData$primarvakt <- dplyr::recode(RegData$primarvakt, '2' = 1L, '3'= 0L) #1-ja, 2-nei Innh: -1,1,2,3
 variabler <- c( "tverrfagleg_gjennomgang", "rutinenotat",  "data_nir")
 RegData[ , variabler][RegData[,variabler] == 2] <- 0
 RegData$orgnr <- as.character(nyID[as.character(RegData$resh_id)])
@@ -374,73 +360,12 @@ RegDataUt <- tidyr::pivot_longer(
   names_to = 'ind_id'
   ,values_to = 'var'
 )
+#table(RegDataUt$var, useNA = 'a')
+RegDataUt <- RegDataUt[-which(RegDataUt$var == -1), ]
 
 RegDataUt$ind_id <- paste0('intensiv_', RegDataUt$ind_id)
 RegDataUt$denominator <- 1
-RegDataUt$year <- 2021
+RegDataUt$year <- 2022
 RegDataUt$context <- 'caregiver'
 write.table(RegDataUt, file = 'KvalIndEnhNivaa.csv', sep = ';', row.names = F)
 
-#Pandemi:
-#Nevner er TRUE for alle ferdigstilte pandemiskjema hvor "ArsakInnleggelse" = 1
-#Teller er alle ferdigstilte pandemiskjema hvor Nevner er TRUE og "Isolert" = 1.
-#Indikatoren er på oppholdsnivå og ikke pasientnivå.  
-
-xx <- unique(KvalInd_Pand[, c('HealthUnitShortName', 'UnitId')])
-yy <- xx[order(xx$HealthUnitShortName),]
-nyIDpand <- c(
-'102090' = '974706490', #Ahus
-'111487' = '974588951', #Aker
-'4211747' = '979873190', #Alta
-'700263' = '974631091', #Arendal
-'4209961' = '974795361', #Bodø
-'4204083' = '974705788', #Bærum
-'108897' = '974116804', #Diakonhjemmet
-'4204082' = '974631326', #Drammen
-'705464' = '974631768', #Elverum
-'700265' = '974595214', #Flekkefjord
-'700928' = '974744570', #Førde
-'705476' = '974632535', #Gjøvik
-'103580' = '874606162', #Hallingdal
-'705465' = '974724960', #Hamar
-'4211748' = '974795833', #Hammerfest
-'100176' = '974316285', #Haraldsplass
-'700617' = '974795639', #Harstad
-'102909' = '974724774', #Haugesund
-'4207827' = '974557746', #Haukeland
-'100085' =  '983974732', #Helse Førde HF
-'4209222' = '974633752', #Kalnes
-'4211750' = '974795930', #Kirkenes
-'700138' = '974575396', #Klinikk fysikalsk medisin og rehabilitering (Stavern)
-'4204085' = '974631385', #Kongsberg
-'700264' = '974733013', #Kristiansand
-'4216807' = '974746948', #Kristiansund
-'102250' = '974754118', #Levanger
-'705467' = '874632562', #Lillehammer
-'4209963' = '974795558', #Lofoten
-'108279' = '974207532', #Lovisenberg
-'103000' = '974745089', #Lærdal
-'4210647' = '974795515', #Mo i Rana
-'4216808' = '974745569', #Molde
-'4210648' = '974795485', #Mosjøen
-'105893' = '974753898', #Namsos
-'700618' = '974795396', #Narvik
-'103001' = '974745364', #Nordfjord
-'705757' = '974707152', #Radiumhospitalet
-'705577' = '874716782', #Rikshospitalet
-'4204084' = '974631407', #Ringerike
-'4210649' = '974795477', #Sandnessjøen
-'102026' = '974633191', #Skien
-'4201313' = '974749025', #St. Olav
-'100320' =  '883974832', #St. Olavs Hospital HF
-'114282' = '974703300', #Stavanger
-'103081' = '974742985', #Stord
-'700720' = '974795787', #Tromsø
-'705469' = '974725215', #Tynset
-'103948' = '974589095', #Tønsberg
-'109870' = '974589095', #Ullevål
-'4209964' = '974795574', #Vesterålen
-'4216810' = '974747545', #Volda
-'102939' = '974743272', #Voss
-'4216811' = '974747138' #Ålesund'
-)
