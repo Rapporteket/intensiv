@@ -342,12 +342,13 @@ write.table(NIRindFraReg, file = 'NIRindFraReg.csv', sep = ';', row.names = F)
 
 
 #----Kvalitetsindikatorer på enhetsnivå
-KvalIndFil <- read.table(file = 'KvalindNIR_2022_manuell.csv',fileEncoding = 'UTF-8', sep = ';', header = TRUE) #, row.names = FALSE)
+KvalIndFil <- read.table(file = 'NIRKvalIndEnhnivaaNY_alleAar.csv',fileEncoding = 'UTF-8', sep = ';', header = TRUE) #, row.names = FALSE)
 #nye <- setdiff(unique(as.character(KvalIndFil$resh_id)), names(nyID))
 #KvalIndFil[which(KvalIndFil$resh_id %in% nye), c("resh_id", "namn")]
 
 #Dataomorganisering
-RegData <- KvalIndFil[, c("resh_id", "tverrfagleg_gjennomgang", "rutinenotat", "primarvakt", "data_nir")]
+names(KvalIndFil)[which(names(KvalIndFil)=='aar')] <- 'year'
+RegData <- KvalIndFil[, c("resh_id", "tverrfagleg_gjennomgang", "rutinenotat", "primarvakt", "data_nir", "year")]
 RegData$primarvakt <- dplyr::recode(RegData$primarvakt, '2' = 1L, '3'= 0L) #1-ja, 2-nei Innh: -1,1,2,3
 variabler <- c( "tverrfagleg_gjennomgang", "rutinenotat",  "data_nir")
 RegData[ , variabler][RegData[,variabler] == 2] <- 0
@@ -355,7 +356,7 @@ RegData$orgnr <- as.character(nyID[as.character(RegData$resh_id)])
 #table(RegData$orgnr, useNA = 'a')
 
 RegDataUt <- tidyr::pivot_longer(
-  data = RegData[,-1],
+  data = RegData[,-which(names(RegData)=='resh_id')],
   cols = c("tverrfagleg_gjennomgang", "rutinenotat", "primarvakt", "data_nir"),
   names_to = 'ind_id'
   ,values_to = 'var'
@@ -365,7 +366,7 @@ RegDataUt <- RegDataUt[-which(RegDataUt$var == -1), ]
 
 RegDataUt$ind_id <- paste0('intensiv_', RegDataUt$ind_id)
 RegDataUt$denominator <- 1
-RegDataUt$year <- 2022
+#RegDataUt$year <- 2022
 RegDataUt$context <- 'caregiver'
 write.table(RegDataUt, file = 'KvalIndEnhNivaa.csv', sep = ';', row.names = F)
 
