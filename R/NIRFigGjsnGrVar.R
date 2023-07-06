@@ -260,7 +260,8 @@ NIRFigGjsnGrVar <- function(RegData, valgtVar, preprosess=1, hentData=0, valgtMa
       }
       lines(x=rep(AggTot, 2), y=c(minpos, maxpos), col=farger[1], lwd=2.5) #y=c(0, max(pos)+0.55),
       #Linje for kvalitetsindikatormål:
-      if ((valgtMaal=='Med' & valgtVar == 'respiratortidInvMoverf') | valgtVar == 'SMR') { #(!is.na(KImaal)) {
+      if ((valgtMaal=='Med' & valgtVar %in% c('respiratortidInvMoverf', 'respiratortidInvUoverf')) | 
+          valgtVar == 'SMR') { 
         lines(x=rep(KImaal, 2), y=c(minpos, maxpos), col= '#FF7260', lwd=2.5) #y=c(0, max(pos)+0.55),
         text(x=KImaal, y=maxpos+0.6, paste0('Mål:', KImaaltxt), cex=0.9*cexgr, col= '#FF7260',adj=c(0.5,0))
       }
