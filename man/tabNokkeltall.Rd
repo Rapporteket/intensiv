@@ -9,7 +9,8 @@ tabNokkeltall(
   tidsenhet = "Mnd",
   datoTil = Sys.Date(),
   enhetsUtvalg = 0,
-  reshID = 0
+  reshID = 0,
+  respirator = 4
 )
 }
 \arguments{
@@ -17,11 +18,13 @@ tabNokkeltall(
 
 \item{tidsenhet}{velg: Aar, Halvaar, Kvartal, Mnd (standard)}
 
-\item{datoTil}{sluttdato}
+\item{datoTil}{sluttdato, format: 'yyyy-mm-dd'}
 
 \item{enhetsUtvalg}{enhetsutvalg}
 
 \item{reshID}{enhetens resh-id}
+
+\item{respirator}{respirator/invasiv/non-inv 0:ikke respirator, 1:respirator, 2:invasiv, 3:non-invasiv}
 }
 \description{
 Nøkkeltall (antall opph., pasienter,  intensivdøgn, samt div oversiktstall)
