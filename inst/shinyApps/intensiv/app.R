@@ -2,12 +2,12 @@
 #NB: For å få lagt ut app'en på Shinyapps, må Github-pakkene (intensiv og rapbase) være installert fra Github.
 #devtools::install_github(ref = 'rel', repo = 'Rapporteket/intensiv')
 library(intensiv)
-library(shiny)
-library(lubridate)
-library(zoo)
-library(kableExtra)
-library(knitr)
-library(shinyjs)
+# library(shiny)
+# library(lubridate)
+# library(zoo)
+# library(kableExtra)
+# library(knitr)
+# library(shinyjs)
 
 addResourcePath('rap', system.file('www', package='rapbase'))
 
@@ -106,7 +106,7 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
 #--------------Startside------------------------------
   tabPanel(p("Oversiktsside",
              title= 'Nøkkeltall og samlerapporter'),
-           useShinyjs(),
+           shinyjs::useShinyjs(),
 
            h2('Velkommen til Rapporteket-Intensiv!', align='center'),
            br(),
@@ -328,8 +328,8 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                ),
              selectInput(inputId = "covidvalg", label= velgCovidTxt,
                          choices = covidValg),
-               enhetsUtvalgValg <-
-                 selectInput(inputId = 'enhetsUtvalg', label='Egen enhet og/eller landet',
+               #enhetsUtvalgValg <-
+             selectInput(inputId = 'enhetsUtvalg', label='Egen enhet og/eller landet',
                              choices = enhetsUtvalg
                  ),
              selectInput(inputId = 'velgResh', label='Velg eget Sykehus',
@@ -641,10 +641,12 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                            'Totalskår, beslutning (skjema 2)' = 'SumScoreSatisfactionDecision',
                            'Totalskår, alle spørsmål' = 'SumScoreAllQuestions')
              ),
-             dateInput(inputId = 'startDatoIntervensjon', label = 'Startdato, intervensjon', language="nb",
-                       value = '2016-10-01', max = Sys.Date()),
              dateRangeInput(inputId = 'datovalgPaarorFord', start = "2015-01-01", end = idag,
                             label = "Tidsperiode", separator="t.o.m.", language="nb"),
+             dateInput(inputId = 'startDatoIntervensjon', label = 'Startdato, intervensjon', language="nb",
+                       value = '2016-10-01', max = Sys.Date()),
+             selectInput(inputId = 'enhetsUtvalgPaarorFord', label='Egen enhet / hele landet',
+                         choices =  c("Hele landet"=0, "Egen enhet"=2)),
              selectInput(inputId = "erMannPaarorFord", label="Kjønn, pasient",
                          choices = c("Begge"=2, "Menn"=1, "Kvinner"=0))
              #h3('Utvalg vedrørende den pårørende (alder, kjønn, relasjon,...)?')
@@ -896,10 +898,10 @@ server <- function(input, output, session) { #
                       full_width=F,
                       digits = c(0,0,0,1,0,1,1,0,0,0,1,1,2,1)
     ) %>%
-      column_spec(column = 1, width_min = '4em', width_max = 10) %>%
-      column_spec(column = 2:(ncol(tab)), width = '4em')  %>%
-      row_spec(0, bold = T, align = 'c') %>%
-      kable_styling(full_width = FALSE, position = 'left') 
+      kableExtra::column_spec(column = 1, width_min = '4em', width_max = 10) %>%
+      kableExtra::column_spec(column = 2:(ncol(tab)), width = '4em')  %>%
+      kableExtra::row_spec(0, bold = T, align = 'c') %>%
+      kableExtra::kable_styling(full_width = FALSE, position = 'left') 
   }
 
   # observe({
@@ -919,10 +921,10 @@ server <- function(input, output, session) { #
                          full_width=F,
                          digits = c(0,0,0,1,0,1,1,0,0,0,1,1,2,1)
                          ) %>%
-                  column_spec(column = 1, width_min = '4em', width_max = 10) %>%
-                  column_spec(column = 2:(ncol(tab)), width = '4em')  %>%
-                  row_spec(0, bold = T, align = 'c') %>%
-                  kable_styling(full_width = FALSE, position = 'left')
+                  kableExtra::column_spec(column = 1, width_min = '4em', width_max = 10) %>%
+                  kableExtra::column_spec(column = 2:(ncol(tab)), width = '4em')  %>%
+         kableExtra::row_spec(0, bold = T, align = 'c') %>%
+         kableExtra::kable_styling(full_width = FALSE, position = 'left')
       } # ,rownames=T, digits=0 )
 
 
@@ -939,10 +941,10 @@ server <- function(input, output, session) { #
                        full_width=F,
                        digits = c(0,0,0,1,0,1,1,0,0,0,1,1,1,1,0,1,0,1,2,1,0)
      ) %>%
-       column_spec(column = 1, width_min = '4em', width_max = 10) %>%
-       column_spec(column = 2:(ncol(tab)), width = '4em')  %>%
-       row_spec(0, bold = T, align = 'c') %>%
-       kable_styling(full_width = FALSE, position = 'left') #"hover",
+       kableExtra::column_spec(column = 1, width_min = '4em', width_max = 10) %>%
+       kableExtra::column_spec(column = 2:(ncol(tab)), width = '4em')  %>%
+       kableExtra::row_spec(0, bold = T, align = 'c') %>%
+       kableExtra::kable_styling(full_width = FALSE, position = 'left') #"hover",
    }
 
    output$lastNed_tabNokkel <- downloadHandler(
@@ -1044,16 +1046,16 @@ server <- function(input, output, session) { #
                   )}) #, align='center'
             output$fordelingTab <- function() { #gr1=UtDataFord$hovedgrTxt, gr2=UtDataFord$smltxt renderTable(
 
-                  #       kable_styling("hover", full_width = F)
+                  #       kableExtra::kable_styling("hover", full_width = F)
                   antKol <- ncol(tab)
                   kableExtra::kable(tab, format = 'html'
                                     , full_width=F
                                     , digits = c(0,1,0,1)[1:antKol]
                                     ) %>%
-                        add_header_above(c(" "=1, 'Egen enhet/gruppe' = 2, 'Resten' = 2)[1:(antKol/2+1)]) %>%
-                        column_spec(column = 1, width_min = '7em') %>%
-                        column_spec(column = 2:(ncol(tab)+1), width = '7em') %>%
-                        row_spec(0, bold = T)
+                        kableExtra::add_header_above(c(" "=1, 'Egen enhet/gruppe' = 2, 'Resten' = 2)[1:(antKol/2+1)]) %>%
+                        kableExtra::column_spec(column = 1, width_min = '7em') %>%
+                        kableExtra::column_spec(column = 2:(ncol(tab)+1), width = '7em') %>%
+                        kableExtra::row_spec(0, bold = T)
             }
 
             output$lastNed_tabFord <- downloadHandler(
@@ -1142,10 +1144,10 @@ server <- function(input, output, session) { #
                                           , full_width=F
                                           , digits = c(0,1,0,1)[1:antKol]
                         ) %>%
-                              add_header_above(c(" "=1, 'Egen enhet/gruppe' = 2, 'Resten' = 2)[1:(antKol/2+1)]) %>%
-                              column_spec(column = 1, width_min = '7em') %>%
-                              column_spec(column = 2:(antKol+1), width = '7em') %>%
-                              row_spec(0, bold = T)
+                              kableExtra::add_header_above(c(" "=1, 'Egen enhet/gruppe' = 2, 'Resten' = 2)[1:(antKol/2+1)]) %>%
+                              kableExtra::column_spec(column = 1, width_min = '7em') %>%
+                              kableExtra::column_spec(column = 2:(antKol+1), width = '7em') %>%
+                              kableExtra::row_spec(0, bold = T)
                   }
                   output$lastNed_tabAndelTid <- downloadHandler(
                     filename = function(){
@@ -1172,9 +1174,9 @@ server <- function(input, output, session) { #
                                           #, full_width=T
                                           , digits = c(0,1) #,0,1)[1:antKol]
                         ) %>%
-                              column_spec(column = 1, width_min = '5em') %>%
-                              column_spec(column = 2:(antKol+1), width = '4em') %>%
-                              row_spec(0, bold = T)
+                              kableExtra::column_spec(column = 1, width_min = '5em') %>%
+                              kableExtra::column_spec(column = 2:(antKol+1), width = '4em') %>%
+                              kableExtra::row_spec(0, bold = T)
                   }
                   output$lastNed_tabAndelGrVar <- downloadHandler(
                     filename = function(){
@@ -1265,9 +1267,9 @@ server <- function(input, output, session) { #
                             , full_width=F
                             , digits = c(0,1) #,1,1)[1:antKol]
           ) %>%
-            column_spec(column = 1, width_min = '7em') %>%
-            column_spec(column = 2:3, width = '7em') %>%
-            row_spec(0, bold = T)
+            kableExtra::column_spec(column = 1, width_min = '7em') %>%
+            kableExtra::column_spec(column = 2:3, width = '7em') %>%
+            kableExtra::row_spec(0, bold = T)
         }
 
         output$lastNed_tabGjsnGrVar <- downloadHandler(
@@ -1314,11 +1316,11 @@ server <- function(input, output, session) { #
                                 , full_width=F
                                 , digits = 1 #c(0,1,1,1)[1:antKol]
               ) %>%
-                add_header_above(c(" "=1, 'Egen enhet/gruppe' = 3, 'Resten' = 3)[1:(antKol/3+1)]) %>%
-                #add_header_above(c(" "=1, 'Egen enhet/gruppe' = 3, 'Resten' = 3)[1:(antKol/3+1)]) %>%
-                column_spec(column = 1, width_min = '7em') %>%
-                column_spec(column = 2:(antKol+1), width = '7em') %>%
-                row_spec(0, bold = T)
+                kableExtra::add_header_above(c(" "=1, 'Egen enhet/gruppe' = 3, 'Resten' = 3)[1:(antKol/3+1)]) %>%
+                #kableExtra::add_header_above(c(" "=1, 'Egen enhet/gruppe' = 3, 'Resten' = 3)[1:(antKol/3+1)]) %>%
+                kableExtra::column_spec(column = 1, width_min = '7em') %>%
+                kableExtra::column_spec(column = 2:(antKol+1), width = '7em') %>%
+                kableExtra::row_spec(0, bold = T)
             }
 
           }
@@ -1376,9 +1378,9 @@ server <- function(input, output, session) { #
                             , full_width=F
                             , digits = c(0,2) #,1,1)[1:antKol]
           ) %>%
-            column_spec(column = 1, width_min = '7em') %>%
-            column_spec(column = 2:3, width = '7em') %>%
-            row_spec(0, bold = T)
+            kableExtra::column_spec(column = 1, width_min = '7em') %>%
+            kableExtra::column_spec(column = 2:3, width = '7em') %>%
+            kableExtra::row_spec(0, bold = T)
         }
         output$tittelSMR <- renderUI(
           tagList(
@@ -1412,12 +1414,15 @@ server <- function(input, output, session) { #
                           outfile = file)
         }
       )
-
+#------------Pårørende-------------------
+      
       if (antPaaror>0){
       output$paarorFord <- renderPlot(
         NIRFigPrePostPaaror(RegData=PaarorData, preprosess = 0, valgtVar=input$valgtVarPaarorFord,
                             startDatoIntervensjon = input$startDatoIntervensjon,
                             datoFra=input$datovalgPaarorFord[1], datoTil=input$datovalgPaarorFord[2],
+                            reshID=reshID,
+                            enhetsUtvalg = input$enhetsUtvalgPaarorFord,
                             erMann=as.numeric(input$erMannPaarorFord,session=session)
         ), width=800, height = 800 #execOnResize=TRUE,
       )}

@@ -9,7 +9,7 @@
 #' @export
 tabBelegg <- function(RegData, tidsenhet='Aar', datoTil, enhetsUtvalg=0, reshID=0) {
       datoFra <- switch(tidsenhet,
-                        Mnd = floor_date(as.Date(datoTil)%m-% months(12, abbreviate = T), 'month'), #as.Date(paste0(as.numeric(substr(datoTil,1,4))-1, substr(datoTil,5,8), '01'), tz='UTC')
+                        Mnd = lubridate::floor_date(as.Date(datoTil)%m-% months(12, abbreviate = T), 'month'), #as.Date(paste0(as.numeric(substr(datoTil,1,4))-1, substr(datoTil,5,8), '01'), tz='UTC')
                         Aar = paste0(lubridate::year(as.Date(datoTil))-4, '-01-01')
       )
       RegData <- NIRUtvalgEnh(RegData=RegData, datoFra=datoFra, datoTil = datoTil,
@@ -53,11 +53,11 @@ tabAntOpphShMnd <- function(RegData, datoTil=Sys.Date(), datoFra='Ikke angitt', 
       aggVar <-  c('ShNavn', 'InnDato')
       RegDataDum <- RegData[RegData$InnDato <= as.Date(datoTil, tz='UTC')
                               & RegData$InnDato > as.Date(datoFra, tz='UTC'), aggVar]
-      RegDataDum$Maaned1 <- floor_date(RegDataDum$InnDato, 'month')
+      RegDataDum$Maaned1 <- lubridate::floor_date(RegDataDum$InnDato, 'month')
       tabAvdMnd1 <- table(RegDataDum[ , c('ShNavn', 'Maaned1')])
-      colnames(tabAvdMnd1) <- format(ymd(colnames(tabAvdMnd1)), '%b %y') #month(ymd(colnames(tabAvdMnd1)), label = T)
+      colnames(tabAvdMnd1) <- format(lubridate::ymd(colnames(tabAvdMnd1)), '%b %y') #month(lubridate::ymd(colnames(tabAvdMnd1)), label = T)
       tabAvdMnd1 <- addmargins((tabAvdMnd1))
-      #tabAvdMnd1 <- RegDataDum %>% group_by(Maaned=floor_date(InnDato, "month"), ShNavn) %>%
+      #tabAvdMnd1 <- RegDataDum %>% group_by(Maaned=lubridate::floor_date(InnDato, "month"), ShNavn) %>%
       #      summarize(Antall=length(ShNavn))
       tabAvdMnd1 <- xtable::xtable(tabAvdMnd1)
 	return(tabAvdMnd1)

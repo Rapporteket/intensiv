@@ -18,11 +18,8 @@ datoTil=Sys.Date()
 reshID <- 706078
 tellInfluensa(datoFra='2018-09-01', datoTil=Sys.Date(), reshID=reshID)
 
+#test
 
-
-library(intensiv)
-library(kableExtra)
-library(tidyverse)
 datoFra <- '2018-01-01'
 datoTil <- '2020-12-31'
 RegData <- NIRRegDataSQL(datoFra = datoFra, datoTil = datoTil)
@@ -210,6 +207,7 @@ KobleMedHoved <- function(HovedSkjema, Skjema2, alleHovedskjema=F, alleSkjema2=F
 HovedSkjema <- RegData
 Skjema2 <- PaarorData
 
+
 PaarorDataH2018 <- KobleMedHoved(HovedSkjema = RegData2018, Skjema2 = PaarorData)
 PaarorDataH <- lageTulleData(RegData=PaarorDataH, varBort=varBort, antSh=26, antObs=600)
 save(PaarorDataH, file=paste0(dataKat, 'PaarorRegData.RData'))
@@ -217,6 +215,19 @@ write.table(PaarorDataH, file='A:/Intensiv/PaarorDataHtull.csv', fileEncoding = 
 save(list=c('RegData', 'PaarorDataH'), file=paste0(dataKat, '/NIRRegDataSyn.RData'))
 #save(RegData, PaarorData, file=paste0(dataKat, '/NIRRegDataSyn.RData'))
 load('A:/Intensiv/NIRRegDataSyn.RData')
+
+IntData <- NIRRegDataSQL(datoFra = '2015-01-01') 
+PaarorData <- NIRpaarorDataSQL()
+PaarorDataH <- KobleMedHoved(IntData, PaarorData, alleHovedskjema=F, alleSkjema2=F)
+PaarorData <- NIRPreprosess(RegData = PaarorDataH) #Må først koble på hoveddata for å få ShType++
+
+NIRFigPrePostPaaror(RegData=PaarorData, preprosess = 0, valgtVar='SymptomSmerte',
+                    reshID = 706078,
+                    #startDatoIntervensjon = input$startDatoIntervensjon,
+                    #datoFra=, datoTil=,
+                    enhetsUtvalg = 2)
+
+
 
 # Div sjekk
 table(RegData$ShNavn, RegData$Aar)
@@ -227,6 +238,7 @@ RegData$PatientTransferredFromHospital[ind]
 table(RegData$PatientTransferredFromHospital)
 table(RegData$PatientTransferredFromHospitalName[ind])
 table(RegData$PatientTransferredToHospitalName[ind])
+
 #-----------------------------------Lage datasett til kvalitetsindikatorer---------
 library(intensiv)
 
