@@ -162,8 +162,7 @@ finnDblReg <- function(RegData, datoTil=Sys.Date(), reshID=0, pasientID = 'Pasie
 #' @param reshID enhetens resh-id
 #' @param respirator respirator/invasiv/non-inv 0:ikke respirator, 1:respirator, 2:invasiv, 3:non-invasiv
 #' @export
-tabNokkeltall <- function(RegData, tidsenhet='Mnd', datoTil=Sys.Date(), enhetsUtvalg=0, reshID=0,
-                          respirator=4) {
+tabNokkeltall <- function(RegData, tidsenhet='Mnd', datoTil=Sys.Date(), enhetsUtvalg=0, reshID=0, respirator=4) {
       datoFra <- switch(tidsenhet,
                         Mnd = lubridate::floor_date(as.Date(datoTil)%m-% months(12, abbreviate = T), 'month'), #as.Date(paste0(as.numeric(substr(datoTil,1,4))-1, substr(datoTil,5,8), '01'), tz='UTC')
                         Aar = paste0(lubridate::year(as.Date(datoTil))-4, '-01-01')
