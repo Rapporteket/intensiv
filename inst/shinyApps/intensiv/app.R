@@ -282,7 +282,7 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
            sidebarPanel(
              id = "brukervalg_fordeling",
              width = 3,
-             h4('Her kan man velge hvilken variabel man ønsker å se resultater for og gjøre ulike filtreringer.'),
+             h4('Her kan man velge hvilken variabel man ønsker å se resultater for og gjøre filtreringer.'),
              br(),
              selectInput(
                inputId = "valgtVar", label="Velg variabel",
@@ -375,6 +375,7 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
            sidebarPanel(
              id = "brukervalg_andeler",
              width=3,
+             h4('Her kan man velge hvilken variabel man ønsker å se resultater for og gjøre filtreringer.'),
              selectInput(
                inputId = "valgtVarAndel", label="Velg variabel",
                choices = c('Alder minst 80 år' = 'alder_over80',
@@ -472,6 +473,7 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
            sidebarPanel(
              id = "brukervalg_gjsn",
              width = 3,
+             h4('Her kan man velge hvilken variabel man ønsker å se resultater for og gjøre filtreringer.'),
              selectInput(inputId = "valgtVarGjsn", label="Velg variabel",
                          choices = c('Alder' = 'alder',
                                      'Liggetid' = 'liggetid',
@@ -542,6 +544,7 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
            br(),
            sidebarPanel(
              width = 3,
+             h4('Her kan man gjøre filtreringer.'),
              selectInput(inputId = "valgtVarMort", label="Velg variabel",
                         choices = c('SMR, SAPSII' = 'SMR',
                                     'SMR: PIM' = 'PIMdod')),
@@ -583,6 +586,7 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
            br(),
            sidebarPanel(
              width = 3,
+             h4('Her kan man gjøre filtreringer.'),
              dateRangeInput(inputId = 'datovalgInnMaate', start = startDato, end = idag,
                             label = "Tidsperiode", separator="t.o.m.", language="nb"),
              selectInput(inputId = "erMannInnMaate", label="Kjønn",
@@ -610,6 +614,7 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
            # fluidRow(column(width = 3, #Første kolonne. Alternativ til sidebarLayout(sidebarPanel())
            sidebarPanel(
              width = 3,
+             h4('Her kan man velge hvilken variabel man ønsker å se resultater for og gjøre ulike filtreringer.'),
              selectInput(
                inputId = "valgtVarPaarorFord", label="Velg variabel",
                choices = c('S1.1 Pasient, høflighet og medfølelse' = 'BehandlingHoeflighetRespektMedfoelelse',
