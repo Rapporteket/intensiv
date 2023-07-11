@@ -172,8 +172,10 @@ tabNokkeltall <- function(RegData, tidsenhet='Mnd', datoTil=Sys.Date(), enhetsUt
       RegData <- SorterOgNavngiTidsEnhet(RegData, tidsenhet=tidsenhet, tab=1)$RegData
       if (respirator %in% 0:3) {
       indResp <- switch(as.character(respirator),
-                        '0' = setdiff(1:dim(RegData)[1], which(RegData$respiratortid>0)),
-                        '1' = which(RegData$respiratortid>0), # 88466 respiratortid>0 #87124
+                        # '0' = setdiff(1:dim(RegData)[1], which(RegData$respiratortid>0)),
+                        # '1' = which(RegData$respiratortid>0), # 88466 respiratortid>0 #87124
+                        '0' = which(RegData$MechanicalRespirator==2),
+                        '1' = which(RegData$MechanicalRespirator==1), # 88466 respiratortid>0 #87124
                         '2' = which(RegData$InvasivVentilation>0),
                         '3' = which(RegData$NonInvasivVentilation>0))
       RegData <- RegData[indResp, ]
