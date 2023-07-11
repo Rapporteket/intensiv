@@ -221,7 +221,10 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                           selectInput(inputId = 'enhetsNivaaReg', label='Enhetsnivå',
                                       choices = c("Hele landet"=0, "Egen enhet"=2,
                                                   "Egen sykehustype"=4, "Egen region"=7)
-                          )),
+                          ),
+                          selectInput(inputId = 'respiratorReg', label = 'Respiratorstøtte?',
+                                      choices = c(' '=4, 'Nei'=0, 'Ja'=1, 'Invasiv'=2, 'Non-invasiv'=3)
+                                      )),
                         conditionalPanel(
                           condition = "input.ark == 'Overføringer'", 
                           dateRangeInput(inputId = 'datovalgReg', start = startDato, end = idag,
@@ -647,6 +650,7 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                        value = '2016-10-01', max = Sys.Date()),
              selectInput(inputId = 'enhetsUtvalgPaarorFord', label='Egen enhet / hele landet',
                          choices =  c("Hele landet"=0, "Egen enhet"=2)),
+             h5('(NB: Hvis din avdeling ikke har registreringer, vises hele landet uansett valg)'),
              selectInput(inputId = "erMannPaarorFord", label="Kjønn, pasient",
                          choices = c("Begge"=2, "Menn"=1, "Kvinner"=0))
              #h3('Utvalg vedrørende den pårørende (alder, kjønn, relasjon,...)?')
@@ -906,16 +910,19 @@ server <- function(input, output, session) { #
 
   # observe({
    output$NokkeltallTxtReg <- renderText({
-     paste0('Nøkkeltall på intensiv, ',
-            as.character(names(egenLokalitet[which(egenLokalitet==as.numeric(input$enhetsNivaaReg))])))
+     c(paste0('Nøkkeltall på intensiv, ',
+            as.character(names(egenLokalitet[which(egenLokalitet==as.numeric(input$enhetsNivaaReg))]))),
+     c(paste0(c(', uten', ', med', ', invasiv', ', non-invasiv'), ' respiratorstøtte'), '')[as.numeric(input$respiratorReg) + 1]
+     )
    })
    
    output$tabNokkeltall <- function() {
      RegDataCov <- NIRUtvalgEnh(RegData=RegData, velgDiag = as.numeric(input$covidvalgReg))$RegData
      tab <- t(tabNokkeltall(RegData=RegDataCov, 
-                                     tidsenhet=input$tidsenhetReg,
-                                     datoTil=input$sluttDatoReg,
-                                     enhetsUtvalg=as.numeric(input$enhetsNivaaReg), 
+                            tidsenhet=input$tidsenhetReg,
+                            datoTil=input$sluttDatoReg,
+                            respirator=input$respiratorReg,
+                            enhetsUtvalg=as.numeric(input$enhetsNivaaReg), 
                                      reshID=reshID))
        kableExtra::kable(tab,
                          full_width=F,

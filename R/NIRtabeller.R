@@ -157,11 +157,13 @@ finnDblReg <- function(RegData, datoTil=Sys.Date(), reshID=0, pasientID = 'Pasie
 #'
 #' @param RegData dataramme
 #' @param tidsenhet velg: Aar, Halvaar, Kvartal, Mnd (standard)
-#' @param datoTil sluttdato
+#' @param datoTil sluttdato, format: 'yyyy-mm-dd'
 #' @param enhetsUtvalg enhetsutvalg
 #' @param reshID enhetens resh-id
+#' @param respirator respirator/invasiv/non-inv 0:ikke respirator, 1:respirator, 2:invasiv, 3:non-invasiv
 #' @export
-tabNokkeltall <- function(RegData, tidsenhet='Mnd', datoTil=Sys.Date(), enhetsUtvalg=0, reshID=0) {
+tabNokkeltall <- function(RegData, tidsenhet='Mnd', datoTil=Sys.Date(), enhetsUtvalg=0, reshID=0,
+                          respirator=9) {
       datoFra <- switch(tidsenhet,
                         Mnd = lubridate::floor_date(as.Date(datoTil)%m-% months(12, abbreviate = T), 'month'), #as.Date(paste0(as.numeric(substr(datoTil,1,4))-1, substr(datoTil,5,8), '01'), tz='UTC')
                         Aar = paste0(lubridate::year(as.Date(datoTil))-4, '-01-01')
@@ -169,6 +171,15 @@ tabNokkeltall <- function(RegData, tidsenhet='Mnd', datoTil=Sys.Date(), enhetsUt
       RegData <- NIRUtvalgEnh(RegData=RegData, datoFra=datoFra, datoTil = datoTil,
                               enhetsUtvalg = enhetsUtvalg, reshID = reshID)$RegData
       RegData <- SorterOgNavngiTidsEnhet(RegData, tidsenhet=tidsenhet, tab=1)$RegData
+      if (respirator %in% 0:3) {
+      indResp <- switch(as.character(respirator),
+                        '0' = which(RegData$MechanicalRespirator==2),
+                        '1' = which(RegData$MechanicalRespirator==1), # 88466 respiratortid>0 #87124
+                        '2' = which(RegData$InvasivVentilation>0),
+                        '3' = which(RegData$NonInvasivVentilation>0))
+      RegData <- RegData[indResp, ]
+      }
+
       #NB: sjekk riktige utvalg!!!
       indLigget <- which(RegData$liggetid>0)
       indRespt <- which(RegData$respiratortid>0)

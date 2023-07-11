@@ -18,7 +18,10 @@ datoTil=Sys.Date()
 reshID <- 706078
 tellInfluensa(datoFra='2018-09-01', datoTil=Sys.Date(), reshID=reshID)
 
-#test
+c(paste0('Nøkkeltall på intensiv, ',
+         'mine tall'),
+  c(paste0(c(', uten', ', med', ', invasiv', ', non-invasiv'), ' respiratorstøtte'), '')[2 + 1]
+)
 
 datoFra <- '2018-01-01'
 datoTil <- '2020-12-31'
