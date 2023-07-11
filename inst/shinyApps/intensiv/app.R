@@ -146,7 +146,6 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
              tabsetPanel(
                tabPanel('Startside',
              h3(ifelse(paaServer, "","Merk at noen resultater kan se rare ut siden dette er syntetiske data!"), align='center' ),
-             #h2("Nøkkeltall på intensiv"),
              h3(uiOutput('NokkeltallUtvalgTxt')),
              selectInput(inputId = 'enhetsNivaaStart', label='Enhetsnivå',
                            choices = c("Egen enhet"=2, "Hele landet"=0,
@@ -900,7 +899,7 @@ server <- function(input, output, session) { #
                            reshID=reshID))
     kableExtra::kable(tab,
                       full_width=F,
-                      digits = c(0,0,0,1,0,1,1,0,0,0,1,1,2,1)
+                      digits = c(0,0,1,0,1,1,0,0,0,1,1,2,1)
     ) %>%
       kableExtra::column_spec(column = 1, width_min = '4em', width_max = 10) %>%
       kableExtra::column_spec(column = 2:(ncol(tab)), width = '4em')  %>%
