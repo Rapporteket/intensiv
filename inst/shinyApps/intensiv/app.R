@@ -2,12 +2,6 @@
 #NB: For å få lagt ut app'en på Shinyapps, må Github-pakkene (intensiv og rapbase) være installert fra Github.
 #devtools::install_github(ref = 'rel', repo = 'Rapporteket/intensiv')
 library(intensiv)
-# library(shiny)
-# library(lubridate)
-# library(zoo)
-# library(kableExtra)
-# library(knitr)
-# library(shinyjs)
 
 addResourcePath('rap', system.file('www', package='rapbase'))
 
@@ -942,15 +936,16 @@ server <- function(input, output, session) { #
 
    output$tabNokkeltallUtvidet <- function() {
      RegDataCov <- NIRUtvalgEnh(RegData=RegData, velgDiag = as.numeric(input$covidvalgNok))$RegData
-     tab <- t(tabNokkeltallUtvid(RegData=RegDataCov,
-                                 #tidsenhet=input$tidsenhetNok,
+     tab <- t(tabNokkeltall(RegData=RegDataCov,
+                                 tidsenhet='Aar',
                                  datoFra = input$datoValgNok[1],
                                  datoTil = input$datoValgNok[2],
-                                sykehus=input$enhetNok)
+                                sykehus=input$enhetNok,
+                                utvidTab=1)
               )
      kableExtra::kable(tab,
                        full_width=F,
-                       digits = c(0,0,0,1,0,1,1,0,0,0,1,1,1,1,0,1,0,1,2,1,0)
+                       digits = c(0,0,0,1,0,1,1,1,0,0,0,0,1,1,1,1,0,1,1,1,2)
      ) %>%
        kableExtra::column_spec(column = 1, width_min = '4em', width_max = 10) %>%
        kableExtra::column_spec(column = 2:(ncol(tab)), width = '4em')  %>%
@@ -963,10 +958,11 @@ server <- function(input, output, session) { #
      },
      content = function(file, filename){
        RegDataCov <- NIRUtvalgEnh(RegData=RegData, velgDiag = as.numeric(input$covidvalgNok))$RegData
-       tab <- t(tabNokkeltallUtvid(RegData=RegDataCov,
-                                   datoFra = input$datoValgNok[1],
-                                   datoTil = input$datoValgNok[2],
-                                   sykehus=input$enhetNok))
+       tab <- t(tabNokkeltall(RegData=RegDataCov,
+                              datoFra = input$datoValgNok[1],
+                              datoTil = input$datoValgNok[2],
+                              sykehus=input$enhetNok,
+                              utvidTab=1))
        write.csv2(tab, file, row.names = F, na = '')
      })
 
