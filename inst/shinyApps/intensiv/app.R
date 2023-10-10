@@ -862,7 +862,7 @@ server <- function(input, output, session) { #
                            reshID=reshID))
     kableExtra::kable(tab,
                       full_width=F,
-                      digits = c(0,0,0,1,0,1,1,1,0,0,0,0,1,0,0)
+                      digits = c(0,0,0,1,0,0,1,1,1,0,0,0,1,0,0)
     ) %>%
       kableExtra::column_spec(column = 1, width_min = '4em', width_max = 10) %>%
       kableExtra::column_spec(column = 2:(ncol(tab)), width = '4em')  %>%
@@ -888,7 +888,7 @@ server <- function(input, output, session) { #
                                      reshID=reshID))
        kableExtra::kable(tab,
                          full_width=F,
-                         digits = c(0,0,0,1,0,1,1,1,0,0,0,0,2,1)
+                         digits = c(0,0,0,1,0,0,1,1,1,0,0,0,1,0,0)
                          ) %>%
                   kableExtra::column_spec(column = 1, width_min = '4em', width_max = 10) %>%
                   kableExtra::column_spec(column = 2:(ncol(tab)), width = '4em')  %>%
@@ -909,7 +909,7 @@ server <- function(input, output, session) { #
               )
      kableExtra::kable(tab,
                        full_width=F,
-                       digits = c(0,0,0,0,1,0,1,1,1,0,0,0,0,1,1,1,1,0,1,1,1,2)
+                       digits = c(0,0,0,1,0,0,1,1,1,0,0,0,1,1,0,0,1,1,1,1,1)
      ) %>%
        kableExtra::column_spec(column = 1, width_min = '4em', width_max = 10) %>%
        kableExtra::column_spec(column = 2:(ncol(tab)), width = '4em')  %>%
