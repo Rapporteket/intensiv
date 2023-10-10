@@ -117,11 +117,6 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
              h3('Samlede resultater, egen enhet'),
              downloadButton(outputId = 'samleRapp.pdf', label='Last ned samlerapport', class = "butt"),
              br(),
-             # h3('Resultater fra influensaregistrering'),
-             # h6('(Inntil det kommer registreringer fra inneværende sesong, vil rapporten vise tall fra forrige sesong.)'),
-             # downloadButton(outputId = 'influensaRapp.pdf', label='Last ned influensarapport', class = "butt"),
-             # br(),
-             # br(),
              br(),
              h2('Hente datauttrekk'),
              dateRangeInput(inputId = 'datovalgData', start = startDato, end = idag,
@@ -687,30 +682,6 @@ tabPanel(p("Abonnement",
 ), #tab abonnement
 
 
-# tabPanel(p("Abonnement",
-  #            title='Bestill automatisk utsending av rapporter på e-post'),
-  #          sidebarLayout(
-  #            sidebarPanel(width = 3,
-  #                         selectInput("subscriptionRep", "Rapport:",
-  #                                     c("Månedsrapport", "Samlerapport", "Influensaresultater")),
-  #                         selectInput("subscriptionFreq", "Frekvens:",
-  #                                     list(Årlig="Årlig-year",
-  #                                           Kvartalsvis="Kvartalsvis-quarter",
-  #                                           Månedlig="Månedlig-month",
-  #                                           Ukentlig="Ukentlig-week",
-  #                                           Daglig="Daglig-DSTday"),
-  #                                     selected = "Månedlig-month"),
-  #                         #selectInput("subscriptionFileFormat", "Format:",
-  #                         #            c("html", "pdf")),
-  #                         actionButton("subscribe", "Bestill!")
-  #            ),
-  #            mainPanel(
-  #              uiOutput("subscriptionContent")
-  #            )
-  #          )
-  # ),
-
-
 #-------Registeradministrasjon----------
 
   # shiny::tabPanel(
@@ -848,13 +819,6 @@ server <- function(input, output, session) { #
     }
   )
 
-  output$influensaRapp.pdf <- downloadHandler(
-    filename = function(){ paste0('NIRinfluensa', Sys.time(), '.pdf')},
-    content = function(file){
-      henteSamlerapporter(file, rnwFil="NIRinfluensa.Rnw")
-    }
-  )
-
   #test <- henteSamlerapporter('file.pdf', rnwFil="NIRinfluensa.Rnw")
   #Datadump
   observe({
@@ -898,7 +862,7 @@ server <- function(input, output, session) { #
                            reshID=reshID))
     kableExtra::kable(tab,
                       full_width=F,
-                      digits = c(0,0,1,0,1,1,0,0,0,1,1,2,1)
+                      digits = c(0,0,0,1,0,1,1,1,0,0,0,0,1,0,0)
     ) %>%
       kableExtra::column_spec(column = 1, width_min = '4em', width_max = 10) %>%
       kableExtra::column_spec(column = 2:(ncol(tab)), width = '4em')  %>%
@@ -924,7 +888,7 @@ server <- function(input, output, session) { #
                                      reshID=reshID))
        kableExtra::kable(tab,
                          full_width=F,
-                         digits = c(0,0,0,1,0,1,1,0,0,0,1,1,2,1)
+                         digits = c(0,0,0,1,0,1,1,1,0,0,0,0,2,1)
                          ) %>%
                   kableExtra::column_spec(column = 1, width_min = '4em', width_max = 10) %>%
                   kableExtra::column_spec(column = 2:(ncol(tab)), width = '4em')  %>%
@@ -945,7 +909,7 @@ server <- function(input, output, session) { #
               )
      kableExtra::kable(tab,
                        full_width=F,
-                       digits = c(0,0,0,1,0,1,1,1,0,0,0,0,1,1,1,1,0,1,1,1,2)
+                       digits = c(0,0,0,0,1,0,1,1,1,0,0,0,0,1,1,1,1,0,1,1,1,2)
      ) %>%
        kableExtra::column_spec(column = 1, width_min = '4em', width_max = 10) %>%
        kableExtra::column_spec(column = 2:(ncol(tab)), width = '4em')  %>%
@@ -1434,8 +1398,6 @@ server <- function(input, output, session) { #
         ), width=800, height = 800 #execOnResize=TRUE,
       )}
 
-
-
 #------------------ Abonnement ----------------------------------------------
       
       #--------Modul, abonnement
@@ -1466,76 +1428,6 @@ server <- function(input, output, session) { #
       
       
       
-      # ## reaktive verdier for å holde rede på endringer som skjer mens
-      # ## applikasjonen kjører
-      # rv <- reactiveValues(
-      #   subscriptionTab = rapbase::makeAutoReportTab(session))
-      # 
-      # ## lag tabell over gjeldende status for abonnement
-      # output$activeSubscriptions <- DT::renderDataTable(
-      #   rv$subscriptionTab, server = FALSE, escape = FALSE, selection = 'none',
-      #   rownames = FALSE, options = list(dom = 't')
-      # )
-      # 
-      # ## lag side som viser status for abonnement, også når det ikke finnes noen
-      # output$subscriptionContent <- renderUI({
-      #   fullName <- rapbase::getUserFullName(session)
-      #   if (length(rv$subscriptionTab) == 0) {
-      #     p(paste("Ingen aktive abonnement for", fullName))
-      #   } else {
-      #     tagList(
-      #       p(paste("Aktive abonnement for", fullName, "som sendes per epost til ",
-      #               rapbase::getUserEmail(session), ":")),
-      #       DT::dataTableOutput("activeSubscriptions")
-      #     )
-      #   }
-      # })
-      # 
-      # ## nye abonnement
-      # observeEvent (input$subscribe, { #MÅ HA
-      #   owner <- rapbase::getUserName(session)
-      #   interval <- strsplit(input$subscriptionFreq, "-")[[1]][2]
-      #   intervalName <- strsplit(input$subscriptionFreq, "-")[[1]][1]
-      #   organization <- rapbase::getUserReshId(session)
-      #   runDayOfYear <- rapbase::makeRunDayOfYearSequence(
-      #     interval = interval
-      #   )
-      #   email <- rapbase::getUserEmail(session)
-      #   if (input$subscriptionRep == "Månedsrapport") {
-      #     synopsis <- "Intensiv/Rapporteket: månedsrapport, abonnement"
-      #     rnwFil <- "NIRmndRapp.Rnw"
-      #   }
-      #   if (input$subscriptionRep == "Samlerapport") {
-      #     synopsis <- "Intensiv/Rapporteket: Samlerapport, abonnement"
-      #     rnwFil <- "NIRSamleRapp.Rnw"
-      #   }
-      #   if (input$subscriptionRep == "Influensaresultater") {
-      #     synopsis <- "Intensiv/Rapporteket: influensaresultater, abonnement"
-      #     rnwFil <- "NIRinfluensa.Rnw"
-      #   }
-      # 
-      #   fun <- "abonnement"  #"henteSamlerapporter"
-      #   paramNames <- c('rnwFil', 'brukernavn', "reshID", "datoFra", 'datoTil')
-      #   paramValues <- c(rnwFil, brukernavn(), reshID, startDato, as.character(datoTil)) #input$subscriptionFileFormat)
-      # 
-      #   #test <- intensiv::abonnement(rnwFil = 'NIRSamleRapp.Rnw', brukernavn='IntensivBruker', reshID=109773, datoTil=Sys.Date())
-      # 
-      #   rapbase::createAutoReport(synopsis = synopsis, package = "intensiv",
-      #                             fun = fun, paramNames = paramNames,
-      #                             paramValues = paramValues, owner = owner,
-      #                             email = email, organization = organization,
-      #                             runDayOfYear = runDayOfYear, interval = interval,
-      #                             intervalName = intervalName)
-      #   rv$subscriptionTab <- rapbase::makeAutoReportTab(session) #makeAutoReportTab()(session)
-      # })
-      # 
-      # ## slett eksisterende abonnement
-      # observeEvent(input$del_button, {
-      #   selectedRepId <- strsplit(input$del_button, "_")[[1]][2]
-      #   rapbase::deleteAutoReport(selectedRepId)
-      #   rv$subscriptionTab <- rapbase::makeAutoReportTab(session) #makeAutoReportTab()(session)
-      # })
-
 #-------------Registeradministrasjon -----------------
 
       #---Utsendinger---------------

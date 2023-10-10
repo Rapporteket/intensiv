@@ -12,7 +12,7 @@ tabNokkeltall(
   reshID = 0,
   respirator = 4,
   sykehus = "Alle",
-  datoFra = "tom",
+  datoFra = "2020-02-29",
   utvidTab = 0
 )
 }
