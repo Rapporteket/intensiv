@@ -18,11 +18,11 @@ datoTil=Sys.Date()
 reshID <- 706078
 tellInfluensa(datoFra='2018-09-01', datoTil=Sys.Date(), reshID=reshID)
 
+c(paste0('Nøkkeltall på intensiv, ',
+         'mine tall'),
+  c(paste0(c(', uten', ', med', ', invasiv', ', non-invasiv'), ' respiratorstøtte'), '')[2 + 1]
+)
 
-
-library(intensiv)
-library(kableExtra)
-library(tidyverse)
 datoFra <- '2018-01-01'
 datoTil <- '2020-12-31'
 RegData <- NIRRegDataSQL(datoFra = datoFra, datoTil = datoTil)
@@ -163,11 +163,10 @@ InfluData <- InfluDataAlle[ ,variableTilTab]
 #-------------------------------------LASTE DATA-----------------------------------------------
 rm(list=ls())
 
-dato <- '2019-09-24' #'2018-12-14' #MainFormDataContract2018-06-19
-dataKat <- 'A:/Intensiv/'
-fil <- paste0(dataKat,'MainFormDataContract',dato)
+dato <- '2022-11-14' #'2018-12-14' #MainFormDataContract2018-06-19
+fil <- paste0('c:/Registerdata/nipar/MainFormDataContract',dato)
 NIRdata <- read.table(file=paste0(fil,'.csv'), header=T, stringsAsFactors=FALSE, sep=';',encoding = 'UTF-8')
-RegData <- NIRdata
+RegData <- intensiv::NIRPreprosess(NIRdata)
 load(paste0(fil,".Rdata")) #RegData 2019-01-07
 save(RegData, file=paste0('intensivdata.Rdata'))
  # RegData <- RegData[which(
@@ -176,6 +175,10 @@ save(RegData, file=paste0('intensivdata.Rdata'))
 #save(RegData, file=paste0(dataKat,'NIRdata10000.Rdata'))
 library(intensiv)
 load(paste0("A:/Intensiv/NIRdata10000.Rdata")) #RegDataTEST, 2018-06-05
+
+enh <- unique(NIRdata[,c("ShNavn",'ReshId' )])
+enh <- table(RegData[,c("ShNavn",'Aar' )], useNA = )
+enh[order(enh$ReshId),]
 
 Sys.setlocale("LC_TIME", "nb_NO.UTF-8")
 Sys.setlocale("LC_ALL", "nb_NO.UTF-8")
@@ -210,6 +213,7 @@ KobleMedHoved <- function(HovedSkjema, Skjema2, alleHovedskjema=F, alleSkjema2=F
 HovedSkjema <- RegData
 Skjema2 <- PaarorData
 
+
 PaarorDataH2018 <- KobleMedHoved(HovedSkjema = RegData2018, Skjema2 = PaarorData)
 PaarorDataH <- lageTulleData(RegData=PaarorDataH, varBort=varBort, antSh=26, antObs=600)
 save(PaarorDataH, file=paste0(dataKat, 'PaarorRegData.RData'))
@@ -217,6 +221,19 @@ write.table(PaarorDataH, file='A:/Intensiv/PaarorDataHtull.csv', fileEncoding = 
 save(list=c('RegData', 'PaarorDataH'), file=paste0(dataKat, '/NIRRegDataSyn.RData'))
 #save(RegData, PaarorData, file=paste0(dataKat, '/NIRRegDataSyn.RData'))
 load('A:/Intensiv/NIRRegDataSyn.RData')
+
+IntData <- NIRRegDataSQL(datoFra = '2015-01-01') 
+PaarorData <- NIRpaarorDataSQL()
+PaarorDataH <- KobleMedHoved(IntData, PaarorData, alleHovedskjema=F, alleSkjema2=F)
+PaarorData <- NIRPreprosess(RegData = PaarorDataH) #Må først koble på hoveddata for å få ShType++
+
+NIRFigPrePostPaaror(RegData=PaarorData, preprosess = 0, valgtVar='SymptomSmerte',
+                    reshID = 706078,
+                    #startDatoIntervensjon = input$startDatoIntervensjon,
+                    #datoFra=, datoTil=,
+                    enhetsUtvalg = 2)
+
+
 
 # Div sjekk
 table(RegData$ShNavn, RegData$Aar)
@@ -227,6 +244,7 @@ RegData$PatientTransferredFromHospital[ind]
 table(RegData$PatientTransferredFromHospital)
 table(RegData$PatientTransferredFromHospitalName[ind])
 table(RegData$PatientTransferredToHospitalName[ind])
+
 #-----------------------------------Lage datasett til kvalitetsindikatorer---------
 library(intensiv)
 

@@ -88,4 +88,5 @@ Argumentet \emph{enhetsUtvalg} har følgende valgmuligheter:
     \item 7: Egen region
  \item 8: Egen region mot resten
    	}
+   	Hvis egen avdeling ikke har registreringer, vises hele landet.
 }
