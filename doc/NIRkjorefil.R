@@ -163,11 +163,10 @@ InfluData <- InfluDataAlle[ ,variableTilTab]
 #-------------------------------------LASTE DATA-----------------------------------------------
 rm(list=ls())
 
-dato <- '2019-09-24' #'2018-12-14' #MainFormDataContract2018-06-19
-dataKat <- 'A:/Intensiv/'
-fil <- paste0(dataKat,'MainFormDataContract',dato)
+dato <- '2022-11-14' #'2018-12-14' #MainFormDataContract2018-06-19
+fil <- paste0('c:/Registerdata/nipar/MainFormDataContract',dato)
 NIRdata <- read.table(file=paste0(fil,'.csv'), header=T, stringsAsFactors=FALSE, sep=';',encoding = 'UTF-8')
-RegData <- NIRdata
+RegData <- intensiv::NIRPreprosess(NIRdata)
 load(paste0(fil,".Rdata")) #RegData 2019-01-07
 save(RegData, file=paste0('intensivdata.Rdata'))
  # RegData <- RegData[which(
@@ -176,6 +175,10 @@ save(RegData, file=paste0('intensivdata.Rdata'))
 #save(RegData, file=paste0(dataKat,'NIRdata10000.Rdata'))
 library(intensiv)
 load(paste0("A:/Intensiv/NIRdata10000.Rdata")) #RegDataTEST, 2018-06-05
+
+enh <- unique(NIRdata[,c("ShNavn",'ReshId' )])
+enh <- table(RegData[,c("ShNavn",'Aar' )], useNA = )
+enh[order(enh$ReshId),]
 
 Sys.setlocale("LC_TIME", "nb_NO.UTF-8")
 Sys.setlocale("LC_ALL", "nb_NO.UTF-8")
