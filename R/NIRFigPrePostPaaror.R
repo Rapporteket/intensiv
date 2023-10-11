@@ -124,7 +124,7 @@ NIRFigPrePostPaaror  <- function(RegData=0, valgtVar, datoFra='2011-01-01', dato
       #Tekst som angir hvilket utvalg som er gjort
       mtext(utvalgTxt, side=3, las=1, cex=0.9, adj=0, col=farger[1], line=c(3+0.8*((NutvTxt-1):0)))
 
-      title(tittel, font.main=1)	#line=0.5,
+      title(tittel, font.main=1, sub=NIRUtvalg$hovedgrTxt, col.sub= farger[2])	#line=0.5,
 
       par('fig'=c(0, 1, 0, 1))
       if ( outfile != '') {dev.off()}

@@ -2,8 +2,8 @@
 title: "Intensivmedisin, Helse Nord"
 author: "NiPaR v/Lena Ringstad Olsen"
 output:
-  pdf_document: default
   html_document: default
+  pdf_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -12,7 +12,7 @@ library(intensiv)
 library(kableExtra)
 library(tidyverse)
 aarFra <- 2018
-aarTil <- 2021
+aarTil <- 2022
 datoFra <- paste0(aarFra, '-01-01')
 datoTil <- paste0(aarTil, '-12-31')
 RegDataLandet <- NIRRegDataSQL(datoFra = datoFra, datoTil = datoTil)
@@ -29,14 +29,6 @@ OpphCovLandet <- intensivberedskap::NIRPreprosessBeredsk(
 RegDataCovLandet <- merge(RegDataLandet, OpphCovLandet, suffixes = c('','Cov'),
         by.x = 'SkjemaGUID', by.y = 'HovedskjemaGUID', all.x = T, all.y=F)
 RegDataCov <- RegDataCovLandet[RegDataCovLandet$RHF == 'Helse Nord', ]
-# RegDataCovLandet <- merge(RegDataLandet, OpphCovLandet[ , c('Bekreftet', 'HovedskjemaGUID', 'FormStatus')], suffixes = c('','Cov'),
-#         by.x = 'SkjemaGUID', by.y = 'HovedskjemaGUID', all.x = T, all.y=F)
-# RegDataCov <- merge(RegData, OpphCov[ , c('Bekreftet', 'HovedskjemaGUID', 'FormStatus')], suffixes = c('','Cov'),
-#          by.x = 'SkjemaGUID', by.y = 'HovedskjemaGUID', all.x = T, all.y=F)
-
-#OpphCovRaa <- intensivberedskap::NIRberedskDataSQL(datoFra = '2020-03-01', datoTil = datoTil, kobleInt=1) 
-#OpphCovLandet <- intensivberedskap::NIRPreprosessBeredsk(OpphCovRaa, aggPers = 0)
-
 
 ```
 
@@ -51,11 +43,10 @@ Data <- RegData %>% dplyr::group_by(HF, ShNavn) %>%
     '2019' = sum(Aar==2019),
     '2020' = sum(Aar==2020),
     '2021' = sum(Aar==2021),
-    #'2022' = sum(Aar==2022)
+    '2022' = sum(Aar==2022)
     )
-#print(as.table(Data))
 kableExtra::kable(Data)
-write.table(Data, file = 'Aktivitet18_21.csv', sep = ';')
+write.table(Data, file = 'Aktivitet18_22.csv', sep = ';')
 #Test: 
 #Tab <- table(RegDataLandet[,c('HelseenhetKortnavn', 'Aar')], dnn = 0)
 # TabAar <- ftable(Tab, row.vars = c('HF', 'ShNavn'), exclude = 0)
@@ -252,14 +243,15 @@ Alle tall er vel ikke interessante, men det er enklest å ta med alt, så plukke
 sykehusnavn <- c('Helse Nord RHF', sort(unique(RegData$HF)))
 
 for (sykehus in sykehusnavn) {
- Tab <- tabNokkeltallNord(RegData = RegData, sykehus=sykehus)
+ Tab <- tabNokkeltall(RegData = RegData, sykehus=sykehus, tidsenhet = 'Aar', 
+                      datoFra = datoFra, utvidTab = -1)
   shfilnavn <- gsub(" ", "_", sykehus)  
   write.table(as.table(Tab), row.names = T, fileEncoding = 'UTF-8',
-              file = paste0('~/speil/intensivstrategi/Nokkeltall_', shfilnavn, '.csv'), sep = ';')
+              file = paste0('~/Aarsrappresultater/intensivstrategi/Nokkeltall22_', shfilnavn, '.csv'), sep = ';')
   TabUt <- kableExtra::kbl(Tab,  digits= 1, #format='html', #align=c('l', rep('r', ncol(tabNokkeltall))), #row.names=F,
                          label = paste0('tab:Nokkeltall', sykehus),
        caption = paste('Nøkkeltall for intensivopphold i ', sykehus, ':'))
-  print(TabUt)
+  #print(TabUt)
 }
 
 ```
@@ -274,13 +266,14 @@ sykehusnavn <- sort(unique(RegData$HelseenhetKortnavn))
 #Tab <- tabNokkeltallNord(RegData = RegData, sykehus=sykehusnavn[3])
 
 for (sykehus in sykehusnavn) {
-  Tab <- tabNokkeltallNord(RegData = RegData, sykehus=sykehus)
+  Tab <- tabNokkeltall(RegData = RegData, sykehus=sykehus, tidsenhet = 'Aar', 
+                       datoFra = datoFra, utvidTab = -1)
   shfilnavn <- gsub(" ", "_", sykehus) #gsub("y", "NEW", x) 
-  write.table(Tab, file = paste0('~/speil/intensivstrategi/Nokkeltall, ', shfilnavn, '.csv'), sep = ';')
+  write.table(Tab, file = paste0('~/Aarsrappresultater/intensivstrategi/Nokkeltall, ', shfilnavn, '.csv'), sep = ';')
   TabUt <- kableExtra::kbl(Tab,  digits= 1, #format='html', #align=c('l', rep('r', ncol(tabNokkeltall))), #row.names=F,
                          label = paste0('tab:Nokkeltall', sykehus),
        caption = paste('Nøkkeltall for intensivopphold i ', sykehus, ':'))
-  print(TabUt)
+  #print(TabUt)
 }
 
 ```

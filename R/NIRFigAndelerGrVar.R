@@ -313,7 +313,7 @@ if (lagFig == 1) {
                         TXT <- paste0(NIRUtvalg$grTypeTxt, 'sykehus: ', sprintf('%.1f', AggTot), '%, N=', N$Hoved) #paste0('totalt: ', sprintf('%.1f', AggTot), ', N=', N$Hoved)
 
                         if (medKI == 0) {
-                              legend(xmax/4, posOver+posDiff, TXT, fill=NA,  border=NA, lwd=2.5, xpd=TRUE, #inset=c(-0.1,0),
+                              legend('top', TXT, fill=NA,  border=NA, lwd=2.5, xpd=TRUE, #xmax/4, posOver+posDiff, inset=c(-0.1,0),
                                      col=farger[1], cex=cexleg, seg.len=0.6, merge=TRUE, bty='n')
                         } else {
                               TXT <- c(TXT,

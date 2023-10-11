@@ -79,14 +79,12 @@ NIRFigGjsnGrVar <- function(RegData, valgtVar, preprosess=1, hentData=0, valgtMa
                Gjsn = 'Gjennomsnittlig ')
 
 
-  #tittel <- paste0(t1, valgtVar, ', ', NIRUtvalg$grTypeTxt, 'sykehus')
   tittel <- paste0(t1, NIRVarSpes$tittel)
 
   if( valgtVar =='SMR') {tittel <- c(paste0('SMR, ', NIRUtvalg$grTypeTxt, 'sykehus'),
                                      '(uten reinnlagte pasienter)')}
   if( valgtVar =='PIMdod') {tittel <- paste0('PIM, ', NIRUtvalg$grTypeTxt, 'sykehus')}
-  # (uten reinnlagte pasienter)')}
-
+  
   Ngrtxt <- paste0(' (', as.character(Ngr),')')
   indGrUt <- which(Ngr < Ngrense)
   if (length(indGrUt)==0) { indGrUt <- 0}
@@ -154,13 +152,9 @@ NIRFigGjsnGrVar <- function(RegData, valgtVar, preprosess=1, hentData=0, valgtMa
   }
 
 
-  #if (sum(which(Ngr < Ngrense))>0) {indGrUt <- as.numeric(which(Ngr<Ngrense))} else {indGrUt <- 0}
-  #AndelerGr[indGrUt] <- -0.0001
-
   GrNavnSort <- paste0(names(Ngr)[sortInd], Ngrtxt[sortInd])
   if (valgtVar %in% c('SMR', 'PIMdod')) {AntDes <- 2} else {AntDes <- 1}
   soyletxt <- sprintf(paste0('%.', AntDes,'f'), Midt)
-  #soyletxt <- c(sprintf(paste0('%.', AntDes,'f'), Midt[1:AntGr]), rep('',length(Ngr)-AntGr))
   indUT <- which(is.na(Midt))  #Rydd slik at bare benytter indGrUt
   soyletxt[indUT] <- ''
   KIned[indUT] <- NA
@@ -190,7 +184,6 @@ NIRFigGjsnGrVar <- function(RegData, valgtVar, preprosess=1, hentData=0, valgtMa
                         soyletxt=soyletxt,
                         valgtMaal=valgtMaal,
                         tittel=tittel,    #NIRVarSpes$tittel,
-                        #yAkseTxt=yAkseTxt,
                         retn='H',
                         utvalgTxt = utvalgTxt,
                         medSml=NIRUtvalg$medSml)
@@ -199,28 +192,8 @@ NIRFigGjsnGrVar <- function(RegData, valgtVar, preprosess=1, hentData=0, valgtMa
   #FigDataParam skal inn som enkeltparametre i funksjonskallet
   if (lagFig == 1) {
     cexgr <- 1-length(soyletxt)/200
-    # NIRFigSoyler(RegData, AggVerdier=AggVerdier, AggTot=MidtHele, Ngr=Ngr, N=list(Hoved=N), cexgr=cexgr,
-    #              tittel=tittel, valgtMaal=valgtMaal,
-    #              smltxt=NIRUtvalg$smltxt, yAkseTxt=yAkseTxt,utvalgTxt=NIRUtvalg$utvalgTxt,
-    #              grTypeTxt=NIRUtvalg$grTypeTxt,  fargepalett=NIRUtvalg$fargepalett, grtxt=GrNavnSort,
-    #              soyletxt=soyletxt,  grVar=grVar, medKI=medKI, KImaal = NIRVarSpes$KImaal,
-    #              medSml=NIRUtvalg$medSml, xAkseTxt=NIRVarSpes$xAkseTxt, outfile=outfile)
-    #
-    #
-    # NIRFigSoyler <- function(RegData, AggVerdier, AggTot=0, Ngr, tittel='mangler tittel', smltxt='', N, retn='H',
-    #                          yAkseTxt='', utvalgTxt='', grTypeTxt='', soyletxt='', grtxt, grtxt2='', hovedgrTxt='',
-    #                          grVar='', valgtMaal='Andel', figurtype='', cexgr=1, medSml=0, fargepalett='BlaaOff', xAkseTxt='',
-    #                          medKI=0, KImaal = NA, KImaaltxt = '', outfile='') { #Ngr=list(Hoved=0)
-    #
-    #
-    #---------------------------------------FRA FIGANDELER, FigGjsnGrVar og FigAndelGrVar--------------------------
-    #Hvis for få observasjoner..
 
-    if ((N$Hoved < 5) | (dim(RegData)[1]<5))
-      #| ((enhetsUtvalg %in% c(1,3)) & length(which(RegData$ReshId == reshID))<5)) #(dim(RegData)[1]-N$Hoved <5) )
-      #       if (dim(RegData)[1] < 10 | ((enhetsUtvalg %in% c(1,3)) & length(which(RegData$ReshId == reshID))<5) )
-      #|(grVar=='' & length(which(RegData$ReshId == reshID))<5 & enhetsUtvalg %in% c(1,3)))
-    {
+    if ((N$Hoved < 5) | (dim(RegData)[1]<5)) {
       #-----------Figur---------------------------------------
       FigTypUt <-rapFigurer::figtype(outfile)  #FigTypUt <- rapFigurer::figtype(outfile)
       farger <- FigTypUt$farger
@@ -287,7 +260,8 @@ NIRFigGjsnGrVar <- function(RegData, valgtVar, preprosess=1, hentData=0, valgtMa
       }
       lines(x=rep(AggTot, 2), y=c(minpos, maxpos), col=farger[1], lwd=2.5) #y=c(0, max(pos)+0.55),
       #Linje for kvalitetsindikatormål:
-      if ((valgtMaal=='Med' & valgtVar == 'respiratortidInvMoverf') | valgtVar == 'SMR') { #(!is.na(KImaal)) {
+      if ((valgtMaal=='Med' & valgtVar %in% c('respiratortidInvMoverf', 'respiratortidInvUoverf')) | 
+          valgtVar == 'SMR') { 
         lines(x=rep(KImaal, 2), y=c(minpos, maxpos), col= '#FF7260', lwd=2.5) #y=c(0, max(pos)+0.55),
         text(x=KImaal, y=maxpos+0.6, paste0('Mål:', KImaaltxt), cex=0.9*cexgr, col= '#FF7260',adj=c(0.5,0))
       }
@@ -307,13 +281,13 @@ NIRFigGjsnGrVar <- function(RegData, valgtVar, preprosess=1, hentData=0, valgtMa
       #------Tegnforklaring (legend)--------
       if (medKI == 0) {
         TXT <- paste0(grTypeTxt, 'sykehus ', sprintf('%.1f', AggTot), ', N=', N$Hoved)
-        legend(xmax/4, posOver+posDiff, TXT, fill=NA,  border=NA, lwd=2.5,xpd=TRUE,
+        legend('top', TXT, fill=NA,  border=NA, lwd=2.5,xpd=TRUE, #xmax/4, posOver+3*posDiff
                col=farger[1], cex=cexleg, seg.len=0.6, merge=TRUE, bty='n')
       } else {
         TXT <- c(paste0(grTypeTxt, 'sykehus ', sprintf('%.1f', AggTot), ', N=', N$Hoved),
                  paste0('95% konf.int., ', grTypeTxt, 'sykehus (',
                         sprintf('%.1f', KIHele[1]), '-', sprintf('%.1f', KIHele[2]), ')'))
-        legend(xmax/4, posOver, TXT, yjust=0, xpd=TRUE, fill=c(NA, farger[3]),  border=NA, lwd=2.5,  #inset=c(-0.1,0),
+        legend(x=xmax/4, y=posOver, TXT, yjust=0, xpd=TRUE, fill=c(NA, farger[3]),  border=NA, lwd=2.5,  #inset=c(-0.1,0),
                col=c(farger[1], farger[3]), cex=cexleg, seg.len=0.6, merge=TRUE, bty='n') #+2*posDiff
       }
 

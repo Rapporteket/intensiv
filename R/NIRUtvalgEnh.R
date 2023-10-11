@@ -12,6 +12,7 @@
 #'     \item 7: Egen region
 #'	 \item 8: Egen region mot resten
 #'    	}
+#'    	Hvis egen avdeling ikke har registreringer, vises hele landet.
 #'
 #' @inheritParams NIRFigAndeler
 #' @param valgtVar Hvilken variabel som skal visualiseres. Se \strong{Details} for oversikt.
@@ -73,7 +74,6 @@ NIRUtvalgEnh <- function(RegData, datoFra='2011-01-01', datoTil=Sys.Date(), mina
       if (velgAvd[1] != 0 & reshID==0) {
          #if (enhetsUtvalg !=0) {stop("enhetsUtvalg må være 0 (alle)")}
          #Utvalg på avdelinger:
-         #RegData <- RegData[which(as.character(RegData$ShNavn) %in% velgAvd),]
          RegData <- RegData[which(as.numeric(RegData$ReshId) %in% as.numeric(velgAvd)),]
          RegData$ShNavn <- as.factor(RegData$ShNavn)
       }
