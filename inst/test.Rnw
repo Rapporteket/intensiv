@@ -1,0 +1,106 @@
+\documentclass[handout, xcolor=pdftex,dvipsnames,table]{beamer}  %presentation,
+%\documentclass[handout, xcolor=pdftex,dvipsnames,table]  %presentation,
+\usetheme{Hannover}
+ 
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[english, norsk]{babel}
+\usepackage{xspace}
+\usepackage{booktabs}
+\usepackage{rotating}
+\usepackage{graphicx}
+
+
+<<'initOpts',include=FALSE>>=
+knitr::opts_chunk$set(warnings=FALSE,echo=FALSE)
+knitr::opts_knit$set(root.dir = './')
+library(xtable)
+library(lubridate)
+@
+
+<<'hentDataOgTilrettelegg', include=FALSE>>=
+#startOfMonth<- function(x) {as.Date(format(x, "%Y-%m-01")) }
+
+dato <- as.POSIXlt(Sys.Date(), tz='UTC')
+datoTil <- as.Date(format(dato, "%Y-%m-01"))-1 #Til siste i forrige måned
+mndTxt <- c('januar', 'februar', 'mars', 'april', 'mai', 'juni', 'juli', 'august', 
+                   'september', 'oktober', 'november', 'desember')
+rappMnd <- paste0(mndTxt[ifelse(dato$mon==0, 12, dato$mon)], ' ', dato$year+1900)
+#som <- function(x) {as.Date(format(x, "%Y-%m-01"), tz='UTC')}
+#dato <- as.POSIXlt(datoTil, tz='UTC')
+
+datoFra1Aar <- as.Date(paste0(1900+dato$year-1,'-', ifelse(dato$mon==11, 1, dato$mon+2), '-', '01'), tz='UTC')
+#Siste 6 måneder:
+datoFra6mnd <- paste0(substr(as.character(dato %m-% months(6, abbreviate=FALSE)),1, 8),'01')  #benytter lubridate
+      
+datoFra <- datoFra6mnd
+#Ønsker eget datasett for forrige måned
+dato <- as.POSIXlt('2018-12-07')
+datoFraMnd <- format(datoTil, "%Y-%m-01")
+# Gir feil dato: datoFraMnd <- as.Date(paste0(1900+dato$year,'-', ifelse(dato$mon==0, 11, dato$mon), '-', '01'), tz='UTC') #dato - 
+
+tidsenhet <- 'Mnd'
+preprosess <- 0
+
+
+
+@
+
+\begin{document}
+\SweaveOpts{concordance=TRUE}
+
+\title[NIR\\ \\\today]{\textit{Norsk intensivregister} \\
+Månadsrapport, \Sexpr{rappMnd} \\
+%{\today}\\[2cm] % Date, change the \today to a set date if you want to be precise \date{}
+\maketitle
+
+
+\begin{tiny}
+
+\begin{frame}[fragile] {Ansvar og bruk av data}
+
+Fagrådet i NIR er ansvarleg for alle vurderingar og tolkingar av data, og også feil i resultat som skuldast feil i datagrunnlaget. Den viktigaste feilkjelda i rapporten vil truleg vere ufullstendige datasett i mange av NIR-einingane – det vil seie at ikkje alle data er ferdigstilte for aktuell månad. Dette etterslepet vil variere markert både i tid og volum, og gjer at data blir meir eller mindre representative for dei ulike einingane.
+Rapporten har difor usikkert datagrunnlag og er meint til internt bruk i einingane. 
+Rapporten inneheld anonymiserte samledata. I tilfelle der utvalet inneheld få registreringar som er kombinerte med til dømes demografiske data, kan det ikkje utelukkast at rapporterte data kan tilbakeførast til einskildpersonar. 
+
+\textit{\textbf{Av grunnane over, ber NIR om at denne rapporten ikkje blir brukt offentleg i nokon samanheng eller blir offentleggjort på noko vis.}}
+
+\end{frame}
+
+
+%\section{Innhald}
+
+\begin{frame}[fragile] {Datagrunnlag}
+
+Denne rapporten er utarbeidd på oppdrag frå Norsk intensivregister (NIR) og vert generert automatisk
+frå Rapporteket. Alle resultat er baserte på data frå registeret og er gyldige per rapportdato for
+opphald som er ferdigstilte i MRS. Rapporten inneheld alle ferdigstilte opphald i MRS der innleggingstidspunktet på intensiv er i tidsrommet kl.00.00 den fyrste i aktuell månad til kl. 23.59 den siste i månaden. NIR-einingar
+som er ajour med registreringa, vil dermed kunne få nær fullstendige månadsrapportar.
+
+
+\par
+
+Denne rapporten kan hentast ved at ein loggar seg inn på Rapporteket-Intensiv og klikkar på "Månedsrapport". Det gjer at alle kan hente seg representative månadsrapportar når dei måtte ynskje. Ein kan óg abonnere på rapporten. Ein vél da sjølv kor ofte ein ynskjer rapporten. I Rapporteket kan ein óg finne mange fleire figurar og tabellar og gjere endringar i tidsintervall og samanlikningsgrunnlag.
+ 
+
+\end{frame}
+
+\begin{frame}[fragile] {Innhald}
+\small{
+\begin{itemize}
+\item Opphald og liggedøger
+\item Alder
+\item Liggetid
+\item Hovudårsak til opphaldet
+\item NEMS-skåre
+\item Respirasjonsstøtte
+\item SAPS II
+\item Dobbeltregistreringar
+\end{itemize}
+}
+\end{frame}
+
+
+\end{tiny}
+
+\end{document}

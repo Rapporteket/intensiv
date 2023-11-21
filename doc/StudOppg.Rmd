@@ -1,24 +1,30 @@
 ---
-title: "StudentOppg2003"
+title: "Akutt bukkirurgioperasjoner før/etter utvidelse av aktuttstuetilbud"
 author: "Lena"
 date: "2023-11-20"
-output: html_document
+output:
+  word_document: default
+  html_document: default
+  pdf_document: default
+editor_options:
+  chunk_output_type: console
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
 
 
 ## Sammendrag
 
+Heile oppgåva/kvalitetssikringsprosjektet dreiar seg om (eksklusjon allereie gjort) å samanlikne to toårs-kohortar av akuttinngrep på gastro(mage-tarm)-seksjonen på Haukeland Sjå vedlagde protokoll, som vi ikkje kjem til å fylgje opp 100%. Det er noko vil ikkje kjem til å sjå på.
+Alle samanlikningar der det ikkje er fullstendige data, skal gjerast med utgangspunkt i dei data vi har (n vil altså varierer etter kva vi ser på).
 
-Samanlikne to toårs-kohortar gastrokirurgiske pasientar på Haukeland:
+
+Gastrokirurgiske pasientar, toårs-kohortar:
   1.	Dei som gjennomgjekk akutt bukkirurgi i tidsrommet 01.01.2018-31.12.2019
   2.	Dei som gjennomgjekk akutt bukkirurgi i tidsrommet 01.04.2020-31.03.2022
- Hovudpoenget er at det fram til februar 2020 var avgrensa tilgang til "akuttstove" på dagtid
- - dvs. at det var avsett eit eige team til å ta seg av akuttoperasjonar på dagtid berre kring 2 dagar/veke.
+ Hovudpoenget er at det fram til februar 2020 var avgrensa tilgang til "akuttstove" på dagtid, dvs. at det var avsett eit eige team til å ta seg av akuttoperasjonar på dagtid berre kring 2 dagar/veke.
 Frå februar 2020 vart dette tilbodet utvida til fem dagar/veke (måndag til fredag).
 
  *Kohort 1 2028-2019*: 
@@ -29,67 +35,89 @@ Frå februar 2020 vart dette tilbodet utvida til fem dagar/veke (måndag til fre
 - inngrep etter slik tilgang var etablert.
 - 1292 inngrep og 1002 pasientar.
 
-Ei fil på pasientnivå - kun siste inngrep
-Ei fil med alle inngrep 
+- Ei fil på pasientnivå - kun siste inngrep
+- Ei fil med alle inngrep 
 
-```{r data, echo=FALSE}
-library("readxl")
-#excel_sheets('P:/Registerinfo og historie/intensiv/studentOppg2023/PasienterDIPS.xlsx')
-Pas <- read_excel('P:/Registerinfo og historie/intensiv/studentOppg2023/PasienterDIPS.xlsx') #, sheet = "chickwts")
+Målet er ein artikkel i tidsskriftet BMJ Quality & Safety.
+
+```{r data, echo=FALSE, warning=FALSE}
+#sti <- 'P:/Registerinfo og historie/intensiv/studentOppg2023/'
+sti <- 'E:/studentOppg2023/'
+#readxl::excel_sheets(paste0(sti, 'PasienterDIPS.xlsx'))
+Pas <- readxl::read_excel(paste0(sti, 'PasienterDIPS.xlsx')) #, sheet = "chickwts")
 indPasFor <- which(Pas$Gruppe=='foer')
 indPasEtter <- which(Pas$Gruppe=='etter')
 
-Inngr <-  read_excel('P:/Registerinfo og historie/intensiv/studentOppg2023/InngrepDIPS.xlsx')
+Inngr <-  readxl::read_excel(paste0(sti, 'InngrepDIPS.xlsx'))
 indInngrFor <- which(Pas$Gruppe=='foer')
 indInngrEtter <- which(Pas$Gruppe=='etter')
 
 ```
 
- Vi ynskjer å sjå om vi finn att effekt av denne endringa, og undersøkjer ein del variablar som har med logistikk å gjere
- (blant anna om fraksjonen av operasjonar på dagtid vs. på vakttid er blitt endra,
-  om fleire pasientar vert opererte innan den tidsfristen kirurgen ynskjer seg etc),
+ Vi ynskjer å sjå om vi finn att effekt av denne endringa, og undersøkjer ein del variablar som har med logistikk å gjere, eks: 
+ - om fraksjonen av operasjonar på dagtid vs. på vakttid er blitt endra, 
+ - om fleire pasientar vert opererte innan den tidsfristen kirurgen ynskjer seg
+ - ...
  og også nokre variablar som har med utfall å gjere:
-  operajonstid, overleving 7, 30 og 365 dagar, grad av blødning, førekomst av reoperasjonar innan 7 døger
+- operajonstid, 
+- overleving 7, 30 og 365 dagar, 
+- grad av blødning, 
+- førekomst av reoperasjonar innan 7 døger
  
 I tillegg må vi samanlikne kohortane for ein del basalkarakteristika: kjønn, alder, "funksjonsklasse" gradert som ASA.
-Alt i alt er det altså snakk om nokså "basal" statistikk, på nokså store datasett (kring 1100-1200 inngrep i kvar gruppe).
-Målet er ein artikkel i tidsskriftet BMJ Quality & Safety.
 
 
-# Her er det vi gjerne vil ha statistisk hjelp til.
-Heile oppgåva/kvalitetssikringsprosjektet dreiar seg om (eksklusjon allereie gjort) å samanlikne to toårs-kohortar av akuttinngrep på gastro(mage-tarm)-seksjonen på sjukehuset. Sjå vedlagde protokoll, som vi ikkje kjem til å fylgje opp 100% - det er noko vil ikkje kjem til å sjå på.
+## Her er det vi gjerne vil ha statistisk hjelp til.
 
-
-
-## Deskriptiv statistikk av pasient-populasjonene
+### Deskriptiv statistikk av pasient-populasjonene
 Ønsker først å gjere ei case-mix-samanlikning av pasientane,  (dvs. dei 959 mot dei 1002) der vi ser på:
 
+```{r case-mix, echo=FALSE}
+#Aldersgrupper: 18-39, 40-49, 50-59, 60-69, 70-79 og 80+,
+N1 <- length(indPasFor)
+N2 <- length(indPasEtter)
+Pas$Gr <- ifelse(Pas$Gruppe=='foer', 1, 2)
+Pas$AldersGr <- cut(Pas$Alder, 
+                    labels = c('18-39', '40-49', '50-59', '60-69', '70-79', '80+'),
+                    breaks= c(18, 40, 50, 60, 70, 80, 150),
+                    include.lowest=TRUE, right=FALSE)
+tabAldGr <- cbind(
+  Gr1 = table(Pas$AldersGr[indPasFor]), 
+  Gr2 = table(Pas$AldersGr[indPasEtter]),
+  PstGr1 = round(table(Pas$AldersGr[indPasFor])/N1*100, 1),
+  PstGr2 = round(table(Pas$AldersGr[indPasEtter])/N2*100, 1)
+)
+  
+#Kjønn
+tabKj <- tapply(Pas$Kjonn, Pas$Gruppe, FUN = function(x){c(sum(x=='M'), 100*sum(x=='M')/length(x) )})
+
+tabAldKj <- rbind(tabAldGr,
+                  Menn = c(tabKj$foer[1], tabKj$etter[1], tabKj$foer[2], tabKj$etter[2])
+)
+
+```
+
 **Alder**
-Gruppe 1: `summary(Pas$Alder)`
-Gjennomsnitt / SD
+- Gruppe1: Gjennomsnitt `r mean(Pas$Alder[indPasFor])`, SD `r sd(Pas$Alder[indPasFor])`
+- Gruppe2: Gjennomsnitt `r mean(Pas$Alder[indPasEtter])`, SD `r sd(Pas$Alder[indPasEtter])`
+
+Fordeling
 Aldersgrupper: 18-39, 40-49, 50-59, 60-69, 70-79 og 80+, sammenligne fordeling.
 
-**Kjønn**
+`r knitr::kable(tabAldKj, "simple")`
 
 **Mors (døde)**
-*Mors* fortel om pasienten er registrert som død (=1) då vi gjorde datauttrekka. 
-*mors_7* har eit 1-tal om dødsfallet skjedde < 7 døger etter siste inngrep, 
-*mors_30* < 30 døger etter siste inngrep og kolonne BE i løpet av eitt år/365 dagar etter siste inngrep. NB! mors-variablene  er kumulative – dersom mors_7 har eit 1-tal, så har mors_30 og mors_365 det også – altså: er ein registrert død innan 7 døger, er ein også registrert død innan 30 og 365.
+- *Mors* fortel om pasienten er registrert som død (=1) då vi gjorde datauttrekka. 
+- *mors_7* har eit 1-tal om dødsfallet skjedde < 7 døger etter siste inngrep, 
+- *mors_30* < 30 døger etter siste inngrep og kolonne BE i løpet av eitt år/365 dagar etter siste inngrep. 
 
 Det er vel ikkje råd å lage ei Kaplan-Meier-kurve-samanlikning med berre tre punkt, eller er det det? Korleis skal vi best samanlikne mortaliteten i dei to kohortane – ved kategoriske testar?
-vURDER: vI KAN VEL BRUKE mors_dager...?
+*Vurder: Bruke mors_dager i Kaplan-Meier...?*
 
 - Kan du også sjekke om det er skilnad i mortalitet etter 7, 30 og 365 dagar i dei to kohortane når det gjeld aldersgruppene i kolonne O? Her er vi ute etter om særleg dei eldre og presumptivt mekir skrøpelege har fått endra overleving etter innføring av akuttstove (det ser førebels ut for oss som at totalmortaliteten og også ASA-skåre har auka frå kohort 1 til 2.
+*Tja... Det er blittelitt høyere andel av ASA 4 (og 5, få obs.), men det er også bittelitt høyere andel av ASA 1+2.*
 
-
-```{r Case-mix}
-# **Alder**
-# Gjennomsnitt / SD
-summary(Pas$Alder)
-# Aldersgrupper: 18-39, 40-49, 50-59, 60-69, 70-79 og 80+, sammenligne fordeling.
-
-# **Kjønn**
-
+```{r Mors, echo=FALSE}
 # Mors (døde)
 # kolonne AX fortel om pasienten er registrert som død (=1) då vi gjorde datauttrekka. 
 # Kolonne BC har eit 1-tal om dødsfallet skjedde < 7 døger etter siste inngrep, 
@@ -103,22 +131,23 @@ summary(Pas$Alder)
 
 
 Så ynskjer vi å samanlikna inngrepa  dei to kohortane av inngrep:
-- *ASA-klassefordeling* mellom dei fem klassane 1-5.
-- *Priorite*t = Fordelinga i hastegrader (dvs. kor raskt kirurgen har ynskt inngrepet gjort etter at det er meldt inn). NB! Her vert det litt sortering. Vi ynskjer fordeling etter desse hovudkategoriane:
-  - a)	Innan 6 timar (dvs. alle som har dette, eller kortare tid, i kolonne F)
-  - b)	> 6, men < 24 timar (dvs. alle som har meir enn 6 timar hastegrad og opp til og med dei som har «innen 24 timer»)
-  - c)	>24 t, men < 72 timar (dvs. alle som har meir enn 24 t hastegrad, men innan 72 timar
-  - d)	> 72 t (dvs. alle som har lenger frist enn «innen 72 t») 
-  - e)	Innan 1 time (Svært akutte inngrep, der kirurgen har sett kortare tid enn 1 time) – dette vil bli ei undergruppe av kategori a) (innan 6 timar)
-- *Opr innan prio* Eit 1-tal her tyder at inngrepet er starta innan den tidsfristen kirurgen ynskte i klonne F. Vi ynskjer å samanlikne om det totalt sett er skilnad i graden av oppfylling av tidsfristar, dvs. fraksjonen av inngrep (med talet 1 i kolonne I) mellom dei to kohortane. Så ynsker vi å sjå om det er skilnader mellom kohort 1 og 2 når det gjeld dei ulike prioriteringskategoriane, dvs. mellom dei som er ynskt opererte innan 1t, 6 t, 24 t, 72 t og over 72t.
-- *Knivtid* (=den tida kirurgen brukte på inngrepet i minuttar). Vi ynskjer å samanlikne gjennomsnitta og medianar i kohort 1 og kohort 2 her
-- *Blødning* i ml – kor mykje blødning som er registrert i løpet av inngrepet. Dette er skeivfordelte data, så er det best å samanlikne median/interkvartilar?
-- *Andel akuttinngrep på dagtid*Kor stor andel av desse akuttinngrepa på kvardagsdøger måndag-fredag (der det var ei akuttstove tilgjengeleg kvar dag for kohort 2, og meir sporadisk for kohort 
-  - 1) skjedde på dagtid (dvs. vart starta på dagtid)? Var denne andelen ulik i dei to kohortane? Oppstart på dagtid har eit 1-tal i kolonne AE «Dagtid». Det skal då vere 0 i kolonne AF (helg-helgedag, dvs. laurdag/sundag og bevegelege heilagdagar). Kolonne AG «Kveld» kan vere 1 samstundes som det er 1 i kolonne AE «Dagtid» - då er det eit inngrep som strekkjer seg over både dag og kveld/natt. Dersom det er 1 i kolonne AG «Kveld» utan at det er 1 i AE «Dagtid», er inngrepet starta på vakttid og ikkje dagtid.
--	*Liggjetid på sjukehus* kolonne AU = totalt tal på døger innlagt. Dette er også ein skeivfordelt variabel som vi gjerne vil samanlikne mellom dei to kohortane. 
 
+- **ASA-klassefordeling** mellom dei fem klassane 1-5.
+- **Prioritet** = Fordelinga i hastegrader (dvs. kor raskt kirurgen har ynskt inngrepet gjort etter at det er meldt inn). Har laget kategoriene 0-1t, 1-6t, 6-24t, 24-72t og 72+t
 
-Alle samanlikningar der det ikkje er fullstendige data, skal gjerast med utgangspunkt i dei data vi har (n vil altså varierer etter kva vi ser på).
+- **Opr innan prio** Eit 1-tal her tyder at inngrepet er starta innan den tidsfristen kirurgen ynskte. Vi ynskjer å samanlikne om det totalt sett er skilnad i graden av oppfylling av tidsfristar, dvs. fraksjonen av inngrep (med talet 1 i kolonne I) mellom dei to kohortane. Så ynsker vi å sjå om det er skilnader mellom kohort 1 og 2 når det gjeld dei ulike prioriteringskategoriane, dvs. mellom dei som er ynskt opererte innan 1t, 6 t, 24 t, 72 t og over 72t.
+
+- **Knivtid** (den tida kirurgen brukte på inngrepet i minuttar). Vi ynskjer å samanlikne gjennomsnitta og medianar i kohort 1 og kohort 2 her
+
+- **Blødning** i ml – kor mykje blødning som er registrert i løpet av inngrepet. Dette er skeivfordelte data, så er det best å samanlikne median/interkvartilar?
+
+- **Andel akuttinngrep på dagtid** 
+Kor stor andel av desse akuttinngrepa på ble utført på: 
+- kvardagsdøger måndag-fredag (akuttstove tilgjengeleg kvar dag for kohort 2, og meir sporadisk for kohort 1)
+- dagtid (dvs. vart starta på dagtid)? 
+- Var denne andelen ulik i dei to kohortane? 
+Oppstart på dagtid har eit 1-tal i variabelen «Dagtid». Det skal då vere 0 i "helg-helgedag", dvs. laurdag/sundag og bevegelege heilagdagar). Kolonne «Kveld» kan vere 1 samstundes som det er 1 i kolonne «Dagtid» - då er det eit inngrep som strekkjer seg over både dag og kveld/natt. Dersom det er 1 i kolonne «Kveld» utan at det er 1 i «Dagtid», er inngrepet starta på vakttid og ikkje dagtid.
+-	*Liggjetid på sjukehus* = totalt tal på døger innlagt. Dette er også ein skeivfordelt variabel som vi gjerne vil samanlikne mellom dei to kohortane. 
 
 
 
