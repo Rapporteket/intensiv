@@ -23,6 +23,17 @@ c(paste0('Nøkkeltall på intensiv, ',
   c(paste0(c(', uten', ', med', ', invasiv', ', non-invasiv'), ' respiratorstøtte'), '')[2 + 1]
 )
 
+IntData <- NIRPreprosess(RegData = NIRRegDataSQL(datoFra = '2000-01-01'))
+start <- tapply(IntData$Aar, INDEX=IntData$ShNavn, FUN = min, na.rm=T)
+
+startAnt <- IntData %>% 
+  dplyr::group_by(ShNavn) %>%
+  dplyr::summarise(
+    startAar = min(Aar, na.rm = T),
+    TotAntOpph = dplyr::n()
+  )
+
+write.csv2(startAnt, file = 'NIRstartAarAnt.csv', row.names = F)
 datoFra <- '2018-01-01'
 datoTil <- '2020-12-31'
 RegData <- NIRRegDataSQL(datoFra = datoFra, datoTil = datoTil)

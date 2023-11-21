@@ -198,10 +198,6 @@ axis(side=1, at = tidNum, labels = levels(RegData$TidsEnhet))
 
 #Sammenlikning:
 if (medSml==1) {
-      # polygon( c(tidtxt[1]-0.01,tidtxt, tidtxt[AntTidsenh]+0.012,
-      #            tidtxt[AntTidsenh]+0.012, tidtxt[AntTidsenh:1], tidtxt[1]-0.01),
-      #          c(KonfRest[1,c(1,1:AntTidsenh, AntTidsenh)], KonfRest[2,c(AntTidsenh,AntTidsenh:1,1)]),
-      #          col=fargeRestRes, border=NA)
       AntTidsenh <- max(which(!is.na(KonfRest[1,])))
             #which(KonfRest==max(KonfRest, na.rm = T)) #Tar bare høyde for at siste tidspunkt har KonfRest=NA
             #length(min(tidNum, na.rm = T):max(tidNum, na.rm = T)) #length(tidNum)

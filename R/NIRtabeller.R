@@ -235,8 +235,6 @@ tabNokkeltall <- function(RegData, tidsenhet='Mnd', datoTil=Sys.Date(), enhetsUt
   
   if (respirator %in% 0:3) {
     indResp <- switch(as.character(respirator),
-                      # '0' = setdiff(1:dim(RegData)[1], which(RegData$respiratortid>0)),
-                      # '1' = which(RegData$respiratortid>0), # 88466 respiratortid>0 #87124
                       '0' = which(RegData$MechanicalRespirator==2),
                       '1' = which(RegData$MechanicalRespirator==1), # 88466 respiratortid>0 #87124
                       '2' = which(RegData$InvasivVentilation>0),
@@ -264,8 +262,6 @@ tabNokkeltall <- function(RegData, tidsenhet='Mnd', datoTil=Sys.Date(), enhetsUt
   indSAPS <- which(RegData$SAPSII > 0)
   indNEMS <- which( (RegData$liggetid>=1) & (RegData$NEMS>1))
   RegDataReinn <- NIRVarTilrettelegg(RegData=RegData, valgtVar = 'reinn', figurtype = 'andelGrVar')$RegData
-  #RegData <- FinnReinnleggelser(RegData=RegData, PasientID = 'PasientID')
-  #indReinn <- intersect(which(RegData$InnDato >= as.Date('2016-01-01', tz='UTC')), which(RegData$Overf==1))
   ind1708 <- union(which(RegData$DateDischargedIntensive$hour<8), which(RegData$DateDischargedIntensive$hour>=17))
   RegData$Ut1708 <- 0
   RegData$Ut1708[ind1708]<-1
