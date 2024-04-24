@@ -22,7 +22,6 @@ FigNIRMeanMed_sql.R
 *.gz
 *.csv
 *.Rdata
-*.html
 *.docx
 
 *.xlsx
