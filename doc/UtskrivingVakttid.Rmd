@@ -1,0 +1,76 @@
+---
+title: "Utskrivinger i vakttid"
+output: html_document
+date: "`r Sys.Date()`"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+```
+
+## Spm 1 Variasjon, måneder
+Det er variasjon frå minimum 8 (i mars) til maksimum 17 i juni og november). 
+Dette er etter alt å døme berre tilfeldig variasjon. Kan du hjelpe oss å uttrykkje dette statistisk?
+
+```{r VarAntMnd, echo=FALSE}
+navn <-   c('Januar',	'Februar',	'Mars',	'April',	'Mai',	'Juni',	'Juli',	'August',	'September',	'Oktober',	'November',	'Desember')
+Ant <- c(9,	14,	8,	15,	16,	17,	9,	16,	9,	15,	17,	16)
+names(Ant) <- navn
+n <- length(Ant)- 2 #Fordi to på medianen
+```
+
+
+```{r runchart, echo=FALSE}
+#Run-diagram:
+qicharts2::qic(Ant)
+```
+
+Teste skift i prosessen: Er ant etterfølgende pkt på ei side mer enn: `r round(log2(n)) + 3`? Nei.
+Er ant skift/kryssinger færre enn: `r qbinom(0.05, n - 1, 0.5)`? Nei.
+
+
+
+## Spm 2.	Forskjell i andel utskriving mellom aldersgrupper
+I aldergruppa 0-9 år vart det skrive ut 20 pasientar på vakttid, og det var 47,6% av alle utskrivingar i den aldersgruppa. I andre enden var det 7 pasientar i alderen 80-89 som vart utskrivne på vakttid, og det utgjorde 18,9% av alle utskrivingane i den aldersgruppa. Det ser her ut til å vere tydelege skilnader i andelar som vert utskrivne på vakttid. Er det statistisk signifikant?
+
+```{r VarAntAlder, echo=FALSE}
+
+AntAldGrVakt <- c(20,	6,	11,	13,	11,	26,	35,	32,	7)
+AntAldGrTot <- c(42,26,30,33,43,68,115,119,37)
+navnAldGr <- c('0-9aar', '10-19aar', '20-29aar', '30-39aar', '40-49aar', '50-59aar', '60-69aar', '70-79aar', '80-89aar')
+
+(likeGr <- prop.test(x=AntAldGrVakt, n=AntAldGrTot))
+(likFord <- ks.test(x=AntAldGrVakt, y=AntAldGrTot-AntAldGrVakt))
+```
+Test for ulike andeler gir p-verdi:
+`r likeGr$p.value`
+
+Vi kan også benytte en Kolmogorov-Smirnoftest for å teste om det er forskjell i fordeling for overførte i og utenfor vakttid. P-verdi:
+`r likFord$p.value`
+
+Begge tester konkluderer med at det ikke er signifikante avvik i andelene hvis vi velger 5% konfidensnivå. Med 10% er vi akkurat i grenseland..
+
+## Spm. 3.	Er det signifikante kjønnsskilnader i andelar som er utskrivne på vakttid/dagtid
+
+Av i alt 297 utskrivne menn, vart 89 (30,0%) utskrivne på vakttid, og 208 (70%) på dagtid
+Av i alt 216 utskrivne kvinner, vart 72 (33,3%) utskriven på vakttid, og 144 (66,7%) på dagtid.
+
+
+Eg finn med mine enkle utrekningar at dette ikkje representerer nokon signifikant skilnad, men vil gjerne ha det kontrollert og stadfesta av ein statistikar.
+
+```{r VarKjonn, echo=FALSE}
+#Menn, kvinner
+navnKj <- c('Menn', 'Kvinner')
+KjTOt <- c(297, 216)
+KjVakt <- c(89, 72)
+
+  resKjonn <- prop.test(x=KjVakt, n=KjTOt)
+  resKjonn
+```
+Testen gir en p-verdi på `r resKjonn$p.value`, så absolutt ikke signifikant.
+
+
+Eg trur ikkje det har noko for seg å sjå på ev. kjønnsskilnader i dei ulike aldersgruppene i tillegg – kva seier du til det?
+
+Nei, det er ikke veldig store forskjeller og blir små grupper.

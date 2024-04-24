@@ -1,9 +1,10 @@
 ---
 title: "Akutt bukkirurgioperasjoner før/etter utvidelse av aktuttstuetilbud"
 author: "Lena"
-date: "2023-11-20"
+date: 
 output:
-  word_document: default
+  word_document: 
+    keep_md: yes
   html_document: default
   pdf_document: default
 editor_options:
@@ -12,46 +13,80 @@ editor_options:
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+
+# Fra artikkelen:
+# We compared by univariate analysis the outcomes of the independent samples. In a first instance, we performed the
+# Kolmogorov–Smirnov test to check normality of data distribution in order to assess whether or not to use parametric
+# tests. For this purpose, we also performed the Hartley test to verify the homoscedasticity. The different distributions were
+# not normal and the variables resulted heteroscedastic. The introductive phase was concluded with a statistical power
+# analysis (ex post) to estimate the sample size required for the specific tests. We considered variables with a p value<
+# 0.05 as statistically significant. The 1−ß value of the significant variables was >0.8, assuring a low risk of type II error
+# and an appropriate sample size. The univariate analysis was performed using the Mann–Whitney test for the continuous
+# variables and the chi-squared test with Yates’s correction for the categorical variables. 
+
 ```
 
 
 ## Sammendrag
 
-Heile oppgåva/kvalitetssikringsprosjektet dreiar seg om (eksklusjon allereie gjort) å samanlikne to toårs-kohortar av akuttinngrep på gastro(mage-tarm)-seksjonen på Haukeland Sjå vedlagde protokoll, som vi ikkje kjem til å fylgje opp 100%. Det er noko vil ikkje kjem til å sjå på.
-Alle samanlikningar der det ikkje er fullstendige data, skal gjerast med utgangspunkt i dei data vi har (n vil altså varierer etter kva vi ser på).
+Heile oppgåva/kvalitetssikringsprosjektet dreiar seg om å samanlikne to toårs-kohortar av akuttinngrep på gastro(mage-tarm)-seksjonen på Haukeland Sjå vedlagde protokoll, som vi ikkje kjem til å fylgje opp 100%. Alle samanlikningar der det ikkje er fullstendige data, skal gjerast med utgangspunkt i dei data vi har (n vil altså varierer etter kva vi ser på).
+Målet er ein artikkel i tidsskriftet BMJ Quality & Safety.
 
+Gastrokirurgiske pasientar, toårs-kohortar: 
 
-Gastrokirurgiske pasientar, toårs-kohortar:
-  1.	Dei som gjennomgjekk akutt bukkirurgi i tidsrommet 01.01.2018-31.12.2019
-  2.	Dei som gjennomgjekk akutt bukkirurgi i tidsrommet 01.04.2020-31.03.2022
- Hovudpoenget er at det fram til februar 2020 var avgrensa tilgang til "akuttstove" på dagtid, dvs. at det var avsett eit eige team til å ta seg av akuttoperasjonar på dagtid berre kring 2 dagar/veke.
-Frå februar 2020 vart dette tilbodet utvida til fem dagar/veke (måndag til fredag).
-
- *Kohort 1 2028-2019*: 
+ *Kohort 1 2018-2019*: 
+ 
+- Dei som gjennomgjekk akutt bukkirurgi i tidsrommet 01.01.2018-31.12.2019
 - inngrep/pasientar før tilgang på ei ekstra akuttstove på dagtid som rutine på måndag-fredager
 - totalt 1199 inngrep, og 959 pasientar
 
 *Kohort 2, 1.4.2020-31.03.2022* 
+
+- Dei som gjennomgjekk akutt bukkirurgi i tidsrommet 01.04.2020-31.03.2022
 - inngrep etter slik tilgang var etablert.
 - 1292 inngrep og 1002 pasientar.
 
-- Ei fil på pasientnivå - kun siste inngrep
-- Ei fil med alle inngrep 
+ Hovudpoenget er at det fram til februar 2020 var avgrensa tilgang til "akuttstove" på dagtid, dvs. at det var avsett eit eige team til å ta seg av akuttoperasjonar på dagtid berre kring 2 dagar/veke.
+Frå februar 2020 vart dette tilbodet utvida til fem dagar/veke (måndag til fredag).
 
-Målet er ein artikkel i tidsskriftet BMJ Quality & Safety.
+
+- Fil på pasientnivå - kun siste inngrep
+- Fil med alle inngrep 
+
 
 ```{r data, echo=FALSE, warning=FALSE}
 #sti <- 'P:/Registerinfo og historie/intensiv/studentOppg2023/'
 sti <- 'E:/studentOppg2023/'
-#readxl::excel_sheets(paste0(sti, 'PasienterDIPS.xlsx'))
 Pas <- readxl::read_excel(paste0(sti, 'PasienterDIPS.xlsx')) #, sheet = "chickwts")
-indPasFor <- which(Pas$Gruppe=='foer')
-indPasEtter <- which(Pas$Gruppe=='etter')
+indPasFor <- which(Pas$Gruppe=='gr1')
+indPasEtter <- which(Pas$Gruppe=='gr2')
 
 Inngr <-  readxl::read_excel(paste0(sti, 'InngrepDIPS.xlsx'))
-indInngrFor <- which(Pas$Gruppe=='foer')
-indInngrEtter <- which(Pas$Gruppe=='etter')
+indInngrFor <- which(Pas$Gruppe=='gr1')
+indInngrEtter <- which(Pas$Gruppe=='gr2')
 
+Inngr$ASAnum <- as.numeric(substr(Inngr$Perop_ASA, 12, 12))
+Pas$ASAnum <- as.numeric(substr(Pas$Perop_ASA, 12, 12))
+
+#Koble på operasjonsdato og sensur
+uttrekksdato <- '2023-09-14'  #Uttrekk gjort 14.09.2023
+PasMdato <- readxl::read_excel(paste0(sti, 'PasMdato.xlsx'))
+Pas <- merge(Pas, PasMdato[,c('behandlingsnr', "Mors_dato", "Totaltid_start")], by= 'behandlingsnr')
+
+Pas$Mors_dato <- as.Date(Pas$Mors_dato, origin = '1900-01-01')
+Pas$Totaltid_start <- as.Date(Pas$Totaltid_start)
+Pas$DagerTilStopp <- as.numeric(difftime(as.Date(uttrekksdato), Pas$Totaltid_start, units = 'days'))
+Pas$DagerTilStopp[which(Pas$Mors==1)] <- Pas$mors_dager[which(Pas$Mors==1)]
+Pas$Mors[is.na(Pas$Mors)] <- 0
+
+
+N1 <- length(indPasFor)
+N2 <- length(indPasEtter)
+Pas$Gruppe01 <- ifelse(Pas$Gruppe=='gr1', 0, 1)
+Pas$Aldersgruppe <- cut(Pas$Alder, 
+                    labels = c('18-39', '40-49', '50-59', '60-69', '70-79', '80+'),
+                    breaks= c(18, 40, 50, 60, 70, 80, 150),
+                    include.lowest=TRUE, right=FALSE)
 ```
 
  Vi ynskjer å sjå om vi finn att effekt av denne endringa, og undersøkjer ein del variablar som har med logistikk å gjere, eks: 
@@ -67,90 +102,414 @@ indInngrEtter <- which(Pas$Gruppe=='etter')
 I tillegg må vi samanlikne kohortane for ein del basalkarakteristika: kjønn, alder, "funksjonsklasse" gradert som ASA.
 
 
-## Her er det vi gjerne vil ha statistisk hjelp til.
-
-### Deskriptiv statistikk av pasient-populasjonene
-Ønsker først å gjere ei case-mix-samanlikning av pasientane,  (dvs. dei 959 mot dei 1002) der vi ser på:
+## Deskriptiv statistikk av pasientpopulasjonene
+Ønsker først å gjere ei case-mix-samanlikning av pasientane,  (dvs. dei 959 mot dei 1002).
 
 ```{r case-mix, echo=FALSE}
 #Aldersgrupper: 18-39, 40-49, 50-59, 60-69, 70-79 og 80+,
-N1 <- length(indPasFor)
-N2 <- length(indPasEtter)
-Pas$Gr <- ifelse(Pas$Gruppe=='foer', 1, 2)
-Pas$AldersGr <- cut(Pas$Alder, 
-                    labels = c('18-39', '40-49', '50-59', '60-69', '70-79', '80+'),
-                    breaks= c(18, 40, 50, 60, 70, 80, 150),
-                    include.lowest=TRUE, right=FALSE)
 tabAldGr <- cbind(
-  Gr1 = table(Pas$AldersGr[indPasFor]), 
-  Gr2 = table(Pas$AldersGr[indPasEtter]),
-  PstGr1 = round(table(Pas$AldersGr[indPasFor])/N1*100, 1),
-  PstGr2 = round(table(Pas$AldersGr[indPasEtter])/N2*100, 1)
+  Gr1 = table(Pas$Aldersgruppe[indPasFor]), 
+  Gr2 = table(Pas$Aldersgruppe[indPasEtter]),
+  PstGr1 = round(table(Pas$Aldersgruppe[indPasFor])/N1*100, 1),
+  PstGr2 = round(table(Pas$Aldersgruppe[indPasEtter])/N2*100, 1)
 )
-  
-#Kjønn
-tabKj <- tapply(Pas$Kjonn, Pas$Gruppe, FUN = function(x){c(sum(x=='M'), 100*sum(x=='M')/length(x) )})
 
-tabAldKj <- rbind(tabAldGr,
-                  Menn = c(tabKj$foer[1], tabKj$etter[1], tabKj$foer[2], tabKj$etter[2])
-)
+DivAld1 <- summary(Pas$Alder[indPasFor])
+DivAld2 <- summary(Pas$Alder[indPasEtter])
+
+#Kjønn
+tabKj <- tapply(Pas$Kjonn, Pas$Gruppe, FUN = function(x){
+  c(Antall = round(sum(x=='M'),0), 
+    Andel =round(100*sum(x=='M')/length(x), 1) )})
+
+resKjonn <- prop.test(tapply(Pas$Kjonn == 'M', Pas$Gruppe, sum), n=table(Pas$Gruppe))
 
 ```
 
-**Alder**
-- Gruppe1: Gjennomsnitt `r mean(Pas$Alder[indPasFor])`, SD `r sd(Pas$Alder[indPasFor])`
-- Gruppe2: Gjennomsnitt `r mean(Pas$Alder[indPasEtter])`, SD `r sd(Pas$Alder[indPasEtter])`
+### Alder og kjønn
+Resultater basert på pasienter
+Sammenligne fordeling, aldersgrupper:
 
-Fordeling
-Aldersgrupper: 18-39, 40-49, 50-59, 60-69, 70-79 og 80+, sammenligne fordeling.
+Andel menn i de to gruppene er hhv. `r paste0(sprintf("%.1f", 100*resKjonn$estimate), ' %') `, p-verdi: `r round(resKjonn$p.value, 2)`
 
-`r knitr::kable(tabAldKj, "simple")`
 
-**Mors (døde)**
-- *Mors* fortel om pasienten er registrert som død (=1) då vi gjorde datauttrekka. 
-- *mors_7* har eit 1-tal om dødsfallet skjedde < 7 døger etter siste inngrep, 
-- *mors_30* < 30 døger etter siste inngrep og kolonne BE i løpet av eitt år/365 dagar etter siste inngrep. 
+```{r sign Alder, echo=FALSE}
+Pas$Aldersgruppe <- factor(Pas$Aldersgruppe)
+ggplot2::ggplot(data = Pas, mapping = ggplot2::aes(x=Aldersgruppe, fill=Gruppe)) + ggplot2::geom_bar(position = 'identity', alpha=0.5)
 
-Det er vel ikkje råd å lage ei Kaplan-Meier-kurve-samanlikning med berre tre punkt, eller er det det? Korleis skal vi best samanlikne mortaliteten i dei to kohortane – ved kategoriske testar?
-*Vurder: Bruke mors_dager i Kaplan-Meier...?*
+testOver70aar1sid <- prop.test(tapply(Pas$Alder>70, Pas$Gruppe, sum), n=table(Pas$Gruppe), alternative = 'less')
+testOver70aar2sid <- prop.test(tapply(Pas$Alder>70, Pas$Gruppe, sum), n=table(Pas$Gruppe)) #, alternative = 'less')
 
-- Kan du også sjekke om det er skilnad i mortalitet etter 7, 30 og 365 dagar i dei to kohortane når det gjeld aldersgruppene i kolonne O? Her er vi ute etter om særleg dei eldre og presumptivt mekir skrøpelege har fått endra overleving etter innføring av akuttstove (det ser førebels ut for oss som at totalmortaliteten og også ASA-skåre har auka frå kohort 1 til 2.
-*Tja... Det er blittelitt høyere andel av ASA 4 (og 5, få obs.), men det er også bittelitt høyere andel av ASA 1+2.*
+#testAldGR <- ks.test(x=as.numeric(Pas$Aldersgruppe[indPasFor]), y=as.numeric(Pas$Aldersgruppe[indPasEtter]))
+testAldersford <- ks.test(x=as.numeric(Pas$Alder[indPasFor]), y=as.numeric(Pas$Alder[indPasEtter]))
+```
+
+
+- Før: Median: `r DivAld1[3]`  Gjennomsnitt: `r round( DivAld1[4],1)`, SD: `r round(sd(Pas$Alder[indPasFor]),1)`
+- Etter: Median: `r DivAld2[3]`  Gjennomsnitt: `r round( DivAld2[4],1)`, SD: `r round(sd(Pas$Alder[indPasEtter]),1)`
+- p-verdi fra t-test, gjennomsnitt: `r round(t.test(Alder ~ Gruppe, data = Pas)$p.value, 2)`
+- p-verdi fra Wilcox-test, median: `r round(wilcox.test(Alder ~ Gruppe, data = Pas, conf.int = TRUE)$p.value, 2)`
+
+Basert på test av gjennomsnitt og median, er det forskjell i alder mellom før og etter, hvis vi velger signifikansnivå 10%.
+
+Vi ser at det er høyere andel av eldre i gruppa etter intervensjon. Hvis vi tester om andelen over 70 år er forskjellig (kji-kvadrat test), 
+får vi en p-verdi på `r testOver70aar2sid$p.value`
+Hvis vi tester om andelen av 70+åringer er høyere etter (ensidig test), får vi en p-verdi på `r testOver70aar1sid$p.value`.
+
+Hvis vi tester selve aldersfordelingene med Kolmogorov-Smirnovs test, får vi en p-verdi på `r testAldersford$p.value`
+
+
+**ASA-klassefordeling** 
+Resultater basert på inngrep.
+```{r ASA, echo=FALSE}
+#tabASA <- round(100*prop.table(table(Pas[ c('Perop_ASA', 'Gruppe')]), margin = 2), 1)
+tabASA <- round(100*prop.table(table(Inngr[ c('Perop_ASA', 'Gruppe')]), margin = 2), 1)
+#Sammenligne ASA i to grupper
+#Pakke dgof
+#Two-sample KS cml forkjell i empirisk fordeling (ECDF) for to utvalg.
+
+KStestASAnum <- 
+  stats::ks.test(x=Inngr$ASAnum[indInngrFor], y=Inngr$ASAnum[indInngrEtter]) #,exact = TRUE) #simulate.p.value = TRUE, B = 1000)
+  #stats::ks.test(x=Pas$ASAnum[indPasFor], y=Pas$ASAnum[indPasEtter]) #,exact = TRUE) #simulate.p.value = TRUE, B = 1000)
+#dgof:: ks.test gir eksakt samme svar
+
+#ASA-fordeling i artikkel: 
+# grA <- c(0, 24, 25, 9)
+# grB <- c(14, 32, 12, 0)
+# ASA_A <- c(rep(2, grA[2]), rep(3, grA[3]), rep(4, grA[4]))
+# ASA_B <- c(rep(1, grB[1]), rep(2, grB[2]), rep(3, grB[3]), rep(4, grB[4]))
+# ks.test(x=ASA_A, y=ASA_B) #, exact = TRUE) #, simulate.p.value = TRUE, B = 1000)
+# Får samme p-verdi som i artikkelen.
+```
+
+`r knitr::kable(tabASA)` 
+
+*Test:* Ved Kolmogorov-Smirnovs test kan man teste om to utvalg er fra samme fordeling, noe som gir en p-verdi på `r KStestASAnum$p.value`
+Basert på dette kan vi konkludere at det ikke er forskjell i ASA-grad.
+
+(For å verifisere metoden, gjorde jeg tilsvarende test for ASA-gradverdiene fra artikkelen og kom ut med omtrent samme p-verdi som de fikk i artikkelen.)
+
+
+## Resultater 
+Ynskjer å samanlikna dei to kohortane av **inngrep**.
+
+
+#### Mors (døde)
+Resultater basert på pasienter siden man dør bare en gang.
+
+
+*Mors* fortel om pasienten er registrert som død (=1) då vi gjorde datauttrekka. 
 
 ```{r Mors, echo=FALSE}
 # Mors (døde)
-# kolonne AX fortel om pasienten er registrert som død (=1) då vi gjorde datauttrekka. 
-# Kolonne BC har eit 1-tal om dødsfallet skjedde < 7 døger etter siste inngrep, 
-# kolonne BD < 30 døger etter siste inngrep og kolonne BE i løpet av eitt år/365 dagar etter siste inngrep. NB! Kolonne BC, BD og BE er kumulative – dersom BC har eit 1-tal, så har BD og BE det også – altså: er ein registrert død innan 7 døger, er ein også registrert død innan 30 og 365. Er ein død etter 15 dagar, er BC tom, medan det er eit 1-tal i BD og BE.
-# Det er vel ikkje råd å lage ei Kaplan-Meier-kurve-samanlikning med berre tre punkt, eller er det det? Korleis skal vi best samanlikne mortaliteten i dei to kohortane – ved kategoriske testar?
-# 
-# Kan du også sjekke om det er skilnad i mortalitet etter 7, 30 og 365 dagar i dei to kohortane når det gjeld aldersgruppene i kolonne O? Her er vi ute etter om særleg dei eldre og presumptivt mekir skrøpelege har fått endra overleving etter innføring av akuttstove (det ser førebels ut for oss som at totalmortaliteten og også ASA-skåre («kor sjuke pasientane var») har auka frå kohort 1 til 2.
+funAntPst <- function(x) {
+  antPst <- tapply(x, INDEX = Pas$Gruppe, function(x){c(sum(x, na.rm = T), 100*sum(x, na.rm = T)/length(x))})
+  vektor <- round(c(antPst$gr1, antPst$gr2),1)
+  return(vektor)
+  } 
+tabMors <- rbind(
+  Mors7 = funAntPst(Pas$mors_7),
+  Mors30 = funAntPst(Pas$mors_30),
+  Mors365 = funAntPst(Pas$mors_365)
+  )
+#Ser ut til at høyere dødelighet før?
+#summary((Pas$mors_dager[indPasFor])[Pas$mors_dager[indPasFor]<=max(Pas$mors_dager[indPasEtter], na.rm = T)])
+#summary(Pas$mors_dager[indPasEtter])
+
+#survival::survdiff(Surv(time, status))
+pstFunk <- function(var, gr) {
+  tapply(var, INDEX = gr, 
+         FUN = function(x) {round(100*sum(x, na.rm = T)/length(x), 1)}) }
+
+MorsGr <- function(var) {tapply(var, INDEX = list(Pas$Aldersgruppe, Pas$Gruppe), 
+            FUN = function(x) {round(100*sum(x, na.rm = T)/length(x), 1)}) }
+tabMorsAld <- cbind(
+  MorsGr(Pas$mors_7),
+  MorsGr(Pas$mors_30),
+  MorsGr(Pas$mors_365)
+)[ ,c(1,3,5, 2,4,6)]
+
+totMors <- rbind(
+  M7 = pstFunk(Pas$mors_7, gr = Pas$Gruppe),
+  M30 = pstFunk(Pas$mors_30, gr = Pas$Gruppe),
+  M365 = pstFunk(Pas$mors_365, gr = Pas$Gruppe))  
+
+tabMors <- rbind(
+  tabMorsAld,
+  Totalt = c(totMors[,1], totMors[,2])
+)
+
+```
+- Kan du også sjekke om det er skilnad i mortalitet etter 7, 30 og 365 dagar i dei to kohortane når det gjeld aldersgruppene? Her er vi ute etter om særleg dei eldre og presumptivt mekir skrøpelege har fått endra overleving etter innføring av akuttstove (det ser førebels ut for oss som at totalmortaliteten og også ASA-skåre har auka frå kohort 1 til 2.
+
+Andel (%) døde etter 7, 30 og 365 dager i ulike aldersgrupper.
+`r knitr::kable(tabMors, "simple")`
+
+Det ser ut til at mortaliteten er litt høyere etter, for de under 60, mens den er bittelitt lavere for de >60. Totalt sett litt høyere.
+Jeg har gjort test ved de aktuelle tidspunktene (7, 30 og 365 dager) og det er ikke signifikant forekjell for noen av tidspunktene.
+
+*Reidar: Her er det svært interessant for oss å sjå på om skilnader i mortalitet kan knytast til
+aldersfordeling. Alle ser jo det som er openbert (og forventa), at mortaliteten stig med
+stigande alder, både i gr. 1 og gr.2. Sidan vi finn litt høgare totalmortalitet i gr.2, blir
+spørsmålet:
+1. Kan dette forklarast med at det er ein større andel i dei høge aldersgruppene i gr.2?
+2. Kan dette også hengje saman med ASA-klasse (som jo ei ei slags risikovurdering,
+dess høgare ASA, dess høgare risiko)?
+3. Det er kanskje komplisert, men ideellt sett skulle vi samanlikna mortalitet før og
+etter (altså i gr. 1 og gr. 2) og samstundes korrigert for alder og ASA-klasse
+Vi har ikkje rekna med at det skal vere tydelege skilnader i mortalitet, men det er i
+utgangspunktet litt overraskande at totalmortalitet er litt høgare i gr. 2. Samstundes kan ei
+høgst plausibel forklaring vere at det er auka tal på inngrep på «dårlege»
+pasientar/høgrisikopasientar i gr. 2. (det er jo noko høgare totaltal i gr. 2). Pasientar med
+høg alder/høg ASA-klasse/høg risiko er noko ein vil unngå å operere på vakttid – og ofte
+kan det hende ein avstår frå kirurgi, fordi ein trur pasienten har lite å hente på å bli operert
+i det heile. Dersom det er auka kapasitet på dagtid, kan det vere at ein i større grad likevel
+prøver seg på slike «tvilsame inngrep». Det kan også forklare den auka gjennomsnittlege
+operasjonstida i gr. 2.*
+
+Jeg har gjort overlevelsesanalyse justert for alder og ASA. Se neste avsnitt.
+
+## Overlevelsesanalyser
+Resultater basert på pasienter.
+
+Har beregnet total eksponeringstid i studien for pasienter som har overlevd. Dette basert på differansen mellom operasjonsdato og uttrekksdato (14.09.2023).
+
+```{r Overlevelse, echo=FALSE}
+#library("magrittr")
+
+# time - The follow up time for right censored data.
+# status - The status indicator, normally 1=event, 0=alive or right censored.
+# group -   The group indicator for comparison, 0= control group, 1= treatment group.
+
+maksTid <- min(max(Pas$DagerTilStopp[Pas$Gruppe=='gr1']), max(Pas$DagerTilStopp[Pas$Gruppe=='gr2']))
+
+#TEste spesifikke tidspunkt: (ingen er signifikante)
+# testMors7 <- ComparisonSurv::Fixpoint.test(
+#   time = Pas$DagerTilStopp, status= Pas$Mors, group= Pas$Gruppe01, t0=7)
+# testMors30 <- ComparisonSurv::Fixpoint.test(
+#   time = Pas$DagerTilStopp, status= Pas$Mors, group= Pas$Gruppe01, t0=30)
+# testMors365 <- ComparisonSurv::Fixpoint.test(
+#   time = Pas$DagerTilStopp, status= Pas$Mors, group= Pas$Gruppe01, t0=365)
+
+#ComparisonSurv::Descriptive.stat(time = Pas$DagerTilStopp, status=Pas$Mors, group=Pas$Gruppe01, tau=maksTid, alpha=0.05)
+
+# Har hatt med dette, men tar det ut:
+# ComparisonSurv::Cumhazard.plot(time = Pas$DagerTilStopp, status=Pas$Mors, group=Pas$Gruppe01, 
+#                                col=c(1,4),lwd=c(1,1),lty=c(1,1), lab.x="dager fra operasjon",lab.y="andel dod", 
+#                               legend=TRUE, local.x=0, local.y=0.4,legend.0="gr1",legend.1="gr2")
+
+
+#Survival.plot Plot for Cumulative Survival Function
+#ComparisonSurv::Survival.plot(time = Pas$DagerTilStopp, status=Pas$Mors, group=Pas$Gruppe01) - feil bruk?
+#A function used to produce the results of various statistical inference methods for overall
+#hypothesis testing, along with the test result of proportional hazards assumption.
+#Survival.plot is based on the survival package, more details can be found in package "survival", the function of plot.survfit.
+
+#simTest <- ComparisonSurv::Overall.test(time = Pas$DagerTilStopp, status=Pas$Mors, group=Pas$Gruppe01, 
+                            # tau=maksTid, nperm=100, seed=12345)
+# fit <- survminer::surv_fit(Surv(time, status) ~ sex, data = survival::colon)
+# fit <- survminer::surv_fit(Surv(time, status) ~ sex,
+               # data = list(colon, lung))
+#survminer::surv_pvalue(fit)
+#survminer::ggsurvplot(fit, pval = TRUE)
+
+fit <- survminer::surv_fit(survival::Surv(DagerTilStopp, Mors) ~ Gruppe, data = Pas)
+#Se også funksjon Surv2
+survminer::ggsurvplot(fit, pval = TRUE)
+
+# To calculate confounder-adjusted survival curves fo each group of this dataset using Direct Standardization (also known as G-Computation or Corrected Group Prognosis method, see Makuch (1982) or Chang et al. (1982)), we first have to fit a coxph model:
+
+# it is important to use X=TRUE in the coxph function call
+Pas$Gruppe01fa <- factor(Pas$Gruppe01, levels = 0:1, labels = c('gr1', 'gr2'))
+outcome_model <- survival::coxph(survival::Surv(DagerTilStopp, Mors) ~ Alder + ASAnum + Gruppe01fa, data=Pas, x=TRUE)
+#This model can then be used in a call to the adjustedsurv function, as shown below:
+
+adjsurv <- adjustedCurves::adjustedsurv(data=Pas,
+                        variable="Gruppe01fa",
+                        ev_time="DagerTilStopp",
+                        event="Mors",
+                        method="direct",
+                        outcome_model=outcome_model,
+                        conf_int=TRUE)
+plot(adjsurv, conf_int = TRUE, median_surv_lines=TRUE)
 
 ```
 
 
+I det første plottet ser vi det vi har observert, dvs. at mortaliteten er en anelse høyere i gruppe to.
 
-Så ynskjer vi å samanlikna inngrepa  dei to kohortane av inngrep:
-
-- **ASA-klassefordeling** mellom dei fem klassane 1-5.
-- **Prioritet** = Fordelinga i hastegrader (dvs. kor raskt kirurgen har ynskt inngrepet gjort etter at det er meldt inn). Har laget kategoriene 0-1t, 1-6t, 6-24t, 24-72t og 72+t
-
-- **Opr innan prio** Eit 1-tal her tyder at inngrepet er starta innan den tidsfristen kirurgen ynskte. Vi ynskjer å samanlikne om det totalt sett er skilnad i graden av oppfylling av tidsfristar, dvs. fraksjonen av inngrep (med talet 1 i kolonne I) mellom dei to kohortane. Så ynsker vi å sjå om det er skilnader mellom kohort 1 og 2 når det gjeld dei ulike prioriteringskategoriane, dvs. mellom dei som er ynskt opererte innan 1t, 6 t, 24 t, 72 t og over 72t.
-
-- **Knivtid** (den tida kirurgen brukte på inngrepet i minuttar). Vi ynskjer å samanlikne gjennomsnitta og medianar i kohort 1 og kohort 2 her
-
-- **Blødning** i ml – kor mykje blødning som er registrert i løpet av inngrepet. Dette er skeivfordelte data, så er det best å samanlikne median/interkvartilar?
-
-- **Andel akuttinngrep på dagtid** 
-Kor stor andel av desse akuttinngrepa på ble utført på: 
-- kvardagsdøger måndag-fredag (akuttstove tilgjengeleg kvar dag for kohort 2, og meir sporadisk for kohort 1)
-- dagtid (dvs. vart starta på dagtid)? 
-- Var denne andelen ulik i dei to kohortane? 
-Oppstart på dagtid har eit 1-tal i variabelen «Dagtid». Det skal då vere 0 i "helg-helgedag", dvs. laurdag/sundag og bevegelege heilagdagar). Kolonne «Kveld» kan vere 1 samstundes som det er 1 i kolonne «Dagtid» - då er det eit inngrep som strekkjer seg over både dag og kveld/natt. Dersom det er 1 i kolonne «Kveld» utan at det er 1 i «Dagtid», er inngrepet starta på vakttid og ikkje dagtid.
--	*Liggjetid på sjukehus* = totalt tal på døger innlagt. Dette er også ein skeivfordelt variabel som vi gjerne vil samanlikne mellom dei to kohortane. 
+Det andre plottet viser overlevelseskurvene (inkl. konfidensintervall) etter justering for alder og ASA. Justeringa gjør at kurvene bytter plass, dvs. at overlevelsen
+er litt bedre etter, men ingen signifikant forskjell.
 
 
+### Prioritet ("Valgt hastegrad")
+Resultater basert på inngrep.
 
-Vedlagt er også eit (uferdig) xl-ark der studentane har undersøkt og funne fram til tal/% i xl-filene – der ser du grovt sett kva data vi samanliknar og vil har statistiske opplysningar om.
+- **Prioritet** = Valgt hastegrad, dvs. kor raskt kirurgen har ynskt inngrepet gjort etter at det er meldt inn. 
+
+Ynsker vi å sjå om det er skilnader mellom kohort 1 og 2 når det gjeld dei ulike prioriteringskategoriane
+
+```{r Prioritet, echo=FALSE}
+# Pas$Pri5gr <- factor(Pas$Pri5gr, levels= c('0-1t', '1-6t', '6-24t', '24-72t', '72+t'))
+# ggplot2::ggplot(data = Pas, mapping = ggplot2::aes(x=Pri5gr, fill=Gruppe)) + ggplot2::geom_bar(position = 'identity', alpha=0.5)
+# tabPri <- round(prop.table(table(Pas[ ,c('Gruppe', 'Pri5gr' )]), 1)*100, 1)
+# testPriU6t <- prop.test(tapply(Pas$Prioritet == '0-6t', Pas$Gruppe, sum), n=table(Pas$Gruppe)) #, alternative = 'less')
+
+Inngr$Pri5gr <- factor(Inngr$Pri5gr, levels= c('0-1t', '1-6t', '6-24t', '24-72t', '72+t'))
+ggplot2::ggplot(data = Inngr, mapping = ggplot2::aes(x=Pri5gr, fill=Gruppe)) + ggplot2::geom_bar(position = 'identity', alpha=0.5)
+tabPri <- round(prop.table(table(Inngr[ ,c('Gruppe', 'Pri5gr' )]), 1)*100, 1)
+testPriU6t <- prop.test(tapply(as.numeric(Inngr$Pri5gr) %in% 1:2, Inngr$Gruppe, sum), n=table(Inngr$Gruppe)) #, alternative = 'less')
+```
+
+`r knitr::kable(tabPri)`
+
+Flere får prioritet 0-6t gruppe 2. Skyldes høyere sykelighet…?
+*Reidar: Kanskje. Men det kan også
+vere «uynskt» ved at kirurgane veit at det har vore litt større høve til å få pas. fort, og
+dermed kan ha vorte freista til å setje høgare prioritet (dvs. kortare tidsfrist) for å få
+inngrepet gjort. Er skilnadene her signifikante?*
+
+Det er signifikant høyere andel som prioriteres til 0-6t etter kapasitetsøkninga, sammenlignet med før. P-verdi, ved tosidig test: `r testPriU6t$p.value`
+
+### Operert innen gitt prioriteringstid
+ **Opr innan prio** Eit 1-tal her tyder at inngrepet er starta innan den tidsfristen kirurgen ynskte. Vi ynskjer å samanlikne om det totalt sett er skilnad i graden av oppfylling av tidsfristar, dvs. fraksjonen av inngrep (med talet 1 i kolonne I) mellom dei to kohortane. 
+
+```{r tidsfrist, echo=FALSE}
+#prop.table(table(Pas[ ,c("Opr_innan_prio", "Gruppe")]), margin = 2)
+testOprPri <- prop.test(tapply(Inngr$Opr_innan_prio, Inngr$Gruppe, sum), n=table(Inngr$Gruppe))
+testOprPriU6t <- prop.test(
+  tapply(Inngr$Opr_innan_prio[Inngr$Pri5gr %in% c('0-1t', '1-6t')], 
+         Inngr$Gruppe[Inngr$Pri5gr %in% c('0-1t', '1-6t')], sum), 
+  n=table(Inngr$Gruppe))
+```
+Andel som opereres innen fristen, hhv. før og etter: `r testOprPri$estimate` 
+Totalt sett opereres ca 2%-poeng flere innen fristen.
+p-verdi: `r testOprPri$p.value`
+
+*Reidar: Er det signifikante endringar for dei med kortast tidsfrist, 
+dvs. under 2 og under 6 timar?
+Det er fyrst og fremst her ein kan forvente ei viss betring ved større tilgang på akuttstove.*
+
+Ja, hvis vi ser på endring for pasienter med kort tidsfrist, dvs. "innen 6 timer", har vi ei signifikant endring:
+Andel som opereres innen 0-6t hhv. før og etter: 
+`r paste0(sprintf("%.1f", 100*testOprPriU6t$estimate), ' %') `, med p-verdi: `r testOprPriU6t$p.value`
+
+Dette er vel et relativt sterkt funn siden vi både har signifikant flere som får prioritet 0-6t OG det er signifikant flere som får denne fristen innfridd.
+
+#### Knivtid
+Resultat basert på inngrep.
+
+Knivtid = den tida kirurgen brukte på inngrepet i minuttar. 
+Vi ynskjer å samanlikne gjennomsnitta og medianar i kohort 1 og kohort 2 her.
+
+```{r Knivtid, echo=FALSE}
+DivKniv1 <- summary(Inngr$Knivtid[Inngr$Gruppe=='gr1'])
+DivKniv2 <- summary(Inngr$Knivtid[Inngr$Gruppe=='gr2'])
+
+ttestKniv <- t.test(Knivtid ~ Gruppe, data = Inngr)
+wilcoxtestKniv <- wilcox.test(Knivtid ~ Gruppe, data = Inngr, conf.int = TRUE)
+#Note that in the two-sample case the estimator for the difference in location parameters does not estimate the difference in medians (a common misconception) but rather the median of the difference between a sample from x and a sample from y.
+```
+
+- Før: Median: `r DivKniv1[3]`  Gjennomsnitt: `r round( DivKniv1[4],1)`, interkvartil: `r DivKniv1[2]` - `r DivKniv1[5]`
+- Etter: Median: `r DivKniv2[3]`  Gjennomsnitt: `r round( DivKniv2[4],1)`, interkvartil: `r DivKniv2[2]` - `r DivKniv2[5]`
+- p-verdi for forskjell mellom gjennomsnittlig knivtid: `r round(ttestKniv$p.value, 4)`
+- p-verdi for forskjell mellom median knivtid: `r round(wilcoxtestKniv$p.value, 4)`
+
+#### Blødning i ml 
+Analyse basert på inngrep.
+
+– kor mykje blødning som er registrert i løpet av inngrepet. Dette er skeivfordelte data, så er det best å samanlikne median/interkvartilar?
+
+```{r Blodning, echo=FALSE}
+DivBlod1 <- summary(Inngr$Blodning_ml[Inngr$Gruppe=='gr1'])
+DivBlod2 <- summary(Inngr$Blodning_ml[Inngr$Gruppe=='gr2'])
+
+ttestBlodn <- t.test(Blodning_ml ~ Gruppe, data = Inngr)
+wilcoxtestBlodn <- wilcox.test(Blodning_ml ~ Gruppe, data = Inngr)
+```
+
+- Før: Median: `r DivBlod1[3]`  Gjennomsnitt: `r round( DivBlod1[4],1)`, interkvartil: `r DivBlod1[2]` - `r DivBlod1[5]`
+- Etter: Median: `r DivBlod2[3]`  Gjennomsnitt: `r round( DivBlod2[4],1)`, interkvartil: `r DivBlod2[2]` - `r DivBlod2[5]`
+- p-verdi for forskjell mellom gjennomsnittlig blødning: `r round(ttestBlodn$p.value, 4)`
+- p-verdi for forskjell mellom median blødning: `r round(wilcoxtestBlodn$p.value, 4)`
 
 
+#### Andel akuttinngrep på dagtid
+Analyse basert på inngrep.
+
+Oppstart på dagtid har eit 1-tal i variabelen «Dagtid». Det skal då vere 0 i "helg-helgedag", dvs. laurdag/sundag og bevegelege heilagdagar).
+Kolonne «Kveld» kan vere 1 samstundes som det er 1 i kolonne «Dagtid» - då er det eit inngrep som strekkjer seg over både dag og kveld/natt.  
+Dersom det er 1 i kolonne «Kveld» utan at det er 1 i «Dagtid», er inngrepet starta på vakttid og ikkje dagtid.
+*Ut fra dette forstår jeg at man bare trenger å se på variabelen Dagtid når man ser på operasjoner gjort på dagtid*
+
+```{r dagtid, echo=FALSE}
+#ukedag <- c( 'Fredag', 'Måndag',  'Onsdag',  'Torsdag',  'Tysdag' )
+Inngr$Kvardag <- ifelse(Inngr$Vekedag %in% 1:5, 1, 0)
+tabKvardag <- round(prop.table(table(Inngr[ ,c('Gruppe', 'Kvardag' )]), 1)*100, 1)
+
+tabDagtid <- round(prop.table(table(Inngr[ ,c('Gruppe', 'Dagtid' )]), 1)*100, 1)
+testOprDagtid <- prop.test(tapply(Inngr$Dagtid, Inngr$Gruppe, sum), n=table(Inngr$Gruppe))
+```
+
+Kor stor andel av desse akuttinngrepa ble utført på
+kvardagsdøger måndag-fredag (akuttstove tilgjengeleg kvar dag for kohort 2, og meir sporadisk for kohort 1)
+`r knitr::kable(tabKvardag)`
+
+Kor stor andel av desse akuttinngrepa på ble utført på dagtid (dvs. vart starta på dagtid)? 
+Basert på variabel *Dagtid*:
+`r knitr::kable(tabDagtid)`
+p-verdi: `r testOprDagtid$p.value `
+
+
+#### Totaltid
+Analyse basert på inngrep.
+```{r totaltid, echo=FALSE}
+DivTotaltid1 <- summary(Inngr$Totaltid[Inngr$Gruppe=='gr1'])
+DivTotaltid2 <- summary(Inngr$Totaltid[Inngr$Gruppe=='gr2'])
+
+ttestTotaltid <- t.test(Totaltid ~ Gruppe, data = Inngr)
+wilcoxtestTotaltid <- wilcox.test(Totaltid ~ Gruppe, data = Inngr)
+
+```
+- Før: Median: `r DivTotaltid1[3]`  Gjennomsnitt: `r round( DivTotaltid1[4],1)`, interkvartil: `r DivTotaltid1[2]` - `r DivTotaltid1[5]`
+- Etter: Median: `r DivTotaltid2[3]`  Gjennomsnitt: `r round( DivTotaltid2[4],1)`, interkvartil: `r DivTotaltid2[2]` - `r DivTotaltid2[5]`
+- p-verdi for forskjell mellom gjennomsnittlig totaltid: `r round(ttestTotaltid$p.value, 4)`
+- p-verdi for forskjell mellom median totaltid: `r round(wilcoxtestTotaltid$p.value, 4)`
+
+
+#### Liggjetid 
+Analyse basert på inngrep.
+
+Liggjetid på sjukehus = totalt tal på døger innlagt. Dette er også ein skeivfordelt variabel som vi gjerne vil samanlikne mellom dei to kohortane. Variabel: *Liggedager*
+
+```{r liggetid, echo=FALSE}
+DivLiggetid1 <- summary(Inngr$Liggedager[Inngr$Gruppe=='gr1'])
+DivLiggetid2 <- summary(Inngr$Liggedager[Inngr$Gruppe=='gr2'])
+
+ttestLiggetid <- t.test(Liggedager ~ Gruppe, data = Inngr)
+wilcoxtestLiggetid <- wilcox.test(Liggedager ~ Gruppe, data = Inngr)
+```
+
+- Før: Median: `r DivLiggetid1[3]`  Gjennomsnitt: `r round( DivLiggetid1[4],1)`, interkvartil: `r DivLiggetid1[2]` - `r DivLiggetid1[5]`
+- Etter: Median: `r DivLiggetid2[3]`  Gjennomsnitt: `r round( DivLiggetid2[4],1)`, interkvartil: `r DivLiggetid2[2]` - `r DivLiggetid2[5]`
+- p-verdi for forskjell mellom gjennomsnittlig liggetid: `r round(ttestLiggetid$p.value, 4)`
+- p-verdi for forskjell mellom median liggetid: `r round(wilcoxtestLiggetid$p.value, 4)`
+
+
+#### Reoperasjoner
+Basert på inngrep
+```{r Reoperasjoner, echo=FALSE}
+# Pas$ReopTot <- ifelse(Pas$Dager_til_neste_OP>=0, 1, 0)
+# tabReop7 <- round(prop.table(table(Pas[ ,c('Gruppe', 'Reoperert')], useNA = 'a'), 1)*100, 1)
+# tabReop <- round(prop.table(table(Pas[ ,c('Gruppe', 'ReopTot')], useNA = 'a'), 1)*100, 1)
+
+  
+tabReop7 <- round(prop.table(table(Inngr[ ,c('Gruppe', 'Reoperert')], useNA = 'a'), 1)*100, 1)
+testReop7 <- prop.test(tapply(Inngr$Reoperert, Inngr$Gruppe, sum, na.rm=T), n=table(Inngr$Gruppe))
+```
+
+*Reidars tall: 12,3 (147) i gr 1 og 13,3 (172)*
+Prosent reoperasjoner innen 7 dager: Før: `r tabReop7[1,1]`, Etter: `r tabReop7[2,1]`, p-verdi: `r testReop7$p.value`
+
+(Jeg har ikke lagt til reoperasjoner i pasientfila.)
