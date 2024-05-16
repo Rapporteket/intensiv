@@ -97,6 +97,8 @@ NIRFigAndelTid <- function(RegData, valgtVar='alder_u18', datoFra='2011-01-01', 
       #------------------------Klargjøre tidsenhet--------------
       N <- list(Hoved = dim(RegData)[1], Rest=0)
       if (N$Hoved>Ngrense) {
+        if (class(RegData$Aar) == "factor") {
+          RegData$Aar <- as.numeric(levels(RegData$Aar)[RegData$Aar])} 
             RegDataFunk <- SorterOgNavngiTidsEnhet(RegData=RegData, tidsenhet = tidsenhet)
             RegData <- RegDataFunk$RegData
             #tidtxt <- RegDataFunk$tidtxt

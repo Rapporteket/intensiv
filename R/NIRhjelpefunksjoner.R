@@ -59,7 +59,7 @@ FinnReinnleggelser <- function(RegData, PasientID='PasientID'){
 #' @export
 SorterOgNavngiTidsEnhet <- function(RegData, tidsenhet='Aar', tab=0) {
       #Lager sorteringsvariabel for tidsenhet:
-      RegData$TidsEnhetSort <- switch(tidsenhet,
+  RegData$TidsEnhetSort <- switch(tidsenhet,
                                       Aar = RegData$Aar-min(RegData$Aar)+1,
                                       Mnd = RegData$MndNum-min(RegData$MndNum[RegData$Aar==min(RegData$Aar)])+1
                                           +(RegData$Aar-min(RegData$Aar))*12, #format(RegData$InnDato, '%b%y'), #
@@ -68,9 +68,8 @@ SorterOgNavngiTidsEnhet <- function(RegData, tidsenhet='Aar', tab=0) {
                                       Halvaar = RegData$Halvaar-min(RegData$Halvaar[RegData$Aar==min(RegData$Aar)])+1+
                                             (RegData$Aar-min(RegData$Aar))*2
       )
-      format.Date(seq(from=as.Date('2018-01-01'),
-                      to=as.Date('2018-09-01'), by='month'), format = '%b%y')
-
+      #format.Date(seq(from=as.Date('2018-01-01'),
+                     # to=as.Date('2018-09-01'), by='month'), format = '%b%y')
       tidtxt <- switch(tidsenhet,
                        #Mnd = paste(substr(RegData$Aar[match(1:max(RegData$TidsEnhetSort), RegData$TidsEnhetSort)], 3,4),
                         #          sprintf('%02.0f', RegData$Mnd[match(1:max(RegData$TidsEnhetSort), RegData$TidsEnhetSort)]), sep='.'),
@@ -281,6 +280,7 @@ dataTilOffVisning <- function(RegData = RegData, valgtVar, #datoFra='2016-01-01'
     #ReshId	orgnr	RapporteketNavn	SKDEnavn
   nyID <- c('102090'='974706490', #AHUS - Intensiv
   '4215368' = '974706490', #AHUS - Kongsvinger
+  '4207303' = '974706490', #AHUS - Med. Overvåkning 
   '4205696'='974706490', #AHUS - Postop
   '100089'='974706490', #Akershus universitetssykehus HF
   '111487'='974588951', #Aker
@@ -324,15 +324,18 @@ dataTilOffVisning <- function(RegData = RegData, valgtVar, #datoFra='2016-01-01'
   '705576'='874716782', #RH Barneintensiv
   '705577'='874716782', #RH Gen Int 1
   '706929'='874716782', #RH Gen Int 2
+ '106033' = '874716782', #RH Hjertemed int og overvåkn  
   '700419'='874716782', #RH samlet
   '705699'='874716782', #RH Thorax 1 
   '103539'='974631407', #Ringerike
   '103149'='974795477', #Sandnessjøen
   '102026'='974633191', #Skien
   '4201313'='974749025', #St. Olav Hovedint
-  '106572'='974749025', #St. Olav Med int
+ '4208928'='974749025', #St. Olavs Intensiv barn
+ '106572'='974749025', #St. Olav Med int
   '4205574'='974749025', #St. Olav Med lunge
-  '105790' = '974749025', #St. Olavs hospital - Nevrointensiv
+  '105790' = '974749025', #St. Olavs Nevrointensiv
+  '706032' = '974749025', #St. Olavs  Thoraxkirurgisk intensivavdeling
   '114282'='974703300', #Stavanger
   '701785'='974703300', #Stavanger univ.sjukehus - Postop. 1G
   '4207985'='974742985', #Stord 
