@@ -107,7 +107,8 @@ NIRpaarorDataSQL <- function(datoFra = '2015-12-01', datoTil = Sys.Date(), medH=
   , Q.HF
   , Q.Sykehus
   , Q.Helseenhet
-  , Q.HelseenhetKortNavn
+  -- , Q.HelseenhetKortNavn
+  Q.HealthUnitShortName AS HelseenhetKortNavn
   , Q.HelseenhetID
   --      , Q.LastUpdate
   --      , Q.FormStatus
