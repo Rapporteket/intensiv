@@ -10,7 +10,7 @@ setwd('~/speil/aarsrapp/intensiv/')
 RegData <- NIRRegDataSQL(datoFra=datoFra, datoTil=datoTil)
 RegData1aar <- NIRRegDataSQL(datoFra=datoFra1aar, datoTil=datoTil)
 reshBort21 <- c(4215368, 100132) #, 700620, 700619, 700419)
-RegData1aar <- RegData1aar[-which(RegData1aar$ReshID %in% reshBort21), ]
+RegData1aar <- RegData1aar[-which(RegData1aar$ReshId %in% reshBort21), ]
 
 ## DATA HENTET 25.april 2022, forrige 31.MARS 2022
 

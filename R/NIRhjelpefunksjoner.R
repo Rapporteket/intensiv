@@ -344,6 +344,7 @@ dataTilOffVisning <- function(RegData = RegData, valgtVar, #datoFra='2016-01-01'
   '700619'='974795787', #Tromsø Kir. int.
   '601302'='974795787', #Tromsø Med int
   '700620'='974795787', #Tromsø Postop
+  '4217939' ='974795787', #Tromsø, Oppvåkning
   '103948'='974633574', #Tønsberg
   '105101'='974633574', #Tønsberg Med. Over.
   '109870'='974589095', #Ullevål Akuttmed Int
@@ -359,7 +360,7 @@ dataTilOffVisning <- function(RegData = RegData, valgtVar, #datoFra='2016-01-01'
   '108308'='974747138', #Ålesund Kir
   '102673'='974747138') #Ålesund Med
 
-#nyResh <- setdiff(unique(RegDataUt$ReshId), names(nyID))
+nyResh <- setdiff(unique(RegDataUt$ReshId), names(nyID))
 #RegDataUt[match(nyResh, RegDataUt$ReshId), 'ShNavn']
   RegDataUt$orgnr <- as.character(nyID[as.character(RegDataUt$ReshId)])
   RegDataUt$ind_id <- indID

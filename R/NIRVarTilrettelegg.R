@@ -312,10 +312,37 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='an
         RegData$VariabelGr <- as.factor(RegData$PatientTransferredToHospitalName)
         grtxt <- levels(RegData$VariabelGr)
         retn <- 'H'
-
       }
+      if (valgtVar == 'PIMdod') { #GjsnGrVar
+        #Tar ut reinnlagte på intensiv og  de med SAPSII=0 (ikke scorede)
+        #De under 16år tas ut i NIRutvalg
+        #Reinn: #1:Ja, 2:Nei, 3:Ukjent, -1:Ikke utfylt
+        maxald <- min(15, maxald)
+        # indMed <- which(as.numeric(RegData$SAPSII)>0) %i%
+        #   which(RegData$InnDato >= as.Date('2016-01-01', tz='UTC'))
+        # RegData <- RegData[indMed,]
+        #RegData <- FinnReinnleggelser(RegData=RegData)
+        #RegData <- RegData[RegData$Reinn==2, ]
+        RegData$Variabel <- RegData$PIM_Probability*100 #For å få samme format som SMR
+        xAkseTxt <- 'Observert 30-dagers dødelighet / PIM-estimert dødelighet'
+        sortAvtagende <- FALSE
+      }
+      
+if (valgtVar == 'PIMsanns'){ #
+  tittel <- 'PIM, sannsynlighet'
+    # if (figurtype %in% c('gjsnGrVar', 'gjsnTid')) {
+    #   tittel <- 'SAPSII' }
+  RegData <- RegData[RegData$PIM_Probability >= 0, ]
+  RegData$Variabel <- 100*RegData$PIM_Probability
+  gr <- c(seq(0, 90,10), 100)
+    RegData$VariabelGr <- cut(100*RegData$PIM_Probability, breaks=gr, include.lowest=TRUE, right=FALSE)
+    #grtxt <- c('(0-10)','[10-20)','[20-30)','[30-40)','[40-50)','[50-60)','[60-70)','[70-80)','[80-90)','[90-100]')
+    grtxt <- levels(RegData$VariabelGr)
+#    xAkseTxt <- 'Observert 30-dagers dødelighet / PIM-estimert dødelighet'
+    retn <- 'V'
+}
 
-      if (valgtVar %in% c('regForsinkelseInn', 'regForsinkelse')) {  #Fordeling, Andeler,
+if (valgtVar %in% c('regForsinkelseInn', 'regForsinkelse')) {  #Fordeling, Andeler,
 
         RegData$RegForsink <- switch(valgtVar,
           'regForsinkelseInn' = as.numeric(difftime(RegData$CreationDate,
@@ -389,6 +416,23 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='an
             grtxt <- c('(0-1)','[1-2)','[2-3)','[3-4)','[4-5)','[5-6)','[6-7)','[7-14)','14+')
             xAkseTxt <- 'ventilasjonstid (døgn)'
             sortAvtagende <- TRUE      #Rekkefølge
+      }
+      if (valgtVar == 'respiratortidInv') { #Andeler #GjsnGrVar GjsnTid
+        #InvasivVentilation (pusterør/åpnet lufterør)
+        
+        ind <- which(RegData$InvasivVentilation>0) %i%
+          which(RegData$InnDato>=as.Date('2015-01-01', tz='UTC'))
+        RegData <- RegData[ind,]
+        if (figurtype %in% c('andeler', 'gjsnGrVar', 'gjsnTid')) {
+          RegData$Variabel  <- as.numeric(RegData$InvasivVentilation)
+          tittel <- 'invasiv ventilasjon'
+        }      #Andeler, GjsnGrVar
+        if (figurtype == 'andeler') {tittel <- 'Invasiv ventilasjon'}
+        gr <- c(0, 1, 2, 3, 4, 5, 6, 7, 14, 1000) #c(0, exp(seq(0,log(30),length.out = 6)), 500),1)
+        RegData$VariabelGr <- cut(RegData$InvasivVentilation, breaks=gr, include.lowest=TRUE, right=FALSE)
+        grtxt <- c('(0-1)','[1-2)','[2-3)','[3-4)','[4-5)','[5-6)','[6-7)','[7-14)','14+')
+        xAkseTxt <- 'ventilasjonstid (døgn)'
+        sortAvtagende <- TRUE      #Rekkefølge
       }
       if (valgtVar == 'respiratortidInvMoverf') { #Andeler #GjsnGrVar #AndelGrVar, GjsnTid
             #InvasivVentilation (pusterør/åpnet lufterør)
@@ -507,20 +551,6 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='an
             KImaal <- 0.7  #Reinnleggelser <4%
             KImaaltxt <- '< 0.7'
 
-      }
-      if (valgtVar == 'PIMdod') { #GjsnGrVar
-        #Tar ut reinnlagte på intensiv og  de med SAPSII=0 (ikke scorede)
-        #De under 16år tas ut i NIRutvalg
-        #Reinn: #1:Ja, 2:Nei, 3:Ukjent, -1:Ikke utfylt
-        maxald <- min(15, maxald)
-        # indMed <- which(as.numeric(RegData$SAPSII)>0) %i%
-        #   which(RegData$InnDato >= as.Date('2016-01-01', tz='UTC'))
-        # RegData <- RegData[indMed,]
-        #RegData <- FinnReinnleggelser(RegData=RegData)
-        #RegData <- RegData[RegData$Reinn==2, ]
-        RegData$Variabel <- RegData$PIM_Probability*100 #For å få samme format som SMR
-        xAkseTxt <- 'Observert 30-dagers dødelighet / PIM-estimert dødelighet'
-        sortAvtagende <- FALSE
       }
       if (valgtVar == 'trakeostomi') { #andelGrVar
             #-1: Velg verdi, 1 = Nei, 2 = Ja – perkutan teknikk på intensiv/oppv., 3 = Ja – åpen teknikk (operativ)

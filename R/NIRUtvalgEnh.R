@@ -54,9 +54,9 @@
 #' @export
 
 NIRUtvalgEnh <- function(RegData, datoFra='2011-01-01', datoTil=Sys.Date(), minald=0, maxald=110, erMann='', InnMaate='',
-                         aar=0, grType=99, enhetsUtvalg=0, dodInt='', reshID=0, velgAvd=0, velgDiag=0,
+                         aar=0, grType=99, enhetsUtvalg=0, dodInt='', reshID=0, velgAvd=0, velgDiag=0, overfPas=99,
                          fargepalett='BlaaOff')
-      # overfPas=99,
+      # 
 {
       #OffAlleFarger <- c('#c6dbef', '#6baed6', '#4292c6', '#2171b5', '#084594', '#000059', '#FF7260', '#4D4D4D', '#737373', '#A6A6A6', '#DADADA')
       #BlaaOff = OffAlleFarger[rev(c(1,2,4,5))]
@@ -124,10 +124,11 @@ NIRUtvalgEnh <- function(RegData, datoFra='2011-01-01', datoTil=Sys.Date(), mina
         switch(velgDiag,
                '1' = which(RegData$Bekreftet %in% 0:1),
                '2' = which(!(RegData$Bekreftet %in% 0:1)))
-        } else {1:Ninn}
+      } else {1:Ninn}
+      indOverf <- if (overfPas %in% 1:2) {which(RegData$Overf == overfPas)} else {1:Ninn}
 
 
-      indMed <- indDatoFra %i% indDatoTil %i% indAld %i% indKj %i% indInnMaate %i% indDod %i% indDiag %i% indAar #%i% indGrType
+      indMed <- indDatoFra %i% indDatoTil %i% indAld %i% indKj %i% indInnMaate %i% indDod %i% indDiag %i% indAar %i% indOverf  #%i% indGrType
 
       RegData <- RegData[indMed,]
 
@@ -154,6 +155,7 @@ NIRUtvalgEnh <- function(RegData, datoFra='2011-01-01', datoTil=Sys.Date(), mina
                                                c('Elektivt',0,0,0,0,0, 'Akutt medisinsk',0, 'Akutt kirurgi')[InnMaate+1], sep='')},
             if (grType %in% 1:3) {paste0('Sykehustype: ', grTypetextstreng[grType])},
             if (dodInt %in% 0:1) {paste0('Status ut fra intensiv: ', c('Levende','Død')[as.numeric(dodInt)+1])},
+            if (overfPas %in% 1:2) {c('Ikke-overførte pasienter', 'Overførte pasienter')[overfPas]},
             if (velgAvd[1] != 0 & reshID==0) {'Viser valgte sykehus'}
       )
 

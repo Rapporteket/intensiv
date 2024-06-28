@@ -6,21 +6,122 @@ aarsrappAar <- 2023
 datoFra <- '2011-01-01'
 datoTil <- paste0(aarsrappAar, '-12-31')
 datoFra1aar <- paste0(aarsrappAar, '-01-01')
-setwd('~/Aarsrappresultater/NiPar23/intensiv')
+setwd('~/Aarsrappresultater/NiPar23') #/intensiv
 RegData <- NIRPreprosess(NIRRegDataSQL(datoFra=datoFra, datoTil=datoTil))
 #Registrert på feil resh:
 RegData$ReshId[RegData$ReshId == 100132] <- 102026
 RegData1aar <- NIRPreprosess(NIRRegDataSQL(datoFra=datoFra1aar, datoTil=datoTil))
-
-## DATA HENTET 22.april 2024
-#2022: (varslet også i fjor)
-#SkjemaGUID 6A5D7672-A706-426C-9900-D760AC9EA61B manglerresh/enhetstilhørighet
 
 table(RegData$ShNavn, RegData$Aar)
 test <- unique(RegData[ ,c('ShNavn', 'ReshId')])
 test[order(test$ShNavn),]
 table(test$ShNavn)
 
+#--------------Tilleggsbestilling, 2023, overordnede gruppper------------------
+# Jeg har lagt til en ‘label’ på hver enhet, som her har fått navnet ‘Niva’. Med verdi 1-3.
+# Ønsket er at du kjører følgende figurer ut fra disse «kategoriene», altså nivåinndelingene.
+# 1a, 1b, 2a, 2b, 3
+# Skill på overførte og ikke overførte.
+
+# - Median Invasiv ventilasjonsbehandling
+# - Median non-invasiv ventilasjonsbehandling
+# - Median liggetid
+# - Median SAPS
+# - Median NEMS
+
+GruppeDef <- read.csv2(file = 'NIRenheter_nivaa060624.csv')
+#match(c(1,3,5,9, 1, 5), 1:10)
+ind <- match(RegData1aar$ReshId, GruppeDef$resh_id)
+RegData1aar$ShNavn <- GruppeDef$niva[ind] 
+RegData1aar <- RegData1aar[!is.na(RegData1aar$ShNavn), ]
+#table(RegData1aar$ShNavn[which(is.na(ind))])
+# Mangler mapping: 
+#   RH Hjertemed int og overvåkn           St. Olav Hjertemed        Sykehuset Telemark HF                        Volda 
+# 4                          204                          299                          257 
+
+variabler <- c('liggetid','respiratortidNonInv')
+variabler <- 'respiratortidInv'
+variabler <- c( 'SAPSII', 'NEMS','respiratortidInv', 'SMR') 
+for (valgtVar in variabler){ #
+  for (overf in 1:2) {
+    overfTxt <- c('Uoverf','Overf')[overf]
+  outfile <- paste0(valgtVar, overfTxt, '_MedSh.pdf')
+  NIRFigGjsnGrVar(RegData=RegData1aar, preprosess = 0, valgtVar=valgtVar, valgtMaal='Med',
+                  overfPas = overf, outfile=outfile)
+  } 
+}
+
+
+
+#---------Tilleggsbestilling, 2023, barn <16 år ------------------------------
+RegData <- NIRUtvalgEnh(RegData = RegData, datoFra = '2015-01-01')$RegData
+
+# PIM3
+# Fordeling, 2023
+# Median, Enhetsnivå for 2023
+# Median, Tidstrend fra 2015 – 2023
+# 
+# Liggetid
+# Fordeling, 2023
+# Median, enhetsnivå for 2023
+# Median, Tidstrend fra 2015 – 2023
+# 
+# Invasiv ventilasjon 
+# Overført + Ikke-overført - mener du en for hver eller samlet
+# Median, Tidstrend fra 2015 – 2023
+# 
+# Non-invasiv ventilasjon
+# Overført + Ikke-overført
+# Median, enhetsnivå for 2023
+# 
+# Primærårsak intensivopphold
+# Fordeling, 2023
+# 
+# Inklusjon
+# Fordeling, 2023
+# 
+# Alder
+# Fordeling - ny figur som viser fordeling av de under 16 år?
+# Median, Enhetsnivå, 2023
+# Median, tidstrend fra 2015-2023
+# 
+# Døde på intensiv
+# Andel døde, Tidstrend 2015 – 2023
+
+#Fordeling
+variabler <- c('PIMsanns', 'liggetid','InnMaate', 'inklKrit')
+
+for (valgtVar in variabler) {
+  outfile <- paste0(valgtVar, '_Ford0_15aar.pdf')
+  NIRFigAndeler(RegData=RegData1aar, preprosess = 0, valgtVar=valgtVar,
+                minald = 0, maxald = 15, outfile=outfile)
+}
+
+#Enhetsnivå
+variabler <- c('PIMsanns', 'liggetid','alder', 
+               'respiratortidInvMoverf',  'respiratortidNonInv')
+  for (valgtVar in variabler){ #
+    outfile <- paste0(valgtVar, '_MedPrSh0_15aar.pdf')
+    NIRFigGjsnGrVar(RegData=RegData1aar, preprosess = 0, valgtVar=valgtVar, valgtMaal='Med',
+                    minald = 0, maxald = 15, outfile=outfile)
+  }
+
+#Tidstrend
+variabler <- c('PIMsanns', 'liggetid','alder', 
+               'respiratortidInvMoverf',  'respiratortidNonInv',
+               'respiratortid')
+
+for (valgtVar in variabler) {
+  outfile <- paste0(valgtVar, 'MedTid0_15aar.pdf')
+  NIRFigGjsnTid(RegData=RegData, preprosess = 0, valgtVar=valgtVar, 
+                minald = 0, maxald = 15, 
+                valgtMaal='Med', tidsenhet= 'Aar', outfile=outfile)
+}
+
+#tapply(RegData$PIM_Probability, INDEX = RegData$Aar, FUN = 'mean', na.rm=T)
+
+NIRFigAndelTid(RegData = RegData, preprosess = 0, valgtVar = 'dodeIntensiv',
+               minald = 0, maxald = 15, outfile = 'dodeIntensivAndelTid0_15aar.pdf')
 
 #--------------------------------------- Fordelinger ----------------------------------
 
@@ -88,6 +189,8 @@ for (grType in 2:3) {
 NIRFigAndelerGrVar(RegData=RegData1aar, preprosess = 0, valgtVar='OrganDonationCompletedCirc', 
                      Ngrense=10, outfile='OrganDonationCompletedCircPrSh.pdf')
 
+NIRFigAndelerGrVar(RegData=RegData1aar, preprosess = 0, valgtVar='regForsinkelse', 
+                   Ngrense=10)
 
 # #Organdonorer av døde: OrganDonationCompletedStatus
 # #Organdonorer, av alle med opphevet intrakran. sirk.': 'OrganDonationCompletedCirc',
@@ -156,34 +259,6 @@ NIRFigGjsnGrVar(RegData=RegData1aar, preprosess = 0, valgtVar='respiratortidNonI
 #    NIRFigAndeler(RegData=PaarorDataH, valgtVar=valgtVar, datoFra=datoFra1aar, datoTil=datoTil,
 #                        outfile=outfile, preprosess = 0)
 # }
-
-#-------------------------------Tall 2022--------------------------------
-# For alle intensivpasientar i 2022
-# Gjennomsnitt og median alder med KI
-# GjSn: 62,5 KI: 62,2-62,8
-# Median: 68,4 KI:68,1-68,7
-# 
-# Del over 80 år: 16,9%
-# under 18 år:5,5%
-# 
-# Gjennomsnitt invasiv respiratortid med KI:
-#   UTEN overførte: 0,9 KI 0,8-1,0
-#   
-# Del nyreerstattande behandling (totalt): 
-#   Andel av opphold: 5,5%
-# Del døde ved utskriving frå intensiv: 10,5%
-# Del døde etter 30 dagar: 21,3%
-# 
-# 
-# For pandemipasientar på intensiv i 2022 (beredskap)
-# (Hentet fra Rapporteket-Intensiv og filtrert på Covid-pasienter)
-# Del kvinner og menn: 735/1160
-# Median alder med KI: 66,5 KI: 65,5-67,5
-# Del døde ved utskriving frå intensiv: 18,9%
-# Del døde etter 30 dagar: 31,6%
-
-
-  
 
 
 #-------------------------------Tabeller--------------------------------
@@ -350,11 +425,13 @@ write.table(NIRindFraReg, file = 'NIRindFraReg.csv', sep = ';', row.names = F)
 
 
 
-#----Kvalitetsindikatorer på enhetsnivå
-KvalIndManuellNy <- read.table(file = 'KvalIndNIR2023manuelle.csv', fileEncoding = 'UTF-8', sep = ';', header = TRUE) #, row.names = FALSE)
-
-TidligereKvalIndReg <- read.table(file = 'IntensivPublKvalInd.csv', fileEncoding = 'UTF-8', sep = ',', header = TRUE)
+#----Kvalitetsindikatorer på enhetsnivå ("manuelle" indikatorer)
+setwd('C:/ResultattjenesteGIT/Aarsrapp/NETTsider/') #Fra åpen harddisk C:\ResultattjenesteGIT\Aarsrapp\NETTsider
+#  KvalIndManuellNy <- read.table(file = 'KvalIndNIR2023manuelle.csv', fileEncoding = 'UTF-8', sep = ';', header = TRUE) #, row.names = FALSE)
+KvalIndManuellNy <- readxl::read_excel('IntensivKvalIndManuell2023_2024_RAA.xlsx')
+TidligereKvalIndReg <- read.table(file = 'IntensivKvalIndPublManuell2017_22.csv', fileEncoding = 'UTF-8', sep = ';', header = TRUE)
 names(table(TidligereKvalIndReg$ind_id))
+
 indKIfraReg <- which(TidligereKvalIndReg$ind_id %in% c('intensiv_innlegg_72t', 'intensiv_inv_vent', 'intensiv_dg') )
 TidligereKvalIndReg <- TidligereKvalIndReg[-indKIfraReg, ]
 table(TidligereKvalIndReg$year)
@@ -365,8 +442,9 @@ names(TidligereKvalIndReg)
 
 #Dataomorganisering
 names(KvalIndManuellNy)
-RegData <- KvalIndManuellNy[, c("resh_id", "tverrfagleg_gjennomgang", "rutinenotat", "primarvakt", "data_nir")]
-RegData$primarvakt <- dplyr::recode(RegData$primarvakt, '2' = 1L, '3'= 0L) #1-ja, 2-nei Innh: -1,1,2,3
+RegData <- KvalIndManuellNy[, c("resh_id", "tverrfagleg_gjennomgang", "rutinenotat", "primarvakt", "data_nir", "year")]
+RegData$primarvakt <- dplyr::recode(RegData$primarvakt, '2' = 1, '3' = 0, .default = RegData$primarvakt) #1-ja, 2-nei Innh: -1,1,2,3
+#RegData$primarvakt <- dplyr::case_match(RegData$primarvakt, 2 ~ 1, 3 ~ 0) #1-ja, 2-nei Innh: -1,1,2,3
 variabler <- c( "tverrfagleg_gjennomgang", "rutinenotat",  "data_nir")
 RegData[ , variabler][RegData[,variabler] == 2] <- 0
 RegData$orgnr <- as.character(nyID[as.character(RegData$resh_id)])
@@ -383,10 +461,10 @@ table(RegDataUt$var, useNA = 'a')
 
 RegDataUt$ind_id <- paste0('intensiv_', RegDataUt$ind_id)
 RegDataUt$denominator <- 1
-RegDataUt$year <- 2023
+#RegDataUt$year <- 2023
 RegDataUt$context <- 'caregiver'
 head(RegDataUt)
 head(TidligereKvalIndReg)
 KvalIndManuellAlleAar <- rbind(RegDataUt, TidligereKvalIndReg[ ,names(RegDataUt)])
-write.table(KvalIndManuellAlleAar, file = 'KvalIndEnhNivaa.csv', sep = ';', row.names = F)
+write.table(KvalIndManuellAlleAar, file = 'IntensivKvalIndEnhNivaa.csv', sep = ';', row.names = F)
 

@@ -5,6 +5,18 @@
 #Det har til dags dato (6.april 2022) ikke vært gjort noen "fork" av repositoriet.
 #Alle 6 kloninger som ble gjort 4.april, ble gjort av meg, under bruker olonkin og lenaringstado.
 
+query <- paste0('select * from 			EQ5DFormDataContract
+WHERE cast(DateAdmittedIntensive as date) BETWEEN \'', '2023-01-01', '\' AND \'', '2023-01-01', '\'')
+
+EQ5D <- rapbase::loadRegData(registryName= "nir", query=query, dbType="mysql")
+sort(names(EQ5D))
+
+
+
+
+
+
+
 #Alle off.farger:
 
       #c6dbef #6baed6 #4292c6 #2171b5 #084594 #000059 #FF7260 #4D4D4D #737373 #A6A6A6 #DADADA
@@ -624,7 +636,7 @@ Fordeling(RegData=RegData, valgtVar=valgtVar, minald=minald, maxald=maxald, grTy
 
 From <- names(table(RegData$PatientTransferredFromHospital))
 To <- names(table(RegData$PatientTransferredToHospital))
-Resh <- names(table(RegData$ReshID))
+Resh <- names(table(RegData$ReshId))
 From[-c(0,which(From %in% Resh))]
 To[-c(0,which(To %in% Resh))]
 
