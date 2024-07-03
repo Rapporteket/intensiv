@@ -47,7 +47,6 @@ NIRPreprosess <- function(RegData=RegData, skjema=1)	#, reshID=reshID)
       RegData$erMann[RegData$PatientGender == 2] <- 0
 
       #Riktig navn på regions-variabel:
-      #...
       #	RegData$Region <- RegData$RHF
 
       # Endre variabelnavn:
@@ -64,7 +63,7 @@ NIRPreprosess <- function(RegData=RegData, skjema=1)	#, reshID=reshID)
 
         RegData$SapsSum <- with(RegData, Glasgow+Age+SystolicBloodPressure+HeartRate+Temperature+MvOrCpap+UrineOutput+
               SerumUreaOrBun+Leukocytes+Potassium+Sodium+Hco3+Bilirubin+TypeOfAdmission)
-        RegData[which(RegData$Alder<16), c('SapsSum', 'Saps2Score', 'Saps2ScoreNumber')] <- 0
+        RegData[which(RegData$AgeAdmitted<16), c('SapsSum', 'Saps2Score', 'Saps2ScoreNumber')] <- 0
       }
 
       #names(RegData)[which(names(RegData) == 'PatientAge')] <- 'Alder' #Uten desimal
