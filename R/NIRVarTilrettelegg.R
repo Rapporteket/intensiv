@@ -236,7 +236,7 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='an
             tittel <- 'Andel av total liggetid brukt på dem som dør på intensiv'
       }
 
-      if (valgtVar=='NAS24') { #Fordeling, GjsnGrVar
+      if (valgtVar=='Nas24') { #Fordeling, GjsnGrVar
             tittel <- 'NAS per døgn'   #GjsnGrVar henter tittel fra NIRGjsnVar
             RegData$Variabel <- RegData$Nas/RegData$liggetid
             indMed <- which(RegData$Variabel <= 177) %i% which( (RegData$liggetid > 8/24) & (RegData$Nas>0))

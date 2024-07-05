@@ -130,7 +130,7 @@ NIRFigAndelTid(RegData = RegData, preprosess = 0, valgtVar = 'dodeIntensiv',
 
 variabler <- c('OrganDonationCompletedReasonForNoStatus',
                'frailtyIndex', 'inklKrit','liggetid','InnMaate',
-              'NEMS24', 'NAS24', 'regForsinkelse', 'respiratortidNonInv',
+              'NEMS24', 'Nas24', 'regForsinkelse', 'respiratortidNonInv',
               'SAPSII', 'nyreBeh', 'nyreBehTid','spesTiltak')
 
 for (valgtVar in variabler) {
@@ -197,7 +197,7 @@ NIRFigAndelerGrVar(RegData=RegData1aar, preprosess = 0, valgtVar='regForsinkelse
 
 #--------------------------------------- SENTRALMÅL per enhet----------------------------------
 
-variabler <- c('alder',  'NEMS24', 'NAS24',
+variabler <- c('alder',  'NEMS24', 'Nas24',
               'respiratortidInvMoverf',  'respiratortidNonInv', 'SAPSII')
   #Lagt til mai -23: variabler <- 'frailtyIndex'
 for (grType in 2:3) {
