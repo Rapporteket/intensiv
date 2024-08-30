@@ -172,14 +172,19 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='an
       if (valgtVar=='frailtyIndex') { #Andeler, , AndelGrVar/Tid
         #1:9 Veldig sprek - Terminalt syk
         gr <- 1:9
-        if (figurtype == 'andeler'){
         tittel <- 'Skrøpelighets indeks ("frailty")'
-        RegData <- RegData[which((RegData$FrailtyIndex %in% gr)), ]  #Kun gyldige verdier: 0,6,8
-        RegData$VariabelGr <- factor(RegData$FrailtyIndex, levels=gr)
-        grtxt <- c('Veldig sprek', 'Sprek', 'Ok', 'Sårbar', 'Lett skrøpelig', 'Moderat skrøpelig',
-                   'Alvorlig skøpelig', 'Svært skrøpelig', 'Terminal')
         xAkseTxt <- 'Grad av skrøpelighet'
-        retn <- 'H'}
+        if (figurtype == 'andeler'){
+          RegData <- RegData[which((RegData$FrailtyIndex %in% gr)), ]  #Kun gyldige verdier
+          RegData$Variabel  <- as.numeric(RegData$FrailtyIndex)
+          RegData$VariabelGr <- factor(RegData$FrailtyIndex, levels=gr)
+          grtxt <- c('Veldig sprek', 'Sprek', 'Ok', 'Sårbar', 'Lett skrøpelig', 'Moderat skrøpelig',
+                     'Alvorlig skøpelig', 'Svært skrøpelig', 'Terminal')
+          retn <- 'H'}
+        if (figurtype %in% 'gjsnGrVar') {
+          RegData <- RegData[which((RegData$FrailtyIndex %in% gr)), ]  
+          RegData$Variabel  <- as.numeric(RegData$FrailtyIndex)
+        }
         if (figurtype %in% c('andelGrVar', 'andelTid' )) {
           RegData$Variabel[RegData$FrailtyIndex %in% gr] <- 1
           tittel <- 'Registrert skrøpelighetsindeks'
@@ -648,13 +653,14 @@ if (valgtVar %in% c('regForsinkelseInn', 'regForsinkelse')) {  #Fordeling, Andel
             #1 = Pårørende negativ til donasjon	2 = Plutselig død/hjertestans	3 = Avslag fra RH	4 = Temp
             #OrganDonationCompletedStatus - Ble organdonasjon gjennomført?
             #1:ja, 2:nei, -1: tom
-            gr <- 0:3
-            RegData <- RegData[which(RegData$OrganDonationCompletedReasonForNoStatus %in% 0:4),]
+            gr <- c(0:3,5)
+            RegData <- RegData[which(RegData$OrganDonationCompletedReasonForNoStatus %in% gr),]
             RegData$VariabelGr <- factor(RegData$OrganDonationCompletedReasonForNoStatus, levels=gr)
             grtxt <- c('Pasient negativ til organdonasjon',
                   'Pårørende negativ til donasjon',
                   'Plutselig død/hjertestans',
-                  'Avslag fra RH')
+                  'Avslag fra RH',
+                  'Problem med cDcD')
             retn <- 'H'
             tittel <- 'Årsak ikke donasjon, pasienter med opph. intrakran. sirk.'
             xAkseTxt <- 'Andel (%)'

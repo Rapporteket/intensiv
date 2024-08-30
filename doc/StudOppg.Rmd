@@ -56,7 +56,7 @@ Frå februar 2020 vart dette tilbodet utvida til fem dagar/veke (måndag til fre
 
 ```{r data, echo=FALSE, warning=FALSE}
 #sti <- 'P:/Registerinfo og historie/intensiv/studentOppg2023/'
-sti <- 'E:/studentOppg2023/'
+sti <- 'D:/studentOppg2023/'
 Pas <- readxl::read_excel(paste0(sti, 'PasienterDIPS.xlsx')) #, sheet = "chickwts")
 indPasFor <- which(Pas$Gruppe=='gr1')
 indPasEtter <- which(Pas$Gruppe=='gr2')
@@ -74,7 +74,7 @@ PasMdato <- readxl::read_excel(paste0(sti, 'PasMdato.xlsx'))
 Pas <- merge(Pas, PasMdato[,c('behandlingsnr', "Mors_dato", "Totaltid_start")], by= 'behandlingsnr')
 
 Pas$Mors_dato <- as.Date(Pas$Mors_dato, origin = '1900-01-01')
-Pas$Totaltid_start <- as.Date(Pas$Totaltid_start)
+Pas$Totaltid_start <- as.Date(Pas$Totaltid_start, origin = '1900-01-01')
 Pas$DagerTilStopp <- as.numeric(difftime(as.Date(uttrekksdato), Pas$Totaltid_start, units = 'days'))
 Pas$DagerTilStopp[which(Pas$Mors==1)] <- Pas$mors_dager[which(Pas$Mors==1)]
 Pas$Mors[is.na(Pas$Mors)] <- 0
@@ -294,9 +294,19 @@ maksTid <- min(max(Pas$DagerTilStopp[Pas$Gruppe=='gr1']), max(Pas$DagerTilStopp[
 #ComparisonSurv::Descriptive.stat(time = Pas$DagerTilStopp, status=Pas$Mors, group=Pas$Gruppe01, tau=maksTid, alpha=0.05)
 
 # Har hatt med dette, men tar det ut:
-# ComparisonSurv::Cumhazard.plot(time = Pas$DagerTilStopp, status=Pas$Mors, group=Pas$Gruppe01, 
-#                                col=c(1,4),lwd=c(1,1),lty=c(1,1), lab.x="dager fra operasjon",lab.y="andel dod", 
-#                               legend=TRUE, local.x=0, local.y=0.4,legend.0="gr1",legend.1="gr2")
+# ComparisonSurv::Cumhazard.plot(time = Pas$DagerTilStopp, status=Pas$Mors, group=Pas$Gruppe01,
+#                                col=c(1,4),lwd=c(2, 2),lty=c(1,1), 
+#                                lab.x="Days from operation",lab.y="Fraction dead",
+#                               legend=TRUE, local.x=0, local.y=0.4,legend.0="Cohort 1",legend.1="Cohort 2")
+#Denne er bedre: 
+fit=survival::survfit(survival::Surv(DagerTilStopp, Mors) ~ Gruppe, data = Pas)
+#plot(fit,fun="cumhaz"))
+survminer::ggsurvplot(fit, fun = "cumhaz", #surv.plot.height = 1,
+                      pval = TRUE, pval.coord = c(1500, 0.25),
+                      legend.title = '', legend.labs = c('Cohort 1', 'Cohort 2'),
+                      xlab = 'Days from operation' , font.x = c(12,'italic', 'black'),
+                      ylab = 'Fraction dead', font.y = c(12,'italic', 'black'))
+
 
 
 #Survival.plot Plot for Cumulative Survival Function
@@ -307,15 +317,13 @@ maksTid <- min(max(Pas$DagerTilStopp[Pas$Gruppe=='gr1']), max(Pas$DagerTilStopp[
 
 #simTest <- ComparisonSurv::Overall.test(time = Pas$DagerTilStopp, status=Pas$Mors, group=Pas$Gruppe01, 
                             # tau=maksTid, nperm=100, seed=12345)
-# fit <- survminer::surv_fit(Surv(time, status) ~ sex, data = survival::colon)
-# fit <- survminer::surv_fit(Surv(time, status) ~ sex,
-               # data = list(colon, lung))
 #survminer::surv_pvalue(fit)
 #survminer::ggsurvplot(fit, pval = TRUE)
 
-fit <- survminer::surv_fit(survival::Surv(DagerTilStopp, Mors) ~ Gruppe, data = Pas)
+# fit <- survminer::surv_fit(survival::Surv(DagerTilStopp, Mors) ~ Gruppe, data = Pas)
 #Se også funksjon Surv2
-survminer::ggsurvplot(fit, pval = TRUE)
+# survminer::ggsurvplot(fit, pval = TRUE, 
+#                      legend.title = '', legend.labs = c('Cohort 1', 'Cohort 2'))
 
 # To calculate confounder-adjusted survival curves fo each group of this dataset using Direct Standardization (also known as G-Computation or Corrected Group Prognosis method, see Makuch (1982) or Chang et al. (1982)), we first have to fit a coxph model:
 
@@ -356,7 +364,26 @@ Ynsker vi å sjå om det er skilnader mellom kohort 1 og 2 når det gjeld dei ul
 # testPriU6t <- prop.test(tapply(Pas$Prioritet == '0-6t', Pas$Gruppe, sum), n=table(Pas$Gruppe)) #, alternative = 'less')
 
 Inngr$Pri5gr <- factor(Inngr$Pri5gr, levels= c('0-1t', '1-6t', '6-24t', '24-72t', '72+t'))
-ggplot2::ggplot(data = Inngr, mapping = ggplot2::aes(x=Pri5gr, fill=Gruppe)) + ggplot2::geom_bar(position = 'identity', alpha=0.5)
+library(ggplot2)
+# ggplot2::ggplot(data = Inngr, mapping = ggplot2::aes(x=Pri5gr, fill=Gruppe)) + 
+#   ggplot2::geom_bar(position = 'identity', alpha=0.5)
+library(magrittr)
+       Inngr %>%
+         dplyr::filter(!is.na(Pri5gr)) %>%
+      ggplot(aes(x=Pri5gr, fill=Gruppe)) + 
+  geom_bar(position = 'identity', alpha=0.5) +
+  labs(x = "Priority groups", y = 'Count') + #, fill = "Cohort") +
+  scale_fill_discrete(name = "", 
+                      breaks=c("gr1", "gr2"),
+                      labels=c("Cohort 1", "Cohort 2"))
+  #labs(title = "Temperatures\n", x = "TY [°C]", y = "Txxx", color = "Legend Title\n") +
+  #scale_color_manual(labels = c("T999", "T888"), values = c("blue", "red")) +
+  # scale_fill_manual(values=c("blue", "green"), 
+  #                      #name="Experimental\nCondition", #tittel
+  #                      breaks=c("gr1", "gr2"),
+  #                      labels=c("Cohort 1", "Cohort 2"))
+
+  #ggplot2::theme(legend.position = "bottom") 
 tabPri <- round(prop.table(table(Inngr[ ,c('Gruppe', 'Pri5gr' )]), 1)*100, 1)
 testPriU6t <- prop.test(tapply(as.numeric(Inngr$Pri5gr) %in% 1:2, Inngr$Gruppe, sum), n=table(Inngr$Gruppe)) #, alternative = 'less')
 ```

@@ -36,14 +36,10 @@ NIRFigInnMaate <- function(RegData, valgtVar='InnMaate', datoFra='2010-01-01', d
       }
 
 #------- Tilrettelegge variable
-#NIRVarSpes <- NIRVarTilrettelegg(RegData=RegData, valgtVar=valgtVar, figurtype = 'gjsnGrVar')
-#RegData <- NIRVarSpes$RegData
   RegData <- RegData[which(RegData$InnMaate %in% c(0,6,8)), ]
       #0:Planlagt operasjon, 6:Akutt nonoperativ, 8:Akutt operasjon
     #Rekoder variablene 0->1, 6->2, 8->3
-  RegData$Variabel <- factor(RegData$InnMaate, levels = c(0,6,8)) #ifelse(RegData$InnMaate == 0, 1, ifelse(RegData$InnMaate==6, 2, 3))
-	#gr <- c(0,6,8)
- 	#RegData$VariabelGr <- factor(RegData$Variabel, levels=gr)
+  RegData$Variabel <- factor(RegData$InnMaate, levels = c(0,6,8)) 
 	tittel <-'Type opphold'
       grtxt <- c('Planlagt operasjon','Akutt non-operativ', 'Akutt operasjon') #InnMaate - 0-El, 6-Ak.m, 8-Ak.k, standard: alle (alt unntatt 0,6,8)
       subtxt <- 'Type opphold'

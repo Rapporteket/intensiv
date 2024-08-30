@@ -1,0 +1,77 @@
+---
+title: "Akutt bukkirurgioperasjoner før/etter utvidelse av aktuttstuetilbud, tilleggsanalyser"
+author: "Lena"
+date: 
+output:
+  word_document: 
+    keep_md: yes
+  html_document: default
+  pdf_document: default
+editor_options:
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+```
+
+
+# Tilleggsanalyser
+
+```{r Tilleggsan, echo=FALSE}
+InngrTillegg <-  readxl::read_excel('D:/studentOppg2023/Inngrep_tillegg.xlsx')
+# table(InngrTillegg$LapKode, InngrTillegg$Gruppe)
+
+resLap <- prop.test(tapply(InngrTillegg$LapKode == 1, InngrTillegg$Gruppe, sum), n=table(InngrTillegg$Gruppe))
+
+```
+
+I xl-fila er alle inngrepa i 2018-2019 (kohort 1) og 2020-2022 (kohort 2). Kolonne "Operasjonskoder" som i originalfilene.         
+Der det er registrert ein eller fleire laparoskopikodar, har eg markert dette med eit 1-tal i ei ny kolonne "LapKode". Det skal vere registret 139 inngrep med laparoskopikode i 2018-19 og 215 i 2020-2022.
+ 
+Kan du sjekke fylgjande:
+Er det ein signifikant auke i andel laparoskopiar frå kohort 1 til kohort 2? 139/1199 (11,6%) vs. 215/1292 (16,6%)?
+Ja, det er signifikant, p-verdi: `r resLap$p.value`
+
+
+Sammenlign alle inngrep med laparoskopikode  (139 + 215 = 354) og med alle inngrep utan laparoskopikode (1060 + 1077 = 2137). 
+Vil samanlikne inngrepa med laparoskopikode med inngrepa utan slik kode med tanke på
+
+
+```{r tidLap, echo=FALSE}
+DivTottidLap0 <- summary(InngrTillegg$Totaltid[InngrTillegg$LapKode== 0])
+DivTottidLap1 <- summary(InngrTillegg$Totaltid[InngrTillegg$LapKode== 1])
+
+ttestTotaltidLap <- t.test(Totaltid ~ LapKode, data = InngrTillegg)
+wilcoxtestTotaltidLap <- wilcox.test(Totaltid ~ LapKode, data = InngrTillegg)
+
+
+DivKnivtidLap0 <- summary(InngrTillegg$Knivtid[InngrTillegg$LapKode== 0])
+DivKnivtidLap1 <- summary(InngrTillegg$Knivtid[InngrTillegg$LapKode== 1])
+
+ttestKnivtidLap <- t.test(Knivtid ~ LapKode, data = InngrTillegg)
+wilcoxtestKnivtidLap <- wilcox.test(Knivtid ~ LapKode, data = InngrTillegg)
+
+```
+
+## Total tid, begge kohorter samlet
+- Uten laparoskopi: Median: `r DivTottidLap0[3]`  Gjennomsnitt: `r round( DivTottidLap0[4],1)`, interkvartil: `r DivTottidLap0[2]` - `r DivTottidLap0[5]`
+- Med laparoskopi: Median: `r DivTottidLap1[3]`  Gjennomsnitt: `r round( DivTottidLap1[4],1)`, interkvartil: `r DivTottidLap1[2]` - `r DivTottidLap1[5]`
+- p-verdi for forskjell mellom gjennomsnittlig totaltid: `r round(ttestTotaltidLap$p.value, 3)`
+- p-verdi for forskjell mellom median totaltid: `r round(wilcoxtestTotaltidLap$p.value, 3)`
+
+Både t-test og ikke-parametrisk test angir signifikant forskjell.
+
+
+## Knivtid, begge kohorter samlet
+- Uten laparoskopi: Median: `r DivKnivtidLap0[3]`  Gjennomsnitt: `r round( DivKnivtidLap0[4],1)`, interkvartil: `r DivKnivtidLap0[2]` - `r DivKnivtidLap0[5]`
+- Med laparoskopi: Median: `r DivKnivtidLap1[3]`  Gjennomsnitt: `r round( DivKnivtidLap1[4],1)`, interkvartil: `r DivKnivtidLap1[2]` - `r DivKnivtidLap1[5]`
+- p-verdi for forskjell mellom gjennomsnittlig knivtid: `r round(ttestKnivtidLap$p.value, 3)`
+- p-verdi for forskjell mellom median knivtid: `r round(wilcoxtestKnivtidLap$p.value, 4)`
+
+Både t-test og ikke-parametrisk test angir signifikant forskjell.
+
+ 
+Vi veit (sjå tabell 3 i manuset) at desse gjennomsnitta var høgare i kohort 2 - dvs. at ein i kohort 2 brukte gjennomsnittleg meir totaltid på operasjonsstova og også gjennomsnittleg meir tid på sjølve operasjonen (knivtid). Vi har altså lyst til å undersøkje om ein (signifikant?) høgare andel laparoskopiar i kohort 2 kan vere noko av forklaringa på den auka tidsbruken i kohort 2.
+

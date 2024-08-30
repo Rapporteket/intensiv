@@ -202,6 +202,11 @@ Resultater basert på inngrep.
 
 Ynsker vi å sjå om det er skilnader mellom kohort 1 og 2 når det gjeld dei ulike prioriteringskategoriane
 
+
+```
+## Warning: package 'ggplot2' was built under R version 4.2.3
+```
+
 ![](StudOppg_files/figure-docx/Prioritet-1.png)<!-- -->
 
 
