@@ -87,7 +87,22 @@ NIRPreprosess <- function(RegData=RegData, skjema=1)	#, reshID=reshID)
       RegData$ShNavn <- trimws(as.character(RegData$ShNavn)) #Fjerner mellomrom (før) og etter navn
       if (skjema %in% 1:3){
         RegData$ShType[RegData$ShType ==2 ] <- 1	#Har nå kun type lokal/sentral og regional
-        }
+      }
+      
+      #Tomme sykehusnavn får resh som navn:
+      indTom <- which(is.na(RegData$ShNavn) | RegData$ShNavn == '')
+      RegData$ShNavn[indTom] <- RegData$ReshId[indTom]
+      
+      #Sjekker om alle resh har egne enhetsnavn
+      dta <- unique(RegData[ ,c('ReshId', 'ShNavn')])
+      duplResh <- names(table(dta$ReshId)[which(table(dta$ReshId)>1)])
+      duplSh <- names(table(dta$ShNavn)[which(table(dta$ShNavn)>1)])
+      
+      if (length(c(duplSh, duplResh)) > 0) {
+        ind <- union(which(RegData$ReshId %in% duplResh), which(RegData$ShNavn %in% duplSh))
+        RegData$ShNavn[ind] <- paste0(RegData$ShNavn[ind],' (', RegData$ReshId[ind], ')')
+      }
+      
       #Riktig format på datovariable:
       #	RegData <- RegData[which(RegData$DateAdmittedIntensive!=''),]	#Tar ut registreringer som ikke har innleggelsesdato
       RegData$InnDato <- as.Date(RegData$DateAdmittedIntensive, tz= 'UTC', format="%Y-%m-%d")

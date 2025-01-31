@@ -506,19 +506,43 @@ setwd('~/Aarsrappresultater/NETTsider/')
 library(intensiv)
 library(magrittr)
 NIRData <- NIRPreprosess(RegData = NIRRegDataSQL(datoFra = '2016-01-01'))
-NIRData <- NIRData[-which(NIRData$ShNavn ==''), ]
+indUShNavn <- which(NIRData$ShNavn =='')
+NIRData$ReshId[indUShNavn]
+unique(NIRData$Aar[indUShNavn])
+table(NIRData[which(NIRData$ReshId == 4210053), 'ShNavn'])
+#NIRData <- NIRData[-which(NIRData$ShNavn ==''), ]
+#nov2024: Kun Bodø som mangler sykehusnavn og den aktuelle reshid'en er mappet til orgnr.
+
+
+tab <- unique(NIRData[order(NIRData$ShNavn) ,c("ShNavn", "ReshId")])
+indFlereResh <- which(NIRData$ShNavn %in% names(table(tab$ShNavn)[table(tab$ShNavn)>1]))
+sort(table(tab$ShNavn))
+#Har to Sykehusnavn: 4210053 dvs. Bodø mangler sykehusnavn
+tab <- unique(NIRData[indFlereResh, c("ShNavn", "ReshId")])
+tab[order(tab$ShNavn),  c("ShNavn", "ReshId")]
 
 'respiratortidInvUoverf'
-RegData <- NIRData
-ind <- which(RegData$InvasivVentilation>0) %i%
-  which(RegData$InnDato>=as.Date('2015-01-01', tz='UTC')) %i% which(RegData$Overf ==1)
-RegData <- RegData[ind,]
-
-table(RegData[RegData$ShNavn %in% c('Mosjøen', 'Haraldplass') ,c('Aar', 'ShNavn')])
+# RegData <- NIRData
+# ind <- which(RegData$InvasivVentilation>0) %i%
+#   which(RegData$InnDato>=as.Date('2015-01-01', tz='UTC')) %i% which(RegData$Overf ==1)
+# RegData <- RegData[ind,]
+# 
+# table(RegData[RegData$ShNavn %in% c('Mosjøen', 'Haraldplass') ,c('Aar', 'ShNavn')])
 
 
 nyResh <- setdiff(unique(NIRData$ReshId), names(nyID))
-unique(NIRData[which(NIRData$ReshId %in% nyResh),c("ShNavn", "ReshId")])
+unique(NIRData[which(NIRData$ReshId %in% nyResh),c("ShNavn", "ReshId", "Aar")])
+
+#Okt 2024:
+# ShNavn   ReshId
+# Gjøvik  4212166
+# KalnesØstf.  4208977
+# Førde   701577
+# Lovisenberg 42088921
+# Skien   102428
+# KalnesØstf.  4208976
+# Hamar   108827
+# Sandnessjøen  4210742
 
 ind1 <- dataTilOffVisning(RegData = NIRData, valgtVar='reinn', 
                                  indID = 'intensiv_innlegg_72t', filUt = 'innlegg_72t')

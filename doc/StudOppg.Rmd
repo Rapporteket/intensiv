@@ -60,6 +60,10 @@ sti <- 'D:/studentOppg2023/'
 Pas <- readxl::read_excel(paste0(sti, 'PasienterDIPS.xlsx')) #, sheet = "chickwts")
 indPasFor <- which(Pas$Gruppe=='gr1')
 indPasEtter <- which(Pas$Gruppe=='gr2')
+Pas$Cohort <- NA
+Pas$Cohort[indPasFor] <- 'Cohort 1'
+Pas$Cohort[which(Pas$Gruppe=='gr2')] <- 'Cohort 2'
+
 
 Inngr <-  readxl::read_excel(paste0(sti, 'InngrepDIPS.xlsx'))
 indInngrFor <- which(Pas$Gruppe=='gr1')
@@ -135,7 +139,9 @@ Andel menn i de to gruppene er hhv. `r paste0(sprintf("%.1f", 100*resKjonn$estim
 
 ```{r sign Alder, echo=FALSE}
 Pas$Aldersgruppe <- factor(Pas$Aldersgruppe)
-ggplot2::ggplot(data = Pas, mapping = ggplot2::aes(x=Aldersgruppe, fill=Gruppe)) + ggplot2::geom_bar(position = 'identity', alpha=0.5)
+plotAld <- ggplot2::ggplot(data = Pas, mapping = ggplot2::aes(x=Aldersgruppe, fill=Cohort)) + ggplot2::geom_bar(position = 'identity', alpha=0.5) + ggplot2::labs(x = 'Age groups', y = 'Count')
+
+invisible(print(plotAld))
 
 testOver70aar1sid <- prop.test(tapply(Pas$Alder>70, Pas$Gruppe, sum), n=table(Pas$Gruppe), alternative = 'less')
 testOver70aar2sid <- prop.test(tapply(Pas$Alder>70, Pas$Gruppe, sum), n=table(Pas$Gruppe)) #, alternative = 'less')
@@ -301,12 +307,12 @@ maksTid <- min(max(Pas$DagerTilStopp[Pas$Gruppe=='gr1']), max(Pas$DagerTilStopp[
 #Denne er bedre: 
 fit=survival::survfit(survival::Surv(DagerTilStopp, Mors) ~ Gruppe, data = Pas)
 #plot(fit,fun="cumhaz"))
-survminer::ggsurvplot(fit, fun = "cumhaz", #surv.plot.height = 1,
+plot4surv <- survminer::ggsurvplot(fit, fun = "cumhaz", #surv.plot.height = 1,
                       pval = TRUE, pval.coord = c(1500, 0.25),
                       legend.title = '', legend.labs = c('Cohort 1', 'Cohort 2'),
                       xlab = 'Days from operation' , font.x = c(12,'italic', 'black'),
                       ylab = 'Fraction dead', font.y = c(12,'italic', 'black'))
-
+invisible(print(plot4surv))
 
 
 #Survival.plot Plot for Cumulative Survival Function
@@ -328,7 +334,7 @@ survminer::ggsurvplot(fit, fun = "cumhaz", #surv.plot.height = 1,
 # To calculate confounder-adjusted survival curves fo each group of this dataset using Direct Standardization (also known as G-Computation or Corrected Group Prognosis method, see Makuch (1982) or Chang et al. (1982)), we first have to fit a coxph model:
 
 # it is important to use X=TRUE in the coxph function call
-Pas$Gruppe01fa <- factor(Pas$Gruppe01, levels = 0:1, labels = c('gr1', 'gr2'))
+Pas$Gruppe01fa <- factor(Pas$Gruppe01, levels = 0:1, labels = c('Cohort 1', 'Cohort 2'))
 outcome_model <- survival::coxph(survival::Surv(DagerTilStopp, Mors) ~ Alder + ASAnum + Gruppe01fa, data=Pas, x=TRUE)
 #This model can then be used in a call to the adjustedsurv function, as shown below:
 

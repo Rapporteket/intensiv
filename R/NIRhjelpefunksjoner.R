@@ -155,6 +155,7 @@ delTekst <- function(x, len) #x -tekststreng/vektor av tekststrenger, len - Leng
 #' @export
 KobleMedHoved <- function(HovedSkjema, Skjema2, alleHovedskjema=F, alleSkjema2=F) {
   #HovedSkjema <- plyr::rename(HovedSkjema, c('FormDate' = 'FormDateHoved'))
+  Skjema2$SkjemaGUID_S2 <- Skjema2$SkjemaGUID
   varBegge <- intersect(names(HovedSkjema),names(Skjema2)) ##Variabelnavn som finnes i begge datasett
   Skjema2 <- Skjema2[ , c("HovedskjemaGUID", names(Skjema2)[!(names(Skjema2) %in% varBegge)])]  #"SkjemaGUID",
   data <- merge(HovedSkjema, Skjema2, suffixes = c('','_S2'),
@@ -274,8 +275,6 @@ dataTilOffVisning <- function(RegData = RegData, valgtVar, #datoFra='2016-01-01'
                                var = Variabel)
                   
                           
-                     
-                 
     #Legge på orgID ("Sykehusviser")
     #ReshId	orgnr	RapporteketNavn	SKDEnavn
   nyID <- c('102090'='974706490', #AHUS - Intensiv
@@ -291,8 +290,11 @@ dataTilOffVisning <- function(RegData = RegData, valgtVar, #datoFra='2016-01-01'
   '103620'='974631326', #Drammen
   '108609'='974631768', #Elverum
   '105282'='974744570', #Førde
+  '701577'='974744570',  #Førde okt24
   '108618'='974632535', #Gjøvik
+  '4212166'='974632535',  #Gjøvik  
   '108610'='974724960', #Hamar
+  '108827'='974724960', #Hamar okt2024
   '101858'='974795833', #Hammerfest
   '100180'='974316285', #Haraldplass
   '700617'='974795639', #Harstad
@@ -307,6 +309,8 @@ dataTilOffVisning <- function(RegData = RegData, valgtVar, #datoFra='2016-01-01'
   '106285'='974557746', #Haukel. TIO
   '100082'='983974724', #Helse Bergen HF  NB: HF-resh
   '4209889'='974633752', #KalnesØstf.
+  '4208977'='974633752', #KalnesØstf. okt2024  
+  '4208976'='974633752', #KalnesØstf. okt 2024
   '101830'='974795930', #Kirkenes
   '4208715'='974631385', #Kongsberg
   '114240'='974733013', #Kristiansand
@@ -314,6 +318,7 @@ dataTilOffVisning <- function(RegData = RegData, valgtVar, #datoFra='2016-01-01'
   '102250'='974754118', #Levanger
   '108626'='874632562', #Lillehammer
   '4208892'='974207532', #Lovisenberg Diakonale Sykehus
+  '42088921'='974207532', #Lovisenberg
   '103015'='974795515', #Mo i Rana
   '706079'='974745569', #Molde
   '103141'='974795485', #Mosjøen
@@ -329,8 +334,10 @@ dataTilOffVisning <- function(RegData = RegData, valgtVar, #datoFra='2016-01-01'
   '705699'='874716782', #RH Thorax 1 
   '103539'='974631407', #Ringerike
   '103149'='974795477', #Sandnessjøen
-  '102026'='974633191', #Skien
-  '4201313'='974749025', #St. Olav Hovedint
+  '4210742'='974795477', #Sandnessjøen okt2024
+ '102026'='974633191', #Skien
+ '102428'='974633191', #Skien okt2024
+ '4201313'='974749025', #St. Olav Hovedint
  '4208928'='974749025', #St. Olavs Intensiv barn
  '106572'='974749025', #St. Olav Med int
   '4205574'='974749025', #St. Olav Med lunge

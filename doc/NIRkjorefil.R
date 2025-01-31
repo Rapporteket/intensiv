@@ -11,11 +11,44 @@ WHERE cast(DateAdmittedIntensive as date) BETWEEN \'', '2023-01-01', '\' AND \''
 EQ5D <- rapbase::loadRegData(registryName= "nir", query=query, dbType="mysql")
 sort(names(EQ5D))
 
+#---- ReshId vs UnitId
+library(intensiv)
+Data <- NIRPreprosess(NIRRegDataSQL())
+ShResh <- unique(Data[order(Data$ShNavn), c("ShNavn", "ReshId")])
+ShUnit <- unique(Data[order(Data$ShNavn), c("ShNavn", "UnitId")])
+sum(as.numeric(ShResh$ReshId))
+sum(as.numeric(ShUnit$UnitId))
+DataRaa <- NIRRegDataSQL()
+sum(as.numeric(DataRaa$UnitId))
+sum(as.numeric(DataRaa$ReshId))
 
 
+#-----Teste pårørendedata---SkjemaGUID#-----Teste pårørendedata-----
+library(intensiv)
+IntData <- NIRRegDataSQL(datoFra = '2022-01-01') 
+PaarorData <- NIRpaarorDataSQL()
+PaarorDataH <- KobleMedHoved(IntData, PaarorData, alleHovedskjema=F, alleSkjema2=F)
+PaarorDataH <- NIRPreprosess(RegData = PaarorDataH) #Må først koble på hoveddata for å få ShType++
 
+table(PaarorData$BehandlingBesvarerBehov)
+manglendeHskjema <- setdiff(PaarorData$SkjemaGUID, PaarorDataH$SkjemaGUID_S2)
 
+table(PaarorDataH$BehandlingBesvarerBehov)
+table(PaarorDataH$BehandlingBesvarerBehovSkaaring, useNA = 'a')
 
+table(PaarorDataH[c('Aar','BehandlingBesvarerBehov')])
+table(PaarorDataH[c('Aar','BehandlingBesvarerBehovSkaaring')], useNA = 'a')
+
+paarVar <- names(PaarorData)
+manglerV <- setdiff(paarVar, names(PaarorDataH))
+paarVar <- paarVar[-which(paarVar %in% manglerV)]
+Paaror <- PaarorDataH[,c('Aar', "SkjemaGUID_S2", paarVar)]
+write.csv2(Paaror, file = 'PaarorData.csv', row.names = F)
+
+Paaror24 <- Paaror[which(Paaror$Aar==2024), ]
+test <- PaarorData[which(PaarorData$SkjemaGUID %in% sort(Paaror24$SkjemaGUID_)), ]
+
+#109 skjema mangler hovedskjema
 
 #Alle off.farger:
 
