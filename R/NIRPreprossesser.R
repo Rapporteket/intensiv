@@ -88,15 +88,16 @@ NIRPreprosess <- function(RegData=RegData, skjema=1)	#, reshID=reshID)
       if (skjema %in% 1:3){
         RegData$ShType[RegData$ShType ==2 ] <- 1	#Har nå kun type lokal/sentral og regional
       }
-      
-      #Tomme sykehusnavn får resh som navn:
-      indTom <- which(is.na(RegData$ShNavn) | RegData$ShNavn == '')
-      RegData$ShNavn[indTom] <- RegData$ReshId[indTom]
+      #Hvis samme resh har flere navn -> slå sammen navnene (de fleste har tomt navn som 2.navn)
       
       #Sjekker om alle resh har egne enhetsnavn
       dta <- unique(RegData[ ,c('ReshId', 'ShNavn')])
       duplResh <- names(table(dta$ReshId)[which(table(dta$ReshId)>1)])
       duplSh <- names(table(dta$ShNavn)[which(table(dta$ShNavn)>1)])
+      
+      #Tomme sykehusnavn får resh som navn:
+      indTom <- which(is.na(RegData$ShNavn)) # | RegData$ShNavn == '')
+      RegData$ShNavn[indTom] <- RegData$ReshId[indTom]
       
       if (length(c(duplSh, duplResh)) > 0) {
         ind <- union(which(RegData$ReshId %in% duplResh), which(RegData$ShNavn %in% duplSh))

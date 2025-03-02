@@ -12,7 +12,7 @@
 NIRRegDataSQL <- function(datoFra = '2019-01-01', datoTil = '2099-01-01') { #,session='') {
 
 
-  #	DischargedHospitalStatus,
+  registryName <- "nir"
 
   query <- paste0('SELECT
   Age,
@@ -122,7 +122,7 @@ WHERE cast(DateAdmittedIntensive as date) BETWEEN \'', datoFra, '\' AND \'', dat
    # query <- paste0('select * from MainFormDataContract
    # WHERE cast(DateAdmittedIntensive as date) BETWEEN \'', '2020-01-01', '\' AND \'', Sys.Date(), '\'')
 
-  RegData <- rapbase::loadRegData(registryName= "nir", query=query, dbType="mysql")
+  RegData <- rapbase::loadRegData(registryName = registryName, query=query, dbType="mysql")
 
   #rapbase::repLogger(session = session, 'Hentet alle data fra intensivregisteret')
 

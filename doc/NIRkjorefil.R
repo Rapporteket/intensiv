@@ -14,15 +14,24 @@ sort(names(EQ5D))
 #---- ReshId vs UnitId
 library(intensiv)
 Data <- NIRPreprosess(NIRRegDataSQL())
+#ReshId og UnitId inneholder akkurat det samme.
 ShResh <- unique(Data[order(Data$ShNavn), c("ShNavn", "ReshId")])
-ShUnit <- unique(Data[order(Data$ShNavn), c("ShNavn", "UnitId")])
-sum(as.numeric(ShResh$ReshId))
-sum(as.numeric(ShUnit$UnitId))
-DataRaa <- NIRRegDataSQL()
-sum(as.numeric(DataRaa$UnitId))
-sum(as.numeric(DataRaa$ReshId))
+ShReshUnit <- unique(Data[, c("ShNavn", "UnitId", 'ReshId')])
+ShReshUnit <- ShReshUnit[order(ShReshUnit$ShNavn),]
+ReshUnitSh <- ShReshUnit[order(ShReshUnit$ReshId),]
+write.csv2(ReshUnitSh, file = 'ReshUnitSh.csv', row.names = F)
 
+RegData$ShNavn <- trimws(as.character(RegData$ShNavn)) #Fjerner mellomrom (før) og etter navn
+ShResh <- unique(RegData[, c("ShNavn", 'ReshId')])
+ShResh <- ShResh[order(ShResh$ReshId),]
 
+#109779 Ullevål Nevroint
+datoFra <- '2024-01-01'
+datoTil <- '2024-12-31'
+reshID <- 109779
+RegData <- NIRPreprosess(RegData)
+FraUllev <- tabOverforinger(RegData, datoFra=datoFra, datoTil=datoTil,
+                            reshID=109779, velgAvd=0, enhetsUtvalg=2, overfFraSh=1)
 #-----Teste pårørendedata---SkjemaGUID#-----Teste pårørendedata-----
 library(intensiv)
 IntData <- NIRRegDataSQL(datoFra = '2022-01-01') 
