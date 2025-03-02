@@ -12,7 +12,7 @@
 NIRRegDataSQL <- function(datoFra = '2019-01-01', datoTil = '2099-01-01') { #,session='') {
 
 
-  registryName <- "nir"
+  registryName <- 'data' #"nir"
 
   query <- paste0('SELECT
   Age,

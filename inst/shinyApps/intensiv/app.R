@@ -28,7 +28,7 @@ if (paaServer) {
   #Covid-skjema:
   qCovid <- paste0('SELECT HovedskjemaGUID, FormStatus, Diagnosis
                   FROM ReadinessFormDataContract')
-  CovidData <- rapbase::loadRegData(registryName= "nir", query=qCovid, dbType="mysql")
+  CovidData <- rapbase::loadRegData(registryName= "data", query=qCovid, dbType="mysql")
 
 } else { #hente data på server
 
