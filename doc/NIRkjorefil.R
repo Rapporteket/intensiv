@@ -16,7 +16,7 @@ library(intensiv)
 Data <- NIRPreprosess(NIRRegDataSQL())
 #ReshId og UnitId inneholder akkurat det samme.
 ShResh <- unique(Data[order(Data$ShNavn), c("ShNavn", "ReshId")])
-ShReshUnit <- unique(Data[, c("ShNavn", "UnitId", 'ReshId')])
+ShReshUnit <- unique(RegData[, c("ShNavn", "UnitId", 'ReshId')])
 ShReshUnit <- ShReshUnit[order(ShReshUnit$ShNavn),]
 ReshUnitSh <- ShReshUnit[order(ShReshUnit$ReshId),]
 write.csv2(ReshUnitSh, file = 'ReshUnitSh.csv', row.names = F)

@@ -84,12 +84,12 @@ NIRPreprosess <- function(RegData=RegData, skjema=1)	#, reshID=reshID)
 
 
       # Riktig format
-      RegData$ShNavn <- trimws(as.character(RegData$ShNavn)) #Fjerner mellomrom (før) og etter navn
       if (skjema %in% 1:3){
         RegData$ShType[RegData$ShType ==2 ] <- 1	#Har nå kun type lokal/sentral og regional
       }
-      #Hvis samme resh har flere navn -> slå sammen navnene (de fleste har tomt navn som 2.navn)
       
+      #Fjerner mellomrom (før) og etter navn
+      RegData$ShNavn <- trimws(as.character(RegData$ShNavn)) 
       #Sjekker om alle resh har egne enhetsnavn
       dta <- unique(RegData[ ,c('ReshId', 'ShNavn')])
       duplResh <- names(table(dta$ReshId)[which(table(dta$ReshId)>1)])
