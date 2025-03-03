@@ -6,7 +6,7 @@ x-environment: &environment
   MYSQL_HOST: db
   MYSQL_USER: root
   MYSQL_PASSWORD: root
-  FALK_APP_ID: 999
+  FALK_APP_ID: 106
   USERORGID: "pilot"
   SHINYPROXY_USERNAME: test@tester.no
   SHINYPROXY_USERGROUPS: "pilot"

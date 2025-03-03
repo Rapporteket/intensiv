@@ -4,7 +4,7 @@ library(intensiv)
 addResourcePath('rap', system.file('www', package='rapbase'))
 
 context <- Sys.getenv("R_RAP_INSTANCE") #Blir tom hvis jobber lokalt
-paaServer <- (context %in% c("DEV", "TEST", "QA","QAC", "PRODUCTION", "PRODUCTIONC")) #rapbase::isRapContext()
+paaServer <- (context %in% c("DEV", "TEST", "QA","QAC", "PRODUCTION", "PRODUCTIONC"))
 
   
 options(knitr.table.format = "html")
@@ -107,7 +107,7 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
            ),
            mainPanel(
              tags$head(tags$link(rel="shortcut icon", href="rap/favicon.ico")),
-             if (context %in% c("DEV", "TEST", "QA", "PRODUCTION", "QAC", "PRODUCTIONC")) {
+             if (paaServer) {
                rapbase::navbarWidgetInput("navbar-widget", selectOrganization = TRUE)
              },
              
@@ -732,9 +732,9 @@ server <- function(input, output, session) { #
   # "name", "fullName", "phone", "email", "group", "unit", "org", "role", "orgName"
   user <- rapbase::navbarWidgetServer2(
     id = "navbar-widget",
-    orgName = "rygg",
+    orgName = "intensiv",
     map_orgname = shiny::req(map_avdeling),
-    caller = "rygg"
+    caller = "intensiv"
   )
   
   
