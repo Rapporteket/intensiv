@@ -1377,8 +1377,6 @@ server <- function(input, output, session) { #
       )}
 
 #------------------ Abonnement ----------------------------------------------
-      
-      #--------Modul, abonnement
       orgs <- as.list(sykehusValg)
       
       ## make a list for report metadata
@@ -1387,59 +1385,60 @@ server <- function(input, output, session) { #
           synopsis = "Intensiv/Rapporteket: månedsrapport, abonnement",
           fun = "abonnement", 
           paramNames = c('rnwFil',  "reshID", "datoFra", 'datoTil'), #"valgtRHF"),
-          paramValues = c('NIRmndRapp.Rnw', user$org(), Sys.Date()-180, Sys.Date()) #'Alle')
+          paramValues = c('NIRmndRapp.Rnw', user$org(), Sys.Date()-180, Sys.Date())
         ),
         SamleRapp = list(
           synopsis = "Intensiv/Rapporteket: Samlerapport, abonnement",
           fun = "abonnement", 
           paramNames = c('rnwFil', "reshID", "datoFra", 'datoTil'), #"valgtRHF"),
-          paramValues = c('NIRSamleRapp.Rnw', user$org(), Sys.Date()-180, Sys.Date()) #'Alle')
+          paramValues = c('NIRSamleRapp.Rnw', user$org(), Sys.Date()-180, Sys.Date()) 
         )
       )
 
-      #test <- intensiv::abonnement(rnwFil='NIRmndRapp.Rnw', reshID=706078)
-      rapbase::autoReportServer(
-        id = "intensivAbb", registryName = "intensiv", type = "subscription",
-        paramNames = paramNames, paramValues = paramValues, #org = orgAbb$value,
-        reports = reports, orgs = orgs, eligible = TRUE
+     rapbase::autoReportServer2(
+        id = "intensivAbb", 
+        registryName = "intensiv", 
+        type = "subscription",
+        #paramNames = paramNames, paramValues = paramValues, 
+        reports = reports, 
+        orgs = orgs, 
+        eligible = TRUE,
+        user = user
       )
-      
       
       
 #-------------Registeradministrasjon -----------------
 
       #---Utsendinger---------------
       orgs <- as.list(sykehusValg)
-
-      ## liste med metadata for rapport
-      reports <- list(
-        MndRapp = list(
-          synopsis = "Rapporteket-Intensiv: Månadsrapport",
-          fun = "abonnement",
-          paramNames = c('rnwFil', "reshID"),
-          paramValues = c('NIRmndRapp.Rnw', 0)
-        ),
-        SamleRapp = list(
-          synopsis = "Rapporteket-Intensiv: Rapport, div. resultater",
-          fun = "abonnement",
-          paramNames = c('rnwFil', "reshID"),
-          paramValues = c('NIRSamleRapp.Rnw', 'Alle')
-        )
-      )
-      #abonnement(rnwFil, brukernavn='tullebukk', reshID=0, datoFra=Sys.Date()-180, datoTil=Sys.Date())
-
       org <- rapbase::autoReportOrgServer("NIRuts", orgs)
-
+      
       # oppdatere reaktive parametre, for å få inn valgte verdier (overskrive de i report-lista)
       paramNames <- shiny::reactive("reshID")
       paramValues <- shiny::reactive(org$value())
 
-      rapbase::autoReportServer(
-        id = "NIRuts", registryName = "intensiv", type = "dispatchment",
-        org = org$value, paramNames = paramNames, paramValues = paramValues,
-        reports = reports, orgs = orgs, eligible = TRUE
-      )
-
+      rapbase::autoReportServer2(
+        id = "NIRuts",
+        registryName = "intensiv",
+        type = "dispatchment",
+        org = org$value,
+        paramNames = paramNames,
+        paramValues = paramValues,
+        reports = list(
+          MndRapp = list(
+            synopsis = "Rapporteket-Intensiv: Månadsrapport",
+            fun = "abonnement",
+            paramNames = c('rnwFil', "reshID"),
+            paramValues = c('NIRmndRapp.Rnw',  user$org())),
+          SamleRapp = list(
+            synopsis = "Rapporteket-Intensiv: Rapport, div. resultater",
+            fun = "abonnement",
+            paramNames = c('rnwFil', "reshID"),
+            paramValues = c('NIRSamleRapp.Rnw', 'Alle'))
+          ),
+        orgs = orgs,
+        eligible = (user$role() == "SC"),
+        user = user  )
 
       #----------- Eksport ----------------
         ## brukerkontroller
