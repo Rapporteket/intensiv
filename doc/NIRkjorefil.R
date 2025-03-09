@@ -13,9 +13,13 @@ sort(names(EQ5D))
 
 #---- ReshId vs UnitId
 library(intensiv)
-Data <- NIRPreprosess(NIRRegDataSQL())
+RegData <- NIRPreprosess(NIRRegDataSQL())
+RegData <- NIRRegDataSQL(datoFra='2010-01-01')
+AlleData <- rapbase::loadRegData(registryName = 'data', query= 'select * from MainFormDataContract', dbType="mysql")
+sort(names(AlleData))
 #ReshId og UnitId inneholder akkurat det samme.
-ShResh <- unique(Data[order(Data$ShNavn), c("ShNavn", "ReshId")])
+ShResh <- unique(AlleData[order(AlleData$ShNavn), c("ShNavn",'Helseenhet', "ReshId", "UnitId")])
+write.csv2(ShResh, file = 'EnhetsnavnOgResh.csv', row.names = F, fileEncoding = 'latin1')
 ShReshUnit <- unique(RegData[, c("ShNavn", "UnitId", 'ReshId')])
 ShReshUnit <- ShReshUnit[order(ShReshUnit$ShNavn),]
 ReshUnitSh <- ShReshUnit[order(ShReshUnit$ReshId),]

@@ -18,14 +18,12 @@ AarNaa <- as.numeric(format(idag, "%Y"))
 #---------Hente data------------
 
   IntData <- NIRRegDataSQL(datoFra = '2011-01-01') 
-  PaarorData <- NIRpaarorDataSQL()
 
-  #Covid-skjema:
-  qCovid <- paste0('SELECT HovedskjemaGUID, FormStatus, Diagnosis
-                  FROM ReadinessFormDataContract')
-  CovidData <- rapbase::loadRegData(registryName= "data", query=qCovid, dbType="mysql")
+#Covid-skjema:
+qCovid <- paste0('SELECT HovedskjemaGUID, FormStatus, Diagnosis
+                FROM ReadinessFormDataContract')
+CovidData <- rapbase::loadRegData(registryName= "data", query=qCovid, dbType="mysql")
 
-PaarorDataH <- KobleMedHoved(IntData, PaarorData, alleHovedskjema=F, alleSkjema2=F)
 CovidData$HovedskjemaGUID <- toupper(CovidData$HovedskjemaGUID)
 CovidData$Bekreftet <- 0
 CovidData$Bekreftet[which(CovidData$Diagnosis %in% 100:103)] <- 1
@@ -33,22 +31,29 @@ CovidData$Bekreftet[which(CovidData$Diagnosis %in% 100:103)] <- 1
 RegData <- merge(IntData, CovidData[ ,-which(names(CovidData) == 'Diagnosis')], suffixes = c('','Cov'),
                  by.x = 'SkjemaGUID', by.y = 'HovedskjemaGUID', all.x = T, all.y=F)
 
+RegData <- NIRPreprosess(RegData = RegData)
+#RegData <- RegData[!is.na(RegData$Aar), ]
 
+PaarorData <- NIRpaarorDataSQL()
+PaarorDataH <- KobleMedHoved(IntData, PaarorData, alleHovedskjema=F, alleSkjema2=F)
 antPaaror <- dim(PaarorDataH)[1]
 if (antPaaror>0) {
 PaarorData <- NIRPreprosess(RegData = PaarorDataH) #Må først koble på hoveddata for å få ShType++
 }
-RegData <- NIRPreprosess(RegData = RegData)
-RegData <- RegData[!is.na(RegData$Aar), ]
 
 #-----Definere utvalgsinnhold og evt. parametre som er statiske i appen----------
 
 
 #Definere utvalgsinnhold
-sykehusNavn <- sort(unique(RegData$ShNavn), index.return=T)
-sykehusValg <- unique(RegData$ReshId)[sykehusNavn$ix]
-sykehusValg <- c(0,sykehusValg)
-names(sykehusValg) <- c('Ikke valgt',sykehusNavn$x)
+# sykehusNavn <- sort(unique(RegData$ShNavn), index.return=T)
+# sykehusValg <- unique(RegData$ReshId)[sykehusNavn$ix] #Blir feil siden flere sykehusnavn enn resh
+# sykehusValg <- c(0,sykehusValg)
+# names(sykehusValg) <- c('Ikke valgt',sykehusNavn$x)
+
+sykehusNavnResh <- unique(RegData[,c("ShNavn", "ReshId")])
+rekkeflg <- order(sykehusNavnResh$ShNavn)
+sykehusValg <- c(0,sykehusNavnResh$ReshId[rekkeflg])
+names(sykehusValg) <- c('Ikke valgt',sykehusNavnResh$ShNavn[rekkeflg])
 
 enhetsUtvalg <- c("Egen mot resten av landet"=1,
                   "Hele landet"=0,
@@ -221,7 +226,7 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                          tabPanel('Overføringer',
                                   p(h2('Overføring av intensivpasienter',
                                      align='center') ),
-                                  #h2(uiOutput('egetShNavn')),
+                                  #h2(uiOutput('user$org()')),
                                   br(),
                                   column(6,
                                          tableOutput('tabOverfTil')
@@ -743,6 +748,7 @@ server <- function(input, output, session) { #
       shinyjs::show(id = 'velgResh')
       shinyjs::show(id = 'velgReshOverf')
       shinyjs::show(id = 'velgReshData')
+      showTab(inputId = "hovedark", target = "Registeradministrasjon")
     } else {
       shinyjs::hide(id = 'velgResh')
       shinyjs::hide(id = 'velgReshOverf')
@@ -756,23 +762,24 @@ server <- function(input, output, session) { #
   observeEvent(input$reset_gjsnValg, shinyjs::reset("brukervalg_gjsn"))
  
   
-  indReshEgen <- match(user$org(), RegData$ReshId)
-  egetShNavn <- as.character(RegData$ShNavn[indReshEgen])
-  egetRHF <- as.character(RegData$RHF[indReshEgen])
-  egetHF <- as.character(RegData$HF[indReshEgen])
-  egenShType <- c('lokal-/sentralsykehus', '',
-                  'universitetssykehus')[RegData$ShType[indReshEgen]]
+  #indReshEgen <- match(user$org(), RegData$ReshId)
+  #egetShNavn <- as.character(RegData$ShNavn[match(user$org(), RegData$ReshId)])
+  #egetRHF <- as.character(RegData$RHF[indReshEgen])
+  #egetHF <- as.character(RegData$HF[indReshEgen])
+  #egenShType <- c('lokal-/sentralsykehus', '',
+  #                'universitetssykehus')[RegData$ShType[indReshEgen]]
   egenLokalitet <- c(0, 2, 4, 7)
-  names(egenLokalitet) <- c('hele landet', egetShNavn, egenShType , egetRHF)
+  names(egenLokalitet) <- c('hele landet', 'egen enhet', 'egen sykehustype' , 'eget RHF')
+    # c('hele landet', egetShNavn, egenShType , egetRHF)
 
-  output$egetShNavn <- renderText(egetShNavn)
+  output$egetShNavn <- renderText(as.character(RegData$ShNavn[match(user$org(), RegData$ReshId)]))
 
 
   # widget
     output$appUserName <- renderText(rapbase::getUserFullName(session))
     output$appOrgName <- renderText(paste0('rolle: ', user$role(),
                                            '<br> ReshID: ', user$org(), 
-                                           '<br> Enhet: ', user$orgName()) ) #egetShNavn
+                                           '<br> Enhet: ', user$orgName()) ) 
 
   # User info in widget
   userInfo <- rapbase::howWeDealWithPersonalData(session)
@@ -969,19 +976,26 @@ server <- function(input, output, session) { #
           paste0('FigurFord_', input$valgtVar, Sys.Date(), '.', input$bildeformatFord)
         },
         content = function(file){
-          NIRFigAndeler(RegData=RegData, preprosess = 0, valgtVar=input$valgtVar,
-                        reshID = user$org(), velgAvd = input$velgResh,
+          NIRFigAndeler(RegData=RegData, preprosess = 0, 
+                        valgtVar=input$valgtVar,
+                        reshID = user$org(), 
+                        velgAvd = input$velgResh,
                         enhetsUtvalg=as.numeric(input$enhetsUtvalg),
                         datoFra=input$datovalg[1], datoTil=input$datovalg[2],
                         minald=as.numeric(input$alder[1]), maxald=as.numeric(input$alder[2]),
-                        erMann=as.numeric(input$erMann), velgDiag = as.numeric(input$covidvalg),
+                        erMann=as.numeric(input$erMann), 
+                        velgDiag = as.numeric(input$covidvalg),
                         outfile = file)
         }
       )
 
       observe({
-            UtDataFord <- NIRFigAndeler(RegData=RegData, preprosess = 0, valgtVar=input$valgtVar,
-                                        reshID = user$org(), enhetsUtvalg=as.numeric(input$enhetsUtvalg),
+        print(user$org())
+        print(input$velgResh)
+            UtDataFord <- NIRFigAndeler(RegData=RegData, preprosess = 0, 
+                                        valgtVar=input$valgtVar,
+                                        reshID = user$org(), 
+                                        enhetsUtvalg=as.numeric(input$enhetsUtvalg),
                                         velgAvd = input$velgResh,
                                         datoFra=input$datovalg[1], datoTil=input$datovalg[2],
                                         minald=as.numeric(input$alder[1]), maxald=as.numeric(input$alder[2]),
@@ -1379,19 +1393,20 @@ server <- function(input, output, session) { #
 #------------------ Abonnement ----------------------------------------------
       orgs <- as.list(sykehusValg)
       
+      observe({
       ## make a list for report metadata
       reports <- list(
         MndRapp = list(
           synopsis = "Intensiv/Rapporteket: månedsrapport, abonnement",
-          fun = "abonnement", 
+          fun = "abonnement",
           paramNames = c('rnwFil',  "reshID", "datoFra", 'datoTil'), #"valgtRHF"),
           paramValues = c('NIRmndRapp.Rnw', user$org(), Sys.Date()-180, Sys.Date())
         ),
         SamleRapp = list(
           synopsis = "Intensiv/Rapporteket: Samlerapport, abonnement",
-          fun = "abonnement", 
+          fun = "abonnement",
           paramNames = c('rnwFil', "reshID", "datoFra", 'datoTil'), #"valgtRHF"),
-          paramValues = c('NIRSamleRapp.Rnw', user$org(), Sys.Date()-180, Sys.Date()) 
+          paramValues = c('NIRSamleRapp.Rnw', user$org(), Sys.Date()-180, Sys.Date())
         )
       )
 
@@ -1406,9 +1421,10 @@ server <- function(input, output, session) { #
         user = user
       )
       
-      
+      })
 #-------------Registeradministrasjon -----------------
-
+      observeEvent(user$role(), {
+        if (user$role() == 'SC') {
       #---Utsendinger---------------
       orgs <- as.list(sykehusValg)
       org <- rapbase::autoReportOrgServer("NIRuts", orgs)
@@ -1448,7 +1464,9 @@ server <- function(input, output, session) { #
                                 )
          ## veileding
         rapbase::exportGuideServer("intensivExportGuide", registryName = "intensiv")
-
+        rapbase::exportGuideServer("ngerExportGuide", registryName)
+      }
+})
 } #serverdel
 
 # Run the application

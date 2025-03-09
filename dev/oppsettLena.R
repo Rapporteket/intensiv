@@ -1,7 +1,6 @@
 
 # Lena :
-Sys.setenv(FALK_EXTENDED_USER_RIGHTS= "[{\"A\":106,\"R\":\"SC\",\"U\":706078},{\"A\":106,\"R\":\"LU\",\"U\":706078},{\"A\":106,\"R\":\"LU\",\"U\":700720},{\"A\":106,\"R\":\"LU\",\"U\":700720}]")
-Sys.setenv(R_RAP_INSTANCE="QAC")
+Sys.setenv(FALK_EXTENDED_USER_RIGHTS= "[{\"A\":106,\"R\":\"LU\",\"U\":706078},{\"A\":106,\"R\":\"SC\",\"U\":706078},{\"A\":106,\"R\":\"LU\",\"U\":700720},{\"A\":106,\"R\":\"LU\",\"U\":700720}]")
 Sys.setenv(R_RAP_CONFIG_PATH="/home/rstudio/nger/data-raw/config")
 Sys.setenv(MYSQL_DB_DATA="intensivregisterreportdatastaging")
 
