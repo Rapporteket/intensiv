@@ -68,10 +68,17 @@ RegData <- RegData[!is.na(RegData$Aar), ]
 
 
 #Definere utvalgsinnhold
-sykehusNavn <- sort(unique(RegData$ShNavn), index.return=T)
-sykehusValg <- unique(RegData$ReshId)[sykehusNavn$ix]
-sykehusValg <- c(0,sykehusValg)
-names(sykehusValg) <- c('Ikke valgt',sykehusNavn$x)
+# sykehusNavn <- sort(unique(RegData$ShNavn), index.return=T)
+# sykehusValg <- unique(RegData$ReshId)[sykehusNavn$ix]
+# sykehusValg <- c(0,sykehusValg)
+# names(sykehusValg) <- c('Ikke valgt',sykehusNavn$x)
+
+sykehusNavnResh <- unique(RegData[,c("ShNavn", "ReshId")])
+rekkeflg <- order(sykehusNavnResh$ShNavn)
+sykehusValg <- c(0,sykehusNavnResh$ReshId[rekkeflg])
+names(sykehusValg) <- c('Ikke valgt',sykehusNavnResh$ShNavn[rekkeflg])
+
+
 
 enhetsUtvalg <- c("Egen mot resten av landet"=1,
                   "Hele landet"=0,
