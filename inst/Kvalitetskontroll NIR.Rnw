@@ -385,7 +385,7 @@ høy som mulig.\newline\hspace*{-5.5cm}
 <<kompletthet, results=tex, echo=FALSE>>=
 variabler <- c('TypeOfAdmission','TransferredStatus','PatientTransferredFromHospital','PatientTransferredToHospital','ChronicDiseases','Glasgow','Age','SystolicBloodPressure',
                'HeartRate','Temperature','MvOrCpap','UrineOutput','SerumUreaOrBun','Leukocytes','Potassium','Sodium','Hco3','Bilirubin','CerebralCirculationAbolishedReasonForNo','OrganDonationCompletedReasonForNoStatus',
-               'FormType','DischargedIntensiveStatus','DateAdmittedIntensive','DateDischargedIntensive','BirthDate','DaysAdmittedIntensiv','AgeAdmitted','Respirator','Saps2ScoreNumber','Saps2Score','MoreThan24Hours',
+               'FormType','DischargedIntensiveStatus','DateAdmittedIntensive','DateDischargedIntensive','DaysAdmittedIntensiv','AgeAdmitted','Respirator','Saps2ScoreNumber','Saps2Score','MoreThan24Hours',
                'MechanicalRespirator','DeadPatientDuring24Hours','MovedPatientToAnotherIntensivDuring24Hours','ReAdmitted','Nems','Nas','BrainDamage','CerebralCirculationAbolished','OrganDonationCompletedStatus','Updated')
 
 Avdeling <- nir.alt[which(nir.alt$FreshOrganizationUnitId==EgenReshID),]

@@ -24,7 +24,7 @@ library(lubridate)
 
 #Antall innleggelser med bekreftet influensa (ICD10_1 eller _2 == 10) pr.uke og  pr. helseregion, 
 #evt. aldersgrupper. Foreløpig for få observasjoner. Kan angi median, min og maks?
-#Variable:  RHF , PatientInRegistryGuid, DateAdmittedIntensive, ICD10_1-ICD10_5, 
+#Variable:  RHF , PasientGUID, DateAdmittedIntensive, ICD10_1-ICD10_5, 
 
 # Datafelt som er ønskte i aggregert rapport, på dags/vekebasis:
 # -	Veke
@@ -44,7 +44,7 @@ if (!exists('InfluDataAlle')){
             query <- paste0('SELECT 
                   ShNavn,
                   RHF,
-                  PatientInRegistryGuid,
+                  PasientGUID,
                   FormDate,
                   ICD10_1,
                   FormStatus

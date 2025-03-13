@@ -5,6 +5,21 @@
 #Det har til dags dato (6.april 2022) ikke vært gjort noen "fork" av repositoriet.
 #Alle 6 kloninger som ble gjort 4.april, ble gjort av meg, under bruker olonkin og lenaringstado.
 
+
+#Endringer, mars 2025:
+
+Slettet felter
+PatientInRegistryGuid, Tabeller: MainFormDataContract, QuestionaryFormDataContract, InfluensaFormDataContract, ReadinessFormDataContract, EQ5DFormDataContract
+Birthdate: Tabeller: ReadinessFormDataContract
+
+Endret: PatientInRegistryGuid -> PasientGUID
+Nye Felter:
+Skjematype, Tabeller: MainFormDataContract, QuestionaryFormDataContract, InfluensaFormDataContract
+PasientGUID, Tabeller: MainFormDataContract, QuestionaryFormDataContract, InfluensaFormDataContract
+
+
+
+
 query <- paste0('select * from 			EQ5DFormDataContract
 WHERE cast(DateAdmittedIntensive as date) BETWEEN \'', '2023-01-01', '\' AND \'', '2023-01-01', '\'')
 
@@ -714,14 +729,7 @@ t(tab)
 
 NIRInfluDataSQL <- function(datoFra = '2019-09-25', datoTil = Sys.Date()) {
 
-  query <- paste0('SELECT
-                  *
-                  # ShNavn,
-                  # RHF,
-                  # PatientInRegistryGuid,
-                  # FormDate,
-                  # ICD10_1,
-                  # FormStatus
+  query <- paste0('SELECT *
             FROM InfluensaFormDataContract
             WHERE cast(FormDate as date) BETWEEN \'', datoFra, '\' AND \'', datoTil, '\'')
   #WHERE cast(DateAdmittedIntensive as date) >= \'', datoFra, '\' AND DateAdmittedIntensive <= \'', datoTil, '\'')
