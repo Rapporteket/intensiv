@@ -8,17 +8,35 @@
 
 #Endringer, mars 2025:
 
-Slettet felter
-PatientInRegistryGuid, Tabeller: MainFormDataContract, QuestionaryFormDataContract, InfluensaFormDataContract, ReadinessFormDataContract, EQ5DFormDataContract
-Birthdate: Tabeller: ReadinessFormDataContract
+# Slettet felter
+# PatientInRegistryGuid, Tabeller: MainFormDataContract, QuestionaryFormDataContract, InfluensaFormDataContract, ReadinessFormDataContract, EQ5DFormDataContract
+# Birthdate: Tabeller: ReadinessFormDataContract
+# 
+# Endret: PatientInRegistryGuid -> PasientGUID
+# Nye Felter:
+# Skjematype, Tabeller: MainFormDataContract, QuestionaryFormDataContract, InfluensaFormDataContract
+# PasientGUID, Tabeller: MainFormDataContract, QuestionaryFormDataContract, InfluensaFormDataContract
 
-Endret: PatientInRegistryGuid -> PasientGUID
-Nye Felter:
-Skjematype, Tabeller: MainFormDataContract, QuestionaryFormDataContract, InfluensaFormDataContract
-PasientGUID, Tabeller: MainFormDataContract, QuestionaryFormDataContract, InfluensaFormDataContract
+# Får problemer med resh/ShNavn
+query <- 'select * from MainFormDataContract'
+DataMain <- rapbase::loadRegData(registryName = 'data', query=query, dbType="mysql")
+DataMainPre <- intensiv::NIRPreprosess(DataMain)
+DataMain$ShNavn <- trimws(as.character(DataMain$ShNavn))
+ShResh <- unique(DataMain[ ,c("ShNavn", "ReshId", "UnitId")])
+ShReshUnit <- unique(DataMain[ ,c("ShNavn", "ReshId", "UnitId")])
+ShReshUnit <- ShReshUnit[order(ShReshUnit$ShNavn),]
+write.csv2(ShReshUnit, file = 'ShNavnReshUnit.csv', fileEncoding = 'latin1', row.names = F)
+
+ReshShSjekk <- unique(DataMain[ ,c('HelseenhetKortNavn','Helseenhet', 'UnitId')])
+write.csv2(ReshShSjekk[order(ReshShSjekk$HelseenhetKortNavn),], 
+           file = 'HelseenhUnitid.csv', fileEncoding = 'latin1', row.names = F)
 
 
+unique(DataMain[ ,c("ShNavn", "UnitId")])
 
+ftable(DataMainPre, row.vars=c("ShNavn"), col.vars = 'Aar')
+
+table(DataMainPre$ShNavn, DataMainPre$Aar)
 
 query <- paste0('select * from 			EQ5DFormDataContract
 WHERE cast(DateAdmittedIntensive as date) BETWEEN \'', '2023-01-01', '\' AND \'', '2023-01-01', '\'')
@@ -118,7 +136,7 @@ for (sykehus in sykehusnavn) {
               file = paste0('Nokkeltall_', shfilnavn, '.csv'), sep = ';')
 }
 
-sykehusnavn <- sort(unique(RegData$HelseenhetKortnavn))
+sykehusnavn <- sort(unique(RegData$HelseenhetKortNavn))
 for (sykehus in sykehusnavn) {
   Tab <- tabNokkeltallNord(RegData = RegData, sykehus=sykehus)
   shfilnavn <- gsub(" ", "_", sykehus) #gsub("y", "NEW", x)
@@ -274,8 +292,8 @@ LC_ADDRESS=C;LC_TELEPHONE=C;LC_MEASUREMENT=en_US.UTF-8;LC_IDENTIFICATION=C"
 #---------LagSyntetiskeData-------------------------
 library(intensiv)
 #Hovedtabell
-varBort <- c('PostalCode', 'HF Sykehus', 'Helseenhet', 'HelseenhetKortnavn', 'LastUpdate', 'ShNavn', 'MunicipalNumber', 'Municipal',
-             'ICD10_1', 'ICD10_2', 'ICD10_3', 'ICD10_4', 'ICD10_5', 'Sykehus', 'HelseenhetID')
+varBort <- c('PostalCode', 'HF Sykehus', 'HealthUnitName', 'HelseenhetKortNavn', 'LastUpdate', 'ShNavn', 'MunicipalNumber', 'Municipal',
+             'ICD10_1', 'ICD10_2', 'ICD10_3', 'ICD10_4', 'ICD10_5', 'Sykehus', 'HealthUnitId')
 HovedData <- read.table(file=paste0(fil,'.csv'), header=T, stringsAsFactors=FALSE, sep=';',encoding = 'UTF-8')
 RegData <- lageTulleData(RegData=HovedData, varBort=varBort, antSh=26, antObs=20000)
 #Pårørendedata

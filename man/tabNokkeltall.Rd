@@ -29,7 +29,7 @@ tabNokkeltall(
 
 \item{respirator}{respirator/invasiv/non-inv 0:ikke respirator, 1:respirator, 2:invasiv, 3:non-invasiv}
 
-\item{sykehus}{HelseenhetKortnavn eller HF-navn}
+\item{sykehus}{HelseenhetKortNavn eller HF-navn}
 }
 \description{
 Nøkkeltall (antall opph., pasienter,  intensivdøgn, samt div oversiktstall)
