@@ -66,13 +66,11 @@ NIRPreprosess <- function(RegData=RegData, skjema=1)	#, reshID=reshID)
         RegData[which(RegData$AgeAdmitted<16), c('SapsSum', 'Saps2Score', 'Saps2ScoreNumber')] <- 0
       }
 
-      #names(RegData)[which(names(RegData) == 'PatientAge')] <- 'Alder' #Uten desimal
       names(RegData)[which(names(RegData) == 'AgeAdmitted')] <- 'Alder' #Én desimal
       names(RegData)[which(names(RegData) == 'Saps2Score')] <- 'SMR' #Saps2Score er SAPS estimert mortalitet
       names(RegData)[which(names(RegData) == 'Saps2ScoreNumber')] <- 'SAPSII'
       names(RegData)[which(names(RegData) == 'DaysAdmittedIntensiv')] <- 'liggetid'
       names(RegData)[which(names(RegData) == 'Nems')] <- 'NEMS'
-      #	names(RegData)[which(names(RegData) == 'ReAdmitted')] <- 'Reinn'
       names(RegData)[which(names(RegData) == 'Respirator')] <- 'respiratortid'
       names(RegData)[which(names(RegData) == 'TransferredStatus')] <- 'Overf'
       names(RegData)[which(names(RegData) == 'TypeOfAdmission')] <- 'InnMaate'
