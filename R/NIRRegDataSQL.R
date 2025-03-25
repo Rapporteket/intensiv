@@ -93,7 +93,7 @@ NIRRegDataSQL <- function(datoFra = '2019-01-01', datoTil = '2099-01-01') { #,se
       Potassium,
       PrimaryReasonAdmitted,
       -- ReAdmitted,
-      ReshId,
+      -- ReshId,
       Respirator,
       RHF,
       Saps2Score,
@@ -111,7 +111,7 @@ NIRRegDataSQL <- function(datoFra = '2019-01-01', datoTil = '2099-01-01') { #,se
       Trakeostomi,
       TransferredStatus,
       TypeOfAdmission,
-      UnitId,
+      UnitId AS ReshId,
       UrineOutput,
       VasoactiveInfusion
 FROM

@@ -99,18 +99,18 @@ NIRpaarorDataSQL <- function(datoFra = '2015-12-01', datoTil = Sys.Date(), medH=
   --     , Q.Forslag
   --       , Q.Kommentar
   --       , Q.Personalet
-  , Q.ReshId
+  -- , Q.ReshId
   , UPPER(Q.HovedskjemaGUID) AS HovedskjemaGUID
   , Q.FormTypeId
-  , Q.UnitId
+  , Q.UnitId AS ReshId
   , Q.RHF
   , Q.HF
   -- , Q.Sykehus
   -- , Q.Helseenhet
   , Q.HealthUnitShortName
   -- , Q.HelseenhetID
-  --      , Q.LastUpdate
-  --      , Q.FormStatus
+  --  , Q.LastUpdate
+  --   , Q.FormStatus
   , Q.PatientAge
   , Q.PatientGender
   --      , Q.MunicipalNumber

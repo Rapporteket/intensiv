@@ -76,11 +76,11 @@ NIRPreprosess <- function(RegData=RegData, skjema=1)	#, reshID=reshID)
       names(RegData)[which(names(RegData) == 'Respirator')] <- 'respiratortid'
       names(RegData)[which(names(RegData) == 'TransferredStatus')] <- 'Overf'
       names(RegData)[which(names(RegData) == 'TypeOfAdmission')] <- 'InnMaate'
-      # names(RegData)[which(names(RegData) == 'ReshID')] <- 'ReshId'
       names(RegData)[
         names(RegData) %in% c('PatientInRegistryGuid', 'PasientGUID')] <- 'PasientID'
 
-      if (skjema==4){names(RegData)[which(names(RegData) == 'UnitId')] <- 'ReshId'}
+      #if (skjema==4){
+        names(RegData)[which(names(RegData) == 'UnitId')] <- 'ReshId' #}
 
 
       # Riktig format
