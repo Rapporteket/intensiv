@@ -218,7 +218,7 @@ tabNokkeltallGML <- function(RegData, tidsenhet='Mnd', datoTil=Sys.Date(), enhet
 #' @param datoTil sluttdato, format: 'yyyy-mm-dd'
 #' @param enhetsUtvalg enhetsutvalg
 #' @param reshID enhetens resh-id
-#' @param sykehus HelseenhetKortNavn eller HF-navn
+#' @param sykehus HealthUnitShortName eller HF-navn
 #' @param respirator respirator/invasiv/non-inv 0:ikke respirator, 1:respirator, 2:invasiv, 3:non-invasiv
 #' @export
 tabNokkeltall <- function(RegData, tidsenhet='Mnd', datoTil=Sys.Date(), enhetsUtvalg=0, reshID=0, respirator=4,
@@ -249,8 +249,8 @@ tabNokkeltall <- function(RegData, tidsenhet='Mnd', datoTil=Sys.Date(), enhetsUt
   if (sykehus %in% unique(RegData$HF)) {
     RegData <- RegData[RegData$HF == sykehus, ]
   }
-  if (sykehus %in% unique(RegData$HelseenhetKortNavn)) {
-    RegData <- RegData[RegData$HelseenhetKortNavn == sykehus, ]
+  if (sykehus %in% unique(RegData$HealthUnitShortName)) {
+    RegData <- RegData[RegData$HealthUnitShortName == sykehus, ]
   }
   
   
@@ -351,8 +351,8 @@ tabNokkeltall <- function(RegData, tidsenhet='Mnd', datoTil=Sys.Date(), enhetsUt
   # if (sykehus %in% unique(RegData$HF)) {
   #   RegData <- RegData[RegData$HF == sykehus, ]
   # }
-  # if (sykehus %in% unique(RegData$HelseenhetKortNavn)) {
-  #   RegData <- RegData[RegData$HelseenhetKortNavn == sykehus, ]
+  # if (sykehus %in% unique(RegData$HealthUnitShortName)) {
+  #   RegData <- RegData[RegData$HealthUnitShortName == sykehus, ]
   # }
   # 
   # indLigget <- which(RegData$liggetid>0)

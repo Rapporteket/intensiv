@@ -27,8 +27,8 @@ ShReshUnit <- unique(DataMain[ ,c("ShNavn", "ReshId", "UnitId")])
 ShReshUnit <- ShReshUnit[order(ShReshUnit$ShNavn),]
 write.csv2(ShReshUnit, file = 'ShNavnReshUnit.csv', fileEncoding = 'latin1', row.names = F)
 
-ReshShSjekk <- unique(DataMain[ ,c('HelseenhetKortNavn','Helseenhet', 'UnitId')])
-write.csv2(ReshShSjekk[order(ReshShSjekk$HelseenhetKortNavn),], 
+ReshShSjekk <- unique(DataMain[ ,c('HealthUnitShortName','Helseenhet', 'UnitId')])
+write.csv2(ReshShSjekk[order(ReshShSjekk$HealthUnitShortName),], 
            file = 'HelseenhUnitid.csv', fileEncoding = 'latin1', row.names = F)
 
 
@@ -136,7 +136,7 @@ for (sykehus in sykehusnavn) {
               file = paste0('Nokkeltall_', shfilnavn, '.csv'), sep = ';')
 }
 
-sykehusnavn <- sort(unique(RegData$HelseenhetKortNavn))
+sykehusnavn <- sort(unique(RegData$HealthUnitShortName))
 for (sykehus in sykehusnavn) {
   Tab <- tabNokkeltallNord(RegData = RegData, sykehus=sykehus)
   shfilnavn <- gsub(" ", "_", sykehus) #gsub("y", "NEW", x)
@@ -292,7 +292,7 @@ LC_ADDRESS=C;LC_TELEPHONE=C;LC_MEASUREMENT=en_US.UTF-8;LC_IDENTIFICATION=C"
 #---------LagSyntetiskeData-------------------------
 library(intensiv)
 #Hovedtabell
-varBort <- c('PostalCode', 'HF Sykehus', 'HealthUnitName', 'HelseenhetKortNavn', 'LastUpdate', 'ShNavn', 'MunicipalNumber', 'Municipal',
+varBort <- c('PostalCode', 'HF Sykehus', 'HealthUnitName', 'HealthUnitShortName', 'LastUpdate', 'ShNavn', 'MunicipalNumber', 'Municipal',
              'ICD10_1', 'ICD10_2', 'ICD10_3', 'ICD10_4', 'ICD10_5', 'Sykehus', 'HealthUnitId')
 HovedData <- read.table(file=paste0(fil,'.csv'), header=T, stringsAsFactors=FALSE, sep=';',encoding = 'UTF-8')
 RegData <- lageTulleData(RegData=HovedData, varBort=varBort, antSh=26, antObs=20000)

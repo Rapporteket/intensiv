@@ -743,7 +743,7 @@ tabPanel(p("Registeradministrasjon", title='Registeradministrasjonens side'),
                                 choices =   c('Alle',
                                               unique(RegData$RHF),
                                               unique(RegData$HF),
-                                              unique(RegData$HelseenhetKortNavn))),
+                                              unique(RegData$HealthUnitShortName))),
                  #mainPanel(
                   br(),
                  h4('Andel opphold med *komplikasjon*, er definert som et opphold hvor det har

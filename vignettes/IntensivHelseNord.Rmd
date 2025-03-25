@@ -48,7 +48,7 @@ Data <- RegData %>% dplyr::group_by(HF, ShNavn) %>%
 kableExtra::kable(Data)
 write.table(Data, file = 'Aktivitet18_22.csv', sep = ';')
 #Test: 
-#Tab <- table(RegDataLandet[,c('HelseenhetKortNavn', 'Aar')], dnn = 0)
+#Tab <- table(RegDataLandet[,c('HealthUnitShortName', 'Aar')], dnn = 0)
 # TabAar <- ftable(Tab, row.vars = c('HF', 'ShNavn'), exclude = 0)
 
 
@@ -262,7 +262,7 @@ for (sykehus in sykehusnavn) {
 
 ```{r Nøkkeltall_intavd, echo=FALSE, results = 'asis'}
 
-sykehusnavn <- sort(unique(RegData$HelseenhetKortNavn))
+sykehusnavn <- sort(unique(RegData$HealthUnitShortName))
 #Tab <- tabNokkeltallNord(RegData = RegData, sykehus=sykehusnavn[3])
 
 for (sykehus in sykehusnavn) {
