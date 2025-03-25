@@ -218,7 +218,7 @@ texi2pdf(file='OffDataIntensiv.tex')
 dato <- '2019-11-05' #2019-01-30
 InfluDataAlle <- read.table(paste0('A:/Intensiv/InfluensaFormDataContract', dato, '.csv'), sep=';',
                             stringsAsFactors=FALSE, header=T, encoding = 'UTF-8')
-variableTilTab <- c('ShNavn', 'RHF', 'PatientInRegistryGuid', 'FormDate','FormStatus', 'ICD10_1') #'DateAdmittedIntensive',
+variableTilTab <- c('ShNavn', 'RHF', 'PasientGUID', 'FormDate','FormStatus', 'ICD10_1') 
 InfluData <- InfluDataAlle[ ,variableTilTab]
 # knit('NIRinfluensaUtenICD10.Rnw', encoding = 'UTF-8')
 # tools::texi2pdf(file='NIRinfluensaUtenICD10.tex')
@@ -722,7 +722,7 @@ NIRInfluDataSQL <- function(datoFra = '2019-09-25', datoTil = Sys.Date()) {
                   *
                   # ShNavn,
                   # RHF,
-                  # PatientInRegistryGuid,
+                  # PasientGUID,
                   # FormDate,
                   # ICD10_1,
                   # FormStatus

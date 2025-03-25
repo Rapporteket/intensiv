@@ -19,7 +19,6 @@ library(lubridate)
 @
 
 <<'hentDataOgTilrettelegg', include=FALSE>>=
-#startOfMonth<- function(x) {as.Date(format(x, "%Y-%m-01")) }
 
 dato <- as.POSIXlt(Sys.Date(), tz='UTC')
 datoTil <- as.Date(format(dato, "%Y-%m-01"))-1 #Til siste i forrige måned
@@ -27,7 +26,6 @@ mndTxt <- c('januar', 'februar', 'mars', 'april', 'mai', 'juni', 'juli', 'august
                    'september', 'oktober', 'november', 'desember')
 rappMnd <- paste0(mndTxt[ifelse(dato$mon==0, 12, dato$mon)], ' ', dato$year+1900)
 #som <- function(x) {as.Date(format(x, "%Y-%m-01"), tz='UTC')}
-#dato <- as.POSIXlt(datoTil, tz='UTC')
 
 datoFra1Aar <- as.Date(paste0(1900+dato$year-1,'-', ifelse(dato$mon==11, 1, dato$mon+2), '-', '01'), tz='UTC')
 #Siste 6 måneder:
@@ -46,12 +44,10 @@ if (!exists('RegData')){
       RegData <- NIRRegDataSQL(datoFra = datoFra1Aar, datoTil = datoTil)
 	  #RegData er data fra siste år.
 }
-#RegDataRaa <- RegData #For å kunne "tilbakestille" RegData
 
 RegData <- NIRPreprosess(RegData=RegData)
 RegData <- NIRUtvalgEnh(RegData=RegData, datoFra=datoFra1Aar)$RegData
 RegData <- FinnReinnleggelser(RegData) # Beregne reinnleggelser
-#RegData1aar <- RegData
 
 #RegData endres til 6 mnd:
 grType <- RegData$ShType[match(reshID, RegData$ReshId)]
