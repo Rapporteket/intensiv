@@ -25,16 +25,16 @@ NIRPreprosess <- function(RegData=RegData, skjema=1)	#, reshID=reshID)
   # RegData4 <- rapbase::loadRegData(registryName="nir", query='SELECT * FROM ReadinessFormDataContract', dbType="mysql")
 
 
-  LogVarSjekk <- names(RegData)[unique(which(RegData[1,] %in% c('True','False')),
-                                       which(RegData[dim(RegData)[1]-15,] %in% c('True','False')))]
-  LogVar <- unique(c(LogVarSjekk,
-                     "Eeg", "EcmoEcla", "Hyperbar", "Iabp", "Icp", "Impella", "Intermitterende",
-                     "KompHypoglykemi", "KompPneumotoraks", "KompLuftveisproblem",
-                     "KompDekubitus", "KomIngen", "KompIkkeUtfylt", "Kontinuerlig", "Leverdialyse",
-                     "No", "Oscillator", "Sofa", "TerapetiskHypotermi"))
-
-  RegData[, intersect(names(RegData), LogVar)] <-
-    apply(RegData[, intersect(names(RegData), LogVar)], 2, as.logical)
+  # LogVarSjekk <- names(RegData)[unique(which(RegData[1,] %in% c('True','False')),
+  #                                      which(RegData[dim(RegData)[1]-15,] %in% c('True','False')))]
+  # LogVar <- unique(c(LogVarSjekk,
+  #                    "Eeg", "EcmoEcla", "Hyperbar", "Iabp", "Icp", "Impella", "Intermitterende",
+  #                    "KompHypoglykemi", "KompPneumotoraks", "KompLuftveisproblem",
+  #                    "KompDekubitus", "KomIngen", "KompIkkeUtfylt", "Kontinuerlig", "Leverdialyse",
+  #                    "No", "Oscillator", "Sofa", "TerapetiskHypotermi"))
+  # 
+  # RegData[, intersect(names(RegData), LogVar)] <-
+  #   apply(RegData[, intersect(names(RegData), LogVar)], 2, as.logical)
 
       #Kun ferdigstilte registreringer:
       # Fra des. 2018 får Intensiv også kladd over fra  fra MRS/NHN. 1.april 2021 - alle er fortsatt ferdigstilte...
@@ -54,12 +54,12 @@ NIRPreprosess <- function(RegData=RegData, skjema=1)	#, reshID=reshID)
       #RegData$logit <- -7.7631 + 0.0737*RegData$Saps2ScoreNumber + 0.9971*log(RegData$Saps2ScoreNumber+1)
       #RegData$Mort <- exp(RegData$logit)/(1+exp(RegData$logit))*100 # = Saps2Score = SMR
       if (skjema==1){
-        LogVarSjekk <- names(RegData)[which(RegData[1,] %in% c('True','False'))]
-        LogVar <- unique(c(LogVarSjekk,
-                           "Eeg", "EcmoEcla", "Hyperbar", "Iabp", "Icp", "Impella", "Intermitterende",
-                           "Kontinuerlig", "Leverdialyse", "No", "Oscillator", "Sofa", "TerapetiskHypotermi"))
-        RegData[, intersect(names(RegData), LogVar)] <-
-          apply(RegData[, intersect(names(RegData), LogVar)], 2, as.logical)
+        # LogVarSjekk <- names(RegData)[which(RegData[1,] %in% c('True','False'))]
+        # LogVar <- unique(c(LogVarSjekk,
+        #                    "Eeg", "EcmoEcla", "Hyperbar", "Iabp", "Icp", "Impella", "Intermitterende",
+        #                    "Kontinuerlig", "Leverdialyse", "No", "Oscillator", "Sofa", "TerapetiskHypotermi"))
+        # RegData[, intersect(names(RegData), LogVar)] <-
+        #   apply(RegData[, intersect(names(RegData), LogVar)], 2, as.logical)
 
         RegData$SapsSum <- with(RegData, Glasgow+Age+SystolicBloodPressure+HeartRate+Temperature+MvOrCpap+UrineOutput+
               SerumUreaOrBun+Leukocytes+Potassium+Sodium+Hco3+Bilirubin+TypeOfAdmission)

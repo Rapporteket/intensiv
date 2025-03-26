@@ -38,7 +38,7 @@ NIRRegDataSQL <- function(datoFra = '2019-01-01', datoTil = '2099-01-01') { #,se
       Glasgow,
       Hco3,
       HeartRate,
-      HelseenhetKortNavn AS HealthUnitShortName,
+      HealthUnitShortName,
       HF,
       Hyperbar,
       Iabp,
