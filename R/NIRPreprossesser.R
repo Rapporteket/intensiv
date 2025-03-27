@@ -25,17 +25,16 @@ NIRPreprosess <- function(RegData=RegData, skjema=1)	#, reshID=reshID)
   # RegData4 <- rapbase::loadRegData(registryName="nir", query='SELECT * FROM ReadinessFormDataContract', dbType="mysql")
 
 
-  # LogVarSjekk <- names(RegData)[unique(which(RegData[1,] %in% c('True','False')),
-  #                                      which(RegData[dim(RegData)[1]-15,] %in% c('True','False')))]
-  # LogVar <- unique(c(LogVarSjekk,
-  #                    "Eeg", "EcmoEcla", "Hyperbar", "Iabp", "Icp", "Impella", "Intermitterende",
-  #                    "KompHypoglykemi", "KompPneumotoraks", "KompLuftveisproblem",
-  #                    "KompDekubitus", "KomIngen", "KompIkkeUtfylt", "Kontinuerlig", "Leverdialyse",
-  #                    "No", "Oscillator", "Sofa", "TerapetiskHypotermi"))
-  # 
-  # RegData[, intersect(names(RegData), LogVar)] <-
-  #   apply(RegData[, intersect(names(RegData), LogVar)], 2, as.logical)
-
+  LogVar <- c("Kontinuerlig", "Intermitterende",  "Peritonealdialyse", "SpecialMeasures",
+              "TerapetiskHypotermi",  "EcmoEcla",  "Iabp",  "Impella",   "Icp",   "Oscillator",
+              "No",  "Leverdialyse", "Hyperbar", "Eeg",  "Ingen", "FrailtyIndexForklaring", 
+              "KompHypoglykemi",  "KompPneumotoraks",   "KompLuftveisproblem",  "KompDekubitus",    
+              "KomIngen",    "KompIkkeUtfylt",   "PIM_SuppliedO2",    "Sofa",    
+              "ValidationIgnoreDaysAdmittedIntensivOver14",    "ValidationIgnoreRespiratorOver7")
+  endreVar <- intersect(names(RegData), LogVar)
+  RegData[, endreVar] <- apply(RegData[, endreVar], 2, as.numeric)
+  RegData[, endreVar] <- apply(RegData[, endreVar], 2, as.logical)
+  
       #Kun ferdigstilte registreringer:
       # Fra des. 2018 får Intensiv også kladd over fra  fra MRS/NHN. 1.april 2021 - alle er fortsatt ferdigstilte...
   if (skjema %in% 1:2){
