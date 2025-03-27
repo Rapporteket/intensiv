@@ -60,15 +60,6 @@ NIRPreprosess <- function(RegData=RegData, skjema=1)	#, reshID=reshID)
         # LogVar <- c("Eeg", "EcmoEcla", "Hyperbar", "Iabp", "Icp", "Impella", "Intermitterende",
         #                    "Kontinuerlig", "Leverdialyse", "No", "Oscillator", "Sofa", "TerapetiskHypotermi")
         #Fra kodeboka:
-        LogVar <- c("Kontinuerlig", "Intermitterende",  "Peritonealdialyse", "SpecialMeasures",
-                    "TerapetiskHypotermi",  "EcmoEcla",  "Iabp",  "Impella",   "Icp",   "Oscillator",
-                    "No",  "Leverdialyse", "Hyperbar", "Eeg",  "Ingen", "FrailtyIndexForklaring", 
-                    "KompHypoglykemi",  "KompPneumotoraks",   "KompLuftveisproblem",  "KompDekubitus",    
-                    "KomIngen",    "KompIkkeUtfylt",   "PIM_SuppliedO2",    "Sofa",    
-                    "ValidationIgnoreDaysAdmittedIntensivOver14",    "ValidationIgnoreRespiratorOver7")
-        endreVar <- intersect(names(RegData), LogVar)
-        RegData[, endreVar] <- apply(RegData[, endreVar], 2, as.numeric)
-        RegData[, endreVar] <- apply(RegData[, endreVar], 2, as.logical)
         
         
         
