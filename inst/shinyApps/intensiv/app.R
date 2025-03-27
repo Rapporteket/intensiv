@@ -21,7 +21,6 @@ regTitle <- ifelse(paaServer,
 
 
 #---------Hente data------------
-if (paaServer) {
   IntData <- NIRRegDataSQL(datoFra = '2011-01-01') 
   PaarorData <- NIRpaarorDataSQL()
 
@@ -30,16 +29,6 @@ if (paaServer) {
                   FROM ReadinessFormDataContract')
   CovidData <- rapbase::loadRegData(registryName= "nir", query=qCovid, dbType="mysql")
 
-} else { #hente data på server
-
-  IntData <- read.table(paste0('C:/Registerdata/nipar/MainFormDataContract2022-11-14.csv'), sep=';',
-                                stringsAsFactors=FALSE, header=T, encoding = 'UTF-8')
-  PaarorData <- read.table(paste0('C:/Registerdata/nipar/QuestionaryFormDataContract2022-11-14.csv'), sep=';',
-                           stringsAsFactors=FALSE, header=T, encoding = 'UTF-8')
-  #Covid-skjema:
-  CovidData <- read.table(paste0('C:/Registerdata/nipar/ReadinessFormDataContract2022-11-14.csv'), sep=';',
-                          stringsAsFactors=FALSE, header=T, encoding = 'UTF-8')
-}
 
 PaarorDataH <- KobleMedHoved(IntData, PaarorData, alleHovedskjema=F, alleSkjema2=F)
 CovidData$HovedskjemaGUID <- toupper(CovidData$HovedskjemaGUID)
