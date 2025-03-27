@@ -25,15 +25,6 @@ NIRPreprosess <- function(RegData=RegData, skjema=1)	#, reshID=reshID)
   # RegData4 <- rapbase::loadRegData(registryName="nir", query='SELECT * FROM ReadinessFormDataContract', dbType="mysql")
 
 
-  LogVar <- c("Kontinuerlig", "Intermitterende",  "Peritonealdialyse", "SpecialMeasures",
-              "TerapetiskHypotermi",  "EcmoEcla",  "Iabp",  "Impella",   "Icp",   "Oscillator",
-              "No",  "Leverdialyse", "Hyperbar", "Eeg",  "Ingen", "FrailtyIndexForklaring", 
-              "KompHypoglykemi",  "KompPneumotoraks",   "KompLuftveisproblem",  "KompDekubitus",    
-              "KomIngen",    "KompIkkeUtfylt",   "PIM_SuppliedO2",    "Sofa",    
-              "ValidationIgnoreDaysAdmittedIntensivOver14",    "ValidationIgnoreRespiratorOver7")
-  endreVar <- intersect(names(RegData), LogVar)
-  RegData[, endreVar] <- apply(RegData[, endreVar], 2, as.numeric)
-  RegData[, endreVar] <- apply(RegData[, endreVar], 2, as.logical)
   
       #Kun ferdigstilte registreringer:
       # Fra des. 2018 får Intensiv også kladd over fra  fra MRS/NHN. 1.april 2021 - alle er fortsatt ferdigstilte...
