@@ -398,7 +398,7 @@ NIRFigInnMaate (RegData=RegData, valgtVar='InnMaate', minald=0, maxald=130, dato
 
 
 #--------------------------------------- Fordelinger ----------------------------------
-valgtVar <- 'inklKrit'	#'alder', 'liggetid', 'respiratortid',  'SAPSII', 'NEMS24', 'Nas24', 'InnMaate'
+valgtVar <- 'spesTiltak'	#'alder', 'liggetid', 'respiratortid',  'SAPSII', 'NEMS24', 'Nas24', 'InnMaate'
                               #Nye: PrimaryReasonAdmitted, inklKrit, respiratortidNonInv, respiratortidInv
                               #nyreBeh, nyreBehTid, ExtendedHemodynamicMonitoring, isolering, isoleringDogn,
                               #spesTiltak
@@ -410,9 +410,7 @@ Utdata <- NIRFigAndeler(RegData=RegData, preprosess = 0, valgtVar='inklKrit', #d
               outfile='', reshID=109773, enhetsUtvalg=0, lagFig=1)
 
 outfile <- '' #paste0(valgtVar,'_Ford', '.png')
-NIRFigAndeler(RegData=RegData, valgtVar=valgtVar, minald=minald, maxald=maxald,  datoFra=datoFra,
-                         datoTil=datoTil, InnMaate=InnMaate, dodInt=dodInt,erMann=erMann, outfile=outfile,
-                         hentData=0, preprosess=1, reshID=reshID, enhetsUtvalg=0, lagFig=1)
+NIRFigAndeler(RegData=RegData, valgtVar=valgtVar, preprosess=0)
 
 
 variable <- c('alder', 'liggetid', 'respiratortid',  'SAPSII', 'NEMS24', 'Nas24', 'InnMaate')

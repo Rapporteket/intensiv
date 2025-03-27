@@ -20,11 +20,10 @@ AarNaa <- as.numeric(format(idag, "%Y"))
   IntData <- NIRRegDataSQL(datoFra = '2011-01-01') 
 
 #Covid-skjema:
-qCovid <- paste0('SELECT HovedskjemaGUID, FormStatus, Diagnosis
+qCovid <- paste0('SELECT UPPER(HovedskjemaGUID) AS HovedskjemaGUID, FormStatus, Diagnosis
                 FROM ReadinessFormDataContract')
 CovidData <- rapbase::loadRegData(registryName= "data", query=qCovid, dbType="mysql")
 
-CovidData$HovedskjemaGUID <- toupper(CovidData$HovedskjemaGUID)
 CovidData$Bekreftet <- 0
 CovidData$Bekreftet[which(CovidData$Diagnosis %in% 100:103)] <- 1
 
@@ -32,13 +31,12 @@ RegData <- merge(IntData, CovidData[ ,-which(names(CovidData) == 'Diagnosis')], 
                  by.x = 'SkjemaGUID', by.y = 'HovedskjemaGUID', all.x = T, all.y=F)
 
 RegData <- NIRPreprosess(RegData = RegData)
-#RegData <- RegData[!is.na(RegData$Aar), ]
 
 PaarorData <- NIRpaarorDataSQL()
 PaarorDataH <- KobleMedHoved(IntData, PaarorData, alleHovedskjema=F, alleSkjema2=F)
 antPaaror <- dim(PaarorDataH)[1]
 if (antPaaror>0) {
-PaarorData <- NIRPreprosess(RegData = PaarorDataH) #Må først koble på hoveddata for å få ShType++
+  PaarorData <- NIRPreprosess(RegData = PaarorDataH) #Må først koble på hoveddata for å få ShType++
 }
 
 #-----Definere utvalgsinnhold og evt. parametre som er statiske i appen----------
