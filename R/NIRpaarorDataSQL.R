@@ -124,7 +124,7 @@ NIRpaarorDataSQL <- function(datoFra = '2015-12-01', datoTil = Sys.Date(), medH=
   --  , Q.MajorVersion
   --  , Q.MinorVersion
   --  , Q.PatientInRegistryGuid
-  , PasientGUID'
+  , PasientGUID AS PasientID'
   
   queryH <- paste0('SELECT ',
                    varHoved,
@@ -133,7 +133,7 @@ NIRpaarorDataSQL <- function(datoFra = '2015-12-01', datoTil = Sys.Date(), medH=
                    INNER JOIN  MainFormDataContract M
                    ON Q.HovedskjemaGUID = M.SkjemaGUID
                    WHERE cast(DateAdmittedIntensive as date) BETWEEN \'', datoFra, '\' AND \'', datoTil, '\'')
-  #UPPER(Q.HovedskjemaGUID) = UPPER(M.SkjemaGUID)
+  
   
   queryP <- paste0('SELECT ',
                    varPaaror,
