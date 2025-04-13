@@ -59,8 +59,8 @@ NIRPreprosess <- function(RegData=RegData, skjema=1)	#, reshID=reshID)
       names(RegData)[which(names(RegData) == 'TransferredStatus')] <- 'Overf'
       names(RegData)[which(names(RegData) == 'TypeOfAdmission')] <- 'InnMaate'
       
-      #if (skjema==4){
-        names(RegData)[which(names(RegData) == 'UnitId')] <- 'ReshId' # } UnitId skal benyttes for resh (mars -25)
+      #if (skjema==4){ Endrer navnet i spørringa
+#        names(RegData)[which(names(RegData) == 'UnitId')] <- 'ReshId' # } UnitId skal benyttes for resh (mars -25)
 
 
       # Riktig format

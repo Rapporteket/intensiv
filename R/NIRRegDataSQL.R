@@ -102,7 +102,7 @@ NIRRegDataSQL <- function(datoFra = '2019-01-01', datoTil = '2099-01-01') { #,se
       SerumUreaOrBun,
       ShNavn,
       ShType,
-      SkjemaGUID,
+      UPPER(SkjemaGUID) AS SkjemaGUID,
       Sodium,
       Sofa,
       SystolicBloodPressure,
@@ -111,7 +111,7 @@ NIRRegDataSQL <- function(datoFra = '2019-01-01', datoTil = '2099-01-01') { #,se
       Trakeostomi,
       TransferredStatus,
       TypeOfAdmission,
-      UnitId,
+      UnitId AS ReshId,
       UrineOutput,
       VasoactiveInfusion
 FROM
