@@ -77,7 +77,7 @@ NIRRegDataSQL <- function(datoFra = '2019-01-01', datoTil = '2099-01-01') { #,se
       OrganDonationCompletedReasonForNoStatus,
       OrganDonationCompletedStatus,
       Oscillator,
-      PasientGUID,
+      PasientGUID AS PasientID,
       -- PatientInRegistryGuid,
       -- PatientInRegistryGUID,
       -- PatientAge,

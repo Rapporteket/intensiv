@@ -114,7 +114,7 @@ NIRpaarorDataSQL <- function(datoFra = '2015-12-01', datoTil = Sys.Date(), medH=
   , Q.PatientAge
   , Q.PatientGender
   --      , Q.MunicipalNumber
-  --       , Q.CurrentMunicipalNumber
+  --      , Q.CurrentMunicipalNumber
   --  , Q.Municipal
   --  , Q.PostalCode
   --  , Q.DistrictCode
@@ -122,7 +122,7 @@ NIRpaarorDataSQL <- function(datoFra = '2015-12-01', datoTil = Sys.Date(), medH=
   --  , Q.FormDate
   --  , Q.MajorVersion
   --  , Q.MinorVersion
-  , Q.PasientGUID'
+  , Q.PasientGUID AS PasientID'
   
   queryH <- paste0('SELECT ',
                    varHoved,

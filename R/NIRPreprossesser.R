@@ -78,10 +78,10 @@ RegData$SapsSum <- with(RegData, Glasgow+Age+SystolicBloodPressure+HeartRate+Tem
       names(RegData)[which(names(RegData) == 'Respirator')] <- 'respiratortid'
       names(RegData)[which(names(RegData) == 'TransferredStatus')] <- 'Overf'
       names(RegData)[which(names(RegData) == 'TypeOfAdmission')] <- 'InnMaate'
-      names(RegData)[
-        names(RegData) %in% c('PatientInRegistryGuid', 'PasientGUID')] <- 'PasientID'
+      # names(RegData)[
+      #   names(RegData) %in% c('PatientInRegistryGuid', 'PasientGUID')] <- 'PasientID'
 
-      names(RegData)[which(names(RegData) == 'UnitId')] <- 'ReshId' 
+     # names(RegData)[which(names(RegData) == 'UnitId')] <- 'ReshId' 
 
 
       # Riktig format
