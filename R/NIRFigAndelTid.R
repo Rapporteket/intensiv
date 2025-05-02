@@ -33,9 +33,9 @@ NIRFigAndelTid <- function(RegData, valgtVar='alder_u18', datoFra='2011-01-01', 
                         reshID=0, outfile='',
                         enhetsUtvalg=0, preprosess=1, hentData=0, lagFig=1, offData=0,...) {
 
-   if ("session" %in% names(list(...))) {
-      rapbase::repLogger(session = list(...)[["session"]], msg = paste0("AndelTid: ", valgtVar))
-   }
+   # if ("session" %in% names(list(...))) {
+   #    rapbase::repLogger(session = list(...)[["session"]], msg = paste0("AndelTid: ", valgtVar))
+   # }
    if (hentData == 1) {
             RegData <- NIRRegDataSQL(datoFra, datoTil)
       }
@@ -98,7 +98,7 @@ NIRFigAndelTid <- function(RegData, valgtVar='alder_u18', datoFra='2011-01-01', 
       N <- list(Hoved = dim(RegData)[1], Rest=0)
       if (N$Hoved>Ngrense) {
         if (class(RegData$Aar) == "factor") {
-          RegData$Aar <- as.numeric(levels(RegData$Aar)[RegData$Aar])} 
+          RegData$Aar <- as.numeric(levels(RegData$Aar)[RegData$Aar])}
             RegDataFunk <- SorterOgNavngiTidsEnhet(RegData=RegData, tidsenhet = tidsenhet)
             RegData <- RegDataFunk$RegData
             #tidtxt <- RegDataFunk$tidtxt

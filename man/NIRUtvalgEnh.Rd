@@ -19,6 +19,7 @@ NIRUtvalgEnh(
   reshID = 0,
   velgAvd = 0,
   velgDiag = 0,
+  overfPas = 99,
   fargepalett = "BlaaOff"
 )
 }
@@ -61,16 +62,16 @@ hvilken enhet i spesialisthelsetjenesten brukeren tilhører}
 
 \item{velgDiag}{Velge diagnose. 0-alle, 1-Bekreftede Covid-pasienter, 2-alle unntatt Covid-pasienter}
 
+\item{overfPas}{Overført under pågående intensivbehandling?
+1 = Pasienten er ikke overført
+2 = Pasienten er overført}
+
 \item{fargepalett}{Hvilken fargepalett skal brukes i figurer (Standard: BlaaRapp)}
 
 \item{valgtVar}{Hvilken variabel som skal visualiseres. Se \strong{Details} for oversikt.}
 
 \item{outfile}{Navn på fil figuren skrives til. Standard: '' (Figur skrives
 til systemets standard utdataenhet (som regel skjerm))}
-
-\item{overfPas}{Overført under pågående intensivbehandling?
-1 = Pasienten er ikke overført
-2 = Pasienten er overført}
 }
 \value{
 UtData En liste bestående av det filtrerte datasettet, utvalgstekst for figur og tekststreng som angir fargepalett

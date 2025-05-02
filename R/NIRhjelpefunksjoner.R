@@ -1,15 +1,36 @@
-#' Fil med div hjelpefunksjoner.Group of functions Description section
+# Fil med div hjelpefunksjoner.Group of functions Description section
+# Fil som inneholder hjelpefunksjoner.
+# SorterOgNavngiTidsEnhet Legger til tidsenhetene Aar, Halvaar, Mnd og Kvartal
+# @param RegData data
+# @param PasientID Variabelen som angir pasientidentifikasjon
+# @return Div hjelpefunksjoner
+# @export
+
+#' Kjøre Shiny Application
 #'
-#' Detaljer. kommer senereGroup of functions Details paragraph.
+#' @param browser TRUE/FALSE
+#' @param logAsJson noe med logging...
+#' @return Et objekt som representerer den Rygg-app'en
+#' @export
+
+kjorIntensivApp <- function(browser = FALSE, logAsJson = FALSE) {
+  if (logAsJson) {
+    rapbase::loggerSetup()
+  }
+
+  app <- shiny::runApp(system.file('appErHer/appIntensiv.R', package = 'intensiv'))
+
+  return(app)
+}
+
+
+
+#' Finne reinnleggelser
 #'
-#' Fil som inneholder hjelpefunksjoner.
-#' FinnReinnleggelser beregner reinnleggelser fra DateAdmittedIntensive og DateDischargedIntensive
-#' SorterOgNavngiTidsEnhet Legger til tidsenhetene Aar, Halvaar, Mnd og Kvartal
+#' @param RegData dataramme
+#' @param PasientID pasientid
 #'
-#'
-#' @param RegData data
-#' @param PasientID Variabelen som angir pasientidentifikasjon
-#' @return Div hjelpefunksjoner
+#' @return Dataramme med reinnleggelser
 #' @export
 
 FinnReinnleggelser <- function(RegData, PasientID='PasientID'){
@@ -226,8 +247,8 @@ henteSamlerapporter <- function(filnavn, rnwFil, reshID=0,
 #' @return Full path of file produced
 #' @export
 
-abonnement <- function(rnwFil, brukernavn='tullebukk', reshID=0,
-                                datoFra=Sys.Date()-180, datoTil=Sys.Date()) {
+abonnement <- function(rnwFil, brukernavn='tullebukk', reshID=0){
+                                # datoFra=Sys.Date()-180, datoTil=Sys.Date()) {
 
   Rpakke <- ifelse(rnwFil==as.character('NIRinfluensa.Rnw'), 'intensivberedskap', 'intensiv')
   #rapbase::subLogger(author = brukernavn, registryName = 'Norsk Intensivregister',
@@ -273,13 +294,13 @@ dataTilOffVisning <- function(RegData = RegData, valgtVar, #datoFra='2016-01-01'
     RegDataUt <- dplyr::rename(RegDataUt,
                                year = Aar,
                                var = Variabel)
-                  
-                          
+
+
     #Legge på orgID ("Sykehusviser")
     #ReshId	orgnr	RapporteketNavn	SKDEnavn
   nyID <- c('102090'='974706490', #AHUS - Intensiv
   '4215368' = '974706490', #AHUS - Kongsvinger
-  '4207303' = '974706490', #AHUS - Med. Overvåkning 
+  '4207303' = '974706490', #AHUS - Med. Overvåkning
   '4205696'='974706490', #AHUS - Postop
   '100089'='974706490', #Akershus universitetssykehus HF
   '111487'='974588951', #Aker
@@ -292,7 +313,7 @@ dataTilOffVisning <- function(RegData = RegData, valgtVar, #datoFra='2016-01-01'
   '105282'='974744570', #Førde
   '701577'='974744570',  #Førde okt24
   '108618'='974632535', #Gjøvik
-  '4212166'='974632535',  #Gjøvik  
+  '4212166'='974632535',  #Gjøvik
   '108610'='974724960', #Hamar
   '108827'='974724960', #Hamar okt2024
   '101858'='974795833', #Hammerfest
@@ -303,13 +324,13 @@ dataTilOffVisning <- function(RegData = RegData, valgtVar, #datoFra='2016-01-01'
   '109363'='974557746', #Haukel. Brannsk, Feil resh
   '112044'='974557746', #Haukel. KSK Int.
   '105048'='974557746', #Haukel. MIO
-  '107930'='974557746', #Haukel. MOE  
+  '107930'='974557746', #Haukel. MOE
   '106271'='974557746', #Haukel. Postop
   '107717'='974557746', #Haukel. ROE
   '106285'='974557746', #Haukel. TIO
   '100082'='983974724', #Helse Bergen HF  NB: HF-resh
   '4209889'='974633752', #KalnesØstf.
-  '4208977'='974633752', #KalnesØstf. okt2024  
+  '4208977'='974633752', #KalnesØstf. okt2024
   '4208976'='974633752', #KalnesØstf. okt 2024
   '101830'='974795930', #Kirkenes
   '4208715'='974631385', #Kongsberg
@@ -329,9 +350,9 @@ dataTilOffVisning <- function(RegData = RegData, valgtVar, #datoFra='2016-01-01'
   '705576'='874716782', #RH Barneintensiv
   '705577'='874716782', #RH Gen Int 1
   '706929'='874716782', #RH Gen Int 2
- '106033' = '874716782', #RH Hjertemed int og overvåkn  
+ '106033' = '874716782', #RH Hjertemed int og overvåkn
   '700419'='874716782', #RH samlet
-  '705699'='874716782', #RH Thorax 1 
+  '705699'='874716782', #RH Thorax 1
   '103539'='974631407', #Ringerike
   '103149'='974795477', #Sandnessjøen
   '4210742'='974795477', #Sandnessjøen okt2024
@@ -345,7 +366,7 @@ dataTilOffVisning <- function(RegData = RegData, valgtVar, #datoFra='2016-01-01'
   '706032' = '974749025', #St. Olavs  Thoraxkirurgisk intensivavdeling
   '114282'='974703300', #Stavanger
   '701785'='974703300', #Stavanger univ.sjukehus - Postop. 1G
-  '4207985'='974742985', #Stord 
+  '4207985'='974742985', #Stord
   '100132'='983975267', #Sykehuset Telemark HF NB: HF-resh
   '700720'='974795787', #Tromsø Intensivmedisinsk
   '700619'='974795787', #Tromsø Kir. int.

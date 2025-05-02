@@ -46,9 +46,9 @@ NIRFigAndelerGrVar <- function(RegData, valgtVar='dod30d', datoFra='2011-01-01',
                             preprosess=1, outfile='', lagFig=1, offData=0,...){
                             #KImaal = NA, utvalgsInfo = "", tittel = "", sortAvtagende=TRUE,)
 
-  if ("session" %in% names(list(...))) {
-    rapbase::repLogger(session = list(...)[["session"]], msg = paste0("FigAndelerGrVar: ", valgtVar))
-  }
+  # if ("session" %in% names(list(...))) {
+  #   rapbase::repLogger(session = list(...)[["session"]], msg = paste0("FigAndelerGrVar: ", valgtVar))
+  # }
 
 
       if (hentData == 1) {
