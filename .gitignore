@@ -20,7 +20,6 @@ FigNIRMeanMed_sql.R
 *.snm
 *.vrb
 *.gz
-*.csv
 *.Rdata
 
 *.xlsx
