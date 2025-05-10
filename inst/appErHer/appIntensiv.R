@@ -1393,6 +1393,7 @@ server <- function(input, output, session) { #
       paramNames <- shiny::reactive(c('reshID', 'brukernavn'))
       paramValues <- shiny::reactive(c(user$org(), user$name()))
 
+    #  cat("WORKDIR: ", getwd())
      rapbase::autoReportServer(
         id = "intensivAbb",
         registryName = "intensiv",
