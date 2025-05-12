@@ -65,8 +65,9 @@
 #' @export
 
 NIRFigAndeler  <- function(RegData=0, valgtVar='alder', datoFra='2011-01-01', datoTil='3000-12-31', aar=0,
-                           overfPas=0, minald=0, maxald=110, erMann='',InnMaate='', dodInt='', velgDiag=0, outfile='',
-                           grType=99,  preprosess=1, hentData=0, reshID=0, velgAvd=0, enhetsUtvalg=0, lagFig=1, ...) { #, session='')	{
+                           minald=0, maxald=110, erMann='',InnMaate='', dodInt='', velgDiag=0, outfile='',
+                           grType=99,  nivaa = 0, overfPas = 0,
+                           preprosess=1, hentData=0, reshID=0, velgAvd=0, enhetsUtvalg=0, lagFig=1, ...) { #, session='')	{
 
    if ("session" %in% names(list(...))) {
      rapbase::repLogger(session = list(...)[["session"]], msg = paste0('Fordelingsfigur: ',valgtVar))
@@ -107,11 +108,12 @@ NIRFigAndeler  <- function(RegData=0, valgtVar='alder', datoFra='2011-01-01', da
       flerevar <- NIRVarSpes$flerevar
 
 
-      NIRUtvalg <- NIRUtvalgEnh(RegData=RegData, datoFra=datoFra, datoTil=datoTil, aar=aar,
-                                minald=minald, maxald=maxald, velgDiag = velgDiag,
-                                erMann=erMann, InnMaate=InnMaate, dodInt=dodInt,
-                                reshID=reshID, grType=grType, enhetsUtvalg=enhetsUtvalg,
-                                velgAvd=velgAvd) #overfPas = overfPas,
+      NIRUtvalg <- NIRUtvalgEnh(
+        RegData=RegData, datoFra=datoFra, datoTil=datoTil, aar=aar,
+        minald=minald, maxald=maxald, velgDiag = velgDiag,
+        erMann=erMann, InnMaate=InnMaate, dodInt=dodInt,
+        reshID=reshID, grType=grType,  nivaa = nivaa, overfPas = overfPas,
+        enhetsUtvalg=enhetsUtvalg, velgAvd=velgAvd)
       RegData <- NIRUtvalg$RegData
       utvalgTxt <- NIRUtvalg$utvalgTxt
 

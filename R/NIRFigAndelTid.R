@@ -29,8 +29,8 @@
 #'
 #' @export
 NIRFigAndelTid <- function(RegData, valgtVar='alder_u18', datoFra='2011-01-01', datoTil=Sys.Date(), tidsenhet='Aar',
-                        minald=0, maxald=110, erMann='', InnMaate='', dodInt='', velgDiag=0,
-                        reshID=0, outfile='',
+                        minald=0, maxald=110, erMann='', InnMaate='', dodInt='', velgDiag=0, nivaa = 0,
+                        reshID=0, outfile='', overfPas = 0,
                         enhetsUtvalg=0, preprosess=1, hentData=0, lagFig=1, offData=0,...) {
 
    if ("session" %in% names(list(...))) {
@@ -77,9 +77,10 @@ NIRFigAndelTid <- function(RegData, valgtVar='alder_u18', datoFra='2011-01-01', 
 
       if (offData == 0) {
             if (reshID==0) {enhetsUtvalg <- 0}
-            NIRUtvalg <- NIRUtvalgEnh(RegData=RegData, reshID=reshID, datoFra=datoFra, datoTil=datoTil,
-                                      minald=minald, maxald=maxald, erMann=erMann, velgDiag=velgDiag, #aar=0,
-                                      InnMaate=InnMaate, dodInt=dodInt, enhetsUtvalg=enhetsUtvalg) #, grType=grType
+            NIRUtvalg <- NIRUtvalgEnh(
+              RegData=RegData, reshID=reshID, datoFra=datoFra, datoTil=datoTil,
+              minald=minald, maxald=maxald, erMann=erMann, velgDiag=velgDiag, nivaa = nivaa,  overfPas = overfPas,
+              InnMaate=InnMaate, dodInt=dodInt, enhetsUtvalg=enhetsUtvalg) #, grType=grType
             smltxt <- NIRUtvalg$smltxt
             medSml <- NIRUtvalg$medSml
             utvalgTxt <- NIRUtvalg$utvalgTxt

@@ -1,0 +1,87 @@
+ReshId;ShNavnInt;ShNavn;ReshIdTab;RHF;HF;Hospital;HealthUnitName;HealthUnitShortName;HealthUnitId;niva;KategoriTxt;IkkeMatch
+4208078;NA;Hjertemedisinsk intensiv;4208078;Helse Midt-Norge;St. Olavs Hospital HF;St. Olav;St. Olavs Hospital;St. Olav;105;2b;Generell <50;sjekk ShNavn
+4212166;Gjøvik;Gjøvik;108618;Helse Sør-Øst;Sykehuset Innlandet HF;Sykehuset Innlandet;Gjøvik;Gjøvik;192;2b;Generell <50;sjekk ShNavn og kategori/niva
+108827;Hamar;Hamar;108610;Helse Sør-Øst;Sykehuset Innlandet HF;Sykehuset Innlandet;Hamar;Hamar;1010;2b;Generell <50;sjekk ShNavn og kategori/niva
+4208976;KalnesØstf.;Kalnes/Østf.;4209889;Helse Sør-Øst;Sykehuset Østfold HF;Østfold;Kalnes;Kalnes;1011;2b;Generell <50;sjekk ShNavn og kategori/niva
+4208977;KalnesØstf.;Kalnes/Østf.;4209889;Helse Sør-Øst;Sykehuset Østfold HF;Østfold;Kalnes;Kalnes;1011;2b;Generell <50;sjekk ShNavn og kategori/niva
+4210742;Sandnessjøen;Sandnessjøen;103149;Helse Nord;Helgelandssykehuset HF;Helgelandssykehuset;Sandnessjøen;Sandnessjøen;1003;2b;Generell <50;sjekk ShNavn og kategori/niva
+102428;Skien;Skien;102026;Helse Sør-Øst;Sykehuset Telemark HF;Telemark;Skien;Skien;1020;2b;Generell <50;sjekk ShNavn og kategori/niva
+100082;Helse Bergen HF;;;;;;;;;;;sjekk ShNavn og kategori/niva
+102673;Ålesund Med;;;Helse Midt-Norge;Helse Møre og Romsdal HF;Ålesund;Ålesund sjukehus;Ålesund;116;;;sjekk ShNavn og kategori/niva
+106572;St. Olav Hjertemed;;;Helse Midt-Norge;St. Olavs Hospital HF;St. Olav;St. Olavs Hospital;St. Olav;105;;;sjekk ShNavn og kategori/niva
+109877;Ullevål Hjerte-PO;;;Helse Sør-Øst;Oslo universitetssykehus HF;Oslo universitetssykehus;Ullevål;Ullevål;1007;;;sjekk ShNavn og kategori/niva
+110867;Vesterål.Stokm.;;;Helse Nord;Nordlandssykehuset HF;Nordlandssykehuset;;;;;;sjekk ShNavn og kategori/niva
+111449;Ullevål Barneint;;;Helse Sør-Øst;Oslo universitetssykehus HF;Oslo universitetssykehus;Ullevål;Ullevål;1007;3c;Barn;sjekk ShNavn og kategori/niva
+700419;RH samlet;;;;;;;;;;;sjekk ShNavn og kategori/niva
+700619;Tromsø Kir. int.;;;Helse Nord;Universitetssykehuset Nord-Norge HF;Tromsø;UNN Tromsø;Tromsø;108;;;sjekk ShNavn og kategori/niva
+700620;Tromsø Postop;;;Helse Nord;Universitetssykehuset Nord-Norge HF;Tromsø;UNN Tromsø;Tromsø;108;;;sjekk ShNavn og kategori/niva
+706032;St. Olav Thorax;;;Helse Midt-Norge;St. Olavs Hospital HF;St. Olav;St. Olavs Hospital;St. Olav;105;;;sjekk ShNavn og kategori/niva
+4209764;Volda;;102836;Helse Midt-Norge;Helse Møre og Romsdal HF;Volda;Volda;Volda;4209764;2b;Generell <50;sjekk ShNavn og kategori/niva
+102090;AHUS - Intensiv;AHUS - Intensiv;102090;Helse Sør-Øst;Akershus universitetssykehus HF;Ahus;Akershus universitetssykehus;Ahus;102;3;Generell >50;
+4215368;AHUS - Kongsvinger;AHUS - Kongsvinger;4215368;Helse Sør-Øst;Akershus universitetssykehus HF;Kongsvinger;Kongsvinger;Kongsvinger;1068;2b;Generell <50;
+4207303;AHUS - Med. Overvåkning;AHUS - Med overvåkning;4207303;Helse Sør-Øst;Akershus universitetssykehus HF;Ahus;Akershus universitetssykehus;Ahus;102;2b;Generell <50;
+4205696;AHUS - Postop;AHUS - Postop;4205696;Helse Sør-Øst;Akershus universitetssykehus HF;Ahus;Akershus universitetssykehus;Ahus;102;1b;Postoperativ;
+111487;Aker;Aker;111487;Helse Sør-Øst;Oslo universitetssykehus HF;Oslo universitetssykehus;Oslo universitetssykehus;Oslo universitetssykehus;101;1b;Postoperativ;
+104450;Arendal;Arendal;104450;Helse Sør-Øst;Sørlandet sykehus HF;Sørlandet sykehus;Arendal;Arendal;1012;2b;Generell <50;
+110111;NA;Barneintensiv;110111;Helse Sør-Øst;Oslo universitetssykehus HF;Oslo universitetssykehus;Ullevål;Ullevål;111449;1a;Overvaking;
+4210053;Bodø;Bodø;4210053;Helse Nord;Nordlandssykehuset HF;Nordlandssykehuset;Bodø;Bodø;1006;2b;Generell <50;
+109363;Haukel. Brannsk;Brannskaden;109363;Helse Vest;Helse Bergen HF;Haukeland;Haukeland universitetssykehus;Haukeland;103;2b;Generell <50;
+103090;Bærum;Bærum;103090;Helse Sør-Øst;Vestre Viken HF;Bærum;Bærum sykehus;Bærum;110;2b;Generell <50;
+108897;Diakonhjemmet;Diakonhjemmet ;108897;Privat;Diakonhjemmet sykehus AS;Diakonhjemmet;Diakonhjemmet sykehus;Diakonhjemmet;141;2b;Generell <50;
+103620;Drammen;Drammen;103620;Helse Sør-Øst;Vestre Viken HF;Drammen;Drammen sykehus;Drammen;111;2b;Generell <50;
+108609;Elverum;Elverum;108609;Helse Sør-Øst;Sykehuset Innlandet HF;Sykehuset Innlandet;Elverum;Elverum;196;2b;Generell <50;
+105282;Førde;Førde;105282;Helse Vest;Helse Førde HF;Førde;Førde sentralsjukehus;Førde;114;2b;Generell <50;
+701577;Førde;Førde;105282;Helse Vest;Helse Førde HF;Førde;Førde sentralsjukehus;Førde;114;2b;Generell <50;
+108618;Gjøvik;Gjøvik;108618;Helse Sør-Øst;Sykehuset Innlandet HF;Sykehuset Innlandet;Gjøvik;Gjøvik;192;2b;Generell <50;
+108610;Hamar;Hamar;108610;Helse Sør-Øst;Sykehuset Innlandet HF;Sykehuset Innlandet;Hamar;Hamar;1010;2b;Generell <50;
+101858;Hammerfest;Hammerfest;101858;Helse Nord;Finnmarkssykehuset HF;Finnmarkssykehuset;Hammerfest;Hammerfest;180;2b;Generell <50;
+100180;Haraldplass;Haraldplass;100180;Privat;Haraldsplass Diakonale sykehus AS;Haraldsplass;Haraldsplass Diakonale sykehus;Haraldsplass;156;2b;Generell <50;
+700617;Harstad;Harstad;700617;Helse Nord;Universitetssykehuset Nord-Norge HF;Harstad;UNN Harstad;Harstad;135;2b;Generell <50;
+100273;Haugesund;Haugesund;100273;Helse Vest;Helse Fonna HF;Haugesund;Haugesund sjukehus;Haugesund;113;2b;Generell <50;
+112044;Haukel. KSK Int.;Haukel. KSK Int. ;112044;Helse Vest;Helse Bergen HF;Haukeland;Haukeland universitetssykehus;Haukeland;103;3;Generell >50;
+105048;Haukel. MIO;Haukel. MIO;105048;Helse Vest;Helse Bergen HF;Haukeland;Haukeland universitetssykehus;Haukeland;103;2b;Generell <50;
+107930;Haukel. MOE;Haukel. MOE;107930;Helse Vest;Helse Bergen HF;Haukeland;Haukeland universitetssykehus;Haukeland;103;1a;Overvaking;
+106271;Haukel. Postop;Haukel. Postop;106271;Helse Vest;Helse Bergen HF;Haukeland;Haukeland universitetssykehus;Haukeland;103;1b;Postoperativ;
+107717;Haukel. ROE;Haukel. ROE;107717;Helse Vest;Helse Bergen HF;Haukeland;Haukeland universitetssykehus;Haukeland;103;1a;Overvaking;
+106285;Haukel. TIO;Haukel. TIO;106285;Helse Vest;Helse Bergen HF;Haukeland;Haukeland universitetssykehus;Haukeland;103;3b;Spesial;
+4209889;KalnesØstf.;Kalnes/Østf.;4209889;Helse Sør-Øst;Sykehuset Østfold HF;Østfold;Kalnes;Kalnes;1011;2b;Generell <50;
+101830;Kirkenes;Kirkenes;101830;Helse Nord;Finnmarkssykehuset HF;Finnmarkssykehuset;Kirkenes;Kirkenes;181;2b;Generell <50;
+4208715;Kongsberg;Kongsberg;4208715;Helse Sør-Øst;Vestre Viken HF;Kongsberg;Kongsberg sykehus;Kongsberg;133;2b;Generell <50;
+114240;Kristiansand;Kristiansand ;114240;Helse Sør-Øst;Sørlandet sykehus HF;Sørlandet sykehus;Kristiansand;Kristiansand;1013;2b;Generell <50;
+706078;Kristiansund;Kristiansund;706078;Helse Midt-Norge;Helse Møre og Romsdal HF;Kristiansund;Kristiansund sjukehus;Kristiansund;124;2b;Generell <50;
+102250;Levanger;Levanger;102250;Helse Midt-Norge;Helse Nord-Trøndelag HF;Levanger;Sykehuset Levanger;Levanger;118;2b;Generell <50;
+108626;Lillehammer;Lillehammer;108626;Helse Sør-Øst;Sykehuset Innlandet HF;Sykehuset Innlandet;Lillehammer;Lillehammer;115;2b;Generell <50;
+42088921;Lovisenberg;Lovisenberg;4208892;Privat;Lovisenberg Diakonale sykehus AS;Lovisenberg;Lovisenberg Diakonale sykehus;Lovisenberg;142;2b;Generell <50;
+103015;Mo i Rana;Mo i Rana;103015;Helse Nord;Helgelandssykehuset HF;Helgelandssykehuset;Mo i Rana;Mo i Rana;1001;2b;Generell <50;
+706079;Molde;Molde;706079;Helse Midt-Norge;Helse Møre og Romsdal HF;Molde;Molde sjukehus;Molde;125;2b;Generell <50;
+103141;Mosjøen;Mosjøen;103141;Helse Nord;Helgelandssykehuset HF;Helgelandssykehuset;Mosjøen;Mosjøen;1002;2b;Generell <50;
+105893;Namsos;Namsos;105893;Helse Midt-Norge;Helse Nord-Trøndelag HF;Namsos;Sykehuset Namsos;Namsos;130;2b;Generell <50;
+700618;Narvik;Narvik;700618;Helse Nord;Universitetssykehuset Nord-Norge HF;Narvik;UNN Narvik;Narvik;137;2b;Generell <50;
+705757;Radiumhospitalet;Radiumhospitalet;705757;Helse Sør-Øst;Oslo universitetssykehus HF;Oslo universitetssykehus;Oslo universitetssykehus;Oslo universitetssykehus;101;1b;Postoperativ;
+705576;RH Barneintensiv;RH Barneintensiv;705576;Helse Sør-Øst;Oslo universitetssykehus HF;Oslo universitetssykehus;Rikshospitalet;Rikshospitalet;1008;3c;Barn;
+705577;RH Gen Int 1;RH Gen Int 1;705577;Helse Sør-Øst;Oslo universitetssykehus HF;Oslo universitetssykehus;Rikshospitalet;Rikshospitalet;1008;3;Generell >50;
+706929;RH Gen Int 2;RH Gen Int 2;706929;Helse Sør-Øst;Oslo universitetssykehus HF;Oslo universitetssykehus;Rikshospitalet;Rikshospitalet;1008;3;Generell >50;
+106033;RH Hjertemed int og overvåkn;RH Hjertemed int og overvåkn;106033;Helse Sør-Øst;Oslo universitetssykehus HF;Oslo universitetssykehus;Rikshospitalet;Rikshospitalet;1008;2b;Generell <50;
+705699;RH Thorax 1;RH Thorax 1;705699;Helse Sør-Øst;Oslo universitetssykehus HF;Oslo universitetssykehus;Rikshospitalet;Rikshospitalet;1008;1b;Postoperativ;
+103539;Ringerike;Ringerike;103539;Helse Sør-Øst;Vestre Viken HF;Ringerike;Ringerike sykehus;Ringerike;120;2b;Generell <50;
+103149;Sandnessjøen;Sandnessjøen;103149;Helse Nord;Helgelandssykehuset HF;Helgelandssykehuset;Sandnessjøen;Sandnessjøen;1003;2b;Generell <50;
+102026;Skien;Skien;102026;Helse Sør-Øst;Sykehuset Telemark HF;Telemark;Skien;Skien;1020;2b;Generell <50;
+4201313;St. Olav Hovedint;St. Olav Hovedintensiv;4205574;Helse Midt-Norge;St. Olavs Hospital HF;St. Olav;St. Olavs Hospital;St. Olav;105;3;Generell  >50;
+4208928;NA;St. Olav Intensiv Barn;4208928;Helse Midt-Norge;St. Olavs Hospital HF;St. Olav;St. Olavs Hospital;St. Olav;105;3c;Barn;
+4205574;St. Olav Med lunge;St. Olav Med lunge;4205574;Helse Midt-Norge;St. Olavs Hospital HF;St. Olav;St. Olavs Hospital;St. Olav;105;1a;Overvaking;
+105790;St. Olav Nevro;St. Olav Nevrointeniv;105790;Helse Midt-Norge;St. Olavs Hospital HF;St. Olav;St. Olavs Hospital;St. Olav;105;3b;Spesial;
+4207985;Stord;Stord;4207985;Helse Vest;Helse Fonna HF;Stord;Stord sjukehus;Stord;128;2b;Generell <50;
+114282;SUS Intensiv;SUS Intensiv;114282;Helse Vest;Helse Stavanger HF;Stavanger;Stavanger universitetssjukehus;Stavanger;104;3;Generell  >50;
+701785;SUS Postop 1G;SUS Postop 1G;701785;Helse Vest;Helse Stavanger HF;Stavanger;Stavanger universitetssjukehus;Stavanger;104;1b;Postoperativ;
+700720;Tromsø Intensiv;Tromsø Intensiv;700720;Helse Nord;Universitetssykehuset Nord-Norge HF;Tromsø;UNN Tromsø;Tromsø;108;3;Generell >50;
+601302;Tromsø Med int- og hjerteoppv;Tromsø Med int- og hjerteoppv;601302;Helse Nord;Universitetssykehuset Nord-Norge HF;Tromsø;UNN Tromsø;Tromsø;108;2b;Generell <50;
+4217938;NA;Tromsø Oppvåkning;4217938;Helse Nord;Universitetssykehuset Nord-Norge HF;Tromsø;UNN Tromsø;Tromsø;108;1b;Postoperativ;
+103948;Tønsberg Intensiv;Tønsberg, Intensiv;103948;Helse Sør-Øst;Sykehuset i Vestfold HF;Tønsberg;Tønsberg sykehus;Tønsberg;107;2b;Generell <50;
+105101;Tønsberg Med. Over.;Tønsberg, Med. Over.;105101;Helse Sør-Øst;Sykehuset i Vestfold HF;Tønsberg;Tønsberg sykehus;Tønsberg;107;1a;Overvaking;
+109870;Ullevål Akuttmed Int;Ullevål Akuttmed Int;109870;Helse Sør-Øst;Oslo universitetssykehus HF;Oslo universitetssykehus;Ullevål;Ullevål;1007;2b;Generell <50;
+109773;Ullevål Gen int;Ullevål Gen int;109773;Helse Sør-Øst;Oslo universitetssykehus HF;Oslo universitetssykehus;Ullevål;Ullevål;1007;3;Generell  >50;
+4205969;Ullevål Hjertemed Int;Ullevål Hjertemed Int;4205969;Helse Sør-Øst;Oslo universitetssykehus HF;Oslo universitetssykehus;Ullevål;Ullevål;1007;2b;Generell <50;
+109779;Ullevål Nevroint;Ullevål Nevroint ;109779;Helse Sør-Øst;Oslo universitetssykehus HF;Oslo universitetssykehus;Ullevål;Ullevål;1007;3b;Spesial;
+109778;Ullevål Postop;Ullevål Postop ;109778;Helse Sør-Øst;Oslo universitetssykehus HF;Oslo universitetssykehus;Ullevål;Ullevål;1007;1b;Postoperativ;
+102836;NA;Volda;102836;Helse Midt-Norge;Helse Møre og Romsdal HF;Volda;Volda;Volda;4209764;2b;Generell <50;
+108308;Ålesund Kir;Ålesund Kir;108308;Helse Midt-Norge;Helse Møre og Romsdal HF;Ålesund;Ålesund sjukehus;Ålesund;116;2b;Generell <50;

@@ -124,6 +124,26 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='an
             tittel <- 'Opphold der pasienten døde på intensiv'
             sortAvtagende <- FALSE
       }
+      if (valgtVar=='EcmoEcla') { #AndelTid,AndelerGrVar
+        #Andel som dør på intensiv
+        RegData$Variabel <- RegData$EcmoEcla	#TRUE/FALSE
+        varTxt <- 'opph med ECMO'
+        tittel <- 'Opphold med bruk av ECMO'
+        sortAvtagende <- FALSE
+      }
+      if (valgtVar == 'EcmoEclaDager') { #Andeler #GjsnGrVar
+        #Liggetid bare >0
+        RegData$Variabel  <- as.numeric(RegData$EcmoEclaDager)
+        RegData <- RegData[which(RegData$EcmoEcla==TRUE), ]
+        tittel <- 'Liggetid på ECMO'
+        if (figurtype %in% c('gjsnGrVar', 'gjsnTid')) {
+          tittel <- 'liggetid på ECMO'}
+        gr <- c(0:7,14,21,30,100)
+        RegData$VariabelGr <- cut(RegData$liggetid, breaks=gr, include.lowest=TRUE, right=FALSE)
+        grtxt <- c(levels(RegData$VariabelGr)[-length(gr-1)], '30+')
+        xAkseTxt <- 'Liggetid (døgn)'
+      }
+
       if (valgtVar=='ExtendedHemodynamicMonitoring') { #andeler, andelerGrVar
             #-1:Ikke svart, 1:Nei, 2:Picco, 3:PA
             tittel <- 'Utvidet hemodynamisk monitorering'
@@ -173,17 +193,36 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='an
         #1:9 Veldig sprek - Terminalt syk
         gr <- 1:9
         if (figurtype == 'andeler'){
-        tittel <- 'Skrøpelighets indeks ("frailty")'
-        RegData <- RegData[which((RegData$FrailtyIndex %in% gr)), ]  #Kun gyldige verdier: 0,6,8
-        RegData$VariabelGr <- factor(RegData$FrailtyIndex, levels=gr)
-        grtxt <- c('Veldig sprek', 'Sprek', 'Ok', 'Sårbar', 'Lett skrøpelig', 'Moderat skrøpelig',
-                   'Alvorlig skøpelig', 'Svært skrøpelig', 'Terminal')
-        xAkseTxt <- 'Grad av skrøpelighet'
-        retn <- 'H'}
+          tittel <- 'Skrøpelighets indeks ("frailty")'
+          RegData <- RegData[which((RegData$FrailtyIndex %in% gr)), ]  #Kun gyldige verdier
+          RegData$VariabelGr <- factor(RegData$FrailtyIndex, levels=gr)
+          grtxt <- c('Veldig sprek', 'Sprek', 'Ok', 'Sårbar', 'Lett skrøpelig', 'Moderat skrøpelig',
+                     'Alvorlig skøpelig', 'Svært skrøpelig', 'Terminal')
+          xAkseTxt <- 'Grad av skrøpelighet'
+          retn <- 'H'}
+        tittel <- 'Alder ved innleggelse'
+        if (figurtype %in% c('gjsnGrVar', 'gjsnTid')) {
+          RegData <- RegData[which((RegData$FrailtyIndex %in% gr)), ]  #Kun gyldige verdier
+          RegData$Variabel <- RegData$FrailtyIndex  	#GjsnTid, GjsnGrVar
+          tittel <- 'skrøpelighet'}
         if (figurtype %in% c('andelGrVar', 'andelTid' )) {
           RegData$Variabel[RegData$FrailtyIndex %in% gr] <- 1
           tittel <- 'Registrert skrøpelighetsindeks'
         }
+      }
+      if (valgtVar=='Iabp') { #AndelTid,AndelerGrVar
+        #Angir om pasienten har blitt behandlet med IABP (intra-aortic balloon pump).
+        RegData$Variabel <- RegData$Iabp	#TRUE/FALSE
+        varTxt <- 'opph med IABP'
+        tittel <- 'Opphold med bruk av Aortaballongpumpe'
+        sortAvtagende <- FALSE
+      }
+      if (valgtVar=='Impella') { #AndelTid,AndelerGrVar
+        # Angir om pasienten har blitt behandlet med Impella (hjertepumpe)
+        RegData$Variabel <- RegData$Impella	#TRUE/FALSE
+        varTxt <- 'opph med Impella'
+        tittel <- 'Opphold med bruk av Impella/VV-assist'
+        sortAvtagende <- FALSE
       }
 
      if (valgtVar == 'isoleringDogn' ) {   # Andeler,
@@ -526,6 +565,7 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='an
             #-1: Velg verdi, 1 = Nei, 2 = Ja – perkutan teknikk på intensiv/oppv., 3 = Ja – åpen teknikk (operativ)
 
             RegData <- RegData[which(RegData$Trakeostomi %in% 1:3)
+                               %i% which(RegData$InvasivVentilationF>0)
                                      %i% which(RegData$InnDato >= as.Date('2016-01-01', tz='UTC')), ] #Innført ila 2015
             retn <- 'H'
             tittel <- 'Trakeostomi utført'
@@ -641,7 +681,7 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='an
         RegData$Variabel[which(RegData$BrainDamage == 1)] <- 1
         cexgr <- 0.9
       }
-      
+
 
 
       #---------------KATEGORISKE

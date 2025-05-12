@@ -35,8 +35,8 @@
 
 NIRFigGjsnGrVar <- function(RegData, valgtVar, preprosess=1, hentData=0, valgtMaal='Gjsn',
                             minald=0, maxald=110, datoFra='2011-01-01', datoTil='3000-01-01', aar=0,
-                            grType=99, InnMaate=99, dodInt='', erMann='', grVar='ShNavn', medKI=1,
-                            velgDiag=0, lagFig=1, outfile='',...) {
+                            grType=99, nivaa = 0, InnMaate=99, dodInt='', erMann='', grVar='ShNavn', medKI=1,
+                            velgDiag=0, overfPas = 0, lagFig=1, outfile='',...) {
 
   if ("session" %in% names(list(...))) {
     rapbase::repLogger(session = list(...)[["session"]], msg = paste0("AndelGrVar: ", valgtVar))
@@ -59,8 +59,10 @@ NIRFigGjsnGrVar <- function(RegData, valgtVar, preprosess=1, hentData=0, valgtMa
   #------- Gjøre utvalg
   minald <- max(NIRVarSpes$minald, minald)
   maxald <- min(NIRVarSpes$maxald, maxald)
-  NIRUtvalg <- NIRUtvalgEnh(RegData=RegData, datoFra=datoFra, datoTil=datoTil, aar=aar, minald=minald, maxald=maxald,
-                            erMann=erMann, InnMaate=InnMaate, dodInt=dodInt, grType=grType, velgDiag=velgDiag) #overfPas=overfPas,
+  NIRUtvalg <- NIRUtvalgEnh(
+    RegData=RegData, datoFra=datoFra, datoTil=datoTil, aar=aar, minald=minald, maxald=maxald,
+    erMann=erMann, InnMaate=InnMaate, dodInt=dodInt, grType=grType, nivaa = nivaa,
+    overfPas = overfPas, velgDiag=velgDiag)
   RegData <- NIRUtvalg$RegData
   utvalgTxt <- NIRUtvalg$utvalgTxt
 
@@ -84,7 +86,7 @@ NIRFigGjsnGrVar <- function(RegData, valgtVar, preprosess=1, hentData=0, valgtMa
   if( valgtVar =='SMR') {tittel <- c(paste0('SMR, ', NIRUtvalg$grTypeTxt, 'sykehus'),
                                      '(uten reinnlagte pasienter)')}
   if( valgtVar =='PIMdod') {tittel <- paste0('PIM, ', NIRUtvalg$grTypeTxt, 'sykehus')}
-  
+
   Ngrtxt <- paste0(' (', as.character(Ngr),')')
   indGrUt <- which(Ngr < Ngrense)
   if (length(indGrUt)==0) { indGrUt <- 0}
@@ -260,8 +262,8 @@ NIRFigGjsnGrVar <- function(RegData, valgtVar, preprosess=1, hentData=0, valgtMa
       }
       lines(x=rep(AggTot, 2), y=c(minpos, maxpos), col=farger[1], lwd=2.5) #y=c(0, max(pos)+0.55),
       #Linje for kvalitetsindikatormål:
-      if ((valgtMaal=='Med' & valgtVar %in% c('respiratortidInvMoverf', 'respiratortidInvUoverf')) | 
-          valgtVar == 'SMR') { 
+      if ((valgtMaal=='Med' & valgtVar %in% c('respiratortidInvMoverf', 'respiratortidInvUoverf')) |
+          valgtVar == 'SMR') {
         lines(x=rep(KImaal, 2), y=c(minpos, maxpos), col= '#FF7260', lwd=2.5) #y=c(0, max(pos)+0.55),
         text(x=KImaal, y=maxpos+0.6, paste0('Mål:', KImaaltxt), cex=0.9*cexgr, col= '#FF7260',adj=c(0.5,0))
       }
