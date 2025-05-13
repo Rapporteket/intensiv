@@ -353,6 +353,18 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='an
         retn <- 'H'
 
       }
+      if (valgtVar == 'PIMsanns'){ #
+        tittel <- 'PIM, sannsynlighet'
+        # if (figurtype %in% c('gjsnGrVar', 'gjsnTid')) {
+        RegData <- RegData[RegData$PIM_Probability >= 0, ]
+        RegData$Variabel <- 100*RegData$PIM_Probability
+        gr <- c(seq(0, 90,10), 100)
+        RegData$VariabelGr <- cut(100*RegData$PIM_Probability, breaks=gr, include.lowest=TRUE, right=FALSE)
+        #grtxt <- c('(0-10)','[10-20)','[20-30)','[30-40)','[40-50)','[50-60)','[60-70)','[70-80)','[80-90)','[90-100]')
+        grtxt <- levels(RegData$VariabelGr)
+        #    xAkseTxt <- 'Observert 30-dagers dødelighet / PIM-estimert dødelighet'
+        retn <- 'V'
+      }
 
       if (valgtVar %in% c('regForsinkelseInn', 'regForsinkelse')) {  #Fordeling, Andeler,
 
