@@ -1,0 +1,59 @@
+name: Publish Docker image
+on:
+  release:
+    types: [published]
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main", "main_dev" ]
+  schedule:
+    - cron: '0 21 * * 6' # run every Saturday at 21
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  push_to_registries:
+    name: Push Docker image to docker hub
+    runs-on: ubuntu-latest
+    env:
+      IMAGE_NAME: ${{ github.repository }}
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v4
+      - name: R setup
+        uses: r-lib/actions/setup-r@v2
+      - name: Build package (tarball)
+        run: R CMD build .
+      - name: Lint Dockerfile
+        uses: hadolint/hadolint-action@v3.1.0
+        with:
+          dockerfile: "Dockerfile"
+      - name: Prepare tags
+        id: docker_meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.IMAGE_NAME }}
+          tags: |
+            type=ref,event=branch
+            type=ref,event=pr
+            type=schedule,pattern=weekly
+            type=semver,pattern={{major}}.{{minor}}.{{patch}}
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Login to DockerHub
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Build image and push to Docker Hub
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ./Dockerfile
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ steps.docker_meta.outputs.tags }}
+          labels: ${{ steps.docker_meta.outputs.labels }}
+          build-args: GH_PAT=${{ secrets.GITHUB_TOKEN }}
