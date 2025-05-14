@@ -12,11 +12,7 @@ License: GPL2
 Encoding: UTF-8
 LazyData: false
 Depends:
-    R (>= 3.5.0),
-    rapbase (>= 1.0.0)
-Remotes: 
-      Rapporteket/rapbase@main,
-      Rapporteket/rapFigurer
+    R (>= 4.1.0)
 Suggests:
     rmarkdown,
     testthat, 
@@ -35,4 +31,7 @@ Imports:
     shinyalert,
     xtable,
     zoo
+Remotes: 
+      Rapporteket/rapbase@main,
+      Rapporteket/rapFigurer
 RoxygenNote: 7.3.2
