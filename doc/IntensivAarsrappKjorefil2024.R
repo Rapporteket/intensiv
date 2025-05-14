@@ -300,6 +300,7 @@ tabNokkeltall <- rbind(
   'Antall opphold' = tapply(RegData$PasientID, RegData$EnhNivaa, FUN=length),
   'Antall pasienter' = tapply(RegData$PasientID, RegData$EnhNivaa,
                               FUN=function(x) length(unique(x))),
+  'Alder (median)' = tapply(RegData$Alder, RegData$EnhNivaa, FUN=median, na.rm=T),
   'Pasienter >80 år' = tapply(RegData$Alder > 80, RegData$EnhNivaa,
                             FUN=function(x) round(sum(x, na.rm=T)/length(x)*100, 1)),
   'Liggedøgn (median)' = tapply(RegData$liggetid[indLigget], RegData$EnhNivaa[indLigget], FUN=median, na.rm=T),
