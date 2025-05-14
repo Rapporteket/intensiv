@@ -14,10 +14,10 @@ LazyData: true
 Depends:
     R (>= 4.1.0)
 Suggests:
+    rmarkdown,
+    prodlim,
     testthat 
 Imports:
-    prodlim,
-    rmarkdown,
     digest,
     DT,
     kableExtra,
@@ -25,8 +25,6 @@ Imports:
     lifecycle,
     lubridate,
     plyr,
-    rapbase,
-    rapFigurer,
     shiny,
     shinyalert,
     xtable,
