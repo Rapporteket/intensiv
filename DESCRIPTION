@@ -14,10 +14,10 @@ LazyData: false
 Depends:
     R (>= 4.1.0)
 Suggests:
-    rmarkdown,
-    testthat, 
-    prodlim
+    testthat 
 Imports:
+    prodlim,
+    rmarkdown,
     digest,
     DT,
     kableExtra,
