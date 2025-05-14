@@ -16,7 +16,7 @@ concurrency:
 jobs:
   push_to_registries:
     name: Push Docker image to docker hub
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     env:
       IMAGE_NAME: ${{ github.repository }}
     steps:
