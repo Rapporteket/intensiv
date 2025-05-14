@@ -4,7 +4,7 @@ Title: Resultatrapporter for Intensivregisteret
 Version: 3.0.0
 Date: 2025-04-23
 Author: Authors@R: c(person("Olsen", "Lena", email =
-    "Lena.Ringstad.Olsen@unn.no", role = c("cre", "aut"))
+    "Lena.Ringstad.Olsen@unn.no", role = c("cre", "aut")))
 Maintainer: Lena Ringstad Olsen <lena.olsen@skde.no>
 Description: Pakke for (automatisk) generering av resultater (figurer og
     samledokument) fra Norsk Intensivregister. 
