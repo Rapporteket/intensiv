@@ -10,7 +10,7 @@ Description: Pakke for (automatisk) generering av resultater (figurer og
     samledokument) fra Norsk Intensivregister. 
 License: GPL2
 Encoding: UTF-8
-LazyData: false
+LazyData: true
 Depends:
     R (>= 4.1.0)
 Suggests:
