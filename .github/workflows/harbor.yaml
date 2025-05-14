@@ -1,0 +1,60 @@
+name: Publish Docker image to Harbor
+on:
+  release:
+    types: [published]
+  push:
+    branches:
+        - main
+  pull_request:
+    branches:
+        - main
+        - main_dev
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Push Docker image to Harbor
+    runs-on: ubuntu-latest
+    env:
+        IMAGE_NAME: ${{ github.repository }}
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v4
+      - name: Lint Dockerfile
+        uses: hadolint/hadolint-action@v3.1.0
+        with:
+          dockerfile: "Dockerfile"
+      - name: R setup
+        uses: r-lib/actions/setup-r@v2
+      - uses: r-lib/actions/setup-r-dependencies@v2
+      - name: Build package (tarball)
+        run: R CMD build .
+      - name: Prepare tags
+        id: docker_meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.IMAGE_NAME }}
+          flavor: |
+            latest=false
+          tags: |
+            type=ref,event=branch
+            type=ref,event=pr
+            type=semver,pattern={{version}}
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Login to Harbor
+        if: github.event_name == 'release'
+        run: |
+          echo ${{ secrets.HARBOR_PASSWORD }} | docker login --username ${{ secrets.HARBOR_USERNAME }} --password-stdin ${{ secrets.HARBOR_REGISTRY }}
+      - name: Build image and push to Harbor
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ./Dockerfile
+          tags: ${{ secrets.HARBOR_REGISTRY }}/${{ steps.docker_meta.outputs.tags }}
+          push: ${{ github.event_name == 'release' }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
