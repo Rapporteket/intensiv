@@ -115,11 +115,11 @@ NIRRegDataSQL <- function(datoFra = '2019-01-01', datoTil = '2099-01-01') { #,se
       UrineOutput,
       VasoactiveInfusion
 FROM
-	MainFormDataContract
+	mainformdatacontract
 WHERE cast(DateAdmittedIntensive as date) BETWEEN \'', datoFra, '\' AND \'', datoTil, '\'')
   #WHERE cast(DateAdmittedIntensive as date) >= \'', datoFra, '\' AND DateAdmittedIntensive <= \'', datoTil, '\'')
 
-   # query <- paste0('select * from MainFormDataContract
+   # query <- paste0('select * from mainformdatacontract
    # WHERE cast(DateAdmittedIntensive as date) BETWEEN \'', '2020-01-01', '\' AND \'', Sys.Date(), '\'')
 
   RegData <- rapbase::loadRegData(registryName = registryName, query=query, dbType="mysql")

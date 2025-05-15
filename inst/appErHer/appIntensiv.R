@@ -21,7 +21,7 @@ AarNaa <- as.numeric(format(idag, "%Y"))
 
 #Covid-skjema:
 qCovid <- paste0('SELECT UPPER(HovedskjemaGUID) AS HovedskjemaGUID, FormStatus, Diagnosis
-                FROM ReadinessFormDataContract')
+                FROM readinessformdatacontract')
 CovidData <- rapbase::loadRegData(registryName= "data", query=qCovid, dbType="mysql")
 
 CovidData$Bekreftet <- 0
@@ -159,8 +159,8 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                     h4(tags$b('SMR '), 'viser SMR per sykehus. Dette er faktisk dødelighet
                        delt på estimert dødelighet ut fra SAPS-skår.'),
                     h4(tags$b('Type opphold'), 'viser en figur med fordeling av oppholdstyper.'),
-                    h4(tags$b('PREM-skjema'), 'viser resultater fra pårørendeundersøkelser
-                       registrert i skjemaet FS-ICU.'),
+                    # h4(tags$b('PREM-skjema'), 'viser resultater fra pårørendeundersøkelser
+                    #    registrert i skjemaet FS-ICU.'),
                     br(),
                     h4('Gi gjerne innspill til registerledelsen om det er resultater/tabeller/figurer du savner
                             på Rapporteket-Intensiv.')
@@ -575,71 +575,72 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
   ), #tab
 
   #-------Pårørendeskjema----------
-  tabPanel(p("PREM-skjema", title='Enkeltspørsmål fra FS-ICU, samt totalskårer'),
-           h2('Resultater fra Pårørendeskjema (FS-ICU)', align = 'center'),
-           # fluidRow(column(width = 3, #Første kolonne. Alternativ til sidebarLayout(sidebarPanel())
-           sidebarPanel(
-             width = 3,
-             h4('Her kan man velge hvilken variabel man ønsker å se resultater for og gjøre ulike filtreringer.'),
-             selectInput(
-               inputId = "valgtVarPaarorFord", label="Velg variabel",
-               choices = c('S1.1 Pasient, høflighet og medfølelse' = 'BehandlingHoeflighetRespektMedfoelelse',
-                           'S1.2 Smerte' = 'SymptomSmerte',
-                           'S1.3 Pustebesvær' = 'SymptomPustebesvaer',
-                           'S1.4 Uro' = 'SymptomUro',
-                           'S1.5 Interesse for behov' = 'BehandlingBesvarerBehov',
-                           'S1.6 Følelsesmessig støtte' = 'BehandlingBesvarerStoette',
-                           'S1.7 Samarbeid' = 'BehandlingSamarbeid',
-                           'S1.8 Pårørende, høflighet og medfølelse' = 'BehandlingBesvarerHoeflighetRespektMedfoelelse',
-                           'S1.9 Omsorg, sykepleier' = 'SykepleierOmsorg',
-                           'S1.10 Kommunikasjon, sykepleier' = 'SykepleierKommunikasjon',
-                           'S1.11 Omsorg, lege' = 'LegeBehandling',
-                           'S1.12 Atmosfære på avd.' = 'AtmosfaerenIntensivAvd',
-                           'S1.13 Atmosfære, venterom' = 'AtmosfaerenPaaroerenderom',
-                           'S1.14 Omfang av behandling' = 'OmfangetAvBehandlingen',
-                           'S2.1 Legens informasjonsfrekvens' = 'LegeInformasjonFrekvens',
-                           'S2.2 Svarvillighet, personale' = 'SvarPaaSpoersmaal',
-                           'S2.3 Forståelige forklaringer' = 'ForklaringForstaaelse',
-                           'S2.4 Informasjon, ærlighet' = 'InformasjonsAerlighet',
-                           'S2.5 Informasjon' = 'InformasjonOmForloep',
-                           'S2.6 Informasjon, overensstemmelse' = 'InformasjonsOverensstemmelse',
-                           'S2.7 Beslutningsprosess, involvering' = 'BeslutningsInvolvering',
-                           'S2.8 Beslutningsprosess, støtte' = 'BeslutningsStoette',
-                           'S2.9 Beslutningsprosess, innflytelse' = 'BeslutningsKontroll',
-                           'S2.10 Beslutningsprosess, tid' = 'BeslutningsTid',
-                           'S2.11 Livslengde' = 'LivsLengde',
-                           'S2.12 Komfort ved livsslutt, pasient' = 'LivssluttKomfor',
-                           'S2.13 Involvering ved livsslutt' = 'LivssluttStoette',
-                           'Totalskår, omsorg (skjema 1)' = 'SumScoreSatisfactionCare',
-                           'Totalskår, beslutning (skjema 2)' = 'SumScoreSatisfactionDecision',
-                           'Totalskår, alle spørsmål' = 'SumScoreAllQuestions')
-             ),
-             dateRangeInput(inputId = 'datovalgPaarorFord', start = "2015-01-01", end = idag,
-                            label = "Tidsperiode", separator="t.o.m.", language="nb"),
-             dateInput(inputId = 'startDatoIntervensjon', label = 'Startdato, intervensjon', language="nb",
-                       value = '2016-10-01', max = Sys.Date()),
-             selectInput(inputId = 'enhetsUtvalgPaarorFord', label='Egen enhet / hele landet',
-                         choices =  c("Hele landet"=0, "Egen enhet"=2)),
-             h5('(NB: Hvis din avdeling ikke har registreringer, vises hele landet uansett valg)'),
-             selectInput(inputId = "erMannPaarorFord", label="Kjønn, pasient",
-                         choices = c("Begge"=2, "Menn"=1, "Kvinner"=0))
-             #h3('Utvalg vedrørende den pårørende (alder, kjønn, relasjon,...)?')
-           ),
-
-           mainPanel(
-             tabsetPanel(
-               tabPanel(
-                 'Figur',
-                 plotOutput('paarorFord')),
-               tabPanel(
-                 'Tabell',
-                 h3('Her kommer en tabell')
-                 #uiOutput("tittelFord"),
-                 #tableOutput('fordelingTabPaaror')
-               )
-             )
-           )
-  ), #tab Pårørende
+#DENNE SKAL OPPDATERES TIL Å GJELDE NY VERSJON AV SKJEMAET
+  # tabPanel(p("PREM-skjema", title='Enkeltspørsmål fra FS-ICU, samt totalskårer'),
+  #          h2('Resultater fra Pårørendeskjema (FS-ICU)', align = 'center'),
+  #          # fluidRow(column(width = 3, #Første kolonne. Alternativ til sidebarLayout(sidebarPanel())
+  #          sidebarPanel(
+  #            width = 3,
+  #            h4('Her kan man velge hvilken variabel man ønsker å se resultater for og gjøre ulike filtreringer.'),
+  #            selectInput(
+  #              inputId = "valgtVarPaarorFord", label="Velg variabel",
+  #              choices = c('S1.1 Pasient, høflighet og medfølelse' = 'BehandlingHoeflighetRespektMedfoelelse',
+  #                          'S1.2 Smerte' = 'SymptomSmerte',
+  #                          'S1.3 Pustebesvær' = 'SymptomPustebesvaer',
+  #                          'S1.4 Uro' = 'SymptomUro',
+  #                          'S1.5 Interesse for behov' = 'BehandlingBesvarerBehov',
+  #                          'S1.6 Følelsesmessig støtte' = 'BehandlingBesvarerStoette',
+  #                          'S1.7 Samarbeid' = 'BehandlingSamarbeid',
+  #                          'S1.8 Pårørende, høflighet og medfølelse' = 'BehandlingBesvarerHoeflighetRespektMedfoelelse',
+  #                          'S1.9 Omsorg, sykepleier' = 'SykepleierOmsorg',
+  #                          'S1.10 Kommunikasjon, sykepleier' = 'SykepleierKommunikasjon',
+  #                          'S1.11 Omsorg, lege' = 'LegeBehandling',
+  #                          'S1.12 Atmosfære på avd.' = 'AtmosfaerenIntensivAvd',
+  #                          'S1.13 Atmosfære, venterom' = 'AtmosfaerenPaaroerenderom',
+  #                          'S1.14 Omfang av behandling' = 'OmfangetAvBehandlingen',
+  #                          'S2.1 Legens informasjonsfrekvens' = 'LegeInformasjonFrekvens',
+  #                          'S2.2 Svarvillighet, personale' = 'SvarPaaSpoersmaal',
+  #                          'S2.3 Forståelige forklaringer' = 'ForklaringForstaaelse',
+  #                          'S2.4 Informasjon, ærlighet' = 'InformasjonsAerlighet',
+  #                          'S2.5 Informasjon' = 'InformasjonOmForloep',
+  #                          'S2.6 Informasjon, overensstemmelse' = 'InformasjonsOverensstemmelse',
+  #                          'S2.7 Beslutningsprosess, involvering' = 'BeslutningsInvolvering',
+  #                          'S2.8 Beslutningsprosess, støtte' = 'BeslutningsStoette',
+  #                          'S2.9 Beslutningsprosess, innflytelse' = 'BeslutningsKontroll',
+  #                          'S2.10 Beslutningsprosess, tid' = 'BeslutningsTid',
+  #                          'S2.11 Livslengde' = 'LivsLengde',
+  #                          'S2.12 Komfort ved livsslutt, pasient' = 'LivssluttKomfor',
+  #                          'S2.13 Involvering ved livsslutt' = 'LivssluttStoette',
+  #                          'Totalskår, omsorg (skjema 1)' = 'SumScoreSatisfactionCare',
+  #                          'Totalskår, beslutning (skjema 2)' = 'SumScoreSatisfactionDecision',
+  #                          'Totalskår, alle spørsmål' = 'SumScoreAllQuestions')
+  #            ),
+  #            dateRangeInput(inputId = 'datovalgPaarorFord', start = "2015-01-01", end = idag,
+  #                           label = "Tidsperiode", separator="t.o.m.", language="nb"),
+  #            dateInput(inputId = 'startDatoIntervensjon', label = 'Startdato, intervensjon', language="nb",
+  #                      value = '2016-10-01', max = Sys.Date()),
+  #            selectInput(inputId = 'enhetsUtvalgPaarorFord', label='Egen enhet / hele landet',
+  #                        choices =  c("Hele landet"=0, "Egen enhet"=2)),
+  #            h5('(NB: Hvis din avdeling ikke har registreringer, vises hele landet uansett valg)'),
+  #            selectInput(inputId = "erMannPaarorFord", label="Kjønn, pasient",
+  #                        choices = c("Begge"=2, "Menn"=1, "Kvinner"=0))
+  #            #h3('Utvalg vedrørende den pårørende (alder, kjønn, relasjon,...)?')
+  #          ),
+  #
+  #          mainPanel(
+  #            tabsetPanel(
+  #              tabPanel(
+  #                'Figur',
+  #                plotOutput('paarorFord')),
+  #              tabPanel(
+  #                'Tabell',
+  #                h3('Her kommer en tabell')
+  #                #uiOutput("tittelFord"),
+  #                #tableOutput('fordelingTabPaaror')
+  #              )
+  #            )
+  #          )
+  # ), #tab Pårørende
 
 
   #-----------Abonnement--------------------------------
@@ -1377,16 +1378,16 @@ server <- function(input, output, session) { #
       )
 #------------Pårørende-------------------
 
-      if (antPaaror>0){
-      output$paarorFord <- renderPlot(
-        NIRFigPrePostPaaror(RegData=PaarorData, preprosess = 0, valgtVar=input$valgtVarPaarorFord,
-                            startDatoIntervensjon = input$startDatoIntervensjon,
-                            datoFra=input$datovalgPaarorFord[1], datoTil=input$datovalgPaarorFord[2],
-                            reshID = user$org(),
-                            enhetsUtvalg = input$enhetsUtvalgPaarorFord,
-                            erMann=as.numeric(input$erMannPaarorFord,session=session)
-        ), width=800, height = 800 #execOnResize=TRUE,
-      )}
+      # if (antPaaror>0){
+      # output$paarorFord <- renderPlot(
+      #   NIRFigPrePostPaaror(RegData=PaarorData, preprosess = 0, valgtVar=input$valgtVarPaarorFord,
+      #                       startDatoIntervensjon = input$startDatoIntervensjon,
+      #                       datoFra=input$datovalgPaarorFord[1], datoTil=input$datovalgPaarorFord[2],
+      #                       reshID = user$org(),
+      #                       enhetsUtvalg = input$enhetsUtvalgPaarorFord,
+      #                       erMann=as.numeric(input$erMannPaarorFord,session=session)
+      #   ), width=800, height = 800 #execOnResize=TRUE,
+      # )}
 
 #------------------ Abonnement ----------------------------------------------
       orgs <- as.list(sykehusValg[-1])
@@ -1417,25 +1418,6 @@ server <- function(input, output, session) { #
         orgs = orgs,
         user = user
       )
-#Nakke
-     # Modul, abonnement
-     paramNames <- shiny::reactive(c('reshID', 'brukernavn'))
-     paramValues <- shiny::reactive(c(user$org(), user$name()))
-     rapbase::autoReportServer(
-       id = "NakkeAbb",
-       registryName = "nakke",
-       type = "subscription",
-       reports = list(
-         Kvartalsrapp = list(
-           synopsis = "NKR_Nakke/Rapporteket: Resultatrapport, abonnement",
-           fun = "abonnementNakke",
-           paramNames = c('rnwFil', 'reshID', 'brukernavn'),
-           paramValues = c('NakkeMndRapp.Rnw', "user$org()", "user$name()")
-         )
-       ),
-       orgs = as.list(sykehusValg[-1]),
-       user = user
-     )
 
 #-------------Registeradministrasjon -----------------
      observeEvent(user$role(), {

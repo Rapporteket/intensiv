@@ -27,7 +27,7 @@ pdf(file = NULL)
 
   #Covid-skjema:
   qCovid <- paste0('SELECT HovedskjemaGUID, FormStatus, Diagnosis
-                  FROM ReadinessFormDataContract')
+                  FROM readinessformdatacontract')
   CovidData <- rapbase::loadRegData(registryName= "data", query=qCovid, dbType="mysql")
 
 PaarorDataH <- KobleMedHoved(IntData, PaarorData, alleHovedskjema=F, alleSkjema2=F)

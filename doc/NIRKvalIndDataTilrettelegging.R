@@ -19,7 +19,7 @@ rand <- 1
 #Reinnleggelse og Respiratortid
 
 #Laste inn RegData, dvs. data fra intensivregisterets hovedskjema. 
-load('A:/Intensiv/MainFormDataContract2017-11-07.Rdata')
+load('A:/Intensiv/mainformdatacontract2017-11-07.Rdata')
 
 # Riktig format
 RegData$InnDato <- as.POSIXlt(RegData$DateAdmittedIntensive, format="%Y-%m-%d") 

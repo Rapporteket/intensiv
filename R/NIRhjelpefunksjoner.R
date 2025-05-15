@@ -195,7 +195,7 @@ KobleMedHoved <- function(HovedSkjema, Skjema2, alleHovedskjema=F, alleSkjema2=F
 #'
 tellInfluensa <- function(datoFra='2020-09-01', datoTil=Sys.Date(), reshID=0){
   q <- paste0('SELECT *
-  FROM InfluensaFormDataContract
+  FROM influensaformdatacontract
 WHERE cast(DateAdmittedIntensive as date) BETWEEN \'', datoFra, '\' AND \'', datoTil, '\'')
   RegData <- rapbase::loadRegData(registryName= "data", query=q)
 

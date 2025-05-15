@@ -88,7 +88,7 @@ SAPS-II-skår beregnes ut fra:
 ```{r Datasjekk, echo=FALSE, include=FALSE}
 # , results = 'asis'
 #Datasjekk:
-query <- paste0('select * from MainFormDataContract
+query <- paste0('select * from mainformdatacontract
   WHERE cast(DateAdmittedIntensive as date) BETWEEN \'', datoFra='2018-01-01', '\' AND \'', datoTil=datoTil, '\'')
 RegDataAlleVar <- rapbase::loadRegData(registryName= "nir", query=query, dbType="mysql")
 RegDataAndre <-  NIRPreprosess(RegDataAlleVar[RegDataAlleVar$RHF != 'Helse Nord', ])

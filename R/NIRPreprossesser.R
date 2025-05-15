@@ -19,10 +19,10 @@ NIRPreprosess <- function(RegData=RegData, skjema=1)	#, reshID=reshID)
       #Sys.setlocale("LC_TIME", "nb_NO.UTF-8")
       #print(paste('Etter at satt "nb_NO.UTF-8": ', Sys.getlocale()))
 
-  # RegData1 <- rapbase::loadRegData(registryName="nir", query='SELECT * FROM MainFormDataContract', dbType="mysql") #intensiv::NIRRegDataSQL()
-  # RegData2 <- rapbase::loadRegData(registryName="nir", query='SELECT * FROM QuestionaryFormDataContract', dbType="mysql")
-  # RegData3 <- rapbase::loadRegData(registryName="nir", query='SELECT * FROM InfluensaFormDataContract', dbType="mysql")
-  # RegData4 <- rapbase::loadRegData(registryName="nir", query='SELECT * FROM ReadinessFormDataContract', dbType="mysql")
+  # RegData1 <- rapbase::loadRegData(registryName="nir", query='SELECT * FROM mainformdatacontract', dbType="mysql") #intensiv::NIRRegDataSQL()
+  # RegData2 <- rapbase::loadRegData(registryName="nir", query='SELECT * FROM questionaryformdatacontract', dbType="mysql")
+  # RegData3 <- rapbase::loadRegData(registryName="nir", query='SELECT * FROM influensaformdatacontract', dbType="mysql")
+  # RegData4 <- rapbase::loadRegData(registryName="nir", query='SELECT * FROM readinessformdatacontract', dbType="mysql")
 
 
   #Boolske variabler ser ut til å være er endret til 0-1 i ny ekstraktor mars-25

@@ -127,15 +127,15 @@ NIRpaarorDataSQL <- function(datoFra = '2015-12-01', datoTil = Sys.Date(), medH=
   queryH <- paste0('SELECT ',
                    varHoved,
                    varPaaror,
-                   ' FROM QuestionaryFormDataContract Q
-                   INNER JOIN  MainFormDataContract M
+                   ' FROM questionaryformdatacontract Q
+                   INNER JOIN  mainformdatacontract M
                    ON Q.HovedskjemaGUID = M.SkjemaGUID
                    WHERE cast(DateAdmittedIntensive as date) BETWEEN \'', datoFra, '\' AND \'', datoTil, '\'')
   #UPPER(Q.HovedskjemaGUID) = UPPER(M.SkjemaGUID)
   
   queryP <- paste0('SELECT ',
                    varPaaror,
-                   ' FROM QuestionaryFormDataContract Q ')
+                   ' FROM questionaryformdatacontract Q ')
                    #WHERE cast(DateAdmittedIntensive as date) BETWEEN \'', datoFra, '\' AND \'', datoTil, '\'')
   
   query <- switch(as.character(medH),
