@@ -28,8 +28,6 @@ Imports:
     lifecycle,
     lubridate,
     plyr,
-    rapbase,
-    rapFigurer,
     shiny,
     shinyalert,
     xtable,
