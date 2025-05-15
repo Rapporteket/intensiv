@@ -32,6 +32,7 @@ Imports:
     rlang,
     shiny,
     shinyalert,
+    shinyjs,
     xtable,
     zoo
 RoxygenNote: 7.3.2
