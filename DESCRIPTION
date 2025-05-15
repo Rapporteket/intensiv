@@ -27,11 +27,12 @@ Imports:
     knitr,
     lifecycle,
     lubridate,
+    magrittr,
     plyr,
-    rapbase,
-    rapFigurer,
+    rlang,
     shiny,
     shinyalert,
+    shinyjs,
     xtable,
     zoo
 RoxygenNote: 7.3.2
