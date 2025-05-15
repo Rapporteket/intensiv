@@ -29,6 +29,7 @@ Imports:
     lubridate,
     magrittr,
     plyr,
+    rapFigurer,
     rlang,
     shiny,
     shinyalert,
