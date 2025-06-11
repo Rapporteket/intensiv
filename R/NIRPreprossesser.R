@@ -19,9 +19,9 @@ NIRPreprosess <- function(RegData=RegData, skjema=1)	#, reshID=reshID)
       #Sys.setlocale("LC_TIME", "nb_NO.UTF-8")
       #print(paste('Etter at satt "nb_NO.UTF-8": ', Sys.getlocale()))
 
-  # RegData1 <- rapbase::loadRegData(registryName="nir", query='SELECT * FROM mainformdatacontract', dbType="mysql") #intensiv::NIRRegDataSQL()
+  # RegData1 <- rapbase::loadRegData(registryName="nir", query='SELECT * FROM intensivopphold', dbType="mysql") #intensiv::NIRRegDataSQL()
   # RegData2 <- rapbase::loadRegData(registryName="nir", query='SELECT * FROM questionaryformdatacontract', dbType="mysql")
-  # RegData3 <- rapbase::loadRegData(registryName="nir", query='SELECT * FROM influensaformdatacontract', dbType="mysql")
+  # RegData3 <- rapbase::loadRegData(registryName="nir", query='SELECT * FROM influensaregistrering', dbType="mysql")
   # RegData4 <- rapbase::loadRegData(registryName="nir", query='SELECT * FROM readinessformdatacontract', dbType="mysql")
 
 
@@ -33,7 +33,7 @@ NIRPreprosess <- function(RegData=RegData, skjema=1)	#, reshID=reshID)
   #                    "KompHypoglykemi", "KompPneumotoraks", "KompLuftveisproblem",
   #                    "KompDekubitus", "KomIngen", "KompIkkeUtfylt", "Kontinuerlig", "Leverdialyse",
   #                    "No", "Oscillator", "Sofa", "TerapetiskHypotermi"))
-  # 
+  #
   # RegData[, intersect(names(RegData), LogVar)] <-
   #   apply(RegData[, intersect(names(RegData), LogVar)], 2, as.logical)
 
@@ -60,10 +60,10 @@ NIRPreprosess <- function(RegData=RegData, skjema=1)	#, reshID=reshID)
         # LogVar <- c("Eeg", "EcmoEcla", "Hyperbar", "Iabp", "Icp", "Impella", "Intermitterende",
         #                    "Kontinuerlig", "Leverdialyse", "No", "Oscillator", "Sofa", "TerapetiskHypotermi")
         #Fra kodeboka:
-        
-        
-        
-        
+
+
+
+
 
 RegData$SapsSum <- with(RegData, Glasgow+Age+SystolicBloodPressure+HeartRate+Temperature+MvOrCpap+UrineOutput+
               SerumUreaOrBun+Leukocytes+Potassium+Sodium+Hco3+Bilirubin+TypeOfAdmission)
@@ -81,36 +81,36 @@ RegData$SapsSum <- with(RegData, Glasgow+Age+SystolicBloodPressure+HeartRate+Tem
       # names(RegData)[
       #   names(RegData) %in% c('PatientInRegistryGuid', 'PasientGUID')] <- 'PasientID'
 
-     # names(RegData)[which(names(RegData) == 'UnitId')] <- 'ReshId' 
+     # names(RegData)[which(names(RegData) == 'UnitId')] <- 'ReshId'
 
 
       # Riktig format
       if (skjema %in% 1:3){
         RegData$ShType[RegData$ShType ==2 ] <- 1	#Har nå kun type lokal/sentral og regional
       }
-      
+
       #Fjerner mellomrom (før) og etter navn
-      RegData$ShNavn <- trimws(as.character(RegData$ShNavn)) 
+      RegData$ShNavn <- trimws(as.character(RegData$ShNavn))
       #Sjekker om alle resh har egne enhetsnavn
       dta <- unique(RegData[ ,c('ReshId', 'ShNavn')])
       duplResh <- names(table(dta$ReshId)[which(table(dta$ReshId)>1)])
       duplSh <- names(table(dta$ShNavn)[which(table(dta$ShNavn)>1)])
-      
+
       #Tomme sykehusnavn får resh som navn:
       indTom <- which(is.na(RegData$ShNavn)) # | RegData$ShNavn == '')
       RegData$ShNavn[indTom] <- RegData$ReshId[indTom]
-      
+
       if (length(c(duplSh, duplResh)) > 0) {
         ind <- union(which(RegData$ReshId %in% duplResh), which(RegData$ShNavn %in% duplSh))
         RegData$ShNavn[ind] <- paste0(RegData$ShNavn[ind],' (', RegData$ReshId[ind], ')')
       }
-      
+
       #Riktig format på datovariable:
       #	RegData <- RegData[which(RegData$DateAdmittedIntensive!=''),]	#Tar ut registreringer som ikke har innleggelsesdato
       RegData$InnDato <- as.Date(RegData$DateAdmittedIntensive, tz= 'UTC', format="%Y-%m-%d")
-      RegData$Innleggelsestidspunkt <- as.POSIXlt(RegData$DateAdmittedIntensive, tz= 'UTC', format="%Y-%m-%d %H:%M:%S" )
+      RegData$Innleggelsestidspunkt <- as.POSIXlt(RegData$DateAdmittedIntensive, tz= 'UTC', format="%Y-%m-%d %H:%M" ) #:%S
       #RegData$InnDato <- strptime(RegData$DateAdmittedIntensive, format="%Y-%m-%d") # %H:%M:%S" )  #"%d.%m.%Y"	"%Y-%m-%d"
-      RegData$DateDischargedIntensive <- as.POSIXlt(RegData$DateDischargedIntensive, tz= 'UTC', format="%Y-%m-%d %H:%M:%S" )
+      RegData$DateDischargedIntensive <- as.POSIXlt(RegData$DateDischargedIntensive, tz= 'UTC', format="%Y-%m-%d %H:%M" )
 
       # Nye variable:
       RegData$MndNum <- RegData$Innleggelsestidspunkt$mon +1
@@ -129,14 +129,14 @@ RegData$SapsSum <- with(RegData, Glasgow+Age+SystolicBloodPressure+HeartRate+Tem
       #En "overlever": Person som er i live 30 dager etter innleggelse.
       if (skjema %in% c(1,3)){
       RegData$Dod30 <- 0
-      RegData$Dod30[which(difftime(as.Date(RegData$Morsdato, format="%Y-%m-%d %H:%M:%S"),
+      RegData$Dod30[which(difftime(as.Date(RegData$Morsdato, format="%Y-%m-%d"), # %H:%M:%S
                                    as.Date(RegData$InnDato), units='days')< 30)] <- 1
       RegData$Dod90 <- 0
-      RegData$Dod90[which(difftime(as.Date(RegData$Morsdato, format="%Y-%m-%d %H:%M:%S"),
+      RegData$Dod90[which(difftime(as.Date(RegData$Morsdato, format="%Y-%m-%d"), #  %H:%M:%S
                                    as.Date(RegData$InnDato), units='days')< 90)] <- 1
 
       RegData$Dod365 <- 0
-      RegData$Dod365[which(difftime(as.Date(RegData$Morsdato, format="%Y-%m-%d %H:%M:%S"),
+      RegData$Dod365[which(difftime(as.Date(RegData$Morsdato, format="%Y-%m-%d"), # %H:%M:%S
                                    as.Date(RegData$InnDato), units='days')< 365)] <- 1
 
       }

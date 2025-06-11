@@ -139,7 +139,7 @@ figKrymp1 <- 1 #0.95
 #load("A:/Intensiv/ NIRdata10000.Rdata") #RegData
 dato <- '2017-11-07'
 dataKat <- 'A:/Intensiv/'
-fil <- paste0(dataKat,'mainformdatacontract',dato)
+fil <- paste0(dataKat,'intensivopphold',dato)
 load(paste0(fil,".Rdata")) #RegData
 RegDataRaa <- RegData
 

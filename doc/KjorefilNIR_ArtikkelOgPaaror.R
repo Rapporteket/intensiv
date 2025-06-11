@@ -8,7 +8,7 @@
 library(intensiv)
 rm(list=ls())
 load("A:/Intensiv/NIRdataPaaror.RData") #RegDataTEST, 2018-06-05
-# HovedSkjema <- read.table(file='A:/Intensiv/mainformdatacontract2018-10-02.csv', header=T, sep=';',encoding = 'UTF-8')
+# HovedSkjema <- read.table(file='A:/Intensiv/intensivopphold2018-10-02.csv', header=T, sep=';',encoding = 'UTF-8')
 #  HovedSkjema <- RegData
 #  PaarorData <- read.table(file='A:/Intensiv/questionaryformdatacontract2018-10-02.csv', header=T, sep=';',encoding = 'UTF-8')
 # PaarorData$PreskjemaGUID <- toupper(PaarorData$HovedskjemaGUID)

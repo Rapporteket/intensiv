@@ -21,7 +21,7 @@ AarNaa <- as.numeric(format(idag, "%Y"))
 
 #Covid-skjema:
 qCovid <- paste0('SELECT UPPER(HovedskjemaGUID) AS HovedskjemaGUID, FormStatus, Diagnosis
-                FROM readinessformdatacontract')
+                FROM beredskap')
 CovidData <- rapbase::loadRegData(registryName= "data", query=qCovid, dbType="mysql")
 
 CovidData$Bekreftet <- 0
@@ -989,9 +989,7 @@ server <- function(input, output, session) { #
       )
 
       observe({
-        print(user$org())
-        print(input$velgResh)
-            UtDataFord <- NIRFigAndeler(RegData=RegData, preprosess = 0,
+        UtDataFord <- NIRFigAndeler(RegData=RegData, preprosess = 0,
                                         valgtVar=input$valgtVar,
                                         reshID = user$org(),
                                         enhetsUtvalg=as.numeric(input$enhetsUtvalg),

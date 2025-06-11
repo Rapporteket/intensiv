@@ -22,7 +22,8 @@ Sys.setlocale(locale = 'nb_NO.UTF-8')
 source("dev/sysSetenv.R")
 intensiv::kjorIntensivApp(browser = TRUE)
 
-dum <- intensiv::NIRRegDataSQL(datoFra = '2025-01-01')
+dum <- intensiv::NIRRegDataSQL(datoFra = '2024-01-01')
+RegData <- intensiv::NIRPreprosess(RegData = dum)
 rm('RegData')
 
 

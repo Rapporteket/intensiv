@@ -1,4 +1,4 @@
-#' Henter data fra pårørendeskjema registrert for Intensiv og kobler til 
+#' Henter data fra pårørendeskjema registrert for Intensiv og kobler til
 #' noen variabler fra hovedskjema.
 #'
 #' Henter data for Intensivregisterets database
@@ -11,21 +11,21 @@
 #'
 #'
 NIRpaarorDataSQL <- function(datoFra = '2015-12-01', datoTil = Sys.Date(), medH=0) {
-  
-  
+
+
   varHoved <- c("UPPER(M.SkjemaGUID) AS SkjemaGUID
-                , M.DateAdmittedIntensive 
+                , M.DateAdmittedIntensive
                 , M.DaysAdmittedIntensiv
                 , M.Respirator
                 , M.TransferredStatus
-                , M.Saps2Score 
-                , M.Saps2ScoreNumber 
-                , M.TypeOfAdmission 
-                , M.Nems 
+                , M.Saps2Score
+                , M.Saps2ScoreNumber
+                , M.TypeOfAdmission
+                , M.Nems
                 , M.Morsdato
-                , M.PatientTransferredFromHospital 
-                , M.PatientTransferredToHospital 
-                , M.ShNavn 
+                , M.PatientTransferredFromHospital
+                , M.PatientTransferredToHospital
+                , M.ShNavn
                 , M.ShType
                 , M.DateDischargedIntensive,")
   varPaaror <- 'Q.SkjemaGUID
@@ -123,25 +123,25 @@ NIRpaarorDataSQL <- function(datoFra = '2015-12-01', datoTil = Sys.Date(), medH=
   --  , Q.MajorVersion
   --  , Q.MinorVersion
   , Q.PasientGUID AS PasientID'
-  
+
   queryH <- paste0('SELECT ',
                    varHoved,
                    varPaaror,
-                   ' FROM questionaryformdatacontract Q
-                   INNER JOIN  mainformdatacontract M
+                   ' FROM sporreskjema_om_paarorendes_tilfredshet_med_behandlingen Q
+                   INNER JOIN  intensivopphold M
                    ON Q.HovedskjemaGUID = M.SkjemaGUID
                    WHERE cast(DateAdmittedIntensive as date) BETWEEN \'', datoFra, '\' AND \'', datoTil, '\'')
   #UPPER(Q.HovedskjemaGUID) = UPPER(M.SkjemaGUID)
-  
+
   queryP <- paste0('SELECT ',
                    varPaaror,
-                   ' FROM questionaryformdatacontract Q ')
+                   ' FROM sporreskjema_om_paarorendes_tilfredshet_med_behandlingen Q ')
                    #WHERE cast(DateAdmittedIntensive as date) BETWEEN \'', datoFra, '\' AND \'', datoTil, '\'')
-  
+
   query <- switch(as.character(medH),
                   '0' = queryP,
                   '1' = queryH)
-  
+
   RegData <- rapbase::loadRegData(registryName="data", query=query, dbType="mysql")
   return(RegData)
 }

@@ -50,8 +50,8 @@ FinnReinnleggelser <- function(RegData, PasientID='PasientID'){
       indPasFlereOpph <- which(RegDataSort$OpphNr>1) #intersect(which(RegDataSort$AntOpph>1), which(RegDataSort$OpphNr>1))
       RegDataSort$TidUtInn <- NA
       RegDataSort$TidUtInn[indPasFlereOpph] <-
-            difftime(as.POSIXlt(RegDataSort$DateAdmittedIntensive[indPasFlereOpph], tz= 'UTC', format="%Y-%m-%d %H:%M:%S"),
-                     as.POSIXlt(RegDataSort$DateDischargedIntensive[indPasFlereOpph-1], tz= 'UTC', format="%Y-%m-%d %H:%M:%S"),
+            difftime(as.POSIXlt(RegDataSort$DateAdmittedIntensive[indPasFlereOpph], tz= 'UTC', format="%Y-%m-%d %H:%M"), #:%S
+                     as.POSIXlt(RegDataSort$DateDischargedIntensive[indPasFlereOpph-1], tz= 'UTC', format="%Y-%m-%d %H:%M"), #:%S
                      units = 'hour')
       RegDataSort$SmResh <- c(FALSE, RegDataSort$ReshId[2:N] == RegDataSort$ReshId[1:N-1])
       RegDataSort$Reinn <- 2 #Ikke reinnleggelse
@@ -195,7 +195,7 @@ KobleMedHoved <- function(HovedSkjema, Skjema2, alleHovedskjema=F, alleSkjema2=F
 #'
 tellInfluensa <- function(datoFra='2020-09-01', datoTil=Sys.Date(), reshID=0){
   q <- paste0('SELECT *
-  FROM influensaformdatacontract
+  FROM influensaregistrering
 WHERE cast(DateAdmittedIntensive as date) BETWEEN \'', datoFra, '\' AND \'', datoTil, '\'')
   RegData <- rapbase::loadRegData(registryName= "data", query=q)
 

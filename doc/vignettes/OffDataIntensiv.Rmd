@@ -43,7 +43,7 @@ library(intensiv)
 #load("A:/Intensiv/ NIRdata10000.Rdata") #RegData
 dato <- '2017-07-03'
 dataKat <- 'A:/Intensiv/'
-fil <- paste0(dataKat,'mainformdatacontract',dato)
+fil <- paste0(dataKat,'intensivopphold',dato)
 load(paste0(fil,".Rdata")) #RegData
 RegDataRaa <- RegData
 
