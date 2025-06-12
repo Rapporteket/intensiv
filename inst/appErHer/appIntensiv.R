@@ -17,26 +17,37 @@ AarNaa <- as.numeric(format(idag, "%Y"))
 
 #---------Hente data------------
 
+  message("Getting IntData")
   IntData <- NIRRegDataSQL(datoFra = '2011-01-01')
+  message("Done!")
 
 #Covid-skjema:
-qCovid <- paste0('SELECT UPPER(HovedskjemaGUID) AS HovedskjemaGUID, FormStatus, Diagnosis
+  message("Getting covid data")
+  qCovid <- paste0('SELECT UPPER(HovedskjemaGUID) AS HovedskjemaGUID, FormStatus, Diagnosis
                 FROM beredskap')
 CovidData <- rapbase::loadRegData(registryName= "data", query=qCovid, dbType="mysql")
+message("Done!")
 
 CovidData$Bekreftet <- 0
 CovidData$Bekreftet[which(CovidData$Diagnosis %in% 100:103)] <- 1
 
+message("Merge IntData and covid data")
 RegData <- merge(IntData, CovidData[ ,-which(names(CovidData) == 'Diagnosis')], suffixes = c('','Cov'),
                  by.x = 'SkjemaGUID', by.y = 'HovedskjemaGUID', all.x = T, all.y=F)
-
+message("Done!")
+message("Preposess data")
 RegData <- NIRPreprosess(RegData = RegData)
-
+message("Done!")
+message("Get paaror data")
 PaarorData <- NIRpaarorDataSQL()
+message("Merge IntData and paaror data")
 PaarorDataH <- KobleMedHoved(IntData, PaarorData, alleHovedskjema=F, alleSkjema2=F)
+message("Done!")
 antPaaror <- dim(PaarorDataH)[1]
 if (antPaaror>0) {
+  message("Preposess PaarorDataH")
   PaarorData <- NIRPreprosess(RegData = PaarorDataH) #Må først koble på hoveddata for å få ShType++
+  message("Done!")
 }
 
 #-----Definere utvalgsinnhold og evt. parametre som er statiske i appen----------
