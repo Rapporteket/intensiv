@@ -18,7 +18,7 @@ AarNaa <- as.numeric(format(idag, "%Y"))
 #---------Hente data------------
 
   message("Getting IntData")
-  IntData <- NIRRegDataSQL(datoFra = '2011-01-01')
+  IntData <- NIRRegDataSQL(datoFra = '2021-01-01')
   message("Done!")
 
 #Covid-skjema:
@@ -59,10 +59,12 @@ if (antPaaror>0) {
 # sykehusValg <- c(0,sykehusValg)
 # names(sykehusValg) <- c('Ikke valgt',sykehusNavn$x)
 
+message("Defining sykehusValg")
 sykehusNavnResh <- unique(RegData[,c("ShNavn", "ReshId")])
 rekkeflg <- order(sykehusNavnResh$ShNavn)
 sykehusValg <- c(0,sykehusNavnResh$ReshId[rekkeflg])
 names(sykehusValg) <- c('Ikke valgt',sykehusNavnResh$ShNavn[rekkeflg])
+message("Done!")
 
 enhetsUtvalg <- c("Egen mot resten av landet"=1,
                   "Hele landet"=0,
@@ -736,6 +738,7 @@ server <- function(input, output, session) { #
 
   context <- Sys.getenv("R_RAP_INSTANCE") #Blir tom hvis jobber lokalt
   paaServer <- (context %in% c("DEV", "TEST", "QA","QAC", "PRODUCTION", "PRODUCTIONC")) #rapbase::isRapContext()
+  message("Intensivapp server started in context: ", context)
   #if (paaServer) {
 
 
@@ -743,6 +746,7 @@ server <- function(input, output, session) { #
     UnitId = unique(RegData$ReshId),
     orgname = RegData$ShNavn[match(unique(RegData$ReshId),
                                    RegData$ReshId)])
+  message("Map avdeling created with ", nrow(map_avdeling), " rows.")
   #user inneholder både reshID: user$org() og  rolle: user$role()
   # "name", "fullName", "phone", "email", "group", "unit", "org", "role", "orgName"
   user <- rapbase::navbarWidgetServer2(
@@ -754,6 +758,7 @@ server <- function(input, output, session) { #
 
 
   observeEvent(user$role(), {
+    message("User role changed to: ", user$role())
     if (user$role() == 'SC') {
       shinyjs::show(id = 'velgResh')
       shinyjs::show(id = 'velgReshOverf')
