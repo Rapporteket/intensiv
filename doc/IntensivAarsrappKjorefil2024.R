@@ -1,5 +1,6 @@
 #  FIGURER OG TABELLER TIL ÅRSRAPPORT, Norsk Intensivregister
 
+
 # Sys.setenv(R_RAP_INSTANCE="QAC")
 # Sys.setenv(R_RAP_CONFIG_PATH="/home/rstudio/nger/data-raw/config")
 # Sys.setenv(MYSQL_DB_LOG="db_log")
@@ -92,13 +93,22 @@ NIRFigGjsnGrVar(RegData=RegData1aar, preprosess = 0, valgtVar='respiratortidNonI
 
 
 # ------------------------- FIGURER som skiller på enhetsNIVÅ----------------------------------
-nivaa <- 1:6
-nivaaKort <- c('1a', '1b', '2b', '3', '3b', '3c')
-nivaaTxt <- c('Overvåk', 'Postop', 'Gen <50','Gen >50', 'Spesial',  'Barn')
+#Endringsønske 12.juni 2025:
+#slå sammen spesialiserte enheter (3b) og <50 kategori 3 senger (2b) -> < 50 % kategori 3-senger (2b)
+# 1. Overvakingseiningar
+# 2. Postoperative einingar
+# 3. Generelle intensiveiningar med < 50 % kategori 3-senger.
+# 4. Generelle intensiveiningar med ≥ 50 % kategori 3-senger
+# 5. Barneintensiv
+
+
+nivaa <- 1:5
+nivaaKort <- c('1a', '1b', '2b', '3', '3c')  #c('1a', '1b', '2b', '3', '3b', '3c')
+nivaaTxt <- c('Overvåk', 'Postop', 'Gen <50','Gen >50', 'Barn')
 
 #------------Fordelingsfigurer
 variabler <- c('komplikasjoner', 'frailtyIndex')
-for (nivaa in 1:6) {
+for (nivaa in 1:5) {
   for (valgtVar in variabler) {
     outfile <- paste0(valgtVar, '_',nivaaKort[nivaa], 'Ford.pdf')
     NIRFigAndeler(RegData=RegData1aar, preprosess = 0, valgtVar=valgtVar,
@@ -113,7 +123,7 @@ variabler <- c('dod30d', 'frailtyIndex', 'komplReg',
                'OrganDonationCompletedCirc', 'OrganDonationCompletedStatus',
                'potDonor', 'regForsinkelse', 'reinn', 'trakeostomi')
 
-for (nivaa in 1:6) {
+for (nivaa in 1:5) {
       for (valgtVar in variabler) {
             outfile <-  paste0(valgtVar, '_',nivaaKort[nivaa], 'PrSh.pdf')
             NIRFigAndelerGrVar(RegData=RegData1aar, preprosess = 0, valgtVar=valgtVar,
@@ -125,7 +135,7 @@ for (nivaa in 1:6) {
 
 variabler <- c('alder', 'NEMS24', 'Nas24',
               'respiratortidInvMoverf',  'respiratortidNonInv', 'SAPSII')
-for (nivaa in 1:6) {
+for (nivaa in 1:5) {
       for (valgtVar in variabler){ #
             outfile <-  paste0(valgtVar, '_',nivaaKort[nivaa], '_MedPrSh.pdf')
             NIRFigGjsnGrVar(RegData=RegData1aar, preprosess = 0, valgtVar=valgtVar, valgtMaal='Med',
@@ -162,7 +172,7 @@ for (nivaa in c(2,4)) {
 
 variabler <- c('alder', 'NEMS24', 'Nas24',
                'respiratortidInvMoverf',  'respiratortidNonInv', 'SAPSII')
-for (nivaa in 1:6) {
+for (nivaa in 1:5) {
   for (valgtVar in variabler){
     outfile <-  paste0(valgtVar, '_',nivaaKort[nivaa], '_MedTid.pdf')
     NIRFigGjsnTid(RegData=RegData, preprosess = 0, valgtVar=valgtVar, valgtMaal='Med',
@@ -449,14 +459,6 @@ sort(table(tab$ShNavn))
 #Har to Sykehusnavn: 4210053 dvs. Bodø mangler sykehusnavn
 tab <- unique(NIRData[indFlereResh, c("ShNavn", "ReshId")])
 tab[order(tab$ShNavn),  c("ShNavn", "ReshId")]
-
-'respiratortidInvUoverf'
-# RegData <- NIRData
-# ind <- which(RegData$InvasivVentilation>0) %i%
-#   which(RegData$InnDato>=as.Date('2015-01-01', tz='UTC')) %i% which(RegData$Overf ==1)
-# RegData <- RegData[ind,]
-#
-# table(RegData[RegData$ShNavn %in% c('Mosjøen', 'Haraldplass') ,c('Aar', 'ShNavn')])
 
 
 nyResh <- setdiff(unique(NIRData$ReshId), names(nyID))
