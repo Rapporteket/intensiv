@@ -18,7 +18,10 @@ kjorIntensivApp <- function(browser = FALSE, logAsJson = FALSE) {
     rapbase::loggerSetup()
   }
 
-  app <- shiny::runApp(system.file('appErHer/appIntensiv.R', package = 'intensiv'))
+  app <- shiny::runApp(
+    system.file('appErHer/appIntensiv.R', package = 'intensiv'),
+    launch.browser = browser
+  )
 
   return(app)
 }

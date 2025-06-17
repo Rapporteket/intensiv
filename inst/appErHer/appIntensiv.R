@@ -18,7 +18,7 @@ AarNaa <- as.numeric(format(idag, "%Y"))
 #---------Hente data------------
 
   message("Getting IntData")
-  IntData <- NIRRegDataSQL(datoFra = '2021-01-01')
+  IntData <- NIRRegDataSQL(datoFra = '2011-01-01')
   message("Done!")
 
 #Covid-skjema:
