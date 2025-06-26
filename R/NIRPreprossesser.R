@@ -25,18 +25,6 @@ NIRPreprosess <- function(RegData=RegData, skjema=1)	#, reshID=reshID)
   # RegData4 <- rapbase::loadRegData(registryName="nir", query='SELECT * FROM readinessformdatacontract', dbType="mysql")
 
 
-  #Boolske variabler ser ut til å være er endret til 0-1 i ny ekstraktor mars-25
-  # LogVarSjekk <- names(RegData)[unique(which(RegData[1,] %in% c('True','False')),
-  #                                      which(RegData[dim(RegData)[1]-15,] %in% c('True','False')))]
-  # LogVar <- unique(c(LogVarSjekk,
-  #                    "Eeg", "EcmoEcla", "Hyperbar", "Iabp", "Icp", "Impella", "Intermitterende",
-  #                    "KompHypoglykemi", "KompPneumotoraks", "KompLuftveisproblem",
-  #                    "KompDekubitus", "KomIngen", "KompIkkeUtfylt", "Kontinuerlig", "Leverdialyse",
-  #                    "No", "Oscillator", "Sofa", "TerapetiskHypotermi"))
-  #
-  # RegData[, intersect(names(RegData), LogVar)] <-
-  #   apply(RegData[, intersect(names(RegData), LogVar)], 2, as.logical)
-
       #Kun ferdigstilte registreringer:
       # Fra des. 2018 får Intensiv også kladd over fra  fra MRS/NHN. 1.april 2021 - alle er fortsatt ferdigstilte...")
   if (skjema %in% 1:2){
@@ -49,8 +37,6 @@ NIRPreprosess <- function(RegData=RegData, skjema=1)	#, reshID=reshID)
       RegData$erMann[RegData$PatientGender == 0] <- NA
       RegData$erMann[RegData$PatientGender == 2] <- 0
 
-      #Riktig navn på regions-variabel:
-      #	RegData$Region <- RegData$RHF
 
       # Endre variabelnavn:
       #For enkelhetsskyld kalles Saps2Score som er Estimert mortalitet for SMR
@@ -82,10 +68,6 @@ RegData$SapsSum <- with(RegData, Glasgow+Age+SystolicBloodPressure+HeartRate+Tem
       names(RegData)[which(names(RegData) == 'Respirator')] <- 'respiratortid'
       names(RegData)[which(names(RegData) == 'TransferredStatus')] <- 'Overf'
       names(RegData)[which(names(RegData) == 'TypeOfAdmission')] <- 'InnMaate'
-      # names(RegData)[
-      #   names(RegData) %in% c('PatientInRegistryGuid', 'PasientGUID')] <- 'PasientID'
-
-     # names(RegData)[which(names(RegData) == 'UnitId')] <- 'ReshId'
 
 
       # Riktig format
@@ -95,8 +77,8 @@ RegData$SapsSum <- with(RegData, Glasgow+Age+SystolicBloodPressure+HeartRate+Tem
       }
 
       #Fjerner mellomrom (før) og etter navn
-      message("NIRPreprosess: Fjerner mellomrom i sykehusnavn")
       RegData$ShNavn <- trimws(as.character(RegData$ShNavn))
+
       #Sjekker om alle resh har egne enhetsnavn
       message("NIRPreprosess: Sjekker om alle resh har egne enhetsnavn")
       dta <- unique(RegData[ ,c('ReshId', 'ShNavn')])

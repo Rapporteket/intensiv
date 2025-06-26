@@ -22,6 +22,33 @@ Sys.setlocale(locale = 'nb_NO.UTF-8')
 source("dev/sysSetenv.R")
 intensiv::kjorIntensivApp(browser = TRUE)
 
+
+
+TilgJsn <- Sys.getenv("MRS_ACCESS_HIERARCHY_URL")
+Tilgangstre <- jsonlite::fromJSON(TilgJsn)$AccessUnits
+grep('(1)', Tilgangstre$Title)
+strsplit(Tilgangstre$Title, aplit= ' (' )
+varTilg <- c("UnitId", "ParentUnitId", "HasDatabase", "ExternalId", "Title", "TitleWithPath","ExtraData")
+
+RegDataRaa <- NIRRegDataSQL()
+
+# reshTilg <- sort(Tilgangstre$UnitId[Tilgangstre$HasDatabase==TRUE])
+# reshAlle <- sort(unique(RegDataRaa$ReshId))
+# resh <- intersect(reshTilg, reshAlle) # 100082 100085 100170 - fjernes/flyttes? 114
+
+RegData <- merge(RegDataRaa, Tilgangstre[ ,varTilg],
+                 by.x = 'ReshId', by.y = 'UnitId', suffixes = c('Int','Tilg'))
+RegData <- dplyr::rename(RegData,
+              Nivaa = ExtraData,
+              ReshIdReg = ReshId,
+              ReshId = ExternalId,
+              ShNavnReg = ShNavn,
+              ShNavn = Title) #newname = oldname
+RegData <- NIRPreprosess(RegData = RegData)
+#700720?
+# Tromsø Intensiv (3) (700720)	0	0	238	15	456	709
+# Tromsø Kir. int. (3) (700720)	459	446	218	0	2	1125
+
 dum <- intensiv::NIRRegDataSQL(datoFra = '2024-01-01')
 RegData <- intensiv::NIRPreprosess(RegData = dum)
 rm('RegData')
