@@ -22,6 +22,13 @@ Sys.setlocale(locale = 'nb_NO.UTF-8')
 source("dev/sysSetenv.R")
 intensiv::kjorIntensivApp(browser = TRUE)
 
+TilgJsn <- Sys.getenv("MRS_ACCESS_HIERARCHY_URL")
+Tilgangstre <- jsonlite::fromJSON(test)$AccessUnits
+
+setdiff(sort(Tilgangstre$UnitId), sort(Tilgangstre$ExternalId))
+
+
+
 dum <- intensiv::NIRRegDataSQL(datoFra = '2024-01-01')
 RegData <- intensiv::NIRPreprosess(RegData = dum)
 rm('RegData')

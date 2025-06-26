@@ -2,15 +2,9 @@ Package: intensiv
 Type: Package
 Title: Resultatrapporter for Intensivregisteret
 Version: 3.0.0
-<<<<<<< HEAD
-Date: 2025-02-07
-Author: Authors@R: c(person("Olsen", "Lena", email =
-    "Lena.Ringstad.Olsen@unn.no", role = c("cre", "aut"))
-=======
 Date: 2025-04-23
 Author: Authors@R: c(person("Olsen", "Lena", email =
     "Lena.Ringstad.Olsen@unn.no", role = c("cre", "aut")))
->>>>>>> eec561e5978e5645c37a776012ab37ded1356da0
 Maintainer: Lena Ringstad Olsen <lena.olsen@skde.no>
 Description: Pakke for (automatisk) generering av resultater (figurer og
     samledokument) fra Norsk Intensivregister. 
@@ -20,11 +14,7 @@ LazyData: false
 Depends:
     R (>= 4.1.0)
 Remotes: 
-<<<<<<< HEAD
-      Rapporteket/rapbase@*main,
-=======
       Rapporteket/rapbase@main,
->>>>>>> eec561e5978e5645c37a776012ab37ded1356da0
       Rapporteket/rapFigurer
       Rapporteket/intensivberedskap
 Imports:
@@ -34,30 +24,15 @@ Imports:
     intensivberedskap,
     kableExtra,
     knitr,
-<<<<<<< HEAD
-=======
     lifecycle,
     lubridate,
->>>>>>> eec561e5978e5645c37a776012ab37ded1356da0
     magrittr,
     plyr,
     rapFigurer,
-<<<<<<< HEAD
-    readxl,
-    rmarkdown,
-=======
->>>>>>> eec561e5978e5645c37a776012ab37ded1356da0
     rlang,
     shiny,
     shinyalert,
     shinyjs,
-<<<<<<< HEAD
-    stats,
-    testthat,
-    tidyverse,
-    tools,
-=======
->>>>>>> eec561e5978e5645c37a776012ab37ded1356da0
     xtable,
     zoo
 RoxygenNote: 7.3.2
