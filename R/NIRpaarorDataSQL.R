@@ -1,4 +1,4 @@
-#' Henter data fra pårørendeskjema registrert for Intensiv og kobler til 
+#' Henter data fra pårørendeskjema registrert for Intensiv og kobler til
 #' noen variabler fra hovedskjema.
 #'
 #' Henter data for Intensivregisterets database
@@ -11,21 +11,21 @@
 #'
 #'
 NIRpaarorDataSQL <- function(datoFra = '2015-12-01', datoTil = Sys.Date(), medH=0) {
-  
-  
+
+
   varHoved <- c("UPPER(M.SkjemaGUID) AS SkjemaGUID
-                , M.DateAdmittedIntensive 
+                , M.DateAdmittedIntensive
                 , M.DaysAdmittedIntensiv
                 , M.Respirator
                 , M.TransferredStatus
-                , M.Saps2Score 
-                , M.Saps2ScoreNumber 
-                , M.TypeOfAdmission 
-                , M.Nems 
+                , M.Saps2Score
+                , M.Saps2ScoreNumber
+                , M.TypeOfAdmission
+                , M.Nems
                 , M.Morsdato
-                , M.PatientTransferredFromHospital 
-                , M.PatientTransferredToHospital 
-                , M.ShNavn 
+                , M.PatientTransferredFromHospital
+                , M.PatientTransferredToHospital
+                , M.ShNavn
                 , M.ShType
                 , M.DateDischargedIntensive,")
   varPaaror <- 'Q.SkjemaGUID
@@ -99,22 +99,22 @@ NIRpaarorDataSQL <- function(datoFra = '2015-12-01', datoTil = Sys.Date(), medH=
   --     , Q.Forslag
   --       , Q.Kommentar
   --       , Q.Personalet
-  , Q.ReshId
+  -- , Q.ReshId
   , UPPER(Q.HovedskjemaGUID) AS HovedskjemaGUID
   , Q.FormTypeId
-  , Q.UnitId
+  , Q.UnitId AS ReshId
   , Q.RHF
   , Q.HF
-  , Q.Sykehus
-  , Q.Helseenhet
-  , Q.HelseenhetKortNavn
-  , Q.HelseenhetID
-  --      , Q.LastUpdate
-  --      , Q.FormStatus
+  -- , Q.Sykehus
+  -- , Q.Helseenhet
+  , Q.HealthUnitShortName
+  -- , Q.HelseenhetID
+  --  , Q.LastUpdate
+  --   , Q.FormStatus
   , Q.PatientAge
   , Q.PatientGender
   --      , Q.MunicipalNumber
-  --       , Q.CurrentMunicipalNumber
+  --      , Q.CurrentMunicipalNumber
   --  , Q.Municipal
   --  , Q.PostalCode
   --  , Q.DistrictCode
@@ -122,26 +122,26 @@ NIRpaarorDataSQL <- function(datoFra = '2015-12-01', datoTil = Sys.Date(), medH=
   --  , Q.FormDate
   --  , Q.MajorVersion
   --  , Q.MinorVersion
-  , Q.PatientInRegistryGuid'
-  
+  , Q.PasientGUID AS PasientID'
+
   queryH <- paste0('SELECT ',
                    varHoved,
                    varPaaror,
-                   ' FROM QuestionaryFormDataContract Q
-                   INNER JOIN  MainFormDataContract M
+                   ' FROM sporreskjema_om_paarorendes_tilfredshet_med_behandlingen Q
+                   INNER JOIN  intensivopphold M
                    ON Q.HovedskjemaGUID = M.SkjemaGUID
                    WHERE cast(DateAdmittedIntensive as date) BETWEEN \'', datoFra, '\' AND \'', datoTil, '\'')
   #UPPER(Q.HovedskjemaGUID) = UPPER(M.SkjemaGUID)
-  
+
   queryP <- paste0('SELECT ',
                    varPaaror,
-                   ' FROM QuestionaryFormDataContract Q ')
+                   ' FROM sporreskjema_om_paarorendes_tilfredshet_med_behandlingen Q ')
                    #WHERE cast(DateAdmittedIntensive as date) BETWEEN \'', datoFra, '\' AND \'', datoTil, '\'')
-  
+
   query <- switch(as.character(medH),
                   '0' = queryP,
                   '1' = queryH)
-  
-  RegData <- rapbase::loadRegData(registryName="nir", query=query, dbType="mysql")
+
+  RegData <- rapbase::loadRegData(registryName="data", query=query, dbType="mysql")
   return(RegData)
 }

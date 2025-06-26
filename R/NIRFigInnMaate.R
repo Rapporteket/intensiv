@@ -23,9 +23,9 @@ NIRFigInnMaate <- function(RegData, valgtVar='InnMaate', datoFra='2010-01-01', d
                             grType=99, grVar='ShNavn', InnMaate=99, dodInt='', erMann='', hentData=0,
                             preprosess=1, outfile='', ...)
 {
-  if ("session" %in% names(list(...))) {
-    rapbase::repLogger(session = list(...)[["session"]], msg = paste0("FigInnMaate: ", valgtVar))
-  }
+  # if ("session" %in% names(list(...))) {
+  #   rapbase::repLogger(session = list(...)[["session"]], msg = paste0("FigInnMaate: ", valgtVar))
+  # }
       if (hentData == 1) {
             RegData <- NIRRegDataSQL(datoFra, datoTil)
       }
@@ -39,7 +39,7 @@ NIRFigInnMaate <- function(RegData, valgtVar='InnMaate', datoFra='2010-01-01', d
   RegData <- RegData[which(RegData$InnMaate %in% c(0,6,8)), ]
       #0:Planlagt operasjon, 6:Akutt nonoperativ, 8:Akutt operasjon
     #Rekoder variablene 0->1, 6->2, 8->3
-  RegData$Variabel <- factor(RegData$InnMaate, levels = c(0,6,8)) 
+  RegData$Variabel <- factor(RegData$InnMaate, levels = c(0,6,8))
 	tittel <-'Type opphold'
       grtxt <- c('Planlagt operasjon','Akutt non-operativ', 'Akutt operasjon') #InnMaate - 0-El, 6-Ak.m, 8-Ak.k, standard: alle (alt unntatt 0,6,8)
       subtxt <- 'Type opphold'

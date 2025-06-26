@@ -2,23 +2,18 @@
 % Please edit documentation in R/NIRhjelpefunksjoner.R
 \name{FinnReinnleggelser}
 \alias{FinnReinnleggelser}
-\title{Fil med div hjelpefunksjoner.Group of functions Description section}
+\title{Finne reinnleggelser}
 \usage{
 FinnReinnleggelser(RegData, PasientID = "PasientID")
 }
 \arguments{
-\item{RegData}{data}
+\item{RegData}{dataramme}
 
-\item{PasientID}{Variabelen som angir pasientidentifikasjon}
+\item{PasientID}{pasientid}
 }
 \value{
-Div hjelpefunksjoner
+Dataramme med reinnleggelser
 }
 \description{
-Detaljer. kommer senereGroup of functions Details paragraph.
-}
-\details{
-Fil som inneholder hjelpefunksjoner.
-FinnReinnleggelser beregner reinnleggelser fra DateAdmittedIntensive og DateDischargedIntensive
-SorterOgNavngiTidsEnhet Legger til tidsenhetene Aar, Halvaar, Mnd og Kvartal
+Finne reinnleggelser
 }

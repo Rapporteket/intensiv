@@ -12,7 +12,7 @@
 NIRRegDataSQL <- function(datoFra = '2019-01-01', datoTil = '2099-01-01') { #,session='') {
 
 
-  #	DischargedHospitalStatus,
+  registryName <- 'data' #"nir"
 
   query <- paste0('SELECT
   Age,
@@ -38,7 +38,7 @@ NIRRegDataSQL <- function(datoFra = '2019-01-01', datoTil = '2099-01-01') { #,se
       Glasgow,
       Hco3,
       HeartRate,
-      HelseenhetKortnavn,
+      HealthUnitShortName,
       HF,
       Hyperbar,
       Iabp,
@@ -77,8 +77,8 @@ NIRRegDataSQL <- function(datoFra = '2019-01-01', datoTil = '2099-01-01') { #,se
       OrganDonationCompletedReasonForNoStatus,
       OrganDonationCompletedStatus,
       Oscillator,
-      -- PasientGUID,
-      PatientInRegistryGuid,
+      PasientGUID AS PasientID,
+      -- PatientInRegistryGuid,
       -- PatientInRegistryGUID,
       -- PatientAge,
       PatientGender,
@@ -93,7 +93,7 @@ NIRRegDataSQL <- function(datoFra = '2019-01-01', datoTil = '2099-01-01') { #,se
       Potassium,
       PrimaryReasonAdmitted,
       -- ReAdmitted,
-      ReshId,
+      -- ReshId,
       Respirator,
       RHF,
       Saps2Score,
@@ -102,7 +102,7 @@ NIRRegDataSQL <- function(datoFra = '2019-01-01', datoTil = '2099-01-01') { #,se
       SerumUreaOrBun,
       ShNavn,
       ShType,
-      SkjemaGUID,
+      UPPER(SkjemaGUID) AS SkjemaGUID,
       Sodium,
       Sofa,
       SystolicBloodPressure,
@@ -111,21 +111,29 @@ NIRRegDataSQL <- function(datoFra = '2019-01-01', datoTil = '2099-01-01') { #,se
       Trakeostomi,
       TransferredStatus,
       TypeOfAdmission,
-      UnitId,
+      UnitId AS ReshId,
       UrineOutput,
       VasoactiveInfusion
 FROM
-	MainFormDataContract
+	intensivopphold
 WHERE cast(DateAdmittedIntensive as date) BETWEEN \'', datoFra, '\' AND \'', datoTil, '\'')
   #WHERE cast(DateAdmittedIntensive as date) >= \'', datoFra, '\' AND DateAdmittedIntensive <= \'', datoTil, '\'')
 
-   # query <- paste0('select * from MainFormDataContract
+   # query <- paste0('select * from intensivopphold
    # WHERE cast(DateAdmittedIntensive as date) BETWEEN \'', '2020-01-01', '\' AND \'', Sys.Date(), '\'')
 
-  RegData <- rapbase::loadRegData(registryName= "nir", query=query, dbType="mysql")
+  RegData <- rapbase::loadRegData(registryName = registryName, query=query, dbType="mysql")
 
-  #rapbase::repLogger(session = session, 'Hentet alle data fra intensivregisteret')
-
+  LogVar <- c("Kontinuerlig", "Intermitterende",  "Peritonealdialyse", "SpecialMeasures",
+              "TerapetiskHypotermi",  "EcmoEcla",  "Iabp",  "Impella",   "Icp",   "Oscillator",
+              "No",  "Leverdialyse", "Hyperbar", "Eeg",  "Ingen", "FrailtyIndexForklaring", 
+              "KompHypoglykemi",  "KompPneumotoraks",   "KompLuftveisproblem",  "KompDekubitus",    
+              "KomIngen",    "KompIkkeUtfylt",   "PIM_SuppliedO2",    "Sofa",    
+              "ValidationIgnoreDaysAdmittedIntensivOver14",    "ValidationIgnoreRespiratorOver7")
+  endreVar <- intersect(names(RegData), LogVar)
+  RegData[, endreVar] <- apply(RegData[, endreVar], 2, as.numeric)
+  RegData[, endreVar] <- apply(RegData[, endreVar], 2, as.logical)
+  
 
 
     return(RegData)

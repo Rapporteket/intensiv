@@ -47,8 +47,8 @@
 rm(list=ls())
 TestData <- read.table(file='A:/Intensiv/SpSkjemaTestData2018-04-16TestAvTotSkaar.csv', header=T, sep=';',encoding = 'UTF-8')
 RegData <- TestData
-PaarorData <- read.table(file='A:/Intensiv/QuestionaryFormDataContract2017-09-18.csv', header=T, sep=';',encoding = 'UTF-8')
-load('A:/Intensiv/MainFormDataContract2017-09-18.Rdata') #read.table(file='C:/Registre/NIR/data/Main2017-03-20.csv', header=T, sep=';',encoding = 'UTF-8')
+PaarorData <- read.table(file='A:/Intensiv/questionaryformdatacontract2017-09-18.csv', header=T, sep=';',encoding = 'UTF-8')
+load('A:/Intensiv/intensivopphold2017-09-18.Rdata') #read.table(file='C:/Registre/NIR/data/Main2017-03-20.csv', header=T, sep=';',encoding = 'UTF-8')
 #PaarorData$PreskjemaGUID <- toupper(PaarorData$HovedskjemaGUID)
 hovedVar <- c('SkjemaGUID','DateAdmittedIntensive', 'DaysAdmittedIntensiv','Respirator','TransferredStatus', 
               'Saps2Score','Saps2ScoreNumber', 'TypeOfAdmission', 'Nems', 'Morsdato', 

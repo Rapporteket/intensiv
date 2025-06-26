@@ -21,7 +21,7 @@ setwd('/home/rstudio/intensiv/aarsrappOff/CovidPas')
 IntData <- NIRRegDataSQL(datoFra=datoFra, datoTil=datoTil)
 #Covid-skjema:
 qCovid <- paste0('SELECT SkjemaGUID, HovedskjemaGUID, FormStatus, Diagnosis
-                  FROM ReadinessFormDataContract')
+                  FROM readinessformdatacontract')
 CovidData <- rapbase::loadRegData(registryName= "nir", query=qCovid, dbType="mysql")
 
 CovidData$HovedskjemaGUID <- toupper(CovidData$HovedskjemaGUID)

@@ -5,7 +5,7 @@
 #Det har til dags dato (6.april 2022) ikke vært gjort noen "fork" av repositoriet.
 #Alle 6 kloninger som ble gjort 4.april, ble gjort av meg, under bruker olonkin og lenaringstado.
 
-query <- paste0('select * from 			EQ5DFormDataContract
+query <- paste0('select * from 			eq5dformdatacontract
 WHERE cast(DateAdmittedIntensive as date) BETWEEN \'', '2023-01-01', '\' AND \'', '2023-01-01', '\'')
 
 EQ5D <- rapbase::loadRegData(registryName= "nir", query=query, dbType="mysql")
@@ -13,16 +13,29 @@ sort(names(EQ5D))
 
 #---- ReshId vs UnitId
 library(intensiv)
-Data <- NIRPreprosess(NIRRegDataSQL())
-ShResh <- unique(Data[order(Data$ShNavn), c("ShNavn", "ReshId")])
-ShUnit <- unique(Data[order(Data$ShNavn), c("ShNavn", "UnitId")])
-sum(as.numeric(ShResh$ReshId))
-sum(as.numeric(ShUnit$UnitId))
-DataRaa <- NIRRegDataSQL()
-sum(as.numeric(DataRaa$UnitId))
-sum(as.numeric(DataRaa$ReshId))
+RegData <- NIRPreprosess(NIRRegDataSQL())
+RegData <- NIRRegDataSQL(datoFra='2010-01-01')
+AlleData <- rapbase::loadRegData(registryName = 'data', query= 'select * from intensivopphold', dbType="mysql")
+sort(names(AlleData))
+#ReshId og UnitId inneholder akkurat det samme.
+ShResh <- unique(AlleData[order(AlleData$ShNavn), c("ShNavn",'Helseenhet', "ReshId", "UnitId")])
+write.csv2(ShResh, file = 'EnhetsnavnOgResh.csv', row.names = F, fileEncoding = 'latin1')
+ShReshUnit <- unique(RegData[, c("ShNavn", "UnitId", 'ReshId')])
+ShReshUnit <- ShReshUnit[order(ShReshUnit$ShNavn),]
+ReshUnitSh <- ShReshUnit[order(ShReshUnit$ReshId),]
+write.csv2(ReshUnitSh, file = 'ReshUnitSh.csv', row.names = F)
 
+RegData$ShNavn <- trimws(as.character(RegData$ShNavn)) #Fjerner mellomrom (før) og etter navn
+ShResh <- unique(RegData[, c("ShNavn", 'ReshId')])
+ShResh <- ShResh[order(ShResh$ReshId),]
 
+#109779 Ullevål Nevroint
+datoFra <- '2024-01-01'
+datoTil <- '2024-12-31'
+reshID <- 109779
+RegData <- NIRPreprosess(RegData)
+FraUllev <- tabOverforinger(RegData, datoFra=datoFra, datoTil=datoTil,
+                            reshID=109779, velgAvd=0, enhetsUtvalg=2, overfFraSh=1)
 #-----Teste pårørendedata---SkjemaGUID#-----Teste pårørendedata-----
 library(intensiv)
 IntData <- NIRRegDataSQL(datoFra = '2022-01-01') 
@@ -181,7 +194,7 @@ aggregate(x=RegData$ReshId, by=aggVar, FUN=length)
 
 
 #load(paste0("A:/Intensiv/NIRdata10000.Rdata")) #RegDataTEST, 21.mai 2018
-load(paste0("A:/Intensiv/MainFormDataContract2019-01-30.Rdata")) #RegData 2018-06-18
+load(paste0("A:/Intensiv/intensivopphold2019-01-30.Rdata")) #RegData 2018-06-18
 #knit('NIRmndRapp.Rnw', encoding = 'UTF-8')
 #tools::texi2pdf(file='NIRmndRapp.tex')
 knit2pdf('NIRmndRapp.Rnw') #, encoding = 'UTF-8')
@@ -203,9 +216,9 @@ knit('OffDataIntensiv.Rnw')
 texi2pdf(file='OffDataIntensiv.tex')
 
 dato <- '2019-11-05' #2019-01-30
-InfluDataAlle <- read.table(paste0('A:/Intensiv/InfluensaFormDataContract', dato, '.csv'), sep=';',
+InfluDataAlle <- read.table(paste0('A:/Intensiv/influensaregistrering', dato, '.csv'), sep=';',
                             stringsAsFactors=FALSE, header=T, encoding = 'UTF-8')
-variableTilTab <- c('ShNavn', 'RHF', 'PatientInRegistryGuid', 'FormDate','FormStatus', 'ICD10_1') #'DateAdmittedIntensive',
+variableTilTab <- c('ShNavn', 'RHF', 'PasientGUID', 'FormDate','FormStatus', 'ICD10_1') 
 InfluData <- InfluDataAlle[ ,variableTilTab]
 # knit('NIRinfluensaUtenICD10.Rnw', encoding = 'UTF-8')
 # tools::texi2pdf(file='NIRinfluensaUtenICD10.tex')
@@ -219,8 +232,8 @@ InfluData <- InfluDataAlle[ ,variableTilTab]
 #-------------------------------------LASTE DATA-----------------------------------------------
 rm(list=ls())
 
-dato <- '2022-11-14' #'2018-12-14' #MainFormDataContract2018-06-19
-fil <- paste0('c:/Registerdata/nipar/MainFormDataContract',dato)
+dato <- '2022-11-14' #'2018-12-14' #intensivopphold2018-06-19
+fil <- paste0('c:/Registerdata/nipar/intensivopphold',dato)
 NIRdata <- read.table(file=paste0(fil,'.csv'), header=T, stringsAsFactors=FALSE, sep=';',encoding = 'UTF-8')
 RegData <- intensiv::NIRPreprosess(NIRdata)
 load(paste0(fil,".Rdata")) #RegData 2019-01-07
@@ -255,7 +268,7 @@ varBort <- c('PostalCode', 'HF Sykehus', 'Helseenhet', 'HelseenhetKortnavn', 'La
 HovedData <- read.table(file=paste0(fil,'.csv'), header=T, stringsAsFactors=FALSE, sep=';',encoding = 'UTF-8')
 RegData <- lageTulleData(RegData=HovedData, varBort=varBort, antSh=26, antObs=20000)
 #Pårørendedata
-filPaaror <- paste0(dataKat,'QuestionaryFormDataContract',dato,'.csv')
+filPaaror <- paste0(dataKat,'questionaryformdatacontract',dato,'.csv')
 PaarorData <- read.table(file=filPaaror, header=T, stringsAsFactors=FALSE, sep=';',encoding = 'UTF-8')
 
 KobleMedHoved <- function(HovedSkjema, Skjema2, alleHovedskjema=F, alleSkjema2=F) {
@@ -385,7 +398,7 @@ NIRFigInnMaate (RegData=RegData, valgtVar='InnMaate', minald=0, maxald=130, dato
 
 
 #--------------------------------------- Fordelinger ----------------------------------
-valgtVar <- 'inklKrit'	#'alder', 'liggetid', 'respiratortid',  'SAPSII', 'NEMS24', 'Nas24', 'InnMaate'
+valgtVar <- 'spesTiltak'	#'alder', 'liggetid', 'respiratortid',  'SAPSII', 'NEMS24', 'Nas24', 'InnMaate'
                               #Nye: PrimaryReasonAdmitted, inklKrit, respiratortidNonInv, respiratortidInv
                               #nyreBeh, nyreBehTid, ExtendedHemodynamicMonitoring, isolering, isoleringDogn,
                               #spesTiltak
@@ -397,9 +410,7 @@ Utdata <- NIRFigAndeler(RegData=RegData, preprosess = 0, valgtVar='inklKrit', #d
               outfile='', reshID=109773, enhetsUtvalg=0, lagFig=1)
 
 outfile <- '' #paste0(valgtVar,'_Ford', '.png')
-NIRFigAndeler(RegData=RegData, valgtVar=valgtVar, minald=minald, maxald=maxald,  datoFra=datoFra,
-                         datoTil=datoTil, InnMaate=InnMaate, dodInt=dodInt,erMann=erMann, outfile=outfile,
-                         hentData=0, preprosess=1, reshID=reshID, enhetsUtvalg=0, lagFig=1)
+NIRFigAndeler(RegData=RegData, valgtVar=valgtVar, preprosess=0)
 
 
 variable <- c('alder', 'liggetid', 'respiratortid',  'SAPSII', 'NEMS24', 'Nas24', 'InnMaate')
@@ -709,11 +720,11 @@ NIRInfluDataSQL <- function(datoFra = '2019-09-25', datoTil = Sys.Date()) {
                   *
                   # ShNavn,
                   # RHF,
-                  # PatientInRegistryGuid,
+                  # PasientGUID,
                   # FormDate,
                   # ICD10_1,
                   # FormStatus
-            FROM InfluensaFormDataContract
+            FROM influensaregistrering
             WHERE cast(FormDate as date) BETWEEN \'', datoFra, '\' AND \'', datoTil, '\'')
   #WHERE cast(DateAdmittedIntensive as date) >= \'', datoFra, '\' AND DateAdmittedIntensive <= \'', datoTil, '\'')
 
@@ -802,7 +813,7 @@ aarFra <- 2019
 aarTil <- 2021
 datoFra <- paste0(aarFra, '-01-01')
 datoTil <- paste0(aarTil, '-12-31')
-RegDataLandet <- read.table(paste0('C:/Registerdata/nipar/MainFormDataContract2022-11-14.csv'), sep=';',
+RegDataLandet <- read.table(paste0('C:/Registerdata/nipar/intensivopphold2022-11-14.csv'), sep=';',
                                              stringsAsFactors=FALSE, header=T, encoding = 'UTF-8')
 RegDataLandet <- NIRPreprosess(RegData=RegDataLandet)
 RegDataVest <- RegDataLandet[RegDataLandet$RHF == 'Helse Vest', ]

@@ -21,6 +21,7 @@ NIRFigGjsnGrVar(
   erMann = "",
   grVar = "ShNavn",
   medKI = 1,
+  overfPas = 99,
   velgDiag = 0,
   lagFig = 1,
   outfile = "",
@@ -88,6 +89,10 @@ alle: standard (alle andre verdier)}
 \item{erMann}{Kjønn, standard: alt annet enn 0/1 gir begge kjønn
 0: Kvinner
 1: Menn}
+
+\item{overfPas}{Overført under pågående intensivbehandling?
+1 = Pasienten er ikke overført
+2 = Pasienten er overført}
 
 \item{velgDiag}{Velge diagnose. 0-alle, 1-Bekreftede Covid-pasienter, 2-alle unntatt Covid-pasienter}
 

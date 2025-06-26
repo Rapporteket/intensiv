@@ -19,9 +19,9 @@ NIRFigPrePost  <- function(RegData, valgtVar, datoFra='2011-01-01', datoTil=Sys.
 		reshID, enhetsUtvalg=1, preprosess=1, hentData=0,...)
 {
 
-  if ("session" %in% names(list(...))) {
-    rapbase::repLogger(session = list(...)[["session"]], msg = paste0("NIRFigPrePost: ", valgtVar))
-  }
+  # if ("session" %in% names(list(...))) {
+  #   rapbase::repLogger(session = list(...)[["session"]], msg = paste0("NIRFigPrePost: ", valgtVar))
+  # }
 
   if (hentData == 1) {
     RegData <- NIRRegDataSQL(datoFra, datoTil)

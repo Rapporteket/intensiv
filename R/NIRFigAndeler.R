@@ -68,11 +68,8 @@ NIRFigAndeler  <- function(RegData=0, valgtVar='alder', datoFra='2011-01-01', da
                            overfPas=0, minald=0, maxald=110, erMann='',InnMaate='', dodInt='', velgDiag=0, outfile='',
                            grType=99,  preprosess=1, hentData=0, reshID=0, velgAvd=0, enhetsUtvalg=0, lagFig=1, ...) { #, session='')	{
 
-   if ("session" %in% names(list(...))) {
-     rapbase::repLogger(session = list(...)[["session"]], msg = paste0('Fordelingsfigur: ',valgtVar))
-   }
-   # if ("velgAvd" %in% names(list(...))) {
-   #    reshID <- velgAvd
+   # if ("session" %in% names(list(...))) {
+   #   rapbase::repLogger(session = list(...)[["session"]], msg = paste0('Fordelingsfigur: ',valgtVar))
    # }
    if (hentData == 1) {
             RegData <- NIRRegDataSQL(datoFra, datoTil) #minald=0, maxald=110, erMann='',InnMaate='', dodInt=''

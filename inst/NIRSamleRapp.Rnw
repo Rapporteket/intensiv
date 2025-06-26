@@ -35,9 +35,6 @@
 \definecolor{OffBlaa3}{rgb}{0.26, 0.57, 0.78}	%66/255, 146/255, 198/255}
 \definecolor{OffBlaa4}{rgb}{ 0.13 0.44 0.71}	%33/255, 113/255, 181/255}
 \definecolor{OffBlaa5}{rgb}{0.03 0.27 0.58}		%8/255,  69/255, 148/255}
-%\definecolor{SKDE}{rgb}{0,0.32,0.61}
-%\definecolor{moerkgraa}{rgb}{0.25,0.25,0.25}
-%\color{moerkgraa}
 
 \usepackage[pdftex, colorlinks, linkcolor=OffBlaa3, urlcolor=OffBlaa3]{hyperref}
 
@@ -66,13 +63,11 @@
 \begin{document}
 
 <<setup, include=FALSE, cache=FALSE>>=
-# this is equivalent to \SweaveOpts{...}
 knitr::opts_chunk$set(warnings=FALSE,echo=FALSE)
 knitr::opts_chunk$set()	#Settes også i rapbase
 knitr::opts_knit$set(root.dir = './')	#Settes også i rapbase
 knitr::opts_chunk$set(fig.align='center', fig.show='hold', out.width='.8\\textwidth', cache=FALSE)
 options(replace.assign=TRUE, width=90) #, warnings=FALSE, echo=FALSE, fig.align='center', fig.show='hold', out.width='.8\\textwidth', cache=FALSE)
-#system.file("logoNIR.jpg", package = "intensiv")
 @
 
 \begin{titlepage}
@@ -83,9 +78,6 @@ options(replace.assign=TRUE, width=90) #, warnings=FALSE, echo=FALSE, fig.align=
 { \huge \bfseries Samlerapport for data rapportert til Norsk Intensivregister (NIR)}\\[0.4cm] % Title of your document
 \HRule \\[1.5cm]
  
-%	AUTHOR SECTION
-%\author{NIR og SKDE}
-%\Large \emph{Author:}\\
 \Large Utarbeidet av: \\
 \huge{NIR og SKDE}\\[3cm] % Your name
 
@@ -96,10 +88,6 @@ options(replace.assign=TRUE, width=90) #, warnings=FALSE, echo=FALSE, fig.align=
 
 % LOGO, Include a department/university logo - this will require the graphicx package
  \includegraphics[height=2cm]{\Sexpr{system.file(file='logoNIR.jpg', package='intensiv')}}
- %\\[1cm]
-% \includegraphics[height=2cm]{../logoNIR.jpg}\\[1cm] 
-% \includepdf[fitpaper]{\Sexpr{system.file(file='ForsideV1logo.pdf', package='norgast')}}
-% \vfill % Fill the rest of the page with whitespace
 \end{titlepage}
 
 
@@ -112,7 +100,6 @@ options(replace.assign=TRUE, width=90) #, warnings=FALSE, echo=FALSE, fig.align=
 
 
 
-%\section{Informasjonsgrunnlag og ansvarsforhold}
 \section*{Informasjonsgrunnlag og ansvarsforhold}
 
 Denne rapporten er fremstilt automatisk på grunnlag av en mal laget av
@@ -170,8 +157,6 @@ ShTypeEgenTxt <- ShTypeTxt[ShTypeEgen]
 
 <<'Variabeldef og datautvalg',echo=FALSE, eval=T>>=
 
-#NIRutvalg <- NIRUtvalgEnh(RegData=NIRdata, datoFra=datoFra, datoTil=datoTil, fargepalett='BlaaRapp')
-#NIRdata <- NIRutvalg$RegData
 #Legger på riktig beregning av reinnleggelse (variabelen Reinn)
 NIRdata <- FinnReinnleggelser(RegData=NIRdata)
 #Tar ut registreringer som ikke har kjønn #og ugyldig ShType
@@ -179,12 +164,10 @@ indMed <- which(NIRdata$erMann %in% 0:1) #%i% which(NIRdata$ShType %in% 1:3)
 NIRdata <- NIRdata[indMed, ]	
 NIRdata$Aar <- as.factor(NIRdata$Innleggelsestidspunkt$year+1900)
 N <- dim(NIRdata)[1]
-#names(NIRdata)[which(names(NIRdata) == 'PasientId')] <- 'PID'
 LiggeGr <- c(-0.001, 1, 7, 14, 1000)	#<24t, 1-7døgn, 7-14døgn, >14døgn
 NIRdata$LiggetidGr <-  cut(NIRdata$liggetid, breaks=LiggeGr, include.lowest=FALSE, right=FALSE,
 			levels=c('0', '<24t', '1-7døgn', '7-14døgn', '>14døgn'))
 
-#NIRdata$ShNavn <- as.factor(NIRdata$ShNavn)	#Hvis dette legges på, får vi ikke valgt ut bare sykehustypens sykehus
 NIRdata <- NIRdata[which(NIRdata$InnMaate %in% c(0,6,8)), ] 
 NIRdata$InnMaate <- factor(NIRdata$InnMaate, levels = c(0,6,8))
 
@@ -198,7 +181,6 @@ NIRdataResten <- NIRdata[setdiff(1:N,ind$Eget), ]
 NIRdataRestShType <- NIRdata[setdiff(ind$EgenShType,ind$Eget), ]
 Neget <- dim(NIRdataEget)[1]
 tabKjPstEget <- round(table(NIRdataEget$erMann)/Neget*100, digits=1)
-#ShTypeEgen <- as.character(NIRdata[which(NIRdata$ReshId == reshID),'ShTypeTxt'])[1]
 
 @
 
@@ -316,23 +298,7 @@ Liggetiden vil dermed inkludere tid pasienten måtte være utenfor intensiv (rø
 osv.). Liggetiden blir registrert i døgn med en desimal, dvs. timer/24.
 
 <<'TabLiggetid', results='asis', echo=FALSE>>=
-#1,2,3 = lokal, regional, sentral
-#tabLiggEget <- table(NIRdataEget$LiggetidGr)
-#tabLiggLokSentr <- table(NIRdata[which(NIRdata$ShType==1), 'LiggetidGr'])
-#tabLiggReg <- table(NIRdata[which(NIRdata$ShType==3), 'LiggetidGr'])
-#tabLiggAlle <- table(NIRdata$LiggetidGr)
 
-# tabLiggetidShType <- round(100*rbind(
-# #	'Egen enhet' = tabLiggEget/sum(tabLiggEget),	
-# 	'Lokal-/sentralenheter' = tabLiggLokSentr/sum(tabLiggLokSentr),		
-# 	'Regionalenheter' = tabLiggReg/sum(tabLiggReg),		
-# 	'Hele landet' = tabLiggAlle/sum(tabLiggAlle)
-# 		),1)
-# colnames(tabLiggetidShType) <- c('<24t', '1-7døgn', '7-14døgn', '>14døgn')
-# xtable(tabLiggetidShType, digits=1, align=c('l', rep('r', ncol(tabLiggetidShType))), 
-# 		caption='Prosentvis fordeling av liggetid.',
-# 		label='tab:LiggetidShType')
-	
 liggetidDIV <- cbind('Egen enhet'= summary(NIRdataEget$liggetid)[1:6],
 			'Andre, egen sykehustype'= summary(NIRdataRestShType$liggetid)[1:6])
 rownames(liggetidDIV) <- c('Minimum:', '25% av pasientene ligger under:', 'Median:','Gjennsomsnitt:',
@@ -567,8 +533,6 @@ xtable(tabRespShType, digits=c(0,1,1,1,0), align=c('l', 'r','r','r','c'),
 		caption='Antall døgn med respirasjonsstøtte for ulike sykehuskategorier.',
 		label='tab:Resp')
 
-#dum <- Fordeling(RegData=NIRdata, valgtVar='respiratortid', grType=ShTypeEgen, 
-#	datoFra=datoFra, datoTil=datoTil, preprosess=0, hentData=0, outfile='FigResptidFord.pdf') 
 dum <- NIRFigAndeler(RegData=NIRdata, valgtVar='respiratortid', preprosess=0, hentData=0, datoFra=datoFra, 
 	datoTil=datoTil, enhetsUtvalg=3, reshID=reshID, outfile='FigResptidFord.pdf')
 dum <- NIRFigGjsnGrVar(RegData=NIRdata, valgtVar='respiratortid', valgtMaal='Gjsn', preprosess=0, hentData=0,  
@@ -628,8 +592,6 @@ xtable(tabSAPSShType, digits=c(0,1,1,0,0), align=c('l','r','r','c','c'),
 		caption='SAPS-skåre for ulike sykehuskategorier.',
 		label='tab:SAPSII')
 
-#dum <- Fordeling(RegData=NIRdata, valgtVar='SAPSII', grType=ShTypeEgen, datoFra=datoFra, datoTil=datoTil, 
-#		preprosess=0, hentData=0, outfile='FigSAPSford.pdf') 
 dum <- NIRFigAndeler(RegData=NIRdata, valgtVar='SAPSII', preprosess=0, hentData=0, datoFra=datoFra, 
 	datoTil=datoTil, enhetsUtvalg=3, reshID=reshID, outfile='FigSAPSford.pdf')
 dum <- NIRFigGjsnGrVar(RegData=NIRdata, valgtVar='SAPSII', valgtMaal='Med', preprosess=0, hentData=0,  

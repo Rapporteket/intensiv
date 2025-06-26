@@ -1,0 +1,64 @@
+x-environment: &environment
+  MYSQL_DB_LOG: db_log
+  NORDICSCIR_DB: db_data
+  MYSQL_DB_AUTOREPORT: db_autoreport
+  MYSQL_DB_DATA: intensivregisterreportdatastaging
+  MYSQL_HOST: db
+  MYSQL_USER: root
+  MYSQL_PASSWORD: root
+  FALK_APP_ID: 106
+  USERORGID: "pilot"
+  SHINYPROXY_USERNAME: test@tester.no
+  SHINYPROXY_USERGROUPS: "pilot"
+  FALK_USER_EMAIL: kevin.thon@gmail.com
+
+
+services:
+
+  db:
+    image: mysql:8
+    restart: "no"
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+    volumes:
+      - ./dev/db:/docker-entrypoint-initdb.d
+      - /d/db:/var/lib/mysql
+    entrypoint:
+      sh -c "
+        /usr/local/bin/docker-entrypoint.sh  --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+      "
+    ports:
+      - 3307:3307
+      # - 3306:3306
+  dev:
+    depends_on:
+      - db
+    image: rapporteket/pilot-dev:main
+    volumes:
+      - ~/.gitconfig:/home/rstudio/.gitconfig
+      - .:/home/rstudio/intensiv
+      - /c/ResultattjenesteGIT:/home/rstudio
+      - ../rapbase/.:/home/rstudio/rapbase
+      - /c/Users/Lena Ringstad Olsen/.ssh:/home/rstudio/speiler_.ssh
+      - /d/mydata:/home/rstudio/mydata
+    ports:
+      - "8787:8787"
+    restart: "no"
+    environment:
+      << : *environment
+      DISABLE_AUTH: "true"
+      R_RAP_CONFIG_PATH: /home/rstudio/intensiv/data-raw/config
+      FALK_EXTENDED_USER_RIGHTS: "[{\\\"A\\\":106,\\\"R\\\":\\\"SC\\\",\\\"U\\\":110734},{\\\"A\\\":106,\\\"R\\\":\\\"LU\\\",\\\"U\\\":110734},{\\\"A\\\":106,\\\"R\\\":\\\"LU\\\",\\\"U\\\":108172},{\\\"A\\\":106,\\\"R\\\":\\\"LU\\\",\\\"U\\\":103575}]"
+      R_RAP_INSTANCE: "QAC"
+
+  adminer:
+    depends_on:
+      - db
+    image: adminer
+    restart: "no"
+    environment:
+      ADMINER_PLUGINS: frames
+    ports:
+      - 8888:8080
