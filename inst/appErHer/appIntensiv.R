@@ -18,7 +18,19 @@ AarNaa <- as.numeric(format(idag, "%Y"))
 #---------Hente data------------
 
   message("Getting IntData")
-  IntData <- NIRRegDataSQL(datoFra = '2011-01-01')
+  IntDataRaa <- NIRRegDataSQL(datoFra = '2011-01-01')
+
+  TilgJsn <- Sys.getenv("MRS_ACCESS_HIERARCHY_URL")
+  Tilgangstre <- jsonlite::fromJSON(TilgJsn)$AccessUnits
+  varTilg <- c("UnitId", "ParentUnitId", "HasDatabase", "ExternalId", "Title", "TitleWithPath","ExtraData")
+  IntData <- merge(IntDataRaa, Tilgangstre[ ,varTilg],
+                   by.x = 'ReshId', by.y = 'UnitId', suffixes = c('Int','Tilg'))
+  IntData <- dplyr::rename(IntData,
+                           Nivaa = ExtraData,
+                           ReshIdReg = ReshId,
+                           ReshId = ExternalId,
+                           ShNavnReg = ShNavn,
+                           ShNavn = Title) #newname = oldname
   message("Done!")
 
 #Covid-skjema:
@@ -1473,7 +1485,7 @@ server <- function(input, output, session) { #
 
          #----------- Eksport ----------------
          ## brukerkontroller
-         rapbase::exportUCServer("intensivExport", registryName = "nir",
+         rapbase::exportUCServer2("intensivExport", registryName = "nir",
                                  repoName = "intensiv",
                                  eligible = vis_rapp
          )
