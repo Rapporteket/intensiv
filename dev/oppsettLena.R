@@ -24,8 +24,13 @@ intensiv::kjorIntensivApp(browser = TRUE)
 
 TilgJsn <- Sys.getenv("MRS_ACCESS_HIERARCHY_URL")
 Tilgangstre <- jsonlite::fromJSON(test)$AccessUnits
+varTilg <- c("UnitId", "ParentUnitId", "HasDatabase", "ExternalId", "Title", "TitleWithPath","ExtraData")
 
-setdiff(sort(Tilgangstre$UnitId), sort(Tilgangstre$ExternalId))
+RegDataRaa <- NIRRegDataSQL()
+RegData <- merge(RegDataRaa, Tilgangstre[ ,varTilg],
+                 by.x = 'ReshId', by.y = 'UnitId', suffixes = c('Int','Tilg'))
+RegData$ExtraData <- RegData$NivaaTxt
+
 
 
 
