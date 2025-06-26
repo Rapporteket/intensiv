@@ -31,7 +31,7 @@ RegDataRaa <- NIRPreprosess(NIRRegDataSQL(datoFra=datoFra, datoTil=datoTil))
 RegDataRaa$ReshId[RegDataRaa$ReshId == 100132] <- 102026
 
 #Tabell med navn og nivåer
-EnhNivaa <- read.csv2(file = 'C:/Users/lro2402unn/RegistreGIT/intensiv/data/AlleReshShNavnKategori.csv',
+EnhNivaa <- read.csv2(file = 'C:/Users/lro2402unn/RegistreGIT/intensiv/data/AlleReshShNavnNivaa.csv',
                       encoding = 'latin1') #, sep = ';', row.names = FALSE)
 #unique(EnhNivaa[,c('Nivaa', 'NivaaTxt')])
 #ekstraResh <- setdiff( sort(unique(EnhNivaa$ReshId)), sort(unique(RegDataRaa$ReshId)))
@@ -52,7 +52,7 @@ setwd('../Aarsrapp/Intensiv')
 variabler <- c('OrganDonationCompletedReasonForNoStatus',
                'CerebralCirculationAbolishedReasonForNo',
                'frailtyIndex', 'inklKrit','liggetid','InnMaate',
-              'NEMS24', 'Nas24', 'regForsinkelse', 'respiratortidNonInv',
+              'NEMS24', 'NAS24', 'regForsinkelse', 'respiratortidNonInv',
               'SAPSII', 'nyreBeh', 'nyreBehTid','spesTiltak')
 
 for (valgtVar in variabler) {
@@ -60,7 +60,7 @@ for (valgtVar in variabler) {
    NIRFigAndeler(RegData=RegData1aar, preprosess = 0, valgtVar=valgtVar,
                  outfile=outfile)
 }
-
+#NIRFigAndeler(RegData=RegData1aar, preprosess = 0, valgtVar='NAS24')
 
 #------------ Andelsh
 NIRFigAndelerGrVar(RegData=RegData1aar, preprosess = 0, valgtVar='OrganDonationCompletedCirc',
@@ -94,7 +94,8 @@ NIRFigGjsnGrVar(RegData=RegData1aar, preprosess = 0, valgtVar='respiratortidNonI
 
 # ------------------------- FIGURER som skiller på enhetsNIVÅ----------------------------------
 #Endringsønske 12.juni 2025:
-#slå sammen spesialiserte enheter (3b) og <50 kategori 3 senger (2b) -> < 50 % kategori 3-senger (2b)
+#slå sammen spesialiserte enheter (3b) og <50 % kategori 3 senger (2b) -> < 50 % kategori 3-senger (2b)
+# Dvs. 3b -> 2b, nivå 6->5
 # 1. Overvakingseiningar
 # 2. Postoperative einingar
 # 3. Generelle intensiveiningar med < 50 % kategori 3-senger.
@@ -106,6 +107,8 @@ nivaa <- 1:5
 nivaaKort <- c('1a', '1b', '2b', '3', '3c')  #c('1a', '1b', '2b', '3', '3b', '3c')
 nivaaTxt <- c('Overvåk', 'Postop', 'Gen <50','Gen >50', 'Barn')
 
+test <- NIRUtvalgEnh(RegData1aar, nivaa = 4)$RegData
+
 #------------Fordelingsfigurer
 variabler <- c('komplikasjoner', 'frailtyIndex')
 for (nivaa in 1:5) {
@@ -116,6 +119,15 @@ for (nivaa in 1:5) {
   }
 }
 
+
+variabler <- c('nyreBehTid','nyreBeh')
+for (nivaa in 3:4){
+  for (valgtVar in variabler) {
+  outfile <- paste0(valgtVar, '_',nivaaKort[nivaa], 'Ford.pdf')
+  NIRFigAndeler(RegData=RegData1aar, preprosess = 0, valgtVar=valgtVar,
+                Ngrense=10, nivaa=nivaa, outfile=outfile)
+}}
+
 #-------------- AndelGrVar
 # #Organdonorer av døde: OrganDonationCompletedStatus
 # #Organdonorer, av alle med opphevet intrakran. sirk.': 'OrganDonationCompletedCirc',
@@ -123,6 +135,7 @@ variabler <- c('dod30d', 'frailtyIndex', 'komplReg',
                'OrganDonationCompletedCirc', 'OrganDonationCompletedStatus',
                'potDonor', 'regForsinkelse', 'reinn', 'trakeostomi')
 
+variabler <- 'CerebralCirculationAbolished'
 for (nivaa in 1:5) {
       for (valgtVar in variabler) {
             outfile <-  paste0(valgtVar, '_',nivaaKort[nivaa], 'PrSh.pdf')
@@ -131,10 +144,20 @@ for (nivaa in 1:5) {
       }
 }
 
+variabler <- c('nyreBehTid','nyreBeh')
+for (nivaa in 3:4){
+  for (valgtVar in variabler) {
+    outfile <-  paste0(valgtVar, '_',nivaaKort[nivaa], 'PrSh.pdf')
+    NIRFigAndelerGrVar(RegData=RegData1aar, preprosess = 0, valgtVar=valgtVar,
+                       Ngrense=10, nivaa=nivaa, outfile=outfile)
+  }
+}
+
 #------------ SENTRALMÅL per enhet
 
-variabler <- c('alder', 'NEMS24', 'Nas24',
+variabler <- c('alder', 'NEMS24', # 'NAS24',
               'respiratortidInvMoverf',  'respiratortidNonInv', 'SAPSII')
+variabler <- 'liggetid'
 for (nivaa in 1:5) {
       for (valgtVar in variabler){ #
             outfile <-  paste0(valgtVar, '_',nivaaKort[nivaa], '_MedPrSh.pdf')
@@ -143,6 +166,13 @@ for (nivaa in 1:5) {
       }
 }
 
+for (nivaa in 2:5) {
+    outfile <-  paste0('NAS24_',nivaaKort[nivaa], '_MedPrSh.pdf')
+    NIRFigGjsnGrVar(RegData=RegData1aar, preprosess = 0, valgtVar='NAS24', valgtMaal='Med',
+                    nivaa=nivaa, outfile=outfile)
+}
+
+
 #Nye, 2024
 #   •	‘EcmoEcla’ – andel TRUE per enhet. En figur for hver av kategoriene Gen.int >50, postop
 # •	‘EcmoEclaDager’ [EcmoEcla=TRUE] – median per enhet. En figur for hver av kategoriene Gen.int >50, postop
@@ -150,7 +180,7 @@ for (nivaa in 1:5) {
 # •	‘Impella’– andel TRUE per enhet. En figur for hver av kategoriene Gen.int.<50 og Gen.int >50.
 
 
-for (nivaa in c(2,4)) {
+for (nivaa in c(2,3)) {
     (outfile <-  paste0('EcmoEclaDager', '_',nivaaKort[nivaa], '_MedPrSh.pdf'))
     NIRFigGjsnGrVar(RegData=RegData1aar, preprosess = 0, valgtVar='EcmoEclaDager', valgtMaal='Med',
                     nivaa=nivaa, outfile=outfile)
@@ -170,7 +200,7 @@ for (nivaa in c(2,4)) {
 
 #tidstrender på alder, liggetid, invasiv respiratortid, og saps fordelt på kategoriene
 
-variabler <- c('alder', 'NEMS24', 'Nas24',
+variabler <- c('alder', 'NEMS24', 'NAS24',
                'respiratortidInvMoverf',  'respiratortidNonInv', 'SAPSII')
 for (nivaa in 1:5) {
   for (valgtVar in variabler){
@@ -181,23 +211,16 @@ for (nivaa in 1:5) {
 }
 
 
-#--------------Tilleggsbestilling, 2023, overordnede grupper (enhetskategorier) ------------------
+#--------------Overordnede nivå som enhetskategorier ------------------
 # Jeg har lagt til en ‘label’ på hver enhet, som her har fått navnet ‘Niva’. Med verdi 1-3.
 # Ønsket er at du kjører følgende figurer ut fra disse «kategoriene», altså nivåinndelingene.
 # 1a, 1b, 2a, 2b, 3
 
-
-# - Median Invasiv ventilasjonsbehandling
-# - Median non-invasiv ventilasjonsbehandling
-# - Median liggetid
-# - Median SAPS
-# - Median NEMS
-
 #RegData$ShNavn <- GruppeDef$niva[match(RegData$ReshId, GruppeDef$resh_id)]
-
+#Endrer til Nivå:
 RegData1aar$ShNavn <- RegData1aar$NivaaTxt
 
-# 1.runde: Skill på overførte og ikke overførte.
+# Skill på overførte og ikke overførte.
 variabler <- c( 'liggetid','NEMS','respiratortidInv','respiratortidNonInv','SAPSII',  'SMR')
 for (valgtVar in variabler){ #
   for (overf in 1:2) {
@@ -209,24 +232,29 @@ for (valgtVar in variabler){ #
 }
 
 
-# 2. runde:
 
 variabler <- c('dod30d', 'frailtyIndex', 'komplReg', #'komplikasjoner',
                'OrganDonationCompletedCirc', 'OrganDonationCompletedStatus',
-               'potDonor', 'regForsinkelse', 'reinn', 'trakeostomi')
+               'potDonor', 'regForsinkelse', 'reinn', 'trakeostomi',
+               'nyreBeh' )
+variabler <- 'OrganDonationCompletedCirc'
   for (valgtVar in variabler) {
     outfile <- paste0(valgtVar, '_PrNivaa.pdf')
     NIRFigAndelerGrVar(RegData=RegData1aar, preprosess = 0, valgtVar=valgtVar,
                        Ngrense=10, outfile=outfile)
   }
 
-variabler <- c('alder', 'frailtyIndex', 'NEMS24', 'Nas24',
+variabler <- c('alder', 'frailtyIndex', 'NEMS24', 'NAS24',
                'respiratortidInvMoverf',  'respiratortidNonInv', 'SAPSII')
+variabler <- 'liggetid'
+
   for (valgtVar in variabler){ # variabler <- 'frailtyIndex'
     outfile <- paste0(valgtVar, '_MedPrNivaa.pdf')
     NIRFigGjsnGrVar(RegData=RegData1aar, preprosess = 0, valgtVar=valgtVar, valgtMaal='Med',
                     outfile=outfile)
   }
+
+
 
 #KvalInd:
 NIRFigGjsnGrVar(RegData=RegData1aar, preprosess = 0, valgtVar='SMR'
@@ -263,7 +291,7 @@ AndelMenn <- rbind(AndelMenn,
                    'Alle år' = 100*c(prop.table(table(RegData[ , c("erMann",'ShType')]),2)[2,],
                                      prop.table(table(RegData[ , "erMann"]))[2])
 )
-colnames(AndelMenn)[7] <- 'Hele landet'
+colnames(AndelMenn)[6] <- 'Hele landet'
 xtable::xtable(AndelMenn, digits=1, align=c('l', rep('r', ncol(AndelMenn))),
        caption='Del (prosent) av intensivopphald som er menn.', label='tab:KjonnAar')
 
@@ -307,45 +335,45 @@ RegData$Ut1708 <- 0
 RegData$Ut1708[ind1708]<-1
 
 tabNokkeltall <- rbind(
-  'Antall opphold' = tapply(RegData$PasientID, RegData$EnhNivaa, FUN=length),
-  'Antall pasienter' = tapply(RegData$PasientID, RegData$EnhNivaa,
+  'Antal opphald' = tapply(RegData$PasientID, RegData$EnhNivaa, FUN=length),
+  'Antal pasientar' = tapply(RegData$PasientID, RegData$EnhNivaa,
                               FUN=function(x) length(unique(x))),
   'Alder (median)' = tapply(RegData$Alder, RegData$EnhNivaa, FUN=median, na.rm=T),
-  'Pasienter >80 år' = tapply(RegData$Alder > 80, RegData$EnhNivaa,
+  'Pasientar >80 år' = tapply(RegData$Alder > 80, RegData$EnhNivaa,
                             FUN=function(x) round(sum(x, na.rm=T)/length(x)*100, 1)),
-  'Liggedøgn (median)' = tapply(RegData$liggetid[indLigget], RegData$EnhNivaa[indLigget], FUN=median, na.rm=T),
+  'Liggedøger (median)' = tapply(RegData$liggetid[indLigget], RegData$EnhNivaa[indLigget], FUN=median, na.rm=T),
   'Mekanisk ventilasjonsstøtte (%)' = tapply(RegData$respiratortid>0, RegData$EnhNivaa,
                                                FUN=function(x) round(sum(x, na.rm=T)/length(x)*100,1)),
 
-  'Respiratordøgn, samlet (median)' = tapply(RegData$respiratortid[indRespt], RegData$EnhNivaa[indRespt],
+  'Respiratordøger, samla (median)' = tapply(RegData$respiratortid[indRespt], RegData$EnhNivaa[indRespt],
                                                FUN=median, na.rm=T),
-  'Respiratordøgn, invasiv (median)' = tapply(RegData$InvasivVentilation[indRespInv], RegData$EnhNivaa[indRespInv],
+  'Respiratordøger, invasiv (median)' = tapply(RegData$InvasivVentilation[indRespInv], RegData$EnhNivaa[indRespInv],
                                                 FUN=median, na.rm=T),
-  'Respiratordøgn, non-invasiv (median)' = tapply(RegData$NonInvasivVentilation[indRespNIV], RegData$EnhNivaa[indRespNIV],
+  'Respiratordøger, non-inv. (median)' = tapply(RegData$NonInvasivVentilation[indRespNIV], RegData$EnhNivaa[indRespNIV],
                                                     FUN=median, na.rm=T),
   'SAPSII (median)' = tapply(RegData$SAPSII[indSAPS], RegData$EnhNivaa[indSAPS], FUN=median, na.rm=T),
   'SAPSII u/alder (median)' = tapply(RegData$SAPSuAld[indSAPS], RegData$EnhNivaa[indSAPS], FUN=median, na.rm=T),
-  'NEMS (totalt)' = tapply(RegData$NEMS[indNEMS],
-                           RegData$EnhNivaa[indNEMS], FUN=sum, na.rm=T),
+  # 'NEMS (totalt)' = tapply(RegData$NEMS[indNEMS],
+  #                         RegData$EnhNivaa[indNEMS], FUN=sum, na.rm=T),
   'NEMS/opph. (median)' = tapply(RegData$NEMS[indNEMS],
                                  RegData$EnhNivaa[indNEMS], FUN=median, na.rm=T),
-  'Reinnleggelser, <72t (%)' = tapply(RegDataReinn$Reinn==1, RegDataReinn$EnhNivaa,
+  'Reinnleggingar, <72t (%)' = tapply(RegDataReinn$Reinn==1, RegDataReinn$EnhNivaa,
                                         FUN=function(x) round(sum(x, na.rm=T)/length(x)*100,1)),
-  'Utskrevet kl 17-08 (%)' = tapply(RegData$Ut1708, RegData$EnhNivaa,
+  'Utskrivne kl 17-08 (%)' = tapply(RegData$Ut1708, RegData$EnhNivaa,
                                        FUN=function(x) round(sum(x, na.rm=T)/length(x)*100,1)),
-  'Skrøpelighet (median)' = tapply(RegData$FrailtyIndex[indFrail],
+  'Skrøpeligheit (median)' = tapply(RegData$FrailtyIndex[indFrail],
                                    RegData$EnhNivaa[indFrail], FUN=median, na.rm=T),
   'Perkutan trakeostomi (%)' = tapply(RegData$Trakeostomi==2, RegData$EnhNivaa,
                                     FUN=function(x) round(sum(x, na.rm=T)/length(x)*100,1)),
-  'Kont. hemofiltr. v/nyreerstat. (%)' = tapply(RegData$Kontinuerlig[indNyre], RegData$EnhNivaa[indNyre],
+  'Kont. hemofiltr. (%)' = tapply(RegData$Kontinuerlig[indNyre], RegData$EnhNivaa[indNyre],
                                                FUN=function(x) round(sum(x, na.rm=T)/length(x)*100,1)),
   'Kont. hemofiltr. beh.tid (median)' =  tapply(RegData$KontinuerligDays[indNyre], RegData$EnhNivaa[indNyre],
                                               FUN=median, na.rm=T),
-  'Intermitt. hemodia. v/nyreerstat.' = tapply(RegData$Intermitterende[indNyre], RegData$EnhNivaa[indNyre],
+  'Intermitt. hemodialyse' = tapply(RegData$Intermitterende[indNyre], RegData$EnhNivaa[indNyre],
                                                   FUN=function(x) round(sum(x, na.rm=T)/length(x)*100,1)),
   'Intermitt. hemodia. beh.tid (median)' = tapply(RegData$IntermitterendeDays[indNyre], RegData$EnhNivaa[indNyre],
                                                FUN=median, na.rm=T),
-  'Mottatt pressor' = tapply(RegData$VasoactiveInfusion[indVaso]==1, RegData$EnhNivaa[indVaso],
+  'Fått vasoaktiv med.' = tapply(RegData$VasoactiveInfusion[indVaso]==1, RegData$EnhNivaa[indVaso],
                              FUN=function(x) round(sum(x, na.rm=T)/length(x)*100,1)),
   'Døde (%)' = tapply((RegData$DischargedIntensiveStatus==1), RegData$EnhNivaa,
                       FUN=function(x) round(sum(x, na.rm=T)/length(x)*100,1))
@@ -353,6 +381,7 @@ tabNokkeltall <- rbind(
 xtable::xtable(tabNokkeltall, digits= 2, align=c('l', rep('r', ncol(tabNokkeltall))), #row.names=F,
                label = 'tab:nokkelKat',
                caption = paste0('Nøkkeltal og aktivitet i norsk intensivmedisin, ', aarsrappAar))
+
 
 
 # Legge til:

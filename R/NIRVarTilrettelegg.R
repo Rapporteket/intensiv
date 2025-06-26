@@ -625,13 +625,24 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='an
             #1:ja, 2:nei, -1: tom
             #OrganDonationCompletedStatus - Ble organdonasjon gjennomført?
             #1:ja, 2:nei, -1: tom
-            RegData <- RegData[which(RegData$CerebralCirculationAbolished == 1),] #Opphevet sirkulasjon
+            RegData <- RegData[which(RegData$CerebralCirculationAbolished == 1 | (RegData$CerebralCirculationAbolished_V2 %in% 1:2)), ] #Opphevet sirkulasjon
             retn <- 'H'
             tittel <- 'Andel donorer av de med opphevet intrakraniell sirkulajon'
             varTxt <- 'donorer'
-            RegData$Variabel[which(RegData$OrganDonationCompletedStatus == 1)] <- 1
+            RegData$Variabel[which(RegData$OrganDonationCompletedStatus == 1| (RegData$OrganDonationCompletedStatus_V2 %in% 1:2))] <- 1
             cexgr <- 0.9
       }
+
+      if (valgtVar == 'CerebralCirculationAbolished') { #andelGrVar, andelTid
+        RegData <- RegData[which(RegData$DischargedIntensiveStatus == 1),] #Døde
+        #Ble det påvist opphevet intrakraniell sirkulasjon?	CerebralCirculationAbolished
+        retn <- 'H'
+        tittel <- 'Andel pasienter med påvist opphevet intrakran. sirkulasjon'
+        varTxt <- 'opph. intrakran. sirk.'
+        RegData$Variabel[which(RegData$CerebralCirculationAbolished == 1 | (RegData$CerebralCirculationAbolished_V2 %in% 1:2))] <- 1
+        cexgr <- 0.9
+      }
+
 # 3.	Grunnar til ikkje påvist oppheva intrakraniell sirkulasjon blant daude (histogram per ShType?)
       if (valgtVar == 'CerebralCirculationAbolishedReasonForNo') { #andeler
             #Ble det påvist opphevet intrakraniell sirkulasjon?	CerebralCirculationAbolished
@@ -748,6 +759,7 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='an
                                                   'KompDekubitus', "KomIngen")])>0
        tittel <- 'Registrert komplikasjoner'
        RegData$Variabel[RegData$KompUtfylt] <- 1
+       sortAvtagende <- FALSE
       }
       if (valgtVar=='komplikasjoner') { #Andeler
         #Avkrysningsvariabler. Fra 2020

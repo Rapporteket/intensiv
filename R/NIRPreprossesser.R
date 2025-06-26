@@ -54,18 +54,6 @@ NIRPreprosess <- function(RegData=RegData, skjema=1)	#, reshID=reshID)
       #For enkelhetsskyld kalles Saps2Score som er Estimert mortalitet for SMR
       #RegData$logit <- -7.7631 + 0.0737*RegData$Saps2ScoreNumber + 0.9971*log(RegData$Saps2ScoreNumber+1)
       #RegData$Mort <- exp(RegData$logit)/(1+exp(RegData$logit))*100 # = Saps2Score = SMR
-      if (skjema==1){
-        LogVarSjekk <- names(RegData)[which(RegData[1,] %in% c('True','False'))]
-        LogVar <- unique(c(LogVarSjekk,
-                           "Eeg", "EcmoEcla", "Hyperbar", "Iabp", "Icp", "Impella", "Intermitterende",
-                           "Kontinuerlig", "Leverdialyse", "No", "Oscillator", "Sofa", "TerapetiskHypotermi"))
-        RegData[, intersect(names(RegData), LogVar)] <-
-          apply(RegData[, intersect(names(RegData), LogVar)], 2, as.logical)
-
-        RegData$SapsSum <- with(RegData, Glasgow+Age+SystolicBloodPressure+HeartRate+Temperature+MvOrCpap+UrineOutput+
-              SerumUreaOrBun+Leukocytes+Potassium+Sodium+Hco3+Bilirubin+TypeOfAdmission)
-        RegData[which(RegData$Alder<16), c('SapsSum', 'Saps2Score', 'Saps2ScoreNumber')] <- 0
-      }
 
       #names(RegData)[which(names(RegData) == 'PatientAge')] <- 'Alder' #Uten desimal
       names(RegData)[which(names(RegData) == 'AgeAdmitted')] <- 'Alder' #Én desimal
@@ -81,7 +69,20 @@ NIRPreprosess <- function(RegData=RegData, skjema=1)	#, reshID=reshID)
       names(RegData)[
         names(RegData) %in% c('PatientInRegistryGuid', 'PasientGUID')] <- 'PasientID'
 
-      if (skjema==4){names(RegData)[which(names(RegData) == 'UnitId')] <- 'ReshId'}
+      if (skjema==1){
+        LogVarSjekk <- names(RegData)[which(RegData[1,] %in% c('True','False'))]
+        LogVar <- unique(c(LogVarSjekk,
+                           "Eeg", "EcmoEcla", "Hyperbar", "Iabp", "Icp", "Impella", "Intermitterende",
+                           "Kontinuerlig", "Leverdialyse", "No", "Oscillator", "Sofa", "TerapetiskHypotermi"))
+        RegData[, intersect(names(RegData), LogVar)] <-
+          apply(RegData[, intersect(names(RegData), LogVar)], 2, as.logical)
+
+        RegData$SapsSum <- with(RegData, Glasgow+Age+SystolicBloodPressure+HeartRate+Temperature+MvOrCpap+UrineOutput+
+                                  SerumUreaOrBun+Leukocytes+Potassium+Sodium+Hco3+Bilirubin+InnMaate)
+        RegData[which(RegData$Alder<16), c('SapsSum', 'Saps2Score', 'Saps2ScoreNumber')] <- 0
+      }
+
+            if (skjema==4){names(RegData)[which(names(RegData) == 'UnitId')] <- 'ReshId'}
 
 
       # Riktig format

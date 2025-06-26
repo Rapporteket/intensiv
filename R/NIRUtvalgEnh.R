@@ -121,9 +121,9 @@ NIRUtvalgEnh <- function(RegData, datoFra='2011-01-01', datoTil=Sys.Date(), aar=
                '1' = which(RegData$Bekreftet %in% 0:1),
                '2' = which(!(RegData$Bekreftet %in% 0:1)))
       } else {1:Ninn}
-      nivaaKort <- c('1a', '1b', '2b', '3', '3b', '3c')
-      nivaaTxt <- c('Overvåk', 'Postop', 'Gen <50','Gen >50', 'Spesial',  'Barn')
-      indNivaa <- if (min(nivaa) > 0 ) {which(RegData$NivaaTxt %in% nivaaTxt[nivaa])
+      nivaaKort <- c('1a', '1b', '2b', '3', '3c')
+      nivaaTxt <- c('Overvåk', 'Postop', 'Gen<50%','Gen>50%', 'Barn') #c('Overvåk', 'Postop', 'Gen <50','Gen >50', 'Spesial',  'Barn')
+      indNivaa <- if (min(nivaa) > 0 ) {which(RegData$Nivaa %in% nivaaKort[nivaa])
       } else {1:Ninn}
       indOverf <- if (overfPas %in% 1:2) {which(RegData$Overf == overfPas)} else {1:Ninn}
       indMed <- indDatoFra %i% indDatoTil %i% indAld %i% indKj %i% indInnMaate %i% indDod %i% indDiag %i% indAar %i% indNivaa %i% indOverf
