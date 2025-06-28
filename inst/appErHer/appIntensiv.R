@@ -18,7 +18,7 @@ AarNaa <- as.numeric(format(idag, "%Y"))
 #---------Hente data------------
 
   message("Getting IntData")
-  IntDataRaa <- NIRRegDataSQL(datoFra = '2020-01-01')
+  IntDataRaa <- NIRRegDataSQL(datoFra = '2015-01-01')
 
   TilgJsn <- Sys.getenv("MRS_ACCESS_HIERARCHY_URL")
   Tilgangstre <- jsonlite::fromJSON(TilgJsn)$AccessUnits

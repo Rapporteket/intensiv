@@ -23,14 +23,14 @@ source("dev/sysSetenv.R")
 intensiv::kjorIntensivApp(browser = TRUE)
 
 
-
+Sys.setenv(MRS_ACCESS_HIERARCHY_URL="https://app.mrs.qa.nhn.no/intensivregisterservices/AccessHiearchyReport")
 TilgJsn <- Sys.getenv("MRS_ACCESS_HIERARCHY_URL")
 Tilgangstre <- jsonlite::fromJSON(TilgJsn)$AccessUnits
 grep('(1)', Tilgangstre$Title)
 strsplit(Tilgangstre$Title, aplit= ' (' )
 varTilg <- c("UnitId", "ParentUnitId", "HasDatabase", "ExternalId", "Title", "TitleWithPath","ExtraData")
 
-RegDataRaa <- NIRRegDataSQL()
+RegDataRaa <- intensiv::NIRRegDataSQL(datoFra = '2000-01-01')
 
 # reshTilg <- sort(Tilgangstre$UnitId[Tilgangstre$HasDatabase==TRUE])
 # reshAlle <- sort(unique(RegDataRaa$ReshId))

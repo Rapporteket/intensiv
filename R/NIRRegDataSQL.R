@@ -9,7 +9,7 @@
 #' @export
 #'
 #'
-NIRRegDataSQL <- function(datoFra = '2019-01-01', datoTil = '2099-01-01') { #,session='') {
+NIRRegDataSQL <- function(datoFra = '2011-01-01', datoTil = '2099-01-01') { #,session='') {
 
 
   registryName <- 'data' #"nir"
@@ -126,14 +126,14 @@ WHERE cast(DateAdmittedIntensive as date) BETWEEN \'', datoFra, '\' AND \'', dat
 
   LogVar <- c("Kontinuerlig", "Intermitterende",  "Peritonealdialyse", "SpecialMeasures",
               "TerapetiskHypotermi",  "EcmoEcla",  "Iabp",  "Impella",   "Icp",   "Oscillator",
-              "No",  "Leverdialyse", "Hyperbar", "Eeg",  "Ingen", "FrailtyIndexForklaring", 
-              "KompHypoglykemi",  "KompPneumotoraks",   "KompLuftveisproblem",  "KompDekubitus",    
-              "KomIngen",    "KompIkkeUtfylt",   "PIM_SuppliedO2",    "Sofa",    
+              "No",  "Leverdialyse", "Hyperbar", "Eeg",  "Ingen", "FrailtyIndexForklaring",
+              "KompHypoglykemi",  "KompPneumotoraks",   "KompLuftveisproblem",  "KompDekubitus",
+              "KomIngen",    "KompIkkeUtfylt",   "PIM_SuppliedO2",    "Sofa",
               "ValidationIgnoreDaysAdmittedIntensivOver14",    "ValidationIgnoreRespiratorOver7")
   endreVar <- intersect(names(RegData), LogVar)
   RegData[, endreVar] <- apply(RegData[, endreVar], 2, as.numeric)
   RegData[, endreVar] <- apply(RegData[, endreVar], 2, as.logical)
-  
+
 
 
     return(RegData)
