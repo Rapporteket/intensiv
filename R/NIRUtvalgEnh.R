@@ -39,6 +39,8 @@
 #'				1 = Pasienten er ikke overført
 #'				2 = Pasienten er overført
 #'	@param velgDiag Velge diagnose. 0-alle, 1-Bekreftede Covid-pasienter, 2-alle unntatt Covid-pasienter
+#'	@param nivaa Intensivavdelingens "nivå": 1-5: 'Overvåk', 'Postop', 'Gen<50%','Gen>50%', 'Barn'
+#'	Flervalgsparameter
 #' @param grType Gjør gruppeutvalg på sykehustype
 #'                      1: lokal-/sentralsykehus
 #'                      2: lokal-/sentralsykehus
