@@ -11,19 +11,16 @@ devtools::install_github('Rapporteket/intensiv', ref = 'main_dev')
 
 setwd('../data')
 sship::dec('')
-# pakkut
-# Åpne MySQL Command Line Client - Unicode,
-# source c://Users/lro2402unn/RegistreGIT/data/regfil.sql;
 
 setwd('c://Users/lro2402unn/RegistreGIT/intensiv')
-
 
 Sys.setlocale(locale = 'nb_NO.UTF-8')
 source("dev/sysSetenv.R")
 intensiv::kjorIntensivApp(browser = TRUE)
 
 
-Sys.setenv(MRS_ACCESS_HIERARCHY_URL="https://app.mrs.qa.nhn.no/intensivregisterservices/AccessHiearchyReport")
+#Sys.setenv(MRS_ACCESS_HIERARCHY_URL="https://app.mrs.qa.nhn.no/intensivregisterservices/AccessHiearchyReport")
+Sys.setenv(MRS_ACCESS_HIERARCHY_URL="https://app.mrs.nhn.no/intensivregisterservices/AccessHiearchyReport")
 TilgJsn <- Sys.getenv("MRS_ACCESS_HIERARCHY_URL")
 Tilgangstre <- jsonlite::fromJSON(TilgJsn)$AccessUnits
 grep('(1)', Tilgangstre$Title)
@@ -31,7 +28,7 @@ strsplit(Tilgangstre$Title, aplit= ' (' )
 varTilg <- c("UnitId", "ParentUnitId", "HasDatabase", "ExternalId", "Title", "TitleWithPath","ExtraData")
 
 RegDataRaa <- intensiv::NIRRegDataSQL(datoFra = '2000-01-01')
-
+RegData <- NIRPreprosess(RegData = RegDataRaa)
 # reshTilg <- sort(Tilgangstre$UnitId[Tilgangstre$HasDatabase==TRUE])
 # reshAlle <- sort(unique(RegDataRaa$ReshId))
 # resh <- intersect(reshTilg, reshAlle) # 100082 100085 100170 - fjernes/flyttes? 114

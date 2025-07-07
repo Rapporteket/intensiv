@@ -320,6 +320,7 @@ dataTilOffVisning <- function(RegData = RegData, valgtVar, #datoFra='2016-01-01'
   '108610'='974724960', #Hamar
   '108827'='974724960', #Hamar okt2024
   '101858'='974795833', #Hammerfest
+  '100170'='974316285', #Haraldplass
   '100180'='974316285', #Haraldplass
   '700617'='974795639', #Harstad
   '100273'='974724774', #Haugesund
@@ -361,6 +362,7 @@ dataTilOffVisning <- function(RegData = RegData, valgtVar, #datoFra='2016-01-01'
   '4210742'='974795477', #Sandnessjøen okt2024
  '102026'='974633191', #Skien
  '102428'='974633191', #Skien okt2024
+ '4208078'='974749025', #St. Olav  Hjertemedisinsk intensiv
  '4201313'='974749025', #St. Olav Hovedint
  '4208928'='974749025', #St. Olavs Intensiv barn
  '106572'='974749025', #St. Olav Med int
@@ -379,19 +381,21 @@ dataTilOffVisning <- function(RegData = RegData, valgtVar, #datoFra='2016-01-01'
   '103948'='974633574', #Tønsberg
   '105101'='974633574', #Tønsberg Med. Over.
   '109870'='974589095', #Ullevål Akuttmed Int
-  '111449'='974589095', #Ullevål Barneint
+ '110111'='974589095', #Ullevål Barneint
+ '111449'='974589095', #Ullevål Barneint
   '109773'='974589095', #Ullevål Gen int
   '109877'='974589095', #Ullevål Hjerte-PO
   '4205969'='974589095', #Ullevål Hjertemed Int
   '109779'='974589095', #Ullevål Nevroint
   '109778'='974589095', #Ullevål Postop
   '110867'='974795574', #Vesterål.Stokm.
+ '102836'='974747545', #Volda
   '4209764'='974747545', #Volda
   '4213593'='974747545', #Volda
   '108308'='974747138', #Ålesund Kir
   '102673'='974747138') #Ålesund Med
 
-nyResh <- setdiff(unique(RegDataUt$ReshId), names(nyID))
+ nyResh <- setdiff(unique(RegDataUt$ReshId), names(nyID))
 #RegDataUt[match(nyResh, RegDataUt$ReshId), 'ShNavn']
   RegDataUt$orgnr <- as.character(nyID[as.character(RegDataUt$ReshId)])
   RegDataUt$ind_id <- indID

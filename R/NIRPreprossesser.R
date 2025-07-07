@@ -15,15 +15,6 @@
 NIRPreprosess <- function(RegData=RegData, skjema=1)	#, reshID=reshID)
 {
       #Miljøparametre
-      #print(Sys.getlocale())
-      #Sys.setlocale("LC_TIME", "nb_NO.UTF-8")
-      #print(paste('Etter at satt "nb_NO.UTF-8": ', Sys.getlocale()))
-
-  # RegData1 <- rapbase::loadRegData(registryName="nir", query='SELECT * FROM intensivopphold', dbType="mysql") #intensiv::NIRRegDataSQL()
-  # RegData2 <- rapbase::loadRegData(registryName="nir", query='SELECT * FROM questionaryformdatacontract', dbType="mysql")
-  # RegData3 <- rapbase::loadRegData(registryName="nir", query='SELECT * FROM influensaregistrering', dbType="mysql")
-  # RegData4 <- rapbase::loadRegData(registryName="nir", query='SELECT * FROM readinessformdatacontract', dbType="mysql")
-
 
       #Kun ferdigstilte registreringer:
       # Fra des. 2018 får Intensiv også kladd over fra  fra MRS/NHN. 1.april 2021 - alle er fortsatt ferdigstilte...")
@@ -32,7 +23,6 @@ NIRPreprosess <- function(RegData=RegData, skjema=1)	#, reshID=reshID)
       RegData <- RegData[RegData$FormStatus==2, ]}
 
       #Kjønn
-      message("NIRPreprosess: Kjønn")
       RegData$erMann <- RegData$PatientGender #1=Mann, 2=Kvinne, 0=Ukjent
       RegData$erMann[RegData$PatientGender == 0] <- NA
       RegData$erMann[RegData$PatientGender == 2] <- 0
@@ -43,18 +33,9 @@ NIRPreprosess <- function(RegData=RegData, skjema=1)	#, reshID=reshID)
       #RegData$logit <- -7.7631 + 0.0737*RegData$Saps2ScoreNumber + 0.9971*log(RegData$Saps2ScoreNumber+1)
       #RegData$Mort <- exp(RegData$logit)/(1+exp(RegData$logit))*100 # = Saps2Score = SMR
       if (skjema==1){
-        #Boolske variabler var tidligere tekst ('True','False'). Endret til teksten 0-1 (mars -25)
-        #LogVarSjekk <- names(RegData)[which(RegData[1,] %in% c('True','False'))]
-        # LogVar <- c("Eeg", "EcmoEcla", "Hyperbar", "Iabp", "Icp", "Impella", "Intermitterende",
-        #                    "Kontinuerlig", "Leverdialyse", "No", "Oscillator", "Sofa", "TerapetiskHypotermi")
-        #Fra kodeboka:
-
-
-
-
 
         message("NIRPreprosess: beregn SAPS-sum")
-RegData$SapsSum <- with(RegData, Glasgow+Age+SystolicBloodPressure+HeartRate+Temperature+MvOrCpap+UrineOutput+
+        RegData$SapsSum <- with(RegData, Glasgow+Age+SystolicBloodPressure+HeartRate+Temperature+MvOrCpap+UrineOutput+
               SerumUreaOrBun+Leukocytes+Potassium+Sodium+Hco3+Bilirubin+TypeOfAdmission)
         RegData[which(RegData$AgeAdmitted<16), c('SapsSum', 'Saps2Score', 'Saps2ScoreNumber')] <- 0
       }
@@ -72,9 +53,23 @@ RegData$SapsSum <- with(RegData, Glasgow+Age+SystolicBloodPressure+HeartRate+Tem
 
       # Riktig format
       if (skjema %in% 1:3){
-        message("NIRPreprosess: Riktig format på variabler")
         RegData$ShType[RegData$ShType ==2 ] <- 1	#Har nå kun type lokal/sentral og regional
       }
+
+      #Henter tilgangstre og mapper om resh og ShNavn
+      message('Henter tilgangstre og mapper om resh og ShNavn')
+      Sys.setenv(MRS_ACCESS_HIERARCHY_URL="https://app.mrs.qa.nhn.no/intensivregisterservices/AccessHiearchyReport")
+      TilgJsn <- Sys.getenv("MRS_ACCESS_HIERARCHY_URL")
+      Tilgangstre <- jsonlite::fromJSON(TilgJsn)$AccessUnits
+      varTilg <- c("UnitId", "ParentUnitId", "HasDatabase", "ExternalId", "Title", "TitleWithPath","ExtraData")
+      IntData <- merge(RegData, Tilgangstre[ ,varTilg],
+                       by.x = 'ReshId', by.y = 'UnitId', suffixes = c('Int','Tilg'))
+      RegData <- dplyr::rename(IntData,
+                               Nivaa = ExtraData,
+                               ReshIdReg = ReshId,
+                               ReshId = ExternalId,
+                               ShNavnReg = ShNavn,
+                               ShNavn = Title) #newname = oldname
 
       #Fjerner mellomrom (før) og etter navn
       RegData$ShNavn <- trimws(as.character(RegData$ShNavn))
@@ -86,7 +81,6 @@ RegData$SapsSum <- with(RegData, Glasgow+Age+SystolicBloodPressure+HeartRate+Tem
       duplSh <- names(table(dta$ShNavn)[which(table(dta$ShNavn)>1)])
 
       #Tomme sykehusnavn får resh som navn:
-      message("NIRPreprosess: Setter tomme sykehusnavn til reshID")
       indTom <- which(is.na(RegData$ShNavn)) # | RegData$ShNavn == '')
       RegData$ShNavn[indTom] <- RegData$ReshId[indTom]
 
@@ -97,7 +91,6 @@ RegData$SapsSum <- with(RegData, Glasgow+Age+SystolicBloodPressure+HeartRate+Tem
       }
 
       #Riktig format på datovariable:
-      message("NIRPreprosess: Riktig format på datovariable")
       #	RegData <- RegData[which(RegData$DateAdmittedIntensive!=''),]	#Tar ut registreringer som ikke har innleggelsesdato
       RegData$InnDato <- as.Date(RegData$DateAdmittedIntensive, tz= 'UTC', format="%Y-%m-%d")
       RegData$Innleggelsestidspunkt <- as.POSIXlt(RegData$DateAdmittedIntensive, tz= 'UTC', format="%Y-%m-%d %H:%M" ) #:%S
@@ -105,7 +98,6 @@ RegData$SapsSum <- with(RegData, Glasgow+Age+SystolicBloodPressure+HeartRate+Tem
       RegData$DateDischargedIntensive <- as.POSIXlt(RegData$DateDischargedIntensive, tz= 'UTC', format="%Y-%m-%d %H:%M" )
 
       # Nye variable:
-      message("NIRPreprosess: Nye variabler")
       RegData$MndNum <- RegData$Innleggelsestidspunkt$mon +1
       RegData$MndAar <- format(RegData$Innleggelsestidspunkt, '%b%y')
       RegData$Kvartal <- ceiling(RegData$MndNum/3)
@@ -114,14 +106,12 @@ RegData$SapsSum <- with(RegData, Glasgow+Age+SystolicBloodPressure+HeartRate+Tem
 
       ##Kode om  pasienter som er overført til/fra egen avdeling til "ikke-overført"
       #1= ikke overført, 2= overført
-      message("NIRPreprosess: Overført pasienter")
       ind <- union(which(RegData$ReshId == RegData$PatientTransferredFromHospital),
                    which(RegData$ReshId == RegData$PatientTransferredToHospital))
       RegData$Overf[ind] <- 1
 
 
       #En "overlever": Person som er i live 30 dager etter innleggelse.
-      message("NIRPreprosess: Overlevelse 30, 90 og 365 dager")
       if (skjema %in% c(1,3)){
       RegData$Dod30 <- 0
       RegData$Dod30[which(difftime(as.Date(RegData$Morsdato, format="%Y-%m-%d"), # %H:%M:%S

@@ -20,19 +20,6 @@ AarNaa <- as.numeric(format(idag, "%Y"))
   message("Getting IntData")
   IntDataRaa <- NIRRegDataSQL(datoFra = '2015-01-01')
 
-  TilgJsn <- Sys.getenv("MRS_ACCESS_HIERARCHY_URL")
-  Tilgangstre <- jsonlite::fromJSON(TilgJsn)$AccessUnits
-  varTilg <- c("UnitId", "ParentUnitId", "HasDatabase", "ExternalId", "Title", "TitleWithPath","ExtraData")
-  IntData <- merge(IntDataRaa, Tilgangstre[ ,varTilg],
-                   by.x = 'ReshId', by.y = 'UnitId', suffixes = c('Int','Tilg'))
-  IntData <- dplyr::rename(IntData,
-                           Nivaa = ExtraData,
-                           ReshIdReg = ReshId,
-                           ReshId = ExternalId,
-                           ShNavnReg = ShNavn,
-                           ShNavn = Title) #newname = oldname
-  message("Done!")
-
 #Covid-skjema:
   message("Getting covid data")
   qCovid <- paste0('SELECT UPPER(HovedskjemaGUID) AS HovedskjemaGUID, FormStatus, Diagnosis
@@ -44,7 +31,7 @@ CovidData$Bekreftet <- 0
 CovidData$Bekreftet[which(CovidData$Diagnosis %in% 100:103)] <- 1
 
 message("Merge IntData and covid data")
-RegData <- merge(IntData, CovidData[ ,-which(names(CovidData) == 'Diagnosis')], suffixes = c('','Cov'),
+RegData <- merge(IntDataRaa, CovidData[ ,-which(names(CovidData) == 'Diagnosis')], suffixes = c('','Cov'),
                  by.x = 'SkjemaGUID', by.y = 'HovedskjemaGUID', all.x = T, all.y=F)
 message("Done!")
 message("Preposess data")
@@ -53,7 +40,7 @@ message("Done!")
 message("Get paaror data")
 PaarorData <- NIRpaarorDataSQL()
 message("Merge IntData and paaror data")
-PaarorDataH <- KobleMedHoved(IntData, PaarorData, alleHovedskjema=F, alleSkjema2=F)
+PaarorDataH <- KobleMedHoved(IntDataRaa, PaarorData, alleHovedskjema=F, alleSkjema2=F)
 message("Done!")
 antPaaror <- dim(PaarorDataH)[1]
 if (antPaaror>0) {
@@ -1429,7 +1416,7 @@ server <- function(input, output, session) { #
         # paramValues = paramValues,
         reports = list(
           MndRapp = list(
-            synopsis = "Intensiv/Rapporteket: månedsrapport, abonnement",
+            synopsis = "Intensiv: månedsrapport, abonnement",
             fun = "abonnement",
             paramNames = c('rnwFil',  "reshID"),  # ,"datoFra", 'datoTil'),
             paramValues = c('NIRmndRapp.Rnw', "user$org()") #  Sys.Date()-180, Sys.Date())

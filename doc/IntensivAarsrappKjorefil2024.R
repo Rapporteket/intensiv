@@ -475,16 +475,14 @@ for (overfPas in 1:2) {
 
 
 #--------------------------------------Data til offentlig visning (SKDE, Behandlingskvalitet)-------------------------------------
-setwd('~/Aarsrappresultater/NETTsider/')
+setwd('../Aarsrapp')
 library(intensiv)
 library(magrittr)
 NIRData <- NIRPreprosess(RegData = NIRRegDataSQL(datoFra = '2016-01-01'))
+
 indUShNavn <- which(NIRData$ShNavn =='')
 NIRData$ReshId[indUShNavn]
 unique(NIRData$Aar[indUShNavn])
-table(NIRData[which(NIRData$ReshId == 4210053), 'ShNavn'])
-#NIRData <- NIRData[-which(NIRData$ShNavn ==''), ]
-#nov2024: Kun Bodø som mangler sykehusnavn og den aktuelle reshid'en er mappet til orgnr.
 
 
 tab <- unique(NIRData[order(NIRData$ShNavn) ,c("ShNavn", "ReshId")])
@@ -498,16 +496,16 @@ tab[order(tab$ShNavn),  c("ShNavn", "ReshId")]
 nyResh <- setdiff(unique(NIRData$ReshId), names(nyID))
 unique(NIRData[which(NIRData$ReshId %in% nyResh),c("ShNavn", "ReshId", "Aar")])
 
-#Okt 2024:
-# ShNavn   ReshId
-# Gjøvik  4212166
-# KalnesØstf.  4208977
-# Førde   701577
-# Lovisenberg 42088921
-# Skien   102428
-# KalnesØstf.  4208976
-# Hamar   108827
-# Sandnessjøen  4210742
+# Juni 2025:
+# ShNavn  ReshId  Aar
+# Helse Førde HF  100085 2025
+# SNR Intensiv 4209729 2025
+
+# Fjerner nye resh i denne publiseringa (juli 2025):
+NIRData <- NIRData[-which(NIRData$ReshId %in% nyResh), ]
+
+
+max(NIRData$DateAdmittedIntensive) # "2025-06-21 23:32:00
 
 ind1 <- dataTilOffVisning(RegData = NIRData, valgtVar='reinn',
                                  indID = 'intensiv_innlegg_72t', filUt = 'innlegg_72t')
@@ -523,29 +521,34 @@ write.table(NIRindFraReg, file = 'NIRindFraReg.csv', sep = ';', row.names = F)
 
 
 #----Kvalitetsindikatorer på enhetsnivå ("manuelle" indikatorer)
-setwd('C:/ResultattjenesteGIT/Aarsrapp/NETTsider/') #Fra åpen harddisk C:\ResultattjenesteGIT\Aarsrapp\NETTsider
-#  KvalIndManuellNy <- read.table(file = 'KvalIndNIR2023manuelle.csv', fileEncoding = 'UTF-8', sep = ';', header = TRUE) #, row.names = FALSE)
-KvalIndManuellNy <- readxl::read_excel('IntensivKvalIndManuell2023_2024_RAA.xlsx')
-TidligereKvalIndReg <- read.table(file = 'IntensivKvalIndPublManuell2017_22.csv', fileEncoding = 'UTF-8', sep = ';', header = TRUE)
+setwd('../Aarsrapp')
+#KvalIndManuellNy <- read.table(file = 'IntensivKvalIndManuell2024_RAA.csv', fileEncoding = 'UTF-8', sep = ';', header = TRUE) #, row.names = FALSE)
+KvalIndManuellNy <- readxl::read_excel('IntensivKvalIndManuell2024_RAA.xlsx')
+TidligereKvalIndReg <- read.table(file = 'IntensivKvalIndPublManuell2017_23.csv', fileEncoding = 'UTF-8', sep = ';', header = TRUE)
+#TidligereKvalIndReg <- readxl::read_excel('IntensivKvalIndPublManuell2017_23.xlsx')
 names(table(TidligereKvalIndReg$ind_id))
 
-indKIfraReg <- which(TidligereKvalIndReg$ind_id %in% c('intensiv_innlegg_72t', 'intensiv_inv_vent', 'intensiv_dg') )
-TidligereKvalIndReg <- TidligereKvalIndReg[-indKIfraReg, ]
-table(TidligereKvalIndReg$year)
-names(TidligereKvalIndReg)
+# indKIfraReg <- which(TidligereKvalIndReg$ind_id %in% c('intensiv_innlegg_72t', 'intensiv_inv_vent', 'intensiv_dg') )
+# TidligereKvalIndReg <- TidligereKvalIndReg[-indKIfraReg, ]
+# table(TidligereKvalIndReg$year)
+# names(TidligereKvalIndReg)
 
-#nye <- setdiff(unique(as.character(KvalIndManuellNy$resh_id)), names(nyID))
-#NIRData[which(NIRData$ReshId %in% nye), c("resh_id", "namn")]
 
 #Dataomorganisering
 names(KvalIndManuellNy)
+KvalIndManuellNy$year <- 2024
+KvalIndManuellNy <- dplyr::rename(KvalIndManuellNy, 'resh_id' = 'ReshId') # = 'resh_id')
 RegData <- KvalIndManuellNy[, c("resh_id", "tverrfagleg_gjennomgang", "rutinenotat", "primarvakt", "data_nir", "year")]
 RegData$primarvakt <- dplyr::recode(RegData$primarvakt, '2' = 1, '3' = 0, .default = RegData$primarvakt) #1-ja, 2-nei Innh: -1,1,2,3
 #RegData$primarvakt <- dplyr::case_match(RegData$primarvakt, 2 ~ 1, 3 ~ 0) #1-ja, 2-nei Innh: -1,1,2,3
 variabler <- c( "tverrfagleg_gjennomgang", "rutinenotat",  "data_nir")
 RegData[ , variabler][RegData[,variabler] == 2] <- 0
 RegData$orgnr <- as.character(nyID[as.character(RegData$resh_id)])
-table(RegData$orgnr, useNA = 'a')
+
+#Sjekk
+# table(RegData$orgnr, useNA = 'a')
+# resh <- RegData$resh_id[which(is.na(RegData$orgnr))]
+# tabSjekk <- KvalIndManuellNy[which(KvalIndManuellNy$resh_id %in% resh), ]
 
 RegDataUt <- tidyr::pivot_longer(
   data = RegData[,-which(names(RegData)=='resh_id')],
@@ -558,7 +561,6 @@ table(RegDataUt$var, useNA = 'a')
 
 RegDataUt$ind_id <- paste0('intensiv_', RegDataUt$ind_id)
 RegDataUt$denominator <- 1
-#RegDataUt$year <- 2023
 RegDataUt$context <- 'caregiver'
 head(RegDataUt)
 head(TidligereKvalIndReg)
