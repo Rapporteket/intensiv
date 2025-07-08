@@ -182,7 +182,7 @@ tabNokkeltallGML <- function(RegData, tidsenhet='Mnd', datoTil=Sys.Date(), enhet
                                             FUN=function(x) sum(x, na.rm=T)/length(x)*100),
             # 'Respiratordøgn (invasiv)' = tapply(RegData$respiratortid[indRespt], RegData$TidsEnhet[indRespt],
                                              # FUN=median, na.rm=T),
-            'Respiratordøgn (median, non-invasiv)' = tapply(RegData$NonInvasivVentilation[indRespNIV], RegData$TidsEnhet[indRespNIV], 
+            'Respiratordøgn (median, non-invasiv)' = tapply(RegData$NonInvasivVentilation[indRespNIV], RegData$TidsEnhet[indRespNIV],
                                                             FUN=median, na.rm=T),
             'Respiratordøgn (median, invasiv)' = tapply(RegData$InvasivVentilation[indRespInv], RegData$TidsEnhet[indRespInv],
                                                        FUN=median, na.rm=T),
@@ -232,7 +232,7 @@ tabNokkeltall <- function(RegData, tidsenhet='Mnd', datoTil=Sys.Date(), enhetsUt
   RegData <- NIRUtvalgEnh(RegData=RegData, datoFra=datoFra, datoTil = datoTil,
                           enhetsUtvalg = enhetsUtvalg, reshID = reshID)$RegData
   RegData <- SorterOgNavngiTidsEnhet(RegData, tidsenhet=tidsenhet, tab=1)$RegData
-  
+
   if (respirator %in% 0:3) {
     indResp <- switch(as.character(respirator),
                       '0' = which(RegData$MechanicalRespirator==2),
@@ -241,19 +241,19 @@ tabNokkeltall <- function(RegData, tidsenhet='Mnd', datoTil=Sys.Date(), enhetsUt
                       '3' = which(RegData$NonInvasivVentilation>0))
     RegData <- RegData[indResp, ]
   }
-  
-  
+
+
   if (sykehus %in% unique(RegData$RHF)) {
     RegData <- RegData[RegData$RHF == sykehus, ]
   }
   if (sykehus %in% unique(RegData$HF)) {
     RegData <- RegData[RegData$HF == sykehus, ]
   }
-  if (sykehus %in% unique(RegData$HelseenhetKortnavn)) {
-    RegData <- RegData[RegData$HelseenhetKortnavn == sykehus, ]
+  if (sykehus %in% unique(RegData$ShNavn)) {
+    RegData <- RegData[RegData$ShNavn == sykehus, ]
   }
-  
-  
+
+
 
   indLigget <- which(RegData$liggetid>0)
   indRespt <- which(RegData$respiratortid>0)
@@ -265,7 +265,7 @@ tabNokkeltall <- function(RegData, tidsenhet='Mnd', datoTil=Sys.Date(), enhetsUt
   ind1708 <- union(which(RegData$DateDischargedIntensive$hour<8), which(RegData$DateDischargedIntensive$hour>=17))
   RegData$Ut1708 <- 0
   RegData$Ut1708[ind1708]<-1
-  
+
   tabNokkeltall <- rbind(
     'Antall opphold' = tapply(RegData$PasientID, RegData$TidsEnhet, FUN=length), #table(RegDataEget$TidsEnhet), #Neget,
     'Antall pasienter' = tapply(RegData$PasientID, RegData$TidsEnhet,
@@ -280,7 +280,7 @@ tabNokkeltall <- function(RegData, tidsenhet='Mnd', datoTil=Sys.Date(), enhetsUt
                                        FUN=median, na.rm=T),
     'Respiratordøgn, \ninvasiv (median)' = tapply(RegData$InvasivVentilation[indRespInv], RegData$TidsEnhet[indRespInv],
                                                 FUN=median, na.rm=T),
-    'Respiratordøgn, \nnon-invasiv (median)' = tapply(RegData$NonInvasivVentilation[indRespNIV], RegData$TidsEnhet[indRespNIV], 
+    'Respiratordøgn, \nnon-invasiv (median)' = tapply(RegData$NonInvasivVentilation[indRespNIV], RegData$TidsEnhet[indRespNIV],
                                                     FUN=median, na.rm=T),
     'SAPS II (median)' = tapply(RegData$SAPSII[indSAPS], RegData$TidsEnhet[indSAPS], FUN=median, na.rm=T),
     'NEMS (totalt)' = tapply(RegData$NEMS[indNEMS],
@@ -295,7 +295,7 @@ tabNokkeltall <- function(RegData, tidsenhet='Mnd', datoTil=Sys.Date(), enhetsUt
     'Døde (%)' = tapply((RegData$DischargedIntensiveStatus==1), RegData$TidsEnhet,
                         FUN=function(x) round(sum(x, na.rm=T)/length(x)*100,1))
   )
-  
+
   if (utvidTab==-1) { #Tar bort noen variabler for å tilpasse til Nord-bestilling
     tabNokkeltall <- tabNokkeltall[c(1:9, 13:15), ]
   }
@@ -304,7 +304,7 @@ tabNokkeltall <- function(RegData, tidsenhet='Mnd', datoTil=Sys.Date(), enhetsUt
     #Komplikasjoner:
     RegData$KompTot <- (rowSums(RegData[ ,c('KompHypoglykemi',	'KompPneumotoraks',	'KompLuftveisproblem',
                                             'KompDekubitus')])>0)
-    
+
   tabNokkeltall <- rbind(
     tabNokkeltall,
     'Død innen 30 dager (%)' = tapply((RegData$Dod30==1), RegData$TidsEnhet,

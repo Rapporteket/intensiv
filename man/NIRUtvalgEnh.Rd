@@ -8,18 +8,19 @@ NIRUtvalgEnh(
   RegData,
   datoFra = "2011-01-01",
   datoTil = Sys.Date(),
+  aar = 0,
   minald = 0,
   maxald = 110,
   erMann = "",
   InnMaate = "",
-  aar = 0,
-  grType = 99,
-  enhetsUtvalg = 0,
   dodInt = "",
+  velgDiag = 0,
+  grType = 99,
+  nivaa = 0,
+  overfPas = 0,
+  enhetsUtvalg = 0,
   reshID = 0,
   velgAvd = 0,
-  velgDiag = 0,
-  overfPas = 99,
   fargepalett = "BlaaOff"
 )
 }
@@ -44,27 +45,30 @@ Registeret inneholder registreringer f.o.m. 2011}
 8: Akutt kirurgisk,
 standard: alle (alt unntatt 0,6,8 / ikke spesifisert)}
 
+\item{dodInt}{Levende/død ut fra intensiv.
+0: i live,
+1: død,
+alle: standard (alle andre verdier)}
+
+\item{velgDiag}{Velge diagnose. 0-alle, 1-Bekreftede Covid-pasienter, 2-alle unntatt Covid-pasienter}
+
 \item{grType}{Gjør gruppeutvalg på sykehustype
 1: lokal-/sentralsykehus
 2: lokal-/sentralsykehus
 3: regionsykehus
 99: alle (standard)}
 
-\item{enhetsUtvalg}{Gjør gruppeutvalg med eller uten sammenlikning. Se \strong{Details} for oversikt.}
-
-\item{dodInt}{Levende/død ut fra intensiv.
-0: i live,
-1: død,
-alle: standard (alle andre verdier)}
-
-\item{reshID}{Parameter følger fra innlogging helseregister.no og angir
-hvilken enhet i spesialisthelsetjenesten brukeren tilhører}
-
-\item{velgDiag}{Velge diagnose. 0-alle, 1-Bekreftede Covid-pasienter, 2-alle unntatt Covid-pasienter}
+\item{nivaa}{Intensivavdelingens "nivå": 1-5: 'Overvåk', 'Postop', 'Gen<50%','Gen>50%', 'Barn'
+Flervalgsparameter}
 
 \item{overfPas}{Overført under pågående intensivbehandling?
 1 = Pasienten er ikke overført
 2 = Pasienten er overført}
+
+\item{enhetsUtvalg}{Gjør gruppeutvalg med eller uten sammenlikning. Se \strong{Details} for oversikt.}
+
+\item{reshID}{Parameter følger fra innlogging helseregister.no og angir
+hvilken enhet i spesialisthelsetjenesten brukeren tilhører}
 
 \item{fargepalett}{Hvilken fargepalett skal brukes i figurer (Standard: BlaaRapp)}
 

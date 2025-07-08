@@ -17,15 +17,16 @@ kjorIntensivApp <- function(browser = FALSE, logAsJson = FALSE) {
   if (logAsJson) {
     rapbase::loggerSetup()
   }
-
-  app <- shiny::runApp(
-    system.file('appErHer/appIntensiv.R', package = 'intensiv'),
-    launch.browser = browser
+  app <- shiny::shinyApp(
+    ui = intensiv::ui_intensiv,
+    server = intensiv::server_intensiv,
+    # shiny::runApp(ui = ui_intensiv, server = server_intensiv,
+    # system.file('R/appIntensiv.R', package = 'intensiv'),
+  options = list(launch.browser = browser)
   )
 
   return(app)
 }
-
 
 
 #' Finne reinnleggelser
