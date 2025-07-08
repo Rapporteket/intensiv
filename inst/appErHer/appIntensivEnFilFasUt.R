@@ -25,7 +25,6 @@ AarNaa <- as.numeric(format(idag, "%Y"))
   qCovid <- paste0('SELECT UPPER(HovedskjemaGUID) AS HovedskjemaGUID, FormStatus, Diagnosis
                 FROM beredskap')
 CovidData <- rapbase::loadRegData(registryName= "data", query=qCovid, dbType="mysql")
-message("Done!")
 
 CovidData$Bekreftet <- 0
 CovidData$Bekreftet[which(CovidData$Diagnosis %in% 100:103)] <- 1
@@ -33,32 +32,22 @@ CovidData$Bekreftet[which(CovidData$Diagnosis %in% 100:103)] <- 1
 message("Merge IntData and covid data")
 RegData <- merge(IntDataRaa, CovidData[ ,-which(names(CovidData) == 'Diagnosis')], suffixes = c('','Cov'),
                  by.x = 'SkjemaGUID', by.y = 'HovedskjemaGUID', all.x = T, all.y=F)
-message("Done!")
 message("Preposess data")
 RegData <- NIRPreprosess(RegData = RegData)
-message("Done!")
 message("Get paaror data")
 PaarorData <- NIRpaarorDataSQL()
-message("Merge IntData and paaror data")
 PaarorDataH <- KobleMedHoved(IntDataRaa, PaarorData, alleHovedskjema=F, alleSkjema2=F)
-message("Done!")
 antPaaror <- dim(PaarorDataH)[1]
 if (antPaaror>0) {
-  message("Preposess PaarorDataH")
   PaarorData <- NIRPreprosess(RegData = PaarorDataH) #Må først koble på hoveddata for å få ShType++
-  message("Done!")
 }
+message("Alle data hentet!")
 
 #-----Definere utvalgsinnhold og evt. parametre som er statiske i appen----------
 
 
 #Definere utvalgsinnhold
-# sykehusNavn <- sort(unique(RegData$ShNavn), index.return=T)
-# sykehusValg <- unique(RegData$ReshId)[sykehusNavn$ix] #Blir feil siden flere sykehusnavn enn resh
-# sykehusValg <- c(0,sykehusValg)
-# names(sykehusValg) <- c('Ikke valgt',sykehusNavn$x)
 
-message("Defining sykehusValg")
 sykehusNavnResh <- unique(RegData[,c("ShNavn", "ReshId")])
 rekkeflg <- order(sykehusNavnResh$ShNavn)
 sykehusValg <- c(0,sykehusNavnResh$ReshId[rekkeflg])
@@ -775,17 +764,10 @@ server <- function(input, output, session) { #
   observeEvent(input$reset_andelValg, shinyjs::reset("brukervalg_andeler"))
   observeEvent(input$reset_gjsnValg, shinyjs::reset("brukervalg_gjsn"))
 
-
-  #indReshEgen <- match(user$org(), RegData$ReshId)
-  #egetShNavn <- as.character(RegData$ShNavn[match(user$org(), RegData$ReshId)])
-  #egetRHF <- as.character(RegData$RHF[indReshEgen])
-  #egetHF <- as.character(RegData$HF[indReshEgen])
-  #egenShType <- c('lokal-/sentralsykehus', '',
-  #                'universitetssykehus')[RegData$ShType[indReshEgen]]
   egenLokalitet <- c(0, 2, 4, 7)
   names(egenLokalitet) <- c('hele landet', 'egen enhet', 'egen sykehustype' , 'eget RHF')
-    # c('hele landet', egetShNavn, egenShType , egetRHF)
 
+  # Foreløpig ikke i bruk...??
   output$egetShNavn <- renderText(as.character(RegData$ShNavn[match(user$org(), RegData$ReshId)]))
 
 

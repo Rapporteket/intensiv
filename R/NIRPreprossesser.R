@@ -17,9 +17,7 @@ NIRPreprosess <- function(RegData=RegData, skjema=1)	#, reshID=reshID)
       #Miljøparametre
 
       #Kun ferdigstilte registreringer:
-      # Fra des. 2018 får Intensiv også kladd over fra  fra MRS/NHN. 1.april 2021 - alle er fortsatt ferdigstilte...")
   if (skjema %in% 1:2){
-    message("NIRPreprosess: Fjerner registreringer som ikke er ferdigstilte")
       RegData <- RegData[RegData$FormStatus==2, ]}
 
       #Kjønn
@@ -32,9 +30,8 @@ NIRPreprosess <- function(RegData=RegData, skjema=1)	#, reshID=reshID)
       #For enkelhetsskyld kalles Saps2Score som er Estimert mortalitet for SMR
       #RegData$logit <- -7.7631 + 0.0737*RegData$Saps2ScoreNumber + 0.9971*log(RegData$Saps2ScoreNumber+1)
       #RegData$Mort <- exp(RegData$logit)/(1+exp(RegData$logit))*100 # = Saps2Score = SMR
-      if (skjema==1){
 
-        message("NIRPreprosess: beregn SAPS-sum")
+     if (skjema==1){
         RegData$SapsSum <- with(RegData, Glasgow+Age+SystolicBloodPressure+HeartRate+Temperature+MvOrCpap+UrineOutput+
               SerumUreaOrBun+Leukocytes+Potassium+Sodium+Hco3+Bilirubin+TypeOfAdmission)
         RegData[which(RegData$AgeAdmitted<16), c('SapsSum', 'Saps2Score', 'Saps2ScoreNumber')] <- 0
@@ -94,10 +91,9 @@ NIRPreprosess <- function(RegData=RegData, skjema=1)	#, reshID=reshID)
       #	RegData <- RegData[which(RegData$DateAdmittedIntensive!=''),]	#Tar ut registreringer som ikke har innleggelsesdato
       RegData$InnDato <- as.Date(RegData$DateAdmittedIntensive, tz= 'UTC', format="%Y-%m-%d")
       RegData$Innleggelsestidspunkt <- as.POSIXlt(RegData$DateAdmittedIntensive, tz= 'UTC', format="%Y-%m-%d %H:%M" ) #:%S
-      #RegData$InnDato <- strptime(RegData$DateAdmittedIntensive, format="%Y-%m-%d") # %H:%M:%S" )  #"%d.%m.%Y"	"%Y-%m-%d"
       RegData$DateDischargedIntensive <- as.POSIXlt(RegData$DateDischargedIntensive, tz= 'UTC', format="%Y-%m-%d %H:%M" )
 
-      # Nye variable:
+      # Nye variabler:
       RegData$MndNum <- RegData$Innleggelsestidspunkt$mon +1
       RegData$MndAar <- format(RegData$Innleggelsestidspunkt, '%b%y')
       RegData$Kvartal <- ceiling(RegData$MndNum/3)

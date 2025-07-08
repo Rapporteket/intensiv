@@ -1,59 +1,28 @@
-# Shiny-app for Norsk Intensivregister
-#NB: For å få lagt ut app'en på Shinyapps, må Github-pakkene (intensiv og rapbase) være installert fra Github.
-#devtools::install_github(ref = 'rel', repo = 'Rapporteket/intensiv')
+#' Brukergrensesnitt (ui) til Intensiv-appen
+#'
+#' @return Brukergrensesnittet (ui) til intensiv-appen
+#' @export
+ui_intensiv <- function() {
+
 library(intensiv)
 
 addResourcePath('rap', system.file('www', package='rapbase'))
 
 context <- Sys.getenv("R_RAP_INSTANCE") #Blir tom hvis jobber lokalt
-paaServer <- context %in% c("DEV", "TEST", "QA", "PRODUCTION")
+paaServer <- (context %in% c("DEV", "TEST", "QA","QAC", "PRODUCTION", "PRODUCTIONC"))
+
 
 options(knitr.table.format = "html")
-idag <- Sys.Date() #as.Date('2018-11-30') #
-datoTil <- as.POSIXlt(idag)
-aarFra <- paste0(1900+as.POSIXlt(idag)$year-5, '-01-01')
-startDato <- paste0(as.numeric(format(idag-90, "%Y")), '-01-01') #paste0(1900+as.POSIXlt(idag)$year, '-01-01')
-AarNaa <- as.numeric(format(idag, "%Y"))
-
-regTitle <- ifelse(paaServer,
-                   'NORSK INTENSIVREGISTER',
-                   'Norsk Intensivregister med FIKTIVE data')
-
-pdf(file = NULL)
-#---------Hente data------------
-
-  IntData <- NIRRegDataSQL(datoFra = '2011-01-01') 
-  PaarorData <- NIRpaarorDataSQL()
-
-  #Covid-skjema:
-  qCovid <- paste0('SELECT HovedskjemaGUID, FormStatus, Diagnosis
-                  FROM readinessformdatacontract')
-  CovidData <- rapbase::loadRegData(registryName= "data", query=qCovid, dbType="mysql")
-
-PaarorDataH <- KobleMedHoved(IntData, PaarorData, alleHovedskjema=F, alleSkjema2=F)
-CovidData$HovedskjemaGUID <- toupper(CovidData$HovedskjemaGUID)
-CovidData$Bekreftet <- 0
-CovidData$Bekreftet[which(CovidData$Diagnosis %in% 100:103)] <- 1
-
-RegData <- merge(IntData, CovidData[ ,-which(names(CovidData) == 'Diagnosis')], suffixes = c('','Cov'),
-                 by.x = 'SkjemaGUID', by.y = 'HovedskjemaGUID', all.x = T, all.y=F)
 
 
-antPaaror <- dim(PaarorDataH)[1]
-if (antPaaror>0) {
-PaarorData <- NIRPreprosess(RegData = PaarorDataH) #Må først koble på hoveddata for å få ShType++
-}
-RegData <- NIRPreprosess(RegData = RegData)
-RegData <- RegData[!is.na(RegData$Aar), ]
 
 #-----Definere utvalgsinnhold og evt. parametre som er statiske i appen----------
 
-
-#Definere utvalgsinnhold
-sykehusNavn <- sort(unique(RegData$ShNavn), index.return=T)
-sykehusValg <- unique(RegData$ReshId)[sykehusNavn$ix]
-sykehusValg <- c(0,sykehusValg)
-names(sykehusValg) <- c('Ikke valgt',sykehusNavn$x)
+idag <- Sys.Date() #as.Date('2018-11-30') #
+# datoTil <- as.POSIXlt(idag)
+# aarFra <- paste0(1900+as.POSIXlt(idag)$year-5, '-01-01')
+startDato <- paste0(as.numeric(format(idag-90, "%Y")), '-01-01') #paste0(1900+as.POSIXlt(idag)$year, '-01-01')
+# AarNaa <- as.numeric(format(idag, "%Y"))
 
 enhetsUtvalg <- c("Egen mot resten av landet"=1,
                   "Hele landet"=0,
@@ -70,11 +39,11 @@ covidValg <- c('Alle pasienter' = 0,
                'Alle unntatt Covid-pasienter' = 2)
 velgCovidTxt <- 'Velg diagnose (covid-pasienter)'
 
-# Define UI for application that draws figures
+pdf(file = NULL)
 ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
   title = div(a(includeHTML(system.file('www/logo.svg', package='rapbase'))),
-              regTitle),
-  windowTitle = regTitle,
+              'NORSK INTENSIVREGISTER'),
+  windowTitle = 'NORSK INTENSIVREGISTER',
   theme = "rap/bootstrap.css",
   id = 'hovedark',
 
@@ -103,20 +72,22 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
              h2('Hente datauttrekk'),
              dateRangeInput(inputId = 'datovalgData', start = startDato, end = idag,
                             label = "Tidsperiode", separator="t.o.m.", language="nb"),
-             selectInput(inputId = 'velgReshData', label='Velg sykehus',
-                         selected = 0,
-                         choices = sykehusValg),
+             uiOutput('velgReshData'),
+             # selectInput(inputId = 'velgReshData', label='Velg sykehus',
+             #             selected = 0,
+             #             choices = sykehusValg_DataD),
              downloadButton(outputId = 'lastNed_dataDump', label='Last ned datadump')
 
            ),
            mainPanel(
              tags$head(tags$link(rel="shortcut icon", href="rap/favicon.ico")),
-             appNavbarUserWidget(user = uiOutput("appUserName"),
-                                 organization = uiOutput("appOrgName"),
-                                 addUserInfo = TRUE),
+            # if (paaServer) {
+               rapbase::navbarWidgetInput("navbar-widget", selectOrganization = TRUE),
+            # },
+
              tabsetPanel(
                tabPanel('Startside',
-             h3(ifelse(paaServer, "","Merk at noen resultater kan se rare ut siden dette er syntetiske data!"), align='center' ),
+            # h3(ifelse(paaServer, "","Merk at noen resultater kan se rare ut siden dette er syntetiske data!"), align='center' ),
              h3(uiOutput('NokkeltallUtvalgTxt')),
              selectInput(inputId = 'enhetsNivaaStart', label='Enhetsnivå',
                            choices = c("Egen enhet"=2, "Hele landet"=0,
@@ -159,8 +130,8 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                     h4(tags$b('SMR '), 'viser SMR per sykehus. Dette er faktisk dødelighet
                        delt på estimert dødelighet ut fra SAPS-skår.'),
                     h4(tags$b('Type opphold'), 'viser en figur med fordeling av oppholdstyper.'),
-                    h4(tags$b('PREM-skjema'), 'viser resultater fra pårørendeundersøkelser
-                       registrert i skjemaet FS-ICU.'),
+                    # h4(tags$b('PREM-skjema'), 'viser resultater fra pårørendeundersøkelser
+                    #    registrert i skjemaet FS-ICU.'),
                     br(),
                     h4('Gi gjerne innspill til registerledelsen om det er resultater/tabeller/figurer du savner
                             på Rapporteket-Intensiv.')
@@ -181,13 +152,13 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                                                    value = Sys.Date(), max = Sys.Date()),
                                          selectInput(inputId = "covidvalgReg", label= velgCovidTxt,
                                                      choices = covidValg)
-                        ), 
+                        ),
                        conditionalPanel(
                           condition = "input.ark == 'Nøkkeltall' || input.ark == 'Ant. opphold'",
                           selectInput(inputId = "tidsenhetReg", label="Velg tidsenhet",
                                       choices = rev(c('År'= 'Aar', 'Måned'='Mnd')))),
                         conditionalPanel(
-                          condition = "input.ark == 'Nøkkeltall'", 
+                          condition = "input.ark == 'Nøkkeltall'",
                           selectInput(inputId = 'enhetsNivaaReg', label='Enhetsnivå',
                                       choices = c("Hele landet"=0, "Egen enhet"=2,
                                                   "Egen sykehustype"=4, "Egen region"=7)
@@ -196,12 +167,13 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                                       choices = c(' '=4, 'Nei'=0, 'Ja'=1, 'Invasiv'=2, 'Non-invasiv'=3)
                                       )),
                         conditionalPanel(
-                          condition = "input.ark == 'Overføringer'", 
+                          condition = "input.ark == 'Overføringer'",
                           dateRangeInput(inputId = 'datovalgReg', start = startDato, end = idag,
                                          label = "Tidsperiode", separator="t.o.m.", language="nb"),
-                          selectInput(inputId = 'velgReshOverf', label='Velg eget Sykehus',
-                                      #selected = 0,
-                                      choices = sykehusValg)
+                          uiOutput('velgReshOverf')
+                          # selectInput(inputId = 'velgReshOverf', label='Velg eget Sykehus',
+                          #             #selected = 0,
+                          #             choices = sykehusValg)
                         )
            ),
            mainPanel(
@@ -224,7 +196,7 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                          tabPanel('Overføringer',
                                   p(h2('Overføring av intensivpasienter',
                                      align='center') ),
-                                  #h2(uiOutput('egetShNavn')),
+                                  #h2(uiOutput('user$org()')),
                                   br(),
                                   column(6,
                                          tableOutput('tabOverfTil')
@@ -298,13 +270,14 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                ),
              selectInput(inputId = "covidvalg", label= velgCovidTxt,
                          choices = covidValg),
-             
+
              selectInput(inputId = 'enhetsUtvalg', label='Egen enhet og/eller landet',
                              choices = enhetsUtvalg
                  ),
-             selectInput(inputId = 'velgResh', label='Velg eget Sykehus',
-                         #selected = 0,
-                         choices = sykehusValg),
+             uiOutput('velgResh'),
+             # selectInput(inputId = 'velgResh', label='Velg eget Sykehus',
+             #             #selected = 0,
+             #             choices = sykehusValg),
              actionButton("reset_fordValg", label="Tilbakestill valg"),
              br(),
              selectInput(inputId = "bildeformatFord",
@@ -575,79 +548,80 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
   ), #tab
 
   #-------Pårørendeskjema----------
-  tabPanel(p("PREM-skjema", title='Enkeltspørsmål fra FS-ICU, samt totalskårer'),
-           h2('Resultater fra Pårørendeskjema (FS-ICU)', align = 'center'),
-           # fluidRow(column(width = 3, #Første kolonne. Alternativ til sidebarLayout(sidebarPanel())
-           sidebarPanel(
-             width = 3,
-             h4('Her kan man velge hvilken variabel man ønsker å se resultater for og gjøre ulike filtreringer.'),
-             selectInput(
-               inputId = "valgtVarPaarorFord", label="Velg variabel",
-               choices = c('S1.1 Pasient, høflighet og medfølelse' = 'BehandlingHoeflighetRespektMedfoelelse',
-                           'S1.2 Smerte' = 'SymptomSmerte',
-                           'S1.3 Pustebesvær' = 'SymptomPustebesvaer',
-                           'S1.4 Uro' = 'SymptomUro',
-                           'S1.5 Interesse for behov' = 'BehandlingBesvarerBehov',
-                           'S1.6 Følelsesmessig støtte' = 'BehandlingBesvarerStoette',
-                           'S1.7 Samarbeid' = 'BehandlingSamarbeid',
-                           'S1.8 Pårørende, høflighet og medfølelse' = 'BehandlingBesvarerHoeflighetRespektMedfoelelse',
-                           'S1.9 Omsorg, sykepleier' = 'SykepleierOmsorg',
-                           'S1.10 Kommunikasjon, sykepleier' = 'SykepleierKommunikasjon',
-                           'S1.11 Omsorg, lege' = 'LegeBehandling',
-                           'S1.12 Atmosfære på avd.' = 'AtmosfaerenIntensivAvd',
-                           'S1.13 Atmosfære, venterom' = 'AtmosfaerenPaaroerenderom',
-                           'S1.14 Omfang av behandling' = 'OmfangetAvBehandlingen',
-                           'S2.1 Legens informasjonsfrekvens' = 'LegeInformasjonFrekvens',
-                           'S2.2 Svarvillighet, personale' = 'SvarPaaSpoersmaal',
-                           'S2.3 Forståelige forklaringer' = 'ForklaringForstaaelse',
-                           'S2.4 Informasjon, ærlighet' = 'InformasjonsAerlighet',
-                           'S2.5 Informasjon' = 'InformasjonOmForloep',
-                           'S2.6 Informasjon, overensstemmelse' = 'InformasjonsOverensstemmelse',
-                           'S2.7 Beslutningsprosess, involvering' = 'BeslutningsInvolvering',
-                           'S2.8 Beslutningsprosess, støtte' = 'BeslutningsStoette',
-                           'S2.9 Beslutningsprosess, innflytelse' = 'BeslutningsKontroll',
-                           'S2.10 Beslutningsprosess, tid' = 'BeslutningsTid',
-                           'S2.11 Livslengde' = 'LivsLengde',
-                           'S2.12 Komfort ved livsslutt, pasient' = 'LivssluttKomfor',
-                           'S2.13 Involvering ved livsslutt' = 'LivssluttStoette',
-                           'Totalskår, omsorg (skjema 1)' = 'SumScoreSatisfactionCare',
-                           'Totalskår, beslutning (skjema 2)' = 'SumScoreSatisfactionDecision',
-                           'Totalskår, alle spørsmål' = 'SumScoreAllQuestions')
-             ),
-             dateRangeInput(inputId = 'datovalgPaarorFord', start = "2015-01-01", end = idag,
-                            label = "Tidsperiode", separator="t.o.m.", language="nb"),
-             dateInput(inputId = 'startDatoIntervensjon', label = 'Startdato, intervensjon', language="nb",
-                       value = '2016-10-01', max = Sys.Date()),
-             selectInput(inputId = 'enhetsUtvalgPaarorFord', label='Egen enhet / hele landet',
-                         choices =  c("Hele landet"=0, "Egen enhet"=2)),
-             h5('(NB: Hvis din avdeling ikke har registreringer, vises hele landet uansett valg)'),
-             selectInput(inputId = "erMannPaarorFord", label="Kjønn, pasient",
-                         choices = c("Begge"=2, "Menn"=1, "Kvinner"=0))
-             #h3('Utvalg vedrørende den pårørende (alder, kjønn, relasjon,...)?')
-           ),
-
-           mainPanel(
-             tabsetPanel(
-               tabPanel(
-                 'Figur',
-                 plotOutput('paarorFord')),
-               tabPanel(
-                 'Tabell',
-                 h3('Her kommer en tabell')
-                 #uiOutput("tittelFord"),
-                 #tableOutput('fordelingTabPaaror')
-               )
-             )
-           )
-  ), #tab Pårørende
+#DENNE SKAL OPPDATERES TIL Å GJELDE NY VERSJON AV SKJEMAET
+  # tabPanel(p("PREM-skjema", title='Enkeltspørsmål fra FS-ICU, samt totalskårer'),
+  #          h2('Resultater fra Pårørendeskjema (FS-ICU)', align = 'center'),
+  #          # fluidRow(column(width = 3, #Første kolonne. Alternativ til sidebarLayout(sidebarPanel())
+  #          sidebarPanel(
+  #            width = 3,
+  #            h4('Her kan man velge hvilken variabel man ønsker å se resultater for og gjøre ulike filtreringer.'),
+  #            selectInput(
+  #              inputId = "valgtVarPaarorFord", label="Velg variabel",
+  #              choices = c('S1.1 Pasient, høflighet og medfølelse' = 'BehandlingHoeflighetRespektMedfoelelse',
+  #                          'S1.2 Smerte' = 'SymptomSmerte',
+  #                          'S1.3 Pustebesvær' = 'SymptomPustebesvaer',
+  #                          'S1.4 Uro' = 'SymptomUro',
+  #                          'S1.5 Interesse for behov' = 'BehandlingBesvarerBehov',
+  #                          'S1.6 Følelsesmessig støtte' = 'BehandlingBesvarerStoette',
+  #                          'S1.7 Samarbeid' = 'BehandlingSamarbeid',
+  #                          'S1.8 Pårørende, høflighet og medfølelse' = 'BehandlingBesvarerHoeflighetRespektMedfoelelse',
+  #                          'S1.9 Omsorg, sykepleier' = 'SykepleierOmsorg',
+  #                          'S1.10 Kommunikasjon, sykepleier' = 'SykepleierKommunikasjon',
+  #                          'S1.11 Omsorg, lege' = 'LegeBehandling',
+  #                          'S1.12 Atmosfære på avd.' = 'AtmosfaerenIntensivAvd',
+  #                          'S1.13 Atmosfære, venterom' = 'AtmosfaerenPaaroerenderom',
+  #                          'S1.14 Omfang av behandling' = 'OmfangetAvBehandlingen',
+  #                          'S2.1 Legens informasjonsfrekvens' = 'LegeInformasjonFrekvens',
+  #                          'S2.2 Svarvillighet, personale' = 'SvarPaaSpoersmaal',
+  #                          'S2.3 Forståelige forklaringer' = 'ForklaringForstaaelse',
+  #                          'S2.4 Informasjon, ærlighet' = 'InformasjonsAerlighet',
+  #                          'S2.5 Informasjon' = 'InformasjonOmForloep',
+  #                          'S2.6 Informasjon, overensstemmelse' = 'InformasjonsOverensstemmelse',
+  #                          'S2.7 Beslutningsprosess, involvering' = 'BeslutningsInvolvering',
+  #                          'S2.8 Beslutningsprosess, støtte' = 'BeslutningsStoette',
+  #                          'S2.9 Beslutningsprosess, innflytelse' = 'BeslutningsKontroll',
+  #                          'S2.10 Beslutningsprosess, tid' = 'BeslutningsTid',
+  #                          'S2.11 Livslengde' = 'LivsLengde',
+  #                          'S2.12 Komfort ved livsslutt, pasient' = 'LivssluttKomfor',
+  #                          'S2.13 Involvering ved livsslutt' = 'LivssluttStoette',
+  #                          'Totalskår, omsorg (skjema 1)' = 'SumScoreSatisfactionCare',
+  #                          'Totalskår, beslutning (skjema 2)' = 'SumScoreSatisfactionDecision',
+  #                          'Totalskår, alle spørsmål' = 'SumScoreAllQuestions')
+  #            ),
+  #            dateRangeInput(inputId = 'datovalgPaarorFord', start = "2015-01-01", end = idag,
+  #                           label = "Tidsperiode", separator="t.o.m.", language="nb"),
+  #            dateInput(inputId = 'startDatoIntervensjon', label = 'Startdato, intervensjon', language="nb",
+  #                      value = '2016-10-01', max = Sys.Date()),
+  #            selectInput(inputId = 'enhetsUtvalgPaarorFord', label='Egen enhet / hele landet',
+  #                        choices =  c("Hele landet"=0, "Egen enhet"=2)),
+  #            h5('(NB: Hvis din avdeling ikke har registreringer, vises hele landet uansett valg)'),
+  #            selectInput(inputId = "erMannPaarorFord", label="Kjønn, pasient",
+  #                        choices = c("Begge"=2, "Menn"=1, "Kvinner"=0))
+  #            #h3('Utvalg vedrørende den pårørende (alder, kjønn, relasjon,...)?')
+  #          ),
+  #
+  #          mainPanel(
+  #            tabsetPanel(
+  #              tabPanel(
+  #                'Figur',
+  #                plotOutput('paarorFord')),
+  #              tabPanel(
+  #                'Tabell',
+  #                h3('Her kommer en tabell')
+  #                #uiOutput("tittelFord"),
+  #                #tableOutput('fordelingTabPaaror')
+  #              )
+  #            )
+  #          )
+  # ), #tab Pårørende
 
 
   #-----------Abonnement--------------------------------
-  
+
 tabPanel(p("Abonnement",
            title='Bestill automatisk utsending av rapporter på e-post'),
          value = 'Abonnement',
-         
+
          sidebarLayout(
            sidebarPanel(
              rapbase::autoReportInput("intensivAbb")
@@ -698,62 +672,116 @@ tabPanel(p("Registeradministrasjon", title='Registeradministrasjonens side'),
                               separator="t.o.m.", language="nb"),
                     selectInput(inputId = "covidvalgNok", label= velgCovidTxt,
                                            choices = covidValg),
-                    selectInput(inputId = "enhetNok", label= 'Velg enhet',
-                                choices =   c('Alle',
-                                              unique(RegData$RHF),
-                                              unique(RegData$HF),
-                                              unique(RegData$HelseenhetKortnavn))),
+                 uiOutput('enhetNok'),
+                    # selectInput(inputId = "enhetNok", label= 'Velg enhet',
+                    #             choices =   c('Alle',
+                    #                           unique(RegData$RHF),
+                    #                           unique(RegData$HF),
+                    #                           unique(RegData$HelseenhetKortnavn))),
                   br(),
                  h4('Andel opphold med *komplikasjon*, er definert som et opphold hvor det har
                     oppstått minst én av følgende komplikasjoner:
                     Alvorlig hypoglykemi, pneumotoraks, luftveisproblem, trakealtube/kanyle, dekubitus'),
                   tableOutput('tabNokkeltallUtvidet'),
                  downloadButton(outputId = 'lastNed_tabNokkel', label='Last ned tabell')
-                  ) 
+                  )
 #         ),
          ) #tabset
 ) #tab SC
 
 )  #navbarPage
+}
 
-#----------------- Define server logic ----------
-server <- function(input, output, session) { #
+#' Serverdek til Intensiv-appen
+#'
+#' @return Brukergrensesnittet (ui) til intensiv-appen
+#' @export
+server_intensiv <- function(input, output, session) { #
 
 #-----------Div serveroppstart------------------
-  #rapbase::appLogger(session = session, msg = "Starter intensiv-app")
+ # context <- Sys.getenv("R_RAP_INSTANCE") #Blir tom hvis jobber lokalt
+  # paaServer <- (context %in% c("DEV", "TEST", "QA","QAC", "PRODUCTION", "PRODUCTIONC")) #rapbase::isRapContext()
+ # message("Intensivapp server started in context: ", context)
 
-  reshID <- ifelse(paaServer, as.numeric(rapbase::getUserReshId(session)), 109773)
-  rolle <- reactive({ifelse(paaServer, rapbase::getUserRole(shinySession=session), 'SC')})
-  brukernavn <- reactive({ifelse(paaServer, rapbase::getUserName(shinySession=session), 'brukernavn')})
+  #---------Hente data------------
 
-  indReshEgen <- match(reshID, RegData$ReshId)
-  egetShNavn <- as.character(RegData$ShNavn[indReshEgen])
-  egetRHF <- as.character(RegData$RHF[indReshEgen])
-  egetHF <- as.character(RegData$HF[indReshEgen])
-  egenShType <- c('lokal-/sentralsykehus', '',
-                  'universitetssykehus')[RegData$ShType[indReshEgen]]
-  egenLokalitet <- c(0, 2, 4, 7)
-  names(egenLokalitet) <- c('hele landet', egetShNavn, egenShType , egetRHF)
+  message("Getting IntData")
+  IntDataRaa <- NIRRegDataSQL(datoFra = '2015-01-01')
 
-  output$egetShNavn <- renderText(egetShNavn)
+  #Covid-skjema:
+  qCovid <- paste0('SELECT UPPER(HovedskjemaGUID) AS HovedskjemaGUID, FormStatus, Diagnosis
+                FROM beredskap')
+  CovidData <- rapbase::loadRegData(registryName= "data", query=qCovid, dbType="mysql")
 
-  observe({if (rolle() != 'SC') { #
-    shinyjs::hide(id = 'velgResh')
-    shinyjs::hide(id = 'velgReshOverf')
-    shinyjs::hide(id = 'velgReshData')
-    hideTab(inputId = "hovedark", target = "Registeradministrasjon")
+  CovidData$Bekreftet <- 0
+  CovidData$Bekreftet[which(CovidData$Diagnosis %in% 100:103)] <- 1
+
+  message("Merge IntData and covid data")
+  RegData <- merge(IntDataRaa, CovidData[ ,-which(names(CovidData) == 'Diagnosis')], suffixes = c('','Cov'),
+                   by.x = 'SkjemaGUID', by.y = 'HovedskjemaGUID', all.x = T, all.y=F)
+  message("Preposess data")
+  RegData <- NIRPreprosess(RegData = RegData)
+  message("Get paaror data")
+  PaarorData <- NIRpaarorDataSQL()
+  PaarorDataH <- KobleMedHoved(IntDataRaa, PaarorData, alleHovedskjema=F, alleSkjema2=F)
+  antPaaror <- dim(PaarorDataH)[1]
+  if (antPaaror>0) {
+    PaarorData <- NIRPreprosess(RegData = PaarorDataH) #Må først koble på hoveddata for å få ShType++
   }
+  message("Alle data hentet!")
+
+
+  sykehusNavnResh <- unique(RegData[,c("ShNavn", "ReshId")])
+  rekkeflg <- order(sykehusNavnResh$ShNavn)
+  sykehusValg <- c(0,sykehusNavnResh$ReshId[rekkeflg])
+  names(sykehusValg) <- c('Ikke valgt',sykehusNavnResh$ShNavn[rekkeflg])
+
+  map_avdeling <- data.frame(
+    UnitId = unique(RegData$ReshId),
+    orgname = RegData$ShNavn[match(unique(RegData$ReshId),
+                                   RegData$ReshId)])
+  message("Map avdeling created with ", nrow(map_avdeling), " rows.")
+  #user inneholder både reshID: user$org() og  rolle: user$role()
+  # "name", "fullName", "phone", "email", "group", "unit", "org", "role", "orgName"
+  user <- rapbase::navbarWidgetServer2(
+    id = "navbar-widget",
+    orgName = "intensiv",
+    map_orgname = shiny::req(map_avdeling),
+    caller = "intensiv"
+  )
+
+
+  observeEvent(user$role(), {
+    message("User role changed to: ", user$role())
+    if (user$role() == 'SC') {
+      shinyjs::show(id = 'velgResh')
+      shinyjs::show(id = 'velgReshOverf')
+      shinyjs::show(id = 'velgReshData')
+      showTab(inputId = "hovedark", target = "Registeradministrasjon")
+    } else {
+      shinyjs::hide(id = 'velgResh')
+      shinyjs::hide(id = 'velgReshOverf')
+      shinyjs::hide(id = 'velgReshData')
+      hideTab(inputId = "hovedark", target = "Registeradministrasjon")
+    }
   })
+
   observeEvent(input$reset_fordValg, shinyjs::reset("brukervalg_fordeling"))
   observeEvent(input$reset_andelValg, shinyjs::reset("brukervalg_andeler"))
   observeEvent(input$reset_gjsnValg, shinyjs::reset("brukervalg_gjsn"))
 
+  egenLokalitet <- c(0, 2, 4, 7)
+  names(egenLokalitet) <- c('hele landet', 'egen enhet', 'egen sykehustype' , 'eget RHF')
+
+  # Foreløpig ikke i bruk...??
+  output$egetShNavn <- renderText(as.character(RegData$ShNavn[match(user$org(), RegData$ReshId)]))
+
+
   # widget
-  if (paaServer) {
     output$appUserName <- renderText(rapbase::getUserFullName(session))
-    output$appOrgName <- renderText(paste0('rolle: ', rolle(),
-                                           '<br> ReshID: ', reshID,
-                                           '<br> Enhet: ', egetShNavn) )
+    output$appOrgName <- renderText(paste0('rolle: ', user$role(),
+                                           '<br> ReshID: ', user$org(),
+                                           '<br> Enhet: ', user$orgName()) )
 
   # User info in widget
   userInfo <- rapbase::howWeDealWithPersonalData(session)
@@ -763,14 +791,15 @@ server <- function(input, output, session) { #
                            closeOnEsc = TRUE, closeOnClickOutside = TRUE,
                            html = TRUE, confirmButtonText = rapbase::noOptOutOk())
   })
-  
-  }
-      #--------startside--------------
+
+
+
+#--------startside--------------
   output$mndRapp.pdf <- downloadHandler(
     filename = function(){ paste0('MndRapp', Sys.time(), '.pdf')},
     content = function(file){
       henteSamlerapporter(file, rnwFil="NIRmndRapp.Rnw",
-                          reshID = reshID, datoFra = startDato)
+                          reshID = user$org(), datoFra = startDato)
     }
   )
 
@@ -778,28 +807,47 @@ server <- function(input, output, session) { #
     filename = function(){ paste0('NIRsamleRapp', Sys.time(), '.pdf')},
     content = function(file){
       henteSamlerapporter(file, rnwFil="NIRSamleRapp.Rnw",
-                  reshID = reshID, datoFra = startDato)
+                  reshID = user$org(), datoFra = startDato)
     }
   )
 
   #test <- henteSamlerapporter('file.pdf', rnwFil="NIRinfluensa.Rnw")
   #Datadump
+
+  output$velgReshData <- renderUI({
+    selectInput(inputId = 'velgReshData', label='Velg sykehus',
+                selected = 0,
+                choices = sykehusValg)
+  })
+
+  output$velgReshOverf  <- renderUI({
+    selectInput(inputId = 'velgReshOverf', label='Velg eget Sykehus',
+                                  #selected = 0,
+                                  choices = sykehusValg)
+    })
+
+  output$velgResh  <- renderUI({
+    selectInput(inputId = 'velgResh', label='Velg eget Sykehus',
+                #selected = 0,
+                choices = sykehusValg)
+  })
+
+
   observe({
     RegDataReinn <- FinnReinnleggelser(RegData)
      DataDump <- NIRUtvalgEnh(RegData=RegDataReinn,
                            datoFra = input$datovalgData[1],
                           datoTil = input$datovalgData[2])$RegData
 
-
-    if (rolle() == 'SC') {
-      valgtResh <- as.numeric(input$velgReshData)
+    if (user$role() == 'SC') {
+      valgtResh <- ifelse(is.null(input$velgReshData), 0, as.numeric(input$velgReshData))
       ind <- if (valgtResh == 0) {1:dim(DataDump)[1]
         } else {which(as.numeric(DataDump$ReshId) %in% as.numeric(valgtResh))}
       tabDataDump <- DataDump[ind,]
 
     } else {
       tabDataDump <-
-        DataDump[which(DataDump$ReshId == reshID), ]
+        DataDump[which(DataDump$ReshId == user$org()), ]
       #output$test <- renderText(dim(tabDataDump)[1])
     } #Tar bort PROM/PREM til egen avdeling
 
@@ -814,15 +862,15 @@ server <- function(input, output, session) { #
 
 
 #------------ Aktivitet (/Tabeller) --------
- 
+
   output$NokkeltallUtvalgTxt <- renderText({
     paste0('Nøkkeltall på intensiv, ',
                 as.character(names(egenLokalitet[which(egenLokalitet==as.numeric(input$enhetsNivaaStart))])))
   })
    output$tabNokkeltallStart <- function() {
     tab <- t(tabNokkeltall(RegData=RegData, tidsenhet='Mnd',
-                           enhetsUtvalg=as.numeric(input$enhetsNivaaStart), 
-                           reshID=reshID))
+                           enhetsUtvalg=as.numeric(input$enhetsNivaaStart),
+                           reshID = user$org()))
     kableExtra::kable(tab,
                       full_width=F,
                       digits = c(0,0,0,1,0,0,1,1,1,0,0,0,1,0,0)
@@ -830,7 +878,7 @@ server <- function(input, output, session) { #
       kableExtra::column_spec(column = 1, width_min = '4em', width_max = 10) %>%
       kableExtra::column_spec(column = 2:(ncol(tab)), width = '4em')  %>%
       kableExtra::row_spec(0, bold = T, align = 'c') %>%
-      kableExtra::kable_styling(full_width = FALSE, position = 'left') 
+      kableExtra::kable_styling(full_width = FALSE, position = 'left')
   }
 
    output$NokkeltallTxtReg <- renderText({
@@ -839,15 +887,15 @@ server <- function(input, output, session) { #
      c(paste0(c(', uten', ', med', ', invasiv', ', non-invasiv'), ' respiratorstøtte'), '')[as.numeric(input$respiratorReg) + 1]
      )
    })
-   
+
    output$tabNokkeltall <- function() {
      RegDataCov <- NIRUtvalgEnh(RegData=RegData, velgDiag = as.numeric(input$covidvalgReg))$RegData
-     tab <- t(tabNokkeltall(RegData=RegDataCov, 
+     tab <- t(tabNokkeltall(RegData=RegDataCov,
                             tidsenhet=input$tidsenhetReg,
                             datoTil=input$sluttDatoReg,
                             respirator=input$respiratorReg,
-                            enhetsUtvalg=as.numeric(input$enhetsNivaaReg), 
-                                     reshID=reshID))
+                            enhetsUtvalg=as.numeric(input$enhetsNivaaReg),
+                                     reshID = user$org()))
        kableExtra::kable(tab,
                          full_width=F,
                          digits = c(0,0,0,1,0,0,1,1,1,0,0,0,1,0,0)
@@ -859,14 +907,21 @@ server <- function(input, output, session) { #
       } # ,rownames=T, digits=0 )
 
 
+     output$enhetNok  <- renderUI({
+     selectInput(inputId = "enhetNok", label= 'Velg enhet',
+                 choices =   c('Alle',
+                               unique(RegData$RHF),
+                               unique(RegData$HF),
+                               unique(RegData$ShNavn)))
+   })
 
-   output$tabNokkeltallUtvidet <- function() {
+  output$tabNokkeltallUtvidet <- function() {
      RegDataCov <- NIRUtvalgEnh(RegData=RegData, velgDiag = as.numeric(input$covidvalgNok))$RegData
      tab <- t(tabNokkeltall(RegData=RegDataCov,
                                  tidsenhet='Aar',
                                  datoFra = input$datoValgNok[1],
                                  datoTil = input$datoValgNok[2],
-                                sykehus=input$enhetNok,
+                                sykehus=ifelse(is.null(input$enhetNok), 'Alle', input$enhetNok),
                                 utvidTab=1)
               )
      kableExtra::kable(tab,
@@ -907,28 +962,26 @@ server <- function(input, output, session) { #
 
       output$tabOverfTil <- renderTable({
         tab <- tabOverforinger(RegData=RegData, datoFra=input$datovalgReg[1], datoTil=input$datovalgReg[2],
-                               reshID=reshID, velgAvd=input$velgReshOverf,  overfFraSh=0)
+                               reshID = user$org(), velgAvd=input$velgReshOverf,  overfFraSh=0)
         xtable::xtable(tab) #c('r','r','r')
       }, rownames=F, colnames = T, align = 'r')
 
       output$tabOverfFra <- renderTable({
-        #tab <- tabOverforinger(RegData=RegData, reshID=reshID)
+        #tab <- tabOverforinger(RegData=RegData, reshID = user$org())
         tab <- tabOverforinger(RegData=RegData, datoFra=input$datovalgReg[1], datoTil=input$datovalgReg[2],
-                                    reshID=reshID, velgAvd=input$velgReshOverf, overfFraSh=1)
+                                    reshID = user$org(), velgAvd=input$velgReshOverf, overfFraSh=1)
          xtable::xtable(tab, rownames=F)
       }, rownames = F, colnames = T, align = 'r')
 
-      #tabOverforinger(RegData, datoFra=Sys.Date()-365, datoTil=Sys.Date(), reshID=reshID, velgAvd=0, overfFraSh=1)
       output$tabDblReg <- renderTable({
-        tabDBL <- finnDblReg(RegData, reshID=reshID) #tabDBL <-
-        finnDblReg(RegData, reshID=reshID)
-        #tabDBL <- knitr::kable(tabDBL, format='html', row.names = NA)
+        tabDBL <- finnDblReg(RegData, reshID = user$org()) #tabDBL <-
+        finnDblReg(RegData, reshID = user$org())
       }, spacing="xs") #rownames = T,
 
 
       output$inklKrit <- renderPlot({
         NIRFigAndeler(RegData=RegData, preprosess = 0, valgtVar='inklKrit',
-                      reshID=reshID, enhetsUtvalg=as.numeric(input$enhetsUtvalg),
+                      reshID = user$org(), enhetsUtvalg=as.numeric(input$enhetsUtvalg),
                       datoFra=input$datovalg[1], datoTil=input$datovalg[2], session=session)
       }, height=800, width=800 #height = function() {session$clientData$output_fordelinger_width}
       )
@@ -937,7 +990,8 @@ server <- function(input, output, session) { #
 
       output$fordelinger <- renderPlot({
             NIRFigAndeler(RegData=RegData, preprosess = 0, valgtVar=input$valgtVar,
-                          reshID=reshID, velgAvd = input$velgResh,
+                          reshID = user$org(),
+                          velgAvd = ifelse(is.null(input$velgResh), 0, as.numeric(input$velgResh)),
                           enhetsUtvalg=as.numeric(input$enhetsUtvalg),
                           datoFra=input$datovalg[1], datoTil=input$datovalg[2],
                           minald=as.numeric(input$alder[1]), maxald=as.numeric(input$alder[2]),
@@ -951,20 +1005,25 @@ server <- function(input, output, session) { #
           paste0('FigurFord_', input$valgtVar, Sys.Date(), '.', input$bildeformatFord)
         },
         content = function(file){
-          NIRFigAndeler(RegData=RegData, preprosess = 0, valgtVar=input$valgtVar,
-                        reshID=reshID, velgAvd = input$velgResh,
+          NIRFigAndeler(RegData=RegData, preprosess = 0,
+                        valgtVar=input$valgtVar,
+                        reshID = user$org(),
+                        velgAvd = ifelse(is.null(input$velgResh), 0, as.numeric(input$velgResh)),
                         enhetsUtvalg=as.numeric(input$enhetsUtvalg),
                         datoFra=input$datovalg[1], datoTil=input$datovalg[2],
                         minald=as.numeric(input$alder[1]), maxald=as.numeric(input$alder[2]),
-                        erMann=as.numeric(input$erMann), velgDiag = as.numeric(input$covidvalg),
+                        erMann=as.numeric(input$erMann),
+                        velgDiag = as.numeric(input$covidvalg),
                         outfile = file)
         }
       )
 
       observe({
-            UtDataFord <- NIRFigAndeler(RegData=RegData, preprosess = 0, valgtVar=input$valgtVar,
-                                        reshID=reshID, enhetsUtvalg=as.numeric(input$enhetsUtvalg),
-                                        velgAvd = input$velgResh,
+        UtDataFord <- NIRFigAndeler(RegData=RegData, preprosess = 0,
+                                        valgtVar=input$valgtVar,
+                                        reshID = user$org(),
+                                        enhetsUtvalg=as.numeric(input$enhetsUtvalg),
+                                        velgAvd = ifelse(is.null(input$velgResh), 0, as.numeric(input$velgResh)),
                                         datoFra=input$datovalg[1], datoTil=input$datovalg[2],
                                         minald=as.numeric(input$alder[1]), maxald=as.numeric(input$alder[2]),
                                         erMann=as.numeric(input$erMann),
@@ -1028,7 +1087,7 @@ server <- function(input, output, session) { #
             output$andelTid <- renderPlot({
 
                   NIRFigAndelTid(RegData=RegData, preprosess = 0, valgtVar=input$valgtVarAndel,
-                                 reshID=reshID,
+                                 reshID = user$org(),
                                  datoFra=input$datovalgAndel[1], datoTil=input$datovalgAndel[2],
                                  minald=as.numeric(input$alderAndel[1]), maxald=as.numeric(input$alderAndel[2]),
                                  erMann=as.numeric(input$erMannAndel),
@@ -1045,7 +1104,7 @@ server <- function(input, output, session) { #
               },
               content = function(file){
                 NIRFigAndelTid(RegData=RegData, preprosess = 0, valgtVar=input$valgtVarAndel,
-                                   reshID=reshID,
+                                   reshID = user$org(),
                                    datoFra=input$datovalgAndel[1], datoTil=input$datovalgAndel[2],
                                    minald=as.numeric(input$alderAndel[1]), maxald=as.numeric(input$alderAndel[2]),
                                    erMann=as.numeric(input$erMannAndel),
@@ -1060,7 +1119,7 @@ server <- function(input, output, session) { #
                   #AndelTid
 
                   AndelerTid <- NIRFigAndelTid(RegData=RegData, preprosess = 0, valgtVar=input$valgtVarAndel,
-                                               reshID=reshID,
+                                               reshID = user$org(),
                                                datoFra=input$datovalgAndel[1], datoTil=input$datovalgAndel[2],
                                                minald=as.numeric(input$alderAndel[1]), maxald=as.numeric(input$alderAndel[2]),
                                                erMann=as.numeric(input$erMannAndel),
@@ -1154,7 +1213,7 @@ server <- function(input, output, session) { #
 
       output$gjsnTid <- renderPlot({
             NIRFigGjsnTid(RegData=RegData, preprosess = 0, valgtVar=input$valgtVarGjsn,
-                          reshID=reshID,
+                          reshID = user$org(),
                           datoFra=input$datovalgGjsn[1], datoTil=input$datovalgGjsn[2],
                           minald=as.numeric(input$alderGjsn[1]), maxald=as.numeric(input$alderGjsn[2]),
                           erMann=as.numeric(input$erMannGjsn),
@@ -1172,7 +1231,7 @@ server <- function(input, output, session) { #
         },
         content = function(file){
           NIRFigGjsnTid(RegData=RegData, preprosess = 0, valgtVar=input$valgtVarGjsn,
-                        reshID=reshID,
+                        reshID = user$org(),
                         datoFra=input$datovalgGjsn[1], datoTil=input$datovalgGjsn[2],
                         minald=as.numeric(input$alderGjsn[1]), maxald=as.numeric(input$alderGjsn[2]),
                         erMann=as.numeric(input$erMannGjsn),
@@ -1220,7 +1279,7 @@ server <- function(input, output, session) { #
             h5(HTML(paste0(dataUtGjsnGrVar$utvalgTxt, '<br />')))
           ))
         dataUtGjsnTid <- NIRFigGjsnTid(RegData=RegData, preprosess = 0, valgtVar=input$valgtVarGjsn,
-                                       reshID=reshID,
+                                       reshID = user$org(),
                                        datoFra=input$datovalgGjsn[1], datoTil=input$datovalgGjsn[2],
                                        minald=as.numeric(input$alderGjsn[1]), maxald=as.numeric(input$alderGjsn[2]),
                                        erMann=as.numeric(input$erMannGjsn),
@@ -1229,8 +1288,6 @@ server <- function(input, output, session) { #
                                        tidsenhet = input$tidsenhetGjsn,
                                        enhetsUtvalg = input$enhetsUtvalgGjsn,
                                        session = session) #, lagFig=0)
-        #dataUtGjsnTid <- NIRFigGjsnTid(RegData=RegData, preprosess = 0, maxald = 60 ,
-         #                              enhetsUtvalg = 1, reshID=700419, datoFra = '2020-01-01')
 
           if (dataUtGjsnTid$N$Hoved < 3) {
             tabGjsnTid <- 'N<3'
@@ -1348,94 +1405,86 @@ server <- function(input, output, session) { #
         }
       )
 #------------Pårørende-------------------
-      
-      if (antPaaror>0){
-      output$paarorFord <- renderPlot(
-        NIRFigPrePostPaaror(RegData=PaarorData, preprosess = 0, valgtVar=input$valgtVarPaarorFord,
-                            startDatoIntervensjon = input$startDatoIntervensjon,
-                            datoFra=input$datovalgPaarorFord[1], datoTil=input$datovalgPaarorFord[2],
-                            reshID=reshID,
-                            enhetsUtvalg = input$enhetsUtvalgPaarorFord,
-                            erMann=as.numeric(input$erMannPaarorFord,session=session)
-        ), width=800, height = 800 #execOnResize=TRUE,
-      )}
+
+      # if (antPaaror>0){
+      # output$paarorFord <- renderPlot(
+      #   NIRFigPrePostPaaror(RegData=PaarorData, preprosess = 0, valgtVar=input$valgtVarPaarorFord,
+      #                       startDatoIntervensjon = input$startDatoIntervensjon,
+      #                       datoFra=input$datovalgPaarorFord[1], datoTil=input$datovalgPaarorFord[2],
+      #                       reshID = user$org(),
+      #                       enhetsUtvalg = input$enhetsUtvalgPaarorFord,
+      #                       erMann=as.numeric(input$erMannPaarorFord,session=session)
+      #   ), width=800, height = 800 #execOnResize=TRUE,
+      # )}
 
 #------------------ Abonnement ----------------------------------------------
-      
-      #--------Modul, abonnement
-      orgs <- as.list(sykehusValg)
-      
-      ## make a list for report metadata
-      reports <- list(
-        MndRapp = list(
-          synopsis = "Intensiv/Rapporteket: månedsrapport, abonnement",
-          fun = "abonnement", 
-          paramNames = c('rnwFil',  "reshID", "datoFra", 'datoTil'), #"valgtRHF"),
-          paramValues = c('NIRmndRapp.Rnw', reshID, Sys.Date()-180, Sys.Date()) #'Alle')
+      orgs <- as.list(sykehusValg[-1])
+      paramNames <- shiny::reactive(c('reshID', 'brukernavn'))
+      paramValues <- shiny::reactive(c(user$org(), user$name()))
+
+     rapbase::autoReportServer(
+        id = "intensivAbb",
+        registryName = "intensiv",
+        type = "subscription",
+        paramNames = paramNames,
+        paramValues = paramValues,
+        reports = list(
+          MndRapp = list(
+            synopsis = "Intensiv: månedsrapport, abonnement",
+            fun = "abonnement",
+            paramNames = c('rnwFil',  "reshID"),  # ,"datoFra", 'datoTil'),
+            paramValues = c('NIRmndRapp.Rnw', "user$org()") #  Sys.Date()-180, Sys.Date())
+          )
         ),
-        SamleRapp = list(
-          synopsis = "Intensiv/Rapporteket: Samlerapport, abonnement",
-          fun = "abonnement", 
-          paramNames = c('rnwFil', "reshID", "datoFra", 'datoTil'), #"valgtRHF"),
-          paramValues = c('NIRSamleRapp.Rnw', reshID, Sys.Date()-180, Sys.Date()) #'Alle')
-        )
+        orgs = orgs,
+        user = user
       )
 
-      #test <- intensiv::abonnement(rnwFil='NIRmndRapp.Rnw', reshID=706078)
-      rapbase::autoReportServer(
-        id = "intensivAbb", registryName = "intensiv", type = "subscription",
-        paramNames = paramNames, paramValues = paramValues, #org = orgAbb$value,
-        reports = reports, orgs = orgs, eligible = TRUE
-      )
-      
-      
-      
 #-------------Registeradministrasjon -----------------
+     observeEvent(user$role(), {
+       if (user$role() == 'SC') {
 
-      #---Utsendinger---------------
-      orgs <- as.list(sykehusValg)
+         #---Utsendinger---------------
+         org <- rapbase::autoReportOrgServer("NIRuts", orgs)
+         # oppdatere reaktive parametre, for å få inn valgte verdier (overskrive de i report-lista)
+         paramNames <- shiny::reactive("reshID")
+         paramValues <- shiny::reactive(org$value())
+         vis_rapp <- shiny::reactiveVal(FALSE)
+         shiny::observeEvent(user$role(), {
+           vis_rapp(user$role() == "SC")
+         })
 
-      ## liste med metadata for rapport
-      reports <- list(
-        MndRapp = list(
-          synopsis = "Rapporteket-Intensiv: Månadsrapport",
-          fun = "abonnement",
-          paramNames = c('rnwFil', "reshID"),
-          paramValues = c('NIRmndRapp.Rnw', 0)
-        ),
-        SamleRapp = list(
-          synopsis = "Rapporteket-Intensiv: Rapport, div. resultater",
-          fun = "abonnement",
-          paramNames = c('rnwFil', "reshID"),
-          paramValues = c('NIRSamleRapp.Rnw', 'Alle')
-        )
-      )
-      #abonnement(rnwFil, brukernavn='tullebukk', reshID=0, datoFra=Sys.Date()-180, datoTil=Sys.Date())
-
-      org <- rapbase::autoReportOrgServer("NIRuts", orgs)
-
-      # oppdatere reaktive parametre, for å få inn valgte verdier (overskrive de i report-lista)
-      paramNames <- shiny::reactive("reshID")
-      paramValues <- shiny::reactive(org$value())
-
-      rapbase::autoReportServer(
-        id = "NIRuts", registryName = "intensiv", type = "dispatchment",
-        org = org$value, paramNames = paramNames, paramValues = paramValues,
-        reports = reports, orgs = orgs, eligible = TRUE
-      )
+         rapbase::autoReportServer2(
+           id = "NIRuts",
+           registryName = "intensiv",
+           type = "dispatchment",
+           org = org$value,
+           paramNames = paramNames,
+           paramValues = paramValues,
+           reports = list(
+             MndRapp = list(
+               synopsis = "Rapporteket-Intensiv: Månadsrapport",
+               fun = "abonnement",
+               paramNames = c('rnwFil', "reshID"),
+               paramValues = c('NIRmndRapp.Rnw',  "user$org()"))
+           ),
+           orgs = orgs,
+           eligible = vis_rapp,
+           user = user )
 
 
-      #----------- Eksport ----------------
-        ## brukerkontroller
-        rapbase::exportUCServer("intensivExport", registryName = "nir",
-                                repoName = "intensiv",
-                                eligible = (rapbase::getUserRole(session) == "SC")
-                                )
+         #----------- Eksport ----------------
+         ## brukerkontroller
+         rapbase::exportUCServer2("intensivExport", registryName = "nir",
+                                 repoName = "intensiv",
+                                 eligible = vis_rapp
+         )
          ## veileding
-        rapbase::exportGuideServer("intensivExportGuide", registryName = "intensiv")
-
+         rapbase::exportGuideServer("intensivExportGuide", registryName = "intensiv")
+       }
+     })
 } #serverdel
 
 # Run the application
-shinyApp(ui = ui, server = server)
+# shiny::shinyApp(ui = ui_intensiv, server = server_intensiv)
 
