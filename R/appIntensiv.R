@@ -646,13 +646,43 @@ tabPanel(p("Registeradministrasjon", title='Registeradministrasjonens side'),
                     sidebarLayout(
                       sidebarPanel(
                         rapbase::autoReportOrgInput("NIRuts"),
-                        rapbase::autoReportInput("NIRuts")
+                        rapbase::autoReportInput("NIRuts"),
+                        # For tørrkjøring
+                        br(),
+                        shiny::actionButton(inputId = "run_autoreport",
+                                            label = "Kjør autorapporter"),
+                        shiny::dateInput(inputId = "rapportdato",
+                                         label = "Kjør rapporter med dato:",
+                                         value = Sys.Date()+1,
+                                         min = Sys.Date(),
+                                         max = Sys.Date() + 366
+                        ),
+                        selectInput(inputId = 'registerTorrkjor',
+                                    label = 'Velg register',
+                                    choices = c("Intensiv"="intensiv",
+                                                "NGER"='nger',
+                                                "Nakke"='nakke',
+                                                "Rygg"= "rygg",
+                                                "Intensivberedskap"="intensivberedskap")),
+                        shiny::checkboxInput(inputId = "dryRun", label = "Send e-post")
+
+
                       ),
                       mainPanel(
-                        rapbase::autoReportUI("NIRuts")
+                        rapbase::autoReportUI("NIRuts"),
+
+                        #For tørrkjøring:
+                        br(),
+                        p(em("System message:")),
+                        verbatimTextOutput("sysMessage"),
+                        p(em("Function message:")),
+                        verbatimTextOutput("funMessage")
+
                       )
                     )
            ),
+
+
            tabPanel(
              h4("Eksport av krypterte data"),
            sidebarLayout(
@@ -1419,21 +1449,21 @@ server_intensiv <- function(input, output, session) { #
 
 #------------------ Abonnement ----------------------------------------------
       orgs <- as.list(sykehusValg[-1])
-      paramNames <- shiny::reactive(c('reshID', 'brukernavn'))
-      paramValues <- shiny::reactive(c(user$org(), user$name()))
+      paramNamesAbb <- shiny::reactive(c('reshID', 'brukernavn'))
+      paramValuesAbb <- shiny::reactive(c(user$org(), user$name()))
 
      rapbase::autoReportServer(
         id = "intensivAbb",
         registryName = "intensiv",
         type = "subscription",
-        paramNames = paramNames,
-        paramValues = paramValues,
+        paramNames = paramNamesAbb,
+        paramValues = paramValuesAbb,
         reports = list(
           MndRapp = list(
             synopsis = "Intensiv: månedsrapport, abonnement",
             fun = "abonnement",
-            paramNames = c('rnwFil',  "reshID"),  # ,"datoFra", 'datoTil'),
-            paramValues = c('NIRmndRapp.Rnw', "user$org()") #  Sys.Date()-180, Sys.Date())
+            paramNames = c('rnwFil',  "reshID"),
+            paramValues = c('NIRmndRapp.Rnw', "user$org()")
           )
         ),
         orgs = orgs,
@@ -1441,8 +1471,8 @@ server_intensiv <- function(input, output, session) { #
       )
 
 #-------------Registeradministrasjon -----------------
-     observeEvent(user$role(), {
-       if (user$role() == 'SC') {
+     # observeEvent(user$role(), {
+      # if (user$role() == 'SC') {
 
          #---Utsendinger---------------
          org <- rapbase::autoReportOrgServer("NIRuts", orgs)
@@ -1454,7 +1484,7 @@ server_intensiv <- function(input, output, session) { #
            vis_rapp(user$role() == "SC")
          })
 
-         rapbase::autoReportServer2(
+         rapbase::autoReportServer(
            id = "NIRuts",
            registryName = "intensiv",
            type = "dispatchment",
@@ -1472,17 +1502,31 @@ server_intensiv <- function(input, output, session) { #
            eligible = vis_rapp,
            user = user )
 
+# Tørrkjøring
+         kjor_autorapport <- shiny::observeEvent(input$run_autoreport, {
+           dato <- input$rapportdato
+           dryRun <- !(input$dryRun)
+           withCallingHandlers({
+             shinyjs::html("sysMessage", "")
+             shinyjs::html("funMessage", "")
+             shinyjs::html("funMessage",
+                           rapbase::runAutoReport(group = input$registerTorrkjor,  # "intensiv",
+                                                  dato = dato, dryRun = dryRun))
+           },
+           message = function(m) {
+             shinyjs::html(id = "sysMessage", html = m$message, add = TRUE)
+           })
+         })
+
 
          #----------- Eksport ----------------
          ## brukerkontroller
-         rapbase::exportUCServer2("intensivExport", registryName = "nir",
-                                 repoName = "intensiv",
-                                 eligible = vis_rapp
-         )
+         rapbase::exportUCServer("intensivExport", registryName = "intensiv")
          ## veileding
          rapbase::exportGuideServer("intensivExportGuide", registryName = "intensiv")
-       }
-     })
+
+ #        } #SC
+#     })
 } #serverdel
 
 # Run the application

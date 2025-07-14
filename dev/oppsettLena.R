@@ -14,7 +14,7 @@ sship::dec('')
 
 setwd('c://Users/lro2402unn/RegistreGIT/intensiv')
 
-Sys.setlocale(locale = 'nb_NO.UTF-8')
+
 source("dev/sysSetenv.R")
 # shiny::shinyApp(ui = ui_intensiv, server = server_intensiv)
 intensiv::kjorIntensivApp(browser = TRUE)

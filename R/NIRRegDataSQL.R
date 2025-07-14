@@ -11,6 +11,12 @@
 #'
 NIRRegDataSQL <- function(datoFra = '2011-01-01', datoTil = '2099-01-01') { #,session='') {
 
+  if (Sys.getenv("R_RAP_INSTANCE") %in% c("QAC", "PRODUCTIONC")){
+    registryName <- "data"
+  } else {
+    registryName <- "intensiv"
+  }
+
 
   registryName <- 'data' #"nir"
 
