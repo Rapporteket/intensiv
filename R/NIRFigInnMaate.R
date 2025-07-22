@@ -20,7 +20,8 @@
 
 NIRFigInnMaate <- function(RegData, valgtVar='InnMaate', datoFra='2010-01-01', datoTil='3000-01-01', aar=0,
                             minald=0, maxald=110, velgDiag=0,
-                            grType=99, grVar='ShNavn', InnMaate=99, dodInt='', erMann='', hentData=0,
+                           nivaa = 0, #grType=99,
+                           grVar='ShNavn', InnMaate=99, dodInt='', erMann='', hentData=0,
                             preprosess=1, outfile='', ...)
 {
   # if ("session" %in% names(list(...))) {
@@ -48,7 +49,7 @@ NIRFigInnMaate <- function(RegData, valgtVar='InnMaate', datoFra='2010-01-01', d
  #     NIRUtvalg <- NIRUtvalgEnh(RegData=RegData,velgDiag = velgDiag)
 NIRUtvalg <- NIRUtvalgEnh(RegData=RegData, datoFra=datoFra, datoTil=datoTil, aar=aar,
                           minald=minald, maxald=maxald, velgDiag = velgDiag,
-                          erMann=erMann, InnMaate=InnMaate, dodInt=dodInt, grType=grType) #overfPas=overfPas,
+                          erMann=erMann, InnMaate=InnMaate, dodInt=dodInt, nivaa=nivaa) #overfPas=overfPas,
 RegData <- NIRUtvalg$RegData
 utvalgTxt <- NIRUtvalg$utvalgTxt
 
@@ -95,7 +96,7 @@ ShNavnSort <- names(Nsh)[sortInd]	#c(names(Nsh)[sortInd],'')
 NshtxtSort <- Nshtxt[sortInd]
 
 #--------------------------FIGUR---------------------------------------------------
-if (grType %in% 1:3) {xkr <- 0.95} else {xkr <- 0.75}
+if (nivaa %in% 1:5) {xkr <- 1} else {xkr <- 0.75}
 cexShNavn <- 1.2
 
 FigTypUt <- rapFigurer::figtype(outfile, height=3*800, fargepalett=NIRUtvalg$fargepalett)
@@ -114,7 +115,7 @@ tittelpos <- 1
 	pos <- barplot(cbind(as.numeric(dataAlle), rep(0,3), t(dataTab[sortInd,])), horiz=T, beside=FALSE,
 			border=NA, col=farger[1:3],
 			main='', font.main=1, xlab='', ylim=c(ymin, 1.05*ymax+2), las=1, cex.names=xkr) 	# ylim=c(0.05, 1.24)*length(Nsh),xlim=c(0,ymax), cex.axis=0.9, cex.names=0.8*xkr,
-	ShNavnSort <- c('alle i visninga', '', ShNavnSort) #NIRUtvalg$grTypeTxt
+	ShNavnSort <- c('alle i visninga', '', ShNavnSort)
 	NshtxtSort<- c(paste0('N=', N), '', NshtxtSort)
 		legend(x=50, y=1.05*ymax+2, grtxt, xjust=0.5, yjust=0.5,	#inset=0.01,# max(pos)*1.01 x=50, y=ymax,
 			fill=farger[1:3], border=farger[1:3], ncol=3, bty='n', cex=0.8) #,  ncol=6, #c('Planlagt operasjon','Akutt non-operativ', 'Akutt operasjon')

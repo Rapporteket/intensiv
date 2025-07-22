@@ -42,7 +42,8 @@
 #' @export
 NIRFigAndelerGrVar <- function(RegData, valgtVar='dod30d', datoFra='2011-01-01', datoTil='3000-01-01', aar=0,
                             minald=0, maxald=110, aldGr=0, medKI=0, Ngrense=10, velgDiag=0,
-                            grType=99, grVar='ShNavn', InnMaate=99, dodInt='', erMann='', hentData=0,
+                            nivaa = 0, #grType=99,
+                            grVar='ShNavn', InnMaate=99, dodInt='', erMann='', hentData=0,
                             preprosess=1, outfile='', lagFig=1, offData=0,...){
                             #KImaal = NA, utvalgsInfo = "", tittel = "", sortAvtagende=TRUE,)
 
@@ -87,19 +88,13 @@ NIRFigAndelerGrVar <- function(RegData, valgtVar='dod30d', datoFra='2011-01-01',
       smltxt <- ''
       medSml <- 0
 
-      if (offData == 0) {
             NIRUtvalg <- NIRUtvalgEnh(RegData=RegData, datoFra=datoFra, datoTil=datoTil,
                                       minald=minald, maxald=maxald, aar=aar, erMann=erMann, #overfPas=overfPas,
-                                      InnMaate=InnMaate, dodInt=dodInt, grType=grType, velgDiag=velgDiag)
+                                      InnMaate=InnMaate, dodInt=dodInt, nivaa = nivaa, velgDiag=velgDiag)
             smltxt <- NIRUtvalg$smltxt
             medSml=NIRUtvalg$medSml
             utvalgTxt <- NIRUtvalg$utvalgTxt
-      }
-      if (offData == 1) { NIRUtvalg <- NIRUtvalgOff(RegData=RegData, aldGr=aldGr, aar=aar, erMann=erMann, #aldGr
-                                                   InnMaate=InnMaate, grType=grType)
-                          utvalgTxt <- NIRUtvalg$utvalgTxt #c(utvalgsInfo,
-                        }
-      RegData <- NIRUtvalg$RegData
+     RegData <- NIRUtvalg$RegData
 
 
 
@@ -122,13 +117,12 @@ AndelHele <- sum(RegData$Variabel==1)/N*100
 AndelerGr <- as.vector(table(RegData[which(RegData$Variabel==1) , grVar])/Ngr*100)	#round(100*Nvar/Ngr,2)
 if (offData==1) {
       AndelerGr <- c(AndelerGr, AndelHele)
-      names(N) <- NIRUtvalg$grTypeTxt
+      names(N) <- NIRUtvalg$shNivaaTxt
       Ngr <- c(Ngr, N)
 }
 
 if (valgtVar %in% c('liggetidDod','respiratortidDod')) {
   #Kommentar: for liggetid og respiratortid vises antall pasienter og ikke antall liggedøgn for døde
-  #Ngr <-tapply(RegData[, 'DischargedIntensiveStatus'], RegData[ ,grVar],sum, na.rm=T)    #liggetid i døgn, navnene blir litt villedende men enklest å gjøre dette på denne måten
   SUMGr <- tapply(RegData[, 'Variabel'], RegData[ ,grVar], sum,na.rm=T)
   SUMGrHend <- tapply(RegData[, 'Variabel2'], RegData[ ,grVar],sum, na.rm=T)
   AndelerGr <- SUMGrHend/SUMGr*100
@@ -145,10 +139,6 @@ sortInd <- order(as.numeric(AndelerGr), decreasing=sortAvtagende, na.last = FALS
 AndelerGrSort <- AndelerGr[sortInd]
 GrNavnSort <- paste0(names(Ngr)[sortInd], ' (',Ngrtxt[sortInd], ')')
 Ngr <- Ngr[sortInd]
-#GrNavnSort <- switch(as.character(offData),
-#                     '0' = paste0(names(Ngr)[sortInd], '(',Ngrtxt[sortInd], ')'),
-#                     '1' = paste0(c(names(Ngr), NIRUtvalg$grTypeTxt)[sortInd], '(',c(Ngrtxt, N)[sortInd], ')')
-#                        )
 andeltxt <- andeltxtUsort[sortInd]
 
 N = list(Hoved=N, Rest=0)
@@ -194,32 +184,16 @@ AndelerGrVarData <- list(AggVerdier=AggVerdier,
                          xAkseTxt=xAkseTxt, #NIRVarSpes$xAkseTxt,
                          KImaal = KImaal,
                          KImaaltxt = KImaaltxt,
-                         grTypeTxt=NIRUtvalg$grTypeTxt,
+                         grTypeTxt=NIRUtvalg$shNivaaTxt,
                          utvalgTxt=utvalgTxt,
                          fargepalett=NIRUtvalg$fargepalett,
                          medSml=medSml,
                          smltxt=smltxt)
 
-#Lagre beregnede data
-#if (hentData==1) {
-#save(AndelerGrVarData, file='data/AndelerGrVarData.RData')
-#}
-
 #FigDataParam skal inn som enkeltparametre i funksjonskallet
 if (lagFig == 1) {
       cexgr <- 1 - AntGr/200
       fargepalett <- NIRUtvalg$fargepalett
-#      FigurAndelGrVar(RegData, AggVerdier=AggVerdier, AggTot=AndelHele, Ngr=Ngr,N=N, cexgr=cexgr,
-#                   tittel=tittel, smltxt=smltxt, utvalgTxt=utvalgTxt, #yAkseTxt=yAkseTxt,
-#                   grTypeTxt=NIRUtvalg$grTypeTxt,  fargepalett=NIRUtvalg$fargepalett, grtxt=GrNavnSort,
-#                   soyletxt=andeltxt,grVar=grVar, KImaal = KImaal, KImaaltxt = KImaaltxt, #medKI = medKI,
-#                   medSml=medSml, xAkseTxt=xAkseTxt, outfile=outfile)
-#}
-
-#FigurAndelGrVar <- function(RegData, AggVerdier, AggTot=0, Ngr, tittel='mangler tittel', smltxt='', N, retn='H',
-#                               yAkseTxt='', utvalgTxt='', grTypeTxt='', soyletxt='', grtxt, grtxt2='', hovedgrTxt='',
-#                               grVar='', valgtMaal='Andel', cexgr=1, medSml=0, fargepalett='BlaaOff', xAkseTxt='',
-#                               medKI=0, KImaal = NA, KImaaltxt = '', outfile='') { #Ngr=list(Hoved=0)
 
 
             #---------------------------------------FRA FIGANDELER, FigGjsnGrVar og FigAndelGrVar--------------------------
@@ -306,11 +280,8 @@ if (lagFig == 1) {
 
 
                   #------Tegnforklaring (legend)--------
-                  #legend(xmax/4, posOver, yjust=0, col=farger[1], border=NA, lwd=2.5, xpd=TRUE, bty='n', #xpd=TRUE,
-                  #       paste0(grTypeTxt, 'sykehus: ', sprintf('%.1f', AggTot), '%, N=', N$Hoved), cex = cexleg)
-
-                  mtext(at=pos+0.05, text=grtxt, side=2, las=1, cex=cexgr, adj=1, line=0.25)
-                        TXT <- paste0(NIRUtvalg$grTypeTxt, 'sykehus: ', sprintf('%.1f', AggTot), '%, N=', N$Hoved) #paste0('totalt: ', sprintf('%.1f', AggTot), ', N=', N$Hoved)
+                   mtext(at=pos+0.05, text=grtxt, side=2, las=1, cex=cexgr, adj=1, line=0.25)
+                        TXT <- paste0(NIRUtvalg$shNivaaTxt, 'sykehus: ', sprintf('%.1f', AggTot), '%, N=', N$Hoved) #paste0('totalt: ', sprintf('%.1f', AggTot), ', N=', N$Hoved)
 
                         if (medKI == 0) {
                               legend('top', TXT, fill=NA,  border=NA, lwd=2.5, xpd=TRUE, #xmax/4, posOver+posDiff, inset=c(-0.1,0),

@@ -7,7 +7,7 @@
 ui_intensiv()
 }
 \value{
-Brukergrensesnittet (ui) til nger-appen
+Brukergrensesnittet (ui) til intensiv-appen
 }
 \description{
 Brukergrensesnitt (ui) til Intensiv-appen

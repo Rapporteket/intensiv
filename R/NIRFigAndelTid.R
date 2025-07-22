@@ -79,14 +79,13 @@ NIRFigAndelTid <- function(RegData, valgtVar='alder_u18', datoFra='2011-01-01', 
             if (reshID==0) {enhetsUtvalg <- 0}
             NIRUtvalg <- NIRUtvalgEnh(RegData=RegData, reshID=reshID, datoFra=datoFra, datoTil=datoTil,
                                       minald=minald, maxald=maxald, erMann=erMann, velgDiag=velgDiag, #aar=0,
-                                      InnMaate=InnMaate, dodInt=dodInt, enhetsUtvalg=enhetsUtvalg) #, grType=grType
-            smltxt <- NIRUtvalg$smltxt
+                                      InnMaate=InnMaate, dodInt=dodInt, enhetsUtvalg=enhetsUtvalg)
             medSml <- NIRUtvalg$medSml
             utvalgTxt <- NIRUtvalg$utvalgTxt
             ind <- NIRUtvalg$ind
       }
       if (offData == 1) {NIRUtvalg <- NIRUtvalgOff(RegData=RegData, aldGr=aldGr, aar=aar, erMann=erMann,
-                                                   InnMaate=InnMaate, grType=grType)
+                                                   InnMaate=InnMaate, nivaa=nivaa)
 
             utvalgTxt <- c(NIRUtvalg$utvalgsTxt, utvalgsInfo)
             ind <- list(Hoved = 1:dim(RegData)[1], Rest = NULL)
@@ -155,7 +154,7 @@ NIRFigAndelTid <- function(RegData, valgtVar='alder_u18', datoFra='2011-01-01', 
 
       }
       FigAndelTid <- function(RegData, AggVerdier, AggTot=0, Ngr, tittel='mangler tittel', smltxt='', N, retn='H',
-                              yAkseTxt='', utvalgTxt='', grTypeTxt='', varTxt='', grtxt2='', hovedgrTxt='', #tidtxt,
+                              yAkseTxt='', utvalgTxt='', shNivaaTxt='', varTxt='', grtxt2='', hovedgrTxt='', #tidtxt,
                               valgtMaal='Andel', cexgr=1, medSml=0, fargepalett='BlaaOff', xAkseTxt='',
                               medKI=0, KImaal = NA, KImaaltxt = '', outfile='') { #Ngr=list(Hoved=0), grVar='',
 

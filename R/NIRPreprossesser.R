@@ -54,7 +54,7 @@ NIRPreprosess <- function(RegData=RegData, skjema=1)	#, reshID=reshID)
       }
 
       #Henter tilgangstre og mapper om resh og ShNavn
-      message('Henter tilgangstre og mapper om resh og ShNavn')
+      message('Henter tilgangstre fra QA og mapper om resh og ShNavn')
       Sys.setenv(MRS_ACCESS_HIERARCHY_URL="https://app.mrs.qa.nhn.no/intensivregisterservices/AccessHiearchyReport")
       TilgJsn <- Sys.getenv("MRS_ACCESS_HIERARCHY_URL")
       Tilgangstre <- jsonlite::fromJSON(TilgJsn)$AccessUnits
@@ -67,6 +67,8 @@ NIRPreprosess <- function(RegData=RegData, skjema=1)	#, reshID=reshID)
                                ReshId = ExternalId,
                                ShNavnReg = ShNavn,
                                ShNavn = Title) #newname = oldname
+      RegData$NivaaNum <- as.numeric(plyr::mapvalues(RegData$Nivaa, from=c('1a', '1b', '2b', '3', '3c'),
+                                          to = 1:5))
 
       #Fjerner mellomrom (før) og etter navn
       RegData$ShNavn <- trimws(as.character(RegData$ShNavn))

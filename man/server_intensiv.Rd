@@ -2,13 +2,13 @@
 % Please edit documentation in R/appIntensiv.R
 \name{server_intensiv}
 \alias{server_intensiv}
-\title{Brukergrensesnitt (ui) til Intensiv-appen}
+\title{Serverdek til Intensiv-appen}
 \usage{
 server_intensiv(input, output, session)
 }
 \value{
-Brukergrensesnittet (ui) til nger-appen
+Brukergrensesnittet (ui) til intensiv-appen
 }
 \description{
-Brukergrensesnitt (ui) til Intensiv-appen
+Serverdek til Intensiv-appen
 }

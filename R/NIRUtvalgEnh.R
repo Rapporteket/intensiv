@@ -41,7 +41,7 @@
 #'	@param velgDiag Velge diagnose. 0-alle, 1-Bekreftede Covid-pasienter, 2-alle unntatt Covid-pasienter
 #'	@param nivaa Intensivavdelingens "nivå": 1-5: 'Overvåk', 'Postop', 'Gen<50%','Gen>50%', 'Barn'
 #'	Flervalgsparameter
-#' @param grType Gjør gruppeutvalg på sykehustype
+#' @param grType Gjør gruppeutvalg på sykehustype - fases ut !!
 #'                      1: lokal-/sentralsykehus
 #'                      2: lokal-/sentralsykehus
 #'                      3: regionsykehus
@@ -57,7 +57,7 @@
 
 NIRUtvalgEnh <- function(RegData, datoFra='2011-01-01', datoTil=Sys.Date(), aar=0,
                          minald=0, maxald=110, erMann='', InnMaate='', dodInt='',
-                         velgDiag=0, grType=99, nivaa = 0, overfPas = 0,
+                         velgDiag=0, nivaa = 0, overfPas = 0, # grType=99,
                          enhetsUtvalg=0, reshID=0, velgAvd=0,
                          fargepalett='BlaaOff')
 {
@@ -87,22 +87,23 @@ NIRUtvalgEnh <- function(RegData, datoFra='2011-01-01', datoTil=Sys.Date(), aar=
       reshID <- as.numeric(reshID)
       indEgen1 <- match(reshID, RegData$ReshId)
       enhetsUtvalg <- ifelse(reshID==0 | is.na(indEgen1), 0, enhetsUtvalg )
-      grTypeEgen <- RegData$ShType[indEgen1]
+      #grTypeEgen <- RegData$ShType[indEgen1]
+      shNivaaEgen <- RegData$Nivaa[indEgen1] #
+      shNivaaEgenNum <- RegData$NivaaNum[indEgen1] #
       if (enhetsUtvalg %in% c(2,3,4,6,7)) {
             RegData <- switch(as.character(enhetsUtvalg),
                               '2' = RegData[which(RegData$ReshId == reshID),],	#kun egen enhet
-                              '3' = subset(RegData,ShType==grTypeEgen),
-                              '4' = RegData[which(RegData$ShType == grTypeEgen),],	#kun egen shgruppe
+                              '3' = subset(RegData,Nivaa==shNivaaEgen),
+                              '4' = RegData[which(RegData$Nivaa == shNivaaEgen),],	#kun egen shgruppe
                               '6' = RegData[which(RegData$RHF == as.character(RegData$RHF[indEgen1])),],	#mot eget RHF
                               '7' = RegData[which(RegData$RHF == as.character(RegData$RHF[indEgen1])),])	#kun egen RHF
       }
 
       Ninn <- dim(RegData)[1]
-      indGrType <- switch(grType, '1' = which(RegData$ShType %in% 1:2),
-                                  '2' = which(RegData$ShType %in% 1:2),
-                                  '3' = which(RegData$ShType == 3))
-      if (grType %in% 1:3) {RegData <- RegData[indGrType,]} #For utvalg ved visning av flere sykehus
-      #RegData$ShNavn <- as.factor(RegData$ShNavn)
+      # indGrType <- switch(grType, '1' = which(RegData$ShType %in% 1:2),
+      #                             '2' = which(RegData$ShType %in% 1:2),
+      #                             '3' = which(RegData$ShType == 3))
+      # if (grType %in% 1:3) {RegData <- RegData[indGrType,]} #For utvalg ved visning av flere sykehus
 
       indAld <- if(minald>0 | maxald<110) {
             which(RegData$Alder >= minald & RegData$Alder <= maxald)} else {1:Ninn}
@@ -124,7 +125,7 @@ NIRUtvalgEnh <- function(RegData, datoFra='2011-01-01', datoTil=Sys.Date(), aar=
                '2' = which(!(RegData$Bekreftet %in% 0:1)))
       } else {1:Ninn}
       nivaaKort <- c('1a', '1b', '2b', '3', '3c')
-      nivaaTxt <- c('Overvåk', 'Postop', 'Gen<50%','Gen>50%', 'Barn') #c('Overvåk', 'Postop', 'Gen <50','Gen >50', 'Spesial',  'Barn')
+      nivaaTxt <- c('Overvåk', 'Postop', 'Gen<50%','Gen>50%', 'Barn')
       indNivaa <- if (min(nivaa) > 0 ) {which(RegData$Nivaa %in% nivaaKort[nivaa])
       } else {1:Ninn}
       indOverf <- if (overfPas %in% 1:2) {which(RegData$Overf == overfPas)} else {1:Ninn}
@@ -133,8 +134,9 @@ NIRUtvalgEnh <- function(RegData, datoFra='2011-01-01', datoTil=Sys.Date(), aar=
       RegData <- RegData[indMed,]
 
       N <- dim(RegData)[1]	#N=0 gir feilmelding
-      grTypetextstreng <- c('lokal-/sentral', 'lokal-/sentral', 'region')
-      if (grType %in% 1:3) {grTypeTxt <- grTypetextstreng[grType]} else {grTypeTxt <- 'alle '}
+     # grTypetextstreng <- c('lokal-/sentral', 'lokal-/sentral', 'region')
+      #if (grType %in% 1:3) {grTypeTxt <- grTypetextstreng[grType]} else {grTypeTxt <- 'alle '}
+      if (nivaa %in% 1:5) {shNivaaTxt <- shNivaaTxt[nivaa]} else {shNivaaTxt <- 'alle '}
 
 
       utvalgTxt <- c(
@@ -149,7 +151,7 @@ NIRUtvalgEnh <- function(RegData, datoFra='2011-01-01', datoTil=Sys.Date(), aar=
             if (velgDiag %in% 1:2) {paste0('Diagnose: ', c('Covid-19', 'Alle uten Covid-19')[velgDiag])},
             if (InnMaate %in% c(0,6,8)) {paste('Innmåte: ',
                                                c('Elektivt',0,0,0,0,0, 'Akutt medisinsk',0, 'Akutt kirurgi')[InnMaate+1], sep='')},
-            if (grType %in% 1:3) {paste0('Sykehustype: ', grTypetextstreng[grType])},
+  #          if (grType %in% 1:3) {paste0('Sykehustype: ', grTypetextstreng[grType])},
             if (min(nivaa) > 0 ) {paste0('Nivå: ', paste(nivaaTxt[nivaa], collapse = ', '))},
             if (overfPas %in% 1:2) {c('Ikke-overførte pas.', 'Overførte pasienter')[overfPas]},
             if (dodInt %in% 0:1) {paste0('Status ut fra intensiv: ', c('Levende','Død')[as.numeric(dodInt)+1])},
@@ -163,15 +165,15 @@ NIRUtvalgEnh <- function(RegData, datoFra='2011-01-01', datoTil=Sys.Date(), aar=
             hovedgrTxt <- as.character(RegData$ShNavn[indEgen1]) } else {
                   hovedgrTxt <- switch(as.character(enhetsUtvalg),
                                        '0' = 'Hele landet',
-                                       '4' = paste0(grTypetextstreng[RegData$ShType[indEgen1]], 'sykehus'),
-                                       '5' = paste0(grTypetextstreng[RegData$ShType[indEgen1]], 'sykehus'),
+                                       '4' = paste0(nivaaTxt[shNivaaEgenNum], '-enheter'),
+                                       '5' = paste0(nivaaTxt[shNivaaEgenNum], '-enheter'),
                                        '7' = as.character(RegData$RHF[indEgen1]),
                                        '8' = as.character(RegData$RHF[indEgen1]))
             }
 
       if ((velgAvd[1] != 0) & (reshID==0)) {hovedgrTxt <-'Valgte sykehus'}
 
-      ind <- list(Hoved=0, Rest=0, ShTypeEgen=0)
+      ind <- list(Hoved=0, Rest=0, ShNivaaEgen=0) # ShTypeEgen=0)
       smltxt <- ''
       if (enhetsUtvalg %in% c(0,2,4,7)) {		#Ikke sammenlikning
             medSml <- 0
@@ -182,27 +184,28 @@ NIRUtvalgEnh <- function(RegData, datoFra='2011-01-01', datoTil=Sys.Date(), aar=
             if (enhetsUtvalg %in% c(1,3,6)) {	#Involverer egen enhet
                   ind$Hoved <-which(as.numeric(RegData$ReshId)==reshID) } else {
                         ind$Hoved <- switch(as.character(enhetsUtvalg),
-                                            '5' = which(RegData$ShType == RegData$ShType[indEgen1]),	#shgr
+                                            '5' = which(RegData$NivaaNum == shNivaaEgenNum),	#shgr
                                             '8' = which(RegData$RHF == RegData$RHF[indEgen1]))}	#RHF
             smltxt <- switch(as.character(enhetsUtvalg),
                              '1' = 'landet forøvrig',
-                             '3' = paste0('andre ', grTypetextstreng[RegData$ShType[indEgen1]], 'sykehus'),	#RegData inneh. kun egen shgruppe
-                             '5' = 'andre typer sykehus',
+                             '3' = paste0('andre ', nivaaTxt[shNivaaEgenNum], 'enhet'),	#RegData inneh. kun egen shgruppe
+                             '5' = 'andre enhetsnivå',
                              '6' = paste0(RegData$RHF[indEgen1], ' forøvrig'),	#RegData inneh. kun egen RHF
                              '8' = 'andre RHF')
             ind$Rest <- switch(as.character(enhetsUtvalg),
                                '1' = which(as.numeric(RegData$ReshId) != reshID),
                                '3' = which(as.numeric(RegData$ReshId) != reshID),	#RegData inneh. kun egen shgruppe
-                               '5' = which(RegData$ShType != RegData$ShType[indEgen1]),
+                               '5' = which(RegData$NivaaNum != shNivaaEgenNum),
                                '6' = which(as.numeric(RegData$ReshId)!=reshID),	#RegData inneh. kun egen RHF
                                '8' = which(RegData$RHF != RegData$RHF[indEgen1]))
       }
-      ind$ShTypeEgen =  which(RegData$ShType == RegData$ShType[indEgen1]) #Funker ikke hvis gjort utvalg på annen sykehustype
+#      ind$ShTypeEgen =  which(RegData$ShType == RegData$ShType[indEgen1]) #Funker ikke hvis gjort utvalg på annen sykehustype
+      ind$ShNivaaEgen =  which(RegData$NivaaNum == shNivaaEgenNum) #Funker ikke hvis gjort utvalg på annen sykehustype
 
 
 
 
       UtData <- list(utvalgTxt=utvalgTxt, fargepalett=fargepalett, ind=ind, medSml=medSml,
-                     smltxt=smltxt, hovedgrTxt=hovedgrTxt, grTypeTxt=grTypeTxt, RegData=RegData)
+                     smltxt=smltxt, hovedgrTxt=hovedgrTxt, shNivaaTxt=shNivaaTxt, RegData=RegData) # grTypeTxt=shNivaaTxt,
       return(invisible(UtData))
 }

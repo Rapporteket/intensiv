@@ -369,7 +369,7 @@ tabOverforinger <- function(RegData, datoFra=Sys.Date()-365, datoTil=Sys.Date(),
   # velgAvd <- 0
   # reshID <- 108610 #Overfører TIL Hamar
 
-  if (velgAvd!=0){ reshID<- velgAvd}
+  if (velgAvd != 0){ reshID <- velgAvd}
   shNavn <- RegData$ShNavn[match(reshID,RegData$ReshId)]
   RegData <- NIRUtvalgEnh(RegData = RegData, datoFra = datoFra, datoTil = datoTil)$RegData
 

@@ -22,6 +22,8 @@ intensiv::kjorIntensivApp(browser = TRUE)
 
 dum <- intensiv::NIRRegDataSQL(datoFra = '2024-01-01')
 RegData <- intensiv::NIRPreprosess(RegData = dum)
+reshID <- 106271
+
 test <- c('Alle',
   unique(RegData$RHF),
   unique(RegData$HF),

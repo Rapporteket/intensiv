@@ -22,7 +22,7 @@
 
 NIRFigPrePostPaaror  <- function(RegData=0, valgtVar, datoFra='2011-01-01', datoTil='3000-12-31', aar=0,
                                  startDatoIntervensjon='2016-10-01', sluttDatoIntervensjon=Sys.Date(),
-                                 minald=0, maxald=110, erMann='',InnMaate='', dodInt='',outfile='', grType=99,
+                                 minald=0, maxald=110, erMann='',InnMaate='', dodInt='',outfile='', nivaa = 0, #grType=99,
                                  preprosess=1, hentData=0, reshID=0, enhetsUtvalg=0, lagFig=1,...){ #overfPas=0,
    # if ("session" %in% names(list(...))) {
    #    rapbase::repLogger(session = list(...)[["session"]], msg = paste0("FigPrePostPaaror: ", valgtVar))
@@ -46,8 +46,8 @@ NIRFigPrePostPaaror  <- function(RegData=0, valgtVar, datoFra='2011-01-01', dato
       datoFra <- max(as.Date(datoFra), as.Date('2015-01-01'))
       NIRUtvalg <- NIRUtvalgEnh(RegData=RegData, datoFra=datoFra, datoTil=datoTil, aar=aar,
                                 minald=minald, maxald=maxald,
-                                erMann=erMann, InnMaate=InnMaate, dodInt=dodInt,
-                                reshID=reshID, grType=grType, enhetsUtvalg=enhetsUtvalg) #overfPas = overfPas,
+                                erMann=erMann, nivaa=nivaa, dodInt=dodInt,
+                                reshID=reshID, enhetsUtvalg=enhetsUtvalg) #overfPas = overfPas,
       RegData <- NIRUtvalg$RegData
       utvalgTxt <- NIRUtvalg$utvalgTxt
       RegData <- leggTilIntervensjon(RegData, startDatoIntervensjon=startDatoIntervensjon,
