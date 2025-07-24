@@ -35,7 +35,8 @@
 
 NIRFigGjsnGrVar <- function(RegData, valgtVar, preprosess=1, hentData=0, valgtMaal='Gjsn',
                             minald=0, maxald=110, datoFra='2011-01-01', datoTil='3000-01-01', aar=0,
-                            grType=99, InnMaate=99, dodInt='', erMann='', grVar='ShNavn', medKI=1,
+                            nivaa = 0, #grType=99,
+                            InnMaate=99, dodInt='', erMann='', grVar='ShNavn', medKI=1,
                             overfPas=99, velgDiag=0, lagFig=1, outfile='',...) {
 
   # if ("session" %in% names(list(...))) {
@@ -61,7 +62,7 @@ NIRFigGjsnGrVar <- function(RegData, valgtVar, preprosess=1, hentData=0, valgtMa
   maxald <- min(NIRVarSpes$maxald, maxald)
   NIRUtvalg <- NIRUtvalgEnh(RegData=RegData, datoFra=datoFra, datoTil=datoTil, aar=aar,
                             minald=minald, maxald=maxald, erMann=erMann, InnMaate=InnMaate,
-                            overfPas = overfPas, dodInt=dodInt, grType=grType, velgDiag=velgDiag)
+                            overfPas = overfPas, dodInt=dodInt, nivaa=nivaa, velgDiag=velgDiag)
   RegData <- NIRUtvalg$RegData
   utvalgTxt <- NIRUtvalg$utvalgTxt
 
@@ -82,9 +83,9 @@ NIRFigGjsnGrVar <- function(RegData, valgtVar, preprosess=1, hentData=0, valgtMa
 
   tittel <- paste0(t1, NIRVarSpes$tittel)
 
-  if( valgtVar =='SMR') {tittel <- c(paste0('SMR, ', NIRUtvalg$grTypeTxt, 'sykehus'),
+  if( valgtVar =='SMR') {tittel <- c(paste0('SMR, ', NIRUtvalg$shNivaaTxt, '-enheter'),
                                      '(uten reinnlagte pasienter)')}
-  if( valgtVar =='PIMdod') {tittel <- paste0('PIM, ', NIRUtvalg$grTypeTxt, 'sykehus')}
+  if( valgtVar =='PIMdod') {tittel <- paste0('PIM, ', NIRUtvalg$shNivaaTxt, '-enheter')}
 
   Ngrtxt <- paste0(' (', as.character(Ngr),')')
   indGrUt <- which(Ngr < Ngrense)
@@ -167,7 +168,7 @@ NIRFigGjsnGrVar <- function(RegData, valgtVar, preprosess=1, hentData=0, valgtMa
   KImaal <- NIRVarSpes$KImaal
   KImaaltxt <- NIRVarSpes$KImaaltxt
   xAkseTxt <- NIRVarSpes$xAkseTxt
-  grTypeTxt <- NIRUtvalg$grTypeTxt
+  shNivaaTxt <- NIRUtvalg$shNivaaTxt
   utvalgTxt <- NIRUtvalg$utvalgTxt
   fargepalett <- NIRUtvalg$fargepalett
   smltxt <- NIRUtvalg$smltxt
@@ -248,7 +249,7 @@ NIRFigGjsnGrVar <- function(RegData, valgtVar, preprosess=1, hentData=0, valgtMa
       maxpos <- max(posOK)+0.7
 
 
-      grTypeTxt <- ifelse(grType %in% 1:3, NIRUtvalg$grTypeTxt, 'alle ') #smltxt
+      shNivaaTxt <- ifelse(nivaa %in% 1:5, NIRUtvalg$shNivaaTxt, 'alle ')
       mtext(at=posOver, paste0('(N)' ), side=2, las=1, cex=cexgr, adj=1, line=0.25)
       #Linje for hele landet/utvalget:
       if (medKI == 1) {
@@ -267,7 +268,7 @@ NIRFigGjsnGrVar <- function(RegData, valgtVar, preprosess=1, hentData=0, valgtMa
         text(x=KImaal, y=maxpos+0.6, paste0('Mål:', KImaaltxt), cex=0.9*cexgr, col= '#FF7260',adj=c(0.5,0))
       }
       barplot(rev(as.numeric(AggVerdier$Hoved)), horiz=TRUE, beside=TRUE, las=1, add=TRUE,
-              col=fargeHoved, border=NA, cex.names=cexgr) #, xlim=c(0, xmax), ylim=c(ymin,ymax)
+              col=fargeHoved, border=NA, cex.names=cexgr)
       soyleXpos <- 1.15*xmax*max(strwidth(soyletxt, units='figure')) # cex=cexgr
       text(x=soyleXpos, y=pos+0.1, soyletxt, las=1, cex=cexgr, adj=1, col=farger[1])	#AggVerdier, hvert sykehus
       if (medKI == 1) {
@@ -281,14 +282,14 @@ NIRFigGjsnGrVar <- function(RegData, valgtVar, preprosess=1, hentData=0, valgtMa
 
       #------Tegnforklaring (legend)--------
       if (medKI == 0) {
-        TXT <- paste0(grTypeTxt, 'sykehus ', sprintf('%.1f', AggTot), ', N=', N$Hoved)
+        TXT <- paste0(shNivaaTxt, 'enheter ', sprintf('%.1f', AggTot), ', N=', N$Hoved)
         legend('top', TXT, fill=NA,  border=NA, lwd=2.5,xpd=TRUE, #xmax/4, posOver+3*posDiff
                col=farger[1], cex=cexleg, seg.len=0.6, merge=TRUE, bty='n')
       } else {
-        TXT <- c(paste0(grTypeTxt, 'sykehus ', sprintf('%.1f', AggTot), ', N=', N$Hoved),
-                 paste0('95% konf.int., ', grTypeTxt, 'sykehus (',
+        TXT <- c(paste0(shNivaaTxt, 'enheter ', sprintf('%.1f', AggTot), ', N=', N$Hoved),
+                 paste0('95% konf.int., ', shNivaaTxt, 'enheter (',
                         sprintf('%.1f', KIHele[1]), '-', sprintf('%.1f', KIHele[2]), ')'))
-        legend(x=xmax/4, y=posOver, TXT, yjust=0, xpd=TRUE, fill=c(NA, farger[3]),  border=NA, lwd=2.5,  #inset=c(-0.1,0),
+        legend(x=xmax/4, y=posOver, TXT, yjust=0, xpd=TRUE, fill=c(NA, farger[3]),  border=NA, lwd=2.5,
                col=c(farger[1], farger[3]), cex=cexleg, seg.len=0.6, merge=TRUE, bty='n') #+2*posDiff
       }
 

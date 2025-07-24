@@ -15,7 +15,6 @@ NIRUtvalgEnh(
   InnMaate = "",
   dodInt = "",
   velgDiag = 0,
-  grType = 99,
   nivaa = 0,
   overfPas = 0,
   enhetsUtvalg = 0,
@@ -52,12 +51,6 @@ alle: standard (alle andre verdier)}
 
 \item{velgDiag}{Velge diagnose. 0-alle, 1-Bekreftede Covid-pasienter, 2-alle unntatt Covid-pasienter}
 
-\item{grType}{Gjør gruppeutvalg på sykehustype
-1: lokal-/sentralsykehus
-2: lokal-/sentralsykehus
-3: regionsykehus
-99: alle (standard)}
-
 \item{nivaa}{Intensivavdelingens "nivå": 1-5: 'Overvåk', 'Postop', 'Gen<50%','Gen>50%', 'Barn'
 Flervalgsparameter}
 
@@ -76,6 +69,12 @@ hvilken enhet i spesialisthelsetjenesten brukeren tilhører}
 
 \item{outfile}{Navn på fil figuren skrives til. Standard: '' (Figur skrives
 til systemets standard utdataenhet (som regel skjerm))}
+
+\item{grType}{Gjør gruppeutvalg på sykehustype - fases ut !!
+1: lokal-/sentralsykehus
+2: lokal-/sentralsykehus
+3: regionsykehus
+99: alle (standard)}
 }
 \value{
 UtData En liste bestående av det filtrerte datasettet, utvalgstekst for figur og tekststreng som angir fargepalett

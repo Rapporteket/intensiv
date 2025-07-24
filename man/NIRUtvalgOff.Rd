@@ -26,12 +26,6 @@ NIRUtvalgOff(
 8: Akutt kirurgisk,
 standard: alle (alt unntatt 0,6,8 / ikke spesifisert)}
 
-\item{grType}{Gjør gruppeutvalg på sykehustype
-1: lokal-/sentralsykehus
-2: lokal-/sentralsykehus
-3: regionsykehus
-99: alle (standard)}
-
 \item{fargepalett}{Hvilken fargepalett skal brukes i figurer (Standard: BlaaRapp)}
 }
 \value{

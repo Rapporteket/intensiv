@@ -11,25 +11,20 @@ addResourcePath('rap', system.file('www', package='rapbase'))
 context <- Sys.getenv("R_RAP_INSTANCE") #Blir tom hvis jobber lokalt
 paaServer <- (context %in% c("DEV", "TEST", "QA","QAC", "PRODUCTION", "PRODUCTIONC"))
 
-
 options(knitr.table.format = "html")
-
 
 
 #-----Definere utvalgsinnhold og evt. parametre som er statiske i appen----------
 
 idag <- Sys.Date() #as.Date('2018-11-30') #
-# datoTil <- as.POSIXlt(idag)
-# aarFra <- paste0(1900+as.POSIXlt(idag)$year-5, '-01-01')
 startDato <- paste0(as.numeric(format(idag-90, "%Y")), '-01-01') #paste0(1900+as.POSIXlt(idag)$year, '-01-01')
-# AarNaa <- as.numeric(format(idag, "%Y"))
 
 enhetsUtvalg <- c("Egen mot resten av landet"=1,
                   "Hele landet"=0,
                   "Egen enhet"=2,
-                  "Egen enhet mot egen sykehustype" = 3,
-                  "Egen sykehustype" = 4,
-                  "Egen sykehustype mot resten av landet" = 5,
+                  "Egen enhet mot eget enhetsnivå" = 3,
+                  "Eget enhetsnivå" = 4,
+                  "Eget enhetsnivå mot resten av landet" = 5,
                   "Egen enhet mot egen region" = 6,
                   "Egen region" = 7,
                   "Egen region mot resten" = 8)
@@ -65,9 +60,9 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
              downloadButton(outputId = 'mndRapp.pdf', label='Last ned MÅNEDSRAPPORT', class = "butt"),
              tags$head(tags$style(".butt{background-color:#6baed6;} .butt{color: white;}")), # background color and font color
              br(),
-             h3('Samlede resultater, egen enhet'),
-             downloadButton(outputId = 'samleRapp.pdf', label='Last ned samlerapport', class = "butt"),
-             br(),
+             # h3('Samlede resultater, egen enhet'), Deaktiverer til ferdig oppdatert til nye enhetsnivåer
+             # downloadButton(outputId = 'samleRapp.pdf', label='Last ned samlerapport', class = "butt"),
+             # br(),
              br(),
              h2('Hente datauttrekk'),
              dateRangeInput(inputId = 'datovalgData', start = startDato, end = idag,
@@ -89,9 +84,9 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                tabPanel('Startside',
             # h3(ifelse(paaServer, "","Merk at noen resultater kan se rare ut siden dette er syntetiske data!"), align='center' ),
              h3(uiOutput('NokkeltallUtvalgTxt')),
-             selectInput(inputId = 'enhetsNivaaStart', label='Enhetsnivå',
+             selectInput(inputId = 'enhetsNivaaStart', label='Velg enhetsgruppering',
                            choices = c("Egen enhet"=2, "Hele landet"=0,
-                                       "Egen sykehustype"=4, "Egen region"=7)
+                                       "Eget enhetsnivå"=4, "Egen region"=7)
                ),
              tableOutput('tabNokkeltallStart'),
              br('Se neste fane "Aktivitet" for å se nærmere på nøkkeltall')
@@ -161,7 +156,7 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                           condition = "input.ark == 'Nøkkeltall'",
                           selectInput(inputId = 'enhetsNivaaReg', label='Enhetsnivå',
                                       choices = c("Hele landet"=0, "Egen enhet"=2,
-                                                  "Egen sykehustype"=4, "Egen region"=7)
+                                                  "Eget enhetsnivå"=4, "Egen region"=7)
                           ),
                           selectInput(inputId = 'respiratorReg', label = 'Respiratorstøtte?',
                                       choices = c(' '=4, 'Nei'=0, 'Ja'=1, 'Invasiv'=2, 'Non-invasiv'=3)
@@ -801,7 +796,7 @@ server_intensiv <- function(input, output, session) { #
   observeEvent(input$reset_gjsnValg, shinyjs::reset("brukervalg_gjsn"))
 
   egenLokalitet <- c(0, 2, 4, 7)
-  names(egenLokalitet) <- c('hele landet', 'egen enhet', 'egen sykehustype' , 'eget RHF')
+  names(egenLokalitet) <- c('hele landet', 'egen enhet', 'eget enhetsnivå' , 'eget RHF')
 
   # Foreløpig ikke i bruk...??
   output$egetShNavn <- renderText(as.character(RegData$ShNavn[match(user$org(), RegData$ReshId)]))
@@ -991,15 +986,17 @@ server_intensiv <- function(input, output, session) { #
       }, rownames = T, digits=0, spacing="xs")
 
       output$tabOverfTil <- renderTable({
+        valgtReshOverf <- ifelse(is.null(input$velgReshOverf), 0, as.numeric(input$velgReshOverf))
         tab <- tabOverforinger(RegData=RegData, datoFra=input$datovalgReg[1], datoTil=input$datovalgReg[2],
-                               reshID = user$org(), velgAvd=input$velgReshOverf,  overfFraSh=0)
+                               reshID = user$org(), velgAvd=valgtReshOverf,  overfFraSh=0)
         xtable::xtable(tab) #c('r','r','r')
       }, rownames=F, colnames = T, align = 'r')
 
       output$tabOverfFra <- renderTable({
         #tab <- tabOverforinger(RegData=RegData, reshID = user$org())
+        valgtReshOverf <- ifelse(is.null(input$velgReshOverf), 0, as.numeric(input$velgReshOverf))
         tab <- tabOverforinger(RegData=RegData, datoFra=input$datovalgReg[1], datoTil=input$datovalgReg[2],
-                                    reshID = user$org(), velgAvd=input$velgReshOverf, overfFraSh=1)
+                                    reshID = user$org(), velgAvd=valgtReshOverf, overfFraSh=1)
          xtable::xtable(tab, rownames=F)
       }, rownames = F, colnames = T, align = 'r')
 

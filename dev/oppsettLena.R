@@ -11,7 +11,6 @@ devtools::install_github('Rapporteket/intensiv', ref = 'main_dev')
 
 setwd('../data')
 sship::dec('')
-
 setwd('c://Users/lro2402unn/RegistreGIT/intensiv')
 
 
@@ -22,6 +21,8 @@ intensiv::kjorIntensivApp(browser = TRUE)
 
 dum <- intensiv::NIRRegDataSQL(datoFra = '2024-01-01')
 RegData <- intensiv::NIRPreprosess(RegData = dum)
+reshID <- 106271
+
 test <- c('Alle',
   unique(RegData$RHF),
   unique(RegData$HF),

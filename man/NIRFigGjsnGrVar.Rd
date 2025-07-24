@@ -15,7 +15,7 @@ NIRFigGjsnGrVar(
   datoFra = "2011-01-01",
   datoTil = "3000-01-01",
   aar = 0,
-  grType = 99,
+  nivaa = 0,
   InnMaate = 99,
   dodInt = "",
   erMann = "",
@@ -70,11 +70,8 @@ Registeret inneholder registreringer f.o.m. 2011}
 
 \item{datoTil}{Seneste dato i utvalget (vises alltid i figuren).}
 
-\item{grType}{Gjør gruppeutvalg på sykehustype
-1: lokal-/sentralsykehus
-2: lokal-/sentralsykehus
-3: regionsykehus
-99: alle (standard)}
+\item{nivaa}{Intensivavdelingens "nivå": 1-5: 'Overvåk', 'Postop', 'Gen<50%','Gen>50%', 'Barn'
+Flervalgsparameter}
 
 \item{InnMaate}{0: Elektivt,
 6: Akutt medisinsk,

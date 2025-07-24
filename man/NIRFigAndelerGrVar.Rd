@@ -16,7 +16,7 @@ NIRFigAndelerGrVar(
   medKI = 0,
   Ngrense = 10,
   velgDiag = 0,
-  grType = 99,
+  nivaa = 0,
   grVar = "ShNavn",
   InnMaate = 99,
   dodInt = "",
@@ -45,11 +45,8 @@ Registeret inneholder registreringer f.o.m. 2011}
 
 \item{velgDiag}{Velge diagnose. 0-alle, 1-Bekreftede Covid-pasienter, 2-alle unntatt Covid-pasienter}
 
-\item{grType}{Gjør gruppeutvalg på sykehustype
-1: lokal-/sentralsykehus
-2: lokal-/sentralsykehus
-3: regionsykehus
-99: alle (standard)}
+\item{nivaa}{Intensivavdelingens "nivå": 1-5: 'Overvåk', 'Postop', 'Gen<50%','Gen>50%', 'Barn'
+Flervalgsparameter}
 
 \item{InnMaate}{0: Elektivt,
 6: Akutt medisinsk,

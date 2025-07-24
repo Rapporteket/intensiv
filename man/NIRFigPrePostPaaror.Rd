@@ -18,7 +18,7 @@ NIRFigPrePostPaaror(
   InnMaate = "",
   dodInt = "",
   outfile = "",
-  grType = 99,
+  nivaa = 0,
   preprosess = 1,
   hentData = 0,
   reshID = 0,
@@ -58,11 +58,8 @@ alle: standard (alle andre verdier)}
 \item{outfile}{Navn på fil figuren skrives til. Standard: '' (Figur skrives
 til systemets standard utdataenhet (som regel skjerm))}
 
-\item{grType}{Gjør gruppeutvalg på sykehustype
-1: lokal-/sentralsykehus
-2: lokal-/sentralsykehus
-3: regionsykehus
-99: alle (standard)}
+\item{nivaa}{Intensivavdelingens "nivå": 1-5: 'Overvåk', 'Postop', 'Gen<50%','Gen>50%', 'Barn'
+Flervalgsparameter}
 
 \item{preprosess}{Preprosesser data
 FALSE: Nei
