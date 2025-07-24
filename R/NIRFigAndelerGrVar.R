@@ -34,7 +34,6 @@
 #' @param aldGr: Aldersgrupper. Brukes i offentliggjøringsfigurer
 #' @param tittel: Hvis vil angi tittel direkte
 #' @param utvalgsInfo: Hvis datafil lagret med utvalgsinfo
-#' @param offData: Hvis vi benytter anonymiserte 01-data til offentliggjøring.
 #' @param sortAvtagende: sortere søylene i figuren avtagende eller stigende.
 #'
 #' @return Søylediagram med AggVerdier av valgt variabel for hvert sykehus
@@ -44,7 +43,7 @@ NIRFigAndelerGrVar <- function(RegData, valgtVar='dod30d', datoFra='2011-01-01',
                             minald=0, maxald=110, aldGr=0, medKI=0, Ngrense=10, velgDiag=0,
                             nivaa = 0, #grType=99,
                             grVar='ShNavn', InnMaate=99, dodInt='', erMann='', hentData=0,
-                            preprosess=1, outfile='', lagFig=1, offData=0,...){
+                            preprosess=1, outfile='', lagFig=1, ...){
                             #KImaal = NA, utvalgsInfo = "", tittel = "", sortAvtagende=TRUE,)
 
   # if ("session" %in% names(list(...))) {
@@ -54,35 +53,20 @@ NIRFigAndelerGrVar <- function(RegData, valgtVar='dod30d', datoFra='2011-01-01',
 
       if (hentData == 1) {
             RegData <- NIRRegDataSQL(datoFra, datoTil)
-
-      }
-      if (offData == 1) {
-            filnavn <-  paste0('NIRdata01', valgtVar)
-            #assign('NIRdata01',filnavn)
-            utvalgsInfo <- RegData$utvalgsInfo
-            KImaal <- RegData$KImaal
-            KImaaltxt <- RegData$KImaaltxt
-            sortAvtagende <- RegData$sortAvtagende
-            tittel <- RegData$tittel
-            RegData <- RegData$NIRRegData01Off
       }
 
       # Preprosessering av data. I samledokument gjøre dette i samledokumentet. Off01-data er preprosessert.
-      if (offData==1) {preprosess <- 0}
       if (preprosess==1){
             RegData <- NIRPreprosess(RegData=RegData)	#, reshID=reshID)
       }
 
       #------- Tilrettelegge variable
-      if (offData == 0) {
             NIRVarSpes <- NIRVarTilrettelegg(RegData=RegData, valgtVar=valgtVar, figurtype = 'andelGrVar')
             RegData <- NIRVarSpes$RegData
             sortAvtagende <- NIRVarSpes$sortAvtagende
             KImaal <- NIRVarSpes$KImaal
             KImaaltxt <- NIRVarSpes$KImaaltxt
             tittel <- NIRVarSpes$tittel
-      }
-
 
       #------- Gjøre utvalg
       smltxt <- ''
@@ -115,11 +99,6 @@ if (valgtVar %in% c('OrganDonationCompletedStatus', 'OrganDonationCompletedCirc'
 AntGr <- length(which(Ngr >= Ngrense))	#length(which(Midt>0))
 AndelHele <- sum(RegData$Variabel==1)/N*100
 AndelerGr <- as.vector(table(RegData[which(RegData$Variabel==1) , grVar])/Ngr*100)	#round(100*Nvar/Ngr,2)
-if (offData==1) {
-      AndelerGr <- c(AndelerGr, AndelHele)
-      names(N) <- NIRUtvalg$shNivaaTxt
-      Ngr <- c(Ngr, N)
-}
 
 if (valgtVar %in% c('liggetidDod','respiratortidDod')) {
   #Kommentar: for liggetid og respiratortid vises antall pasienter og ikke antall liggedøgn for døde
@@ -178,8 +157,6 @@ AndelerGrVarData <- list(AggVerdier=AggVerdier,
                          soyletxt=andeltxt,
                          grtxt=GrNavnSort,
                          tittel=tittel,
-                         #yAkseTxt=yAkseTxt,
-
                          retn='H',
                          xAkseTxt=xAkseTxt, #NIRVarSpes$xAkseTxt,
                          KImaal = KImaal,
@@ -263,7 +240,6 @@ if (lagFig == 1) {
                         polygon(c(rep(KIHele[1],2), rep(KIHele[2],2)), col=farger[3], border=farger[3],
                                 c(minpos, maxpos, maxpos, minpos))
                   }
-                        #grtxt <- rev(grtxt)
                         grTypeTxt <- smltxt
                         mtext(at=posOver, paste0('(N)' ), side=2, las=1, cex=cexgr, adj=1, line=0.25)
                         #Linje for hele landet/utvalget:
@@ -281,7 +257,8 @@ if (lagFig == 1) {
 
                   #------Tegnforklaring (legend)--------
                    mtext(at=pos+0.05, text=grtxt, side=2, las=1, cex=cexgr, adj=1, line=0.25)
-                        TXT <- paste0(NIRUtvalg$shNivaaTxt, 'sykehus: ', sprintf('%.1f', AggTot), '%, N=', N$Hoved) #paste0('totalt: ', sprintf('%.1f', AggTot), ', N=', N$Hoved)
+                        TXT <- paste0(NIRUtvalg$shNivaaTxt, 'enheter: ', sprintf('%.1f', AggTot), '%, N=', N$Hoved)
+                        #paste0('totalt: ', sprintf('%.1f', AggTot), ', N=', N$Hoved)
 
                         if (medKI == 0) {
                               legend('top', TXT, fill=NA,  border=NA, lwd=2.5, xpd=TRUE, #xmax/4, posOver+posDiff, inset=c(-0.1,0),

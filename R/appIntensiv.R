@@ -60,9 +60,9 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
              downloadButton(outputId = 'mndRapp.pdf', label='Last ned MÅNEDSRAPPORT', class = "butt"),
              tags$head(tags$style(".butt{background-color:#6baed6;} .butt{color: white;}")), # background color and font color
              br(),
-             h3('Samlede resultater, egen enhet'),
-             downloadButton(outputId = 'samleRapp.pdf', label='Last ned samlerapport', class = "butt"),
-             br(),
+             # h3('Samlede resultater, egen enhet'), Deaktiverer til ferdig oppdatert til nye enhetsnivåer
+             # downloadButton(outputId = 'samleRapp.pdf', label='Last ned samlerapport', class = "butt"),
+             # br(),
              br(),
              h2('Hente datauttrekk'),
              dateRangeInput(inputId = 'datovalgData', start = startDato, end = idag,
@@ -986,16 +986,17 @@ server_intensiv <- function(input, output, session) { #
       }, rownames = T, digits=0, spacing="xs")
 
       output$tabOverfTil <- renderTable({
-        print(user$org())
+        valgtReshOverf <- ifelse(is.null(input$velgReshOverf), 0, as.numeric(input$velgReshOverf))
         tab <- tabOverforinger(RegData=RegData, datoFra=input$datovalgReg[1], datoTil=input$datovalgReg[2],
-                               reshID = user$org(), velgAvd=input$velgReshOverf,  overfFraSh=0)
+                               reshID = user$org(), velgAvd=valgtReshOverf,  overfFraSh=0)
         xtable::xtable(tab) #c('r','r','r')
       }, rownames=F, colnames = T, align = 'r')
 
       output$tabOverfFra <- renderTable({
         #tab <- tabOverforinger(RegData=RegData, reshID = user$org())
+        valgtReshOverf <- ifelse(is.null(input$velgReshOverf), 0, as.numeric(input$velgReshOverf))
         tab <- tabOverforinger(RegData=RegData, datoFra=input$datovalgReg[1], datoTil=input$datovalgReg[2],
-                                    reshID = user$org(), velgAvd=input$velgReshOverf, overfFraSh=1)
+                                    reshID = user$org(), velgAvd=valgtReshOverf, overfFraSh=1)
          xtable::xtable(tab, rownames=F)
       }, rownames = F, colnames = T, align = 'r')
 

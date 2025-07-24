@@ -11,7 +11,6 @@ devtools::install_github('Rapporteket/intensiv', ref = 'main_dev')
 
 setwd('../data')
 sship::dec('')
-
 setwd('c://Users/lro2402unn/RegistreGIT/intensiv')
 
 

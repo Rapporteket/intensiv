@@ -363,7 +363,7 @@ tabOverforinger <- function(RegData, datoFra=Sys.Date()-365, datoTil=Sys.Date(),
   #Vi må ta med
   # RegData <- NIRRegDataSQL(datoFra = '2019-01-01')
   # RegData <- NIRPreprosess(RegData)
-  # datoFra=Sys.Date()-365
+  # datoFra=Sys.Date()-700
   # datoTil=Sys.Date()
   # overfFraSh <- 0
   # velgAvd <- 0
@@ -398,8 +398,6 @@ tabOverforinger <- function(RegData, datoFra=Sys.Date()-365, datoTil=Sys.Date(),
     Tab <- cbind('Enhet' = c(names(OverfVektor), 'Totalt'),
       'Antall pasienter' = c(as.numeric(OverfVektor), sum(OverfVektor)),
       'Fordeling' = c(paste0(sprintf('%.1f', OverfVektor/sum(OverfVektor)*100), ' %'),'')) #sort(table(Data$PatientTransferredToHospitalName), decreasing = T)
-    tilfra <- c('til','fra')[overfFraSh]
-    #overfFraSh - overføring fra (1) eller til (0) den aktuelle enheten
     colnames(Tab) <- c(paste(c('til','fra:')[overfFraSh+1], shNavn, c('fra', 'til:')[overfFraSh+1]),
                        'Antall pasienter', 'Fordeling')
     return(Tab)

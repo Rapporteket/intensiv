@@ -437,7 +437,6 @@ nivaaTxt <- c('Overvåk', 'Postop', 'Gen <50','Gen >50', 'Spesial',  'Barn')
 over <- c('IkkeOverf', 'Overf')
 
 for (overfPas in 1:2) {
-  #nivaa <- 6
   nivaa <- 1:5
 
   #Fordeling
@@ -522,7 +521,8 @@ write.table(NIRindFraReg, file = 'NIRindFraReg.csv', sep = ';', row.names = F)
 
 #----Kvalitetsindikatorer på enhetsnivå ("manuelle" indikatorer)
 setwd('../Aarsrapp')
-#KvalIndManuellNy <- read.table(file = 'IntensivKvalIndManuell2024_RAA.csv', fileEncoding = 'UTF-8', sep = ';', header = TRUE) #, row.names = FALSE)
+# KvalIndManuellNy <- read.table(file = 'IntensivKvalIndManuell2024_RAA.csv', fileEncoding = 'UTF-8', sep = ';',
+#                               header = TRUE, row.names = FALSE)
 KvalIndManuellNy <- readxl::read_excel('IntensivKvalIndManuell2024_RAA.xlsx')
 TidligereKvalIndReg <- read.table(file = 'IntensivKvalIndPublManuell2017_23.csv', fileEncoding = 'UTF-8', sep = ';', header = TRUE)
 #TidligereKvalIndReg <- readxl::read_excel('IntensivKvalIndPublManuell2017_23.xlsx')
@@ -537,7 +537,6 @@ names(table(TidligereKvalIndReg$ind_id))
 #Dataomorganisering
 names(KvalIndManuellNy)
 KvalIndManuellNy$year <- 2024
-KvalIndManuellNy <- dplyr::rename(KvalIndManuellNy, 'resh_id' = 'ReshId') # = 'resh_id')
 RegData <- KvalIndManuellNy[, c("resh_id", "tverrfagleg_gjennomgang", "rutinenotat", "primarvakt", "data_nir", "year")]
 RegData$primarvakt <- dplyr::recode(RegData$primarvakt, '2' = 1, '3' = 0, .default = RegData$primarvakt) #1-ja, 2-nei Innh: -1,1,2,3
 #RegData$primarvakt <- dplyr::case_match(RegData$primarvakt, 2 ~ 1, 3 ~ 0) #1-ja, 2-nei Innh: -1,1,2,3

@@ -31,7 +31,7 @@
 NIRFigAndelTid <- function(RegData, valgtVar='alder_u18', datoFra='2011-01-01', datoTil=Sys.Date(), tidsenhet='Aar',
                         minald=0, maxald=110, erMann='', InnMaate='', dodInt='', velgDiag=0,
                         reshID=0, outfile='',
-                        enhetsUtvalg=0, preprosess=1, hentData=0, lagFig=1, offData=0,...) {
+                        enhetsUtvalg=0, preprosess=1, hentData=0, lagFig=1, ...) {
 
    # if ("session" %in% names(list(...))) {
    #    rapbase::repLogger(session = list(...)[["session"]], msg = paste0("AndelTid: ", valgtVar))
@@ -39,16 +39,8 @@ NIRFigAndelTid <- function(RegData, valgtVar='alder_u18', datoFra='2011-01-01', 
    if (hentData == 1) {
             RegData <- NIRRegDataSQL(datoFra, datoTil)
       }
-      if (offData == 1) {
-            utvalgsInfo <- RegData$utvalgsInfo
-            KImaal <- RegData$KImaal
-            sortAvtagende <- RegData$sortAvtagende
-            tittel <- RegData$tittel
-            RegData <- RegData$NIRRegData01Off
-      }
 
       # Preprosessering av data. I samledokument gjøre dette i samledokumentet. Off01-data er preprosessert.
-      if (offData==1) {preprosess <- 0}
       if (preprosess==1){
             RegData <- NIRPreprosess(RegData=RegData)	#, reshID=reshID)
       }
@@ -56,7 +48,6 @@ NIRFigAndelTid <- function(RegData, valgtVar='alder_u18', datoFra='2011-01-01', 
 
       #------- Tilrettelegge variable
       varTxt <- ''
-      if (offData == 0) {
         if (valgtVar %in% c('beredMpand_opph', 'beredMpand_pers')) {
           NIRVarSpes <- intensivberedskap::NIRberedskVarTilrettelegg(RegData=RegData, valgtVar=valgtVar)
           } else {
@@ -68,14 +59,11 @@ NIRFigAndelTid <- function(RegData, valgtVar='alder_u18', datoFra='2011-01-01', 
             KImaal <- NIRVarSpes$KImaal
             KImaaltxt <- ifelse(NIRVarSpes$KImaaltxt=='', '', paste0('Mål: ',NIRVarSpes$KImaaltxt))
             tittel <- NIRVarSpes$tittel
-      }
-
 
       #------- Gjøre utvalg
       smltxt <- ''
       medSml <- 0
 
-      if (offData == 0) {
             if (reshID==0) {enhetsUtvalg <- 0}
             NIRUtvalg <- NIRUtvalgEnh(RegData=RegData, reshID=reshID, datoFra=datoFra, datoTil=datoTil,
                                       minald=minald, maxald=maxald, erMann=erMann, velgDiag=velgDiag, #aar=0,
@@ -83,13 +71,7 @@ NIRFigAndelTid <- function(RegData, valgtVar='alder_u18', datoFra='2011-01-01', 
             medSml <- NIRUtvalg$medSml
             utvalgTxt <- NIRUtvalg$utvalgTxt
             ind <- NIRUtvalg$ind
-      }
-      if (offData == 1) {NIRUtvalg <- NIRUtvalgOff(RegData=RegData, aldGr=aldGr, aar=aar, erMann=erMann,
-                                                   InnMaate=InnMaate, nivaa=nivaa)
 
-            utvalgTxt <- c(NIRUtvalg$utvalgsTxt, utvalgsInfo)
-            ind <- list(Hoved = 1:dim(RegData)[1], Rest = NULL)
-      }
       RegData <- NIRUtvalg$RegData
       Ngrense <-ifelse(valgtVar %in% c('OrganDonationCompletedStatus', 'OrganDonationCompletedCirc'),
                        0,10)
