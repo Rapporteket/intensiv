@@ -14,48 +14,36 @@
 <<'initOpts',include=FALSE>>=
 knitr::opts_chunk$set(warnings=FALSE,echo=FALSE)
 knitr::opts_knit$set(root.dir = './')
+library(intensiv)
 library(xtable)
 library(lubridate)
 @
 
 <<'hentDataOgTilrettelegg', include=FALSE>>=
 
-dato <- as.POSIXlt(Sys.Date(), tz='UTC')
-datoTil <- as.Date(format(dato, "%Y-%m-01"))-1 #Til siste i forrige måned
+idag <- as.POSIXlt(Sys.Date(), tz='UTC')
+datoTil <- as.Date(format(idag, "%Y-%m-01"))-1 #Til siste i forrige måned
 mndTxt <- c('januar', 'februar', 'mars', 'april', 'mai', 'juni', 'juli', 'august',
                    'september', 'oktober', 'november', 'desember')
-rappMnd <- paste0(mndTxt[ifelse(dato$mon==0, 12, dato$mon)], ' ', dato$year+1900)
-#som <- function(x) {as.Date(format(x, "%Y-%m-01"), tz='UTC')}
+rappMnd <- paste0(mndTxt[ifelse(idag$mon==0, 12, idag$mon)], ' ', idag$year+1900)
+#datoFra1Aar <- as.Date(paste0(1900+idag$year-1,'-', ifelse(idag$mon==11, 1, idag$mon+2), '-', '01'), tz='UTC')
 
-datoFra1Aar <- as.Date(paste0(1900+dato$year-1,'-', ifelse(dato$mon==11, 1, dato$mon+2), '-', '01'), tz='UTC')
 #Siste 6 måneder:
-datoFra6mnd <- paste0(substr(as.character(dato %m-% months(6, abbreviate=FALSE)),1, 8),'01')  #benytter lubridate
-
+datoFra6mnd <- paste0(substr(as.character(idag %m-% months(6, abbreviate=FALSE)),1, 8),'01')  #benytter lubridate
 datoFra <- datoFra6mnd
+
 #Ønsker eget datasett for forrige måned
-dato <- as.POSIXlt('2018-12-07')
 datoFraMnd <- format(datoTil, "%Y-%m-01")
-# Gir feil dato: datoFraMnd <- as.Date(paste0(1900+dato$year,'-', ifelse(dato$mon==0, 11, dato$mon), '-', '01'), tz='UTC') #dato -
 
-tidsenhet <- 'Mnd'
-preprosess <- 0
-
-if (!exists('RegData')){
-      RegData <- NIRRegDataSQL(datoFra = datoFra1Aar, datoTil = datoTil)
-	  #RegData er data fra siste år.
-}
-
+RegData <- NIRRegDataSQL(datoFra = as.Date(datoFra6mnd)-4, datoTil = datoTil) #For å få med alle reinnleggelser
 RegData <- NIRPreprosess(RegData=RegData)
-RegData <- NIRUtvalgEnh(RegData=RegData, datoFra=datoFra1Aar)$RegData
 RegData <- FinnReinnleggelser(RegData) # Beregne reinnleggelser
 
 #Enhetsnivå/type
-# grType <- RegData$ShType[match(reshID, RegData$ReshId)]
-# ShTypeEgenTxt <- c('lokal-/sentral', 'lokal-/sentral', 'region')[grType]
 nivaaEgen <-  RegData$Nivaa[match(reshID, RegData$NivaaNum)]
 ShNivaaEgenTxt <- c('overvåknings', 'postoperative', 'Gen<50%','Gen>50%', 'barne')[nivaaEgen]
 
-#RegData bare for siste 6 mnd:
+#RegData bare for siste 6 mnd og for å få indeks:
 NIRUtvalg <- NIRUtvalgEnh(RegData, reshID = reshID, enhetsUtvalg =1,
                           datoFra = datoFra6mnd, datoTil = datoTil)
 #Fra NIRUTvalg: utvalgTxt, ind, medSml, smltxt, hovedgrTxt, shNivaaTxt, RegData
@@ -64,7 +52,7 @@ shtxt <- NIRUtvalg$hovedgrTxt
 ind <- NIRUtvalg$ind
 N <- dim(RegData)[1]
 
-SortMnd <- SorterOgNavngiTidsEnhet(RegData=RegData, tidsenhet=tidsenhet)
+SortMnd <- SorterOgNavngiTidsEnhet(RegData=RegData, tidsenhet = 'Mnd')
 RegData <- SortMnd$RegData
 
 RegDataEget <- RegData[ind$Hoved, ]
@@ -141,7 +129,7 @@ Denne rapporten kan hentast ved at ein loggar seg inn på Rapporteket-Intensiv o
 
 \begin{frame}[fragile] {Belegg}
 <<'TabReg', results='asis', echo=FALSE, eval=T>>=
-tabBelegg <- tabBelegg(RegData=RegDataEget, datoTil=datoTil, tidsenhet=tidsenhet)
+tabBelegg <- tabBelegg(RegData=RegDataEget, datoTil=datoTil, tidsenhet = 'Mnd')
 xtable(tabBelegg, digits=0, align=c('l', rep('r', ncol(tabBelegg))),
 		caption=paste0('Tal på opphald og liggedøger, ', shtxt,'.'), label='tab:RegEget')
 

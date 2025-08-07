@@ -25,7 +25,6 @@ NIRFigAndelerGrVar(
   preprosess = 1,
   outfile = "",
   lagFig = 1,
-  offData = 0,
   ...
 )
 }
@@ -80,8 +79,6 @@ til systemets standard utdataenhet (som regel skjerm))}
 \item{tittel:}{Hvis vil angi tittel direkte}
 
 \item{utvalgsInfo:}{Hvis datafil lagret med utvalgsinfo}
-
-\item{offData:}{Hvis vi benytter anonymiserte 01-data til offentliggjøring.}
 
 \item{sortAvtagende:}{sortere søylene i figuren avtagende eller stigende.}
 }

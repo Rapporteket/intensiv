@@ -182,7 +182,7 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='an
                      'Alvorlig skøpelig', 'Svært skrøpelig', 'Terminal')
           retn <- 'H'}
         if (figurtype %in% 'gjsnGrVar') {
-          RegData <- RegData[which((RegData$FrailtyIndex %in% gr)), ]  
+          RegData <- RegData[which((RegData$FrailtyIndex %in% gr)), ]
           RegData$Variabel  <- as.numeric(RegData$FrailtyIndex)
         }
         if (figurtype %in% c('andelGrVar', 'andelTid' )) {
@@ -332,7 +332,7 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='an
         xAkseTxt <- 'Observert 30-dagers dødelighet / PIM-estimert dødelighet'
         sortAvtagende <- FALSE
       }
-      
+
 if (valgtVar == 'PIMsanns'){ #
   tittel <- 'PIM, sannsynlighet'
     # if (figurtype %in% c('gjsnGrVar', 'gjsnTid')) {
@@ -424,7 +424,7 @@ if (valgtVar %in% c('regForsinkelseInn', 'regForsinkelse')) {  #Fordeling, Andel
       }
       if (valgtVar == 'respiratortidInv') { #Andeler #GjsnGrVar GjsnTid
         #InvasivVentilation (pusterør/åpnet lufterør)
-        
+
         ind <- which(RegData$InvasivVentilation>0) %i%
           which(RegData$InnDato>=as.Date('2015-01-01', tz='UTC'))
         RegData <- RegData[ind,]
@@ -590,7 +590,7 @@ if (valgtVar %in% c('regForsinkelseInn', 'regForsinkelse')) {  #Fordeling, Andel
             tittel <- 'Pasienter utskrevet utenfor vakttid (<8, >=17)'
             sortAvtagende <- FALSE
       }
-      # 1.	Andel donorar av alle daude på intensiv (per eining – samanlikna mot same ShType)
+      # 1.	Andel donorar av alle daude på intensiv
       if (valgtVar == 'OrganDonationCompletedStatus') { #andelGrVar, andelTid
             #OrganDonationCompletedStatus - Ble organdonasjon gjennomført?
             #1:ja, 2:nei, -1: tom
@@ -601,7 +601,7 @@ if (valgtVar %in% c('regForsinkelseInn', 'regForsinkelse')) {  #Fordeling, Andel
             RegData$Variabel[which(RegData$OrganDonationCompletedStatus == 1)] <- 1
             cexgr <- 0.9
       }
-# 2.	Andel donorar av pasientar med oppheva intrakraniell sirkulasjon (per eining – samanlikna mot same ShType)
+# 2.	Andel donorar av pasientar med oppheva intrakraniell sirkulasjon
       if (valgtVar == 'OrganDonationCompletedCirc') { #andelGrVar, andelTid
         RegData <- RegData[which(RegData$DischargedIntensiveStatus == 1),] #Døde
         #Ble det påvist opphevet intrakraniell sirkulasjon?	CerebralCirculationAbolished
@@ -615,7 +615,7 @@ if (valgtVar %in% c('regForsinkelseInn', 'regForsinkelse')) {  #Fordeling, Andel
             RegData$Variabel[which(RegData$OrganDonationCompletedStatus == 1)] <- 1
             cexgr <- 0.9
       }
-# 3.	Grunnar til ikkje påvist oppheva intrakraniell sirkulasjon blant daude (histogram per ShType?)
+# 3.	Grunnar til ikkje påvist oppheva intrakraniell sirkulasjon blant daude
       if (valgtVar == 'CerebralCirculationAbolishedReasonForNo') { #andeler
             #Ble det påvist opphevet intrakraniell sirkulasjon?	CerebralCirculationAbolished
             #-1 = Velg verdi	0 = Avslag fra RH	1 = Ikke oppfylt kriteriene for hjernedød
@@ -646,7 +646,7 @@ if (valgtVar %in% c('regForsinkelseInn', 'regForsinkelse')) {  #Fordeling, Andel
             RegData$VariabelGr <- factor(RegData$CerebralCirculationAbolishedReasonForNo, levels = gr)
             cexgr <- 0.9
       }
-# 4.	Grunnar til ikkje donasjon hjå pasientar med påvist oppheva intrakraniell sirkulasjon (histogram per ShType?)
+# 4.	Grunnar til ikkje donasjon hjå pasientar med påvist oppheva intrakraniell sirkulasjon
       if (valgtVar == 'OrganDonationCompletedReasonForNoStatus') { #andeler
             #Ble organdonasjon gjennomført? Årsak til nei
             #-1 = Velg verdi	0 = Pasient negativ til organdonasjon
@@ -677,7 +677,7 @@ if (valgtVar %in% c('regForsinkelseInn', 'regForsinkelse')) {  #Fordeling, Andel
         RegData$Variabel[which(RegData$BrainDamage == 1)] <- 1
         cexgr <- 0.9
       }
-      
+
 
 
       #---------------KATEGORISKE

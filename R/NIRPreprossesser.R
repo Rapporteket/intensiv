@@ -48,10 +48,10 @@ NIRPreprosess <- function(RegData=RegData, skjema=1)	#, reshID=reshID)
       names(RegData)[which(names(RegData) == 'TypeOfAdmission')] <- 'InnMaate'
 
 
-      # Riktig format
-      if (skjema %in% 1:3){
-        RegData$ShType[RegData$ShType ==2 ] <- 1	#Har nå kun type lokal/sentral og regional
-      }
+      # Riktig format - denne fases ut
+      # if (skjema %in% 1:3){
+      #   RegData$ShType[RegData$ShType ==2 ] <- 1	#Har nå kun type lokal/sentral og regional
+      # }
 
       #Henter tilgangstre og mapper om resh og ShNavn
       message('Henter tilgangstre fra QA og mapper om resh og ShNavn')

@@ -22,7 +22,6 @@ NIRFigAndelTid(
   preprosess = 1,
   hentData = 0,
   lagFig = 1,
-  offData = 0,
   ...
 )
 }

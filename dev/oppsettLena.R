@@ -15,11 +15,11 @@ setwd('c://Users/lro2402unn/RegistreGIT/intensiv')
 
 
 source("dev/sysSetenv.R")
-# shiny::shinyApp(ui = ui_intensiv, server = server_intensiv)
 intensiv::kjorIntensivApp(browser = TRUE)
+# shiny::shinyApp(ui = ui_intensiv, server = server_intensiv)
 
 
-dum <- intensiv::NIRRegDataSQL(datoFra = '2024-01-01')
+dum <- intensiv::NIRRegDataSQL() #datoFra = '2024-01-01')
 RegData <- intensiv::NIRPreprosess(RegData = dum)
 reshID <- 106271
 

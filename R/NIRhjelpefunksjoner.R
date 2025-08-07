@@ -39,17 +39,10 @@ kjorIntensivApp <- function(browser = FALSE, logAsJson = FALSE) {
 
 FinnReinnleggelser <- function(RegData, PasientID='PasientID'){
       #RegData må inneholde DateAdmittedIntensive, DateDischargedIntensive og PasientID
-      #SJEKK Bare innleggelser fra 2016 som skal ha reinnleggelse??
-      #RegData <- RegData[
-      #     as.POSIXlt(RegData$DateAdmittedIntensive, format="%Y-%m-%d %H:%M:%S") >= as.POSIXlt('2016-01-01'), ]
       N <- dim(RegData)[1]
       RegData$PasientID <- RegData[ ,PasientID]
-      #TabAntOpph <- table(RegData$PasientID) #Tar relativt lang tid.
-      #TabFlereOpph <- TabAntOpph[TabAntOpph>1]
-      #indPasFlereOpph <- which(RegData$PasientID %in% names(TabFlereOpph))  #Tar relativt lang tid.
       RegDataSort <- RegData[order(RegData$PasientID, RegData$DateAdmittedIntensive,   #Denne tar mest tid
                                    RegData$DateDischargedIntensive), ]
-      #RegDataSort$AntOpph <- ave(RegDataSort$PasientID, RegDataSort$PasientID, FUN=length)
       RegDataSort$OpphNr <- ave(RegDataSort$PasientID, RegDataSort$PasientID, FUN=seq_along)
       indPasFlereOpph <- which(RegDataSort$OpphNr>1) #intersect(which(RegDataSort$AntOpph>1), which(RegDataSort$OpphNr>1))
       RegDataSort$TidUtInn <- NA

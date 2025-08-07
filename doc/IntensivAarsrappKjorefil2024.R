@@ -525,21 +525,18 @@ setwd('../Aarsrapp')
 #                               header = TRUE, row.names = FALSE)
 KvalIndManuellNy <- readxl::read_excel('IntensivKvalIndManuell2024_RAA.xlsx')
 TidligereKvalIndReg <- read.table(file = 'IntensivKvalIndPublManuell2017_23.csv', fileEncoding = 'UTF-8', sep = ';', header = TRUE)
+table(TidligereKvalIndReg$year)
 #TidligereKvalIndReg <- readxl::read_excel('IntensivKvalIndPublManuell2017_23.xlsx')
 names(table(TidligereKvalIndReg$ind_id))
 
-# indKIfraReg <- which(TidligereKvalIndReg$ind_id %in% c('intensiv_innlegg_72t', 'intensiv_inv_vent', 'intensiv_dg') )
-# TidligereKvalIndReg <- TidligereKvalIndReg[-indKIfraReg, ]
-# table(TidligereKvalIndReg$year)
-# names(TidligereKvalIndReg)
 
 
 #Dataomorganisering
 names(KvalIndManuellNy)
 KvalIndManuellNy$year <- 2024
 RegData <- KvalIndManuellNy[, c("resh_id", "tverrfagleg_gjennomgang", "rutinenotat", "primarvakt", "data_nir", "year")]
+summary(RegData)
 RegData$primarvakt <- dplyr::recode(RegData$primarvakt, '2' = 1, '3' = 0, .default = RegData$primarvakt) #1-ja, 2-nei Innh: -1,1,2,3
-#RegData$primarvakt <- dplyr::case_match(RegData$primarvakt, 2 ~ 1, 3 ~ 0) #1-ja, 2-nei Innh: -1,1,2,3
 variabler <- c( "tverrfagleg_gjennomgang", "rutinenotat",  "data_nir")
 RegData[ , variabler][RegData[,variabler] == 2] <- 0
 RegData$orgnr <- as.character(nyID[as.character(RegData$resh_id)])
@@ -556,13 +553,12 @@ RegDataUt <- tidyr::pivot_longer(
   ,values_to = 'var'
 )
 table(RegDataUt$var, useNA = 'a')
-#RegDataUt <- RegDataUt[-which(RegDataUt$var == -1), ]
+
 
 RegDataUt$ind_id <- paste0('intensiv_', RegDataUt$ind_id)
 RegDataUt$denominator <- 1
 RegDataUt$context <- 'caregiver'
-head(RegDataUt)
-head(TidligereKvalIndReg)
+setdiff(names(RegDataUt), names(TidligereKvalIndReg))
 KvalIndManuellAlleAar <- rbind(RegDataUt, TidligereKvalIndReg[ ,names(RegDataUt)])
-write.table(KvalIndManuellAlleAar, file = 'IntensivKvalIndEnhNivaa.csv', sep = ';', row.names = F)
-
+write.table(KvalIndManuellAlleAar, file = 'IntensivKvalIndEnhNivaaAlleAar.csv', sep = ';', row.names = F)
+table(KvalIndManuellAlleAar$year, KvalIndManuellAlleAar$ind_id)

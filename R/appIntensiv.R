@@ -642,7 +642,10 @@ tabPanel(p("Registeradministrasjon", title='Registeradministrasjonens side'),
                       sidebarPanel(
                         rapbase::autoReportOrgInput("NIRuts"),
                         rapbase::autoReportInput("NIRuts"),
+
                         # For tørrkjøring
+                        br(),
+                        br(),
                         br(),
                         shiny::actionButton(inputId = "run_autoreport",
                                             label = "Kjør autorapporter"),
@@ -667,6 +670,7 @@ tabPanel(p("Registeradministrasjon", title='Registeradministrasjonens side'),
                         rapbase::autoReportUI("NIRuts"),
 
                         #For tørrkjøring:
+                        br(),
                         br(),
                         p(em("System message:")),
                         verbatimTextOutput("sysMessage"),
@@ -751,7 +755,7 @@ server_intensiv <- function(input, output, session) { #
   PaarorDataH <- KobleMedHoved(IntDataRaa, PaarorData, alleHovedskjema=F, alleSkjema2=F)
   antPaaror <- dim(PaarorDataH)[1]
   if (antPaaror>0) {
-    PaarorData <- NIRPreprosess(RegData = PaarorDataH) #Må først koble på hoveddata for å få ShType++
+    PaarorData <- NIRPreprosess(RegData = PaarorDataH) #Må koble på hoveddata for tilleggsinfo
   }
   message("Alle data hentet!")
 
@@ -827,6 +831,7 @@ server_intensiv <- function(input, output, session) { #
                           reshID = user$org(), datoFra = startDato)
     }
   )
+
 
   output$samleRapp.pdf <- downloadHandler(
     filename = function(){ paste0('NIRsamleRapp', Sys.time(), '.pdf')},
@@ -1446,8 +1451,8 @@ server_intensiv <- function(input, output, session) { #
 
 #------------------ Abonnement ----------------------------------------------
       orgs <- as.list(sykehusValg[-1])
-      paramNamesAbb <- shiny::reactive(c('reshID', 'brukernavn'))
-      paramValuesAbb <- shiny::reactive(c(user$org(), user$name()))
+      paramNamesAbb <- shiny::reactive(c('reshID'))
+      paramValuesAbb <- shiny::reactive(c(user$org()))
 
      rapbase::autoReportServer(
         id = "intensivAbb",
@@ -1462,6 +1467,7 @@ server_intensiv <- function(input, output, session) { #
             paramNames = c('rnwFil',  "reshID"),
             paramValues = c('NIRmndRapp.Rnw', "user$org()")
           )
+
         ),
         orgs = orgs,
         user = user

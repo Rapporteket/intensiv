@@ -1,0 +1,121 @@
+\documentclass[handout, xcolor=pdftex,dvipsnames,table]{beamer}  %presentation,
+%\documentclass[handout, xcolor=pdftex,dvipsnames,table]  %presentation,
+\usetheme{Hannover}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[english, norsk]{babel}
+\usepackage{xspace}
+\usepackage{booktabs}
+\usepackage{rotating}
+\usepackage{graphicx}
+
+
+<<'initOpts',include=FALSE>>=
+knitr::opts_chunk$set(warnings=FALSE,echo=FALSE)
+knitr::opts_knit$set(root.dir = './')
+library(intensiv)
+library(xtable)
+library(lubridate)
+@
+
+<<'hentDataOgTilrettelegg', include=FALSE>>=
+
+idag <- as.POSIXlt(Sys.Date(), tz='UTC')
+datoTil <- as.Date(format(idag, "%Y-%m-01"))-1 #Til siste i forrige måned
+mndTxt <- c('januar', 'februar', 'mars', 'april', 'mai', 'juni', 'juli', 'august',
+                   'september', 'oktober', 'november', 'desember')
+rappMnd <- paste0(mndTxt[ifelse(idag$mon==0, 12, idag$mon)], ' ', idag$year+1900)
+
+#Siste 6 måneder:
+datoFra6mnd <- paste0(substr(as.character(idag %m-% months(6, abbreviate=FALSE)),1, 8),'01')  #benytter lubridate
+datoFra <- datoFra6mnd
+
+#Ønsker eget datasett for forrige måned
+datoFraMnd <- format(datoTil, "%Y-%m-01")
+
+RegData <- NIRRegDataSQL(datoFra = as.Date(datoFra6mnd)-4, datoTil = datoTil) #For å få med alle reinnleggelser
+RegData <- NIRPreprosess(RegData=RegData)
+RegData <- FinnReinnleggelser(RegData) # Beregne reinnleggelser
+
+# reshID <- 106271
+
+#RegData bare for siste 6 mnd:
+NIRUtvalg <- NIRUtvalgEnh(RegData, reshID = reshID, enhetsUtvalg =1,
+                          datoFra = datoFra6mnd, datoTil = datoTil)
+#Fra NIRUTvalg: utvalgTxt, ind, medSml, smltxt, hovedgrTxt, shNivaaTxt, RegData
+RegData <- NIRUtvalg$RegData
+shtxt <- NIRUtvalg$hovedgrTxt
+ind <- NIRUtvalg$ind
+N <- dim(RegData)[1]
+
+#Enhetsnivå/type
+nivaaEgen <-  RegData$Nivaa[match(reshID, RegData$NivaaNum)]
+ShNivaaEgenTxt <- c('overvåknings', 'postoperative', 'Gen<50%','Gen>50%', 'barne')[nivaaEgen]
+
+@
+
+\begin{document}
+
+ \title[NIR\\\Sexpr{shtxt} \\\today]{\textit{Norsk intensivregister} \\
+\title[NIR \\\today]{\textit{Norsk intensivregister} \\
+% Månadsrapport, \Sexpr{rappMnd} \\
+% \Sexpr{shtxt} }
+\maketitle
+
+
+\begin{tiny}
+
+\begin{frame}[fragile] {Ansvar og bruk av data}
+
+Fagrådet i NIR er ansvarleg for alle vurderingar og tolkingar av data, og også feil i resultat som skuldast feil i datagrunnlaget. Den viktigaste feilkjelda i rapporten vil truleg vere ufullstendige datasett i mange av NIR-einingane – det vil seie at ikkje alle data er ferdigstilte for aktuell månad. Dette etterslepet vil variere markert både i tid og volum, og gjer at data blir meir eller mindre representative for dei ulike einingane.
+Rapporten har difor usikkert datagrunnlag og er meint til internt bruk i einingane.
+Rapporten inneheld anonymiserte samledata. I tilfelle der utvalet inneheld få registreringar som er kombinerte med til dømes demografiske data, kan det ikkje utelukkast at rapporterte data kan tilbakeførast til einskildpersonar.
+
+\textit{\textbf{Av grunnane over, ber NIR om at denne rapporten ikkje blir brukt offentleg i nokon samanheng eller blir offentleggjort på noko vis.}}
+
+\end{frame}
+
+
+%\section{Innhald}
+
+\begin{frame}[fragile] {Datagrunnlag}
+
+Antall opphald i denne rapporten \Sexpr{N}.
+\par
+
+Denne rapporten kan hentast ved at ein loggar seg inn på Rapporteket-Intensiv og klikkar på "Månedsrapport". Det gjer at alle kan hente seg representative månadsrapportar når dei måtte ynskje. Ein kan óg abonnere på rapporten. Ein vél da sjølv kor ofte ein ynskjer rapporten. I Rapporteket kan ein óg finne mange fleire figurar og tabellar og gjere endringar i tidsintervall og samanlikningsgrunnlag.
+
+
+\end{frame}
+
+\begin{frame}[fragile] {Innhald}
+
+\small{
+\begin{itemize}
+\item Opphald og liggedøger
+\item Alder
+\item Liggetid
+\item Hovudårsak til opphaldet
+\item NEMS-skåre
+\item Respirasjonsstøtte
+\item SAPS II
+\item Dobbeltregistreringar
+\end{itemize}
+}
+\end{frame}
+
+
+\begin{frame}[fragile] {Belegg}
+<<'TabReg', results='asis', echo=FALSE, eval=T>>=
+# tabBelegg <- tabBelegg(RegData=RegData, datoTil=datoTil, tidsenhet = 'Mnd')
+# xtable(tabBelegg, digits=0, align=c('l', rep('r', ncol(tabBelegg))),
+# 		caption=paste0('Tal på opphald og liggedøger, ', shtxt,'.'), label='tab:RegEget')
+
+@
+\end{frame}
+
+
+\end{tiny}
+
+\end{document}
