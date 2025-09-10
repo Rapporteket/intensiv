@@ -54,9 +54,11 @@ NIRPreprosess <- function(RegData=RegData, skjema=1)	#, reshID=reshID)
       }
 
       #Henter tilgangstre og mapper om resh og ShNavn
-      message('Henter tilgangstre fra QA og mapper om resh og ShNavn')
-      Sys.setenv(MRS_ACCESS_HIERARCHY_URL="https://app.mrs.qa.nhn.no/intensivregisterservices/AccessHiearchyReport")
+      message('Henter tilgangstre fra MRS og mapper om resh og ShNavn')
       TilgJsn <- Sys.getenv("MRS_ACCESS_HIERARCHY_URL")
+      if (TilgJsn == "") {
+        stop("NIRPreprosess: Miljøvariabel MRS_ACCESS_HIERARCHY_URL er ikke satt")
+      }
       Tilgangstre <- jsonlite::fromJSON(TilgJsn)$AccessUnits
       varTilg <- c("UnitId", "ParentUnitId", "HasDatabase", "ExternalId", "Title", "TitleWithPath","ExtraData")
       IntData <- merge(RegData, Tilgangstre[ ,varTilg],
