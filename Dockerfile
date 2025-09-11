@@ -8,11 +8,6 @@ ENV GITHUB_PAT=${GH_PAT}
 
 WORKDIR /app/R
 
-# hadolint ignore=DL3008
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    libwebp-dev \
-    && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
-
 COPY *.tar.gz .
 
 RUN R -e "remotes::install_local(list.files(pattern = \"*.tar.gz\"))" \
