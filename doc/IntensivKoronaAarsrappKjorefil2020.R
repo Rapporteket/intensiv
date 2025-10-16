@@ -38,9 +38,9 @@ RegData <- merge(IntData, CovidData[ ,-which(names(CovidData) == 'Diagnosis')], 
 
 #Innkomstmåte (egen fig.) reg/sentLok
 NIRFigInnMaate(RegData=RegData, datoFra=datoFra1aar, datoTil = datoTil,
-               grType=1,velgDiag = 1, outfile='Cov_InnMaateLokSen.pdf')
+               grType=1,luftvei = 1, outfile='Cov_InnMaateLokSen.pdf')
 NIRFigInnMaate(RegData=RegData, valgtVar='InnMaate', datoFra=datoFra1aar, datoTil = datoTil,
-               grType=3,velgDiag = 1, outfile='Cov_InnMaateReg.pdf')
+               grType=3,luftvei = 1, outfile='Cov_InnMaateReg.pdf')
 
 #--------------------------------------- Fordelinger ----------------------------------
 
@@ -52,14 +52,14 @@ variable <- c('OrganDonationCompletedReasonForNoStatus', 'CerebralCirculationAbo
 for (valgtVar in variable) {
    outfile <- paste0('Cov_', valgtVar, '_Ford.pdf')
    NIRFigAndeler(RegData=RegData, valgtVar=valgtVar, datoFra=datoFra1aar, datoTil=datoTil,
-                 outfile=outfile,velgDiag = 1)
+                 outfile=outfile,luftvei = 1)
 }
 
 
 NIRFigAndeler(RegData=RegData, valgtVar='liggetid', dodInt=1, datoFra=datoFra1aar, datoTil=datoTil,
-              velgDiag = 1, outfile='Cov_liggetidDod_ford.pdf')
+              luftvei = 1, outfile='Cov_liggetidDod_ford.pdf')
 NIRFigAndeler(RegData=RegData, valgtVar='spesTiltak', datoFra=datoFra1aar, datoTil=datoTil, grType = 3,
-              velgDiag = 1, outfile='Cov_spesTiltak_ford.pdf')
+              luftvei = 1, outfile='Cov_spesTiltak_ford.pdf')
 #--------------------------------------- AndelGrVar ----------------------------------
 # Reinnleggelser reg/sentlok
 # Død innen 30 dager reg/sentLok
@@ -73,7 +73,7 @@ for (grType in 2:3) {
       for (valgtVar in variable) {
             outfile <- paste0('Cov_',valgtVar, grType, 'PrSh.pdf')
             NIRFigAndelerGrVar(RegData=RegData, valgtVar=valgtVar, datoFra=datoFra1aar, Ngrense=10,
-                               velgDiag = 1, datoTil=datoTil, grType=grType, outfile=outfile)
+                               luftvei = 1, datoTil=datoTil, grType=grType, outfile=outfile)
       }
 }
 
@@ -85,7 +85,7 @@ for (valgtVar in variable){
       outfile <- paste0('Cov_',valgtVar, '_AndelTid.pdf')
       NIRFigAndelTid(RegData=RegData, valgtVar=valgtVar, datoFra=datoFra, datoTil=datoTil,
                      tidsenhet = 'Kvartal',
-                     velgDiag = 1, outfile=outfile)
+                     luftvei = 1, outfile=outfile)
 }
 
 #---------------------GjsnTid----------------------------------------------
@@ -101,10 +101,10 @@ variable <- c('NEMS', 'respiratortid', 'alder', 'liggetid', 'SAPSII')
 for (valgtVar in variable) {
       outfile <- paste0('Cov_', valgtVar, 'MedTid.pdf')
       NIRFigGjsnTid(RegData=RegData, valgtVar=valgtVar, datoFra=datoFra, datoTil=datoTil,
-                    velgDiag = 1, valgtMaal=valgtMaal, outfile=outfile)
+                    luftvei = 1, valgtMaal=valgtMaal, outfile=outfile)
 }
 NIRFigGjsnTid(RegData=RegData, valgtVar='liggetid', datoFra=datoFra, datoTil=datoTil,
-              velgDiag = 1, valgtMaal=valgtMaal, dodInt=1, outfile='Cov_liggetidDod_MedTid.pdf')
+              luftvei = 1, valgtMaal=valgtMaal, dodInt=1, outfile='Cov_liggetidDod_MedTid.pdf')
 
 #--------------------------------------- SENTRALMÅL per enhet----------------------------------
 # Alder reg/lokSen
@@ -128,28 +128,28 @@ for (grType in 2:3) {
       for (valgtVar in variable){ #
             outfile <- paste0('Cov_',valgtVar,grType, '_MedPrSh.pdf')
             NIRFigGjsnGrVar(RegData=RegData, valgtVar=valgtVar, valgtMaal=valgtMaal,
-                            velgDiag = 1, grType=grType, datoFra=datoFra1aar, datoTil=datoTil, outfile=outfile)
+                            luftvei = 1, grType=grType, datoFra=datoFra1aar, datoTil=datoTil, outfile=outfile)
       }
       NIRFigGjsnGrVar(RegData=RegData, valgtVar='SMR', grType=grType,
-                      velgDiag = 1, datoFra=datoFra1aar, datoTil=datoTil, outfile=paste0('Cov_',valgtVar,grType, '_PrSh.pdf'))
+                      luftvei = 1, datoFra=datoFra1aar, datoTil=datoTil, outfile=paste0('Cov_',valgtVar,grType, '_PrSh.pdf'))
       NIRFigGjsnGrVar(RegData=RegData, valgtVar='liggetid', valgtMaal=valgtMaal, dodInt=1,
-                      velgDiag = 1, grType=grType, datoFra=datoFra1aar, datoTil=datoTil,
+                      luftvei = 1, grType=grType, datoFra=datoFra1aar, datoTil=datoTil,
                       outfile=paste0('Cov_','liggetidDod',grType,'_MedPerSh.pdf'))
 }
-NIRFigGjsnGrVar(RegData=RegData, valgtVar='SMR',velgDiag = 1,
+NIRFigGjsnGrVar(RegData=RegData, valgtVar='SMR',luftvei = 1,
                 datoFra=datoFra1aar, datoTil=datoTil, outfile='Cov_SMR_PrSh.pdf')
 
-NIRFigGjsnGrVar(RegData=RegData, valgtVar='liggetid', valgtMaal=valgtMaal, dodInt=1,velgDiag = 1,
+NIRFigGjsnGrVar(RegData=RegData, valgtVar='liggetid', valgtMaal=valgtMaal, dodInt=1,luftvei = 1,
                 grType=3, datoFra=datoFra1aar, datoTil=datoTil, outfile='Cov_liggetidDod3_MedPerSh.pdf')
 
 # Figurar for gjennomsnittleg og median respiratortid for non-invasiv og invasiv respiratorstøtte med overførte pasientar. Figurer per sykehus
-NIRFigGjsnGrVar(RegData=RegData, valgtVar='respiratortidInvMoverf', valgtMaal='Med',velgDiag = 1,
+NIRFigGjsnGrVar(RegData=RegData, valgtVar='respiratortidInvMoverf', valgtMaal='Med',luftvei = 1,
                 datoFra=datoFra1aar, datoTil=datoTil, outfile='Cov_respiratortidInvMoverf_MedPrSh.pdf')
-NIRFigGjsnGrVar(RegData=RegData, valgtVar='respiratortidInvMoverf', valgtMaal='Gjsn',velgDiag = 1,
+NIRFigGjsnGrVar(RegData=RegData, valgtVar='respiratortidInvMoverf', valgtMaal='Gjsn',luftvei = 1,
                 datoFra=datoFra1aar, datoTil=datoTil, outfile='Cov_respiratortidInvMoverf_GjsnPrSh.pdf')
-NIRFigGjsnGrVar(RegData=RegData, valgtVar='respiratortidNonInv', valgtMaal='Med',velgDiag = 1,
+NIRFigGjsnGrVar(RegData=RegData, valgtVar='respiratortidNonInv', valgtMaal='Med',luftvei = 1,
                 datoFra=datoFra1aar, datoTil=datoTil, outfile='Cov_respiratortidNonInv_MedPrSh.pdf')
-NIRFigGjsnGrVar(RegData=RegData, valgtVar='respiratortidNonInv', valgtMaal='Gjsn',velgDiag = 1,
+NIRFigGjsnGrVar(RegData=RegData, valgtVar='respiratortidNonInv', valgtMaal='Gjsn',luftvei = 1,
                 datoFra=datoFra1aar, datoTil=datoTil, outfile='Cov_respiratortidNonInv_GjsnPrSh.pdf')
 
 #-------------------------Tabeller----------------------

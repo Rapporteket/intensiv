@@ -38,7 +38,7 @@ FraUllev <- tabOverforinger(RegData, datoFra=datoFra, datoTil=datoTil,
                             reshID=109779, velgAvd=0, enhetsUtvalg=2, overfFraSh=1)
 #-----Teste pårørendedata---SkjemaGUID#-----Teste pårørendedata-----
 library(intensiv)
-IntData <- NIRRegDataSQL(datoFra = '2022-01-01') 
+IntData <- NIRRegDataSQL(datoFra = '2022-01-01')
 PaarorData <- NIRpaarorDataSQL()
 PaarorDataH <- KobleMedHoved(IntData, PaarorData, alleHovedskjema=F, alleSkjema2=F)
 PaarorDataH <- NIRPreprosess(RegData = PaarorDataH) #Må først koble på hoveddata for å få ShType++
@@ -84,7 +84,7 @@ c(paste0('Nøkkeltall på intensiv, ',
 IntData <- NIRPreprosess(RegData = NIRRegDataSQL(datoFra = '2000-01-01'))
 start <- tapply(IntData$Aar, INDEX=IntData$ShNavn, FUN = min, na.rm=T)
 
-startAnt <- IntData %>% 
+startAnt <- IntData %>%
   dplyr::group_by(ShNavn) %>%
   dplyr::summarise(
     startAar = min(Aar, na.rm = T),
@@ -218,7 +218,7 @@ texi2pdf(file='OffDataIntensiv.tex')
 dato <- '2019-11-05' #2019-01-30
 InfluDataAlle <- read.table(paste0('A:/Intensiv/influensaregistrering', dato, '.csv'), sep=';',
                             stringsAsFactors=FALSE, header=T, encoding = 'UTF-8')
-variableTilTab <- c('ShNavn', 'RHF', 'PasientGUID', 'FormDate','FormStatus', 'ICD10_1') 
+variableTilTab <- c('ShNavn', 'RHF', 'PasientGUID', 'FormDate','FormStatus', 'ICD10_1')
 InfluData <- InfluDataAlle[ ,variableTilTab]
 # knit('NIRinfluensaUtenICD10.Rnw', encoding = 'UTF-8')
 # tools::texi2pdf(file='NIRinfluensaUtenICD10.tex')
@@ -291,7 +291,7 @@ save(list=c('RegData', 'PaarorDataH'), file=paste0(dataKat, '/NIRRegDataSyn.RDat
 #save(RegData, PaarorData, file=paste0(dataKat, '/NIRRegDataSyn.RData'))
 load('A:/Intensiv/NIRRegDataSyn.RData')
 
-IntData <- NIRRegDataSQL(datoFra = '2015-01-01') 
+IntData <- NIRRegDataSQL(datoFra = '2015-01-01')
 PaarorData <- NIRpaarorDataSQL()
 PaarorDataH <- KobleMedHoved(IntData, PaarorData, alleHovedskjema=F, alleSkjema2=F)
 PaarorData <- NIRPreprosess(RegData = PaarorDataH) #Må først koble på hoveddata for å få ShType++
@@ -398,19 +398,20 @@ NIRFigInnMaate (RegData=RegData, valgtVar='InnMaate', minald=0, maxald=130, dato
 
 
 #--------------------------------------- Fordelinger ----------------------------------
-valgtVar <- 'spesTiltak'	#'alder', 'liggetid', 'respiratortid',  'SAPSII', 'NEMS24', 'Nas24', 'InnMaate'
+valgtVar <- 'luftveisinfeksjon'	#'alder', 'liggetid', 'respiratortid',  'SAPSII', 'NEMS24', 'Nas24', 'InnMaate'
                               #Nye: PrimaryReasonAdmitted, inklKrit, respiratortidNonInv, respiratortidInv
                               #nyreBeh, nyreBehTid, ExtendedHemodynamicMonitoring, isolering, isoleringDogn,
                               #spesTiltak
                               #Nye, aug-18: CerebralCirculationAbolishedReasonForNo, OrganDonationCompletedReasonForNoStatus
                               #Nye: 'utenforVakttidInn'
-RegData <- NIRPreprosess(NIRRegDataSQL())
-Utdata <- NIRFigAndeler(RegData=RegData, preprosess = 0, valgtVar='inklKrit', #datoFra=datoFra, datoTil=datoTil,
+source("dev/sysSetenv.R")
+RegData <- NIRPreprosess(NIRRegDataSQL(datoFra = '2025-01-01'))
+Utdata <- NIRFigAndeler(RegData=RegData, preprosess = 0, valgtVar='luftveisinfeksjon', #datoFra=datoFra, datoTil=datoTil,
               #minald=minald, maxald=maxald,   InnMaate=InnMaate, dodInt=dodInt,erMann=erMann,
               outfile='', reshID=109773, enhetsUtvalg=0, lagFig=1)
 
 outfile <- '' #paste0(valgtVar,'_Ford', '.png')
-NIRFigAndeler(RegData=RegData, valgtVar=valgtVar, preprosess=0)
+NIRFigAndeler(RegData=RegData, valgtVar='luftveisinfeksjon', preprosess=0)
 
 
 variable <- c('alder', 'liggetid', 'respiratortid',  'SAPSII', 'NEMS24', 'Nas24', 'InnMaate')

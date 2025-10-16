@@ -22,7 +22,7 @@ NIRFigGjsnGrVar(
   grVar = "ShNavn",
   medKI = 1,
   overfPas = 99,
-  velgDiag = 0,
+  luftvei = 0,
   lagFig = 1,
   outfile = "",
   ...
@@ -91,7 +91,9 @@ alle: standard (alle andre verdier)}
 1 = Pasienten er ikke overført
 2 = Pasienten er overført}
 
-\item{velgDiag}{Velge diagnose. 0-alle, 1-Bekreftede Covid-pasienter, 2-alle unntatt Covid-pasienter}
+\item{luftvei}{Luftveisinfeksjon? 'Alle pasienter' = 0, 'Luftveisinfeksjon' = 1,
+'Covid19' = 2, 'InfluensaA' = 3, 'InfluensaB' = 4, 'RS-virus' = 5, 'Kikhoste' = 6,
+'Annet luftveisvirus' = 7, 'Annen_luftveisbakterie' = 8}
 
 \item{lagFig}{Angir om figur skal lages eller ikke 0-ikke lag, 1-lag}
 

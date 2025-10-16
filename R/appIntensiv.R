@@ -6,13 +6,7 @@ ui_intensiv <- function() {
 
 library(intensiv)
 
-addResourcePath('rap', system.file('www', package='rapbase'))
-
-context <- Sys.getenv("R_RAP_INSTANCE") #Blir tom hvis jobber lokalt
-paaServer <- (context %in% c("DEV", "TEST", "QA","QAC", "PRODUCTION", "PRODUCTIONC"))
-
 options(knitr.table.format = "html")
-
 
 #-----Definere utvalgsinnhold og evt. parametre som er statiske i appen----------
 
@@ -29,18 +23,36 @@ enhetsUtvalg <- c("Egen mot resten av landet"=1,
                   "Egen region" = 7,
                   "Egen region mot resten" = 8)
 
-covidValg <- c('Alle pasienter' = 0,
-                  'Covid-pasienter' = 1,
-               'Alle unntatt Covid-pasienter' = 2)
-velgCovidTxt <- 'Velg diagnose (covid-pasienter)'
+#SKAL ENDRES:
+# covidValg <- c('Alle pasienter' = 0,
+#                   'Covid-pasienter' = 1,
+#                'Alle unntatt Covid-pasienter' = 2)
+# velgCovidTxt <- 'Velg diagnose (covid-pasienter)'
+
+luftveiValg <- c('Alle pasienter' = 0,
+                 'Luftveisinfeksjon' = 1,
+                 'Covid19' = 2,
+                 'InfluensaA' = 3,
+                 'InfluensaB' = 4,
+                 'RS-virus' = 5,
+                 'Kikhoste' = 6,
+                 'Annet luftveisvirus' = 7,
+                 'Annen_luftveisbakterie' = 8)
+velgLuftveiTxt <- 'Luftveisinfeksjoner'
+
+variable <- c('SARS_CoV2', 'InfluensaA', 'InfluensaB', 'RS_virus',
+              'Kikhoste', 'Annet_luftveisvirus', 'Annen_luftveisbakterie',
+              'RespiratoryTractInfection')
+grtxt <-
+
+regTittel <- 'NORSK INTENSIVREGISTER'
 
 pdf(file = NULL)
 ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
-  title = div(a(includeHTML(system.file('www/logo.svg', package='rapbase'))),
-              'NORSK INTENSIVREGISTER'),
-  windowTitle = 'NORSK INTENSIVREGISTER',
-  theme = "rap/bootstrap.css",
   id = 'hovedark',
+  title = rapbase::title(regTittel),
+  windowTitle = regTittel,
+  theme = rapbase::theme(),
 
 
 #--------------Startside------------------------------
@@ -76,9 +88,7 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
            ),
            mainPanel(
              tags$head(tags$link(rel="shortcut icon", href="rap/favicon.ico")),
-            # if (paaServer) {
                rapbase::navbarWidgetInput("navbar-widget", selectOrganization = TRUE),
-            # },
 
              tabsetPanel(
                tabPanel('Startside',
@@ -145,8 +155,8 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                                              || input.ark == 'Pasientar per år og avd.' ",
                                          dateInput(inputId = 'sluttDatoReg', label = 'Velg sluttdato', language="nb",
                                                    value = Sys.Date(), max = Sys.Date()),
-                                         selectInput(inputId = "covidvalgReg", label= velgCovidTxt,
-                                                     choices = covidValg)
+                                         selectInput(inputId = "luftveiValgReg", label= velgLuftveiTxt,
+                                                     choices = luftveiValg)
                         ),
                        conditionalPanel(
                           condition = "input.ark == 'Nøkkeltall' || input.ark == 'Ant. opphold'",
@@ -234,6 +244,7 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                            'Isolasjon, varighet' = 'isoleringDogn',
                            'Komplikasjoner' = 'komplikasjoner',
                            'Liggetid' = 'liggetid',
+                           'Luftveisinfeksjoner' = 'luftveisinfeksjoner',
                            'Nas-skår (sykepleierakt.)' = 'Nas24',
                            'NEMS-skår (ressursbruk)' = 'NEMS24',
                            'Nyreerstattende beh., type' = 'nyreBeh',
@@ -263,8 +274,8 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                sliderInput(inputId="alder", label = "Alder", min = 0,
                            max = 110, value = c(0, 110)
                ),
-             selectInput(inputId = "covidvalg", label= velgCovidTxt,
-                         choices = covidValg),
+             selectInput(inputId = "luftveiValg", label= velgLuftveiTxt,
+                         choices = luftveiValg),
 
              selectInput(inputId = 'enhetsUtvalg', label='Egen enhet og/eller landet',
                              choices = enhetsUtvalg
@@ -350,8 +361,8 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                          choices = c("Begge"=2, "Menn"=1, "Kvinner"=0)),
              sliderInput(inputId="alderAndel", label = "Alder", min = 0,
                          max = 110, value = c(0, 110)),
-             selectInput(inputId = "covidvalgAndel", label= velgCovidTxt,
-                         choices = covidValg),
+             selectInput(inputId = "luftveiValgAndel", label= velgLuftveiTxt,
+                         choices = luftveiValg),
              br(),
              p(em('Følgende utvalg gjelder bare figuren som viser utvikling over tid')),
              selectInput(inputId = 'enhetsUtvalgAndelTid', label='Egen enhet og/eller landet',
@@ -431,8 +442,8 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
              ),
              selectInput(inputId = "sentralmaal", label="Velg gjennomsnitt/median ",
                          choices = c("Gjennomsnitt"='Gjsn', "Median"='Med')),
-             selectInput(inputId = "covidvalgGjsn", label= velgCovidTxt,
-                         choices = covidValg),
+             selectInput(inputId = "luftveiValgGjsn", label= velgLuftveiTxt,
+                         choices = luftveiValg),
              selectInput(inputId = "bildeformatGjsn",
                          label = "Velg format for nedlasting av figur",
                          choices = c('pdf', 'png', 'jpg', 'bmp', 'tif', 'svg')),
@@ -482,8 +493,8 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
              selectInput(inputId = "valgtVarMort", label="Velg variabel",
                         choices = c('SMR, SAPSII' = 'SMR',
                                     'SMR: PIM' = 'PIMdod')),
-             selectInput(inputId = "covidvalgSMR", label= velgCovidTxt,
-                         choices = covidValg),
+             selectInput(inputId = "luftveiValgSMR", label= velgLuftveiTxt,
+                         choices = luftveiValg),
              dateRangeInput(inputId = 'datovalgSMR', start = startDato, end = idag,
                             label = "Tidsperiode", separator="t.o.m.", language="nb"),
              selectInput(inputId = "erMannSMR", label="Kjønn",
@@ -529,8 +540,8 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
              sliderInput(inputId="alderInnMaate", label = "Alder", min = 0,
                          max = 110, value = c(0, 110)
              ),
-             selectInput(inputId = "covidvalgInnMaate", label= velgCovidTxt,
-                         choices = covidValg),
+             selectInput(inputId = "luftveiValgInnMaate", label= velgLuftveiTxt,
+                         choices = luftveiValg),
              br(),
              selectInput(inputId = "bildeformatTypeOpph",
                          label = "Velg format for nedlasting av figur",
@@ -652,13 +663,6 @@ tabPanel(p("Registeradministrasjon", title='Registeradministrasjonens side'),
                                          min = Sys.Date(),
                                          max = Sys.Date() + 366
                         ),
-                        selectInput(inputId = 'registerTorrkjor',
-                                    label = 'Velg register',
-                                    choices = c("Intensiv"="intensiv",
-                                                "NGER"='nger',
-                                                "Nakke"='nakke',
-                                                "Rygg"= "rygg",
-                                                "Intensivberedskap"="intensivberedskap")),
                         shiny::checkboxInput(inputId = "dryRun", label = "Send e-post")
 
 
@@ -695,8 +699,8 @@ tabPanel(p("Registeradministrasjon", title='Registeradministrasjonens side'),
                  dateRangeInput(inputId = 'datoValgNok', label = 'Tidsperiode',
                               start = '2018-01-01', end = idag, #startDato
                               separator="t.o.m.", language="nb"),
-                    selectInput(inputId = "covidvalgNok", label= velgCovidTxt,
-                                           choices = covidValg),
+                    selectInput(inputId = "luftveiValgNok", label= velgLuftveiTxt,
+                                           choices = luftveiValg),
                  uiOutput('enhetNok'),
                     # selectInput(inputId = "enhetNok", label= 'Velg enhet',
                     #             choices =   c('Alle',
@@ -732,27 +736,15 @@ server_intensiv <- function(input, output, session) { #
 
   message("Getting IntData")
   IntDataRaa <- NIRRegDataSQL(datoFra = '2015-01-01')
+  RegData <- NIRPreprosess(RegData = IntDataRaa)
 
-  #Covid-skjema:
-  qCovid <- paste0('SELECT UPPER(HovedskjemaGUID) AS HovedskjemaGUID, FormStatus, Diagnosis
-                FROM beredskap')
-  CovidData <- rapbase::loadRegData(registryName= "data", query=qCovid, dbType="mysql")
-
-  CovidData$Bekreftet <- 0
-  CovidData$Bekreftet[which(CovidData$Diagnosis %in% 100:103)] <- 1
-
-  message("Merge IntData and covid data")
-  RegData <- merge(IntDataRaa, CovidData[ ,-which(names(CovidData) == 'Diagnosis')], suffixes = c('','Cov'),
-                   by.x = 'SkjemaGUID', by.y = 'HovedskjemaGUID', all.x = T, all.y=F)
-  message("Preposess data")
-  RegData <- NIRPreprosess(RegData = RegData)
   message("Get paaror data")
-  PaarorData <- NIRpaarorDataSQL()
-  PaarorDataH <- KobleMedHoved(IntDataRaa, PaarorData, alleHovedskjema=F, alleSkjema2=F)
-  antPaaror <- dim(PaarorDataH)[1]
-  if (antPaaror>0) {
-    PaarorData <- NIRPreprosess(RegData = PaarorDataH) #Må først koble på hoveddata for å få ShType++
-  }
+  # PaarorData <- NIRpaarorDataSQL()
+  # PaarorDataH <- KobleMedHoved(IntDataRaa, PaarorData, alleHovedskjema=F, alleSkjema2=F)
+  # antPaaror <- dim(PaarorDataH)[1]
+  # if (antPaaror>0) {
+  #   PaarorData <- NIRPreprosess(RegData = PaarorDataH) #Må først koble på hoveddata for å få ShType++
+  # }
   message("Alle data hentet!")
 
 
@@ -869,16 +861,21 @@ server_intensiv <- function(input, output, session) { #
       ind <- if (valgtResh == 0) {1:dim(DataDump)[1]
         } else {which(as.numeric(DataDump$ReshId) %in% as.numeric(valgtResh))}
       tabDataDump <- DataDump[ind,]
-
     } else {
       tabDataDump <-
         DataDump[which(DataDump$ReshId == user$org()), ]
-      #output$test <- renderText(dim(tabDataDump)[1])
-    } #Tar bort PROM/PREM til egen avdeling
+    }
+
+     logResh <- ifelse(user$role() == 'SC', valgtResh, user$org())
+     txtLog <- paste0('Datadump, Intensiv: ',
+                      'tidsperiode ', input$datovalgData[1], '_', input$datovalgData[2],
+                      ', resh ', logResh)
 
     output$lastNed_dataDump <- downloadHandler(
       filename = function(){'dataDumpNIR.csv'},
-      content = function(file, filename){write.csv2(tabDataDump, file, row.names = F, na = '')})
+      content = function(file, filename){write.csv2(tabDataDump, file, row.names = F, na = '')
+      rapbase::repLogger(session = session, msg = txtLog)
+      })
   })
 
 
@@ -914,7 +911,7 @@ server_intensiv <- function(input, output, session) { #
    })
 
    output$tabNokkeltall <- function() {
-     RegDataCov <- NIRUtvalgEnh(RegData=RegData, velgDiag = as.numeric(input$covidvalgReg))$RegData
+     RegDataCov <- NIRUtvalgEnh(RegData=RegData, luftvei = as.numeric(input$luftveiValgReg))$RegData
      tab <- t(tabNokkeltall(RegData=RegDataCov,
                             tidsenhet=input$tidsenhetReg,
                             datoTil=input$sluttDatoReg,
@@ -941,7 +938,7 @@ server_intensiv <- function(input, output, session) { #
    })
 
   output$tabNokkeltallUtvidet <- function() {
-     RegDataCov <- NIRUtvalgEnh(RegData=RegData, velgDiag = as.numeric(input$covidvalgNok))$RegData
+     RegDataCov <- NIRUtvalgEnh(RegData=RegData, luftvei = as.numeric(input$luftveiValgNok))$RegData
      tab <- t(tabNokkeltall(RegData=RegDataCov,
                                  tidsenhet='Aar',
                                  datoFra = input$datoValgNok[1],
@@ -963,7 +960,7 @@ server_intensiv <- function(input, output, session) { #
      filename = function(){'NokkelTall.csv'
      },
      content = function(file, filename){
-       RegDataCov <- NIRUtvalgEnh(RegData=RegData, velgDiag = as.numeric(input$covidvalgNok))$RegData
+       RegDataCov <- NIRUtvalgEnh(RegData=RegData, luftvei = as.numeric(input$luftveiValgNok))$RegData
        tab <- t(tabNokkeltall(RegData=RegDataCov,
                               datoFra = input$datoValgNok[1],
                               datoTil = input$datoValgNok[2],
@@ -973,7 +970,7 @@ server_intensiv <- function(input, output, session) { #
      })
 
       output$tabAntOpphSh <- renderTable({
-        RegDataCov <- NIRUtvalgEnh(RegData=RegData, velgDiag = as.numeric(input$covidvalgReg))$RegData
+        RegDataCov <- NIRUtvalgEnh(RegData=RegData, luftvei = as.numeric(input$luftveiValgReg))$RegData
             tab <- switch(input$tidsenhetReg,
                    Mnd=tabAntOpphShMnd(RegData=RegDataCov, datoTil=input$sluttDatoReg, antMnd=12), #input$datovalgTab[2])
                    Aar=tabAntOpphSh5Aar(RegData=RegDataCov, datoTil=input$sluttDatoReg))
@@ -1022,7 +1019,7 @@ server_intensiv <- function(input, output, session) { #
                           enhetsUtvalg=as.numeric(input$enhetsUtvalg),
                           datoFra=input$datovalg[1], datoTil=input$datovalg[2],
                           minald=as.numeric(input$alder[1]), maxald=as.numeric(input$alder[2]),
-                          erMann=as.numeric(input$erMann), velgDiag = as.numeric(input$covidvalg),
+                          erMann=as.numeric(input$erMann), luftvei = as.numeric(input$luftveiValg),
                           session = session)
       }, height=800, width=800 #height = function() {session$clientData$output_fordelinger_width}
       )
@@ -1040,7 +1037,7 @@ server_intensiv <- function(input, output, session) { #
                         datoFra=input$datovalg[1], datoTil=input$datovalg[2],
                         minald=as.numeric(input$alder[1]), maxald=as.numeric(input$alder[2]),
                         erMann=as.numeric(input$erMann),
-                        velgDiag = as.numeric(input$covidvalg),
+                        luftvei = as.numeric(input$luftveiValg),
                         outfile = file)
         }
       )
@@ -1054,7 +1051,7 @@ server_intensiv <- function(input, output, session) { #
                                         datoFra=input$datovalg[1], datoTil=input$datovalg[2],
                                         minald=as.numeric(input$alder[1]), maxald=as.numeric(input$alder[2]),
                                         erMann=as.numeric(input$erMann),
-                                        velgDiag = as.numeric(input$covidvalg),
+                                        luftvei = as.numeric(input$luftveiValg),
                                         lagFig = 0, session = session)
             tab <- lagTabavFig(UtDataFraFig = UtDataFord)
 
@@ -1092,7 +1089,7 @@ server_intensiv <- function(input, output, session) { #
                                datoFra=input$datovalgAndel[1], datoTil=input$datovalgAndel[2],
                                minald=as.numeric(input$alderAndel[1]), maxald=as.numeric(input$alderAndel[2]),
                                erMann=as.numeric(input$erMannAndel),
-                               velgDiag = as.numeric(input$covidvalgAndel),
+                               luftvei = as.numeric(input$luftveiValgAndel),
                                session=session)
       }, height = 800, width=700 #height = function() {session$clientData$output_andelerGrVarFig_width} #})
       )
@@ -1106,7 +1103,7 @@ server_intensiv <- function(input, output, session) { #
                              datoFra=input$datovalgAndel[1], datoTil=input$datovalgAndel[2],
                              minald=as.numeric(input$alderAndel[1]), maxald=as.numeric(input$alderAndel[2]),
                              erMann=as.numeric(input$erMannAndel),
-                             velgDiag = as.numeric(input$covidvalgAndel),
+                             luftvei = as.numeric(input$luftveiValgAndel),
                           outfile = file)
         }
       )
@@ -1118,7 +1115,7 @@ server_intensiv <- function(input, output, session) { #
                                  datoFra=input$datovalgAndel[1], datoTil=input$datovalgAndel[2],
                                  minald=as.numeric(input$alderAndel[1]), maxald=as.numeric(input$alderAndel[2]),
                                  erMann=as.numeric(input$erMannAndel),
-                                 velgDiag = as.numeric(input$covidvalgAndel),
+                                 luftvei = as.numeric(input$luftveiValgAndel),
                                  tidsenhet = input$tidsenhetAndelTid,
                                  enhetsUtvalg = input$enhetsUtvalgAndelTid,
                                  session=session)
@@ -1135,7 +1132,7 @@ server_intensiv <- function(input, output, session) { #
                                    datoFra=input$datovalgAndel[1], datoTil=input$datovalgAndel[2],
                                    minald=as.numeric(input$alderAndel[1]), maxald=as.numeric(input$alderAndel[2]),
                                    erMann=as.numeric(input$erMannAndel),
-                                   velgDiag = as.numeric(input$covidvalgAndel),
+                                   luftvei = as.numeric(input$luftveiValgAndel),
                                    tidsenhet = input$tidsenhetAndelTid,
                                    enhetsUtvalg = input$enhetsUtvalgAndelTid,
                                    session=session,
@@ -1150,7 +1147,7 @@ server_intensiv <- function(input, output, session) { #
                                                datoFra=input$datovalgAndel[1], datoTil=input$datovalgAndel[2],
                                                minald=as.numeric(input$alderAndel[1]), maxald=as.numeric(input$alderAndel[2]),
                                                erMann=as.numeric(input$erMannAndel),
-                                               velgDiag = as.numeric(input$covidvalgAndel),
+                                               luftvei = as.numeric(input$luftveiValgAndel),
                                                tidsenhet = input$tidsenhetAndelTid,
                                                enhetsUtvalg = input$enhetsUtvalgAndelTid,
                                                lagFig=0, session=session)
@@ -1182,7 +1179,7 @@ server_intensiv <- function(input, output, session) { #
                                                     datoFra=input$datovalgAndel[1], datoTil=input$datovalgAndel[2],
                                                     minald=as.numeric(input$alderAndel[1]), maxald=as.numeric(input$alderAndel[2]),
                                                     erMann=as.numeric(input$erMannAndel),
-                                                    velgDiag = as.numeric(input$covidvalgAndel),
+                                                    luftvei = as.numeric(input$luftveiValgAndel),
                                                     lagFig = 0, session=session)
                   tabAndelerShus <- cbind(Antall=AndelerShus$Ngr$Hoved,
                                           Andeler = AndelerShus$AggVerdier$Hoved)
@@ -1219,7 +1216,7 @@ server_intensiv <- function(input, output, session) { #
                             datoFra=input$datovalgGjsn[1], datoTil=input$datovalgGjsn[2],
                             minald=as.numeric(input$alderGjsn[1]), maxald=as.numeric(input$alderGjsn[2]),
                             erMann=as.numeric(input$erMannGjsn),
-                            velgDiag = as.numeric(input$covidvalgGjsn),
+                            luftvei = as.numeric(input$luftveiValgGjsn),
                             valgtMaal = input$sentralmaal)
       }, height=900, width=700
       )
@@ -1232,7 +1229,7 @@ server_intensiv <- function(input, output, session) { #
                                 datoFra=input$datovalgGjsn[1], datoTil=input$datovalgGjsn[2],
                                 minald=as.numeric(input$alderGjsn[1]), maxald=as.numeric(input$alderGjsn[2]),
                                 erMann=as.numeric(input$erMannGjsn),
-                                velgDiag = as.numeric(input$covidvalgGjsn),
+                                luftvei = as.numeric(input$luftveiValgGjsn),
                                 valgtMaal = input$sentralmaal,
                                outfile = file)
               }
@@ -1244,7 +1241,7 @@ server_intensiv <- function(input, output, session) { #
                           datoFra=input$datovalgGjsn[1], datoTil=input$datovalgGjsn[2],
                           minald=as.numeric(input$alderGjsn[1]), maxald=as.numeric(input$alderGjsn[2]),
                           erMann=as.numeric(input$erMannGjsn),
-                          velgDiag = as.numeric(input$covidvalgGjsn),
+                          luftvei = as.numeric(input$luftveiValgGjsn),
                           valgtMaal = input$sentralmaal,
                           tidsenhet = input$tidsenhetGjsn,
                           enhetsUtvalg = input$enhetsUtvalgGjsn,
@@ -1262,7 +1259,7 @@ server_intensiv <- function(input, output, session) { #
                         datoFra=input$datovalgGjsn[1], datoTil=input$datovalgGjsn[2],
                         minald=as.numeric(input$alderGjsn[1]), maxald=as.numeric(input$alderGjsn[2]),
                         erMann=as.numeric(input$erMannGjsn),
-                        velgDiag = as.numeric(input$covidvalgGjsn),
+                        luftvei = as.numeric(input$luftveiValgGjsn),
                         valgtMaal = input$sentralmaal,
                         tidsenhet = input$tidsenhetGjsn,
                         enhetsUtvalg = input$enhetsUtvalgGjsn,
@@ -1275,7 +1272,7 @@ server_intensiv <- function(input, output, session) { #
                                            datoFra=input$datovalgGjsn[1], datoTil=input$datovalgGjsn[2],
                                            minald=as.numeric(input$alderGjsn[1]), maxald=as.numeric(input$alderGjsn[2]),
                                            erMann=as.numeric(input$erMannGjsn),
-                                           velgDiag = as.numeric(input$covidvalgGjsn),
+                                           luftvei = as.numeric(input$luftveiValgGjsn),
                                            valgtMaal = input$sentralmaal, lagFig = 0)
         tabGjsnGrVar <- cbind(Antall = dataUtGjsnGrVar$Ngr$Hoved,
                               Sentralmål = dataUtGjsnGrVar$AggVerdier$Hoved)
@@ -1310,7 +1307,7 @@ server_intensiv <- function(input, output, session) { #
                                        datoFra=input$datovalgGjsn[1], datoTil=input$datovalgGjsn[2],
                                        minald=as.numeric(input$alderGjsn[1]), maxald=as.numeric(input$alderGjsn[2]),
                                        erMann=as.numeric(input$erMannGjsn),
-                                       velgDiag = as.numeric(input$covidvalgGjsn),
+                                       luftvei = as.numeric(input$luftveiValgGjsn),
                                        valgtMaal = input$sentralmaal,
                                        tidsenhet = input$tidsenhetGjsn,
                                        enhetsUtvalg = input$enhetsUtvalgGjsn,
@@ -1358,7 +1355,7 @@ server_intensiv <- function(input, output, session) { #
                         datoFra=input$datovalgSMR[1], datoTil=input$datovalgSMR[2],
                         minald=as.numeric(input$alderSMR[1]), maxald=as.numeric(input$alderSMR[2]),
                         erMann=as.numeric(input$erMannSMR),
-                        velgDiag = as.numeric(input$covidvalgSMR)
+                        luftvei = as.numeric(input$luftveiValgSMR)
                     )
       }, #, height=900, width=700 #heigth = 8000, width=800
       height = function() {2.2*session$clientData$output_SMRfig_height}, #
@@ -1374,7 +1371,7 @@ server_intensiv <- function(input, output, session) { #
                           datoFra=input$datovalgSMR[1], datoTil=input$datovalgSMR[2],
                           minald=as.numeric(input$alderSMR[1]), maxald=as.numeric(input$alderSMR[2]),
                           erMann=as.numeric(input$erMannSMR),
-                          velgDiag = as.numeric(input$covidvalgSMR),
+                          luftvei = as.numeric(input$luftveiValgSMR),
                              outfile = file)
         }
       )
@@ -1384,7 +1381,7 @@ server_intensiv <- function(input, output, session) { #
         dataUtSMR <- NIRFigGjsnGrVar(RegData=RegData, preprosess = 0, valgtVar=input$valgtVarMort,
                                      datoFra=input$datovalgSMR[1], datoTil=input$datovalgSMR[2],
                                      minald=as.numeric(input$alderSMR[1]), maxald=as.numeric(input$alderSMR[2]),
-                                     velgDiag = as.numeric(input$covidvalgSMR),
+                                     luftvei = as.numeric(input$luftveiValgSMR),
                                      erMann=as.numeric(input$erMannSMR), lagFig = 0)
         output$SMRtab <- function() {
           tabSMR <- cbind(Antall = dataUtSMR$Ngr$Hoved,
@@ -1412,7 +1409,7 @@ server_intensiv <- function(input, output, session) { #
                        datoFra=input$datovalgInnMaate[1], datoTil=input$datovalgInnMaate[2],
                        minald=as.numeric(input$alderInnMaate[1]), maxald=as.numeric(input$alderInnMaate[2]),
                        erMann=as.numeric(input$erMannInnMaate),
-                       velgDiag= as.numeric(input$covidvalgInnMaate),
+                       luftvei= as.numeric(input$luftveiValgInnMaate),
                        session=session)
       }, height = function() {2.2*session$clientData$output_innMaate_height},
       width = function() {0.7*session$clientData$output_innMaate_width}) #, height=900, width=700)
@@ -1426,7 +1423,7 @@ server_intensiv <- function(input, output, session) { #
                          datoFra=input$datovalgInnMaate[1], datoTil=input$datovalgInnMaate[2],
                          minald=as.numeric(input$alderInnMaate[1]), maxald=as.numeric(input$alderInnMaate[2]),
                          erMann=as.numeric(input$erMannInnMaate),
-                         velgDiag= as.numeric(input$covidvalgInnMaate),
+                         luftvei= as.numeric(input$luftveiValgInnMaate),
                        session=session,
                           outfile = file)
         }
@@ -1507,7 +1504,7 @@ server_intensiv <- function(input, output, session) { #
              shinyjs::html("sysMessage", "")
              shinyjs::html("funMessage", "")
              shinyjs::html("funMessage",
-                           rapbase::runAutoReport(group = input$registerTorrkjor,  # "intensiv",
+                           rapbase::runAutoReport(group = "intensiv",
                                                   dato = dato, dryRun = dryRun))
            },
            message = function(m) {

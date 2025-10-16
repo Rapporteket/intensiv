@@ -1,25 +1,6 @@
 #  FIGURER OG TABELLER TIL ÅRSRAPPORT, Norsk Intensivregister
 
 
-# Sys.setenv(R_RAP_INSTANCE="QAC")
-# Sys.setenv(R_RAP_CONFIG_PATH="/home/rstudio/nger/data-raw/config")
-# Sys.setenv(MYSQL_DB_LOG="db_log")
-# Sys.setenv(MYSQL_DB_AUTOREPORT="db_autoreport")
-# Sys.setenv(R_RAP_INSTANCE="QAC")
-# Sys.setenv(R_RAP_CONFIG_PATH="data-raw/config") # "/home/rstudio/nakke/data-raw/config")
-# Sys.setenv(SHINYPROXY_USERNAME="ttsk")
-# Sys.setenv(SHINYPROXY_USERGROUPS="pilot")
-# Sys.setenv(USERORGID="pilot")
-
-Sys.setenv(MYSQL_HOST="localhost") # "db")
-Sys.setenv(MYSQL_USER="root")
-Sys.setenv(MYSQL_PASSWORD="root")
-Sys.setenv(MYSQL_DB_DATA="intensivregisterreportdatastaging")
-Sys.setlocale(locale = 'nb_NO.UTF-8')
-
-test <- NIRRegDataSQL(datoFra = '2025-01-01')
-
-
 rm(list=ls())
 library(intensiv)
 aarsrappAar <- 2024

@@ -48,11 +48,6 @@ NIRPreprosess <- function(RegData=RegData, skjema=1)	#, reshID=reshID)
       names(RegData)[which(names(RegData) == 'TypeOfAdmission')] <- 'InnMaate'
 
 
-      # Riktig format
-      if (skjema %in% 1:3){
-        RegData$ShType[RegData$ShType ==2 ] <- 1	#Har nå kun type lokal/sentral og regional
-      }
-
       #Henter tilgangstre og mapper om resh og ShNavn
       message('Henter tilgangstre fra MRS og mapper om resh og ShNavn')
       TilgJsn <- Sys.getenv("MRS_ACCESS_HIERARCHY_URL")
@@ -126,6 +121,19 @@ NIRPreprosess <- function(RegData=RegData, skjema=1)	#, reshID=reshID)
 
       }
 
-  return(invisible(RegData))
+# Angi om Covid-pasient før luftveisvariabel ble innført (okt -2025)
+      qCovid <- paste0('SELECT UPPER(HovedskjemaGUID) AS HovedskjemaGUID, Diagnosis
+                FROM beredskap')
+      CovidData <- rapbase::loadRegData(registryName= "data", query=qCovid, dbType="mysql")
+      # CovidData$Bekreftet <- 0
+      # CovidData$Bekreftet[which(CovidData$Diagnosis %in% 100:103)] <- 1
+      # RegData <- merge(RegData, CovidData[ ,-which(names(CovidData) == 'Diagnosis')], suffixes = c('','Cov'),
+      #                by.x = 'SkjemaGUID', by.y = 'HovedskjemaGUID', all.x = T, all.y=F)
+      # match(c(9,4,7), c(10,2, 0, 3, 2, 5, 9, 7))
+
+      indCov <- match(CovidData$HovedskjemaGUID, RegData$SkjemaGUID, nomatch = NA)
+      RegData$SARS_CoV2[indCov] <- 1
+
+return(invisible(RegData))
 }
 

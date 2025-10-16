@@ -38,10 +38,12 @@
 #' @param overfPas Overført under pågående intensivbehandling?
 #'				1 = Pasienten er ikke overført
 #'				2 = Pasienten er overført
-#'	@param velgDiag Velge diagnose. 0-alle, 1-Bekreftede Covid-pasienter, 2-alle unntatt Covid-pasienter
+#'	@param luftvei Luftveisinfeksjon? 'Alle pasienter' = 0, 'Luftveisinfeksjon' = 1,
+#'	'Covid19' = 2, 'InfluensaA' = 3, 'InfluensaB' = 4, 'RS-virus' = 5, 'Kikhoste' = 6,
+#'	'Annet luftveisvirus' = 7, 'Annen_luftveisbakterie' = 8
 #'	@param nivaa Intensivavdelingens "nivå": 1-5: 'Overvåk', 'Postop', 'Gen<50%','Gen>50%', 'Barn'
 #'	Flervalgsparameter
-#' @param grType Gjør gruppeutvalg på sykehustype - fases ut !!
+#' @param grType Gjør gruppeutvalg på sykehustype - endres til nivå.
 #'                      1: lokal-/sentralsykehus
 #'                      2: lokal-/sentralsykehus
 #'                      3: regionsykehus
@@ -57,14 +59,10 @@
 
 NIRUtvalgEnh <- function(RegData, datoFra='2011-01-01', datoTil=Sys.Date(), aar=0,
                          minald=0, maxald=110, erMann='', InnMaate='', dodInt='',
-                         velgDiag=0, nivaa = 0, overfPas = 0, # grType=99,
+                         luftvei=0, nivaa = 0, overfPas = 0, # grType=99,
                          enhetsUtvalg=0, reshID=0, velgAvd=0,
                          fargepalett='BlaaOff')
 {
-      #OffAlleFarger <- c('#c6dbef', '#6baed6', '#4292c6', '#2171b5', '#084594', '#000059', '#FF7260', '#4D4D4D', '#737373', '#A6A6A6', '#DADADA')
-      #BlaaOff = OffAlleFarger[rev(c(1,2,4,5))]
-
-
       # Definer intersect-operator
       "%i%" <- intersect
       dodInt <- as.numeric(dodInt)
@@ -75,8 +73,6 @@ NIRUtvalgEnh <- function(RegData, datoFra='2011-01-01', datoTil=Sys.Date(), aar=
 
       #Velge hvilke sykehus som skal være med:
       if (velgAvd[1] != 0 & reshID==0) {
-         #if (enhetsUtvalg !=0) {stop("enhetsUtvalg må være 0 (alle)")}
-         #Utvalg på avdelinger:
          RegData <- RegData[which(as.numeric(RegData$ReshId) %in% as.numeric(velgAvd)),]
          RegData$ShNavn <- as.factor(RegData$ShNavn)
       }
@@ -84,10 +80,9 @@ NIRUtvalgEnh <- function(RegData, datoFra='2011-01-01', datoTil=Sys.Date(), aar=
       #Enhetsutvalg:
       #Når bare skal sammenlikne med sykehusgruppe eller region, eller ikke sammenlikne,
       #trengs ikke data for hele landet:
-      reshID <- as.numeric(reshID)
+ #     reshID <- as.numeric(reshID)
       indEgen1 <- match(reshID, RegData$ReshId)
       enhetsUtvalg <- ifelse(reshID==0 | is.na(indEgen1), 0, enhetsUtvalg )
-      #grTypeEgen <- RegData$ShType[indEgen1]
       shNivaaEgen <- RegData$Nivaa[indEgen1] #
       shNivaaEgenNum <- RegData$NivaaNum[indEgen1] #
       if (enhetsUtvalg %in% c(2,3,4,6,7)) {
@@ -100,10 +95,6 @@ NIRUtvalgEnh <- function(RegData, datoFra='2011-01-01', datoTil=Sys.Date(), aar=
       }
 
       Ninn <- dim(RegData)[1]
-      # indGrType <- switch(grType, '1' = which(RegData$ShType %in% 1:2),
-      #                             '2' = which(RegData$ShType %in% 1:2),
-      #                             '3' = which(RegData$ShType == 3))
-      # if (grType %in% 1:3) {RegData <- RegData[indGrType,]} #For utvalg ved visning av flere sykehus
 
       indAld <- if(minald>0 | maxald<110) {
             which(RegData$Alder >= minald & RegData$Alder <= maxald)} else {1:Ninn}
@@ -119,23 +110,27 @@ NIRUtvalgEnh <- function(RegData, datoFra='2011-01-01', datoTil=Sys.Date(), aar=
       } else {1:Ninn}
       indDod <- if (dodInt %in% 0:1) {
         which(as.numeric(RegData$DischargedIntensiveStatus)==dodInt) } else {1:Ninn}
-      indDiag <- if (velgDiag %in% 1:2) {
-        switch(velgDiag,
-               '1' = which(RegData$Bekreftet %in% 0:1),
-               '2' = which(!(RegData$Bekreftet %in% 0:1)))
-      } else {1:Ninn}
+      indLuftvei <- if (luftvei %in% 1:8) {
+        switch(luftvei,
+               '1' = which(RegData$RespiratoryTractInfection == 1),
+               '2' = which(RegData$SARS_CoV2 == 1),
+               '3' = which(RegData$InfluensaA == 1),
+               '4' = which(RegData$InfluensaB == 1),
+               '5' = which(RegData$RS_virus == 1),
+               '6' = which(RegData$Kikhoste == 1),
+               '7' = which(RegData$Annet_luftveisvirus == 1),
+               '8' = which(RegData$Annen_luftveisbakterie == 1))
+        } else {1:Ninn}
       nivaaKort <- c('1a', '1b', '2b', '3', '3c')
       nivaaTxt <- c('Overvåk', 'Postop', 'Gen<50%','Gen>50%', 'Barn')
       indNivaa <- if (min(nivaa) > 0 ) {which(RegData$Nivaa %in% nivaaKort[nivaa])
       } else {1:Ninn}
       indOverf <- if (overfPas %in% 1:2) {which(RegData$Overf == overfPas)} else {1:Ninn}
-      indMed <- indDatoFra %i% indDatoTil %i% indAld %i% indKj %i% indInnMaate %i% indDod %i% indDiag %i% indAar %i% indNivaa %i% indOverf
+      indMed <- indDatoFra %i% indDatoTil %i% indAld %i% indKj %i% indInnMaate %i% indDod %i% indLuftvei %i% indAar %i% indNivaa %i% indOverf
 
       RegData <- RegData[indMed,]
 
       N <- dim(RegData)[1]	#N=0 gir feilmelding
-     # grTypetextstreng <- c('lokal-/sentral', 'lokal-/sentral', 'region')
-      #if (grType %in% 1:3) {grTypeTxt <- grTypetextstreng[grType]} else {grTypeTxt <- 'alle '}
       if (nivaa %in% 1:5) {shNivaaTxt <- shNivaaTxt[nivaa]} else {shNivaaTxt <- 'alle '}
 
 
@@ -147,8 +142,9 @@ NIRUtvalgEnh <- function(RegData, datoFra='2011-01-01', datoTil=Sys.Date(), aar=
             if ((minald>0) | (maxald<110)) {
                paste0('Pasienter fra ', if (N>0) {round(min(RegData$Alder, na.rm=T))} else {round(minald)},
                       ' til ', if (N>0) {round(max(RegData$Alder, na.rm=T))} else {round(maxald)}, ' år')},
-           if (erMann %in% 0:1) {paste0('Kjønn: ', c('Kvinner', 'Menn')[erMann+1])},
-            if (velgDiag %in% 1:2) {paste0('Diagnose: ', c('Covid-19', 'Alle uten Covid-19')[velgDiag])},
+            if (erMann %in% 0:1) {paste0('Kjønn: ', c('Kvinner', 'Menn')[erMann+1])},
+            if (luftvei %in% 1:8) {c('Luftveisinfeksjon','Covid19', 'InfluensaA', 'InfluensaB', 'RS-virus',
+                                     'Kikhoste', 'Annet luftveisvirus', 'Annen_luftveisbakterie')[luftvei]},
             if (InnMaate %in% c(0,6,8)) {paste('Innmåte: ',
                                                c('Elektivt',0,0,0,0,0, 'Akutt medisinsk',0, 'Akutt kirurgi')[InnMaate+1], sep='')},
   #          if (grType %in% 1:3) {paste0('Sykehustype: ', grTypetextstreng[grType])},
@@ -199,7 +195,6 @@ NIRUtvalgEnh <- function(RegData, datoFra='2011-01-01', datoTil=Sys.Date(), aar=
                                '6' = which(as.numeric(RegData$ReshId)!=reshID),	#RegData inneh. kun egen RHF
                                '8' = which(RegData$RHF != RegData$RHF[indEgen1]))
       }
-#      ind$ShTypeEgen =  which(RegData$ShType == RegData$ShType[indEgen1]) #Funker ikke hvis gjort utvalg på annen sykehustype
       ind$ShNivaaEgen =  which(RegData$NivaaNum == shNivaaEgenNum) #Funker ikke hvis gjort utvalg på annen sykehustype
 
 

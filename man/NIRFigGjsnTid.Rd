@@ -16,7 +16,7 @@ NIRFigGjsnTid(
   reshID = 0,
   InnMaate = "",
   dodInt = "",
-  velgDiag = 0,
+  luftvei = 0,
   tittel = 1,
   outfile = "",
   enhetsUtvalg = 0,
@@ -57,7 +57,9 @@ standard: alle (alt unntatt 0,6,8 / ikke spesifisert)}
 1: død,
 alle: standard (alle andre verdier)}
 
-\item{velgDiag}{Velge diagnose. 0-alle, 1-Bekreftede Covid-pasienter, 2-alle unntatt Covid-pasienter}
+\item{luftvei}{Luftveisinfeksjon? 'Alle pasienter' = 0, 'Luftveisinfeksjon' = 1,
+'Covid19' = 2, 'InfluensaA' = 3, 'InfluensaB' = 4, 'RS-virus' = 5, 'Kikhoste' = 6,
+'Annet luftveisvirus' = 7, 'Annen_luftveisbakterie' = 8}
 
 \item{outfile}{Navn på fil figuren skrives til. Standard: '' (Figur skrives
 til systemets standard utdataenhet (som regel skjerm))}

@@ -149,7 +149,7 @@ dataUtSMR_RHF <- intensiv::NIRFigGjsnGrVar(RegData=RegDataCovLandet, preprosess 
                              grVar = 'RHF',
                              aar = 2021,
                              #datoFra='2018-01-01', datoTil='2020-12-31',
-                             velgDiag = 2, #Alle unntatt covid-opphold
+                             luftvei = 2, #Alle unntatt covid-opphold
                              )
 tabSMR_RHF <- cbind(Antall = dataUtSMR_RHF$Ngr$Hoved,
                           SMR = dataUtSMR_RHF$AggVerdier$Hoved)
@@ -161,7 +161,7 @@ tittelRHF <- dataUtSMR_RHF$tittel
 dataUtSMR <- intensiv::NIRFigGjsnGrVar(RegData=RegDataCov, preprosess = 0,
                              valgtVar='SMR',
                              datoFra='2018-01-01', datoTil=datoTil,
-                             velgDiag = 2, #Alle unntatt covid-opphold
+                             luftvei = 2, #Alle unntatt covid-opphold
                              )
 tabSMR <- cbind(Antall = dataUtSMR$Ngr$Hoved,
                           SMR = dataUtSMR$AggVerdier$Hoved)

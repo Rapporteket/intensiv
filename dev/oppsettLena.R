@@ -15,13 +15,15 @@ setwd('c://Users/lro2402unn/RegistreGIT/intensiv')
 
 
 source("dev/sysSetenv.R")
-# shiny::shinyApp(ui = ui_intensiv, server = server_intensiv)
 intensiv::kjorIntensivApp(browser = TRUE)
 
-
+library(intensiv)
 dum <- intensiv::NIRRegDataSQL(datoFra = '2024-01-01')
 RegData <- intensiv::NIRPreprosess(RegData = dum)
 reshID <- 106271
+
+test <- NIRUtvalgEnh(RegData = RegData, luftvei = 3)
+
 
 test <- c('Alle',
   unique(RegData$RHF),
@@ -33,5 +35,6 @@ test <- c('Alle',
 # TilgJsn <- Sys.getenv("MRS_ACCESS_HIERARCHY_URL")
 # Tilgangstre <- jsonlite::fromJSON(TilgJsn)$AccessUnits
 
+R
 
 
