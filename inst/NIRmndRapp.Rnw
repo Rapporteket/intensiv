@@ -49,9 +49,7 @@ RegData <- NIRPreprosess(RegData=RegData)
 RegData <- NIRUtvalgEnh(RegData=RegData, datoFra=datoFra1Aar)$RegData
 RegData <- FinnReinnleggelser(RegData) # Beregne reinnleggelser
 
-#Enhetsnivå/type
-# grType <- RegData$ShType[match(reshID, RegData$ReshId)]
-# ShTypeEgenTxt <- c('lokal-/sentral', 'lokal-/sentral', 'region')[grType]
+#Enhetsnivå
 nivaaEgen <-  RegData$Nivaa[match(reshID, RegData$NivaaNum)]
 ShNivaaEgenTxt <- c('overvåknings', 'postoperative', 'Gen<50%','Gen>50%', 'barne')[nivaaEgen]
 

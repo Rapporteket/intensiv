@@ -223,7 +223,7 @@ WHERE cast(DateAdmittedIntensive as date) BETWEEN \'', datoFra, '\' AND \'', dat
 
 henteSamlerapporter <- function(filnavn, rnwFil, reshID=0,
                                 datoFra=Sys.Date()-180, datoTil=Sys.Date()) {
-    Rpakke <- ifelse(rnwFil==as.character('NIRinfluensa.Rnw'), 'intensivberedskap', 'intensiv')
+    # Rpakke <- ifelse(rnwFil==as.character('NIRinfluensa.Rnw'), 'intensivberedskap', 'intensiv')
     tmpFile <- paste0('tmp',rnwFil)
     src <- normalizePath(system.file(rnwFil, package=Rpakke))
     #gå til tempdir. Har ikke skriverettigheter i arbeidskatalog
@@ -254,7 +254,7 @@ henteSamlerapporter <- function(filnavn, rnwFil, reshID=0,
 abonnement <- function(rnwFil, brukernavn='tullebukk', reshID=0){
                                 # datoFra=Sys.Date()-180, datoTil=Sys.Date()) {
 
-  Rpakke <- ifelse(rnwFil==as.character('NIRinfluensa.Rnw'), 'intensivberedskap', 'intensiv')
+  #Rpakke <- ifelse(rnwFil==as.character('NIRinfluensa.Rnw'), 'intensivberedskap', 'intensiv')
   #rapbase::subLogger(author = brukernavn, registryName = 'Norsk Intensivregister',
   #                  reshId = reshID,
   #                  msg = paste0("1 starter Abonnement:", rnwFil ))
@@ -265,9 +265,6 @@ abonnement <- function(rnwFil, brukernavn='tullebukk', reshID=0){
   setwd(tempdir())
   dir <- getwd()
   file.copy(src, tmpFile, overwrite = TRUE)
-  #rapbase::subLogger(author = brukernavn, registryName = 'Norsk Intensivregister',
-  #                  reshId = reshID,
-  #                  msg = paste0("2 Klar til å strikke", tmpFile))
   knitr::knit2pdf(input=tmpFile)
   utfil <- paste0(dir, '/', substr(tmpFile, 1, nchar(tmpFile)-3), 'pdf')
 

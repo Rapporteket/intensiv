@@ -19,7 +19,7 @@
 
 
 NIRFigInnMaate <- function(RegData, valgtVar='InnMaate', datoFra='2010-01-01', datoTil='3000-01-01', aar=0,
-                            minald=0, maxald=110, velgDiag=0,
+                            minald=0, maxald=110, luftvei=0,
                            nivaa = 0, #grType=99,
                            grVar='ShNavn', InnMaate=99, dodInt='', erMann='', hentData=0,
                             preprosess=1, outfile='', ...)
@@ -46,9 +46,9 @@ NIRFigInnMaate <- function(RegData, valgtVar='InnMaate', datoFra='2010-01-01', d
       subtxt <- 'Type opphold'
 
 #------- Gjøre utvalg
- #     NIRUtvalg <- NIRUtvalgEnh(RegData=RegData,velgDiag = velgDiag)
+ #     NIRUtvalg <- NIRUtvalgEnh(RegData=RegData,luftvei = luftvei)
 NIRUtvalg <- NIRUtvalgEnh(RegData=RegData, datoFra=datoFra, datoTil=datoTil, aar=aar,
-                          minald=minald, maxald=maxald, velgDiag = velgDiag,
+                          minald=minald, maxald=maxald, luftvei = luftvei,
                           erMann=erMann, InnMaate=InnMaate, dodInt=dodInt, nivaa=nivaa) #overfPas=overfPas,
 RegData <- NIRUtvalg$RegData
 utvalgTxt <- NIRUtvalg$utvalgTxt

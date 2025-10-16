@@ -40,7 +40,7 @@
 #'
 #' @export
 NIRFigAndelerGrVar <- function(RegData, valgtVar='dod30d', datoFra='2011-01-01', datoTil='3000-01-01', aar=0,
-                            minald=0, maxald=110, aldGr=0, medKI=0, Ngrense=10, velgDiag=0,
+                            minald=0, maxald=110, aldGr=0, medKI=0, Ngrense=10, luftvei=0,
                             nivaa = 0, #grType=99,
                             grVar='ShNavn', InnMaate=99, dodInt='', erMann='', hentData=0,
                             preprosess=1, outfile='', lagFig=1, ...){
@@ -74,7 +74,7 @@ NIRFigAndelerGrVar <- function(RegData, valgtVar='dod30d', datoFra='2011-01-01',
 
             NIRUtvalg <- NIRUtvalgEnh(RegData=RegData, datoFra=datoFra, datoTil=datoTil,
                                       minald=minald, maxald=maxald, aar=aar, erMann=erMann, #overfPas=overfPas,
-                                      InnMaate=InnMaate, dodInt=dodInt, nivaa = nivaa, velgDiag=velgDiag)
+                                      InnMaate=InnMaate, dodInt=dodInt, nivaa = nivaa, luftvei=luftvei)
             smltxt <- NIRUtvalg$smltxt
             medSml=NIRUtvalg$medSml
             utvalgTxt <- NIRUtvalg$utvalgTxt

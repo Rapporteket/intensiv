@@ -26,7 +26,6 @@ NIRpaarorDataSQL <- function(datoFra = '2015-12-01', datoTil = Sys.Date(), medH=
                 , M.PatientTransferredFromHospital
                 , M.PatientTransferredToHospital
                 , M.ShNavn
-                , M.ShType
                 , M.DateDischargedIntensive,")
   varPaaror <- 'Q.SkjemaGUID
   , Q.Kjoenn

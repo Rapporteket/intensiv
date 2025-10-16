@@ -14,7 +14,7 @@ NIRUtvalgEnh(
   erMann = "",
   InnMaate = "",
   dodInt = "",
-  velgDiag = 0,
+  luftvei = 0,
   nivaa = 0,
   overfPas = 0,
   enhetsUtvalg = 0,
@@ -49,7 +49,9 @@ standard: alle (alt unntatt 0,6,8 / ikke spesifisert)}
 1: død,
 alle: standard (alle andre verdier)}
 
-\item{velgDiag}{Velge diagnose. 0-alle, 1-Bekreftede Covid-pasienter, 2-alle unntatt Covid-pasienter}
+\item{luftvei}{Luftveisinfeksjon? 'Alle pasienter' = 0, 'Luftveisinfeksjon' = 1,
+'Covid19' = 2, 'InfluensaA' = 3, 'InfluensaB' = 4, 'RS-virus' = 5, 'Kikhoste' = 6,
+'Annet luftveisvirus' = 7, 'Annen_luftveisbakterie' = 8}
 
 \item{nivaa}{Intensivavdelingens "nivå": 1-5: 'Overvåk', 'Postop', 'Gen<50%','Gen>50%', 'Barn'
 Flervalgsparameter}
@@ -70,7 +72,7 @@ hvilken enhet i spesialisthelsetjenesten brukeren tilhører}
 \item{outfile}{Navn på fil figuren skrives til. Standard: '' (Figur skrives
 til systemets standard utdataenhet (som regel skjerm))}
 
-\item{grType}{Gjør gruppeutvalg på sykehustype - fases ut !!
+\item{grType}{Gjør gruppeutvalg på sykehustype - endres til nivå.
 1: lokal-/sentralsykehus
 2: lokal-/sentralsykehus
 3: regionsykehus

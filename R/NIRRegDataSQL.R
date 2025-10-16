@@ -9,7 +9,7 @@
 #' @export
 #'
 #'
-NIRRegDataSQL <- function(datoFra = '2011-01-01', datoTil = '2099-01-01') { #,session='') {
+NIRRegDataSQL <- function(datoFra = '2011-01-01', datoTil = Sys.Date()) { #,session='') {
 
   if (Sys.getenv("R_RAP_INSTANCE") %in% c("QAC", "PRODUCTIONC")){
     registryName <- "data"
@@ -107,10 +107,10 @@ NIRRegDataSQL <- function(datoFra = '2011-01-01', datoTil = '2099-01-01') { #,se
       SecondaryReasonAdmitted,
       SerumUreaOrBun,
       ShNavn,
-      ShType,
       UPPER(SkjemaGUID) AS SkjemaGUID,
       Sodium,
       Sofa,
+      SofaScore,
       SystolicBloodPressure,
       Temperature,
       TerapetiskHypotermi,
@@ -119,11 +119,23 @@ NIRRegDataSQL <- function(datoFra = '2011-01-01', datoTil = '2099-01-01') { #,se
       TypeOfAdmission,
       UnitId AS ReshId,
       UrineOutput,
-      VasoactiveInfusion
+      VasoactiveInfusion,
+-- Luftveisvariabler, okt 2025:
+        RespiratoryTractInfection,
+  RespiratoryTractInfectionPrimaryCauseForICUAdmission,
+  CauseOfICUAdmission_APACHEIII,
+  SARS_CoV2,
+  InfluensaA,
+  InfluensaB,
+  RS_virus,
+  Kikhoste,
+  Annet_luftveisvirus,
+  Annen_luftveisbakterie,
+  LaboratoryConfirmedDate
 FROM
 	intensivopphold
 WHERE cast(DateAdmittedIntensive as date) BETWEEN \'', datoFra, '\' AND \'', datoTil, '\'')
-  #WHERE cast(DateAdmittedIntensive as date) >= \'', datoFra, '\' AND DateAdmittedIntensive <= \'', datoTil, '\'')
+
 
    # query <- paste0('select * from intensivopphold
    # WHERE cast(DateAdmittedIntensive as date) BETWEEN \'', '2020-01-01', '\' AND \'', Sys.Date(), '\'')
