@@ -225,9 +225,8 @@ henteSamlerapporter <- function(filnavn, rnwFil, reshID=0,
                                 datoFra=Sys.Date()-180, datoTil=Sys.Date()) {
     # Rpakke <- ifelse(rnwFil==as.character('NIRinfluensa.Rnw'), 'intensivberedskap', 'intensiv')
     tmpFile <- paste0('tmp',rnwFil)
-    src <- normalizePath(system.file(rnwFil, package=Rpakke))
+    src <- normalizePath(system.file(rnwFil, package="intensiv"))
     #gå til tempdir. Har ikke skriverettigheter i arbeidskatalog
-    #owd <-
       setwd(tempdir())
     file.copy(src, tmpFile, overwrite = TRUE)
 

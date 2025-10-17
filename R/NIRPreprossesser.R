@@ -14,7 +14,11 @@
 #'
 NIRPreprosess <- function(RegData=RegData, skjema=1)	#, reshID=reshID)
 {
-      #Miljøparametre
+  # Enhetsnivånavn
+  RegData$RHF <- factor(RegData$RHF,
+                        levels= c('Helse Nord', 'Helse Midt-Norge', 'Helse Vest', 'Helse Sør-Øst', 'Privat'),
+                        labels = c('Nord', 'Midt', 'Vest', 'Sør-Øst', 'Privat'))
+
 
       #Kun ferdigstilte registreringer:
   if (skjema %in% 1:2){
@@ -41,7 +45,7 @@ NIRPreprosess <- function(RegData=RegData, skjema=1)	#, reshID=reshID)
       names(RegData)[which(names(RegData) == 'AgeAdmitted')] <- 'Alder' #Én desimal
       names(RegData)[which(names(RegData) == 'Saps2Score')] <- 'SMR' #Saps2Score er SAPS estimert mortalitet
       names(RegData)[which(names(RegData) == 'Saps2ScoreNumber')] <- 'SAPSII'
-      names(RegData)[which(names(RegData) == 'DaysAdmittedIntensiv')] <- 'liggetid'
+      names(RegData)[which(names(RegData) == 'DaysAdmittedIntensiv')] <- 'Liggetid'
       names(RegData)[which(names(RegData) == 'Nems')] <- 'NEMS'
       names(RegData)[which(names(RegData) == 'Respirator')] <- 'respiratortid'
       names(RegData)[which(names(RegData) == 'TransferredStatus')] <- 'Overf'
@@ -54,18 +58,18 @@ NIRPreprosess <- function(RegData=RegData, skjema=1)	#, reshID=reshID)
       if (TilgJsn == "") {
         stop("NIRPreprosess: Miljøvariabel MRS_ACCESS_HIERARCHY_URL er ikke satt")
       }
-      # Tilgangstre <- jsonlite::fromJSON(TilgJsn)$AccessUnits
-      # varTilg <- c("UnitId", "ParentUnitId", "HasDatabase", "ExternalId", "Title", "TitleWithPath","ExtraData")
-      # IntData <- merge(RegData, Tilgangstre[ ,varTilg],
-      #                  by.x = 'ReshId', by.y = 'UnitId', suffixes = c('Int','Tilg'))
-      # RegData <- dplyr::rename(IntData,
-      #                          Nivaa = ExtraData,
-      #                          ReshIdReg = ReshId,
-      #                          ReshId = ExternalId,
-      #                          ShNavnReg = ShNavn,
-      #                          ShNavn = Title) #newname = oldname
-      # RegData$NivaaNum <- as.numeric(plyr::mapvalues(RegData$Nivaa, from=c('1a', '1b', '2b', '3', '3c'),
-      #                                     to = 1:5))
+      Tilgangstre <- jsonlite::fromJSON(TilgJsn)$AccessUnits
+      varTilg <- c("UnitId", "ParentUnitId", "HasDatabase", "ExternalId", "Title", "TitleWithPath","ExtraData")
+      IntData <- merge(RegData, Tilgangstre[ ,varTilg],
+                       by.x = 'ReshId', by.y = 'UnitId', suffixes = c('Int','Tilg'))
+      RegData <- dplyr::rename(IntData,
+                               Nivaa = ExtraData,
+                               ReshIdReg = ReshId,
+                               ReshId = ExternalId,
+                               ShNavnReg = ShNavn,
+                               ShNavn = Title) #newname = oldname
+      RegData$NivaaNum <- as.numeric(plyr::mapvalues(RegData$Nivaa, from=c('1a', '1b', '2b', '3', '3c'),
+                                          to = 1:5))
 
       #Fjerner mellomrom (før) og etter navn
       RegData$ShNavn <- trimws(as.character(RegData$ShNavn))

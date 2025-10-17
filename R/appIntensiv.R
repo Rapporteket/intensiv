@@ -72,9 +72,14 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
              downloadButton(outputId = 'mndRapp.pdf', label='Last ned MÅNEDSRAPPORT', class = "butt"),
              tags$head(tags$style(".butt{background-color:#6baed6;} .butt{color: white;}")), # background color and font color
              br(),
+
+             h3("Luftveisinfeksjoner"), #),
+             downloadButton(outputId = 'luftveiRapp.pdf', label='Last ned Luftveisinfeksjonsrapport', class = "butt"),
+             tags$head(tags$style(".butt{background-color:#6baed6;} .butt{color: white;}")), # background color and font color
+
              # h3('Samlede resultater, egen enhet'), Deaktiverer til ferdig oppdatert til nye enhetsnivåer
              # downloadButton(outputId = 'samleRapp.pdf', label='Last ned samlerapport', class = "butt"),
-             # br(),
+             br(),
              br(),
              h2('Hente datauttrekk'),
              dateRangeInput(inputId = 'datovalgData', start = startDato, end = idag,
@@ -243,7 +248,7 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                            'Isolasjon, type' = 'isolering',
                            'Isolasjon, varighet' = 'isoleringDogn',
                            'Komplikasjoner' = 'komplikasjoner',
-                           'Liggetid' = 'liggetid',
+                           'Liggetid' = 'Liggetid',
                            'Luftveisinfeksjoner' = 'luftveisinfeksjoner',
                            'Nas-skår (sykepleierakt.)' = 'Nas24',
                            'NEMS-skår (ressursbruk)' = 'NEMS24',
@@ -421,7 +426,7 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
              h4('Her kan man velge hvilken variabel man ønsker å se resultater for og gjøre filtreringer.'),
              selectInput(inputId = "valgtVarGjsn", label="Velg variabel",
                          choices = c('Alder' = 'alder',
-                                     'Liggetid' = 'liggetid',
+                                     'Liggetid' = 'Liggetid',
                                      'Nas-skår (sykepleieraktivitet)' = 'Nas24',
                                      'NEMS-skår per døgn' = 'NEMS24',
                                      'NEMS-skår per opphold' = 'NEMS',
@@ -819,16 +824,23 @@ server_intensiv <- function(input, output, session) { #
                           reshID = user$org(), datoFra = startDato)
     }
   )
-
-  output$samleRapp.pdf <- downloadHandler(
-    filename = function(){ paste0('NIRsamleRapp', Sys.time(), '.pdf')},
+  output$luftveiRapp.pdf <- downloadHandler(
+    filename = function(){ paste0('Luftvei', Sys.time(), '.pdf')},
     content = function(file){
-      henteSamlerapporter(file, rnwFil="NIRSamleRapp.Rnw",
-                  reshID = user$org(), datoFra = startDato)
+      henteSamlerapporter(file, rnwFil="NIRluftveisinfek.Rnw",
+                          reshID = user$org())
     }
   )
 
-  #test <- henteSamlerapporter('file.pdf', rnwFil="NIRinfluensa.Rnw")
+  # output$samleRapp.pdf <- downloadHandler(
+  #   filename = function(){ paste0('NIRsamleRapp', Sys.time(), '.pdf')},
+  #   content = function(file){
+  #     henteSamlerapporter(file, rnwFil="NIRSamleRapp.Rnw",
+  #                 reshID = user$org(), datoFra = startDato)
+  #   }
+  # )
+
+  # test <- henteSamlerapporter('file.pdf', rnwFil="NIRluftveisinfek.Rnw")
   #Datadump
 
   output$velgReshData <- renderUI({

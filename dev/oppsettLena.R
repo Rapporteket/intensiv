@@ -19,7 +19,7 @@ source("dev/sysSetenv.R")
 intensiv::kjorIntensivApp(browser = TRUE)
 
 library(intensiv)
-dum <- intensiv::NIRRegDataSQL(datoFra = '2025-01-01') #8616 i uttrekk fra 16.okt
+dum <- intensiv::NIRRegDataSQL(datoFra = '2025-01-01')
 RegData <- intensiv::NIRPreprosess(RegData = dum)
 reshID <- 106271
 
