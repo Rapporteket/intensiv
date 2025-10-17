@@ -53,17 +53,18 @@ tabAntOpphShMnd <- function(RegData, datoTil=Sys.Date(), datoFra='Ikke angitt', 
 	return(tabAvdMnd1)
 }
 
-#' Antall opphold siste 5 år
+#' Antall opphold siste år
 #'
 #' @param RegData data
 #' @param datoTil sluttdato
+#' @param antAar antall år som skal vises
 #' @export
-tabAntOpphSh5Aar <- function(RegData, datoTil){
+tabAntOpphShAar <- function(RegData, datoTil, antAar = 5){
       AarNaa <- as.numeric(format.Date(datoTil, "%Y"))
 
-      tabAvdAarN <- addmargins(table(RegData[which(RegData$Aar %in% (AarNaa-4):AarNaa), c('ShNavn','Aar')]))
+      tabAvdAarN <- addmargins(table(RegData[which(RegData$Aar %in% (AarNaa-antAar-1):AarNaa), c('ShNavn','Aar')]))
       rownames(tabAvdAarN)[dim(tabAvdAarN)[1] ]<- 'TOTALT, alle enheter:'
-      colnames(tabAvdAarN)[dim(tabAvdAarN)[2] ]<- 'Siste 5 år'
+      colnames(tabAvdAarN)[dim(tabAvdAarN)[2] ]<- 'Sum valgte år'
       tabAvdAarN <- xtable::xtable(tabAvdAarN)
       return(tabAvdAarN)
 }

@@ -190,7 +190,7 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                                   tableOutput("tabAntOpphSh")
                          ),
                          tabPanel('Pasienter per år og avd.',
-                                  h2("Antall pasienter ved avdelingene siste 5 år"),
+                                  h2("Antall pasienter ved avdelingene siste år"),
                                   tableOutput("tabAntPasSh5Aar")
                          ),
                          tabPanel('Nøkkeltall',
@@ -973,7 +973,7 @@ server_intensiv <- function(input, output, session) { #
         RegDataCov <- NIRUtvalgEnh(RegData=RegData, luftvei = as.numeric(input$luftveiValgReg))$RegData
             tab <- switch(input$tidsenhetReg,
                    Mnd=tabAntOpphShMnd(RegData=RegDataCov, datoTil=input$sluttDatoReg, antMnd=12), #input$datovalgTab[2])
-                   Aar=tabAntOpphSh5Aar(RegData=RegDataCov, datoTil=input$sluttDatoReg))
+                   Aar=tabAntOpphShAar(RegData=RegDataCov, datoTil=input$sluttDatoReg, antAar=10))
 
       }, rownames = T, digits=0, spacing="xs"
       )

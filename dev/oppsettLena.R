@@ -6,11 +6,12 @@
 # devtools::install(upgrade = FALSE)
 
 
-devtools::install_github('Rapporteket/intensiv', ref = 'main_dev')
+devtools::install_github('Rapporteket/intensiv', ref = 'main_dev', )
 #remotes::install_github('Rapporteket/intensiv', ref = 'main')
 
 setwd('../data')
-sship::dec('')
+sship::dec('intensiv1590fb768.sql.gz__20251017_104707.tar.gz',
+           keyfile = "c://Users/lro2402unn/.ssh/id_rsa")
 setwd('c://Users/lro2402unn/RegistreGIT/intensiv')
 
 
@@ -18,7 +19,7 @@ source("dev/sysSetenv.R")
 intensiv::kjorIntensivApp(browser = TRUE)
 
 library(intensiv)
-dum <- intensiv::NIRRegDataSQL(datoFra = '2024-01-01')
+dum <- intensiv::NIRRegDataSQL(datoFra = '2025-01-01') #8616 i uttrekk fra 16.okt
 RegData <- intensiv::NIRPreprosess(RegData = dum)
 reshID <- 106271
 

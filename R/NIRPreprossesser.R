@@ -54,18 +54,18 @@ NIRPreprosess <- function(RegData=RegData, skjema=1)	#, reshID=reshID)
       if (TilgJsn == "") {
         stop("NIRPreprosess: Miljøvariabel MRS_ACCESS_HIERARCHY_URL er ikke satt")
       }
-      Tilgangstre <- jsonlite::fromJSON(TilgJsn)$AccessUnits
-      varTilg <- c("UnitId", "ParentUnitId", "HasDatabase", "ExternalId", "Title", "TitleWithPath","ExtraData")
-      IntData <- merge(RegData, Tilgangstre[ ,varTilg],
-                       by.x = 'ReshId', by.y = 'UnitId', suffixes = c('Int','Tilg'))
-      RegData <- dplyr::rename(IntData,
-                               Nivaa = ExtraData,
-                               ReshIdReg = ReshId,
-                               ReshId = ExternalId,
-                               ShNavnReg = ShNavn,
-                               ShNavn = Title) #newname = oldname
-      RegData$NivaaNum <- as.numeric(plyr::mapvalues(RegData$Nivaa, from=c('1a', '1b', '2b', '3', '3c'),
-                                          to = 1:5))
+      # Tilgangstre <- jsonlite::fromJSON(TilgJsn)$AccessUnits
+      # varTilg <- c("UnitId", "ParentUnitId", "HasDatabase", "ExternalId", "Title", "TitleWithPath","ExtraData")
+      # IntData <- merge(RegData, Tilgangstre[ ,varTilg],
+      #                  by.x = 'ReshId', by.y = 'UnitId', suffixes = c('Int','Tilg'))
+      # RegData <- dplyr::rename(IntData,
+      #                          Nivaa = ExtraData,
+      #                          ReshIdReg = ReshId,
+      #                          ReshId = ExternalId,
+      #                          ShNavnReg = ShNavn,
+      #                          ShNavn = Title) #newname = oldname
+      # RegData$NivaaNum <- as.numeric(plyr::mapvalues(RegData$Nivaa, from=c('1a', '1b', '2b', '3', '3c'),
+      #                                     to = 1:5))
 
       #Fjerner mellomrom (før) og etter navn
       RegData$ShNavn <- trimws(as.character(RegData$ShNavn))

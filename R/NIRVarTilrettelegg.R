@@ -766,7 +766,7 @@ if (valgtVar %in% c('regForsinkelseInn', 'regForsinkelse')) {  #Fordeling, Andel
                       'Kikhoste', 'Annet_luftveisvirus', 'Annen_luftveisbakterie',
                       'RespiratoryTractInfection')
         grtxt <- c('Covid19', 'InfluensaA', 'InfluensaB', 'RS-virus',
-                   'Kikhoste', 'Annet luftveisvirus', 'Annen_luftveisbakterie',
+                   'Kikhoste', 'Annet luftveisvirus', 'Annen luftveisbakterie',
                    'Alle typer')
 
         retn <- 'H'
