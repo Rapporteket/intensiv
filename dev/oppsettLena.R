@@ -25,6 +25,7 @@ reshID <- 106271
 
 test <- NIRUtvalgEnh(RegData = RegData, luftvei = 3)
 
+knitr::knit2pdf('./inst/NIRluftveisinfek.Rnw')
 
 test <- c('Alle',
   unique(RegData$RHF),
