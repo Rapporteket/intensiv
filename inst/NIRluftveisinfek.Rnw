@@ -1,0 +1,306 @@
+\documentclass[handout, xcolor=pdftex,dvipsnames,table]{beamer}  %presentation,
+\usetheme{Hannover}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[english, norsk]{babel}
+% \usepackage[norsk]{babel}
+\usepackage{xspace}
+\usepackage{booktabs}
+\usepackage{rotating}
+\usepackage{graphicx}
+
+
+<<'initOpts',include=FALSE>>=
+knitr::opts_chunk$set(warnings=FALSE,echo=FALSE)
+knitr::opts_knit$set(root.dir = './')
+library(intensiv)
+library(intensivberedskap)
+@
+
+
+<<'hentDataOgTilrettelegg', include=FALSE>>=
+
+IntData <- NIRPreprosess(NIRRegDataSQL(datoFra = Sys.Date()-40*7, datoTil = Sys.Date()))
+LuftData <- IntData[!is.na(IntData$RespiratoryTractInfection), ]
+LuftData$RHF <- factor(LuftData$RHF,
+                        levels= c('Helse Nord', 'Helse Midt-Norge', 'Helse Vest', 'Helse Sør-Øst', 'Privat'),
+                        labels = c('Nord', 'Midt', 'Vest', 'Sør-Øst', 'Privat'))
+LuftData$RHFc <- as.character(LuftData$RHF)
+
+    #Legge på tidsenheter. Bruk factor hvis vil ha med tidsenheter uten registreringer - ikke standard!
+    LuftData$Dag <- factor(format(LuftData$InnDato, '%d.%m.%y'),
+  levels = format(seq(min(LuftData$InnDato), max(LuftData$InnDato), by='day'), '%d.%m.%y'))
+    LuftData$Aar <- as.numeric(format(LuftData$InnDato, '%Y'))
+    LuftData$UkeNr <- format(LuftData$InnDato, '%V')
+    LuftData$UkeAar <- format(LuftData$InnDato, '%G.%V') #%G -The week-based year, %V - Week of the year as decimal number (01–53)
+    LuftData$Innleggelsestidspunkt <- as.POSIXlt(LuftData$Innleggelsestidspunkt, tz= 'UTC',
+format='%Y-%m-%d %H:%M:%S' )
+    LuftData$MndAar <- format(LuftData$Innleggelsestidspunkt, '%b%y')
+
+
+# #Legge på tidsenheter
+LuftData$UkeAar <- as.factor(LuftData$UkeAar)
+
+enhetsNivaa <- 'Alle'
+N <- dim(LuftData)[1]
+@
+
+
+\begin{document}
+
+\title[Luftveisinfeksjoner \\\today] {NIR}
+% Luftveisinfeksjonrapportering fra Norsk Intensivregister
+
+
+\maketitle
+
+\begin{tiny}
+
+\begin{frame}[fragile] {Hva er dette?}
+Dette er en automagisk utsendt rapport fra Norsk Intensivregister (NIR).
+Dokumentet inneholder oppsummering av luftveisinfeksjoner hos pasienter som
+kvalifiserer for rapportering til NIR.
+
+Dokumentet viser resultater kun fra ferdigstilte opphold. At et opphold er ferdigstilt vil si at opplysningene er kontrollert og ferdig registrert.
+
+
+\bf{Merk at:}
+\begin{itemize}
+\item Rapporten er basert på registreringer 40 uker bakover i tid til og med \Sexpr{Sys.Date()-1}.
+\item Bare uker hvor det er registrerte tilfeller, vises i tabellene. (Dvs. uker med 0 registreringer vises ikke.)
+\end{itemize}
+
+
+Rapporten gir en oversikt over:
+\begin{itemize}
+\item Antall pasienter på intensiv i dag, inkludert antall med ulike typer pustehjelp.
+\item Antall pasienter på intensiv per helseforetak.
+\item Antall pasienter innlagt med luftveisinfeksjon siste 20 dager og totalt siste 40 uker i hvert regionale helseforetak.
+\item Fordeling av alder og kjønn totalt på rapporteringstidspunktet.
+\item Liggetid på intensiv, tid med pustehjelp, alder og dødelighet på intensiv.
+\end{itemize}
+
+
+\end{frame}
+
+
+
+\begin{frame}[fragile] {Denne kan kanskje vise nøkkeltall per RHF i stedet for per måned?}
+Antall luftveissmitteopphold hvor pasienten har fått pustehjelp
+
+<<'RespiratorECMO', results='asis'>>=
+
+  tabNokkeltall <- tabNokkeltall(RegData=LuftData, tidsenhet='Mnd', enhetsUtvalg=0, reshID=0,
+                                 sykehus='Alle', utvidTab=0)
+#Ikke oppdatert
+xtable::xtable(tabNokkeltall,
+               caption = 'Nøkkeltall')
+
+# digits=0,
+# align = c('l','r','r','r'),
+
+@
+  \end{frame}
+
+
+\begin{frame}[fragile] {Antall  per HF}
+Antall opphold rapportert.
+
+<<'InneliggendePrHF', results='asis',warnings=FALSE>>=
+  #Viser opphold pr HF eller inneliggende pr sykehus hvis enhetsnivå er HF
+
+  RegHF <- LuftData %>%
+  dplyr::group_by(RHFc, HF) %>%
+  dplyr::summarise(.groups='rowwise',
+                   'Antall pasienter' = dplyr::n())
+Totalt <- c('', 'Totalt', sum(RegHF$`Antall pasienter`))
+
+colnames(RegHF) <-c('RHF', 'HF', 'Ant. pasienter')
+
+RegHF <- rbind(as.data.frame(RegHF), Totalt)
+print(xtable::xtable(RegHF, digits=0,
+                     align = c('l', 'l', 'l', 'r'),
+                     caption = 'Antall inneliggende luftveispasienter i hver enhet'),
+      include.rownames = FALSE)
+
+@
+  \end{frame}
+
+
+
+<<'LageTabeller', results='asis'>>=
+
+  #Aggregere på RHF, UkeNr, Ant. bekreftet, Ant. mistenkt
+  TabUkeRHF <- ftable(LuftData[ , c('UkeAar', 'RHF')], row.vars ='UkeAar')
+  antUker <- dim(TabUkeRHF)[1]
+  indAntRader <- max(1,(antUker-14)):(antUker+1)
+
+  TabUkeInflu <- table(LuftData[ ,c('UkeAar', 'RespiratoryTractInfection')])
+
+  TabUkeTot <- addmargins(TabUkeInflu)
+  row.names(TabUkeTot)[antUker+1] <- 'Sum, siste 40 uker'
+
+  @
+
+
+
+    \begin{frame}[fragile] {Luftveisinfeksjon i regionene, alle skjema}
+  <<'TabUkeRHFalle', results='asis'>>=
+    navnRHF <- attributes(TabUkeRHF)$col.vars$RHF
+  # navn2Influ <- attributes(TabUkeRHF)$col.vars$Influensa
+  navnUkenr <- attributes(TabUkeRHF)$row.vars$UkeAar
+  TabUkeRHF <- as.matrix(TabUkeRHF)
+  navnRHF <- sub('Helse ', '', navnRHF)
+  TabUkeRHF <- rbind( TabUkeRHF, Totalt = colSums(TabUkeRHF))
+
+  # add.to.row <- list(pos = list(-1), command = NULL)
+  # command <- paste0(paste0('& \\multicolumn{2}{l}{', navnRHF, '} ', collapse=''), '\\\\\n')
+  # add.to.row$command <- command
+  print(xtable::xtable(TabUkeRHF[indAntRader,], digits=0, #method='compact', #align=c('l', rep('r', ncol(alderDIV))),
+                       caption=paste0('Luftveisinfeksjoner per uke og region siste 40 uker.',
+                                      ' Uker med 0 tilfeller vises ikke.')),
+        # add.to.row = add.to.row,
+        sanitize.rownames.function = identity)
+
+  @
+    \end{frame}
+
+
+  \begin{frame}[fragile] {Luftveisinfeksjon, hele landet}
+
+  <<'TabUkeTot', results='asis'>>=
+    print(xtable::xtable(TabUkeTot[indAntRader,], digits=0, #align=c('l', rep('r', ncol(TabUkeTot))),
+                         caption=paste0('Antall luftveissmittetilfeller siste 40 uker', ' Uker med 0 tilfeller vises ikke.')),
+          sanitize.rownames.function = identity)
+  @
+    \end{frame}
+
+
+
+  \begin{frame}[fragile] {Antall nye Luftveisinfeksjonpasienter per dag}
+
+  <<'TabTot', results='asis'>>=
+
+    TabTidEnh <- ftable(LuftData[ , c('Dag', 'RHF')], #, 'Covid'
+                        row.vars = 'Dag')
+  TabTidEnh <- as.matrix(TabTidEnh)
+
+  TabTidEnh <- addmargins(TabTidEnh, FUN=list(Totalt=sum, 'Hele landet' = sum), quiet=TRUE)
+
+  AntRader <- dim(TabTidEnh)[1]
+  xtable::xtable(TabTidEnh[max(1,AntRader-20):AntRader, ], digits=0,
+                 caption='Antall luftveissmitteopphold siste 20 dager, samt totalt siste 40 uker.')
+
+  @
+    \end{frame}
+
+
+
+
+  \begin{frame}[fragile]{Antall registrerte opphold på hvert sykehus}
+  <<'OpphPrHF', results='asis', warnings=FALSE>>=
+    RegSh <- LuftData %>%
+    dplyr::group_by(as.character(RHF), ShNavn) %>%
+    dplyr::summarise(.groups='rowwise',
+                     'Antall opphold' = dplyr::n())
+  Totalt <- c('Hele landet', '', sum(as.numeric(RegSh$`Antall opphold`)))
+  RegSh <- rbind(as.data.frame(RegSh), Totalt)
+  colnames(RegSh) <- c('RHF', 'Enhet', 'Ant. opph.')
+
+  print(
+    xtable::xtable(RegSh , digits=0,
+                   align = c('l','l','l','r'),
+                   caption='Totalt antall opphold med luftveissmitte siste 40 uker.')
+    ,include.rownames = FALSE)
+  @
+    \end{frame}
+
+
+
+  \begin{frame}[fragile] {Aldersfordeling}
+
+  <<'AlderInfo', results='asis'>>=
+    Alder <- round(summary(LuftData$Alder))
+  txtAlder <- if (dim(LuftData)[1]>2){paste0('Aldersfordelingen er mellom ',
+                                             Alder[1], ' og ', Alder[6], ' år med en gjennomsnittsalder på ',
+                                             Alder[4], ' år.')} else {''}
+  @
+
+    \Sexpr{txtAlder}
+
+  <<'TabAlder', results='asis'>>=
+    TabAlder <- intensivberedskap::TabAlder(RegData=LuftData, sens=1)$Tab  #reshID = reshID, enhetsNivaa = enhetsNivaa
+
+  xtable::xtable(TabAlder,
+                 digits = 0,
+                 align = c('l', rep('r', dim(TabAlder)[2])),
+                 caption='Fordeling i aldersgrupper blant Luftveisinfeksjonpasienter på rapporteringstidspunktet.')
+  @
+    \end{frame}
+
+
+  \begin{frame}[fragile] {Kjønnsfordeling }
+
+  <<'AlderKjonn', results='asis'>>=
+
+    dum <- intensivberedskap::FigFordelingKjonnsdelt(RegData = LuftData, valgtVar = 'Alder', minN=3,
+                                                     outfile = 'AlderKjonn.pdf')
+  @
+
+    \begin{figure}[ht]
+
+  %\scalebox{0.5}
+  \centering \includegraphics[scale=0.25]{AlderKjonn.pdf}
+  \caption{Fordeling av kjønn i ulike aldersgrupper for opphold med registrert luftveisinfeksjon siste 40 uker.
+    Søylene maskeres hvis det er færre enn tre kvinner eller menn i ei aldersgruppe.}
+  \end{figure}
+
+  \end{frame}
+
+
+
+  \begin{frame}[fragile] {Oppsummering, luftveisinfeksjoner}
+  %, \Sexpr{enhetTxt}}
+
+<<'Ferdigstilte', results='asis'>>=
+  # FerdigBekr <- intensivberedskap::oppsumFerdigeRegTab(RegData=LuftData)
+
+  AntBruktResp <- sum(LuftData$MechanicalRespirator==1, na.rm=T)
+  AntBruktECMO <- sum(LuftData$ECMOTid>0, na.rm=T)
+  Liggetid <- summary(LuftData$Liggetid, na.rm = T)
+  RespTid <- summary(LuftData$respiratortid, na.rm = T)
+  ECMOtid <- summary(LuftData$ECMOTid, na.rm = T)
+  Alder <- summary(LuftData$Alder, na.rm = T)
+  AntDod <- sum(LuftData$DischargedIntensiveStatus==1, na.rm=T)
+
+  med_IQR <- function(x){
+    #x[is.na(x)]<-0
+    c(sprintf('%.1f',x[4]), sprintf('%.1f',x[3]), paste(sprintf('%.1f',x[2]), sprintf('%.1f',x[5]), sep=' - '))
+  }
+
+  TabFerdigeReg <- rbind(
+    'Alder (år)' = c(med_IQR(Alder), N, ''),
+    'Liggetid (døgn)' = c(med_IQR(Liggetid), N, ''),
+    'Respiratortid (døgn)' = c(med_IQR(RespTid), AntBruktResp*(c(1, 100/N))),
+    #    'ECMO-tid (døgn)' = c(med_IQR(ECMOtid), AntBruktECMO*(c(1, 100/N))),
+    'Døde' = c('','','',AntDod, paste0(sprintf('%.f',100*AntDod/N),'%'))
+  )
+  colnames(TabFerdigeReg) <- c('Gj.sn', 'Median', 'IQR', 'Antall pasienter', 'Andel pasienter')
+  TabFerdigeReg[c(3),'Andel pasienter'] <-
+    paste0(sprintf('%.0f', as.numeric(TabFerdigeReg[c(3),'Andel pasienter'])),'%')
+
+  xtable::xtable(TabFerdigeReg, #FerdigBekr$Tab,
+                 digits=0,
+                 align = c('l','r','r','c', 'r','r'),
+                 caption = 'Verdier basert på opphold med luftveisinfeksjon siste 40 uker.
+               IQR (inter quartile range) betyr at 25 \\% av pasientene er under minste verdi,
+               50 \\% av pasientene er i intervallet, og 25 \\% av pasientene er over høyeste verdi.'
+  )
+
+  @
+    \end{frame}
+
+\end{tiny}
+
+\end{document}

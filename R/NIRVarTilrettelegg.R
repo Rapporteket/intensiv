@@ -221,7 +221,7 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='an
             if (figurtype %in% c('gjsnGrVar', 'gjsnTid')) {
                   tittel <- 'liggetid'}
             gr <- c(0, 1, 2, 3, 4, 5, 6, 7, 14, 1000)
-            RegData$VariabelGr <- cut(RegData$liggetid, breaks=gr, include.lowest=TRUE, right=FALSE)
+            RegData$VariabelGr <- cut(RegData$Liggetid, breaks=gr, include.lowest=TRUE, right=FALSE)
             grtxt <- c('(0-1)','[1-2)','[2-3)','[3-4)','[4-5)','[5-6)','[6-7)','[7-14)','14+')
             xAkseTxt <- 'Liggetid (døgn)'
       }
@@ -233,17 +233,17 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='an
         tittel <- 'Andel av oppholdene hvor pasienten er mann'
       }
       if (valgtVar=='liggetidDod') { #AndelTid
-            RegData <- RegData[which(RegData$liggetid>=0), ]    #Tar bort liggetid<0 samt NA
+            RegData <- RegData[which(RegData$Liggetid>=0), ]    #Tar bort liggetid<0 samt NA
             RegData <- RegData[which(RegData$DischargedIntensiveStatus %in% 0:1), ]  	#Tar bort ukjente
-            RegData$Variabel<-RegData$liggetid	#Liggetid for alle (total liggetid)
-            RegData$Variabel2<- as.numeric(RegData$DischargedIntensiveStatus)*RegData$liggetid #Liggetid for døde
+            RegData$Variabel<-RegData$Liggetid	#Liggetid for alle (total liggetid)
+            RegData$Variabel2<- as.numeric(RegData$DischargedIntensiveStatus)*RegData$Liggetid #Liggetid for døde
             varTxt <- 'pasienter som døde'
             tittel <- 'Andel av total liggetid brukt på dem som dør på intensiv'
       }
       if (valgtVar=='Nas24') { #Fordeling, GjsnGrVar
             tittel <- 'NAS per døgn'   #GjsnGrVar henter tittel fra NIRGjsnVar
-            RegData$Variabel <- RegData$Nas/RegData$liggetid
-            indMed <- which(RegData$Variabel <= 177) %i% which( (RegData$liggetid > 8/24) & (RegData$Nas>0))
+            RegData$Variabel <- RegData$Nas/RegData$Liggetid
+            indMed <- which(RegData$Variabel <= 177) %i% which( (RegData$Liggetid > 8/24) & (RegData$Nas>0))
             RegData <- RegData[indMed, ]
             gr <- c(seq(0, 160, 20),500)
             RegData$VariabelGr <- cut(RegData$Variabel, breaks=gr, include.lowest=TRUE, right=FALSE)
@@ -255,19 +255,19 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='an
             #Dvs. NEMS-poeng totalt, altså NEMS per opphold
             tittel <- 'NEMS per opphold'
             RegData$Variabel <- RegData$NEMS
-            indMed <- which( (RegData$liggetid>=1) & (RegData$NEMS>1))	#NEMS=0 el 1 - ikke registrert.
+            indMed <- which( (RegData$Liggetid>=1) & (RegData$NEMS>1))	#NEMS=0 el 1 - ikke registrert.
             RegData <- RegData[indMed, ]
             xAkseTxt <- 'NEMS/opphold'
       }
       if (valgtVar=='NEMS24') { #Andeler, GjsnGrVar, GjsnTid
             #Inkluderer: opphald lenger enn 24 timar og det faktisk er skåra NEMS-poeng.
             #Dvs. NEMS-poeng totalt/liggjedøger, altså NEMS/24 timar
-            indMed <- which( (RegData$liggetid>=1) & (RegData$NEMS>1))	#NEMS=0 el 1 - ikke registrert.
+            indMed <- which( (RegData$Liggetid>=1) & (RegData$NEMS>1))	#NEMS=0 el 1 - ikke registrert.
             RegData <- RegData[indMed, ]
-            RegData$Variabel <- RegData$NEMS/RegData$liggetid
+            RegData$Variabel <- RegData$NEMS/RegData$Liggetid
             tittel <- 'NEMS per døgn'  #Benyttes bare i Andeler
             gr <- c(seq(0, 60,10), 500)
-            RegData$Variabel <- RegData$NEMS/RegData$liggetid
+            RegData$Variabel <- RegData$NEMS/RegData$Liggetid
             RegData$VariabelGr <- cut(RegData$Variabel, breaks=gr, include.lowest=TRUE, right=FALSE)
             grtxt <- c('(0-10)','[10-20)','[20-30)','[30-40)','[40-50)','[50-60)','60+')
             xAkseTxt <- 'NEMS per døgn'
@@ -757,16 +757,15 @@ if (valgtVar %in% c('regForsinkelseInn', 'regForsinkelse')) {  #Fordeling, Andel
       }
 
       if (valgtVar == 'luftveisinfeksjoner') {
-        # RespiratoryTractInfection: 	Har pasienten hatt luftveisinfeksjon under intensivoppholdet?
-        # RespiratoryTractInfectionPrimaryCauseForICUAdmission:	Er luftveisinfeksjon årsak til intensivoppholdet?
-        #   CauseOfICUAdmission_APACHEIII:	Er det påvist luftveisagens?
+        # RespiratoryTractInfection: 	Luftveisinfeksjon under intensivoppholdet? -1 = Velg verdi, 1 = Ja, 2 = Nei
         tittel <- 'Luftveisinfeksjoner'
-        RegData <- RegData[!is.na(RegData$RespiratoryTractInfection),]
+        # RegData <- RegData[!is.na(RegData$RespiratoryTractInfection),] - funker ikke på server
+        RegData <- RegData[which(RegData$RespiratoryTractInfection %in% c(-1,1,2) ),]
         variable <- c('SARS_CoV2', 'InfluensaA', 'InfluensaB', 'RS_virus',
                       'Kikhoste', 'Annet_luftveisvirus', 'Annen_luftveisbakterie',
                       'RespiratoryTractInfection')
         grtxt <- c('Covid19', 'InfluensaA', 'InfluensaB', 'RS-virus',
-                   'Kikhoste', 'Annet luftveisvirus', 'Annen_luftveisbakterie',
+                   'Kikhoste', 'Annet luftveisvirus', 'Annen luftveisbakterie',
                    'Alle typer')
 
         retn <- 'H'

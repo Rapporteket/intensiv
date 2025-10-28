@@ -169,7 +169,7 @@ NIRdata <- NIRdata[indMed, ]
 NIRdata$Aar <- as.factor(NIRdata$Innleggelsestidspunkt$year+1900)
 N <- dim(NIRdata)[1]
 LiggeGr <- c(-0.001, 1, 7, 14, 1000)	#<24t, 1-7døgn, 7-14døgn, >14døgn
-NIRdata$LiggetidGr <-  cut(NIRdata$liggetid, breaks=LiggeGr, include.lowest=FALSE, right=FALSE,
+NIRdata$LiggetidGr <-  cut(NIRdata$Liggetid, breaks=LiggeGr, include.lowest=FALSE, right=FALSE,
 			levels=c('0', '<24t', '1-7døgn', '7-14døgn', '>14døgn'))
 
 NIRdata <- NIRdata[which(NIRdata$InnMaate %in% c(0,6,8)), ]
@@ -216,7 +216,7 @@ Den skal ikke offentliggjøres. NIR sentralt vil produsere årsrapport med samle
 tabAvdNEget <- rbind(
 	'Ferdigstilte intensivopphold' = table(NIRdataEget$Aar), #Neget,
 	'Registrerte pasienter' = table(aggregate(erMann~Aar+PasientID,data=NIRdataEget,length)$Aar),
-	'Antall intensivdøgn' = round(as.numeric(tapply(NIRdataEget$liggetid, NIRdataEget$Aar, sum)),0)
+	'Antall intensivdøgn' = round(as.numeric(tapply(NIRdataEget$Liggetid, NIRdataEget$Aar, sum)),0)
 	)
 #colnames(tabAvdNEget)[dim(tabAvdNEget)[2]]<- 'Totalt:'
 
@@ -303,8 +303,8 @@ osv.). Liggetiden blir registrert i døgn med en desimal, dvs. timer/24.
 
 <<'TabLiggetid', results='asis', echo=FALSE>>=
 
-liggetidDIV <- cbind('Egen enhet'= summary(NIRdataEget$liggetid)[1:6],
-			'Andre, eget enhetsnivå'= summary(NIRdataRestShNivaa$liggetid)[1:6])
+liggetidDIV <- cbind('Egen enhet'= summary(NIRdataEget$Liggetid)[1:6],
+			'Andre, eget enhetsnivå'= summary(NIRdataRestShNivaa$Liggetid)[1:6])
 rownames(liggetidDIV) <- c('Minimum:', '25% av pasientene ligger under:', 'Median:','Gjennsomsnitt:',
 		'25% av pasientene ligger over:', 'Maksimum:')
 
@@ -407,9 +407,9 @@ som har vart lenger enn 24 timer og der det faktisk er skåret NEMS-poeng.
 
 <<'TabNEMS', results='asis', echo=FALSE>>=
 #NEMS, kun opphold > 24t
-indNEMS <- which( (NIRdata$liggetid>=1) & (NIRdata$NEMS>1))	#NEMS=0 el 1 - ikke registrert.
-NIRdataUtv <- NIRdata[indNEMS, c('NEMS', 'NivaaNum','liggetid','ReshId')]
-NIRdataUtv$NEMSd <- NIRdataUtv$NEMS/NIRdataUtv$liggetid
+indNEMS <- which( (NIRdata$Liggetid>=1) & (NIRdata$NEMS>1))	#NEMS=0 el 1 - ikke registrert.
+NIRdataUtv <- NIRdata[indNEMS, c('NEMS', 'NivaaNum','Liggetid','ReshId')]
+NIRdataUtv$NEMSd <- NIRdataUtv$NEMS/NIRdataUtv$Liggetid
 indEgenUtv <- which(NIRdataUtv$ReshId == reshID)
 
 NEMSegen <- c(mean(NIRdataUtv$NEMS[indEgenUtv], na.rm=T),
@@ -455,10 +455,10 @@ dum <- NIRFigGjsnGrVar(RegData=NIRdata, valgtVar='NEMS', valgtMaal='Med', prepro
 
 <<'TabNas', results='asis', echo=FALSE>>=
 #Nas, kun opphold > 8t
-NIRdata$NasD <- NIRdata$Nas/NIRdata$liggetid	#floor(NIRdataUtv$liggetid)
+NIRdata$NasD <- NIRdata$Nas/NIRdata$Liggetid	#floor(NIRdataUtv$Liggetid)
 AntOver177prD <- sum(NIRdata$NasD >177, na.rm=T)
-indNas <- intersect(which(NIRdata$NasD <= 177), which( (NIRdata$liggetid > 8/24) & (NIRdata$Nas>0)))	#Nas=0 ikke registrert (?)
-NIRdataUtv <- NIRdata[indNas, c('Nas', 'NasD', 'NivaaNum','liggetid','ReshId')]
+indNas <- intersect(which(NIRdata$NasD <= 177), which( (NIRdata$Liggetid > 8/24) & (NIRdata$Nas>0)))	#Nas=0 ikke registrert (?)
+NIRdataUtv <- NIRdata[indNas, c('Nas', 'NasD', 'NivaaNum','Liggetid','ReshId')]
 indEgenUtv <- which(NIRdataUtv$ReshId == reshID)
 
 Nasegen <- c(mean(NIRdataUtv$Nas[indEgenUtv], na.rm=T),
@@ -692,7 +692,7 @@ dum <- NIRFigGjsnGrVar(RegData=NIRdata, valgtVar='SMR', valgtMaal='Gjsn', prepro
 <<'DodInt', results='asis', echo=FALSE>>=
 #Døde, intensiv
 NIRdataUtv <- NIRdata[which(NIRdata$DischargedIntensiveStatus==1),
-			c('ReshId', 'ShType', 'liggetid', 'respiratortid', 'InnMaate' )]
+			c('ReshId', 'ShType', 'Liggetid', 'respiratortid', 'InnMaate' )]
 N_innmShT <- ftable(NIRdata[c('InnMaate', 'ShType')])
 
 Ndod_innmShT <- ftable(NIRdataUtv[c('InnMaate', 'ShType')]) #0:Planlagt op., 6:Akutt non-op, 8:Akutt op.
@@ -700,20 +700,20 @@ indUtvEget <- which(NIRdataUtv$ReshId == reshID)
 Ndod_innmEgen <- table(NIRdataUtv[indUtvEget, 'InnMaate'])
 N_innmEgen <- table(NIRdata[ind$Eget, 'InnMaate'])
 
-LiggetShType <- tapply(NIRdata$liggetid, NIRdata$ShType, sum, na.rm=T)
-LiggetDodShType <- tapply(NIRdataUtv$liggetid, NIRdataUtv$ShType, sum, na.rm=T)
+LiggetShType <- tapply(NIRdata$Liggetid, NIRdata$ShType, sum, na.rm=T)
+LiggetDodShType <- tapply(NIRdataUtv$Liggetid, NIRdataUtv$ShType, sum, na.rm=T)
 
 ResptidShType <- tapply(NIRdata$respiratortid, NIRdata$ShType, sum, na.rm=T)
 ResptidDodShType <- tapply(NIRdataUtv$respiratortid, NIRdataUtv$ShType, sum, na.rm=T)
 
-DodLiggGjsn <- round(mean(NIRdataUtv$liggetid, na.rm=T),1)
-DodLiggMed <- sprintf('%.1f', median(NIRdataUtv$liggetid, na.rm=T))
+DodLiggGjsn <- round(mean(NIRdataUtv$Liggetid, na.rm=T),1)
+DodLiggMed <- sprintf('%.1f', median(NIRdataUtv$Liggetid, na.rm=T))
 
 tabDodInt <- round(100*rbind(
 	'Opphold' = c(sum(Ndod_innmEgen)/Neget,  colSums(Ndod_innmShT)/colSums(N_innmShT),
 			dim(NIRdataUtv)[1]/N),
-	'Liggetid' = c(sum(NIRdataUtv$liggetid[indUtvEget], na.rm=T)/sum(NIRdata$liggetid[ind$Eget], na.rm=T),
-			LiggetDodShType/LiggetShType, sum(NIRdataUtv$liggetid, na.rm=T)/sum(NIRdata$liggetid, na.rm=T)),
+	'Liggetid' = c(sum(NIRdataUtv$Liggetid[indUtvEget], na.rm=T)/sum(NIRdata$Liggetid[ind$Eget], na.rm=T),
+			LiggetDodShType/LiggetShType, sum(NIRdataUtv$Liggetid, na.rm=T)/sum(NIRdata$Liggetid, na.rm=T)),
 	'Total respiratortid' = c(
 			sum(NIRdataUtv$respiratortid[indUtvEget], na.rm=T)/sum(NIRdata$respiratortid[ind$Eget], na.rm=T),
 			ResptidDodShType/ResptidShType,

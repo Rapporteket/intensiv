@@ -16,6 +16,7 @@ knitr::opts_chunk$set(warnings=FALSE,echo=FALSE)
 knitr::opts_knit$set(root.dir = './')
 library(xtable)
 library(lubridate)
+library(intensiv)
 @
 
 <<'hentDataOgTilrettelegg', include=FALSE>>=
@@ -212,8 +213,8 @@ operasjon osv.).
 
 <<'TabLiggetid', results='asis', echo=FALSE>>=
 finnGjsnMedKj <- function(RegData){
-      Gjsn <- sprintf("%.1f", mean(RegData$liggetid, na.rm=T))
-      Med <- sprintf("%.1f", median(RegData$liggetid, na.rm=T))
+      Gjsn <- sprintf("%.1f", mean(RegData$Liggetid, na.rm=T))
+      Med <- sprintf("%.1f", median(RegData$Liggetid, na.rm=T))
       Kvinner <- sprintf("%.0f", 100*prop.table(table(RegData$erMann))[1])
       Ut <- paste0(c(Gjsn, Med, Kvinner), c('', '', '%'))
       #paste0(sprintf("%.1f %.1f %+.f", Gjsn, Med, Kvinner), '%')
@@ -256,9 +257,9 @@ finnGjsnMed <- function(variabel){
       }
 
 finnGjsnMedNEMS <- function(RegData){
-      indNEMS <- which( (RegData$liggetid>=1) & (RegData$NEMS>1))	#NEMS=0 el 1 - ikke registrert.
+      indNEMS <- which( (RegData$Liggetid >= 1) & (RegData$NEMS>1))	#NEMS=0 el 1 - ikke registrert.
       RegData <- RegData[indNEMS, ]
-      RegData$NEMSd <- RegData$NEMS/RegData$liggetid
+      RegData$NEMSd <- RegData$NEMS/RegData$Liggetid
       GM_NEMS <- finnGjsnMed(RegData$NEMS)
       GM_NEMSd <- finnGjsnMed(RegData$NEMSd)
       Antal <- dim(RegData)[1]

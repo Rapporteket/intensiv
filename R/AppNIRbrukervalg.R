@@ -1,7 +1,7 @@
-#' Funksjon som inneholder alle brukervalg for Intensivregisteret 
+#' Funksjon som inneholder alle brukervalg for Intensivregisteret
 #'
 #' Denne funksjonen beregner ikke noe. :-|
-#' 
+#'
 #' Mer info?
 #'
 #'  @param id namespace for this module
@@ -10,28 +10,28 @@
 #' @return Visning av brukervalg
 #'
 #' @export
-AppNIRbrukervalg  <- function(ark = 'angi sideID') { #id - hvis skal bruke namespace, dat, 
+AppNIRbrukervalg  <- function(ark = 'angi sideID') { #id - hvis skal bruke namespace, dat,
 
-#Ser ut til at denne må deles opp i flere funksjoner elller...      
+#Ser ut til at denne må deles opp i flere funksjoner elller...
             #  @param RegData En dataramme med alle nødvendige variabler fra registeret
-      #uiInputModule <- 
-            
+      #uiInputModule <-
+
             # create namespace
             #ns <- NS(id)
-            
+
             # make values and lables
             #years <- sort(dplyr::distinct(dat, Aar)$Aar)
             #hospital_names <- sort(dplyr::distinct(dat, ShNavn)$ShNavn)
- if (ark == 'Fordelinger') {           
+ if (ark == 'Fordelinger') {
       tagList(
             selectInput(inputId = "valgtVar", label="Velg variabel",
-                              choices = c('Alder' = 'alder', 
+                              choices = c('Alder' = 'alder',
                                           'Innkomstmåte' = 'InnMaate',
                                           'Hemodynamisk overvåkn.' = 'ExtendedHemodynamicMonitoring',
                                           'Inklusjonskriterier' = 'inklKrit',
                                           'Isolasjon, type' = 'isolering',
                                           'Isolasjon, varighet' = 'isoleringDogn',
-                                          'Liggetid' = 'liggetid',
+                                          'Liggetid' = 'Liggetid',
                                           'Nas-skår (sykepleierakt.)' = 'Nas24',
                                           'NEMS-skår (ressursbruk)' = 'NEMS24',
                                           'Nyrebeh., type' = 'nyreBeh',
@@ -56,8 +56,8 @@ AppNIRbrukervalg  <- function(ark = 'angi sideID') { #id - hvis skal bruke names
                               choices = c("Egen mot resten av landet"=1, "Hele landet"=0, "Egen enhet"=2)
                   )
       )}
-            
-if (ark=='Andeler') {      
+
+if (ark=='Andeler') {
       tagList(
             selectInput(inputId = "valgtVarAndelGrVar", label="Velg variabel",
                         choices = c('Alder minst 80 år' = 'alder_over80',
@@ -92,5 +92,4 @@ if (ark=='Andeler') {
       )}
 
 }
-                  
-      
+
