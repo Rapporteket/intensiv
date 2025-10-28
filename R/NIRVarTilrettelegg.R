@@ -760,7 +760,7 @@ if (valgtVar %in% c('regForsinkelseInn', 'regForsinkelse')) {  #Fordeling, Andel
         # RespiratoryTractInfection: 	Luftveisinfeksjon under intensivoppholdet? -1 = Velg verdi, 1 = Ja, 2 = Nei
         tittel <- 'Luftveisinfeksjoner'
         # RegData <- RegData[!is.na(RegData$RespiratoryTractInfection),] - funker ikke på server
-        RegData <- RegData[which(RegData$RespiratoryTractInfection %in% c(-1,1,2) ),]
+        RegData <- RegData[which(RegData$RespiratoryTractInfection %in% 1:2 ),]
         variable <- c('SARS_CoV2', 'InfluensaA', 'InfluensaB', 'RS_virus',
                       'Kikhoste', 'Annet_luftveisvirus', 'Annen_luftveisbakterie',
                       'RespiratoryTractInfection')
