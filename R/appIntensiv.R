@@ -73,9 +73,9 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
              tags$head(tags$style(".butt{background-color:#6baed6;} .butt{color: white;}")), # background color and font color
              br(),
 
-             h3("Luftveisinfeksjoner"), #),
-             downloadButton(outputId = 'luftveiRapp.pdf', label='Last ned Luftveisinfeksjonsrapport', class = "butt"),
-             tags$head(tags$style(".butt{background-color:#6baed6;} .butt{color: white;}")), # background color and font color
+             # h3("Luftveisinfeksjoner"), #),
+             # downloadButton(outputId = 'luftveiRapp.pdf', label='Last ned Luftveisinfeksjonsrapport', class = "butt"),
+             # tags$head(tags$style(".butt{background-color:#6baed6;} .butt{color: white;}")), # background color and font color
 
              # h3('Samlede resultater, egen enhet'), Deaktiverer til ferdig oppdatert til nye enhetsnivåer
              # downloadButton(outputId = 'samleRapp.pdf', label='Last ned samlerapport', class = "butt"),
