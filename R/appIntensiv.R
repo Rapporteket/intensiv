@@ -64,8 +64,8 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
            br(),
            sidebarPanel(
              width = 3,
-             h3('Dokumenter med samling av resultater'),
-             h5('Disse kan man få regelmessig tilsendt på e-post.
+             h3('Månedsrapport - dokument med samling av resultater'),
+             h5('Denne kan man få regelmessig tilsendt på e-post.
                 Gå til fanen "Abonnement" for å bestille dette.'),
              br(),
              h3("Månedsrapport"), #),
@@ -89,6 +89,7 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
              #             selected = 0,
              #             choices = sykehusValg_DataD),
              downloadButton(outputId = 'lastNed_dataDump', label='Last ned datadump')
+
 
            ),
            mainPanel(
