@@ -27,6 +27,9 @@ test <- NIRUtvalgEnh(RegData = RegData, luftvei = 3)
 
 knitr::knit2pdf('./inst/NIRluftveisinfek.Rnw')
 
+test <- NIRUtvalgEnh(RegData = RegData, luftvei = 3)
+
+
 test <- c('Alle',
   unique(RegData$RHF),
   unique(RegData$HF),
