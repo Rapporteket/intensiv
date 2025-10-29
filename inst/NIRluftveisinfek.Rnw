@@ -22,10 +22,8 @@ library(intensivberedskap)
 <<'hentDataOgTilrettelegg', include=FALSE>>=
 
 IntData <- NIRPreprosess(NIRRegDataSQL(datoFra = Sys.Date()-40*7, datoTil = Sys.Date()))
-LuftData <- IntData[!is.na(IntData$RespiratoryTractInfection), ]
-LuftData$RHF <- factor(LuftData$RHF,
-                        levels= c('Helse Nord', 'Helse Midt-Norge', 'Helse Vest', 'Helse Sør-Øst', 'Privat'),
-                        labels = c('Nord', 'Midt', 'Vest', 'Sør-Øst', 'Privat'))
+LuftData <- IntData[which(IntData$RespiratoryTractInfection == 1), ]
+
 LuftData$RHFc <- as.character(LuftData$RHF)
 
     #Legge på tidsenheter. Bruk factor hvis vil ha med tidsenheter uten registreringer - ikke standard!
@@ -42,7 +40,6 @@ format='%Y-%m-%d %H:%M:%S' )
 # #Legge på tidsenheter
 LuftData$UkeAar <- as.factor(LuftData$UkeAar)
 
-enhetsNivaa <- 'Alle'
 N <- dim(LuftData)[1]
 @
 
@@ -95,7 +92,7 @@ Antall luftveissmitteopphold hvor pasienten har fått pustehjelp
                                  sykehus='Alle', utvidTab=0)
 #Ikke oppdatert
 xtable::xtable(tabNokkeltall,
-               caption = 'Nøkkeltall')
+               caption = 'Nøkkeltall for hvert RHF')
 
 # digits=0,
 # align = c('l','r','r','r'),
@@ -104,8 +101,8 @@ xtable::xtable(tabNokkeltall,
   \end{frame}
 
 
-\begin{frame}[fragile] {Antall  per HF}
-Antall opphold rapportert.
+\begin{frame}[fragile] {Antall opphold med luftveisinfeksjoner  per HF}
+Antall opphold rapportert. Denne skal endres til å vise inneliggende, men for tiden overføres ikke ikke-ferdigstilte opphold til Rapporteket.
 
 <<'InneliggendePrHF', results='asis',warnings=FALSE>>=
   #Viser opphold pr HF eller inneliggende pr sykehus hvis enhetsnivå er HF
@@ -121,7 +118,7 @@ colnames(RegHF) <-c('RHF', 'HF', 'Ant. pasienter')
 RegHF <- rbind(as.data.frame(RegHF), Totalt)
 print(xtable::xtable(RegHF, digits=0,
                      align = c('l', 'l', 'l', 'r'),
-                     caption = 'Antall inneliggende luftveispasienter i hver enhet'),
+                     caption = 'Antall luftveispasienter i hver enhet'),
       include.rownames = FALSE)
 
 @
@@ -148,57 +145,22 @@ print(xtable::xtable(RegHF, digits=0,
     \begin{frame}[fragile] {Luftveisinfeksjon i regionene, alle skjema}
   <<'TabUkeRHFalle', results='asis'>>=
     navnRHF <- attributes(TabUkeRHF)$col.vars$RHF
-  # navn2Influ <- attributes(TabUkeRHF)$col.vars$Influensa
   navnUkenr <- attributes(TabUkeRHF)$row.vars$UkeAar
   TabUkeRHF <- as.matrix(TabUkeRHF)
   navnRHF <- sub('Helse ', '', navnRHF)
   TabUkeRHF <- rbind( TabUkeRHF, Totalt = colSums(TabUkeRHF))
 
-  # add.to.row <- list(pos = list(-1), command = NULL)
-  # command <- paste0(paste0('& \\multicolumn{2}{l}{', navnRHF, '} ', collapse=''), '\\\\\n')
-  # add.to.row$command <- command
   print(xtable::xtable(TabUkeRHF[indAntRader,], digits=0, #method='compact', #align=c('l', rep('r', ncol(alderDIV))),
                        caption=paste0('Luftveisinfeksjoner per uke og region siste 40 uker.',
                                       ' Uker med 0 tilfeller vises ikke.')),
-        # add.to.row = add.to.row,
         sanitize.rownames.function = identity)
 
   @
     \end{frame}
 
 
-  \begin{frame}[fragile] {Luftveisinfeksjon, hele landet}
 
-  <<'TabUkeTot', results='asis'>>=
-    print(xtable::xtable(TabUkeTot[indAntRader,], digits=0, #align=c('l', rep('r', ncol(TabUkeTot))),
-                         caption=paste0('Antall luftveissmittetilfeller siste 40 uker', ' Uker med 0 tilfeller vises ikke.')),
-          sanitize.rownames.function = identity)
-  @
-    \end{frame}
-
-
-
-  \begin{frame}[fragile] {Antall nye Luftveisinfeksjonpasienter per dag}
-
-  <<'TabTot', results='asis'>>=
-
-    TabTidEnh <- ftable(LuftData[ , c('Dag', 'RHF')], #, 'Covid'
-                        row.vars = 'Dag')
-  TabTidEnh <- as.matrix(TabTidEnh)
-
-  TabTidEnh <- addmargins(TabTidEnh, FUN=list(Totalt=sum, 'Hele landet' = sum), quiet=TRUE)
-
-  AntRader <- dim(TabTidEnh)[1]
-  xtable::xtable(TabTidEnh[max(1,AntRader-20):AntRader, ], digits=0,
-                 caption='Antall luftveissmitteopphold siste 20 dager, samt totalt siste 40 uker.')
-
-  @
-    \end{frame}
-
-
-
-
-  \begin{frame}[fragile]{Antall registrerte opphold på hvert sykehus}
+  \begin{frame}[fragile]{Antall opphold med luftveisinfeksjon på hvert sykehus}
   <<'OpphPrHF', results='asis', warnings=FALSE>>=
     RegSh <- LuftData %>%
     dplyr::group_by(as.character(RHF), ShNavn) %>%
@@ -230,12 +192,12 @@ print(xtable::xtable(RegHF, digits=0,
     \Sexpr{txtAlder}
 
   <<'TabAlder', results='asis'>>=
-    TabAlder <- intensivberedskap::TabAlder(RegData=LuftData, sens=1)$Tab  #reshID = reshID, enhetsNivaa = enhetsNivaa
+    TabAlder <- intensivberedskap::TabAlder(RegData=LuftData, sens=1)$Tab
 
   xtable::xtable(TabAlder,
                  digits = 0,
                  align = c('l', rep('r', dim(TabAlder)[2])),
-                 caption='Fordeling i aldersgrupper blant Luftveisinfeksjonpasienter på rapporteringstidspunktet.')
+                 caption='Fordeling i aldersgrupper, opphold med luftveisinfeksjon siste 40 uker.')
   @
     \end{frame}
 

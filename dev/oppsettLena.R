@@ -19,10 +19,12 @@ source("dev/sysSetenv.R")
 intensiv::kjorIntensivApp(browser = TRUE)
 
 library(intensiv)
-dum <- intensiv::NIRRegDataSQL(datoFra = '2020-01-01')
-RegData <- intensiv::NIRPreprosess(RegData = dum)
 reshID <- 106271
-ftable(RegData[,c('Aar', 'RespiratoryTractInfection')])
+dum <- intensiv::NIRRegDataSQL(datoFra = '2025-01-01')
+RegData <- intensiv::NIRPreprosess(RegData = dum)
+
+table(dum$RHF, useNA = 'a')
+table(RegData[,c('ReshId', 'RHF')], useNA = 'a')
 test <- NIRUtvalgEnh(RegData = RegData, luftvei = 3)
 
 knitr::knit2pdf('./inst/NIRluftveisinfek.Rnw')
