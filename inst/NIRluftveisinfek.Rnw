@@ -15,7 +15,7 @@
 knitr::opts_chunk$set(warnings=FALSE,echo=FALSE)
 knitr::opts_knit$set(root.dir = './')
 library(intensiv)
-library(intensivberedskap)
+# library(intensivberedskap)
 @
 
 
@@ -46,8 +46,8 @@ N <- dim(LuftData)[1]
 
 \begin{document}
 
-\title[Luftveisinfeksjoner \\\today] {NIR}
-% Luftveisinfeksjonrapportering fra Norsk Intensivregister
+\title[Luftveisinfeksjoner \\\today] {
+Luftveisinfeksjonrapportering fra Norsk Intensivregister}
 
 
 \maketitle
@@ -59,7 +59,7 @@ Dette er en automagisk utsendt rapport fra Norsk Intensivregister (NIR).
 Dokumentet inneholder oppsummering av luftveisinfeksjoner hos pasienter som
 kvalifiserer for rapportering til NIR.
 
-Dokumentet viser resultater kun fra ferdigstilte opphold. At et opphold er ferdigstilt vil si at opplysningene er kontrollert og ferdig registrert.
+Dokumentet viser resultater kun fra ferdigstilte opphold med luftveisinfeksjon. At et opphold er ferdigstilt vil si at opplysningene er kontrollert og ferdig registrert.
 
 
 \bf{Merk at:}
@@ -71,10 +71,10 @@ Dokumentet viser resultater kun fra ferdigstilte opphold. At et opphold er ferdi
 
 Rapporten gir en oversikt over:
 \begin{itemize}
-\item Antall pasienter på intensiv i dag, inkludert antall med ulike typer pustehjelp.
-\item Antall pasienter på intensiv per helseforetak.
-\item Antall pasienter innlagt med luftveisinfeksjon siste 20 dager og totalt siste 40 uker i hvert regionale helseforetak.
-\item Fordeling av alder og kjønn totalt på rapporteringstidspunktet.
+\item Nøkkeltall.
+\item Antall opphold helseforetak.
+\item Antall opphold  med luftveisinfeksjon i hvert regionale helseforetak.
+\item Fordeling av alder og kjønn
 \item Liggetid på intensiv, tid med pustehjelp, alder og dødelighet på intensiv.
 \end{itemize}
 
@@ -83,31 +83,38 @@ Rapporten gir en oversikt over:
 
 
 
-\begin{frame}[fragile] {Denne kan kanskje vise nøkkeltall per RHF i stedet for per måned?}
-Antall luftveissmitteopphold hvor pasienten har fått pustehjelp
+\begin{frame}[fragile] {Nøkkeltall per RHF}
 
 <<'RespiratorECMO', results='asis'>>=
 
-  tabNokkeltall <- tabNokkeltall(RegData=LuftData, tidsenhet='Mnd', enhetsUtvalg=0, reshID=0,
+  tabNokkeltall <- tabNokkeltall(RegData=LuftData, grVar='RHF', enhetsUtvalg=0, reshID=0,
                                  sykehus='Alle', utvidTab=0)
-#Ikke oppdatert
-xtable::xtable(tabNokkeltall,
-               caption = 'Nøkkeltall for hvert RHF')
+indBort <- c(grep('NEMS', row.names(tabNokkeltall)),
+             grep('Reinn', row.names(tabNokkeltall)),
+             grep('Utskrevet', row.names(tabNokkeltall)))
+tabNokkeltall <- tabNokkeltall[-indBort,]
 
-# digits=0,
-# align = c('l','r','r','r'),
+xtable::xtable(tabNokkeltall,
+               caption = 'Nøkkeltall for hvert RHF',
+               digits = 1,
+              align = c('l',rep('r',dim(tabNokkeltall)[2]))
+)
 
 @
   \end{frame}
 
 
-\begin{frame}[fragile] {Antall opphold med luftveisinfeksjoner  per HF}
-Antall opphold rapportert. Denne skal endres til å vise inneliggende, men for tiden overføres ikke ikke-ferdigstilte opphold til Rapporteket.
+\begin{frame}[fragile] {Antall opphold med luftveisinfeksjoner som hovedårsak til innleggelse, per HF}
+Denne skal endres til å vise inneliggende,
+men for tiden overføres ikke ikke-ferdigstilte opphold til Rapporteket.
+
+I tabellen filtreres nå på RespiratoryTractInfectionPrimaryCauseForICUAdmission = 1, dvs. pasienter som er innlagt på grunn av luftveisinfeksjon
 
 <<'InneliggendePrHF', results='asis',warnings=FALSE>>=
   #Viser opphold pr HF eller inneliggende pr sykehus hvis enhetsnivå er HF
 
   RegHF <- LuftData %>%
+  dplyr::filter(RespiratoryTractInfectionPrimaryCauseForICUAdmission == 1 ) %>%
   dplyr::group_by(RHFc, HF) %>%
   dplyr::summarise(.groups='rowwise',
                    'Antall pasienter' = dplyr::n())
@@ -126,33 +133,15 @@ print(xtable::xtable(RegHF, digits=0,
 
 
 
-<<'LageTabeller', results='asis'>>=
-
-  #Aggregere på RHF, UkeNr, Ant. bekreftet, Ant. mistenkt
-  TabUkeRHF <- ftable(LuftData[ , c('UkeAar', 'RHF')], row.vars ='UkeAar')
-  antUker <- dim(TabUkeRHF)[1]
-  indAntRader <- max(1,(antUker-14)):(antUker+1)
-
-  TabUkeInflu <- table(LuftData[ ,c('UkeAar', 'RespiratoryTractInfection')])
-
-  TabUkeTot <- addmargins(TabUkeInflu)
-  row.names(TabUkeTot)[antUker+1] <- 'Sum, siste 40 uker'
-
-  @
-
-
-
-    \begin{frame}[fragile] {Luftveisinfeksjon i regionene, alle skjema}
+\begin{frame}[fragile] {Luftveisinfeksjon i regionene}
   <<'TabUkeRHFalle', results='asis'>>=
-    navnRHF <- attributes(TabUkeRHF)$col.vars$RHF
-  navnUkenr <- attributes(TabUkeRHF)$row.vars$UkeAar
+ TabUkeRHF <- ftable(LuftData[ , c('UkeAar', 'RHF')], row.vars ='UkeAar')
   TabUkeRHF <- as.matrix(TabUkeRHF)
-  navnRHF <- sub('Helse ', '', navnRHF)
   TabUkeRHF <- rbind( TabUkeRHF, Totalt = colSums(TabUkeRHF))
+  TabUkeRHF <- cbind( TabUkeRHF, 'Hele landet' = rowSums(TabUkeRHF))
 
-  print(xtable::xtable(TabUkeRHF[indAntRader,], digits=0, #method='compact', #align=c('l', rep('r', ncol(alderDIV))),
-                       caption=paste0('Luftveisinfeksjoner per uke og region siste 40 uker.',
-                                      ' Uker med 0 tilfeller vises ikke.')),
+  print(xtable::xtable(TabUkeRHF, digits=0,
+                       caption='Luftveisinfeksjoner per uke og region siste 40 uker.'),
         sanitize.rownames.function = identity)
 
   @
@@ -181,6 +170,7 @@ print(xtable::xtable(RegHF, digits=0,
 
 
   \begin{frame}[fragile] {Aldersfordeling}
+  % Her kan vi velge å ta bort maskering for grupper med N<3
 
   <<'AlderInfo', results='asis'>>=
     Alder <- round(summary(LuftData$Alder))
@@ -192,7 +182,7 @@ print(xtable::xtable(RegHF, digits=0,
     \Sexpr{txtAlder}
 
   <<'TabAlder', results='asis'>>=
-    TabAlder <- intensivberedskap::TabAlder(RegData=LuftData, sens=1)$Tab
+    TabAlder <- TabAlder(RegData=LuftData, sens=1)$Tab
 
   xtable::xtable(TabAlder,
                  digits = 0,
@@ -206,7 +196,7 @@ print(xtable::xtable(RegHF, digits=0,
 
   <<'AlderKjonn', results='asis'>>=
 
-    dum <- intensivberedskap::FigFordelingKjonnsdelt(RegData = LuftData, valgtVar = 'Alder', minN=3,
+    dum <- FigFordelingKjonnsdelt(RegData = LuftData, valgtVar = 'Alder', minN=3,
                                                      outfile = 'AlderKjonn.pdf')
   @
 
@@ -226,18 +216,15 @@ print(xtable::xtable(RegHF, digits=0,
   %, \Sexpr{enhetTxt}}
 
 <<'Ferdigstilte', results='asis'>>=
-  # FerdigBekr <- intensivberedskap::oppsumFerdigeRegTab(RegData=LuftData)
-
   AntBruktResp <- sum(LuftData$MechanicalRespirator==1, na.rm=T)
-  AntBruktECMO <- sum(LuftData$ECMOTid>0, na.rm=T)
+  AntBruktECMO <- sum(LuftData$EcmoEcla, na.rm=T)
   Liggetid <- summary(LuftData$Liggetid, na.rm = T)
   RespTid <- summary(LuftData$respiratortid, na.rm = T)
-  ECMOtid <- summary(LuftData$ECMOTid, na.rm = T)
+  ECMOtid <- summary(LuftData$EcmoEclaDager[LuftData$EcmoEcla], na.rm = T)
   Alder <- summary(LuftData$Alder, na.rm = T)
   AntDod <- sum(LuftData$DischargedIntensiveStatus==1, na.rm=T)
 
   med_IQR <- function(x){
-    #x[is.na(x)]<-0
     c(sprintf('%.1f',x[4]), sprintf('%.1f',x[3]), paste(sprintf('%.1f',x[2]), sprintf('%.1f',x[5]), sep=' - '))
   }
 
@@ -245,7 +232,7 @@ print(xtable::xtable(RegHF, digits=0,
     'Alder (år)' = c(med_IQR(Alder), N, ''),
     'Liggetid (døgn)' = c(med_IQR(Liggetid), N, ''),
     'Respiratortid (døgn)' = c(med_IQR(RespTid), AntBruktResp*(c(1, 100/N))),
-    #    'ECMO-tid (døgn)' = c(med_IQR(ECMOtid), AntBruktECMO*(c(1, 100/N))),
+    'ECMO (døgn)' = c(med_IQR(ECMOtid), AntBruktECMO*(c(1, 100/N))),
     'Døde' = c('','','',AntDod, paste0(sprintf('%.f',100*AntDod/N),'%'))
   )
   colnames(TabFerdigeReg) <- c('Gj.sn', 'Median', 'IQR', 'Antall pasienter', 'Andel pasienter')

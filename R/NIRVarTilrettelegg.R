@@ -317,19 +317,20 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='an
         grtxt <- levels(RegData$VariabelGr)
         retn <- 'H'
       }
-      if (valgtVar == 'PIMdod') { #GjsnGrVar
-        #Tar ut reinnlagte på intensiv og  de med SAPSII=0 (ikke scorede)
+      if (valgtVar == 'PIMdod') { #GjsnGrVar, andeler
+        #Fjerne de med PIM_Probability=0?
         #De under 16år tas ut i NIRutvalg
-        #Reinn: #1:Ja, 2:Nei, 3:Ukjent, -1:Ikke utfylt
         maxald <- min(15, maxald)
-        # indMed <- which(as.numeric(RegData$SAPSII)>0) %i%
-        #   which(RegData$InnDato >= as.Date('2016-01-01', tz='UTC'))
-        # RegData <- RegData[indMed,]
-        #RegData <- FinnReinnleggelser(RegData=RegData)
-        #RegData <- RegData[RegData$Reinn==2, ]
         RegData$Variabel <- RegData$PIM_Probability*100 #For å få samme format som SMR
         xAkseTxt <- 'Observert 30-dagers dødelighet / PIM-estimert dødelighet'
         sortAvtagende <- FALSE
+
+        if (figurtype == 'andeler') {	#Fordelingsfigur
+          gr <- c(0:5,10,100)
+          RegData$VariabelGr <- cut(RegData$PIM_Probability*100, breaks=gr, include.lowest=TRUE, right=FALSE)
+          grtxt <- c(0:4,'5-9', '10+')
+          tittel <- 'PIM sannsynlighet (%)'
+          xAkseTxt <- '(%)'}
       }
 
 if (valgtVar == 'PIMsanns'){ #

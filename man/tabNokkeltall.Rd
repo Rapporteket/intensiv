@@ -2,17 +2,19 @@
 % Please edit documentation in R/NIRtabeller.R
 \name{tabNokkeltall}
 \alias{tabNokkeltall}
-\title{Nøkkeltall (antall opph., pasienter,  intensivdøgn, samt div oversiktstall)}
+\title{Nøkkeltall (antall opph., pasienter,  intensivdøgn, samt div oversiktstall)
+20.okt 2025: Endrer fra å bare gruppere på tidsenhet til å kunne gruppere på andre variabler.}
 \usage{
 tabNokkeltall(
   RegData,
   tidsenhet = "Mnd",
+  grVar = "",
+  datoFra = "2020-02-29",
   datoTil = Sys.Date(),
   enhetsUtvalg = 0,
-  reshID = 0,
   respirator = 4,
+  reshID = 0,
   sykehus = "Alle",
-  datoFra = "2020-02-29",
   utvidTab = 0
 )
 }
@@ -25,12 +27,13 @@ tabNokkeltall(
 
 \item{enhetsUtvalg}{enhetsutvalg}
 
-\item{reshID}{enhetens resh-id}
-
 \item{respirator}{respirator/invasiv/non-inv 0:ikke respirator, 1:respirator, 2:invasiv, 3:non-invasiv}
+
+\item{reshID}{enhetens resh-id}
 
 \item{sykehus}{HelseenhetKortnavn eller HF-navn}
 }
 \description{
 Nøkkeltall (antall opph., pasienter,  intensivdøgn, samt div oversiktstall)
+20.okt 2025: Endrer fra å bare gruppere på tidsenhet til å kunne gruppere på andre variabler.
 }

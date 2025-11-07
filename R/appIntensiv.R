@@ -73,9 +73,9 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
              tags$head(tags$style(".butt{background-color:#6baed6;} .butt{color: white;}")), # background color and font color
              br(),
 
-             # h3("Luftveisinfeksjoner"), #),
-             # downloadButton(outputId = 'luftveiRapp.pdf', label='Last ned Luftveisinfeksjonsrapport', class = "butt"),
-             # tags$head(tags$style(".butt{background-color:#6baed6;} .butt{color: white;}")), # background color and font color
+             h3("Luftveisinfeksjoner"), #),
+             downloadButton(outputId = 'luftveiRapp.pdf', label='Last ned Luftveisinfeksjonsrapport', class = "butt"),
+             tags$head(tags$style(".butt{background-color:#6baed6;} .butt{color: white;}")), # background color and font color
 
              # h3('Samlede resultater, egen enhet'), Deaktiverer til ferdig oppdatert til nye enhetsnivåer
              # downloadButton(outputId = 'samleRapp.pdf', label='Last ned samlerapport', class = "butt"),
@@ -255,6 +255,7 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                            'NEMS-skår (ressursbruk)' = 'NEMS24',
                            'Nyreerstattende beh., type' = 'nyreBeh',
                            'Nyreerstattende beh., varighet' = 'nyreBehTid',
+                           'PIM' = 'PIMdod',
                            'Potensielle donorer, årsak ikke påvist opph. sirkulasjon' = 'CerebralCirculationAbolishedReasonForNo',
                            'Primærårsak' = 'PrimaryReasonAdmitted',
                            'Registreringsforsinkelse, innleggelse' = 'regForsinkelseInn',
@@ -1471,6 +1472,12 @@ server_intensiv <- function(input, output, session) { #
             fun = "abonnement",
             paramNames = c('rnwFil',  "reshID"),
             paramValues = c('NIRmndRapp.Rnw', "user$org()")
+          ),
+          Luftveisinfeksjoner = list(
+            synopsis = "Intensiv: luftveisinfeksjoner, abonnement",
+            fun = "abonnement",
+            paramNames = c('rnwFil',  "reshID"),
+            paramValues = c('NIRluftveisinfek.Rnw', "user$org()")
           )
         ),
         orgs = orgs,
@@ -1503,7 +1510,12 @@ server_intensiv <- function(input, output, session) { #
                synopsis = "Rapporteket-Intensiv: Månadsrapport",
                fun = "abonnement",
                paramNames = c('rnwFil', "reshID"),
-               paramValues = c('NIRmndRapp.Rnw',  "user$org()"))
+               paramValues = c('NIRmndRapp.Rnw',  "user$org()")),
+             Luftinfeksjoner = list(
+               synopsis = "Rapporteket-Intensiv: Luftveisinfeksjoner",
+               fun = "abonnement",
+               paramNames = c('rnwFil', "reshID"),
+               paramValues = c('NIRluftveisinfek.Rnw',  "user$org()"))
            ),
            orgs = orgs,
            eligible = vis_rapp,
