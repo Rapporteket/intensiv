@@ -1454,12 +1454,12 @@ server <- function(input, output, session) { #
 
          #----------- Eksport ----------------
          ## brukerkontroller
-         rapbase::exportUCServer2("intensivExport", registryName = "nir",
-                                 repoName = "intensiv",
+         rapbase::exportUCServer2("intensivExport", "nir",
+                                 "intensiv",
                                  eligible = vis_rapp
          )
          ## veileding
-         rapbase::exportGuideServer("intensivExportGuide", registryName = "intensiv")
+         rapbase::exportGuideServer("intensivExportGuide", "intensiv")
        }
      })
 } #serverdel
