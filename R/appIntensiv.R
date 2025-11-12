@@ -1518,9 +1518,9 @@ server_intensiv <- function(input, output, session) { #
 
          #----------- Eksport ----------------
          ## brukerkontroller
-         rapbase::exportUCServer("intensivExport", registryName = "intensiv")
+         rapbase::exportUCServer("intensivExport", "intensiv")
          ## veileding
-         rapbase::exportGuideServer("intensivExportGuide", registryName = "intensiv")
+         rapbase::exportGuideServer("intensivExportGuide", "intensiv")
 
  #        } #SC
 #     })
