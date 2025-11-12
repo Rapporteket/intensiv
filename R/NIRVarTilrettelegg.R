@@ -182,7 +182,7 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='an
                      'Alvorlig skøpelig', 'Svært skrøpelig', 'Terminal')
           retn <- 'H'}
         if (figurtype %in% 'gjsnGrVar') {
-          RegData <- RegData[which((RegData$FrailtyIndex %in% gr)), ]  
+          RegData <- RegData[which((RegData$FrailtyIndex %in% gr)), ]
           RegData$Variabel  <- as.numeric(RegData$FrailtyIndex)
         }
         if (figurtype %in% c('andelGrVar', 'andelTid' )) {
@@ -221,7 +221,7 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='an
             if (figurtype %in% c('gjsnGrVar', 'gjsnTid')) {
                   tittel <- 'liggetid'}
             gr <- c(0, 1, 2, 3, 4, 5, 6, 7, 14, 1000)
-            RegData$VariabelGr <- cut(RegData$liggetid, breaks=gr, include.lowest=TRUE, right=FALSE)
+            RegData$VariabelGr <- cut(RegData$Liggetid, breaks=gr, include.lowest=TRUE, right=FALSE)
             grtxt <- c('(0-1)','[1-2)','[2-3)','[3-4)','[4-5)','[5-6)','[6-7)','[7-14)','14+')
             xAkseTxt <- 'Liggetid (døgn)'
       }
@@ -233,18 +233,17 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='an
         tittel <- 'Andel av oppholdene hvor pasienten er mann'
       }
       if (valgtVar=='liggetidDod') { #AndelTid
-            RegData <- RegData[which(RegData$liggetid>=0), ]    #Tar bort liggetid<0 samt NA
+            RegData <- RegData[which(RegData$Liggetid>=0), ]    #Tar bort liggetid<0 samt NA
             RegData <- RegData[which(RegData$DischargedIntensiveStatus %in% 0:1), ]  	#Tar bort ukjente
-            RegData$Variabel<-RegData$liggetid	#Liggetid for alle (total liggetid)
-            RegData$Variabel2<- as.numeric(RegData$DischargedIntensiveStatus)*RegData$liggetid #Liggetid for døde
+            RegData$Variabel<-RegData$Liggetid	#Liggetid for alle (total liggetid)
+            RegData$Variabel2<- as.numeric(RegData$DischargedIntensiveStatus)*RegData$Liggetid #Liggetid for døde
             varTxt <- 'pasienter som døde'
             tittel <- 'Andel av total liggetid brukt på dem som dør på intensiv'
       }
-
       if (valgtVar=='Nas24') { #Fordeling, GjsnGrVar
             tittel <- 'NAS per døgn'   #GjsnGrVar henter tittel fra NIRGjsnVar
-            RegData$Variabel <- RegData$Nas/RegData$liggetid
-            indMed <- which(RegData$Variabel <= 177) %i% which( (RegData$liggetid > 8/24) & (RegData$Nas>0))
+            RegData$Variabel <- RegData$Nas/RegData$Liggetid
+            indMed <- which(RegData$Variabel <= 177) %i% which( (RegData$Liggetid > 8/24) & (RegData$Nas>0))
             RegData <- RegData[indMed, ]
             gr <- c(seq(0, 160, 20),500)
             RegData$VariabelGr <- cut(RegData$Variabel, breaks=gr, include.lowest=TRUE, right=FALSE)
@@ -256,19 +255,19 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='an
             #Dvs. NEMS-poeng totalt, altså NEMS per opphold
             tittel <- 'NEMS per opphold'
             RegData$Variabel <- RegData$NEMS
-            indMed <- which( (RegData$liggetid>=1) & (RegData$NEMS>1))	#NEMS=0 el 1 - ikke registrert.
+            indMed <- which( (RegData$Liggetid>=1) & (RegData$NEMS>1))	#NEMS=0 el 1 - ikke registrert.
             RegData <- RegData[indMed, ]
             xAkseTxt <- 'NEMS/opphold'
       }
       if (valgtVar=='NEMS24') { #Andeler, GjsnGrVar, GjsnTid
             #Inkluderer: opphald lenger enn 24 timar og det faktisk er skåra NEMS-poeng.
             #Dvs. NEMS-poeng totalt/liggjedøger, altså NEMS/24 timar
-            indMed <- which( (RegData$liggetid>=1) & (RegData$NEMS>1))	#NEMS=0 el 1 - ikke registrert.
+            indMed <- which( (RegData$Liggetid>=1) & (RegData$NEMS>1))	#NEMS=0 el 1 - ikke registrert.
             RegData <- RegData[indMed, ]
-            RegData$Variabel <- RegData$NEMS/RegData$liggetid
+            RegData$Variabel <- RegData$NEMS/RegData$Liggetid
             tittel <- 'NEMS per døgn'  #Benyttes bare i Andeler
             gr <- c(seq(0, 60,10), 500)
-            RegData$Variabel <- RegData$NEMS/RegData$liggetid
+            RegData$Variabel <- RegData$NEMS/RegData$Liggetid
             RegData$VariabelGr <- cut(RegData$Variabel, breaks=gr, include.lowest=TRUE, right=FALSE)
             grtxt <- c('(0-10)','[10-20)','[20-30)','[30-40)','[40-50)','[50-60)','60+')
             xAkseTxt <- 'NEMS per døgn'
@@ -332,7 +331,7 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='an
         xAkseTxt <- 'Observert 30-dagers dødelighet / PIM-estimert dødelighet'
         sortAvtagende <- FALSE
       }
-      
+
 if (valgtVar == 'PIMsanns'){ #
   tittel <- 'PIM, sannsynlighet'
     # if (figurtype %in% c('gjsnGrVar', 'gjsnTid')) {
@@ -424,7 +423,7 @@ if (valgtVar %in% c('regForsinkelseInn', 'regForsinkelse')) {  #Fordeling, Andel
       }
       if (valgtVar == 'respiratortidInv') { #Andeler #GjsnGrVar GjsnTid
         #InvasivVentilation (pusterør/åpnet lufterør)
-        
+
         ind <- which(RegData$InvasivVentilation>0) %i%
           which(RegData$InnDato>=as.Date('2015-01-01', tz='UTC'))
         RegData <- RegData[ind,]
@@ -590,7 +589,7 @@ if (valgtVar %in% c('regForsinkelseInn', 'regForsinkelse')) {  #Fordeling, Andel
             tittel <- 'Pasienter utskrevet utenfor vakttid (<8, >=17)'
             sortAvtagende <- FALSE
       }
-      # 1.	Andel donorar av alle daude på intensiv (per eining – samanlikna mot same ShType)
+      # 1.	Andel donorar av alle daude på intensiv
       if (valgtVar == 'OrganDonationCompletedStatus') { #andelGrVar, andelTid
             #OrganDonationCompletedStatus - Ble organdonasjon gjennomført?
             #1:ja, 2:nei, -1: tom
@@ -601,7 +600,7 @@ if (valgtVar %in% c('regForsinkelseInn', 'regForsinkelse')) {  #Fordeling, Andel
             RegData$Variabel[which(RegData$OrganDonationCompletedStatus == 1)] <- 1
             cexgr <- 0.9
       }
-# 2.	Andel donorar av pasientar med oppheva intrakraniell sirkulasjon (per eining – samanlikna mot same ShType)
+# 2.	Andel donorar av pasientar med oppheva intrakraniell sirkulasjon
       if (valgtVar == 'OrganDonationCompletedCirc') { #andelGrVar, andelTid
         RegData <- RegData[which(RegData$DischargedIntensiveStatus == 1),] #Døde
         #Ble det påvist opphevet intrakraniell sirkulasjon?	CerebralCirculationAbolished
@@ -615,7 +614,7 @@ if (valgtVar %in% c('regForsinkelseInn', 'regForsinkelse')) {  #Fordeling, Andel
             RegData$Variabel[which(RegData$OrganDonationCompletedStatus == 1)] <- 1
             cexgr <- 0.9
       }
-# 3.	Grunnar til ikkje påvist oppheva intrakraniell sirkulasjon blant daude (histogram per ShType?)
+# 3.	Grunnar til ikkje påvist oppheva intrakraniell sirkulasjon blant daude
       if (valgtVar == 'CerebralCirculationAbolishedReasonForNo') { #andeler
             #Ble det påvist opphevet intrakraniell sirkulasjon?	CerebralCirculationAbolished
             #-1 = Velg verdi	0 = Avslag fra RH	1 = Ikke oppfylt kriteriene for hjernedød
@@ -646,7 +645,7 @@ if (valgtVar %in% c('regForsinkelseInn', 'regForsinkelse')) {  #Fordeling, Andel
             RegData$VariabelGr <- factor(RegData$CerebralCirculationAbolishedReasonForNo, levels = gr)
             cexgr <- 0.9
       }
-# 4.	Grunnar til ikkje donasjon hjå pasientar med påvist oppheva intrakraniell sirkulasjon (histogram per ShType?)
+# 4.	Grunnar til ikkje donasjon hjå pasientar med påvist oppheva intrakraniell sirkulasjon
       if (valgtVar == 'OrganDonationCompletedReasonForNoStatus') { #andeler
             #Ble organdonasjon gjennomført? Årsak til nei
             #-1 = Velg verdi	0 = Pasient negativ til organdonasjon
@@ -677,7 +676,7 @@ if (valgtVar %in% c('regForsinkelseInn', 'regForsinkelse')) {  #Fordeling, Andel
         RegData$Variabel[which(RegData$BrainDamage == 1)] <- 1
         cexgr <- 0.9
       }
-      
+
 
 
       #---------------KATEGORISKE
@@ -755,6 +754,26 @@ if (valgtVar %in% c('regForsinkelseInn', 'regForsinkelse')) {  #Fordeling, Andel
         flerevar <- 1
         xAkseTxt <- 'Andel, %'
         retn <- 'H'
+      }
+
+      if (valgtVar == 'luftveisinfeksjoner') {
+        # RespiratoryTractInfection: 	Luftveisinfeksjon under intensivoppholdet? -1 = Velg verdi, 1 = Ja, 2 = Nei
+        tittel <- 'Luftveisinfeksjoner'
+        # RegData <- RegData[!is.na(RegData$RespiratoryTractInfection),] - funker ikke på server
+        RegData <- RegData[which(RegData$RespiratoryTractInfection %in% 1:2 ),]
+        variable <- c('SARS_CoV2', 'InfluensaA', 'InfluensaB', 'RS_virus',
+                      'Kikhoste', 'Annet_luftveisvirus', 'Annen_luftveisbakterie',
+                      'RespiratoryTractInfection')
+        grtxt <- c('Covid19', 'InfluensaA', 'InfluensaB', 'RS-virus',
+                   'Kikhoste', 'Annet luftveisvirus', 'Annen luftveisbakterie',
+                   'Alle typer')
+
+        retn <- 'H'
+        flerevar <- 1
+        ind1 <- which(RegData[ ,variable] == TRUE, arr.ind=T) #Ja i alle variable
+        RegData[ ,variable] <- 0
+        RegData[ ,variable][ind1] <- 1
+        xAkseTxt <- 'Andel opphold (%)'
       }
 
       if (valgtVar == 'spesTiltak' ) {   # Andeler

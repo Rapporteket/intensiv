@@ -864,7 +864,7 @@ server <- function(input, output, session) { #
    })
 
    output$tabNokkeltall <- function() {
-     RegDataCov <- NIRUtvalgEnh(RegData=RegData, velgDiag = as.numeric(input$covidvalgReg))$RegData
+     RegDataCov <- NIRUtvalgEnh(RegData=RegData, luftvei = as.numeric(input$covidvalgReg))$RegData
      tab <- t(tabNokkeltall(RegData=RegDataCov,
                             tidsenhet=input$tidsenhetReg,
                             datoTil=input$sluttDatoReg,
@@ -884,7 +884,7 @@ server <- function(input, output, session) { #
 
 
    output$tabNokkeltallUtvidet <- function() {
-     RegDataCov <- NIRUtvalgEnh(RegData=RegData, velgDiag = as.numeric(input$covidvalgNok))$RegData
+     RegDataCov <- NIRUtvalgEnh(RegData=RegData, luftvei = as.numeric(input$covidvalgNok))$RegData
      tab <- t(tabNokkeltall(RegData=RegDataCov,
                                  tidsenhet='Aar',
                                  datoFra = input$datoValgNok[1],
@@ -906,7 +906,7 @@ server <- function(input, output, session) { #
      filename = function(){'NokkelTall.csv'
      },
      content = function(file, filename){
-       RegDataCov <- NIRUtvalgEnh(RegData=RegData, velgDiag = as.numeric(input$covidvalgNok))$RegData
+       RegDataCov <- NIRUtvalgEnh(RegData=RegData, luftvei = as.numeric(input$covidvalgNok))$RegData
        tab <- t(tabNokkeltall(RegData=RegDataCov,
                               datoFra = input$datoValgNok[1],
                               datoTil = input$datoValgNok[2],
@@ -916,7 +916,7 @@ server <- function(input, output, session) { #
      })
 
       output$tabAntOpphSh <- renderTable({
-        RegDataCov <- NIRUtvalgEnh(RegData=RegData, velgDiag = as.numeric(input$covidvalgReg))$RegData
+        RegDataCov <- NIRUtvalgEnh(RegData=RegData, luftvei = as.numeric(input$covidvalgReg))$RegData
             tab <- switch(input$tidsenhetReg,
                    Mnd=tabAntOpphShMnd(RegData=RegDataCov, datoTil=input$sluttDatoReg, antMnd=12), #input$datovalgTab[2])
                    Aar=tabAntOpphSh5Aar(RegData=RegDataCov, datoTil=input$sluttDatoReg))
@@ -962,7 +962,7 @@ server <- function(input, output, session) { #
                           enhetsUtvalg=as.numeric(input$enhetsUtvalg),
                           datoFra=input$datovalg[1], datoTil=input$datovalg[2],
                           minald=as.numeric(input$alder[1]), maxald=as.numeric(input$alder[2]),
-                          erMann=as.numeric(input$erMann), velgDiag = as.numeric(input$covidvalg),
+                          erMann=as.numeric(input$erMann), luftvei = as.numeric(input$covidvalg),
                           session = session)
       }, height=800, width=800 #height = function() {session$clientData$output_fordelinger_width}
       )
@@ -980,7 +980,7 @@ server <- function(input, output, session) { #
                         datoFra=input$datovalg[1], datoTil=input$datovalg[2],
                         minald=as.numeric(input$alder[1]), maxald=as.numeric(input$alder[2]),
                         erMann=as.numeric(input$erMann),
-                        velgDiag = as.numeric(input$covidvalg),
+                        luftvei = as.numeric(input$covidvalg),
                         outfile = file)
         }
       )
@@ -994,7 +994,7 @@ server <- function(input, output, session) { #
                                         datoFra=input$datovalg[1], datoTil=input$datovalg[2],
                                         minald=as.numeric(input$alder[1]), maxald=as.numeric(input$alder[2]),
                                         erMann=as.numeric(input$erMann),
-                                        velgDiag = as.numeric(input$covidvalg),
+                                        luftvei = as.numeric(input$covidvalg),
                                         lagFig = 0, session = session)
             tab <- lagTabavFig(UtDataFraFig = UtDataFord)
 
@@ -1032,7 +1032,7 @@ server <- function(input, output, session) { #
                                datoFra=input$datovalgAndel[1], datoTil=input$datovalgAndel[2],
                                minald=as.numeric(input$alderAndel[1]), maxald=as.numeric(input$alderAndel[2]),
                                erMann=as.numeric(input$erMannAndel),
-                               velgDiag = as.numeric(input$covidvalgAndel),
+                               luftvei = as.numeric(input$covidvalgAndel),
                                session=session)
       }, height = 800, width=700 #height = function() {session$clientData$output_andelerGrVarFig_width} #})
       )
@@ -1046,7 +1046,7 @@ server <- function(input, output, session) { #
                              datoFra=input$datovalgAndel[1], datoTil=input$datovalgAndel[2],
                              minald=as.numeric(input$alderAndel[1]), maxald=as.numeric(input$alderAndel[2]),
                              erMann=as.numeric(input$erMannAndel),
-                             velgDiag = as.numeric(input$covidvalgAndel),
+                             luftvei = as.numeric(input$covidvalgAndel),
                           outfile = file)
         }
       )
@@ -1058,7 +1058,7 @@ server <- function(input, output, session) { #
                                  datoFra=input$datovalgAndel[1], datoTil=input$datovalgAndel[2],
                                  minald=as.numeric(input$alderAndel[1]), maxald=as.numeric(input$alderAndel[2]),
                                  erMann=as.numeric(input$erMannAndel),
-                                 velgDiag = as.numeric(input$covidvalgAndel),
+                                 luftvei = as.numeric(input$covidvalgAndel),
                                  tidsenhet = input$tidsenhetAndelTid,
                                  enhetsUtvalg = input$enhetsUtvalgAndelTid,
                                  session=session)
@@ -1075,7 +1075,7 @@ server <- function(input, output, session) { #
                                    datoFra=input$datovalgAndel[1], datoTil=input$datovalgAndel[2],
                                    minald=as.numeric(input$alderAndel[1]), maxald=as.numeric(input$alderAndel[2]),
                                    erMann=as.numeric(input$erMannAndel),
-                                   velgDiag = as.numeric(input$covidvalgAndel),
+                                   luftvei = as.numeric(input$covidvalgAndel),
                                    tidsenhet = input$tidsenhetAndelTid,
                                    enhetsUtvalg = input$enhetsUtvalgAndelTid,
                                    session=session,
@@ -1090,7 +1090,7 @@ server <- function(input, output, session) { #
                                                datoFra=input$datovalgAndel[1], datoTil=input$datovalgAndel[2],
                                                minald=as.numeric(input$alderAndel[1]), maxald=as.numeric(input$alderAndel[2]),
                                                erMann=as.numeric(input$erMannAndel),
-                                               velgDiag = as.numeric(input$covidvalgAndel),
+                                               luftvei = as.numeric(input$covidvalgAndel),
                                                tidsenhet = input$tidsenhetAndelTid,
                                                enhetsUtvalg = input$enhetsUtvalgAndelTid,
                                                lagFig=0, session=session)
@@ -1122,7 +1122,7 @@ server <- function(input, output, session) { #
                                                     datoFra=input$datovalgAndel[1], datoTil=input$datovalgAndel[2],
                                                     minald=as.numeric(input$alderAndel[1]), maxald=as.numeric(input$alderAndel[2]),
                                                     erMann=as.numeric(input$erMannAndel),
-                                                    velgDiag = as.numeric(input$covidvalgAndel),
+                                                    luftvei = as.numeric(input$covidvalgAndel),
                                                     lagFig = 0, session=session)
                   tabAndelerShus <- cbind(Antall=AndelerShus$Ngr$Hoved,
                                           Andeler = AndelerShus$AggVerdier$Hoved)
@@ -1159,7 +1159,7 @@ server <- function(input, output, session) { #
                             datoFra=input$datovalgGjsn[1], datoTil=input$datovalgGjsn[2],
                             minald=as.numeric(input$alderGjsn[1]), maxald=as.numeric(input$alderGjsn[2]),
                             erMann=as.numeric(input$erMannGjsn),
-                            velgDiag = as.numeric(input$covidvalgGjsn),
+                            luftvei = as.numeric(input$covidvalgGjsn),
                             valgtMaal = input$sentralmaal)
       }, height=900, width=700
       )
@@ -1172,7 +1172,7 @@ server <- function(input, output, session) { #
                                 datoFra=input$datovalgGjsn[1], datoTil=input$datovalgGjsn[2],
                                 minald=as.numeric(input$alderGjsn[1]), maxald=as.numeric(input$alderGjsn[2]),
                                 erMann=as.numeric(input$erMannGjsn),
-                                velgDiag = as.numeric(input$covidvalgGjsn),
+                                luftvei = as.numeric(input$covidvalgGjsn),
                                 valgtMaal = input$sentralmaal,
                                outfile = file)
               }
@@ -1184,7 +1184,7 @@ server <- function(input, output, session) { #
                           datoFra=input$datovalgGjsn[1], datoTil=input$datovalgGjsn[2],
                           minald=as.numeric(input$alderGjsn[1]), maxald=as.numeric(input$alderGjsn[2]),
                           erMann=as.numeric(input$erMannGjsn),
-                          velgDiag = as.numeric(input$covidvalgGjsn),
+                          luftvei = as.numeric(input$covidvalgGjsn),
                           valgtMaal = input$sentralmaal,
                           tidsenhet = input$tidsenhetGjsn,
                           enhetsUtvalg = input$enhetsUtvalgGjsn,
@@ -1202,7 +1202,7 @@ server <- function(input, output, session) { #
                         datoFra=input$datovalgGjsn[1], datoTil=input$datovalgGjsn[2],
                         minald=as.numeric(input$alderGjsn[1]), maxald=as.numeric(input$alderGjsn[2]),
                         erMann=as.numeric(input$erMannGjsn),
-                        velgDiag = as.numeric(input$covidvalgGjsn),
+                        luftvei = as.numeric(input$covidvalgGjsn),
                         valgtMaal = input$sentralmaal,
                         tidsenhet = input$tidsenhetGjsn,
                         enhetsUtvalg = input$enhetsUtvalgGjsn,
@@ -1215,7 +1215,7 @@ server <- function(input, output, session) { #
                                            datoFra=input$datovalgGjsn[1], datoTil=input$datovalgGjsn[2],
                                            minald=as.numeric(input$alderGjsn[1]), maxald=as.numeric(input$alderGjsn[2]),
                                            erMann=as.numeric(input$erMannGjsn),
-                                           velgDiag = as.numeric(input$covidvalgGjsn),
+                                           luftvei = as.numeric(input$covidvalgGjsn),
                                            valgtMaal = input$sentralmaal, lagFig = 0)
         tabGjsnGrVar <- cbind(Antall = dataUtGjsnGrVar$Ngr$Hoved,
                               Sentralmål = dataUtGjsnGrVar$AggVerdier$Hoved)
@@ -1250,7 +1250,7 @@ server <- function(input, output, session) { #
                                        datoFra=input$datovalgGjsn[1], datoTil=input$datovalgGjsn[2],
                                        minald=as.numeric(input$alderGjsn[1]), maxald=as.numeric(input$alderGjsn[2]),
                                        erMann=as.numeric(input$erMannGjsn),
-                                       velgDiag = as.numeric(input$covidvalgGjsn),
+                                       luftvei = as.numeric(input$covidvalgGjsn),
                                        valgtMaal = input$sentralmaal,
                                        tidsenhet = input$tidsenhetGjsn,
                                        enhetsUtvalg = input$enhetsUtvalgGjsn,
@@ -1298,7 +1298,7 @@ server <- function(input, output, session) { #
                         datoFra=input$datovalgSMR[1], datoTil=input$datovalgSMR[2],
                         minald=as.numeric(input$alderSMR[1]), maxald=as.numeric(input$alderSMR[2]),
                         erMann=as.numeric(input$erMannSMR),
-                        velgDiag = as.numeric(input$covidvalgSMR)
+                        luftvei = as.numeric(input$covidvalgSMR)
                     )
       }, #, height=900, width=700 #heigth = 8000, width=800
       height = function() {2.2*session$clientData$output_SMRfig_height}, #
@@ -1314,7 +1314,7 @@ server <- function(input, output, session) { #
                           datoFra=input$datovalgSMR[1], datoTil=input$datovalgSMR[2],
                           minald=as.numeric(input$alderSMR[1]), maxald=as.numeric(input$alderSMR[2]),
                           erMann=as.numeric(input$erMannSMR),
-                          velgDiag = as.numeric(input$covidvalgSMR),
+                          luftvei = as.numeric(input$covidvalgSMR),
                              outfile = file)
         }
       )
@@ -1324,7 +1324,7 @@ server <- function(input, output, session) { #
         dataUtSMR <- NIRFigGjsnGrVar(RegData=RegData, preprosess = 0, valgtVar=input$valgtVarMort,
                                      datoFra=input$datovalgSMR[1], datoTil=input$datovalgSMR[2],
                                      minald=as.numeric(input$alderSMR[1]), maxald=as.numeric(input$alderSMR[2]),
-                                     velgDiag = as.numeric(input$covidvalgSMR),
+                                     luftvei = as.numeric(input$covidvalgSMR),
                                      erMann=as.numeric(input$erMannSMR), lagFig = 0)
         output$SMRtab <- function() {
           tabSMR <- cbind(Antall = dataUtSMR$Ngr$Hoved,
@@ -1352,7 +1352,7 @@ server <- function(input, output, session) { #
                        datoFra=input$datovalgInnMaate[1], datoTil=input$datovalgInnMaate[2],
                        minald=as.numeric(input$alderInnMaate[1]), maxald=as.numeric(input$alderInnMaate[2]),
                        erMann=as.numeric(input$erMannInnMaate),
-                       velgDiag= as.numeric(input$covidvalgInnMaate),
+                       luftvei= as.numeric(input$covidvalgInnMaate),
                        session=session)
       }, height = function() {2.2*session$clientData$output_innMaate_height},
       width = function() {0.7*session$clientData$output_innMaate_width}) #, height=900, width=700)
@@ -1366,7 +1366,7 @@ server <- function(input, output, session) { #
                          datoFra=input$datovalgInnMaate[1], datoTil=input$datovalgInnMaate[2],
                          minald=as.numeric(input$alderInnMaate[1]), maxald=as.numeric(input$alderInnMaate[2]),
                          erMann=as.numeric(input$erMannInnMaate),
-                         velgDiag= as.numeric(input$covidvalgInnMaate),
+                         luftvei= as.numeric(input$covidvalgInnMaate),
                        session=session,
                           outfile = file)
         }

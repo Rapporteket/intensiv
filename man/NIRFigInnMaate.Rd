@@ -15,7 +15,7 @@ NIRFigInnMaate(
   aar = 0,
   minald = 0,
   maxald = 110,
-  velgDiag = 0,
+  luftvei = 0,
   nivaa = 0,
   grVar = "ShNavn",
   InnMaate = 99,
@@ -41,7 +41,9 @@ Registeret inneholder registreringer f.o.m. 2011}
 
 \item{maxald}{Alder, til og med (Standardverdi: 110)}
 
-\item{velgDiag}{Velge diagnose. 0-alle, 1-Bekreftede Covid-pasienter, 2-alle unntatt Covid-pasienter}
+\item{luftvei}{Luftveisinfeksjon? 'Alle pasienter' = 0, 'Luftveisinfeksjon' = 1,
+'Covid19' = 2, 'InfluensaA' = 3, 'InfluensaB' = 4, 'RS-virus' = 5, 'Kikhoste' = 6,
+'Annet luftveisvirus' = 7, 'Annen_luftveisbakterie' = 8}
 
 \item{nivaa}{Intensivavdelingens "nivå": 1-5: 'Overvåk', 'Postop', 'Gen<50%','Gen>50%', 'Barn'
 Flervalgsparameter}
