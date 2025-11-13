@@ -37,6 +37,7 @@ NIRRegDataSQL <- function(datoFra = '2011-01-01', datoTil = Sys.Date()) { #,sess
       DischargedIntensiveStatus,
       Eeg,
       EcmoEcla,
+      EcmoEclaDager,
       ExtendedHemodynamicMonitoring,
       FirstTimeClosed,
       FormStatus,

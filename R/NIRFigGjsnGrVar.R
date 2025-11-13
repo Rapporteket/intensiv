@@ -131,9 +131,6 @@ NIRFigGjsnGrVar <- function(RegData, valgtVar, preprosess=1, hentData=0, valgtMa
       Gjsn <- 100*ObsGr/EstGr
       if (length(ind0)>0) {Gjsn[ind0] <- 0}#Unngå å dele på 0
       #Vi benytter ikke konf.int for SMR. Setter alle SE lik 0
-      #TestPoGr <- which((Ngr*ObsGr-3*sqrt(Ngr*ObsGr*(1-ObsGr)) <= 0) | (Ngr*ObsGr+3*sqrt(Ngr*ObsGr*(1-ObsGr)) > Ngr))
-      #SE <- sqrt(ObsGr*(1-ObsGr))*100/(sqrt(Ngr)*EstGr)
-      #if (length(TestPoGr)>0) {SE[TestPoGr] <- 0}
       SE <- rep(0, length(Ngr))
       Obs <-  mean(RegData$Dod30)	#Kun 0 og 1
       Est <- mean(RegData$Variabel, na.rm=T)
