@@ -224,7 +224,92 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
   ), #tab
 
 
-  #-------Fordelinger----------
+
+#------------ Luftveisinfeksjoner-----------------------------
+tabPanel("Luftveisinfeksjon",
+         shinyjs::useShinyjs(),
+         sidebarPanel(id = 'brukervalgLuftvei',
+                      width = 3,
+
+                      # uiOutput('CoroRappTxt'),
+                      # downloadButton(outputId = 'CoroRapp.pdf', label='Last ned covid-19rapport', class = "butt"),
+                      # tags$head(tags$style(".butt{background-color:#6baed6;} .butt{color: white;}")), # background color and font color
+                      br(),
+                      h4('Gjør filtreringer/utvalg i tabeller og figurer:')
+                      # selectInput(inputId = "valgtRHF", label="Velg RHF",
+                      #             choices = rhfNavn
+                      # ),
+                      # selectInput(inputId = "bekr", label="Bekreftet/Mistenkt",
+                      #             choices = c("Alle"=9, "Bekreftet"=1, "Mistenkt"=0)
+                      # ),
+                      # selectInput(inputId = "skjemastatus", label="Skjemastatus",
+                      #             choices = c("Alle"=9, "Ferdistilt"=2, "Kladd"=1)
+                      # ),
+                      # selectInput(inputId = "resp", label="Respiratorbehandlet (invasiv+non-inv.)",
+                      #             choices = c("Alle"=9, "Ja"=1, "Nei"=2)
+                      # ),
+                      # selectInput(inputId = "dodInt", label="Tilstand ut fra intensiv",
+                      #             choices = c("Alle"=9, "Død"=1, "Levende"=0)
+                      # ),
+                      # selectInput(inputId = "erMann", label="Kjønn",
+                      #             choices = c("Begge"=9, "Menn"=1, "Kvinner"=0)
+                      # ),
+                      # dateRangeInput(inputId = 'datovalgStart', start = startDato, end = idag, #'2020-05-10',
+                      #                label = "Tidsperiode", separator="t.o.m.", language="nb"
+                      # ),
+                      # br(),
+                      # actionButton("tilbakestillValg", label="Tilbakestill valg")
+         ),
+         mainPanel(width = 9,
+                   tags$head(tags$link(rel="shortcut icon", href="rap/favicon.ico")),
+                   rapbase::navbarWidgetInput("navbar-widget", selectOrganization = TRUE),
+                   h2('Resultater for pasienter med luftveisinfeksjoner'),
+                   h1('Denne siden er under utvikling!!! ', style = "color:red"),
+                   h4('Tal pasientar går frem i ein samletabell på alle nivå.'),
+                   h4('Inntil videre er resultatene basert på kun ferdigstilte registreringer'),
+                   br(),
+                   fluidRow(
+                     column(width = 4,
+                            # h4('Inneliggende pasienter, dvs. forløp uten registrert ut-tid fra intensiv'),
+                            h4('Pasienter innlagt på grunn av luftveisinfeksjon'),
+                            uiOutput('utvalgNaa'),
+                            tableOutput('tabECMOrespirator'),
+                            br()
+                            # h4('Forløp registrert som utskrevet, uten ferdigstilt skjema:'),
+                            # uiOutput('RegIlimbo')
+                     ),
+                     column(width=5, offset=1,
+                            uiOutput('tittelFerdigeReg'),
+                            uiOutput('utvalgFerdigeReg'),
+                            tableOutput('tabFerdigeReg')
+                     )),
+
+                   #h3('Antall inneliggende i hvert HF'),
+                   h3('Antall inneliggende i hvert HF'),
+                   # tableOutput('tabInneliggHF'),
+
+                   h3('Antall ny-innlagte pasienter, siste 10 dager'),
+                   h4('NB: Inkluderer ikke overføringer mellom intensivenheter'),
+                   uiOutput('utvalgHoved'),
+                   tableOutput('tabTidEnhet'),
+                   br(),
+                   fluidRow(
+                     # column(width=5, offset=1,
+                     #        h3('Aldersfordeling'),
+                     #        plotOutput("FigurAldersfordeling", height="auto"),
+                     #        downloadButton("LastNedFigAldKj", "Last ned figur"),
+                     #        downloadButton("lastNedAldKj", "Last ned tabell")
+                     #
+                     # )
+                   )
+         ) #main
+), #tab Oversikt
+
+
+
+
+
+ #-------Fordelinger----------
 
   tabPanel(p("Fordelinger",
              title='Alder, Type opphold, Hemodynamisk overvåkning, Isolasjon, Liggetid, Nas, NEMS, Nyrebehandling,
@@ -1023,6 +1108,77 @@ server_intensiv <- function(input, output, session) { #
                       datoFra=input$datovalg[1], datoTil=input$datovalg[2], session=session)
       }, height=800, width=800 #height = function() {session$clientData$output_fordelinger_width}
       )
+
+
+#--------------- Luftveisside -------------------------
+
+      #Definere utvalgsinnhold
+      rhfNavn <- c('Alle', as.character(sort(unique(CoroData$RHF))))
+      hfNavn <- sort(unique(CoroData$HF)) #, index.return=T)
+      navnUtsendingVerdi <- c(rhfNavn, hfNavn)
+      navnUtsending <- c('Hele landet', paste0('RHF: ', rhfNavn[-1]), paste0('HF: ', hfNavn))
+
+      enhetsNivaa <- c('Alle', 'RHF', 'HF')
+      names(enhetsNivaa) <- c('Hele landet', 'eget RHF', 'egetHF')
+
+      RHFvalgInflu <- c('Alle', unique(as.character(InfluData$RHF)))
+      names(RHFvalgInflu) <- RHFvalgInflu
+
+      observeEvent(input$tilbakestillValg, shinyjs::reset("brukervalgLuftvei"))
+
+      observe({
+        #
+        #   valgtRHF <- ifelse(user$role() == 'SC', as.character(input$valgtRHF), egetRHF)
+        #
+        #   AntTab <- TabTidEnhet(RegData=CoroData, tidsenhet='dag',
+        #                         valgtRHF= valgtRHF,
+        #                         skjemastatus=as.numeric(input$skjemastatus),
+        #                         resp=as.numeric(input$resp),
+        #                         bekr=as.numeric(input$bekr),
+        #                         dodInt=as.numeric(input$dodInt),
+        #                         erMann=as.numeric(input$erMann)
+        #   )
+        #
+        #   UtData <- NIRUtvalgBeredsk(RegData=CoroData,
+        #                              valgtRHF= ifelse(valgtRHF=='Ukjent','Alle',valgtRHF),
+        #                              skjemastatus=as.numeric(input$skjemastatus),
+        #                              resp=as.numeric(input$resp),
+        #                              bekr=as.numeric(input$bekr),
+        #                              dodInt=as.numeric(input$dodInt),
+        #                              erMann=as.numeric(input$erMann)
+        #   )
+        #
+        #   utvalg <- if (length(UtData$utvalgTxt)>0) {
+        #     UtData$utvalgTxt
+        #   } else {'Alle registrerte '}
+        #   txt <- if(dim(UtData$RegData)[1]>2) {
+        #     paste0('For innlagte f.o.m. 10.mars 2020, er gjennomsnittsalderen <b>', round(mean(UtData$RegData$Alder, na.rm = T)), '</b> år og ',
+        #            round(100*mean(UtData$RegData$erMann, na.rm = T)), '% er menn. Antall døde: ',
+        #            sum(UtData$RegData$DischargedIntensiveStatus==1))
+        #   } else {''}
+        #
+        #   output$utvalgHoved <- renderUI({
+        #     UtTekst <- tagList(
+        #       h5(HTML(paste0(utvalg, '<br />'))),
+        #       h4(HTML(paste0(txt, '<br />')))
+        #
+        #     )})
+        #
+        #   visNdager <- nrow(AntTab$Tab)
+        #   output$tabTidEnhet <- renderTable({AntTab$Tab[(visNdager-10):visNdager,]}, rownames = T, digits=0, spacing="xs"
+        #   )
+        #
+        #
+        #   #Tab status nå
+        # statusNaaTab <- statusECMOrespTab(RegData=CoroData, valgtRHF=input$valgtRHF,
+        #                                   erMann=as.numeric(input$erMann),
+        #                                   bekr=as.numeric(input$bekr))
+        # output$tabECMOrespirator <- renderTable({statusNaaTab$Tab}, rownames = T, digits=0, spacing="xs")
+        #  output$utvalgNaa <- renderUI({h5(HTML(paste0(statusNaaTab$utvalgTxt, '<br />'))) })
+        #
+        #
+      }) #observe
+
 
 #------------Fordelinger---------------------
 

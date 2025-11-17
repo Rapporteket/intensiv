@@ -420,3 +420,52 @@ TabAlder <- function(RegData, reshID=0, enhetsNivaa='Alle',
 
 }
 
+
+#' Oppsummeringer, luftveisinfeksjonspasienter
+#'
+#' @param RegData
+#'
+#' @return
+#' @export
+#'
+#' @examples
+TabOppsumLuftvei <- function(RegData, pgaLuftvei=0) {
+
+  if (pgaLuftvei==1) {
+    RegData <- RegData[RegData$RespiratoryTractInfectionPrimaryCauseForICUAdmission == 1, ]
+  }
+
+AntBruktResp <- sum(LuftData$MechanicalRespirator==1, na.rm=T)
+AntBruktECMO <- sum(LuftData$EcmoEcla, na.rm=T)
+Liggetid <- summary(LuftData$Liggetid, na.rm = T)
+RespTid <- summary(LuftData$respiratortid, na.rm = T)
+ECMOtid <- summary(LuftData$EcmoEclaDager[LuftData$EcmoEcla], na.rm = T)
+Alder <- summary(LuftData$Alder, na.rm = T)
+AntDod <- sum(LuftData$DischargedIntensiveStatus==1, na.rm=T)
+
+med_IQR <- function(x){
+  c(sprintf('%.1f',x[4]), sprintf('%.1f',x[3]), paste(sprintf('%.1f',x[2]), sprintf('%.1f',x[5]), sep=' - '))
+}
+
+TabFerdigeReg <- rbind(
+  'Alder (år)' = c(med_IQR(Alder), N, ''),
+  'Liggetid (døgn)' = c(med_IQR(Liggetid), N, ''),
+  'Respiratortid (døgn)' = c(med_IQR(RespTid), AntBruktResp*(c(1, 100/N))),
+  'ECMO (døgn)' = c(med_IQR(ECMOtid), AntBruktECMO*(c(1, 100/N))),
+  'Døde' = c('','','',AntDod, paste0(sprintf('%.f',100*AntDod/N),'%'))
+)
+colnames(TabFerdigeReg) <- c('Gj.sn', 'Median', 'IQR', 'Antall pasienter', 'Andel pasienter')
+TabFerdigeReg[c(3),'Andel pasienter'] <-
+  paste0(sprintf('%.0f', as.numeric(TabFerdigeReg[c(3),'Andel pasienter'])),'%')
+
+# xtable::xtable(TabFerdigeReg, #FerdigBekr$Tab,
+#                digits=0,
+#                align = c('l','r','r','c', 'r','r'),
+#                caption = 'Verdier basert på opphold med luftveisinfeksjon siste 40 uker.
+#                IQR (inter quartile range) betyr at 25 \\% av pasientene er under minste verdi,
+#                50 \\% av pasientene er i intervallet, og 25 \\% av pasientene er over høyeste verdi.'
+# )
+
+return(invisible(TabFerdigeReg))
+
+}
