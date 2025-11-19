@@ -40,10 +40,9 @@ luftveiValg <- c('Alle pasienter' = 0,
                  'Annen_luftveisbakterie' = 8)
 velgLuftveiTxt <- 'Luftveisinfeksjoner'
 
-variable <- c('SARS_CoV2', 'InfluensaA', 'InfluensaB', 'RS_virus',
-              'Kikhoste', 'Annet_luftveisvirus', 'Annen_luftveisbakterie',
-              'RespiratoryTractInfection')
-grtxt <-
+# variable <- c('SARS_CoV2', 'InfluensaA', 'InfluensaB', 'RS_virus',
+#               'Kikhoste', 'Annet_luftveisvirus', 'Annen_luftveisbakterie',
+#               'RespiratoryTractInfection')
 
 regTittel <- 'NORSK INTENSIVREGISTER'
 
@@ -827,10 +826,12 @@ server_intensiv <- function(input, output, session) { #
   #---------Hente data------------
 
   message("Getting IntData")
-  IntDataRaa <- NIRRegDataSQL(datoFra = '2015-01-01')
+  IntDataRaa <- NIRRegDataSQL(datoFra = '2014-01-01')
   RegData <- NIRPreprosess(RegData = IntDataRaa)
 
-  message("Get paaror data")
+  LuftData <- RegData[which(RegData$RespiratoryTractInfection == 1), ]
+
+ #  message("Get paaror data")
   # PaarorData <- NIRpaarorDataSQL()
   # PaarorDataH <- KobleMedHoved(IntDataRaa, PaarorData, alleHovedskjema=F, alleSkjema2=F)
   # antPaaror <- dim(PaarorDataH)[1]
@@ -1113,16 +1114,22 @@ server_intensiv <- function(input, output, session) { #
 #--------------- Luftveisside -------------------------
 
       #Definere utvalgsinnhold
-      rhfNavn <- c('Alle', as.character(sort(unique(CoroData$RHF))))
-      hfNavn <- sort(unique(CoroData$HF)) #, index.return=T)
+      rhfNavn <- c('Alle', as.character(sort(unique(LuftData$RHF))))
+      hfNavn <- sort(unique(LuftData$HF)) #, index.return=T)
       navnUtsendingVerdi <- c(rhfNavn, hfNavn)
       navnUtsending <- c('Hele landet', paste0('RHF: ', rhfNavn[-1]), paste0('HF: ', hfNavn))
 
       enhetsNivaa <- c('Alle', 'RHF', 'HF')
       names(enhetsNivaa) <- c('Hele landet', 'eget RHF', 'egetHF')
 
-      RHFvalgInflu <- c('Alle', unique(as.character(InfluData$RHF)))
-      names(RHFvalgInflu) <- RHFvalgInflu
+      RHFvalgLuft <- c('Alle', unique(as.character(LuftData$RHF)))
+      names(RHFvalgLuft) <- RHFvalgLuft
+
+      output$velgRHFluft <- renderUI({
+        selectInput(inputId = 'velgRHFluft', label='Velg RHF',
+                    selected = 0,
+                    choices = RHFvalgLuft)
+      })
 
       observeEvent(input$tilbakestillValg, shinyjs::reset("brukervalgLuftvei"))
 
@@ -1130,7 +1137,7 @@ server_intensiv <- function(input, output, session) { #
         #
         #   valgtRHF <- ifelse(user$role() == 'SC', as.character(input$valgtRHF), egetRHF)
         #
-        #   AntTab <- TabTidEnhet(RegData=CoroData, tidsenhet='dag',
+        #   AntTab <- TabTidEnhet(RegData=LuftData, tidsenhet='dag',
         #                         valgtRHF= valgtRHF,
         #                         skjemastatus=as.numeric(input$skjemastatus),
         #                         resp=as.numeric(input$resp),
@@ -1139,7 +1146,7 @@ server_intensiv <- function(input, output, session) { #
         #                         erMann=as.numeric(input$erMann)
         #   )
         #
-        #   UtData <- NIRUtvalgBeredsk(RegData=CoroData,
+        #   UtData <- NIRUtvalgBeredsk(RegData=LuftData,
         #                              valgtRHF= ifelse(valgtRHF=='Ukjent','Alle',valgtRHF),
         #                              skjemastatus=as.numeric(input$skjemastatus),
         #                              resp=as.numeric(input$resp),
@@ -1170,12 +1177,11 @@ server_intensiv <- function(input, output, session) { #
         #
         #
         #   #Tab status nå
-        # statusNaaTab <- statusECMOrespTab(RegData=CoroData, valgtRHF=input$valgtRHF,
-        #                                   erMann=as.numeric(input$erMann),
-        #                                   bekr=as.numeric(input$bekr))
-        # output$tabECMOrespirator <- renderTable({statusNaaTab$Tab}, rownames = T, digits=0, spacing="xs")
-        #  output$utvalgNaa <- renderUI({h5(HTML(paste0(statusNaaTab$utvalgTxt, '<br />'))) })
-        #
+        statusNaaTab <- statusECMOrespTab(RegData=LuftData, valgtRHF=input$velgRHFluft)
+                                        #  ,erMann=as.numeric(input$erMann))
+        output$tabECMOrespirator <- renderTable({statusNaaTab$Tab}, rownames = T, digits=0, spacing="xs")
+         output$utvalgNaa <- renderUI({h5(HTML(paste0(statusNaaTab$utvalgTxt, '<br />'))) })
+
         #
       }) #observe
 
