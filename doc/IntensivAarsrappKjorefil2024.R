@@ -455,6 +455,7 @@ for (overfPas in 1:2) {
 
 
 #--------------------------------------Data til offentlig visning (SKDE, Behandlingskvalitet)-------------------------------------
+source("dev/sysSetenv.R")
 setwd('../Aarsrapp')
 library(intensiv)
 library(magrittr)

@@ -41,8 +41,8 @@ test <- c('Alle',
 
 #Sys.setenv(MRS_ACCESS_HIERARCHY_URL="https://app.mrs.qa.nhn.no/intensivregisterservices/AccessHiearchyReport")
 # Sys.setenv(MRS_ACCESS_HIERARCHY_URL="https://app.mrs.nhn.no/intensivregisterservices/AccessHiearchyReport")
-# TilgJsn <- Sys.getenv("MRS_ACCESS_HIERARCHY_URL")
-# Tilgangstre <- jsonlite::fromJSON(TilgJsn)$AccessUnits
+ TilgJsn <- Sys.getenv("MRS_ACCESS_HIERARCHY_URL")
+ Tilgangstre <- jsonlite::fromJSON(TilgJsn)$AccessUnits
 
 
 
