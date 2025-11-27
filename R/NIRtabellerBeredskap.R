@@ -6,7 +6,7 @@
 #' @param tidsenhet 'dag' (standard), 'uke', 'maaned'
 #' @param enhetsNivaa 'RHF', 'HF', 'ShNavn'
 #' @param datoFra Vis hendelser fra og med dato
-#' @inheritParams NIRUtvalgBeredsk
+#' @inheritParams NIRUtvalgEnh
 #'
 #' @return Tabell med antall for hver tidsenhet og enhet
 #' @export
