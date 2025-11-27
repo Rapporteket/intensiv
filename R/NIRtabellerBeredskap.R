@@ -8,13 +8,13 @@
 #' @param datoFra Vis hendelser fra og med dato
 #' @inheritParams NIRUtvalgEnh
 #'
-#' @return Tabell med antall for hver tidsenhet og enhet
+#' @return Tabell med antall for hver tidsenhet og enhet MÅ OPPDATERES!
 #' @export
 TabTidEnhet <- function(RegData, tidsenhet='dag', erMann=9, resp=9, datoFra=0,
-                        bekr=9, skjemastatus=9, dodInt=9, valgtRHF='Alle', velgAvd=0){
+                        skjemastatus=9, dodInt=9, valgtRHF='Alle', velgAvd=0){
 
-  UtData <- NIRUtvalgBeredsk(RegData=RegData, datoFra=0, datoTil=0, erMann=erMann, #enhetsUtvalg=0, minald=0, maxald=110,
-                             bekr=bekr, skjemastatus=skjemastatus, resp=resp,
+  UtData <- NIRUtvalgEnh(RegData=RegData, datoFra=0, datoTil=0, erMann=erMann,
+                             bekr=bekr, # skjemastatus=skjemastatus, resp=resp,
                              dodInt=dodInt) #, valgtRHF=valgtRHF) #velgAvd=velgAvd
 
   RegDataAlle <- UtData$RegData
@@ -72,36 +72,32 @@ TabTidEnhet <- function(RegData, tidsenhet='dag', erMann=9, resp=9, datoFra=0,
 
 
 
-#' Antall som er  i ECMO/respirator
+#' Antall som er  i ECMO/respirator MANGE ELEMENTER SOM IKKE KAN BENYTTES FOR INTENSIVSKJEMA
 #'
 #' @param RegData beredskapsskjema
 #'
 #' @return statustabell
 #' @export
 #'
-statusECMOrespTab <- function(RegData, valgtRHF='Alle', erMann=9, bekr=9, influ=0){
+statusECMOrespTab <- function(RegData, valgtRHF='Alle', erMann=9, luftvei=0){ #bekr=9, influ=0
 
-  if (influ==1){
-    RegData$FormDateSiste <- RegData$FormDate
-    RegData$MechanicalRespiratorStartSiste <- RegData$MechanicalRespiratorStart
-    RegData$MechanicalrespiratorTypeSiste <- RegData$MechanicalRespiratorType
-  }
+  # if (influ==1){
+  #   RegData$FormDateSiste <- RegData$FormDate
+  #   RegData$MechanicalRespiratorStartSiste <- RegData$MechanicalRespiratorStart
+  #   RegData$MechanicalrespiratorTypeSiste <- RegData$MechanicalRespiratorType
+  # }
   UtData <- NIRUtvalgBeredsk(RegData=RegData, valgtRHF=valgtRHF,
-                             erMann=erMann, bekr=bekr)
+                             erMann=erMann, luftvei=luftvei)
   RegData <- UtData$RegData
   N <- dim(RegData)[1]
   ##MechanicalRespirator Fått respiratorstøtte. Ja=1, nei=2,
   inneliggere <- is.na(RegData$DateDischargedIntensive)
   AntPaaIntNaa <- sum(inneliggere) #N - sum(!(is.na(RegData$DateDischargedIntensive)))
-  LiggetidNaa <- as.numeric(difftime(Sys.Date(), RegData$FormDateSiste[inneliggere], units='days'))
+  LiggetidNaa <- as.numeric(difftime(Sys.Date(), RegData$FormDate[inneliggere], units='days'))
   LiggetidNaaGjsn <- mean(LiggetidNaa[LiggetidNaa < 90], na.rm = T)
 
   respLiggere <- inneliggere & is.na(RegData$MechanicalRespiratorEnd) & !(is.na(RegData$MechanicalRespiratorStart) ) #Har antatt at respiratortid MÅ registreres
   AntIrespNaa <- sum(respLiggere)
-  ResptidNaa <- as.numeric(difftime(Sys.Date(), RegData$MechanicalRespiratorStartSiste[respLiggere],
-                                    units='days'))
-  ResptidNaaGjsn <- mean(ResptidNaa[ResptidNaa < 90], na.rm=T)
-  #sjekkLiggetidResp <- as.numeric(mean(difftime(Sys.Date(), RegData$Innleggelsestidspunkt[respLiggere], units='days')))
 
   #MechanicalrespiratorType: -1:ikke utfylt, 1-invasiv, 2-non-invasiv
   #InvNonIBegge:
@@ -120,7 +116,7 @@ statusECMOrespTab <- function(RegData, valgtRHF='Alle', erMann=9, bekr=9, influ=
   TabHjelp <- rbind(
     'På intensiv nå' = c(AntPaaIntNaa,'', LiggetidNaaGjsn),
 
-    'På respirator nå' = c(AntIrespNaa*(c(1, 100/AntPaaIntNaa)), ResptidNaaGjsn),
+    'På respirator nå' = c(AntIrespNaa*(c(1, 100/AntPaaIntNaa)), ''),
     '...Pustehjelp på tett maske' = c(AntNonInvNaa*(c(1, 100/AntPaaIntNaa)), ''),
     '...Invasiv respiratorstøtte' = c(AntInvNaa*(c(1, 100/AntPaaIntNaa)), ''),
     '...Ikke oppgitt pustehjelp' = c(AntUkjInv*(c(1, 100/AntPaaIntNaa)), ''),
@@ -141,13 +137,13 @@ statusECMOrespTab <- function(RegData, valgtRHF='Alle', erMann=9, bekr=9, influ=
 #' Ferdigstilte registreringer
 #'
 #' @param RegData beredskapsskjema
-#' @inheritParams NIRUtvalgBeredsk
+#' @inheritParams NIRUtvalgEnh
 #'
 #' @return nøkkeltalltabell for ferdigstilte registreringer
 #' @export
 #'
 oppsumFerdigeRegTab <- function(RegData, valgtRHF='Alle', datoFra='2020-01-01', datoTil=Sys.Date(),
-                                bekr=9, erMann=9, resp=9, dodInt=9){
+                                luftvei=0, erMann=9, resp=9, dodInt=9){
 
   if (valgtRHF == 'Ukjent') {valgtRHF <- 'Alle'}
   UtData <- NIRUtvalgBeredsk(RegData=RegData, valgtRHF=valgtRHF,

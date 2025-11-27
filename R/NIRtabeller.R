@@ -183,7 +183,6 @@ tabNokkeltall <- function(RegData, tidsenhet='Mnd', grVar = '',
   }
 
 
-
   indLigget <- which(RegData$Liggetid>0)
   indRespt <- which(RegData$respiratortid>0)
   indRespInv <- which(RegData$InvasivVentilation >0)
@@ -227,6 +226,15 @@ tabNokkeltall <- function(RegData, tidsenhet='Mnd', grVar = '',
     'Døde (%)' = tapply((RegData$DischargedIntensiveStatus==1), RegData$GrVar,
                         FUN=function(x) round(sum(x, na.rm=T)/length(x)*100,1))
   )
+
+
+  if (utvidTab == -2) {
+    indBort <- c(grep('NEMS', row.names(tabNokkeltall)),
+                 grep('Reinn', row.names(tabNokkeltall)),
+                 grep('Utskrevet', row.names(tabNokkeltall)))
+    tabNokkeltall <- tabNokkeltall[-indBort,]
+
+  }
 
   if (utvidTab==-1) { #Tar bort noen variabler for å tilpasse til Nord-bestilling
     tabNokkeltall <- tabNokkeltall[c(1:9, 13:15), ]

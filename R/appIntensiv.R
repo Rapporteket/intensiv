@@ -271,12 +271,17 @@ tabPanel("Luftveisinfeksjon",
                      column(width = 4,
                             # h4('Inneliggende pasienter, dvs. forløp uten registrert ut-tid fra intensiv'),
                             h4('Pasienter innlagt på grunn av luftveisinfeksjon'),
+                            h4('Benytt nøkkeltalltabellen?'),
+
                             uiOutput('utvalgNaa'),
-                            tableOutput('tabECMOrespirator'),
+                            tableOutput('tabNokkelInneligg'),
+                            # tableOutput('tabECMOrespirator') - funker ikke for hovedskjema,
                             br()
                             # h4('Forløp registrert som utskrevet, uten ferdigstilt skjema:'),
                             # uiOutput('RegIlimbo')
                      ),
+
+
                      column(width=5, offset=1,
                             uiOutput('tittelFerdigeReg'),
                             uiOutput('utvalgFerdigeReg'),
@@ -1177,9 +1182,17 @@ server_intensiv <- function(input, output, session) { #
         #
         #
         #   #Tab status nå
-        statusNaaTab <- statusECMOrespTab(RegData=LuftData, valgtRHF=input$velgRHFluft)
-                                        #  ,erMann=as.numeric(input$erMann))
-        output$tabECMOrespirator <- renderTable({statusNaaTab$Tab}, rownames = T, digits=0, spacing="xs")
+
+        output$tabNokkelInneligg <- tabNokkeltall(RegData=LuftData, grVar='RHF', enhetsUtvalg=0, reshID=0,
+                                          sykehus='Alle', utvidTab=-2)
+          #
+          # xtable::xtable(tabNokkeltall,
+          #                caption = 'Nøkkeltall for hvert RHF',
+          #                digits = 1,
+          #                align = c('l',rep('r',dim(tabNokkeltall)[2]))
+          # )
+
+        #output$tabECMOrespirator <- renderTable({statusNaaTab$Tab}, rownames = T, digits=0, spacing="xs")
          output$utvalgNaa <- renderUI({h5(HTML(paste0(statusNaaTab$utvalgTxt, '<br />'))) })
 
         #
