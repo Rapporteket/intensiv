@@ -99,6 +99,7 @@ NIRPreprosess <- function(RegData=RegData, skjema=1)	#, reshID=reshID)
       # Nye variabler:
       RegData$MndNum <- RegData$Innleggelsestidspunkt$mon +1
       RegData$MndAar <- format(RegData$Innleggelsestidspunkt, '%b%y')
+      RegData$UkeAar <- format(RegData$Innleggelsestidspunkt, 'uke%V.%g')
       RegData$Kvartal <- ceiling(RegData$MndNum/3)
       RegData$Halvaar <- ceiling(RegData$MndNum/6)
       RegData$Aar <- 1900 + RegData$Innleggelsestidspunkt$year #strptime(RegData$Innleggelsestidspunkt, format="%Y")$year

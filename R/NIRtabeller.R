@@ -24,7 +24,7 @@ tabBelegg <- function(RegData, tidsenhet='Aar', datoTil, enhetsUtvalg=0, reshID=
                             'Antal respiratordøger' = round(as.numeric(tapply(RegData$respiratortid, RegData$TidsEnhet, sum, na.rm=T)),0)
       )
 
-      antTidsenh <- ifelse(tidsenhet=='Aar', 4, 11)
+      antTidsenh <- ifelse(tidsenhet=='Aar', 15, 11)
 
       tabBeleggAnt <- tabBeleggAnt[, max(1, dim(tabBeleggAnt)[2]-antTidsenh) : dim(tabBeleggAnt)[2]] #Tar med 12 siste
       }
@@ -144,18 +144,20 @@ finnDblReg <- function(RegData, datoTil=Sys.Date(), reshID=0, pasientID = 'Pasie
 #' @param respirator respirator/invasiv/non-inv 0:ikke respirator, 1:respirator, 2:invasiv, 3:non-invasiv
 #' @export
 tabNokkeltall <- function(RegData, tidsenhet='Mnd', grVar = '',
-                          datoFra='2020-02-29', datoTil=Sys.Date(),
+                          datoFra='2014-01-01', datoTil=Sys.Date(),
                           enhetsUtvalg=0, respirator=4,
+                          luftvei=0,
                           reshID=0, sykehus='Alle', utvidTab=0) {
 
-  if (grVar == '') {
-    if (datoFra %in% c('2020-02-29', '2024-02-29', '2028-02-29')) {
+  # if (grVar == '') {
+  #   if (datoFra %in% c('2020-02-29', '2024-02-29', '2028-02-29')) { #- sjekk hvilken betydning denne har
       datoFra <- switch(tidsenhet,
                         Mnd = lubridate::floor_date(as.Date(datoTil)%m-% months(12, abbreviate = T), 'month'),
-                        Aar = paste0(lubridate::year(as.Date(datoTil))-4, '-01-01')
+                        Aar = paste0(lubridate::year(as.Date(datoTil))-15, '-01-01')
       )
-    }}
+   # }}
   RegData <- NIRUtvalgEnh(RegData=RegData, datoFra=datoFra, datoTil = datoTil,
+                          luftvei = luftvei,
                           enhetsUtvalg = enhetsUtvalg, reshID = reshID)$RegData
 
   if (grVar == '') {
