@@ -9,7 +9,6 @@ SentralmaalTab(
   valgtRHF = "Alle",
   datoFra = "2020-01-01",
   datoTil = Sys.Date(),
-  bekr = 9,
   erMann = 9,
   resp = 9,
   dodInt = 9

@@ -215,7 +215,7 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='an
 
       if (valgtVar == 'liggetid') { #Andeler #GjsnGrVar
             #Liggetid bare >0
-            RegData$Variabel  <- as.numeric(RegData$liggetid)
+            RegData$Variabel  <- as.numeric(RegData$Liggetid)
             RegData <- RegData[which(RegData$Variabel>0), ]
             tittel <- 'Liggetid'
             if (figurtype %in% c('gjsnGrVar', 'gjsnTid')) {

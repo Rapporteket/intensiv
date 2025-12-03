@@ -10,7 +10,6 @@ TabAlder(
   enhetsNivaa = "Alle",
   skjemastatus = 9,
   resp = 9,
-  bekr = 9,
   dodInt = 9,
   erMann = 9,
   sens = 0
@@ -22,7 +21,6 @@ TabAlder(
   enhetsNivaa = "Alle",
   skjemastatus = 9,
   resp = 9,
-  bekr = 9,
   dodInt = 9,
   erMann = 9,
   sens = 0

@@ -14,7 +14,6 @@ TabTidEnhet <- function(RegData, tidsenhet='dag', erMann=9, resp=9, datoFra=0,
                         skjemastatus=9, dodInt=9, valgtRHF='Alle', velgAvd=0){
 
   UtData <- NIRUtvalgEnh(RegData=RegData, datoFra=0, datoTil=0, erMann=erMann,
-                             bekr=bekr, # skjemastatus=skjemastatus, resp=resp,
                              dodInt=dodInt) #, valgtRHF=valgtRHF) #velgAvd=velgAvd
 
   RegDataAlle <- UtData$RegData
@@ -79,13 +78,8 @@ TabTidEnhet <- function(RegData, tidsenhet='dag', erMann=9, resp=9, datoFra=0,
 #' @return statustabell
 #' @export
 #'
-statusECMOrespTab <- function(RegData, valgtRHF='Alle', erMann=9, luftvei=0){ #bekr=9, influ=0
+statusECMOrespTab <- function(RegData, valgtRHF='Alle', erMann=9, luftvei=0){
 
-  # if (influ==1){
-  #   RegData$FormDateSiste <- RegData$FormDate
-  #   RegData$MechanicalRespiratorStartSiste <- RegData$MechanicalRespiratorStart
-  #   RegData$MechanicalrespiratorTypeSiste <- RegData$MechanicalRespiratorType
-  # }
   UtData <- NIRUtvalgBeredsk(RegData=RegData, valgtRHF=valgtRHF,
                              erMann=erMann, luftvei=luftvei)
   RegData <- UtData$RegData
@@ -149,7 +143,6 @@ oppsumFerdigeRegTab <- function(RegData, valgtRHF='Alle', datoFra='2020-01-01', 
   UtData <- NIRUtvalgBeredsk(RegData=RegData, valgtRHF=valgtRHF,
                              datoFra = datoFra,
                              datoTil = datoTil,
-                             bekr = bekr,
                              dodInt = dodInt,
                              resp=resp,
                              erMann = erMann,
@@ -211,11 +204,11 @@ oppsumFerdigeRegTab <- function(RegData, valgtRHF='Alle', datoFra='2020-01-01', 
 #' @export
 #' @return tabell med andel som har ulike risikofaktorer
 RisikofaktorerTab <- function(RegData, datoFra='2020-01-01', datoTil=Sys.Date(), reshID=0,
-                              erMann=9, bekr=9, skjemastatus=9, dodInt=9, valgtRHF='Alle',
+                              erMann=9,skjemastatus=9, dodInt=9, valgtRHF='Alle',
                               resp=9, minald=0, maxald=110, velgAvd=0, sens=0){ #tidsenhet='Totalt',
 
   UtData <- NIRUtvalgBeredsk(RegData=RegData, datoFra=datoFra, datoTil=datoTil, erMann=erMann, #enhetsUtvalg=0, minald=0, maxald=110,
-                             bekr=bekr, skjemastatus=skjemastatus,dodInt=dodInt,
+                             skjemastatus=skjemastatus,dodInt=dodInt,
                              minald=minald, maxald=maxald, resp=resp,
                              reshID=reshID, valgtRHF=valgtRHF) #velgAvd=velgAvd
   Ntest <- dim(UtData$RegData)[1]
@@ -259,68 +252,6 @@ RisikofaktorerTab <- function(RegData, datoFra='2020-01-01', datoTil=Sys.Date(),
 #' Aldersfordeling, tabell
 #'
 #' @param RegData datatabell, beredskapsdata
-#' @inheritParams NIRUtvalgBeredsk
-#'
-#' @return aldersfordeling, gruppert
-#' @export
-#'
-#' @examples
-#' \dontrun{
-#' TabAlder(RegData=CoroData, enhetsNivaa='HF')
-#' }
-TabAlderGml <- function(RegData, valgtRHF='Alle',
-                     skjemastatus=9,resp=9, bekr=9,
-                     dodInt=9,erMann=9){#enhetsNivaa='RHF'
-
-  #if (valgtRHF != 'Alle'){RegData$RHF <- factor(RegData$RHF, levels=unique(c(levels(as.factor(RegData$RHF)), valgtRHF)))}
-  RegData$RHF <- as.factor(RegData$RHF)
-  UtData <- NIRUtvalgBeredsk(RegData=RegData,
-                             #valgtRHF=valgtRHF,
-                             resp=resp,
-                             #bekr=bekr,
-                             dodInt = dodInt,
-                             erMann = erMann,
-                             #skjemastatus=skjemastatus
-  )
-  RegData <- UtData$RegData
-
-  # enhetsNivaa <- ifelse(as.character(valgtRHF)=='Alle', 'RHF', 'RHF') #'HF')
-  RegData$EnhetsNivaaVar <- RegData$RHF #RegData[ , enhetsNivaa]
-
-  N <- dim(RegData)[1]
-  gr <- seq(0, 90, ifelse(N<100, 25, 10) )
-  RegData$AldersGr <- cut(RegData$Alder, breaks=c(gr, 110), include.lowest=TRUE, right=FALSE)
-  grtxt <- if(N<100){c('0-24', '25-49', "50-74", "75+")} else {
-    c('0-9', '10-19', '20-29', '30-39', '40-49', '50-59', '60-69', '70-79', '80-89', '90+')}
-  #grtxt <- c(levels(RegData$AldersGr)[-length(gr)], paste0(max(gr),'+'))#paste(gr,sep='-')
-  levels(RegData$AldersGr) <- grtxt #c(levels(RegData$AldersGr)[-length(gr)], paste0(max(gr),'+'))
-  TabAlder <- table(RegData$AldersGr, RegData$EnhetsNivaaVar)
-  TabAlder <- addmargins(TabAlder, FUN = list(Totalt = sum), quiet = TRUE) #switch(enhetsNivaa, RHF = 'Totalt', HF = paste0(valgtRHF, ', totalt'))
-  TabAlderPst <-prop.table(TabAlder[-nrow(TabAlder),],2)*100
-
-     TabAlderAlle <- cbind(
-       'Ant. pas. tot.' = TabAlder[,'Totalt'],
-       'Andel pas. tot.' = paste0(sprintf('%.0f', c(TabAlderPst[,'Totalt'], 100)), ' %')
-     )
-
-     if (valgtRHF %in% levels(RegData$RHF)){
-       TabAlderUt <- cbind(
-         'Antall, eget RHF' = TabAlder[ ,valgtRHF],
-         'Andel, eget RHF' = paste0(sprintf('%.0f', c(TabAlderPst[ ,valgtRHF], 100)), ' %'),
-         TabAlderAlle)
-     } else {
-         #colnames(TabAlderAlle) <- c('Antall pasienter', 'Andel pasienter')
-         TabAlderUt <- TabAlderAlle
-         }
-
-  return(invisible(UtData <-
-                     list(Tab=TabAlderUt,
-                          utvalgTxt=c(UtData$utvalgTxt, paste0('Valgt RHF: ', valgtRHF)))))
-}
-
-#' Aldersfordeling, tabell
-#'
-#' @param RegData datatabell, beredskapsdata
 #' @param reshID avdelingsresh
 #' @param enhetsNivaa enhetsnivå
 #' @param sens maskere celler <3. 0-nei, 1-ja
@@ -334,7 +265,7 @@ TabAlderGml <- function(RegData, valgtRHF='Alle',
 #' TabAlder(RegData=CoroData, enhetsNivaa='HF')
 #' }
 TabAlder <- function(RegData, reshID=0, enhetsNivaa='Alle',
-                     skjemastatus=9, resp=9, bekr=9,
+                     skjemastatus=9, resp=9,
                      dodInt=9,erMann=9, sens=0){
 
   #HF-nivå skal se eget HF og eget RHF. Filterer derfor på RHF for HF
@@ -345,7 +276,6 @@ TabAlder <- function(RegData, reshID=0, enhetsNivaa='Alle',
   UtData <- NIRUtvalgBeredsk(RegData=RegData,
                            valgtRHF=egetRHF,
                            resp=resp,
-                           #bekr=bekr,
                            dodInt = dodInt,
                            erMann = erMann,
                            #skjemastatus=skjemastatus
@@ -443,11 +373,11 @@ ManglerIntSkjema <- function(reshID=0, datoFra='2020-03-01', datoTil=Sys.Date())
 #' @export
 #' @return andel for ulike nøkkelverdier
 AndelerTab <- function(RegData, datoFra='2020-01-01', datoTil=Sys.Date(),
-                       erMann=9, bekr=9, dodInt=9, valgtRHF='Alle',
+                       erMann=9, dodInt=9, valgtRHF='Alle',
                        resp=9, minald=0, maxald=110){
 
   UtData <- NIRUtvalgBeredsk(RegData=RegData, datoFra=datoFra, datoTil=datoTil, erMann=erMann, #enhetsUtvalg=0, minald=0, maxald=110,
-                             bekr=bekr, dodInt=dodInt,
+                             dodInt=dodInt,
                              minald=minald, maxald=maxald, resp=resp,
                              valgtRHF=valgtRHF) #velgAvd=velgAvd
   Ntest <- dim(UtData$RegData)[1]
@@ -494,13 +424,12 @@ AndelerTab <- function(RegData, datoFra='2020-01-01', datoTil=Sys.Date(),
 #' @export
 #'
 SentralmaalTab <- function(RegData, valgtRHF='Alle', datoFra='2020-01-01', datoTil=Sys.Date(),
-                                bekr=9, erMann=9, resp=9, dodInt=9){
+                                erMann=9, resp=9, dodInt=9){
 
   if (valgtRHF == 'Ukjent') {valgtRHF <- 'Alle'}
   UtData <- NIRUtvalgBeredsk(RegData=RegData, valgtRHF=valgtRHF,
                              datoFra = datoFra,
                              datoTil = datoTil,
-                             bekr = bekr,
                              dodInt = dodInt,
                              resp=resp,
                              erMann = erMann)

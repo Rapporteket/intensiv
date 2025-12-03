@@ -10,7 +10,6 @@ RisikofaktorerTab(
   datoTil = Sys.Date(),
   reshID = 0,
   erMann = 9,
-  bekr = 9,
   skjemastatus = 9,
   dodInt = 9,
   valgtRHF = "Alle",

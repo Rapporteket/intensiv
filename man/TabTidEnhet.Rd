@@ -10,7 +10,6 @@ TabTidEnhet(
   erMann = 9,
   resp = 9,
   datoFra = 0,
-  bekr = 9,
   skjemastatus = 9,
   dodInt = 9,
   valgtRHF = "Alle",
@@ -22,12 +21,21 @@ TabTidEnhet(
 
 \item{tidsenhet}{'dag' (standard), 'uke', 'maaned'}
 
+\item{erMann}{Kjønn, standard: alt annet enn 0/1 gir begge kjønn
+0: Kvinner
+1: Menn}
+
 \item{datoFra}{Vis hendelser fra og med dato}
+
+\item{dodInt}{Levende/død ut fra intensiv.
+0: i live,
+1: død,
+alle: standard (alle andre verdier)}
 
 \item{enhetsNivaa}{'RHF', 'HF', 'ShNavn'}
 }
 \value{
-Tabell med antall for hver tidsenhet og enhet
+Tabell med antall for hver tidsenhet og enhet MÅ OPPDATERES!
 }
 \description{
 Antall tilfeller for valgt tidsenhet og enhetsnivå. Filtreringer kan også gjøres.

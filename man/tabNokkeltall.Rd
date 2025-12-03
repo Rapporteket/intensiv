@@ -9,10 +9,11 @@ tabNokkeltall(
   RegData,
   tidsenhet = "Mnd",
   grVar = "",
-  datoFra = "2020-02-29",
+  datoFra = "2014-01-01",
   datoTil = Sys.Date(),
   enhetsUtvalg = 0,
   respirator = 4,
+  luftvei = 0,
   reshID = 0,
   sykehus = "Alle",
   utvidTab = 0

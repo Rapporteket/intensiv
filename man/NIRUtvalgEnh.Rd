@@ -6,7 +6,7 @@
 \usage{
 NIRUtvalgEnh(
   RegData,
-  datoFra = "2011-01-01",
+  datoFra = "2014-01-01",
   datoTil = Sys.Date(),
   aar = 0,
   minald = 0,

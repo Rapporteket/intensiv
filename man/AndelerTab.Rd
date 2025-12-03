@@ -10,7 +10,6 @@ AndelerTab(
   datoFra = "2020-01-01",
   datoTil = Sys.Date(),
   erMann = 9,
-  bekr = 9,
   dodInt = 9,
   valgtRHF = "Alle",
   resp = 9,

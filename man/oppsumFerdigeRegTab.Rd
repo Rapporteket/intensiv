@@ -9,7 +9,7 @@ oppsumFerdigeRegTab(
   valgtRHF = "Alle",
   datoFra = "2020-01-01",
   datoTil = Sys.Date(),
-  bekr = 9,
+  luftvei = 0,
   erMann = 9,
   resp = 9,
   dodInt = 9
@@ -17,6 +17,24 @@ oppsumFerdigeRegTab(
 }
 \arguments{
 \item{RegData}{beredskapsskjema}
+
+\item{datoFra}{Tidligste dato i utvalget (vises alltid i figuren). Standard 2019-01-01.
+Registeret inneholder registreringer f.o.m. 2011}
+
+\item{datoTil}{Seneste dato i utvalget (vises alltid i figuren).}
+
+\item{luftvei}{Luftveisinfeksjon? 'Alle pasienter' = 0, 'Luftveisinfeksjon' = 1,
+'Covid19' = 2, 'InfluensaA' = 3, 'InfluensaB' = 4, 'RS-virus' = 5, 'Kikhoste' = 6,
+'Annet luftveisvirus' = 7, 'Annen_luftveisbakterie' = 8}
+
+\item{erMann}{Kjønn, standard: alt annet enn 0/1 gir begge kjønn
+0: Kvinner
+1: Menn}
+
+\item{dodInt}{Levende/død ut fra intensiv.
+0: i live,
+1: død,
+alle: standard (alle andre verdier)}
 }
 \value{
 nøkkeltalltabell for ferdigstilte registreringer

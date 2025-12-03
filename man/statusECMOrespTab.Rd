@@ -2,9 +2,9 @@
 % Please edit documentation in R/NIRtabellerBeredskap.R
 \name{statusECMOrespTab}
 \alias{statusECMOrespTab}
-\title{Antall som er  i ECMO/respirator}
+\title{Antall som er  i ECMO/respirator MANGE ELEMENTER SOM IKKE KAN BENYTTES FOR INTENSIVSKJEMA}
 \usage{
-statusECMOrespTab(RegData, valgtRHF = "Alle", erMann = 9, bekr = 9, influ = 0)
+statusECMOrespTab(RegData, valgtRHF = "Alle", erMann = 9, luftvei = 0)
 }
 \arguments{
 \item{RegData}{beredskapsskjema}
@@ -13,5 +13,5 @@ statusECMOrespTab(RegData, valgtRHF = "Alle", erMann = 9, bekr = 9, influ = 0)
 statustabell
 }
 \description{
-Antall som er  i ECMO/respirator
+Antall som er  i ECMO/respirator MANGE ELEMENTER SOM IKKE KAN BENYTTES FOR INTENSIVSKJEMA
 }
