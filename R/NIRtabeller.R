@@ -24,7 +24,7 @@ tabBelegg <- function(RegData, tidsenhet='Aar', datoTil, enhetsUtvalg=0, reshID=
                             'Antal respiratordøger' = round(as.numeric(tapply(RegData$respiratortid, RegData$TidsEnhet, sum, na.rm=T)),0)
       )
 
-      antTidsenh <- ifelse(tidsenhet=='Aar', 4, 11)
+      antTidsenh <- ifelse(tidsenhet=='Aar', 15, 11)
 
       tabBeleggAnt <- tabBeleggAnt[, max(1, dim(tabBeleggAnt)[2]-antTidsenh) : dim(tabBeleggAnt)[2]] #Tar med 12 siste
       }
@@ -144,18 +144,20 @@ finnDblReg <- function(RegData, datoTil=Sys.Date(), reshID=0, pasientID = 'Pasie
 #' @param respirator respirator/invasiv/non-inv 0:ikke respirator, 1:respirator, 2:invasiv, 3:non-invasiv
 #' @export
 tabNokkeltall <- function(RegData, tidsenhet='Mnd', grVar = '',
-                          datoFra='2020-02-29', datoTil=Sys.Date(),
+                          datoFra='2014-01-01', datoTil=Sys.Date(),
                           enhetsUtvalg=0, respirator=4,
+                          luftvei=0,
                           reshID=0, sykehus='Alle', utvidTab=0) {
 
-  if (grVar == '') {
-    if (datoFra %in% c('2020-02-29', '2024-02-29', '2028-02-29')) {
+  # if (grVar == '') {
+  #   if (datoFra %in% c('2020-02-29', '2024-02-29', '2028-02-29')) { #- sjekk hvilken betydning denne har
       datoFra <- switch(tidsenhet,
                         Mnd = lubridate::floor_date(as.Date(datoTil)%m-% months(12, abbreviate = T), 'month'),
-                        Aar = paste0(lubridate::year(as.Date(datoTil))-4, '-01-01')
+                        Aar = paste0(lubridate::year(as.Date(datoTil))-15, '-01-01')
       )
-    }}
+   # }}
   RegData <- NIRUtvalgEnh(RegData=RegData, datoFra=datoFra, datoTil = datoTil,
+                          luftvei = luftvei,
                           enhetsUtvalg = enhetsUtvalg, reshID = reshID)$RegData
 
   if (grVar == '') {
@@ -181,7 +183,6 @@ tabNokkeltall <- function(RegData, tidsenhet='Mnd', grVar = '',
   if (sykehus %in% unique(RegData$ShNavn)) {
     RegData <- RegData[RegData$ShNavn == sykehus, ]
   }
-
 
 
   indLigget <- which(RegData$Liggetid>0)
@@ -227,6 +228,15 @@ tabNokkeltall <- function(RegData, tidsenhet='Mnd', grVar = '',
     'Døde (%)' = tapply((RegData$DischargedIntensiveStatus==1), RegData$GrVar,
                         FUN=function(x) round(sum(x, na.rm=T)/length(x)*100,1))
   )
+
+
+  if (utvidTab == -2) {
+    indBort <- c(grep('NEMS', row.names(tabNokkeltall)),
+                 grep('Reinn', row.names(tabNokkeltall)),
+                 grep('Utskrevet', row.names(tabNokkeltall)))
+    tabNokkeltall <- tabNokkeltall[-indBort,]
+
+  }
 
   if (utvidTab==-1) { #Tar bort noen variabler for å tilpasse til Nord-bestilling
     tabNokkeltall <- tabNokkeltall[c(1:9, 13:15), ]
@@ -420,3 +430,52 @@ TabAlder <- function(RegData, reshID=0, enhetsNivaa='Alle',
 
 }
 
+
+#' Oppsummeringer, luftveisinfeksjonspasienter
+#'
+#' @param RegData
+#'
+#' @return
+#' @export
+#'
+#' @examples
+TabOppsumLuftvei <- function(RegData, pgaLuftvei=0) {
+
+  if (pgaLuftvei==1) {
+    RegData <- RegData[RegData$RespiratoryTractInfectionPrimaryCauseForICUAdmission == 1, ]
+  }
+
+AntBruktResp <- sum(LuftData$MechanicalRespirator==1, na.rm=T)
+AntBruktECMO <- sum(LuftData$EcmoEcla, na.rm=T)
+Liggetid <- summary(LuftData$Liggetid, na.rm = T)
+RespTid <- summary(LuftData$respiratortid, na.rm = T)
+ECMOtid <- summary(LuftData$EcmoEclaDager[LuftData$EcmoEcla], na.rm = T)
+Alder <- summary(LuftData$Alder, na.rm = T)
+AntDod <- sum(LuftData$DischargedIntensiveStatus==1, na.rm=T)
+
+med_IQR <- function(x){
+  c(sprintf('%.1f',x[4]), sprintf('%.1f',x[3]), paste(sprintf('%.1f',x[2]), sprintf('%.1f',x[5]), sep=' - '))
+}
+
+TabFerdigeReg <- rbind(
+  'Alder (år)' = c(med_IQR(Alder), N, ''),
+  'Liggetid (døgn)' = c(med_IQR(Liggetid), N, ''),
+  'Respiratortid (døgn)' = c(med_IQR(RespTid), AntBruktResp*(c(1, 100/N))),
+  'ECMO (døgn)' = c(med_IQR(ECMOtid), AntBruktECMO*(c(1, 100/N))),
+  'Døde' = c('','','',AntDod, paste0(sprintf('%.f',100*AntDod/N),'%'))
+)
+colnames(TabFerdigeReg) <- c('Gj.sn', 'Median', 'IQR', 'Antall pasienter', 'Andel pasienter')
+TabFerdigeReg[c(3),'Andel pasienter'] <-
+  paste0(sprintf('%.0f', as.numeric(TabFerdigeReg[c(3),'Andel pasienter'])),'%')
+
+# xtable::xtable(TabFerdigeReg, #FerdigBekr$Tab,
+#                digits=0,
+#                align = c('l','r','r','c', 'r','r'),
+#                caption = 'Verdier basert på opphold med luftveisinfeksjon siste 40 uker.
+#                IQR (inter quartile range) betyr at 25 \\% av pasientene er under minste verdi,
+#                50 \\% av pasientene er i intervallet, og 25 \\% av pasientene er over høyeste verdi.'
+# )
+
+return(invisible(TabFerdigeReg))
+
+}

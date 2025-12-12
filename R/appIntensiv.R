@@ -23,12 +23,6 @@ enhetsUtvalg <- c("Egen mot resten av landet"=1,
                   "Egen region" = 7,
                   "Egen region mot resten" = 8)
 
-#SKAL ENDRES:
-# covidValg <- c('Alle pasienter' = 0,
-#                   'Covid-pasienter' = 1,
-#                'Alle unntatt Covid-pasienter' = 2)
-# velgCovidTxt <- 'Velg diagnose (covid-pasienter)'
-
 luftveiValg <- c('Alle pasienter' = 0,
                  'Luftveisinfeksjon' = 1,
                  'Covid19' = 2,
@@ -40,10 +34,9 @@ luftveiValg <- c('Alle pasienter' = 0,
                  'Annen_luftveisbakterie' = 8)
 velgLuftveiTxt <- 'Luftveisinfeksjoner'
 
-variable <- c('SARS_CoV2', 'InfluensaA', 'InfluensaB', 'RS_virus',
-              'Kikhoste', 'Annet_luftveisvirus', 'Annen_luftveisbakterie',
-              'RespiratoryTractInfection')
-grtxt <-
+# variable <- c('SARS_CoV2', 'InfluensaA', 'InfluensaB', 'RS_virus',
+#               'Kikhoste', 'Annet_luftveisvirus', 'Annen_luftveisbakterie',
+#               'RespiratoryTractInfection')
 
 regTittel <- 'NORSK INTENSIVREGISTER'
 
@@ -94,7 +87,7 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
            ),
            mainPanel(
              tags$head(tags$link(rel="shortcut icon", href="rap/favicon.ico")),
-               rapbase::navbarWidgetInput("navbar-widget", selectOrganization = TRUE),
+             rapbase::navbarWidgetInput("navbar-widget", selectOrganization = TRUE),
 
              tabsetPanel(
                tabPanel('Startside',
@@ -182,10 +175,11 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                           dateRangeInput(inputId = 'datovalgReg', start = startDato, end = idag,
                                          label = "Tidsperiode", separator="t.o.m.", language="nb"),
                           uiOutput('velgReshOverf')
-                          # selectInput(inputId = 'velgReshOverf', label='Velg eget Sykehus',
-                          #             #selected = 0,
-                          #             choices = sykehusValg)
-                        )
+                         ),
+                       conditionalPanel(
+                         condition = "input.ark == 'Dobbeltregistreringer'",
+                       uiOutput('velgReshDbl')
+                       )
            ),
            mainPanel(
              tabsetPanel(id='ark',
@@ -202,7 +196,8 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                          tabPanel('Nøkkeltall',
                                   #h2('Nøkkeltall på intensiv'),
                                   h2(uiOutput('NokkeltallTxtReg'), align='center'),
-                                  tableOutput('tabNokkeltall')
+                                  tableOutput('tabNokkeltall'),
+                                  downloadButton(outputId = 'lastNed_tabNokkeltall', label='Last ned tabell')
                          ),
                          tabPanel('Overføringer',
                                   p(h2('Overføring av intensivpasienter',
@@ -217,14 +212,98 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                          ),
                           tabPanel('Dobbeltregistreringer',
                                   h2("Mulige dobbeltregistreringer"),
-                                  tableOutput("tabDblReg")
+                                  tableOutput("tabDblReg"),
+                                  downloadButton(outputId = 'lastNed_tabDblReg', label='Last ned tabell')
                          )
              ) #tabset
            ) #main
   ), #tab
 
 
-  #-------Fordelinger----------
+
+#------------ Luftveisinfeksjoner-----------------------------
+tabPanel("Luftveisinfeksjon",
+         sidebarPanel(id = 'brukervalgLuftvei',
+                      width = 2,
+                      br(),
+                      h3('Hvilke andre utvalg ønskes?'),
+                      br(),
+
+                      # uiOutput('CoroRappTxt'),
+                      br(),
+                      h4('Gjør filtreringer/utvalg i tabellene:'),
+                      selectInput(inputId = "luftveiValgLuft", label= velgLuftveiTxt,
+                                  choices = luftveiValg[-1])
+                      # selectInput(inputId = "valgtRHF", label="Velg RHF",
+                      #             choices = rhfNavn
+                      # ),
+                      # selectInput(inputId = "skjemastatus", label="Skjemastatus",
+                      #             choices = c("Alle"=9, "Ferdistilt"=2, "Kladd"=1)
+                      # ),
+                      # selectInput(inputId = "resp", label="Respiratorbehandlet (invasiv+non-inv.)",
+                      #             choices = c("Alle"=9, "Ja"=1, "Nei"=2)
+                      # ),
+                      # selectInput(inputId = "dodInt", label="Tilstand ut fra intensiv",
+                      #             choices = c("Alle"=9, "Død"=1, "Levende"=0)
+                      # ),
+                      # selectInput(inputId = "erMann", label="Kjønn",
+                      #             choices = c("Begge"=9, "Menn"=1, "Kvinner"=0)
+                      # ),
+                      # dateRangeInput(inputId = 'datovalgStart', start = startDato, end = idag, #'2020-05-10',
+                      #                label = "Tidsperiode", separator="t.o.m.", language="nb"
+                      # ),
+                      # br(),
+                      # actionButton("tilbakestillValg", label="Tilbakestill valg")
+         ),
+         mainPanel(width = 10,
+                   h1('Resultater for pasienter med luftveisinfeksjoner'),
+                   h2('Denne siden er under utvikling! ', style = "color:red"),
+                   h3('Alle resultater er basert på ferdigstilte registreringer.
+                      Mer detajerte resultater for luftveisinfeksjoner kan man finne
+                      ved å filtrere på (ulike typer) luftveisinfeksjoner i andre
+                      faner på Rapporteket.'),
+                   br(),
+                   fluidRow(
+                   # splitLayout(cellWidths = c("50%", "50%"),
+                    column(width = 5,
+                            uiOutput('utvalgNaa'),
+                            h3('Nøkkeltall'),
+                            h5('Oppsummering for siste 40 uker.'),
+                            tableOutput('tabNokkelLuft'),
+                            # tableOutput('tabECMOrespirator') - funker ikke for hovedskjema,
+                     ),
+                    column(width=6, offset=1,
+                           h3('Innleggelser med luftveisinfeksjon som hovedårsak'),
+                           h5('siste 40 uker'),
+                           tableOutput('tabLuftPrHF'),
+                           # uiOutput('tittelFerdigeReg'),
+                            #uiOutput('utvalgFerdigeReg'),
+                            #tableOutput('tabFerdigeReg')
+                     )),
+
+
+                   h3('Antall innleggelser med luftveisinfeksjon, siste 40 uker'),
+                   h5('Tabellen viser bare uker hvor det har vært innleggelser'),
+                   # uiOutput('utvalgHoved'),
+                   tableOutput('tabLuftPrUke'),
+                   br(),
+                   fluidRow(
+                     # column(width=5, offset=1,
+                     #        h3('Aldersfordeling'),
+                     #        plotOutput("FigurAldersfordeling", height="auto"),
+                     #        downloadButton("LastNedFigAldKj", "Last ned figur"),
+                     #        downloadButton("lastNedAldKj", "Last ned tabell")
+                     #
+                     # )
+                   )
+         ) #main
+), #tab Oversikt
+
+
+
+
+
+ #-------Fordelinger----------
 
   tabPanel(p("Fordelinger",
              title='Alder, Type opphold, Hemodynamisk overvåkning, Isolasjon, Liggetid, Nas, NEMS, Nyrebehandling,
@@ -249,7 +328,7 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                            'Isolasjon, type' = 'isolering',
                            'Isolasjon, varighet' = 'isoleringDogn',
                            'Komplikasjoner' = 'komplikasjoner',
-                           'Liggetid' = 'Liggetid',
+                           'Liggetid' = 'liggetid',
                            'Luftveisinfeksjoner' = 'luftveisinfeksjoner',
                            'Nas-skår (sykepleierakt.)' = 'Nas24',
                            'NEMS-skår (ressursbruk)' = 'NEMS24',
@@ -428,7 +507,7 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
              h4('Her kan man velge hvilken variabel man ønsker å se resultater for og gjøre filtreringer.'),
              selectInput(inputId = "valgtVarGjsn", label="Velg variabel",
                          choices = c('Alder' = 'alder',
-                                     'Liggetid' = 'Liggetid',
+                                     'Liggetid' = 'liggetid',
                                      'Nas-skår (sykepleieraktivitet)' = 'Nas24',
                                      'NEMS-skår per døgn' = 'NEMS24',
                                      'NEMS-skår per opphold' = 'NEMS',
@@ -719,7 +798,7 @@ tabPanel(p("Registeradministrasjon", title='Registeradministrasjonens side'),
                     oppstått minst én av følgende komplikasjoner:
                     Alvorlig hypoglykemi, pneumotoraks, luftveisproblem, trakealtube/kanyle, dekubitus'),
                   tableOutput('tabNokkeltallUtvidet'),
-                 downloadButton(outputId = 'lastNed_tabNokkel', label='Last ned tabell')
+                 downloadButton(outputId = 'lastNed_tabNokkelSC', label='Last ned tabell')
                   )
 #         ),
          ) #tabset
@@ -742,10 +821,13 @@ server_intensiv <- function(input, output, session) { #
   #---------Hente data------------
 
   message("Getting IntData")
-  IntDataRaa <- NIRRegDataSQL(datoFra = '2015-01-01')
+  IntDataRaa <- NIRRegDataSQL(datoFra = '2014-01-01')
   RegData <- NIRPreprosess(RegData = IntDataRaa)
 
-  message("Get paaror data")
+  LuftData <- NIRUtvalgEnh(RegData=RegData, luftvei = 1, datoFra = Sys.Date()-7*40)$RegData
+#    RegData[which(RegData$RespiratoryTractInfection == 1), ]
+
+ #  message("Get paaror data")
   # PaarorData <- NIRpaarorDataSQL()
   # PaarorDataH <- KobleMedHoved(IntDataRaa, PaarorData, alleHovedskjema=F, alleSkjema2=F)
   # antPaaror <- dim(PaarorDataH)[1]
@@ -781,11 +863,13 @@ server_intensiv <- function(input, output, session) { #
       shinyjs::show(id = 'velgResh')
       shinyjs::show(id = 'velgReshOverf')
       shinyjs::show(id = 'velgReshData')
+      shinyjs::show(id = 'velgReshDbl')
       showTab(inputId = "hovedark", target = "Registeradministrasjon")
     } else {
       shinyjs::hide(id = 'velgResh')
       shinyjs::hide(id = 'velgReshOverf')
       shinyjs::hide(id = 'velgReshData')
+      shinyjs::hide(id = 'velgReshDbl')
       hideTab(inputId = "hovedark", target = "Registeradministrasjon")
     }
   })
@@ -853,13 +937,11 @@ server_intensiv <- function(input, output, session) { #
 
   output$velgReshOverf  <- renderUI({
     selectInput(inputId = 'velgReshOverf', label='Velg eget Sykehus',
-                                  #selected = 0,
                                   choices = sykehusValg)
     })
 
   output$velgResh  <- renderUI({
     selectInput(inputId = 'velgResh', label='Velg eget Sykehus',
-                #selected = 0,
                 choices = sykehusValg)
   })
 
@@ -903,6 +985,7 @@ server_intensiv <- function(input, output, session) { #
     paste0('Nøkkeltall på intensiv, ',
                 as.character(names(egenLokalitet[which(egenLokalitet==as.numeric(input$enhetsNivaaStart))])))
   })
+
    output$tabNokkeltallStart <- function() {
     tab <- t(tabNokkeltall(RegData=RegData, tidsenhet='Mnd',
                            enhetsUtvalg=as.numeric(input$enhetsNivaaStart),
@@ -923,18 +1006,19 @@ server_intensiv <- function(input, output, session) { #
      c(paste0(c(', uten', ', med', ', invasiv', ', non-invasiv'), ' respiratorstøtte'), '')[as.numeric(input$respiratorReg) + 1]
      )
    })
+observe({
+  tab <- t(tabNokkeltall(RegData=RegData,
+                         tidsenhet=input$tidsenhetReg,
+                         datoTil=input$sluttDatoReg,
+                         respirator=input$respiratorReg,
+                         luftvei = as.numeric(input$luftveiValgReg),
+                         enhetsUtvalg=as.numeric(input$enhetsNivaaReg),
+                         reshID = user$org()))
 
    output$tabNokkeltall <- function() {
-     RegDataCov <- NIRUtvalgEnh(RegData=RegData, luftvei = as.numeric(input$luftveiValgReg))$RegData
-     tab <- t(tabNokkeltall(RegData=RegDataCov,
-                            tidsenhet=input$tidsenhetReg,
-                            datoTil=input$sluttDatoReg,
-                            respirator=input$respiratorReg,
-                            enhetsUtvalg=as.numeric(input$enhetsNivaaReg),
-                                     reshID = user$org()))
        kableExtra::kable(tab,
                          full_width=F,
-                         digits = c(0,0,0,1,0,0,1,1,1,0,0,0,1,0,0)
+                         digits = c(0,0,0,1,0,0,1,1,1,1,0,0,1,0,0)
                          ) %>%
                   kableExtra::column_spec(column = 1, width_min = '4em', width_max = 10) %>%
                   kableExtra::column_spec(column = 2:(ncol(tab)), width = '4em')  %>%
@@ -942,7 +1026,13 @@ server_intensiv <- function(input, output, session) { #
          kableExtra::kable_styling(full_width = FALSE, position = 'left')
       } # ,rownames=T, digits=0 )
 
-
+   output$lastNed_tabNokkeltall <- downloadHandler(
+     filename = function(){'NokkelTall.csv'
+     },
+     content = function(file, filename){
+       write.csv2(tab, file, row.names = T, na = '', fileEncoding = 'latin1')
+     })
+})
      output$enhetNok  <- renderUI({
      selectInput(inputId = "enhetNok", label= 'Velg enhet',
                  choices =   c('Alle',
@@ -970,17 +1060,17 @@ server_intensiv <- function(input, output, session) { #
        kableExtra::kable_styling(full_width = FALSE, position = 'left') #"hover",
    }
 
-   output$lastNed_tabNokkel <- downloadHandler(
+   output$lastNed_tabNokkelSC <- downloadHandler(
      filename = function(){'NokkelTall.csv'
      },
      content = function(file, filename){
-       RegDataCov <- NIRUtvalgEnh(RegData=RegData, luftvei = as.numeric(input$luftveiValgNok))$RegData
-       tab <- t(tabNokkeltall(RegData=RegDataCov,
+       tab <- t(tabNokkeltall(RegData=RegData,
                               datoFra = input$datoValgNok[1],
                               datoTil = input$datoValgNok[2],
+                              luftvei = as.numeric(input$luftveiValgNok),
                               sykehus=input$enhetNok,
                               utvidTab=1))
-       write.csv2(tab, file, row.names = F, na = '')
+       write.csv2(tab, file, row.names = T, na = '')
      })
 
       output$tabAntOpphSh <- renderTable({
@@ -1011,10 +1101,27 @@ server_intensiv <- function(input, output, session) { #
          xtable::xtable(tab, rownames=F)
       }, rownames = F, colnames = T, align = 'r')
 
+      output$velgReshDbl  <- renderUI({
+        selectInput(inputId = 'velgReshDbl', label='Velg eget Sykehus',
+                    choices = sykehusValg)
+      })
+
       output$tabDblReg <- renderTable({
-        tabDBL <- finnDblReg(RegData, reshID = user$org()) #tabDBL <-
-        finnDblReg(RegData, reshID = user$org())
+        #tabDBL <- finnDblReg(RegData, reshID = user$org())
+        finnDblReg(RegData,
+                   #reshID = user$org()
+                   reshID = ifelse(is.null(input$velgReshDbl), user$org(), as.numeric(input$velgReshDbl))
+                  )
       }, spacing="xs") #rownames = T,
+
+      output$lastNed_tabDblReg <- downloadHandler(
+        filename = function(){'DobbeltReg.csv'
+        },
+        content = function(file, filename){
+          write.csv2(finnDblReg(RegData=RegData,# reshID = user$org())
+                                reshID = ifelse(is.null(input$velgReshDbl), user$org(), as.numeric(input$velgReshDbl)))
+                     , file, row.names = T, na = '', fileEncoding = 'latin1')
+        })
 
 
       output$inklKrit <- renderPlot({
@@ -1023,6 +1130,118 @@ server_intensiv <- function(input, output, session) { #
                       datoFra=input$datovalg[1], datoTil=input$datovalg[2], session=session)
       }, height=800, width=800 #height = function() {session$clientData$output_fordelinger_width}
       )
+
+
+#--------------- Luftveisside -------------------------
+
+      #Definere utvalgsinnhold
+      rhfNavn <- c('Alle', as.character(sort(unique(LuftData$RHF))))
+      hfNavn <- sort(unique(LuftData$HF)) #, index.return=T)
+      navnUtsendingVerdi <- c(rhfNavn, hfNavn)
+      navnUtsending <- c('Hele landet', paste0('RHF: ', rhfNavn[-1]), paste0('HF: ', hfNavn))
+
+      enhetsNivaa <- c('Alle', 'RHF', 'HF')
+      names(enhetsNivaa) <- c('Hele landet', 'eget RHF', 'egetHF')
+
+      RHFvalgLuft <- c('Alle', unique(as.character(LuftData$RHF)))
+      names(RHFvalgLuft) <- RHFvalgLuft
+
+      output$velgRHFluft <- renderUI({
+        selectInput(inputId = 'velgRHFluft', label='Velg RHF',
+                    selected = 0,
+                    choices = RHFvalgLuft)
+      })
+
+      observeEvent(input$tilbakestillValg, shinyjs::reset("brukervalgLuftvei"))
+
+      #observe({
+        #
+        #   valgtRHF <- ifelse(user$role() == 'SC', as.character(input$valgtRHF), egetRHF)
+        #
+        #   AntTab <- TabTidEnhet(RegData=LuftData, tidsenhet='dag',
+        #                         valgtRHF= valgtRHF,
+        #                         skjemastatus=as.numeric(input$skjemastatus),
+        #                         resp=as.numeric(input$resp),
+        #                         bekr=as.numeric(input$bekr),
+        #                         dodInt=as.numeric(input$dodInt),
+        #                         erMann=as.numeric(input$erMann)
+        #   )
+        #
+        #   UtData <- NIRUtvalgBeredsk(RegData=LuftData,
+        #                              valgtRHF= ifelse(valgtRHF=='Ukjent','Alle',valgtRHF),
+        #                              skjemastatus=as.numeric(input$skjemastatus),
+        #                              resp=as.numeric(input$resp),
+        #                              bekr=as.numeric(input$bekr),
+        #                              dodInt=as.numeric(input$dodInt),
+        #                              erMann=as.numeric(input$erMann)
+        #   )
+        #
+        #   utvalg <- if (length(UtData$utvalgTxt)>0) {
+        #     UtData$utvalgTxt
+        #   } else {'Alle registrerte '}
+        #   txt <- if(dim(UtData$RegData)[1]>2) {
+        #     paste0('For innlagte f.o.m. 10.mars 2020, er gjennomsnittsalderen <b>', round(mean(UtData$RegData$Alder, na.rm = T)), '</b> år og ',
+        #            round(100*mean(UtData$RegData$erMann, na.rm = T)), '% er menn. Antall døde: ',
+        #            sum(UtData$RegData$DischargedIntensiveStatus==1))
+        #   } else {''}
+        #
+        #   output$utvalgHoved <- renderUI({
+        #     UtTekst <- tagList(
+        #       h5(HTML(paste0(utvalg, '<br />'))),
+        #       h4(HTML(paste0(txt, '<br />')))
+        #
+        #     )})
+        #
+        #   visNdager <- nrow(AntTab$Tab)
+        #   output$tabTidEnhet <- renderTable({AntTab$Tab[(visNdager-10):visNdager,]}, rownames = T, digits=0, spacing="xs"
+        #   )
+        #
+        #
+        #   #Tab status nå
+      # test <- tabNokkeltall(RegData=LuftData)
+        output$tabNokkelLuft <- renderTable(
+          xtable::xtable(tabNokkeltall(RegData=LuftData, grVar='RHF',
+                                      luftvei = as.numeric(input$luftveiValgLuft),
+                                       enhetsUtvalg=0, reshID=0,
+                                       sykehus='Alle', utvidTab=-2),
+                         caption = 'Nøkkeltall for hvert RHF'),
+          rownames = T, digits=1) # , spacing="xs")
+        #                 align = c('l',rep('r',dim(tabNokkeltall)[2]))
+
+        # output$utvalgNaa <- renderUI({h5(HTML(paste0(statusNaaTab$utvalgTxt, '<br />'))) })
+
+        # Luftveispasienter per HF
+
+        output$tabLuftPrHF <- renderTable({
+        Luft1 <- NIRUtvalgEnh(RegData=LuftData,
+                              luftvei = as.numeric(input$luftveiValgLuft))$RegData
+          RegHF <- Luft1 %>%
+          dplyr::filter(RespiratoryTractInfectionPrimaryCauseForICUAdmission == 1 ) %>%
+          dplyr::group_by(RHF, HF, ShNavn) %>%
+          dplyr::summarise(.groups='rowwise',
+                           'Antall pasienter' = dplyr::n())
+        Totalt <- c('','', 'Totalt', sum(RegHF$`Antall pasienter`))
+        RegHF <- rbind(as.matrix(RegHF, dim(RegHF)[1], dim(RegHF)[2]), Totalt)
+        colnames(RegHF) <-c('RHF', 'HF', 'Enhet', 'Ant. pasienter')
+        xtable::xtable(RegHF)
+        })
+     # }) #observe
+
+        output$tabLuftPrUke <- renderTable({
+          Luft1 <- NIRUtvalgEnh(RegData=LuftData,
+                                luftvei = as.numeric(input$luftveiValgLuft))$RegData
+          TabUkeRHF <- ftable(Luft1[ , c('UkeAar', 'RHF')], row.vars ='UkeAar')
+          TabUkeRHF <- as.matrix(TabUkeRHF)
+          TabUkeRHF <- rbind( TabUkeRHF, Totalt = colSums(TabUkeRHF))
+          TabUkeRHF <- cbind( TabUkeRHF, 'Hele landet' = rowSums(TabUkeRHF))},
+          rownames = TRUE,
+          digits = 0
+
+          # print(xtable::xtable(TabUkeRHF, digits=0,
+          #                      caption='Luftveisinfeksjoner per uke og region siste 40 uker.'),
+          #       sanitize.rownames.function = identity)
+        )
+
 
 #------------Fordelinger---------------------
 

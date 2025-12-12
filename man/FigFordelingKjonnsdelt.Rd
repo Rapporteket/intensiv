@@ -10,7 +10,6 @@ FigFordelingKjonnsdelt(
   datoFra = "2020-03-01",
   datoTil = Sys.Date(),
   valgtRHF = "Alle",
-  bekr = 9,
   skjemastatus = 9,
   resp = 9,
   minN = 0,

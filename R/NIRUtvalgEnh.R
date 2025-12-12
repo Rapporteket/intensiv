@@ -57,7 +57,7 @@
 #'
 #' @export
 
-NIRUtvalgEnh <- function(RegData, datoFra='2011-01-01', datoTil=Sys.Date(), aar=0,
+NIRUtvalgEnh <- function(RegData, datoFra='2014-01-01', datoTil=Sys.Date(), aar=0,
                          minald=0, maxald=110, erMann='', InnMaate='', dodInt='',
                          luftvei=0, nivaa = 0, overfPas = 0, # grType=99,
                          enhetsUtvalg=0, reshID=0, velgAvd=0,

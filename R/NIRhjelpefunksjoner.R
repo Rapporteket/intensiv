@@ -359,6 +359,7 @@ dataTilOffVisning <- function(RegData = RegData, valgtVar, #datoFra='2016-01-01'
   '4210742'='974795477', #Sandnessjøen okt2024
  '102026'='974633191', #Skien
  '102428'='974633191', #Skien okt2024
+ '4209729' = '932998521', #SNR Intensiv (Hjelset)
  '4208078'='974749025', #St. Olav  Hjertemedisinsk intensiv
  '4201313'='974749025', #St. Olav Hovedint
  '4208928'='974749025', #St. Olavs Intensiv barn
