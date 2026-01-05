@@ -1,8 +1,8 @@
 Package: intensiv
 Type: Package
 Title: Resultatrapporter for Intensivregisteret
-Version: 3.2.1
-Date: 2025-12-09
+Version: 3.3.0
+Date: 2026-01-05
 Author: Authors@R: c(person("Olsen", "Lena", email =
     "Lena.Ringstad.Olsen@unn.no", role = c("cre", "aut")))
 Maintainer: Lena Ringstad Olsen <lena.olsen@skde.no>
