@@ -59,13 +59,15 @@ Dette er en automagisk utsendt rapport fra Norsk Intensivregister (NIR).
 Dokumentet inneholder oppsummering av luftveisinfeksjoner hos pasienter som
 kvalifiserer for rapportering til NIR.
 
-Dokumentet viser resultater kun fra ferdigstilte opphold med luftveisinfeksjon. At et opphold er ferdigstilt vil si at opplysningene er kontrollert og ferdig registrert.
+Dokumentet viser resultater fra ferdigstilte opphold med luftveisinfeksjon. (Opphold i kladd er ikke med.) At et opphold er ferdigstilt vil si at opplysningene er kontrollert og ferdig registrert.
+
+Variablene som inngår i luftveisrapporteringen, ble innført i uke 42, 2025. Enkelte sykehus har imidlertid registrert data tilbake i tid. Rapporteringen vil derfor først være komplett fra og med uke 42, 2025.
 
 
 \bf{Merk at:}
 \begin{itemize}
 \item Rapporten er basert på registreringer 40 uker bakover i tid til og med \Sexpr{Sys.Date()-1}.
-\item Bare uker hvor det er registrerte tilfeller, vises i tabellene. (Dvs. uker med 0 registreringer vises ikke.)
+\item Bare uker hvor det er registrerte tilfeller, vises i tabellene. (Uker med 0 registreringer vises ikke.)
 \end{itemize}
 
 

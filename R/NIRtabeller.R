@@ -63,6 +63,8 @@ tabAntOpphShMnd <- function(RegData, datoTil=Sys.Date(), datoFra='Ikke angitt', 
 #' @export
 tabAntOpphShAar <- function(RegData, datoTil, antAar = 5){
       AarNaa <- as.numeric(format.Date(datoTil, "%Y"))
+      aggVar <-  c('ShNavn', 'InnDato', 'Aar')
+      RegData <- RegData[RegData$InnDato <= as.Date(datoTil, tz='UTC'), aggVar]
 
       tabAvdAarN <- addmargins(table(RegData[which(RegData$Aar %in% (AarNaa-antAar-1):AarNaa), c('ShNavn','Aar')]))
       rownames(tabAvdAarN)[dim(tabAvdAarN)[1] ]<- 'TOTALT, alle enheter:'
