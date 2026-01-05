@@ -153,7 +153,7 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                         conditionalPanel(condition = "input.ark == 'Nøkkeltall' || input.ark == 'Ant. opphold'
                                              || input.ark == 'Pasientar per år og avd.' ",
                                          dateInput(inputId = 'sluttDatoReg', label = 'Velg sluttdato', language="nb",
-                                                   value = Sys.Date(), max = Sys.Date()),
+                                                   value = format.Date(Sys.Date(),'%Y-%m' ), max = Sys.Date()),
                                          selectInput(inputId = "luftveiValgReg", label= velgLuftveiTxt,
                                                      choices = luftveiValg)
                         ),
@@ -287,15 +287,6 @@ tabPanel("Luftveisinfeksjon",
                    # uiOutput('utvalgHoved'),
                    tableOutput('tabLuftPrUke'),
                    br(),
-                   fluidRow(
-                     # column(width=5, offset=1,
-                     #        h3('Aldersfordeling'),
-                     #        plotOutput("FigurAldersfordeling", height="auto"),
-                     #        downloadButton("LastNedFigAldKj", "Last ned figur"),
-                     #        downloadButton("lastNedAldKj", "Last ned tabell")
-                     #
-                     # )
-                   )
          ) #main
 ), #tab Oversikt
 
@@ -1154,51 +1145,6 @@ observe({
 
       observeEvent(input$tilbakestillValg, shinyjs::reset("brukervalgLuftvei"))
 
-      #observe({
-        #
-        #   valgtRHF <- ifelse(user$role() == 'SC', as.character(input$valgtRHF), egetRHF)
-        #
-        #   AntTab <- TabTidEnhet(RegData=LuftData, tidsenhet='dag',
-        #                         valgtRHF= valgtRHF,
-        #                         skjemastatus=as.numeric(input$skjemastatus),
-        #                         resp=as.numeric(input$resp),
-        #                         bekr=as.numeric(input$bekr),
-        #                         dodInt=as.numeric(input$dodInt),
-        #                         erMann=as.numeric(input$erMann)
-        #   )
-        #
-        #   UtData <- NIRUtvalgBeredsk(RegData=LuftData,
-        #                              valgtRHF= ifelse(valgtRHF=='Ukjent','Alle',valgtRHF),
-        #                              skjemastatus=as.numeric(input$skjemastatus),
-        #                              resp=as.numeric(input$resp),
-        #                              bekr=as.numeric(input$bekr),
-        #                              dodInt=as.numeric(input$dodInt),
-        #                              erMann=as.numeric(input$erMann)
-        #   )
-        #
-        #   utvalg <- if (length(UtData$utvalgTxt)>0) {
-        #     UtData$utvalgTxt
-        #   } else {'Alle registrerte '}
-        #   txt <- if(dim(UtData$RegData)[1]>2) {
-        #     paste0('For innlagte f.o.m. 10.mars 2020, er gjennomsnittsalderen <b>', round(mean(UtData$RegData$Alder, na.rm = T)), '</b> år og ',
-        #            round(100*mean(UtData$RegData$erMann, na.rm = T)), '% er menn. Antall døde: ',
-        #            sum(UtData$RegData$DischargedIntensiveStatus==1))
-        #   } else {''}
-        #
-        #   output$utvalgHoved <- renderUI({
-        #     UtTekst <- tagList(
-        #       h5(HTML(paste0(utvalg, '<br />'))),
-        #       h4(HTML(paste0(txt, '<br />')))
-        #
-        #     )})
-        #
-        #   visNdager <- nrow(AntTab$Tab)
-        #   output$tabTidEnhet <- renderTable({AntTab$Tab[(visNdager-10):visNdager,]}, rownames = T, digits=0, spacing="xs"
-        #   )
-        #
-        #
-        #   #Tab status nå
-      # test <- tabNokkeltall(RegData=LuftData)
         output$tabNokkelLuft <- renderTable(
           xtable::xtable(tabNokkeltall(RegData=LuftData, grVar='RHF',
                                       luftvei = as.numeric(input$luftveiValgLuft),
@@ -1206,12 +1152,8 @@ observe({
                                        sykehus='Alle', utvidTab=-2),
                          caption = 'Nøkkeltall for hvert RHF'),
           rownames = T, digits=1) # , spacing="xs")
-        #                 align = c('l',rep('r',dim(tabNokkeltall)[2]))
 
-        # output$utvalgNaa <- renderUI({h5(HTML(paste0(statusNaaTab$utvalgTxt, '<br />'))) })
-
-        # Luftveispasienter per HF
-
+# Luftveispasienter per HF
         output$tabLuftPrHF <- renderTable({
         Luft1 <- NIRUtvalgEnh(RegData=LuftData,
                               luftvei = as.numeric(input$luftveiValgLuft))$RegData
@@ -1225,7 +1167,6 @@ observe({
         colnames(RegHF) <-c('RHF', 'HF', 'Enhet', 'Ant. pasienter')
         xtable::xtable(RegHF)
         })
-     # }) #observe
 
         output$tabLuftPrUke <- renderTable({
           Luft1 <- NIRUtvalgEnh(RegData=LuftData,
@@ -1237,9 +1178,6 @@ observe({
           rownames = TRUE,
           digits = 0
 
-          # print(xtable::xtable(TabUkeRHF, digits=0,
-          #                      caption='Luftveisinfeksjoner per uke og region siste 40 uker.'),
-          #       sanitize.rownames.function = identity)
         )
 
 
