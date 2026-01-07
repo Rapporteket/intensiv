@@ -251,15 +251,13 @@ henteSamlerapporter <- function(filnavn, rnwFil, reshID=0,
 #' @export
 
 abonnement <- function(rnwFil, brukernavn='tullebukk', reshID=0){
-                                # datoFra=Sys.Date()-180, datoTil=Sys.Date()) {
 
-  #Rpakke <- ifelse(rnwFil==as.character('NIRinfluensa.Rnw'), 'intensivberedskap', 'intensiv')
   #rapbase::subLogger(author = brukernavn, registryName = 'Norsk Intensivregister',
   #                  reshId = reshID,
   #                  msg = paste0("1 starter Abonnement:", rnwFil ))
   filbase <- substr(rnwFil, 1, nchar(rnwFil)-4)
   tmpFile <- paste0(filbase, Sys.Date(),'_',digest::digest(brukernavn), '.Rnw')
-  src <- normalizePath(system.file(rnwFil, package=Rpakke))
+  src <- normalizePath(system.file(rnwFil, package='intensiv'))
   #gå til tempdir. Har ikke skriverettigheter i arbeidskatalog
   setwd(tempdir())
   dir <- getwd()
