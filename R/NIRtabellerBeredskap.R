@@ -265,21 +265,20 @@ RisikofaktorerTab <- function(RegData, datoFra='2020-01-01', datoTil=Sys.Date(),
 #' TabAlder(RegData=CoroData, enhetsNivaa='HF')
 #' }
 TabAlder <- function(RegData, reshID=0, enhetsNivaa='Alle',
-                     skjemastatus=9, resp=9,
-                     dodInt=9,erMann=9, sens=0){
+                     # skjemastatus=9, resp=9,
+                     dodInt=9, erMann=9, sens=0){
 
   #HF-nivå skal se eget HF og eget RHF. Filterer derfor på RHF for HF
   egetRHF <- ifelse (enhetsNivaa=='HF',
                      RegData$RHF[match(reshID, RegData$ReshId)],
                      'Alle')
-
-  UtData <- NIRUtvalgBeredsk(RegData=RegData,
-                           valgtRHF=egetRHF,
-                           resp=resp,
+  UtData <- NIRUtvalgEnh(RegData=RegData,
+                           # valgtRHF=egetRHF,
+                           # resp=resp,
                            dodInt = dodInt,
                            erMann = erMann,
                            #skjemastatus=skjemastatus
-)
+                           )
 RegData <- UtData$RegData
 
 

@@ -8,8 +8,6 @@ TabAlder(
   RegData,
   reshID = 0,
   enhetsNivaa = "Alle",
-  skjemastatus = 9,
-  resp = 9,
   dodInt = 9,
   erMann = 9,
   sens = 0
@@ -19,8 +17,6 @@ TabAlder(
   RegData,
   reshID = 0,
   enhetsNivaa = "Alle",
-  skjemastatus = 9,
-  resp = 9,
   dodInt = 9,
   erMann = 9,
   sens = 0

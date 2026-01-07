@@ -9,6 +9,9 @@ TabOppsumLuftvei(RegData, pgaLuftvei = 0)
 \arguments{
 \item{RegData}{}
 }
+\value{
+oppsummering i tabellform
+}
 \description{
 Oppsummeringer, luftveisinfeksjonspasienter
 }

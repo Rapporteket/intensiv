@@ -437,10 +437,9 @@ TabAlder <- function(RegData, reshID=0, enhetsNivaa='Alle',
 #'
 #' @param RegData
 #'
-#' @return
+#' @return oppsummering i tabellform
 #' @export
 #'
-#' @examples
 TabOppsumLuftvei <- function(RegData, pgaLuftvei=0) {
 
   if (pgaLuftvei==1) {
