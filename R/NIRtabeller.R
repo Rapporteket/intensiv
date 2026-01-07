@@ -446,13 +446,14 @@ TabOppsumLuftvei <- function(RegData, pgaLuftvei=0) {
     RegData <- RegData[RegData$RespiratoryTractInfectionPrimaryCauseForICUAdmission == 1, ]
   }
 
-AntBruktResp <- sum(LuftData$MechanicalRespirator==1, na.rm=T)
-AntBruktECMO <- sum(LuftData$EcmoEcla, na.rm=T)
-Liggetid <- summary(LuftData$Liggetid, na.rm = T)
-RespTid <- summary(LuftData$respiratortid, na.rm = T)
-ECMOtid <- summary(LuftData$EcmoEclaDager[LuftData$EcmoEcla], na.rm = T)
-Alder <- summary(LuftData$Alder, na.rm = T)
-AntDod <- sum(LuftData$DischargedIntensiveStatus==1, na.rm=T)
+N <- dim(RegData)[1]
+AntBruktResp <- sum(RegData$MechanicalRespirator==1, na.rm=T)
+AntBruktECMO <- sum(RegData$EcmoEcla, na.rm=T)
+Liggetid <- summary(RegData$Liggetid, na.rm = T)
+RespTid <- summary(RegData$respiratortid, na.rm = T)
+ECMOtid <- summary(RegData$EcmoEclaDager[RegData$EcmoEcla], na.rm = T)
+Alder <- summary(RegData$Alder, na.rm = T)
+AntDod <- sum(RegData$DischargedIntensiveStatus==1, na.rm=T)
 
 med_IQR <- function(x){
   c(sprintf('%.1f',x[4]), sprintf('%.1f',x[3]), paste(sprintf('%.1f',x[2]), sprintf('%.1f',x[5]), sep=' - '))
