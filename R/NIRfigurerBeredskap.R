@@ -56,19 +56,15 @@ FigTidEnhet <- function(AntTab, outfile=''){
 #'
 #' @return alders og kjønnsfordelnig
 #' @export
-FigFordelingKjonnsdelt <- function(RegData, valgtVar='Alder', datoFra='2020-03-01', datoTil = Sys.Date(),
-                                   valgtRHF='Alle', skjemastatus=9, resp=9, minN = 0,
-                     dodInt=9,erMann=9, grvar='PatientGender', outfile=''){
+FigFordelingKjonnsdelt <- function(RegData, valgtVar='Alder', minN = 0,
+                                   datoFra='2020-03-01', datoTil = Sys.Date(),
+                                   dodInt=9,erMann=9, grvar='PatientGender',
+                                   outfile=''){
 
-  #if (valgtRHF != 'Alle'){RegData$RHF <- factor(RegData$RHF, levels=unique(c(levels(as.factor(RegData$RHF)), valgtRHF)))}
-  # RegData$RHF <- as.factor(RegData$RHF)
   RegData$PatientGender <- factor(RegData$PatientGender, levels = 1:2, labels = c("Menn", "Kvinner"))
   UtData <- NIRUtvalgEnh(RegData=RegData,
                              datoFra = datoFra,
                              datoTil = datoTil,
-                            # valgtRHF=valgtRHF,
-                            # resp=resp,
-                            # skjemastatus=skjemastatus,
                              dodInt = dodInt,
                              erMann = erMann)
   RegData <- UtData$RegData
@@ -131,16 +127,3 @@ FigFordelingKjonnsdelt <- function(RegData, valgtVar='Alder', datoFra='2020-03-0
 
   return(AntHovedTab)
 }
-#
-#
-# Fiks_duplikater <- function(RegData) {
-#
-#   lengde_unik <- function(x){length(unique(x))}
-#   aux <- RegData %>% group_by(PasientID) %>% summarise_all(lengde_unik)
-#
-#   names(colSums(aux[, -1])[colSums(aux[, -1]) > dim(aux)[1]])
-#
-#
-# }
-
-

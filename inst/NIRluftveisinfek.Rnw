@@ -194,24 +194,23 @@ print(xtable::xtable(RegHF, digits=0,
     \end{frame}
 
 
-  \begin{frame}[fragile] {Kjønnsfordeling }
-
-  <<'AlderKjonn', results='asis'>>=
+  <<'AlderKjonn', include=FALSE>>=
 
     dum <- FigFordelingKjonnsdelt(RegData = LuftData, valgtVar = 'Alder', minN=3,
-                                                     outfile = 'AlderKjonn.pdf')
+                                  outfile = 'AlderKjonn.pdf')
   @
 
-    \begin{figure}[ht]
+  \begin{frame}[fragile] {Kjønnsfordeling }
 
+  \begin{figure}[ht]
   %\scalebox{0.5}
-  \centering \includegraphics[scale=0.25]{AlderKjonn.pdf}
-  \caption{Fordeling av kjønn i ulike aldersgrupper for opphold med registrert luftveisinfeksjon siste 40 uker.
-    Søylene maskeres hvis det er færre enn tre kvinner eller menn i ei aldersgruppe.}
+  \centering
+  \includegraphics[scale=0.35]{AlderKjonn.pdf}
+  \caption{Fordeling av kjønn i ulike aldersgrupper for opphold med registrert luftveisinfeksjon
+  siste 40 uker. Søylene maskeres hvis det er færre enn tre kvinner eller menn i ei aldersgruppe.}
   \end{figure}
 
   \end{frame}
-
 
 
   \begin{frame}[fragile] {Oppsummering, luftveisinfeksjoner}
