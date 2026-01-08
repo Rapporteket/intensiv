@@ -79,8 +79,9 @@ TabTidEnhet <- function(RegData, tidsenhet='dag', erMann=9, resp=9, datoFra=0,
 #' @export
 #'
 statusECMOrespTab <- function(RegData, valgtRHF='Alle', erMann=9, luftvei=0){
+#Denne må oppdateres hvis den skal brukes
 
-  UtData <- NIRUtvalgBeredsk(RegData=RegData, valgtRHF=valgtRHF,
+  UtData <- NIRUtvalgEnh(RegData=RegData, # valgtRHF=valgtRHF,
                              erMann=erMann, luftvei=luftvei)
   RegData <- UtData$RegData
   N <- dim(RegData)[1]
@@ -140,13 +141,13 @@ oppsumFerdigeRegTab <- function(RegData, valgtRHF='Alle', datoFra='2020-01-01', 
                                 luftvei=0, erMann=9, resp=9, dodInt=9){
 
   if (valgtRHF == 'Ukjent') {valgtRHF <- 'Alle'}
-  UtData <- NIRUtvalgBeredsk(RegData=RegData, valgtRHF=valgtRHF,
+  UtData <- NIRUtvalgEnh(RegData=RegData, #valgtRHF=valgtRHF,
                              datoFra = datoFra,
                              datoTil = datoTil,
-                             dodInt = dodInt,
-                             resp=resp,
-                             erMann = erMann,
-                             skjemastatus=2)
+                            # dodInt = dodInt,
+                            # resp=resp, skjemastatus=2
+                             erMann = erMann
+                             )
   RegData <- UtData$RegData
   N <- dim(RegData)[1]
   ##MechanicalRespirator Fått respiratorstøtte. Ja=1, nei=2,
@@ -192,59 +193,6 @@ oppsumFerdigeRegTab <- function(RegData, valgtRHF='Alle', datoFra='2020-01-01', 
                                   Ntest=N)))
 }
 
-
-
-#' Tabell med oversikt over tilstander som medfører økt risiko ved Coronasmitte
-#'
-#' @param RegData data
-#' @param datoTil sluttdato
-#' @param reshID enhetens resh
-#' @param valgtRHF 'Alle' (standard), RHF-navn uten 'Helse '
-#'
-#' @export
-#' @return tabell med andel som har ulike risikofaktorer
-RisikofaktorerTab <- function(RegData, datoFra='2020-01-01', datoTil=Sys.Date(), reshID=0,
-                              erMann=9,skjemastatus=9, dodInt=9, valgtRHF='Alle',
-                              resp=9, minald=0, maxald=110, velgAvd=0, sens=0){ #tidsenhet='Totalt',
-
-  UtData <- NIRUtvalgBeredsk(RegData=RegData, datoFra=datoFra, datoTil=datoTil, erMann=erMann, #enhetsUtvalg=0, minald=0, maxald=110,
-                             skjemastatus=skjemastatus,dodInt=dodInt,
-                             minald=minald, maxald=maxald, resp=resp,
-                             reshID=reshID, valgtRHF=valgtRHF) #velgAvd=velgAvd
-  Ntest <- dim(UtData$RegData)[1]
-  RegData <- UtData$RegData
-
-  AntRisiko <- rbind(
-    Kreft = sum(RegData$IsCancerPatient, na.rm = T),
-    'Nedsatt immunforsvar' = sum(RegData$IsImpairedImmuneSystemIncludingHivPatient, na.rm = T),
-    Diabetes	= sum(RegData$IsDiabeticPatient, na.rm = T),
-    Hjertesykdom = sum(RegData$IsHeartDiseaseIncludingHypertensionPatient, na.rm = T),
-    'Fedme (KMI>30)' =	sum(RegData$IsObesePatient, na.rm = T),
-    Astma	= sum(RegData$IsAsthmaticPatient, na.rm = T),
-    'Kronisk lungesykdom' = sum(RegData$IsChronicLungDiseasePatient, na.rm = T),
-    Nyresykdom =	sum(RegData$IsKidneyDiseaseIncludingFailurePatient, na.rm = T),
-    Leversykdom = sum(RegData$IsLiverDiseaseIncludingFailurePatient, na.rm = T),
-    'Nevrologisk/nevromusk.' = sum(RegData$IsChronicNeurologicNeuromuscularPatient, na.rm = T),
-    Graviditet	= sum(RegData$IsPregnant, na.rm = T),
-    'Røyker' =	sum(RegData$IsActiveSmoker, na.rm = T),
-    'Pasienter med risikofaktorer' = sum(RegData$IsRiskFactor, na.rm = T)
-  )
-
-  if (Ntest>3){
-    under3 <- which(AntRisiko < 3)
-
-    TabRisiko <- cbind(AntRisiko,
-                       'Andel' = paste0(sprintf('%.0f', 100*AntRisiko/dim(RegData)[1]),'%')) #[,"Sum"]
-    if (sens==1){
-    TabRisiko[under3, ] <- c(rep('<3', length(under3)), rep('', length(under3)))
-      }
-    TabRisiko <- rbind(TabRisiko,
-                       'Pasienter, totalt' = c(dim(RegData)[1], ''))
-    colnames(TabRisiko) <- c('Antall', 'Andel') #c('Antall pasienter', 'Andel pasienter')
-
-  }
-  return(UtData <- list(Tab=TabRisiko, utvalgTxt=UtData$utvalgTxt, Ntest=Ntest))
-}
 
 
 
@@ -363,74 +311,25 @@ ManglerIntSkjema <- function(reshID=0, datoFra='2020-03-01', datoTil=Sys.Date())
 }
 
 
-#' Tabell med andel av div. variabler for koblet datasett (intensiv+beredskap)
-#' Kun ferdigstilte registreringer
-#'
-#' @inheritParams NIRUtvalgBeredsk
-#' @param valgtRHF 'Alle' (standard), RHF-navn uten 'Helse '
-#'
-#' @export
-#' @return andel for ulike nøkkelverdier
-AndelerTab <- function(RegData, datoFra='2020-01-01', datoTil=Sys.Date(),
-                       erMann=9, dodInt=9, valgtRHF='Alle',
-                       resp=9, minald=0, maxald=110){
-
-  UtData <- NIRUtvalgBeredsk(RegData=RegData, datoFra=datoFra, datoTil=datoTil, erMann=erMann, #enhetsUtvalg=0, minald=0, maxald=110,
-                             dodInt=dodInt,
-                             minald=minald, maxald=maxald, resp=resp,
-                             valgtRHF=valgtRHF) #velgAvd=velgAvd
-  Ntest <- dim(UtData$RegData)[1]
-  RegData <- UtData$RegData
-  #?Tal på pasientar som har fått ARDS-diagnosen
-
-  AntAndel <- function(var, N){
-    Ant <- sum(var, na.rm = T)
-    Andel <- paste0(sprintf('%.1f', 100*Ant/dim(RegData)[1]),'%')
-    c(Ant, Andel)
-  }
-
-  # andelen som har registrert NAS, maks SOFA, andre diagnosar enn covid-19, sekundærårsak til innlegging på intensiv? SMR
-  # Tal på pasientar som har fått ARDS-diagnosen (obs. dette er ikkje obligatorisk). Diagnose = J80 ARDS
-
-
-  TabAndeler <- rbind(
-    'Menn' = AntAndel(var = RegData$erMann, N=Ntest),
-    'Trakeostomi' = AntAndel(var = (RegData$Trakeostomi %in% 2:3), N=Ntest),
-    'Nyreestattende behandling' = AntAndel(var = (RegData$KidneyReplacingTreatment==1), N=Ntest),
-    'Vasoaktiv medikasjon' =  AntAndel(var = (RegData$VasoactiveInfusion==1), N=Ntest),
-    'ECMO-bruk' = AntAndel(var = (RegData$ECMOTid>0), N=Ntest),
-    'Bukleie' =  AntAndel(var = (RegData$Bukleie>0), N=Ntest),
-    'Temperatur mer enn 39gr.' =  AntAndel(var = (RegData$Temperature==3), N=Ntest),
-    'Overflyttet' = AntAndel(var = (RegData$AntRegPrPas>1), N=Ntest),
-    'Død på intensiv' = AntAndel(var = (RegData$DischargedIntensiveStatus==1), N=Ntest),
-    'Død innen 30 dager' = AntAndel(var = RegData$Dod30, N=Ntest),
-    'Respirator (int)' = AntAndel(var = (RegData$MechanicalRespirator==1), N=Ntest),
-    'Nas registrert' = AntAndel(var = (RegData$Nas>0), N=Ntest),
-    'ARDS' = AntAndel(var = RegData$ARDS) #[which(RegData$Alder>=70)]
-  )
-
-  colnames(TabAndeler) <- c('Antall', 'Andel')
-
-  return(UtData <- list(Tab=TabAndeler, utvalgTxt=UtData$utvalgTxt, Ntest=Ntest))
-}
 
 #' Tabell med sentralmål, min,maks IQR
 #'
 #' @param RegData beredskapsskjema
-#' @inheritParams NIRUtvalgBeredsk
+#' @inheritParams NIRUtvalgEnh
 #'
 #' @return tabell, sentralmål
 #' @export
 #'
-SentralmaalTab <- function(RegData, valgtRHF='Alle', datoFra='2020-01-01', datoTil=Sys.Date(),
-                                erMann=9, resp=9, dodInt=9){
+SentralmaalTab <- function(RegData, datoFra='2020-01-01', datoTil=Sys.Date(),
+                                erMann=9 #valgtRHF='Alle', resp=9, dodInt=9
+                           ){
 
   if (valgtRHF == 'Ukjent') {valgtRHF <- 'Alle'}
-  UtData <- NIRUtvalgBeredsk(RegData=RegData, valgtRHF=valgtRHF,
+  UtData <- NIRUtvalgEnh(RegData=RegData, #valgtRHF=valgtRHF,
                              datoFra = datoFra,
                              datoTil = datoTil,
-                             dodInt = dodInt,
-                             resp=resp,
+                            # dodInt = dodInt,
+                             #resp=resp,
                              erMann = erMann)
   RegData <- UtData$RegData
   N <- dim(RegData)[1]

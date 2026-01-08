@@ -51,14 +51,14 @@ FigTidEnhet <- function(AntTab, outfile=''){
 #'
 #' Kan gereraliseres til andre variabler og grupperingsvar.
 #'
-#' @param TabAlder Dataramme med nødvendige figurparametre
 #' @param minN Maskerer verdier under <3
+#' @inheritParams NIRUtvalgEnh
 #'
 #' @return alders og kjønnsfordelnig
 #' @export
 FigFordelingKjonnsdelt <- function(RegData, valgtVar='Alder', minN = 0,
-                                   datoFra='2020-03-01', datoTil = Sys.Date(),
-                                   dodInt=9,erMann=9, grvar='PatientGender',
+                                   datoFra='2015-01-01', datoTil = Sys.Date(),
+                                   dodInt=9, erMann=9, grvar='PatientGender',
                                    outfile=''){
 
   RegData$PatientGender <- factor(RegData$PatientGender, levels = 1:2, labels = c("Menn", "Kvinner"))

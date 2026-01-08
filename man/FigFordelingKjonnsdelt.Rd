@@ -7,12 +7,9 @@
 FigFordelingKjonnsdelt(
   RegData,
   valgtVar = "Alder",
-  datoFra = "2020-03-01",
-  datoTil = Sys.Date(),
-  valgtRHF = "Alle",
-  skjemastatus = 9,
-  resp = 9,
   minN = 0,
+  datoFra = "2015-01-01",
+  datoTil = Sys.Date(),
   dodInt = 9,
   erMann = 9,
   grvar = "PatientGender",
@@ -20,9 +17,28 @@ FigFordelingKjonnsdelt(
 )
 }
 \arguments{
+\item{RegData}{En dataramme med alle nødvendige variabler fra registeret}
+
+\item{valgtVar}{Hvilken variabel som skal visualiseres. Se \strong{Details} for oversikt.}
+
 \item{minN}{Maskerer verdier under <3}
 
-\item{TabAlder}{Dataramme med nødvendige figurparametre}
+\item{datoFra}{Tidligste dato i utvalget (vises alltid i figuren). Standard 2019-01-01.
+Registeret inneholder registreringer f.o.m. 2011}
+
+\item{datoTil}{Seneste dato i utvalget (vises alltid i figuren).}
+
+\item{dodInt}{Levende/død ut fra intensiv.
+0: i live,
+1: død,
+alle: standard (alle andre verdier)}
+
+\item{erMann}{Kjønn, standard: alt annet enn 0/1 gir begge kjønn
+0: Kvinner
+1: Menn}
+
+\item{outfile}{Navn på fil figuren skrives til. Standard: '' (Figur skrives
+til systemets standard utdataenhet (som regel skjerm))}
 }
 \value{
 alders og kjønnsfordelnig

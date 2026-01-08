@@ -48,11 +48,7 @@ NIRFigAndelTid <- function(RegData, valgtVar='alder_u18', datoFra='2011-01-01', 
 
       #------- Tilrettelegge variable
       varTxt <- ''
-        if (valgtVar %in% c('beredMpand_opph', 'beredMpand_pers')) {
-          NIRVarSpes <- intensivberedskap::NIRberedskVarTilrettelegg(RegData=RegData, valgtVar=valgtVar)
-          } else {
             NIRVarSpes <- NIRVarTilrettelegg(RegData=RegData, valgtVar=valgtVar, figurtype = 'andelGrVar')
-            }
             RegData <- NIRVarSpes$RegData
             sortAvtagende <- NIRVarSpes$sortAvtagende
             varTxt <- NIRVarSpes$varTxt

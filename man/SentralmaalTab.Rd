@@ -6,16 +6,22 @@
 \usage{
 SentralmaalTab(
   RegData,
-  valgtRHF = "Alle",
   datoFra = "2020-01-01",
   datoTil = Sys.Date(),
-  erMann = 9,
-  resp = 9,
-  dodInt = 9
+  erMann = 9
 )
 }
 \arguments{
 \item{RegData}{beredskapsskjema}
+
+\item{datoFra}{Tidligste dato i utvalget (vises alltid i figuren). Standard 2019-01-01.
+Registeret inneholder registreringer f.o.m. 2011}
+
+\item{datoTil}{Seneste dato i utvalget (vises alltid i figuren).}
+
+\item{erMann}{Kjønn, standard: alt annet enn 0/1 gir begge kjønn
+0: Kvinner
+1: Menn}
 }
 \value{
 tabell, sentralmål
