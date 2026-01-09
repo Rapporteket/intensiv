@@ -193,11 +193,10 @@ print(xtable::xtable(RegHF, digits=0,
     \end{frame}
 
 
-  <<'AlderKjonn', include=FALSE>>=
-
-    dum <- FigFordelingKjonnsdelt(RegData = LuftData, valgtVar = 'Alder', minN=3,
+<<'AlderKjonn', include=FALSE>>=
+dum <- FigFordelingKjonnsdelt(RegData = LuftData, valgtVar = 'Alder', minN=3,
                                   outfile = 'AlderKjonn.pdf')
-  @
+@
 
   \begin{frame}[fragile] {Kjønnsfordeling }
 

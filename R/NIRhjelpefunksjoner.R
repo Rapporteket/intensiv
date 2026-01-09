@@ -223,7 +223,6 @@ WHERE cast(DateAdmittedIntensive as date) BETWEEN \'', datoFra, '\' AND \'', dat
 
 henteSamlerapporter <- function(filnavn, rnwFil, reshID=0,
                                 datoFra=Sys.Date()-180, datoTil=Sys.Date()) {
-    # Rpakke <- ifelse(rnwFil==as.character('NIRinfluensa.Rnw'), 'intensivberedskap', 'intensiv')
     tmpFile <- paste0('tmp',rnwFil)
     src <- normalizePath(system.file(rnwFil, package="intensiv"))
     #gå til tempdir. Har ikke skriverettigheter i arbeidskatalog
@@ -234,7 +233,7 @@ henteSamlerapporter <- function(filnavn, rnwFil, reshID=0,
 
     gc() #Opprydning gc-"garbage collection"
     file.copy(paste0(substr(tmpFile, 1, nchar(tmpFile)-3), 'pdf'), filnavn)
-    #file.rename(paste0(substr(tmpFile, 1, nchar(tmpFile)-3), 'pdf'), file)
+
 }
 
 #' Funksjon som produserer rapporten som skal sendes til mottager.

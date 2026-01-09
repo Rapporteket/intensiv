@@ -12,7 +12,7 @@ FigFordelingKjonnsdelt(
   datoTil = Sys.Date(),
   dodInt = 9,
   erMann = 9,
-  grvar = "PatientGender",
+  grvar = "Kjonn",
   outfile = ""
 )
 }
