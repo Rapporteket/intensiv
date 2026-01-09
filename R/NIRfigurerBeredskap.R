@@ -58,10 +58,10 @@ FigTidEnhet <- function(AntTab, outfile=''){
 #' @export
 FigFordelingKjonnsdelt <- function(RegData, valgtVar='Alder', minN = 0,
                                    datoFra='2015-01-01', datoTil = Sys.Date(),
-                                   dodInt=9, erMann=9, grvar='PatientGender',
+                                   dodInt=9, erMann=9, grvar='Kjonn',
                                    outfile=''){
 
-  RegData$PatientGender <- factor(RegData$PatientGender, levels = 1:2, labels = c("Menn", "Kvinner"))
+  RegData$Kjonn <- factor(RegData$erMann, levels = 0:1, labels = c("Menn", "Kvinner"))
   UtData <- NIRUtvalgEnh(RegData=RegData,
                              datoFra = datoFra,
                              datoTil = datoTil,
@@ -81,8 +81,9 @@ FigFordelingKjonnsdelt <- function(RegData, valgtVar='Alder', minN = 0,
     levels(RegData$Gr) <- grtxt #c(levels(RegData$AldersGr)[-length(gr)], paste0(max(gr),'+'))
   }
 
-  AntHoved <- table(RegData[, c("PatientGender", "Gr")])
-  AntHovedTab <- tidyr::as_tibble(as.data.frame.matrix(addmargins(table(RegData[, c("Gr", "PatientGender")]))), rownames=valgtVar)
+  AntHoved <- table(RegData[, c(grvar, "Gr")])
+  AntHovedTab <- tidyr::as_tibble(as.data.frame.matrix(addmargins(
+    table(RegData[, c("Gr", grvar)]))), rownames=valgtVar)
   NHoved <- rowSums(AntHoved)
   grtxtMin <- ''
 
@@ -122,8 +123,8 @@ FigFordelingKjonnsdelt <- function(RegData, valgtVar='Alder', minN = 0,
 
   if ( outfile != '') {dev.off()}
 
-  AntHovedTab$Andel <- paste0(round(AntHovedTab$Sum/AntHovedTab$Sum[dim(AntHovedTab)[1]]*100), ' %')
-  names(AntHovedTab)[(dim(AntHovedTab)[2]-1):dim(AntHovedTab)[2]] <- c("Antall", "Andel")
-
-  return(AntHovedTab)
+  # AntHovedTab$Andel <- paste0(round(AntHovedTab$Sum/AntHovedTab$Sum[dim(AntHovedTab)[1]]*100), ' %')
+  # names(AntHovedTab)[(dim(AntHovedTab)[2]-1):dim(AntHovedTab)[2]] <- c("Antall", "Andel")
+  #
+  # return(AntHovedTab)
 }

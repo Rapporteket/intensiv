@@ -6,7 +6,7 @@ devtools::install_github('Rapporteket/intensiv', ref = 'main_dev', )
 remotes::install_github('Rapporteket/rapbase', ref = 'forenkl_take2')
 
 setwd('../data')
-sship::dec('intensiv155c4fc1.sql.gz__20251124_081800.tar.gz',
+sship::dec('intensiv15c2d417d.sql.gz__20260108_155644.tar.gz',
            keyfile = "c://Users/lro2402unn/.ssh/id_rsa")
 setwd('c://Users/lro2402unn/RegistreGIT/intensiv')
 

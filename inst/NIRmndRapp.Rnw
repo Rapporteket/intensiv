@@ -192,17 +192,6 @@ print(xtable(alderDIV, digits=1, align=c('l', rep('r', ncol(alderDIV))),
 @
 \end{frame}
 
-<<'Figurer', include=FALSE>>=
-
-variable <- c('PrimaryReasonAdmitted')
-for (valgtVar in variable) {
-	outfile <- paste0(valgtVar, 'FordMnd', '.pdf')
-	NIRFigAndeler(RegData=RegData, valgtVar=valgtVar, datoFra=datoFra, reshID=reshID,
-	               enhetsUtvalg=3, preprosess=0, outfile = outfile)
-}
-
-@
-
 
 \begin{frame}[fragile] {Liggetid på intensiv}
 
@@ -233,6 +222,19 @@ xtable(liggetidKj, digits=1, align=c('l', rep('r', ncol(liggetidKj))),
 		label='tab:liggetidKj')
 @
 \end{frame}
+
+<<'Figurer', include=FALSE>>=
+
+# variable <- c('PrimaryReasonAdmitted')
+# for (valgtVar in variable) {
+#	outfile <- paste0(valgtVar, 'FordMnd', '.pdf')
+	NIRFigAndeler(RegData=RegData, valgtVar='PrimaryReasonAdmitted',
+	              datoFra=datoFra, reshID=reshID,
+	              enhetsUtvalg=3, preprosess=0,
+	              outfile = 'PrimaryReasonAdmittedFordMnd.pdf')
+# }
+
+@
 
 
 \begin{frame}[fragile] {Hovudårsak til intensivopphaldet}
