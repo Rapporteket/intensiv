@@ -225,9 +225,6 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
 tabPanel("Luftveisinfeksjon",
          sidebarPanel(id = 'brukervalgLuftvei',
                       width = 2,
-                      br(),
-                      h3('Hvilke andre utvalg ønskes?'),
-                      br(),
 
                       # uiOutput('CoroRappTxt'),
                       br(),
@@ -256,12 +253,12 @@ tabPanel("Luftveisinfeksjon",
                       # actionButton("tilbakestillValg", label="Tilbakestill valg")
          ),
          mainPanel(width = 10,
-                   h1('Resultater for pasienter med luftveisinfeksjoner'),
-                   h2('Denne siden er under utvikling! ', style = "color:red"),
-                   h3('Alle resultater er basert på ferdigstilte registreringer.
+                   h1('Pasienter med luftveisinfeksjoner'),
+                  # h2('Denne siden er under utvikling! ', style = "color:red"),
+                   h4(em(strong('Tallene er basert på ferdigstilte registreringer.
                       Mer detajerte resultater for luftveisinfeksjoner kan man finne
                       ved å filtrere på (ulike typer) luftveisinfeksjoner i andre
-                      faner på Rapporteket.'),
+                      faner på Rapporteket.'))),
                    br(),
                    fluidRow(
                    # splitLayout(cellWidths = c("50%", "50%"),
@@ -732,6 +729,10 @@ tabPanel(p("Registeradministrasjon", title='Registeradministrasjonens side'),
                         rapbase::autoReportInput("NIRuts"),
                         # For tørrkjøring
                         br(),
+                        br(),
+                        br(),
+                        h4('Hvis man ønsker å teste autorapporter uten å vente til neste dag.
+                           NB: Rapportene sendes ut til alle registrerte mottagere.'),
                         shiny::actionButton(inputId = "run_autoreport",
                                             label = "Kjør autorapporter"),
                         shiny::dateInput(inputId = "rapportdato",
