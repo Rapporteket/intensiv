@@ -17,12 +17,12 @@ kjorIntensivApp <- function(browser = FALSE, logAsJson = FALSE) {
   if (logAsJson) {
     rapbase::loggerSetup()
   }
+  if (browser) {
+    options(shiny.launch.browser = TRUE)
+  }
   app <- shiny::shinyApp(
     ui = intensiv::ui_intensiv,
-    server = intensiv::server_intensiv,
-    # shiny::runApp(ui = ui_intensiv, server = server_intensiv,
-    # system.file('R/appIntensiv.R', package = 'intensiv'),
-  options = list(launch.browser = browser)
+    server = intensiv::server_intensiv
   )
 
   return(app)
