@@ -15,7 +15,7 @@ source("dev/sysSetenv.R")
 intensiv::kjorIntensivApp(browser = TRUE)
 
 library(intensiv)
-reshID <- 706078 # 106271
+reshID <- 103948 #4205969
 dum <- intensiv::NIRRegDataSQL(datoFra = '2025-01-01')
 
 RegData <- intensiv::NIRPreprosess(RegData = dum)
@@ -27,7 +27,7 @@ dataMangler <- dataMRS[which(skjemaMangler %in% dataMRS$SkjemaGUID), ]
 
 knitr::knit2pdf('./inst/NIRluftveisinfek.Rnw')
 
-test <- NIRUtvalgEnh(RegData = RegData, luftvei = 3)
+  test <- NIRUtvalgEnh(RegData = RegData, luftvei = 3)
 
 
 skjemaidMRS <- as.data.frame(readxl::read_excel('skjema_2025-11-24_0706.xlsx'))

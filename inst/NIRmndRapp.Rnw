@@ -34,7 +34,7 @@ datoFra6mnd <- paste0(substr(as.character(dato %m-% months(6, abbreviate=FALSE))
 
 datoFra <- datoFra6mnd
 #Ønsker eget datasett for forrige måned
-dato <- as.POSIXlt('2018-12-07')
+# dato <- as.POSIXlt('2018-12-07')
 datoFraMnd <- format(datoTil, "%Y-%m-01")
 # Gir feil dato: datoFraMnd <- as.Date(paste0(1900+dato$year,'-', ifelse(dato$mon==0, 11, dato$mon), '-', '01'), tz='UTC') #dato -
 
@@ -51,8 +51,8 @@ RegData <- NIRUtvalgEnh(RegData=RegData, datoFra=datoFra1Aar)$RegData
 RegData <- FinnReinnleggelser(RegData) # Beregne reinnleggelser
 
 #Enhetsnivå
-nivaaEgen <-  RegData$Nivaa[match(reshID, RegData$NivaaNum)]
-ShNivaaEgenTxt <- c('overvåknings', 'postoperative', 'Gen<50%','Gen>50%', 'barne')[nivaaEgen]
+nivaaEgen <-  RegData$NivaaNum[match(reshID, RegData$ReshId)]
+ShNivaaEgenTxt <- c('overvåknings', 'postoperative', 'Gen<50pst','Gen>50pst', 'barne')[nivaaEgen]
 
 #RegData bare for siste 6 mnd:
 NIRUtvalg <- NIRUtvalgEnh(RegData, reshID = reshID, enhetsUtvalg =1,
@@ -242,7 +242,8 @@ xtable(liggetidKj, digits=1, align=c('l', rep('r', ncol(liggetidKj))),
 \begin{figure}[ht]
 \centering
 \includegraphics[scale=0.35]{PrimaryReasonAdmittedFordMnd.pdf}
-\caption{Hovudårsak til innlegging på intensiv (prosent per kategori) siste seks månader, eiga avdeling og andre \Sexpr{ShNivaaEgenTxt}einingar}
+\caption{Hovudårsak til innlegging på intensiv (prosent per kategori) siste seks månader,
+eiga avdeling og andre \Sexpr{ShNivaaEgenTxt} einingar}
 \end{figure}
 \end{frame}
 
@@ -299,8 +300,8 @@ spesialitetar (lunge, øyre-nese-hals, røntgen etc.). Lokal behandlingstradisjo
 
 finnDivRespMaal <- function(RegData){
       indResp <- which(RegData$respiratortid>0)
-      Resp <- round(summary(RegData$respiratortid[indResp]),1)
-      Resp <- sprintf('%1.1f', summary(RegData$respiratortid[indResp]),1)
+      #Resp <- round(summary(RegData$respiratortid[indResp]),1)
+      Resp <- sprintf('%1.1f', summary(RegData$respiratortid[indResp]))
       AndelResp <- paste0(round(100*sum(RegData$MechanicalRespirator==1)/dim(RegData)[1]),'%')
       c(Resp[4], Resp[3], AndelResp[1],
         paste0(Resp[2],' - ',Resp[5]),
@@ -320,6 +321,7 @@ xtable(tabResp, align=c('l', 'r','r','r','c','c'), #digits=c(0,1,1,1,0),
 		label='tab:Resp')
 @
 \end{frame}
+
 
 \begin{frame}[fragile] {SAPS II (alvorsskåre)}
 

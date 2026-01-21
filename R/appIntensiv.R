@@ -1008,6 +1008,7 @@ observe({
                          reshID = user$org()))
 
    output$tabNokkeltall <- function() {
+    if (dim(tab)[1]<2) {'Ingen registreringer' } else {
        kableExtra::kable(tab,
                          full_width=F,
                          digits = c(0,0,0,1,0,0,1,1,1,1,0,0,1,0,0)
@@ -1016,7 +1017,7 @@ observe({
                   kableExtra::column_spec(column = 2:(ncol(tab)), width = '4em')  %>%
          kableExtra::row_spec(0, bold = T, align = 'c') %>%
          kableExtra::kable_styling(full_width = FALSE, position = 'left')
-      } # ,rownames=T, digits=0 )
+      }} # ,rownames=T, digits=0 )
 
    output$lastNed_tabNokkeltall <- downloadHandler(
      filename = function(){'NokkelTall.csv'
@@ -1066,10 +1067,10 @@ observe({
      })
 
       output$tabAntOpphSh <- renderTable({
-        RegDataCov <- NIRUtvalgEnh(RegData=RegData, luftvei = as.numeric(input$luftveiValgReg))$RegData
+        RegDataLuft <- NIRUtvalgEnh(RegData=RegData, luftvei = as.numeric(input$luftveiValgReg))$RegData
             tab <- switch(input$tidsenhetReg,
-                   Mnd=tabAntOpphShMnd(RegData=RegDataCov, datoTil=input$sluttDatoReg, antMnd=12), #input$datovalgTab[2])
-                   Aar=tabAntOpphShAar(RegData=RegDataCov, datoTil=input$sluttDatoReg, antAar=10))
+                   Mnd=tabAntOpphShMnd(RegData=RegDataLuft, datoTil=input$sluttDatoReg, antMnd=12), #input$datovalgTab[2])
+                   Aar=tabAntOpphShAar(RegData=RegDataLuft, datoTil=input$sluttDatoReg, antAar=10))
 
       }, rownames = T, digits=0, spacing="xs"
       )
@@ -1529,9 +1530,9 @@ observe({
                         erMann=as.numeric(input$erMannSMR),
                         luftvei = as.numeric(input$luftveiValgSMR)
                     )
-      }, #, height=900, width=700 #heigth = 8000, width=800
-      height = function() {2.2*session$clientData$output_SMRfig_height}, #
-      width = function() {0.8*session$clientData$output_SMRfig_width}
+      },# height=900, width=700 #heigth = 8000, width=800
+       height = function() {3*session$clientData$output_SMRfig_height}, #
+      # width = function() {0.8*session$clientData$output_SMRfig_width}
       )
 
       output$LastNedFigSMR <- downloadHandler(
@@ -1583,8 +1584,9 @@ observe({
                        erMann=as.numeric(input$erMannInnMaate),
                        luftvei= as.numeric(input$luftveiValgInnMaate),
                        session=session)
-      }, height = function() {2.2*session$clientData$output_innMaate_height},
-      width = function() {0.7*session$clientData$output_innMaate_width}) #, height=900, width=700)
+      }, height=900, width=700)
+      # height = function() {2.2*session$clientData$output_innMaate_height},
+      # width = function() {0.7*session$clientData$output_innMaate_width}) #)
 
       output$LastNedFigTypeOpph <- downloadHandler(
         filename = function(){

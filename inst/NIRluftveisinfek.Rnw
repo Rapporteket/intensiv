@@ -9,6 +9,7 @@
 \usepackage{booktabs}
 \usepackage{rotating}
 \usepackage{graphicx}
+\usepackage{adjustbox}
 
 
 <<'initOpts',include=FALSE>>=
@@ -26,14 +27,13 @@ LuftData <- IntData[which(IntData$RespiratoryTractInfection == 1), ]
 LuftData$RHFc <- as.character(LuftData$RHF)
 
     #Legge på tidsenheter. Bruk factor hvis vil ha med tidsenheter uten registreringer - ikke standard!
-    LuftData$Dag <- factor(format(LuftData$InnDato, '%d.%m.%y'),
-  levels = format(seq(min(LuftData$InnDato), max(LuftData$InnDato), by='day'), '%d.%m.%y'))
-    LuftData$Aar <- as.numeric(format(LuftData$InnDato, '%Y'))
-    LuftData$UkeNr <- format(LuftData$InnDato, '%V')
-    LuftData$UkeAar <- format(LuftData$InnDato, '%G.%V') #%G -The week-based year, %V - Week of the year as decimal number (01–53)
-    LuftData$Innleggelsestidspunkt <- as.POSIXlt(LuftData$Innleggelsestidspunkt, tz= 'UTC',
-format='%Y-%m-%d %H:%M:%S' )
-    LuftData$MndAar <- format(LuftData$Innleggelsestidspunkt, '%b%y')
+  #   LuftData$Dag <- factor(format(LuftData$InnDato, '%d.%m.%y'),
+  # levels = format(seq(min(LuftData$InnDato), max(LuftData$InnDato), by='day'), '%d.%m.%y'))
+   # LuftData$Aar <- as.numeric(format(LuftData$InnDato, '%Y'))
+    #LuftData$UkeNr <- format(LuftData$InnDato, '%V')
+    #LuftData$UkeAar <- format(LuftData$InnDato, '%G.%V') #%G -The week-based year, %V - Week of the year as decimal number (01–53)
+   # LuftData$Innleggelsestidspunkt <- as.POSIXlt(LuftData$Innleggelsestidspunkt, tz= 'UTC', format='%Y-%m-%d %H:%M:%S' )
+    #LuftData$MndAar <- format(LuftData$Innleggelsestidspunkt, '%b%y')
 
 
 # #Legge på tidsenheter
@@ -105,11 +105,10 @@ xtable::xtable(tabNokkeltall,
   \end{frame}
 
 
-\begin{frame}[fragile] {Antall opphold med luftveisinfeksjoner som hovedårsak til innleggelse, per HF}
-Denne skal endres til å vise inneliggende,
-men for tiden overføres ikke ikke-ferdigstilte opphold til Rapporteket.
+\begin{frame}[fragile] {Antall opphold med luftveisinfeksjoner per HF}
+% Når overføring av ikke-ferdigstilte opphold til Rapporteket er på plass, skal denne skal endres til å vise inneliggende-
 
-I tabellen filtreres nå på RespiratoryTractInfectionPrimaryCauseForICUAdmission = 1, dvs. pasienter som er innlagt på grunn av luftveisinfeksjon
+I tabellen filtreres det på pasienter som er innlagt på grunn av luftveisinfeksjon.
 
 <<'InneliggendePrHF', results='asis',warnings=FALSE>>=
   #Viser opphold pr HF eller inneliggende pr sykehus hvis enhetsnivå er HF
@@ -126,7 +125,7 @@ colnames(RegHF) <-c('RHF', 'HF', 'Ant. pasienter')
 RegHF <- rbind(as.data.frame(RegHF), Totalt)
 print(xtable::xtable(RegHF, digits=0,
                      align = c('l', 'l', 'l', 'r'),
-                     caption = 'Antall luftveispasienter i hver enhet'),
+                     caption = 'Antall luftveispasienter med lkuftveisinfeksjon som hovedårsak til innleggelse'),
       include.rownames = FALSE)
 
 @
@@ -140,19 +139,23 @@ print(xtable::xtable(RegHF, digits=0,
   TabUkeRHF <- as.matrix(TabUkeRHF)
   TabUkeRHF <- rbind( TabUkeRHF, Totalt = colSums(TabUkeRHF))
   TabUkeRHF <- cbind( TabUkeRHF, 'Hele landet' = rowSums(TabUkeRHF))
+skaler <- ifelse(dim(TabUkeRHF)[1]>25, 1- 0.006*dim(TabUkeRHF)[1] ,1)
 
   print(xtable::xtable(TabUkeRHF, digits=0,
                        caption='Luftveisinfeksjoner per uke og region siste 40 uker.'),
-        sanitize.rownames.function = identity)
+        sanitize.rownames.function = identity,
+        scale = skaler)
 
   @
     \end{frame}
 
 
 
-  \begin{frame}[fragile]{Antall opphold med luftveisinfeksjon på hvert sykehus}
+  \begin{frame}[fragile]{Opphold med luftveisinfeksjon på hver enhet}
   <<'OpphPrHF', results='asis', warnings=FALSE>>=
-    RegSh <- LuftData %>%
+  # \begin{adjustbox}{width=\columnwidth}
+
+  RegSh <- LuftData %>%
     dplyr::group_by(as.character(RHF), ShNavn) %>%
     dplyr::summarise(.groups='rowwise',
                      'Antall opphold' = dplyr::n())
@@ -160,11 +163,14 @@ print(xtable::xtable(RegHF, digits=0,
   RegSh <- rbind(as.data.frame(RegSh), Totalt)
   colnames(RegSh) <- c('RHF', 'Enhet', 'Ant. opph.')
 
+  skaler <- ifelse(dim(RegSh)[1]>25, 1- 0.005*dim(RegSh)[1] ,1)
   print(
     xtable::xtable(RegSh , digits=0,
-                   align = c('l','l','l','r'),
-                   caption='Totalt antall opphold med luftveissmitte siste 40 uker.')
-    ,include.rownames = FALSE)
+                   align = c('l','l','l','r')
+                   # ,caption='Totalt antall opphold med luftveissmitte siste 40 uker.'
+                   )
+    ,include.rownames = FALSE,
+    scale=0.78)
   @
     \end{frame}
 
@@ -203,7 +209,7 @@ dum <- FigFordelingKjonnsdelt(RegData = LuftData, valgtVar = 'Alder', minN=3,
   \begin{figure}[ht]
   %\scalebox{0.5}
   \centering
-  \includegraphics[scale=0.35]{AlderKjonn.pdf}
+  \includegraphics[scale=0.38]{AlderKjonn.pdf}
   \caption{Fordeling av kjønn i ulike aldersgrupper for opphold med registrert luftveisinfeksjon
   siste 40 uker. Søylene maskeres hvis det er færre enn tre kvinner eller menn i ei aldersgruppe.}
   \end{figure}

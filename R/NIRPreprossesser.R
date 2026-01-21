@@ -99,11 +99,11 @@ NIRPreprosess <- function(RegData=RegData, skjema=1)	#, reshID=reshID)
       # Nye variabler:
       RegData$MndNum <- RegData$Innleggelsestidspunkt$mon +1
       RegData$MndAar <- format(RegData$Innleggelsestidspunkt, '%b%y')
-      RegData$UkeAar <- format(RegData$Innleggelsestidspunkt, 'uke%V.%g')
-      RegData$Kvartal <- ceiling(RegData$MndNum/3)
+     # RegData$UkeAar <- format(RegData$Innleggelsestidspunkt, 'uke%V.%g')
+      RegData$UkeAar <- format(RegData$Innleggelsestidspunkt, '%G.%V') #%G -The week-based year, %V - Week of the year as decimal number (01–53)RegData$Kvartal <- ceiling(RegData$MndNum/3)
       RegData$Halvaar <- ceiling(RegData$MndNum/6)
-      RegData$Aar <- 1900 + RegData$Innleggelsestidspunkt$year #strptime(RegData$Innleggelsestidspunkt, format="%Y")$year
-
+      RegData$Aar <- as.numeric(format(RegData$InnDato, '%Y')) # 1900 + RegData$Innleggelsestidspunkt$year #strptime(RegData$Innleggelsestidspunkt, format="%Y")$year
+#
       ##Kode om  pasienter som er overført til/fra egen avdeling til "ikke-overført"
       #1= ikke overført, 2= overført
       ind <- union(which(RegData$ReshId == RegData$PatientTransferredFromHospital),
