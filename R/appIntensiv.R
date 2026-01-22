@@ -256,7 +256,7 @@ tabPanel("Luftveisinfeksjon",
                    h1('Pasienter med luftveisinfeksjoner'),
                   # h2('Denne siden er under utvikling! ', style = "color:red"),
                    h4(em(strong('Tallene er basert på ferdigstilte registreringer.
-                      Mer detajerte resultater for luftveisinfeksjoner kan man finne
+                      Mer detaljerte resultater for luftveisinfeksjoner kan man finne
                       ved å filtrere på (ulike typer) luftveisinfeksjoner i andre
                       faner på Rapporteket.'))),
                    br(),

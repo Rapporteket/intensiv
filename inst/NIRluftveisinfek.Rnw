@@ -57,7 +57,7 @@ Dette er en automagisk utsendt rapport fra Norsk Intensivregister (NIR).
 Dokumentet inneholder oppsummering av luftveisinfeksjoner hos pasienter som
 kvalifiserer for rapportering til NIR.
 
-Dokumentet viser resultater fra ferdigstilte opphold med luftveisinfeksjon. (Opphold i kladd er ikke med.) At et opphold er ferdigstilt vil si at opplysningene er kontrollert og ferdig registrert.
+Dokumentet viser resultater fra ferdigstilte opphold med påvist luftveisinfeksjon. (Opphold i kladd er ikke med.) At et opphold er ferdigstilt vil si at opplysningene er kontrollert og ferdig registrert.
 
 Variablene som inngår i luftveisrapporteringen, ble innført i uke 42, 2025. Enkelte sykehus har imidlertid registrert data tilbake i tid. Rapporteringen vil derfor først være komplett fra og med uke 42, 2025.
 
@@ -124,7 +124,7 @@ colnames(RegHF) <-c('RHF', 'HF', 'Ant. pasienter')
 RegHF <- rbind(as.data.frame(RegHF), Totalt)
 print(xtable::xtable(RegHF, digits=0,
                      align = c('l', 'l', 'l', 'r'),
-                     caption = 'Antall luftveispasienter med lkuftveisinfeksjon som hovedårsak til innleggelse'),
+                     caption = 'Antall luftveispasienter med luftveisinfeksjon som hovedårsak til innleggelse'),
       include.rownames = FALSE)
 
 @
