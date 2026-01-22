@@ -9,7 +9,6 @@
 \usepackage{booktabs}
 \usepackage{rotating}
 \usepackage{graphicx}
-\usepackage{adjustbox}
 
 
 <<'initOpts',include=FALSE>>=
@@ -153,7 +152,6 @@ skaler <- ifelse(dim(TabUkeRHF)[1]>25, 1- 0.006*dim(TabUkeRHF)[1] ,1)
 
   \begin{frame}[fragile]{Opphold med luftveisinfeksjon på hver enhet}
   <<'OpphPrHF', results='asis', warnings=FALSE>>=
-  # \begin{adjustbox}{width=\columnwidth}
 
   RegSh <- LuftData %>%
     dplyr::group_by(as.character(RHF), ShNavn) %>%
