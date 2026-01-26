@@ -1,17 +1,17 @@
-#' Funksjon for å tilrettelegge variable for beregning. 
+#' Funksjon for å tilrettelegge variable for beregning.
 #'
-#' Denne funksjonen gjør utvalg og tilrettelegger variable (gitt ved valgtVar) til videre bruk. 
-#' Videre bruk kan eksempelvis være beregning av AggVerdier eller gjennomsnitt. 
+#' Denne funksjonen gjør utvalg og tilrettelegger variable (gitt ved valgtVar) til videre bruk.
+#' Videre bruk kan eksempelvis være beregning av AggVerdier eller gjennomsnitt.
 #' Funksjonen gjør også filtreringer som å fjerne ugyldige verdier for den valgte variabelen, samt ta høyde for avhengigheter med
-#' andre variable. Det er også her man angir aksetekster og titler for den valgte variabelen. 
+#' andre variable. Det er også her man angir aksetekster og titler for den valgte variabelen.
 #' Her kan mye hentes til analysebok
 #'
-#'    				
+#'
 #' @inheritParams NIRFigAndeler
 #' @inheritParams NIRUtvalgEnh
-#' @param figurtype Hvilken figurtype det skal tilrettelegges variable for: 
+#' @param figurtype Hvilken figurtype det skal tilrettelegges variable for:
 #'                'andeler', 'andelGrVar', 'andelTid', 'gjsnGrVar', 'gjsnTid'
-#'				
+#'
 #' @return Definisjon av valgt variabel.
 #'
 #' @export
@@ -20,7 +20,7 @@
 NIRVarTilretteleggPaaror  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='andeler'){
 
       "%i%" <- intersect
-      
+
       #----------- Figurparametre ------------------------------
       cexgr <- 1	#Kan endres for enkeltvariable
       retn <- 'H'		#Vertikal som standard. 'H' angis evt. for enkeltvariable
@@ -42,61 +42,26 @@ NIRVarTilretteleggPaaror  <- function(RegData, valgtVar, grVar='ShNavn', figurty
       varTxt <- 'hendelser'
 
       minald <- 0
-      tittel <- 'Mangler tittel' 
+      tittel <- 'Mangler tittel'
       variable <- 'Ingen'
-      #deltittel <- ''
       RegData$Variabel <- 0
 
-      
+
       #--------------- Definere variable ------------------------------
       #Variabeltyper: Numeriske, kategoriske, indikator
       # For hver valgtVar:
       # Definer og gjør utvalg for variabelen
       # tittel, xAkseTxt, sortAvtagende (standard: TRUE)
-      
-#DEFINERTE VARIABLE:
-            Del1 <- c('BehandlingHoeflighetRespektMedfoelelse',
-                'SymptomSmerte',
-                'SymptomPustebesvaer',
-                'SymptomUro',
-                'BehandlingBesvarerBehov',
-                'BehandlingBesvarerStoette',
-                'BehandlingSamarbeid',
-                'BehandlingBesvarerHoeflighetRespektMedfoelelse',
-                'SykepleierOmsorg',
-                'SykepleierKommunikasjon',
-                'LegeBehandling',
-                'AtmosfaerenIntensivAvd',
-                'AtmosfaerenPaaroerenderom',
-                'OmfangetAvBehandlingen')
-      Del2 <- c('LegeInformasjonFrekvens',
-                'SvarPaaSpoersmaal',
-                'ForklaringForstaaelse',
-                'InformasjonsAerlighet',
-                'InformasjonOmForloep',
-                'InformasjonsOverensstemmelse',
-                'BeslutningsInvolvering',
-                'BeslutningsStoette',
-                'BeslutningsKontroll',
-                'BeslutningsTid',
-                'LivsLengde',
-                'LivssluttKomfor',
-                'LivssluttStoette')
- 
+
       tittel <- '' #I AndelerGrVar og GjsnGrVar genereres tittel i beregningsfunksjonen
       verdiTom <- -1
-      
-      library(magrittr)
-      #KodebokPaarorende <- read.table(file='C:/ResultattjenesteGIT/intensiv/doc/KodebokPaarorende.csv', 
-      #                                header=T, sep=';', stringsAsFactors = F) #encoding = 'UTF-8',
-      #VarNavnKodebok <- KodebokPaarorende$Variabelnavn[which(KodebokPaarorende$Variabelnavn != "")]
-      
 
- #AUTOMATISK TILRETTELEGGING AV VARIABLE VHA KODEBOK     
-       if (valgtVar %in% c(Del1, Del2)) {
+      library(magrittr)
+
+ #AUTOMATISK TILRETTELEGGING AV VARIABLE VHA KODEBOK
       #       indKodebok <- which(KodebokPaarorende$Variabelnavn == valgtVar):(
       #             which(KodebokPaarorende$Variabelnavn == VarNavnKodebok[which(VarNavnKodebok==valgtVar)+1])-1)
-      #   #grtxtDum <- KodebokPaarorende$Mulige.verdier[indKodebok] 
+      #   #grtxtDum <- KodebokPaarorende$Mulige.verdier[indKodebok]
       #   #splitt <- stringr::str_split(grtxtDum, pattern = ' = ')
       #   #matr <- rlist::list.rbind(splitt)
       #   grInfo <- KodebokPaarorende$Mulige.verdier[indKodebok] %>% stringr::str_split(pattern=' = ') %>% rlist::list.rbind()
@@ -107,118 +72,118 @@ NIRVarTilretteleggPaaror  <- function(RegData, valgtVar, grVar='ShNavn', figurty
       #   #posTxt <- rlist::list.rbind(dum) #Konverterer liste til matrise
       #   tittel <- KodebokPaarorende$Feltnavn[indKodebok[1]]
       #   RegData$VariabelGr <- factor(RegData[,valgtVar], levels=gr, labels=grtxt)
-      # } 
-      
+      # }
+
+         varSmSvar <- c(
+           'AtmosfaerenIntensivAvd_2',
+           'AtmosfaerenPaaroerenderom_2',
+           'BehandlingBesvarerBeho_2v',
+           'BehandlingBesvarerHoeflighetRespektMedfoelelse_2',
+           'BehandlingBesvarerStoette_2',
+           'BehandlingHoeflighetRespektMedfoelelse_2',
+           'BehandlingSamarbeid_2',
+           'DeltagelseIOmsorg',
+           'ForklaringForstaaelse_2',
+           'InformasjonOmForloep_2',
+           'InformasjonsAerlighet_2',
+           'InformasjonsOverensstemmelse_2',
+           'LegeBehandling_2',
+           'LegeInformasjonFrekvens_2',
+           'MengdenAvHelsetjenester',
+           'OmfangetAvBehandlingen_2',
+           'SvarPaaSpoersmaal_2',
+           'SykepleierKommunikasjon_2',
+           'SykepleierOmsorg_2',
+           'SymptomPustebesvaer_2',
+           'SymptomSmerte_2',
+           'SymptomUro_2')
+
+
       tittel <- switch(valgtVar,
-                       BehandlingHoeflighetRespektMedfoelelse = c('Hvordan ble pasienten møtt av intensivpersonalet', 
-                                                                  ' med hensyn til høflighet, respekt og medfølelse?'),
-                       SymptomSmerte = c('Hvor godt vurderte og behandlet intensivpersonalet ',
-                                         'symptomene til pasienten med hensyn til smerte?'),
-                       SymptomPustebesvaer = c('Hvor godt vurderte og behandlet intensivpersonalet ',
-                                               'symptomene til pasienten med hensyn til pustebesvær?'),
-                       SymptomUro = c('Hvor godt vurderte og behandlet intensivpersonalet ',
-                                      'symptomene til pasienten med hensyn til uro?'),
-                       BehandlingBesvarerBehov	= 'Hvor godt viste intensivpersonalet interesse for dine behov?',
-                       BehandlingBesvarerStoette = c('Hvor god var den følelsesmessige støtten',
-                                                     'som du fikk av intensivpersonalet?'),
-                       BehandlingSamarbeid = c('Hvordan samarbeidet intensivpersonalet som ivaretok',
-                                               'og behandlet pasienten?'),
-                       BehandlingBesvarerHoeflighetRespektMedfoelelse = c('Hvordan ble du møtt av intensivpersonalet',
-                                                                          'med hensyn til høflighet, respekt og medfølelse?'),
-                       SykepleierOmsorg = 'Hvor godt synes du sykepleierne ivaretok pasienten?',
-                       SykepleierKommunikasjon = 'Hvor ofte snakket sykepleierne med deg om pasientens tilstand?',
-                       LegeBehandling = 'Hvor godt synes du legene ivaretok pasienten?',
-                       AtmosfaerenIntensivAvd = 'Atmosfæren i intensivavdelingen var:',
-                       AtmosfaerenPaaroerenderom = 'Atmosfæren på pårørenderommet/venterommet var:',
-                       OmfangetAvBehandlingen =	c('Hvor tilfreds var du med nivå eller omfang av',
-                                                  'pleie og behandling som pasienten fikk på intensivavdelingen?'),
-                       LegeInformasjonFrekvens	= 'Hvor ofte snakket legene med deg om pasientens tilstand?',
-                       SvarPaaSpoersmaal	= 'Hvor villig var intensivpersonalet til å svare på dine spørsmål?',
-                       ForklaringForstaaelse = 'Hvor godt klarte intensivpersonalet å gi deg forklaringer som du forsto?',
-                       InformasjonsAerlighet = c('Hvor ærlig synes du informasjonen du fikk',
-                                                 'om tilstanden til pasienten var?'),
-                       InformasjonOmForloep = c('Hvor godt ble du informert om hva som skjedde med pasienten',
-                                                'og hvorfor ting ble gjort?'),
-                       InformasjonsOverensstemmelse = c('Hvor stor overensstemmelse var det i informasjonen',
-                                                        'du fikk om tilstanden til pasienten?')
-      )
+      AtmosfaerenIntensivAvd_2 = 'Hvor fornøyd er du med stemningen i intensivavd.?',
+        AtmosfaerenPaaroerenderom_2	= 'Hvor fornøyd er du med stemningen på venterommet?',
+        BehandlingBesvarerBeho_2v	=  'Hvor godt viste intensivpersonalet interesse for dine behov?',
+      BehandlingBesvarerHoeflighetRespektMedfoelelse_2	= 'Hvilken høflighet, respekt og omtanke som ble vist deg?',
+      BehandlingBesvarerStoette_2	= 'Hvor god følelsesmessig støtte ga personalet deg?',
+      BehandlingHoeflighetRespektMedfoelelse_2	= 'Høflighet, respekt og medfølelse som ble vist pasienten',
+      BehandlingSamarbeid_2	= 'Samarbeidet mellom alt intensivpersonale som tok hand om pasienten',
+      DeltagelseIOmsorg	= 'Din deltakelse i omsorgen for ditt kritisk syke familiemedlem?',
+        ForklaringForstaaelse_2	= 'Hvor godt intensivpersonalet ga deg forklaringer som du forsto?',
+      InformasjonOmForloep_2 = 'Informasjon fra personalet om hva som hendte med pasienten?',
+      InformasjonsAerlighet_2 = 'Ærligheten i informasjon som ble gitt om pasientens tilstanden?',
+      InformasjonsOverensstemmelse_2 = 'Konsistensen i informasjonen som ble gitt om tilstanden til pasienten',
+      LegeBehandling_2 = 'Hvor godt ivaretok legene pasienten (færdighet og kompetanse)',
+      LegeInformasjonFrekvens_2 = 'Hyppigheten av kommunikasjon med legene i intensivavdelingen?',
+      MengdenAvHelsetjenester = 'Fornøydhet med NIVÅET/mengden av helsetjenester pasienten mottok på avd.?',
+        OmfangetAvBehandlingen_2 = 'Fornøydhet med din deltakelse i daglige legevisitter?',
+        SvarPaaSpoersmaal_2 = 'Personalets villighet til å svare på spørsmål?',
+      SykepleierKommunikasjon_2 = 'Hyppighet av intensivsykepleierne kommunikasjon om pasientens tilstanden?',
+      SykepleierOmsorg_2 = 'Hvor godt ivaretok intensivsykepleiere pasienten',
+      SymptomPustebesvaer_2 = 'Intensivpersonalet vurdering/behandling av pasientens pustevanskeligheter',
+SymptomSmerte_2 = 'Intensivpersonalet vurdering/behandling av pasientens smerte',
+SymptomUro_2 = 'Intensivpersonalets vurdering og behandling av pasientens uro/agitasjon'
+)
+
+if (valgtVar %in% varSmSvar){
+  # -1 = Velg verdi, 1 = Totalt misfornøyd (1), 2 = Litt misfornøyd (2), 3 = For det meste fornøyd (3),
+  # 4 = Svært fornøyd (4), 5 = Totalt fornøyd (5), 6 = Ikke aktuelt
+  gr <- 1:6
+  grtxt <- c('Totalt misfornøyd', 'Litt misfornøyd', 'For det meste fornøyd',
+             'Svært fornøyd', 'Totalt fornøyd', 'Ikke aktuelt')
+  }
 
 
-      
+      if (valgtVar == 'HoeyesteFullfoerteUtdannelse') {
+             #-1:5         -1 = Velg verdi,
+         tittel <- 'Høyeste nivå av fullført utdannelse'
+         gr <- 0:4
+          grtxt <- c('Ikke fullført grunnskole/videregående',
+                     'Fullført grunnskole og videregående',
+                     'Fullført yrkesutdanning',
+                     'Universitetsgrad tilsv. bachelor',
+                     'Master eller Doktorgrad')
+          }
+       if (valgtVar == 'LivssluttKomfor_2') {
+             tittel <- 'De siste timene ditt familiemedlem levde, \n
+             hvordan  tenker du at hen hadde det:'
+             gr <- 1:5
+             grtxt <- c('Svært ukomfortabelt', 'Noe ukomfortabelt',
+             'For det meste komfortabelt', 'Svært komfortabelt', 'Fullkomment komfortabelt')
+       }
 
-      if (valgtVar %in% c(Del1[c(1:9,11:13)],Del2[c(2:6)])) {
-            # -1 = Velg verdi	1 = Fremragende	2 = Meget godt	3 = Godt	4 = Noenlunde	5 = Dårlig	6 = Ikke aktuelt
-            # 1 = Fremragende	2 = Meget godt	3 = Godt	4 = Noenlunde	5 = Dårlig	8:'', 9: = Ikke aktuelt
-            grtxt <- c('Fremragende', 'Meget godt', 'Godt', 'Noenlunde', 'Dårlig') #, '','Ikke svart')
+
+      if (valgtVar == 'BeslutningsStoette_2') {
+        tittel <- 'Hvor mye støtte følte du at du fikk i prosessen med beslutningstaking?'
+        gr <- 1:5
+        grtxt <- c('Ingen  støtte i det hele tatt', 'Liten støtte',
+                   'Hverken eller', 'Fikk støtte', 'Mye støtte')
       }
-      if (valgtVar %in% c(Del1[10],Del2[1])) {
-            #      -1:Velg verdi, 1:Svært ofte, 2: Ofte, 3: Av og til, 4: Sjelden, 5: Aldri, 6: Ikke relevant
-            # 1 = Fremragende	2 = Meget godt	3 = Godt	4 = Noenlunde	5 = Dårlig	8:'', 9: = Ikke aktuelt
-            grtxt <- c('Svært ofte', 'Ofte', 'Av og til', 'Sjelden', 'Aldri')#, '','Ikke svart')
-      }
-      if (valgtVar %in% Del1[14]) {
-            #-1 = Velg verdi	1 = Svært fornøyd	2 = Meget fornøyd	3 = Middels fornøyd	4 = Ganske misfornøyd	
-            #5 = Svært misfornøyd	6 = Ikke relevant
-            # 1 = Fremragende	2 = Meget godt	3 = Godt	4 = Noenlunde	5 = Dårlig	8:'', 9: = Ikke aktuelt
-            grtxt <- c('Svært fornøyd', 'Meget fornøyd', 'Middels fornøyd',
-                       'Ganske misfornøyd', 'Svært misfornøyd')#, '','Ikke svart')
-      }
-      
-}
-       
-       if (valgtVar == 'BeslutningsInvolvering') { #Del2[7]
-             #-1:5
-             tittel <-  'Følte du deg involvert i beslutningsprosessen?'	
-             grtxt <- c('veldig utelatt', 'noe utelatt', 'verken eller', 'noe involvert', 
-                        'veldig involvert')#, '','Ikke svart') #paste0('Jeg følte meg ', )
-       }
-       if (valgtVar == 'BeslutningsStoette') { #Del2[8]
-             #-1:5
-             tittel <-  'Følte du at du fikk støtte når beslutningene ble tatt?'	
-             grtxt <- c('ikke støtte', 'liten støtte', 'en viss støtte', 
-                        'støtte', 'mye støtte')#, '','Ikke svart') #paste0('Jeg følte at jeg ', )
-       }
-       if (valgtVar == 'BeslutningsKontroll') { #Del2[9]
-             #-1:5
-             tittel <- 'Følte du at du hadde innflytelse på den behandlingen \nsom ditt familiemedlem fikk?'	
-             grtxt <- c('helt uten innflytelse', 'liten innflytelse', 'verken eller', 
-                        'en viss innflytelse', 'god innflytelse')#, '','Ikke svart')
-       }
-       if (valgtVar == 'BeslutningsTid') { #Del2[10]
-             #-1:2
-             tittel <- c('Når beslutninger skulle tas, hadde du tilstrekkelig med tid til ', 
-                         'å uttrykke dine bekymringer og få besvart dine spørsmål?')
-             grtxt <- c('trengte mer tid', 'tilstrekkelig med tid')
-             #koder <- c(1,2,8,9)
-       }
-       if (valgtVar == 'LivsLengde') { #Del2[11], #-1:5
-             tittel <- 'Hvilket utsagn beskriver best din oppfatning \nang. livet til pasienten:'
-             grtxt <- c('unødvendig forlenget', 'forlenget litt mer enn nødvendig', 
-                        'passe', 'forkortet litt mer enn nødvendig', 'unødvendig forkortet')
-       }
-       if (valgtVar == 'LivssluttKomfor') { #Del2[12] #-1:5
-             tittel <- 'Under de siste timene av livet til pasienten, hvilket utsagn 
-             beskriver best din oppfatning om hvordan han/hun hadde det:'
-             grtxt <- c('ukomfortabelt', 'noe ukomfortabelt', 'stort sett \nkomfortabelt',
-                        'svært komfortabelt', 'fullstendig komfortabelt')
-       }
-       if (valgtVar == 'LivssluttStoette') { #Del2[13] #-1:5
-             tittel <- 'Under de siste timene før pasienten døde, hvordan \nfølte at du ble involvert beslutningsprosessen?'
-             grtxt <- c('veldig utelatt', 'noe utelatt', 'verken eller', 'noe involvert', 'veldig involvert')
-       }
-      grtxt <- c(grtxt, '','Ikke svart')
-      
+
+      # BeslutningsKontroll_2	23. Følte du at du hadde kontroll når det gjaldt ivaretakelsen av ditt familiemedlem?	-1 = Velg verdi, 1 = Jeg følte at jeg ikke hadde noen som helst kontroll og helsevesenet tok over og dikterte den behandlingen som mitt familiemedlem fikk (1), 2 = Jeg følte at jeg ikke hadde full kontroll og at helsevesenet tok over og dikterte den behandlingen som mitt familiemedlem fikk (2), 3 = Jeg følte hverken at jeg hadde kontroll eller var uten kontroll (3), 4 = Jeg følte at jeg hadde noe kontroll over den behandlingen som mitt familiemedlem fikk (4), 5 = Jeg følte jeg hadde god kontroll over den behandlingen mitt familiemedlem fikk (5)
+      # LivsLengde_2	25. Hvilket av de følgende utsagn beskriver best dine synspunkter:	-1 = Velg verdi, 1 = Jeg følte at livet til mitt familiemedlem ble unødvendig forlenget (1), 2 = Jeg følte at livet til mitt familiemedlem ble noe unødvendig forlenget (2), 3 = Jeg følte hverken at livet til mitt familiemedlem ble unødvendig forlenget eller forkortet (3), 4 = Jeg følte at livet til mitt familiemedlem ble noe unødvendig forkortet (4), 5 = Jeg følte at livet til mitt familiemedlem ble unødvendig forkortet (5)
+      # LivssluttStoette_2	27. I de siste timene før ditt familiemedlem døde, hvilket av de følgende utsagn beskriver best dine synspunkter:	-1 = Velg verdi, 1 = Jeg følte meg svært forlatt av helseteamet (1), 2 = Jeg følte meg noe forlatt av helseteamet (2), 3 = Jeg følte meg hverken forlatt eller støttet av helseteamet (3), 4 = Jeg følte meg støttet av helseteamet (4), 5 = Jeg følte meg svært støttet av helseteamet (5)
+      # BeslutningsInvolvering_2	21. Hvor inkludert eller ekskludert følte du deg i prosessen med beslutningstaking?	-1 = Velg verdi, 1 = Jeg følte meg veldig ekskludert (1), 2 = Jeg følte meg noe ekskludert (2), 3 = Jeg følte meg hverken ekskludert eller inkludert i prosessen med beslutningstaking (3), 4 = Jeg følte meg noe inkludert (4), 5 = Jeg følte meg veldig inkludert (5)
+      # BeslutningsTid_2	24. Når det ble gjort beslutninger, hadde du tilstrekkelig tid til å ta opp dine bekymringer og få svar på dine spørsmål?	-1 = Velg verdi, 1 = Jeg hadde klart behøvd mer tid (1), 2 = Tiden jeg hadde var noe utilstrekkelig (2), 3 = Tiden jeg hadde var tilstrekkelig (3), 4 = Tiden jeg hadde var mer enn tilstrekkelig (4), 5 = Tiden jeg hadde var betydelig mer enn tilstrekkelig (5)
+
+
+
+
+
+
+
+
+
       RegData$VariabelGr <- RegData[ ,valgtVar]
       RegData$VariabelGr[RegData$VariabelGr %in% c(-1,6)] <- 9
       RegData$VariabelGr <- factor(RegData$VariabelGr, levels=c(1:(length(grtxt)-2),8:9))
-      
-      
+
+
        if (valgtVar %in% c('SumScoreSatisfactionCare', 'SumScoreSatisfactionDecision', 'SumScoreAllQuestions')) {  #gjsnGrVar
              RegData <- RegData[which(RegData[,valgtVar] >= 0), ]    #Tar bort alder<0
              if (figurtype == 'andeler') {	#Fordelingsfigur
                    RegData$Variabel  <- RegData[,valgtVar]
-                   gr <- c(seq(0, 90, 10),100)		
-                   RegData$VariabelGr <- cut(RegData$Variabel, breaks=gr, include.lowest=TRUE, right=FALSE)	
+                   gr <- c(seq(0, 90, 10),100)
+                   RegData$VariabelGr <- cut(RegData$Variabel, breaks=gr, include.lowest=TRUE, right=FALSE)
                    grtxt <- c('0-9','10-19','20-29','30-39','40-49','50-59','60-69','70-79','80-89','90-100')
                    xAkseTxt <- 'sumskår'}
              tittel <- switch (valgtVar,
@@ -226,12 +191,12 @@ NIRVarTilretteleggPaaror  <- function(RegData, valgtVar, grVar='ShNavn', figurty
                                SumScoreSatisfactionDecision = 'Totalskår, beslutningsmedvirkning',
                                SumScoreAllQuestions = 'Totalskår')
        }
-       
-       
-          
+
+
+
       UtData <- list(RegData=RegData, minald=minald,
-                     grtxt=grtxt, cexgr=cexgr, varTxt=varTxt, xAkseTxt=xAkseTxt, KImaal=KImaal, KImaaltxt=KImaaltxt, 
+                     grtxt=grtxt, cexgr=cexgr, varTxt=varTxt, xAkseTxt=xAkseTxt, KImaal=KImaal, KImaaltxt=KImaaltxt,
                      retn=retn,tittel=tittel, flerevar=flerevar, variable=variable, sortAvtagende=sortAvtagende)
-      return(invisible(UtData)) 
-      
+      return(invisible(UtData))
+
 }

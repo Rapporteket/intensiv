@@ -12,30 +12,6 @@
 #'
 NIRpaarorDataSQL <- function(datoFra = '2023-10-01', datoTil = Sys.Date(), medH=0) {
 
-
-  varHoved <- "UPPER(SkjemaGUID) AS SkjemaGUID
-                ,DateAdmittedIntensive
-                ,DaysAdmittedIntensiv
-                ,Respirator
-                ,TransferredStatus
-                ,Saps2Score
-                ,Saps2ScoreNumber
-                ,TypeOfAdmission
-                ,Nems
-                ,Morsdato
-                ,PatientTransferredFromHospital
-                ,PatientTransferredToHospital
-                ,ShNavn
-                ,DateDischargedIntensive "
-
-  varHoved <- '*'
-  queryH <- paste0(
-    'SELECT ', varHoved,
-    'FROM intensivopphold
-     WHERE cast(DateAdmittedIntensive as date) BETWEEN \'', datoFra, '\' AND \'', datoTil, '\'')
-
-  DataHoved <- rapbase::loadRegData(registryName="data", query=queryH)
-
   varPaaror <- 'PasientGUID,
 SkjemaGUID,
 HovedskjemaGUID,
@@ -154,9 +130,42 @@ PaarorData <- rapbase::loadRegData(
     registryName="data",
     query= queryP)
 
-  query <- switch(as.character(medH),
-                  '0' = queryP,
-                  '1' = queryH)
+  # query <- switch(as.character(medH),
+  #                 '0' = queryP,
+  #                 '1' = queryH)
+
+if (medH == 1){
+
+
+  varHoved <- "SkjemaGUID
+                ,DateAdmittedIntensive
+                ,DaysAdmittedIntensiv
+                ,Respirator
+                ,TransferredStatus
+                ,Saps2Score
+                ,Saps2ScoreNumber
+                ,TypeOfAdmission
+                ,Nems
+                ,Morsdato
+                ,PatientTransferredFromHospital
+                ,PatientTransferredToHospital
+                ,ShNavn
+                ,DateDischargedIntensive "
+
+  # varHoved <- '*'
+  queryH <- paste0(
+    'SELECT ', varHoved,
+    'FROM intensivopphold
+     WHERE cast(DateAdmittedIntensive as date) BETWEEN \'', datoFra, '\' AND \'', datoTil, '\'')
+
+  HovedData <- rapbase::loadRegData(registryName="data", query=queryH)
+
+  PaarorData <- merge(PaarorData, HovedData,
+        by.x='HovedskjemaGUID', by.y = 'SkjemaGUID',
+        incomparables = NA)
+
+}
+
 
 
   #Variabler i gammelt skjema
@@ -258,5 +267,5 @@ PaarorData <- rapbase::loadRegData(
 
 
 
-    return(RegData)
+    return(PaarorData)
 }

@@ -16,8 +16,10 @@ intensiv::kjorIntensivApp(browser = TRUE)
 
 library(intensiv)
 reshID <- 103948 #4205969
-dum <- intensiv::NIRRegDataSQL(datoFra = '2025-01-01')
 
+
+PaarorDataTest <- NIRpaarorDataSQL(medH = 1)
+dum <- intensiv::NIRRegDataSQL(datoFra = '2025-01-01')
 RegData <- intensiv::NIRPreprosess(RegData = dum)
 RegData <- RegData[RegData$ReshId==reshID,]
 
