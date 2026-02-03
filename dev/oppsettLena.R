@@ -15,12 +15,26 @@ source("dev/sysSetenv.R")
 intensiv::kjorIntensivApp(browser = TRUE)
 
 library(intensiv)
-reshID <- 103948 #4205969
+reshID <- 705577 #103948 #4205969
 
 
-PaarorDataTest <- NIRpaarorDataSQL(medH = 1)
-dum <- intensiv::NIRRegDataSQL(datoFra = '2025-01-01')
+dum <- intensiv::NIRRegDataSQL(datoFra = '2023-11-01')
 RegData <- intensiv::NIRPreprosess(RegData = dum)
+PaarorData <- NIRpaarorDataSQL(medH = 0)
+
+PaarorDataH <- merge(PaarorData, RegData,
+                     by.x = 'HovedskjemaGUID',
+                     by.y = 'SkjemaGUID',
+                     all.x = TRUE,
+                     suffixes = c('_paaror',''))
+
+NIRFigPrePostPaaror(RegData=PaarorDataH, preprosess = 0, valgtVar='BehandlingBesvarerStoette_2',
+                  startDatoIntervensjon = '2024-05-02',
+                  #datoFra=input$datovalgPaarorFord[1], datoTil=input$datovalgPaarorFord[2],
+                  reshID = 705577,
+                    enhetsUtvalg = 2,
+                    erMann=9
+)
 RegData <- RegData[RegData$ReshId==reshID,]
 
 dataMRS <-   readxl::read_excel('../data/NIRdata_2025-11-25_1035.xlsx')
