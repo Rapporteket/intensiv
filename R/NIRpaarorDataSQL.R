@@ -10,24 +10,166 @@
 #' @export
 #'
 #'
-NIRpaarorDataSQL <- function(datoFra = '2015-12-01', datoTil = Sys.Date(), medH=0) {
+NIRpaarorDataSQL <- function(datoFra = '2023-10-01', datoTil = Sys.Date(), medH=0) {
+
+  varPaaror <- 'PasientGUID,
+SkjemaGUID,
+HovedskjemaGUID,
+UnitId,
+FormVersionNumber,
+FormStatus,
+CreationDate,
+FormDate,
+LastUpdate,
+LastUpdateBy,
+RHF,
+CreatedBy,
+Owner,
+HF,
+Hospital,
+HealthUnitName,
+HealthUnitShortName,
+HealthUnitId,
+PatientAge,
+PatientGender,
+MunicipalNumber,
+CurrentMunicipalNumber,
+Municipal,
+PostalCode,
+DistrictCode,
+AddressQuality,
+FirstTimeClosed,
+PasientHash,
+DateDischargedIntensive,
+DateAdmittedIntensive,
+Svardato_paarorendeskjema,
+Kjoenn,
+Alder,
+PasientRelasjon,
+PasientRelasjonAnnet,
+IntensivAvdelingInvolvertFoer,
+BorMedPasienten,
+HvorOfteSerDuPasienten,
+HvorBorDu,
+HoeyesteFullfoerteUtdannelse,
+BehandlingHoeflighetRespektMedfoelelse_2,
+BehandlingHoeflighetRespektMedfoelelseSkaaring_2,
+SymptomSmerte_2,
+SymptomSmerteSkaaring_2,
+SymptomPustebesvaer_2,
+SymptomPustebesvaerSkaaring_2,
+SymptomUro_2,
+SymptomUroSkaaring_2,
+BehandlingBesvarerBeho_2v,
+BehandlingBesvarerBehovSkaaring_2,
+BehandlingBesvarerStoette_2,
+BehandlingBesvarerStoetteSkaaring_2,
+BehandlingSamarbeid_2,
+BehandlingSamarbeidSkaaring_2,
+BehandlingBesvarerHoeflighetRespektMedfoelelseSkaaring_2,
+BehandlingBesvarerHoeflighetRespektMedfoelelse_2,
+SykepleierOmsorg_2,
+SykepleierOmsorgSkaaring_2,
+SykepleierKommunikasjon_2,
+SykepleierKommunikasjonSkaaring_2,
+LegeBehandling_2,
+LegeBehandlingSkaaring_2,
+AtmosfaerenIntensivAvd_2,
+AtmosfaerenIntensivAvdSkaaring_2,
+AtmosfaerenPaaroerenderom_2,
+AtmosfaerenPaaroerenderomSkaaring_2,
+OmfangetAvBehandlingen_2,
+OmfangetAvBehandlingenSkaaring_2,
+DeltagelseIOmsorg,
+DeltagelseIOmsorgSkaaring,
+MengdenAvHelsetjenester,
+ReshId,
+MengdenAvHelsetjenesterSkaaring,
+SumScoreSatisfactionCare_2,
+LegeInformasjonFrekvens_2,
+LegeInformasjonFrekvensSkaaring_2,
+SvarPaaSpoersmaal_2,
+SvarPaaSpoersmaalSkaaring_2,
+ForklaringForstaaelse_2,
+ForklaringForstaaelseSkaaring_2,
+InformasjonsAerlighet_2,
+InformasjonsAerlighetSkaaring_2,
+InformasjonOmForloep_2,
+InformasjonOmForloepSkaaring_2,
+InformasjonsOverensstemmelse_2,
+InformasjonsOverensstemmelseSkaaring_2,
+BeslutningsInvolvering_2,
+BeslutningsInvolveringSkaaring_2,
+BeslutningsStoette_2,
+BeslutningsStoetteSkaaring_2,
+BeslutningsKontroll_2,
+BeslutningsKontrollSkaaring_2,
+BeslutningsTid_2,
+BeslutningsTidSkaaring_2,
+SumScoreSatisfactionDecision_2,
+LivsLengde_2,
+LivsLengdeSkaaring_2,
+LivssluttKomfor_2,
+LivssluttKomforSkaaring_2,
+LivssluttStoette_2,
+LivssluttStoetteSkaaring_2,
+SumScoreAllQuestions_2'
 
 
-  varHoved <- c("UPPER(M.SkjemaGUID) AS SkjemaGUID
-                , M.DateAdmittedIntensive
-                , M.DaysAdmittedIntensiv
-                , M.Respirator
-                , M.TransferredStatus
-                , M.Saps2Score
-                , M.Saps2ScoreNumber
-                , M.TypeOfAdmission
-                , M.Nems
-                , M.Morsdato
-                , M.PatientTransferredFromHospital
-                , M.PatientTransferredToHospital
-                , M.ShNavn
-                , M.DateDischargedIntensive,")
-  varPaaror <- 'Q.SkjemaGUID
+
+  #varPaaror <- '*'
+  datoFraP <- '2024-11-01'
+  datoTilP <- Sys.Date()
+  queryP <- paste0('SELECT ',
+                   varPaaror,
+                   ' FROM sporreskjema_om_paarorendes_tilfredshet_med_behandlingen
+                   WHERE FormVersionNumber > 13')
+  # WHERE cast(FormDate as date) BETWEEN \'', datoFraP, '\' AND \'', datoTil, '\'')
+
+PaarorData <- rapbase::loadRegData(
+    registryName="data",
+    query= queryP)
+
+  # query <- switch(as.character(medH),
+  #                 '0' = queryP,
+  #                 '1' = queryH)
+
+if (medH == 1){
+
+
+  varHoved <- "SkjemaGUID
+                ,DateAdmittedIntensive
+                ,DaysAdmittedIntensiv
+                ,Respirator
+                ,TransferredStatus
+                ,Saps2Score
+                ,Saps2ScoreNumber
+                ,TypeOfAdmission
+                ,Nems
+                ,Morsdato
+                ,PatientTransferredFromHospital
+                ,PatientTransferredToHospital
+                ,ShNavn
+                ,DateDischargedIntensive "
+
+  # varHoved <- '*'
+  queryH <- paste0(
+    'SELECT ', varHoved,
+    'FROM intensivopphold
+     WHERE cast(DateAdmittedIntensive as date) BETWEEN \'', datoFra, '\' AND \'', datoTil, '\'')
+
+  HovedData <- rapbase::loadRegData(registryName="data", query=queryH)
+
+  PaarorData <- merge(PaarorData, HovedData,
+        by.x='HovedskjemaGUID', by.y = 'SkjemaGUID',
+        incomparables = NA)
+
+}
+
+
+
+  #Variabler i gammelt skjema
+  varPaaror1 <- 'Q.SkjemaGUID
   , Q.Kjoenn
   , Q.Alder AS AlderPaaror
   , Q.PasientRelasjon
@@ -123,24 +265,7 @@ NIRpaarorDataSQL <- function(datoFra = '2015-12-01', datoTil = Sys.Date(), medH=
   --  , Q.MinorVersion
   , Q.PasientGUID AS PasientID'
 
-  queryH <- paste0('SELECT ',
-                   varHoved,
-                   varPaaror,
-                   ' FROM sporreskjema_om_paarorendes_tilfredshet_med_behandlingen Q
-                   INNER JOIN  intensivopphold M
-                   ON Q.HovedskjemaGUID = M.SkjemaGUID
-                   WHERE cast(DateAdmittedIntensive as date) BETWEEN \'', datoFra, '\' AND \'', datoTil, '\'')
-  #UPPER(Q.HovedskjemaGUID) = UPPER(M.SkjemaGUID)
 
-  queryP <- paste0('SELECT ',
-                   varPaaror,
-                   ' FROM sporreskjema_om_paarorendes_tilfredshet_med_behandlingen Q ')
-                   #WHERE cast(DateAdmittedIntensive as date) BETWEEN \'', datoFra, '\' AND \'', datoTil, '\'')
 
-  query <- switch(as.character(medH),
-                  '0' = queryP,
-                  '1' = queryH)
-
-  RegData <- rapbase::loadRegData(registryName="data", query=query, dbType="mysql")
-  return(RegData)
+    return(PaarorData)
 }

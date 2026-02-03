@@ -155,8 +155,9 @@ lageTulleData <- function(RegData, varBort='', antSh=26, antObs=20000) {
 #' på de første studiene som ble gjort med pårørendeskjema
 #' @param sluttDatoIntervensjon sluttdato for
 #' @export
-leggTilIntervensjon <- function(RegData, #startDatoPre='2011-01-01', sluttDatoPre='2016-10-01',
-                                 startDatoIntervensjon='2016-10-01', sluttDatoIntervensjon=Sys.Date()){
+leggTilIntervensjon <- function(RegData,
+                                 startDatoIntervensjon='2024-01-01',
+                                sluttDatoIntervensjon=Sys.Date()){
       RegData$Intervensjon <- 0
       RegData$Intervensjon[intersect(which(RegData$InnDato >= as.Date(startDatoIntervensjon)),
                                      which(RegData$InnDato <= as.Date(sluttDatoIntervensjon)))] <- 1
@@ -178,8 +179,8 @@ delTekst <- function(x, len) #x -tekststreng/vektor av tekststrenger, len - Leng
 #' @param alleHovedskjema TRUE/FALSE. standard: FALSE. I praksis om vi skal ha en left? join eller ikke
 #' @param alleSkjema2 TRUE/FALSE.standard: FALSE I praksis om vi skal ha en right? join eller ikke
 #' @export
-KobleMedHoved <- function(HovedSkjema, Skjema2, alleHovedskjema=F, alleSkjema2=F) {
-  #HovedSkjema <- plyr::rename(HovedSkjema, c('FormDate' = 'FormDateHoved'))
+KobleMedHoved <- function(HovedSkjema, Skjema2, alleHovedskjema=F, alleSkjema2=T) {
+
   Skjema2$SkjemaGUID_S2 <- Skjema2$SkjemaGUID
   varBegge <- intersect(names(HovedSkjema),names(Skjema2)) ##Variabelnavn som finnes i begge datasett
   Skjema2 <- Skjema2[ , c("HovedskjemaGUID", names(Skjema2)[!(names(Skjema2) %in% varBegge)])]  #"SkjemaGUID",

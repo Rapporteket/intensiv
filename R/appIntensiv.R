@@ -10,8 +10,8 @@ options(knitr.table.format = "html")
 
 #-----Definere utvalgsinnhold og evt. parametre som er statiske i appen----------
 
-idag <- Sys.Date() #as.Date('2018-11-30') #
-startDato <- paste0(as.numeric(format(idag-90, "%Y")), '-01-01') #paste0(1900+as.POSIXlt(idag)$year, '-01-01')
+#idag <- Sys.Date() #as.Date('2018-11-30') #
+startDato <- paste0(as.numeric(format(Sys.Date()-90, "%Y")), '-01-01')
 
 enhetsUtvalg <- c("Egen mot resten av landet"=1,
                   "Hele landet"=0,
@@ -33,10 +33,6 @@ luftveiValg <- c('Alle pasienter' = 0,
                  'Annet luftveisvirus' = 7,
                  'Annen_luftveisbakterie' = 8)
 velgLuftveiTxt <- 'Luftveisinfeksjoner'
-
-# variable <- c('SARS_CoV2', 'InfluensaA', 'InfluensaB', 'RS_virus',
-#               'Kikhoste', 'Annet_luftveisvirus', 'Annen_luftveisbakterie',
-#               'RespiratoryTractInfection')
 
 regTittel <- 'NORSK INTENSIVREGISTER'
 
@@ -75,7 +71,7 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
              br(),
              br(),
              h2('Hente datauttrekk'),
-             dateRangeInput(inputId = 'datovalgData', start = startDato, end = idag,
+             dateRangeInput(inputId = 'datovalgData', start = startDato, end = Sys.Date(),
                             label = "Tidsperiode", separator="t.o.m.", language="nb"),
              uiOutput('velgReshData'),
              # selectInput(inputId = 'velgReshData', label='Velg sykehus',
@@ -91,7 +87,6 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
 
              tabsetPanel(
                tabPanel('Startside',
-            # h3(ifelse(paaServer, "","Merk at noen resultater kan se rare ut siden dette er syntetiske data!"), align='center' ),
              h3(uiOutput('NokkeltallUtvalgTxt')),
              selectInput(inputId = 'enhetsNivaaStart', label='Velg enhetsgruppering',
                            choices = c("Egen enhet"=2, "Hele landet"=0,
@@ -172,7 +167,7 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                                       )),
                         conditionalPanel(
                           condition = "input.ark == 'Overføringer'",
-                          dateRangeInput(inputId = 'datovalgReg', start = startDato, end = idag,
+                          dateRangeInput(inputId = 'datovalgReg', start = startDato, end = Sys.Date(),
                                          label = "Tidsperiode", separator="t.o.m.", language="nb"),
                           uiOutput('velgReshOverf')
                          ),
@@ -246,7 +241,7 @@ tabPanel("Luftveisinfeksjon",
                       # selectInput(inputId = "erMann", label="Kjønn",
                       #             choices = c("Begge"=9, "Menn"=1, "Kvinner"=0)
                       # ),
-                      # dateRangeInput(inputId = 'datovalgStart', start = startDato, end = idag, #'2020-05-10',
+                      # dateRangeInput(inputId = 'datovalgStart', start = startDato, end = Sys.Date(), #'2020-05-10',
                       #                label = "Tidsperiode", separator="t.o.m.", language="nb"
                       # ),
                       # br(),
@@ -339,7 +334,7 @@ tabPanel("Luftveisinfeksjon",
                )
              ),
 
-               dateRangeInput(inputId = 'datovalg', start = startDato, end = idag,
+               dateRangeInput(inputId = 'datovalg', start = startDato, end = Sys.Date(),
                               label = "Tidsperiode", separator="t.o.m.", language="nb" #)
                ),
                selectInput(inputId = "erMann", label="Kjønn",
@@ -429,7 +424,7 @@ tabPanel("Luftveisinfeksjon",
                            ),
                selected = 'regForsinkelseInn',
              ),
-             dateRangeInput(inputId = 'datovalgAndel', start = startDato, end = idag,
+             dateRangeInput(inputId = 'datovalgAndel', start = startDato, end = Sys.Date(),
                             label = "Tidsperiode", separator="t.o.m.", language="nb"),
              selectInput(inputId = "erMannAndel", label="Kjønn",
                          choices = c("Begge"=2, "Menn"=1, "Kvinner"=0)),
@@ -506,7 +501,7 @@ tabPanel("Luftveisinfeksjon",
                                      'SAPSII-skår (alvorlighetsgrad)' = 'SAPSII'
                          )
              ),
-             dateRangeInput(inputId = 'datovalgGjsn', start = startDato, end = idag,
+             dateRangeInput(inputId = 'datovalgGjsn', start = startDato, end = Sys.Date(),
                             label = "Tidsperiode", separator="t.o.m.", language="nb"),
              selectInput(inputId = "erMannGjsn", label="Kjønn",
                          choices = c("Begge"=2, "Menn"=1, "Kvinner"=0)
@@ -569,7 +564,7 @@ tabPanel("Luftveisinfeksjon",
                                     'SMR: PIM' = 'PIMdod')),
              selectInput(inputId = "luftveiValgSMR", label= velgLuftveiTxt,
                          choices = luftveiValg),
-             dateRangeInput(inputId = 'datovalgSMR', start = startDato, end = idag,
+             dateRangeInput(inputId = 'datovalgSMR', start = startDato, end = Sys.Date(),
                             label = "Tidsperiode", separator="t.o.m.", language="nb"),
              selectInput(inputId = "erMannSMR", label="Kjønn",
                          choices = c("Begge"=2, "Menn"=1, "Kvinner"=0)
@@ -606,7 +601,7 @@ tabPanel("Luftveisinfeksjon",
            sidebarPanel(
              width = 3,
              h4('Her kan man gjøre filtreringer.'),
-             dateRangeInput(inputId = 'datovalgInnMaate', start = startDato, end = idag,
+             dateRangeInput(inputId = 'datovalgInnMaate', start = startDato, end = Sys.Date(),
                             label = "Tidsperiode", separator="t.o.m.", language="nb"),
              selectInput(inputId = "erMannInnMaate", label="Kjønn",
                          choices = c("Begge"=2, "Menn"=1, "Kvinner"=0)
@@ -629,71 +624,81 @@ tabPanel("Luftveisinfeksjon",
 
   #-------Pårørendeskjema----------
 #DENNE SKAL OPPDATERES TIL Å GJELDE NY VERSJON AV SKJEMAET
-  # tabPanel(p("PREM-skjema", title='Enkeltspørsmål fra FS-ICU, samt totalskårer'),
-  #          h2('Resultater fra Pårørendeskjema (FS-ICU)', align = 'center'),
-  #          # fluidRow(column(width = 3, #Første kolonne. Alternativ til sidebarLayout(sidebarPanel())
-  #          sidebarPanel(
-  #            width = 3,
-  #            h4('Her kan man velge hvilken variabel man ønsker å se resultater for og gjøre ulike filtreringer.'),
-  #            selectInput(
-  #              inputId = "valgtVarPaarorFord", label="Velg variabel",
-  #              choices = c('S1.1 Pasient, høflighet og medfølelse' = 'BehandlingHoeflighetRespektMedfoelelse',
-  #                          'S1.2 Smerte' = 'SymptomSmerte',
-  #                          'S1.3 Pustebesvær' = 'SymptomPustebesvaer',
-  #                          'S1.4 Uro' = 'SymptomUro',
-  #                          'S1.5 Interesse for behov' = 'BehandlingBesvarerBehov',
-  #                          'S1.6 Følelsesmessig støtte' = 'BehandlingBesvarerStoette',
-  #                          'S1.7 Samarbeid' = 'BehandlingSamarbeid',
-  #                          'S1.8 Pårørende, høflighet og medfølelse' = 'BehandlingBesvarerHoeflighetRespektMedfoelelse',
-  #                          'S1.9 Omsorg, sykepleier' = 'SykepleierOmsorg',
-  #                          'S1.10 Kommunikasjon, sykepleier' = 'SykepleierKommunikasjon',
-  #                          'S1.11 Omsorg, lege' = 'LegeBehandling',
-  #                          'S1.12 Atmosfære på avd.' = 'AtmosfaerenIntensivAvd',
-  #                          'S1.13 Atmosfære, venterom' = 'AtmosfaerenPaaroerenderom',
-  #                          'S1.14 Omfang av behandling' = 'OmfangetAvBehandlingen',
-  #                          'S2.1 Legens informasjonsfrekvens' = 'LegeInformasjonFrekvens',
-  #                          'S2.2 Svarvillighet, personale' = 'SvarPaaSpoersmaal',
-  #                          'S2.3 Forståelige forklaringer' = 'ForklaringForstaaelse',
-  #                          'S2.4 Informasjon, ærlighet' = 'InformasjonsAerlighet',
-  #                          'S2.5 Informasjon' = 'InformasjonOmForloep',
-  #                          'S2.6 Informasjon, overensstemmelse' = 'InformasjonsOverensstemmelse',
-  #                          'S2.7 Beslutningsprosess, involvering' = 'BeslutningsInvolvering',
-  #                          'S2.8 Beslutningsprosess, støtte' = 'BeslutningsStoette',
-  #                          'S2.9 Beslutningsprosess, innflytelse' = 'BeslutningsKontroll',
-  #                          'S2.10 Beslutningsprosess, tid' = 'BeslutningsTid',
-  #                          'S2.11 Livslengde' = 'LivsLengde',
-  #                          'S2.12 Komfort ved livsslutt, pasient' = 'LivssluttKomfor',
-  #                          'S2.13 Involvering ved livsslutt' = 'LivssluttStoette',
-  #                          'Totalskår, omsorg (skjema 1)' = 'SumScoreSatisfactionCare',
-  #                          'Totalskår, beslutning (skjema 2)' = 'SumScoreSatisfactionDecision',
-  #                          'Totalskår, alle spørsmål' = 'SumScoreAllQuestions')
-  #            ),
-  #            dateRangeInput(inputId = 'datovalgPaarorFord', start = "2015-01-01", end = idag,
-  #                           label = "Tidsperiode", separator="t.o.m.", language="nb"),
-  #            dateInput(inputId = 'startDatoIntervensjon', label = 'Startdato, intervensjon', language="nb",
-  #                      value = '2016-10-01', max = Sys.Date()),
-  #            selectInput(inputId = 'enhetsUtvalgPaarorFord', label='Egen enhet / hele landet',
-  #                        choices =  c("Hele landet"=0, "Egen enhet"=2)),
-  #            h5('(NB: Hvis din avdeling ikke har registreringer, vises hele landet uansett valg)'),
-  #            selectInput(inputId = "erMannPaarorFord", label="Kjønn, pasient",
-  #                        choices = c("Begge"=2, "Menn"=1, "Kvinner"=0))
-  #            #h3('Utvalg vedrørende den pårørende (alder, kjønn, relasjon,...)?')
-  #          ),
-  #
-  #          mainPanel(
-  #            tabsetPanel(
-  #              tabPanel(
-  #                'Figur',
-  #                plotOutput('paarorFord')),
-  #              tabPanel(
-  #                'Tabell',
-  #                h3('Her kommer en tabell')
-  #                #uiOutput("tittelFord"),
-  #                #tableOutput('fordelingTabPaaror')
-  #              )
-  #            )
-  #          )
-  # ), #tab Pårørende
+  tabPanel(p("PREM-skjema", title='Enkeltspørsmål fra FS-ICU, samt totalskårer'),
+           h2('Resultater fra Pårørendeskjema (FS-ICU)', align = 'center'),
+           # fluidRow(column(width = 3, #Første kolonne. Alternativ til sidebarLayout(sidebarPanel())
+           sidebarPanel(
+             width = 3,
+             h4('Her kan man velge hvilken variabel man ønsker å se resultater for og gjøre ulike filtreringer.'),
+             selectInput(
+               inputId = "valgtVarPaarorFord", label="Velg variabel",
+               choices = c(
+                  'Omtanke og omsorg fra intensivpersonalet?' = 'BehandlingHoeflighetRespektMedfoelelse_2',
+                  'Vurdering av dine behov? Hvor godt intensivpersonalet viste interesse for dine behov' = 'BehandlingBesvarerBeho_2v',
+                  'Følelsesmessig støtte? Hvor godt intensivpersonalet ga deg følelsesmessig støtte' = 'BehandlingBesvarerStoette_2',
+                  'Samordning av omsorg? Samarbeidet mellom alt intensivpersonale som tok hand om ditt familiemedlem' = 'BehandlingSamarbeid_2',
+                  'Omtanke om omsorg: Den høflighet, respekt og omtanke som ble vist deg' = 'BehandlingBesvarerHoeflighetRespektMedfoelelse_2',
+                  'Intensivsykepleieres ferdigheter og kompetanse: Hvor godt intensivsykepleiere ivaretok ditt familiemedlem' = 'SykepleierOmsorg_2',
+                  'Hyppigheten av kommunikasjon: Hvor ofte intensivsykepleierne snakket med deg om tilstanden til ditt familiemedlem' = 'SykepleierKommunikasjon_2',
+                  'Ferdigheter og kompetanse blant intensivleger Hvor godt leger ivaretok ditt familiemedlem' = 'LegeBehandling_2',
+                  'Hvor fornøyd er du med atmosfæren (stemningen) på venterommet?' = 'AtmosfaerenPaaroerenderom_2',
+                  'Hvor fornøyd er du med atmosfæren (stemningen) i intensivavdelingen?' = 'AtmosfaerenIntensivAvd_2',
+                  'Hvor fornøyd er du med din deltakelse i daglige legevisitter?' = 'OmfangetAvBehandlingen_2',
+                  'Hvor fornøyd er du med din deltakelse i omsorgen for ditt kritisk syke familiemedlem?' = 'DeltagelseIOmsorg',
+                  'Hvor fornøyd er du med NIVÅET eller mengden av helsetjenester som ditt familiemedlem mottok i intensivavdelingen?' = 'MengdenAvHelsetjenester',
+                  'Hvor ofte legene snakket med deg om tilstanden til ditt familiemedlem' = 'LegeInformasjonFrekvens_2',
+                  'Tilgang på informasjon? Intensivpersonalets villighet til å svare på dine spørsmål' = 'SvarPaaSpoersmaal_2',
+                  'Forståelig informasjon? Hvor godt intensivpersonalet ga deg forklaringer som du forsto' = 'ForklaringForstaaelse_2',
+                  'Ærlig informasjon? Ærligheten i den informasjon som ble gitt deg om tilstanden til ditt familiemedlem' = 'InformasjonsAerlighet_2',
+                  'Hvor godt intensivpersonalet informerte deg om hva som hendte med ditt familiemedlem og hvorfor ting ble gjort' = 'InformasjonOmForloep_2',
+                  'informasjonen om tilstanden til ditt familiemedlem: Fikk du en likelydende historie fra leger, sykepleiere, etc.?' = 'InformasjonsOverensstemmelse_2',
+                  'Hvor inkludert eller ekskludert følte du deg i prosessen med beslutningstaking?' = 'BeslutningsInvolvering_2',
+                  'Hvor mye støtte følte du at du fikk i prosessen med beslutningstaking?' = 'BeslutningsStoette_2',
+                  'Følte du at du hadde kontroll når det gjaldt ivaretakelsen av ditt familiemedlem?' = 'BeslutningsKontroll_2',
+                  'Når det ble gjort beslutninger, hadde du tilstrekkelig tid til å ta opp dine bekymringer og få svar på dine spørsmål?' = 'BeslutningsTid_2',
+                  'Hvilket av de følgende utsagn beskriver best dine synspunkter:' = 'LivsLengde_2',
+                  'I de siste timene ditt familiemedlem levde, hvilket av de følgende utsagn beskriver best dine synspunkter:' = 'LivssluttKomfor_2',
+                  'I de siste timene før ditt familiemedlem døde, hvilket av de følgende utsagn beskriver best dine synspunkter:' = 'LivssluttStoette_2',
+                  'Hvor godt intensivpersonalet vurderte og behandlet ditt familiemedlems smerte' = 'SymptomSmerte_2',
+                  'Hvor godt intensivpersonalet vurderte og behandlet ditt familiemedlems pustevanskeligheter' = 'SymptomPustebesvaer_2',
+                  'Hvor godt intensivpersonalet vurderte og behandlet ditt familiemedlems uro/agitasjon' = 'SymptomUro_2',
+                  'Høyeste nivå av utdannelse som du har fullført?' = 'HoeyesteFullfoerteUtdannelse'
+
+                 # 'S2.13 Involvering ved livsslutt' = 'LivssluttStoette',
+                 # 'Totalskår, omsorg (skjema 1)' = 'SumScoreSatisfactionCare',
+                 # 'Totalskår, beslutning (skjema 2)' = 'SumScoreSatisfactionDecision',
+                 # 'Totalskår, alle spørsmål' = 'SumScoreAllQuestions'
+                 )
+             ),
+             dateRangeInput(inputId = 'datovalgPaarorFord',
+                            start = as.Date("2023-11-07"), end = Sys.Date(),
+                            label = "Tidsperiode", separator="t.o.m.", language="nb"),
+             dateInput(inputId = 'startDatoIntervensjon',
+                       label = 'Startdato, intervensjon', language="nb",
+                       value = '2024-10-01', max = Sys.Date()),
+             selectInput(inputId = 'enhetsUtvalgPaarorFord',
+                         label='Egen enhet / hele landet',
+                         choices =  c("Hele landet"=0, "Egen enhet"=2)),
+             h5('(NB: Hvis din avdeling ikke har registreringer, vises hele landet uansett valg)'),
+             selectInput(inputId = "erMannPaarorFord",
+                         label="Kjønn, pasient",
+                         choices = c("Begge"=2, "Menn"=1, "Kvinner"=0))
+           ),
+
+           mainPanel(
+             tabsetPanel(
+               tabPanel(
+                 'Figur',
+                 plotOutput('paarorFord')) # ,
+               # tabPanel(
+               #   'Tabell',
+               #   h3('Her kommer en tabell')
+               #   #uiOutput("tittelFord"),
+               #   #tableOutput('fordelingTabPaaror')
+               # )
+             )
+           )
+  ), #tab Pårørende
 
 
   #-----------Abonnement--------------------------------
@@ -775,7 +780,7 @@ tabPanel(p("Registeradministrasjon", title='Registeradministrasjonens side'),
                  h2('Nøkkeltall, for valgt HF/RHF', align='center'),
                  h4('Gjør utvalg'),
                  dateRangeInput(inputId = 'datoValgNok', label = 'Tidsperiode',
-                              start = '2018-01-01', end = idag, #startDato
+                              start = as.Date('2018-01-01'), end = Sys.Date(),
                               separator="t.o.m.", language="nb"),
                     selectInput(inputId = "luftveiValgNok", label= velgLuftveiTxt,
                                            choices = luftveiValg),
@@ -811,21 +816,20 @@ server_intensiv <- function(input, output, session) { #
  # message("Intensivapp server started in context: ", context)
 
   #---------Hente data------------
-
   message("Getting IntData")
   IntDataRaa <- NIRRegDataSQL(datoFra = '2014-01-01')
   RegData <- NIRPreprosess(RegData = IntDataRaa)
 
   LuftData <- NIRUtvalgEnh(RegData=RegData, luftvei = 1, datoFra = Sys.Date()-7*40)$RegData
-#    RegData[which(RegData$RespiratoryTractInfection == 1), ]
 
- #  message("Get paaror data")
-  # PaarorData <- NIRpaarorDataSQL()
-  # PaarorDataH <- KobleMedHoved(IntDataRaa, PaarorData, alleHovedskjema=F, alleSkjema2=F)
-  # antPaaror <- dim(PaarorDataH)[1]
-  # if (antPaaror>0) {
-  #   PaarorData <- NIRPreprosess(RegData = PaarorDataH) #Må først koble på hoveddata for å få ShType++
-  # }
+  message("Get paaror data")
+  PaarorData <- NIRpaarorDataSQL()
+  PaarorDataH <- merge(PaarorData, RegData,
+                       by.x = 'HovedskjemaGUID',
+                       by.y = 'SkjemaGUID',
+                       all.x = TRUE,
+                       suffixes = c('_paaror',''))
+
   message("Alle data hentet!")
 
 
@@ -1604,16 +1608,18 @@ observe({
       )
 #------------Pårørende-------------------
 
-      # if (antPaaror>0){
-      # output$paarorFord <- renderPlot(
-      #   NIRFigPrePostPaaror(RegData=PaarorData, preprosess = 0, valgtVar=input$valgtVarPaarorFord,
-      #                       startDatoIntervensjon = input$startDatoIntervensjon,
-      #                       datoFra=input$datovalgPaarorFord[1], datoTil=input$datovalgPaarorFord[2],
-      #                       reshID = user$org(),
-      #                       enhetsUtvalg = input$enhetsUtvalgPaarorFord,
-      #                       erMann=as.numeric(input$erMannPaarorFord,session=session)
-      #   ), width=800, height = 800 #execOnResize=TRUE,
-      # )}
+    #  if (antPaaror>0){
+      output$paarorFord <- renderPlot(
+        NIRFigPrePostPaaror(RegData=PaarorDataH, preprosess = 0, valgtVar=input$valgtVarPaarorFord,
+                            startDatoIntervensjon = input$startDatoIntervensjon,
+                            datoFra=input$datovalgPaarorFord[1], datoTil=input$datovalgPaarorFord[2],
+                            reshID = user$org(),
+                            enhetsUtvalg = input$enhetsUtvalgPaarorFord,
+                            erMann=as.numeric(input$erMannPaarorFord,
+                                              session=session)
+        ), width=800, height = 800 #execOnResize=TRUE,
+      )
+      #}
 
 #------------------ Abonnement ----------------------------------------------
       orgs <- as.list(sykehusValg[-1])
