@@ -23,7 +23,7 @@ AarNaa <- as.numeric(format(idag, "%Y"))
 #Covid-skjema:
   message("Getting covid data")
   qCovid <- paste0('SELECT UPPER(HovedskjemaGUID) AS HovedskjemaGUID, FormStatus, Diagnosis
-                FROM beredskap')
+                FROM beredskap_2')
 CovidData <- rapbase::loadRegData(registryName= "data", query=qCovid, dbType="mysql")
 
 CovidData$Bekreftet <- 0

@@ -135,11 +135,11 @@ NIRRegDataSQL <- function(datoFra = '2011-01-01', datoTil = Sys.Date()) { #,sess
   Annen_luftveisbakterie,
   LaboratoryConfirmedDate
 FROM
-	intensivopphold
+	intensivopphold_1
 WHERE cast(DateAdmittedIntensive as date) BETWEEN \'', datoFra, '\' AND \'', datoTil, '\'')
 
 
-   # query <- paste0('select * from intensivopphold
+   # query <- paste0('select * from intensivopphold_1
    # WHERE cast(DateAdmittedIntensive as date) BETWEEN \'', '2020-01-01', '\' AND \'', Sys.Date(), '\'')
 
   RegData <- rapbase::loadRegData(registryName = registryName, query=query, dbType="mysql")
