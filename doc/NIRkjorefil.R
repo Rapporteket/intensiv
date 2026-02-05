@@ -15,7 +15,7 @@ sort(names(EQ5D))
 library(intensiv)
 RegData <- NIRPreprosess(NIRRegDataSQL())
 RegData <- NIRRegDataSQL(datoFra='2010-01-01')
-AlleData <- rapbase::loadRegData(registryName = 'data', query= 'select * from intensivopphold', dbType="mysql")
+AlleData <- rapbase::loadRegData(registryName = 'data', query= 'select * from intensivopphold_1', dbType="mysql")
 sort(names(AlleData))
 #ReshId og UnitId inneholder akkurat det samme.
 ShResh <- unique(AlleData[order(AlleData$ShNavn), c("ShNavn",'Helseenhet', "ReshId", "UnitId")])
@@ -232,8 +232,6 @@ InfluData <- InfluDataAlle[ ,variableTilTab]
 #-------------------------------------LASTE DATA-----------------------------------------------
 rm(list=ls())
 
-dato <- '2022-11-14' #'2018-12-14' #intensivopphold2018-06-19
-fil <- paste0('c:/Registerdata/nipar/intensivopphold',dato)
 NIRdata <- read.table(file=paste0(fil,'.csv'), header=T, stringsAsFactors=FALSE, sep=';',encoding = 'UTF-8')
 RegData <- intensiv::NIRPreprosess(NIRdata)
 load(paste0(fil,".Rdata")) #RegData 2019-01-07
@@ -725,7 +723,7 @@ NIRInfluDataSQL <- function(datoFra = '2019-09-25', datoTil = Sys.Date()) {
                   # FormDate,
                   # ICD10_1,
                   # FormStatus
-            FROM influensaregistrering
+            FROM influensaregistrering_3
             WHERE cast(FormDate as date) BETWEEN \'', datoFra, '\' AND \'', datoTil, '\'')
   #WHERE cast(DateAdmittedIntensive as date) >= \'', datoFra, '\' AND DateAdmittedIntensive <= \'', datoTil, '\'')
 

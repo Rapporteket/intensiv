@@ -128,7 +128,7 @@ NIRPreprosess <- function(RegData=RegData, skjema=1)	#, reshID=reshID)
 
 # Angi om Covid-pasient før luftveisvariabel ble innført (okt -2025)
       qCovid <- paste0('SELECT UPPER(HovedskjemaGUID) AS HovedskjemaGUID, Diagnosis
-                FROM beredskap')
+                FROM beredskap_4')
       CovidData <- rapbase::loadRegData(registryName= "data", query=qCovid, dbType="mysql")
       # CovidData$Bekreftet <- 0
       # CovidData$Bekreftet[which(CovidData$Diagnosis %in% 100:103)] <- 1
