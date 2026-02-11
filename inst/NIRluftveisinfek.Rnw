@@ -168,7 +168,7 @@ skaler <- ifelse(dim(TabUkeRHF)[1]>25, 1- 0.006*dim(TabUkeRHF)[1] ,1)
                    # ,caption='Totalt antall opphold med luftveissmitte siste 40 uker.'
                    )
     ,include.rownames = FALSE,
-    scale=0.78)
+    scale=0.74)
   @
     \end{frame}
 
