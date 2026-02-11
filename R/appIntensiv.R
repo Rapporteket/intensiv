@@ -625,6 +625,7 @@ tabPanel("Luftveisinfeksjon",
   #-------Pårørendeskjema----------
 #DENNE SKAL OPPDATERES TIL Å GJELDE NY VERSJON AV SKJEMAET
   tabPanel(p("PREM-skjema", title='Enkeltspørsmål fra FS-ICU, samt totalskårer'),
+           value = "PREM-skjema",
            h2('Resultater fra Pårørendeskjema (FS-ICU)', align = 'center'),
            # fluidRow(column(width = 3, #Første kolonne. Alternativ til sidebarLayout(sidebarPanel())
            sidebarPanel(
@@ -860,12 +861,14 @@ server_intensiv <- function(input, output, session) { #
       shinyjs::show(id = 'velgReshOverf')
       shinyjs::show(id = 'velgReshData')
       shinyjs::show(id = 'velgReshDbl')
+      showTab(inputId = "hovedark", target = "PREM-skjema")
       showTab(inputId = "hovedark", target = "Registeradministrasjon")
     } else {
       shinyjs::hide(id = 'velgResh')
       shinyjs::hide(id = 'velgReshOverf')
       shinyjs::hide(id = 'velgReshData')
       shinyjs::hide(id = 'velgReshDbl')
+      hideTab(inputId = "hovedark", target = "PREM-skjema")
       hideTab(inputId = "hovedark", target = "Registeradministrasjon")
     }
   })
