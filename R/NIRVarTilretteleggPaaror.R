@@ -171,7 +171,7 @@ NIRVarTilretteleggPaaror  <- function(RegData, valgtVar, grVar='ShNavn', figurty
      if (valgtVar == 'PasientRelasjon') {
        #-1:Velg verdi, 1:Kone, 2:Ektemann, 3:Samboer, 4:Mor, 5:Far, 6:Søster, 7:Bror, 8:Datter, 9:Sønn, 10:Annet
        tittel <- 'Relasjon til pasienten'
-       gr <- C(-1,1:10)
+       gr <- c(-1, 1:10)
        grtxt <- c('Ikke besvart',
                   'Kone', 'Ektemann', 'Samboer', 'Mor', 'Far',
                   'Søster', 'Bror', 'Datter', 'Sønn', 'Annet')

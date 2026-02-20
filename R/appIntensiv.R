@@ -634,10 +634,10 @@ tabPanel("Luftveisinfeksjon",
              selectInput(
                inputId = "valgtVarPaarorFord", label="Velg variabel",
                choices = c(
-                 'BehandlingHoeflighetRespektMedfoelelse_2' = 'BehandlingHoeflighetRespektMedfoelelse_2',
+                 'BehandlingHoeflighetRespektMedfoelelse' = 'BehandlingHoeflighetRespektMedfoelelse_2',
                  'SymptomSmerte' = 'SymptomSmerte_2',
                  'SymptomPustebesvaer' = 'SymptomPustebesvaer_2',
-                 'SymptomUro' = 'SymptomUro',
+                 'SymptomUro' = 'SymptomUro_2',
                  'BehandlingBesvarerBehov' = 'BehandlingBesvarerBeho_2v',
                  'BehandlingBesvarerStoette' = 'BehandlingBesvarerStoette_2',
                  'BehandlingSamarbeid' = 'BehandlingSamarbeid_2',
