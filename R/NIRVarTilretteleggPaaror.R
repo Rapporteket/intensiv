@@ -28,15 +28,8 @@ NIRVarTilretteleggPaaror  <- function(RegData, valgtVar, grVar='ShNavn', figurty
   flerevar <- 0
   grtxt <- ''		#Spesifiseres for hver enkelt variabel
   grtxt2 <- ''	#Spesifiseres evt. for hver enkelt variabel
-  grNavn <- ''
-  varTxt <- ''
   xAkseTxt <- ''	#Benevning
   yAkseTxt <- ''
-  pktTxt <- '' #(evt. søyletekst)
-  txtEtiketter  <- ''	#legend
-  verdier <- ''	#AggVerdier, gjennomsnitt, ...
-  verdiTxt <- '' 	#pstTxt, ...
-  strIfig <- ''		#cex
   sortAvtagende <- TRUE  #Sortering av resultater
   KImaal <- NA
   KImaaltxt=''
@@ -97,39 +90,40 @@ NIRVarTilretteleggPaaror  <- function(RegData, valgtVar, grVar='ShNavn', figurty
 
 
   tittel <- switch(valgtVar,
-                   AtmosfaerenIntensivAvd_2 = 'Hvor fornøyd er du med stemningen i intensivavd.?',
-                   AtmosfaerenPaaroerenderom_2	= 'Hvor fornøyd er du med stemningen på venterommet?',
-                   BehandlingBesvarerBeho_2v	=  'Hvor godt viste intensivpersonalet interesse for dine behov?',
-                   BehandlingBesvarerHoeflighetRespektMedfoelelse_2	= 'Hvilken høflighet, respekt og omtanke som ble vist deg?',
-                   BehandlingBesvarerStoette_2	= 'Hvor god følelsesmessig støtte ga personalet deg?',
+                   AtmosfaerenIntensivAvd_2 = 'Hvor fornøyd pårørende var med stemningen i intensivavdelingen',
+                   AtmosfaerenPaaroerenderom_2	= 'Hvor fornøyd pårørende var med stemningen på venterommet',
+                   BehandlingBesvarerBeho_2v	=  'Hvor godt intensivpersonalet viste interesse for pårørendes behov',
+                   BehandlingBesvarerHoeflighetRespektMedfoelelse_2	= 'Den høflighet, respekt og omtanke som ble vist til pårørende',
+                   BehandlingBesvarerStoette_2	= 'Hvor godt intensivpersonalet ga pårørende følelsesmessig støtte',
                    BehandlingHoeflighetRespektMedfoelelse_2	= 'Høflighet, respekt og medfølelse som ble vist pasienten',
                    BehandlingSamarbeid_2	= 'Samarbeidet mellom alt intensivpersonale som tok hand om pasienten',
-                   DeltagelseIOmsorg	= 'Din deltakelse i omsorgen for ditt kritisk syke familiemedlem?',
-                   ForklaringForstaaelse_2	= 'Hvor godt intensivpersonalet ga deg forklaringer som du forsto?',
+                   DeltagelseIOmsorg	= 'Hvor fornøyd pårørende var med sin deltakelse i omsorgen for pasienten',
+                   ForklaringForstaaelse_2	= 'Hvor godt intensivpersonalet ga pårørende forklaringer de forsto',
                    InformasjonOmForloep_2 = 'Informasjon fra personalet om hva som hendte med pasienten?',
-                   InformasjonsAerlighet_2 = 'Ærligheten i informasjon som ble gitt om pasientens tilstanden?',
-                   InformasjonsOverensstemmelse_2 = 'Konsistensen i informasjonen som ble gitt om tilstanden til pasienten',
-                   LegeBehandling_2 = 'Hvor godt ivaretok legene pasienten (færdighet og kompetanse)',
-                   LegeInformasjonFrekvens_2 = 'Hyppigheten av kommunikasjon med legene i intensivavdelingen?',
-                   MengdenAvHelsetjenester = 'Fornøydhet med NIVÅET/mengden av helsetjenester pasienten mottok på avd.?',
-                   OmfangetAvBehandlingen_2 = 'Fornøydhet med din deltakelse i daglige legevisitter?',
-                   SvarPaaSpoersmaal_2 = 'Personalets villighet til å svare på spørsmål?',
-                   SykepleierKommunikasjon_2 = 'Hyppighet av intensivsykepleierne kommunikasjon om pasientens tilstanden?',
-                   SykepleierOmsorg_2 = 'Hvor godt ivaretok intensivsykepleiere pasienten',
-                   SymptomPustebesvaer_2 = 'Intensivpersonalet vurdering/behandling av pasientens pustevanskeligheter',
-                   SymptomSmerte_2 = 'Intensivpersonalet vurdering/behandling av pasientens smerte',
-                   SymptomUro_2 = 'Intensivpersonalets vurdering og behandling av pasientens uro/agitasjon'
+                   InformasjonsAerlighet_2 = 'Ærligheten i informasjon som ble gitt pårørede om tilstanden til pasienten',
+                   InformasjonsOverensstemmelse_2 = 'Konsistensen i informasjonen som ble gitt pårørende om tilstanden til pasienten',
+                   LegeBehandling_2 = 'Hvor godt legene ivaretok pasienten',
+                   LegeInformasjonFrekvens_2 = 'Hvor ofte legene snakket med pårørende om pasientens tilstand',
+                   MengdenAvHelsetjenester = 'Hvor fornøyd pårørende var med nivået/mengden av helsetjenester pasienten mottok',
+                   OmfangetAvBehandlingen_2 = ' Hvor fornøyd pårørende var med sin deltakelse i daglige legevisitter',
+                   SvarPaaSpoersmaal_2 = 'Intensivpersonalets villighet til å svare på pårørendes spørsmål',
+                   SykepleierKommunikasjon_2 = 'Hvor ofte intensivsykepleierne snakket med pårørende om tilstanden til pasienten',
+                   SykepleierOmsorg_2 = 'Hvor godt intensivsykepleierne ivaretok pasienten',
+                   SymptomPustebesvaer_2 = 'Hvor godt intensivpersonalet vurderte og behandlet pasientens pustevanskeligheter',
+                   SymptomSmerte_2 = 'Hvor godt intensivpersonalet vurderte og behandlet pasientens smerte',
+                   SymptomUro_2 = 'Hvor godt intensivpersonalet vurderte og behandlet pasientens uro/agitasjon'
   )
 
   if (valgtVar %in% varSmSvar){
     gr <- c(-1,1:6)
-    grtxt <- c('Ikke besvart', 'Totalt misfornøyd', 'Litt misfornøyd', 'For det meste fornøyd',
-               'Svært fornøyd', 'Totalt fornøyd', 'Ikke aktuelt')
+    grtxt <- c('Totalt misfornøyd', 'Litt misfornøyd', 'For det meste fornøyd',
+               'Svært fornøyd', 'Totalt fornøyd', 'Ikke besvart/aktuelt')
+    indSlaaSm <- which(RegData[,valgtVar] == -1)
+    RegData[indSlaaSm ,valgtVar] <- 6
   } else {
 
     if (valgtVar == 'LivssluttKomfor_2') {
-      tittel <- 'De siste timene ditt familiemedlem levde, \n
-             hvordan  tenker du at hen hadde det:'
+      tittel <- 'Pårørendes opplevelse av pasientens komfort på livetsslutt'
       grtxt <- c('Svært ukomfortabelt', 'Noe ukomfortabelt',
                  'For det meste komfortabelt', 'Svært komfortabelt',
                  'Fullkomment komfortabelt')
@@ -137,13 +131,13 @@ NIRVarTilretteleggPaaror  <- function(RegData, valgtVar, grVar='ShNavn', figurty
 
 
     if (valgtVar == 'BeslutningsStoette_2') {
-      tittel <- 'Hvor mye støtte følte du at du fikk i prosessen med beslutningstaking?'
+      tittel <- 'Hvor mye støtte pårørende følte de fikk i prosessen med beslutningstaking'
       grtxt <- c('Ingen  støtte', 'Liten støtte',
                  'Hverken eller', 'Fikk støtte', 'Mye støtte')
     }
 
     if (valgtVar == 'BeslutningsKontroll_2') {
-      tittel <- 'Følte du at du hadde over kontroll ivaretakelsen av ditt familiemedlem?'
+      tittel <- 'Pårørendes følelse av  kontroll med ivaretakelse av pasienten'
       grtxt <- c('Ingen kontroll', 'Ikke så mye kontroll',
                  'Hverken eller', 'Noe kontroll', 'God kontroll')
     }
@@ -154,18 +148,18 @@ NIRVarTilretteleggPaaror  <- function(RegData, valgtVar, grVar='ShNavn', figurty
                  'Hverken eller', 'Noe unødvendig forkortet', 'Unødvendig forkortet')
     }
     if (valgtVar == 'LivssluttStoette_2') {
-      tittel <- 'I hvilken grad følte du deg støttet av helseteamet \n de siste timene av pasientens liv?'
+      tittel <- 'I hvilken grad pårørende følte støtte av helseteamet de siste timene av pasientenes liv'
       grtxt <- c('Svært forlatt', 'Forlatt',
                  'Hverken eller', 'Støttet', 'Svært støttet')
     }
     if (valgtVar == 'BeslutningsInvolvering_2') {
-      tittel <- 'Følte du deg inkludert i beslutningstaking?'
+      tittel <- 'Hvor inkludert pårørende følte seg i prosessen med beslutningstaking'
       grtxt <- c('Veldig ekskludert', 'Noe ekskludert',
                  'Hverken eller', 'Noe inkludert', 'Veldig inkludert')
     }
 
     if (valgtVar == 'BeslutningsTid_2') {
-      tittel <- 'Fikk du nok tid til å få svar på dine spørsmål ifm beslutninger som ble tatt'
+      tittel <- 'Pårørendes følelse av tilstrekkelig tid til å ta opp \n bekymringer/spørsmål ved beslutningstaking'
       grtxt <- c('Behøvde mer tid', 'Noe utilstrekkelig','Tilstrekkelig',
                  'Mer enn nok', 'Mye mer enn nok')
     }
@@ -174,6 +168,14 @@ NIRVarTilretteleggPaaror  <- function(RegData, valgtVar, grVar='ShNavn', figurty
      grtxt <- c('Ikke besvart', grtxt)
 
 
+     if (valgtVar == 'PasientRelasjon') {
+       #-1:Velg verdi, 1:Kone, 2:Ektemann, 3:Samboer, 4:Mor, 5:Far, 6:Søster, 7:Bror, 8:Datter, 9:Sønn, 10:Annet
+       tittel <- 'Relasjon til pasienten'
+       gr <- C(-1,1:10)
+       grtxt <- c('Ikke besvart',
+                  'Kone', 'Ektemann', 'Samboer', 'Mor', 'Far',
+                  'Søster', 'Bror', 'Datter', 'Sønn', 'Annet')
+     }
 
     if (valgtVar == 'HoeyesteFullfoerteUtdannelse') {
       #-1:5         -1 = Velg verdi,

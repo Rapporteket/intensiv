@@ -33,8 +33,6 @@ NIRFigPrePostPaaror  <- function(
             RegData <- NIRPreprosess(RegData=RegData)	#, reshID=reshID)
       }
 
-
-      #     "%i%" <- intersect
       #--------------- Definere variable ------------------------------
 
       NIRVarSpes <- NIRVarTilretteleggPaaror(RegData=RegData, valgtVar=valgtVar, figurtype='andeler')
@@ -67,12 +65,6 @@ NIRFigPrePostPaaror  <- function(
       Ngr$Post <- table(RegData$VariabelGr[ind$Post])
       N$Post <- sum(Ngr$Post)
       AggVerdier$Post <- 100*Ngr$Post/N$Post
-      #Gjennomsnittsskårer
-      # varSkaar <- ifelse(grepl('Sum',valgtVar), valgtVar, paste0(valgtVar,'Skaaring'))
-      # TotSkaar$Pre <- sprintf('%.1f', mean(RegData[ind$Pre, varSkaar], na.rm = T))
-      # TotSkaar$Post <- sprintf('%.1f', mean(RegData[ind$Post, varSkaar], na.rm = T))
-
-
 
       grtxt <- NIRVarSpes$grtxt
       grtxt2 <- paste0(sprintf('%.1f',AggVerdier$Pre),' / ', sprintf('%.1f',AggVerdier$Post),'%')
@@ -107,8 +99,8 @@ NIRFigPrePostPaaror  <- function(
      mtext(at=pos[1,], grtxt2, side=1, las=1, cex=0.8, adj=0.2, line=0)
       grtxt <- delTekst(grtxt, 15)
       mtext(at=pos[1,], grtxt, side=1, las=1, cex=0.8, adj=0.2, line=2)
-      legend('top', c(paste0('Før intervensjon, N=', NPre), #paste0('Gj.sn. skår: ',TotSkaar$Pre),
-                      paste0('Etter intervensjon, N=', NPost) #paste0('Gj.sn. skår: ',TotSkaar$Post)
+      legend('top', c(paste0('Før intervensjon, N=', NPre),
+                      paste0('Etter intervensjon, N=', NPost)
                       ),
              bty='n', fill=farger[c(3,1)], border=NA, ncol=2, cex=cexleg) #farger[c(3,NA,1,NA)]
 
