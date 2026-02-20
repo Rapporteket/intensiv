@@ -115,7 +115,7 @@ NIRVarTilretteleggPaaror  <- function(RegData, valgtVar, grVar='ShNavn', figurty
   )
 
   if (valgtVar %in% varSmSvar){
-    gr <- c(-1,1:6)
+    gr <- 1:6 #c(-1,1:6)
     grtxt <- c('Totalt misfornøyd', 'Litt misfornøyd', 'For det meste fornøyd',
                'Svært fornøyd', 'Totalt fornøyd', 'Ikke besvart/aktuelt')
     indSlaaSm <- which(RegData[,valgtVar] == -1)

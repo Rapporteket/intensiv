@@ -992,7 +992,7 @@ server_intensiv <- function(input, output, session) { #
                            reshID = user$org()))
     kableExtra::kable(tab,
                       full_width=F,
-                      digits = c(0,0,0,1,0,0,1,1,1,0,0,0,1,0,0)
+                      digits = c(0,0,0,1,0,0,1,1,2,0,0,0,1,1,0,1)
     ) %>%
       kableExtra::column_spec(column = 1, width_min = '4em', width_max = 10) %>%
       kableExtra::column_spec(column = 2:(ncol(tab)), width = '4em')  %>%
@@ -1019,7 +1019,7 @@ observe({
     if (dim(tab)[1]<2) {'Ingen registreringer' } else {
        kableExtra::kable(tab,
                          full_width=F,
-                         digits = c(0,0,0,1,0,0,1,1,1,1,0,0,1,0,0)
+                         digits = c(0,0,0,1,0,0,1,1,2,1,0,0,1,1,0,0)
                          ) %>%
                   kableExtra::column_spec(column = 1, width_min = '4em', width_max = 10) %>%
                   kableExtra::column_spec(column = 2:(ncol(tab)), width = '4em')  %>%
@@ -1621,7 +1621,7 @@ observe({
                             enhetsUtvalg = input$enhetsUtvalgPaarorFord,
                             erMann=as.numeric(input$erMannPaarorFord,
                                               session=session)
-        ), width=800, height = 800 #execOnResize=TRUE,
+        ), width=900, height = 900 #execOnResize=TRUE,
       )
       #}
 

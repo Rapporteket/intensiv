@@ -31,8 +31,8 @@ PaarorDataH <- merge(PaarorData, RegData,
 NIRFigPrePostPaaror(RegData=PaarorDataH, preprosess = 0, valgtVar='BehandlingBesvarerStoette_2',
                   startDatoIntervensjon = '2024-05-02',
                   #datoFra=input$datovalgPaarorFord[1], datoTil=input$datovalgPaarorFord[2],
-                  reshID = 705577,
-                    enhetsUtvalg = 2,
+                  # reshID = 705577,
+                    enhetsUtvalg = 0,
                     erMann=9
 )
 RegData <- RegData[RegData$ReshId==reshID,]
