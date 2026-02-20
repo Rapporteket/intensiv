@@ -1454,7 +1454,7 @@ server <- function(input, output, session) { #
 
          #----------- Eksport ----------------
          ## brukerkontroller
-         rapbase::exportUCServer2("intensivExport", "nir",
+         rapbase::exportUCServer("intensivExport", "nir",
                                  "intensiv",
                                  eligible = vis_rapp
          )
