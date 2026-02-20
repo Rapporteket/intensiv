@@ -27,14 +27,14 @@ PaarorDataH <- merge(PaarorData, RegData,
                      by.y = 'SkjemaGUID',
                      all.x = TRUE,
                      suffixes = c('_paaror',''))
+SymptomUro_2
 
-NIRFigPrePostPaaror(RegData=PaarorDataH, preprosess = 0, valgtVar='BehandlingBesvarerStoette_2',
+NIRFigPrePostPaaror(RegData=PaarorDataH, preprosess = 0, valgtVar='PasientRelasjon',
                   startDatoIntervensjon = '2024-05-02',
                   #datoFra=input$datovalgPaarorFord[1], datoTil=input$datovalgPaarorFord[2],
-                  reshID = 705577,
-                    enhetsUtvalg = 2,
-                    erMann=9
-)
+                  # reshID = 705577,
+                    enhetsUtvalg = 0,
+                outfile = 'test.png')
 RegData <- RegData[RegData$ReshId==reshID,]
 
 dataMRS <-   readxl::read_excel('../data/NIRdata_2025-11-25_1035.xlsx')

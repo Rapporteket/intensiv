@@ -33,8 +33,6 @@ NIRFigPrePostPaaror  <- function(
             RegData <- NIRPreprosess(RegData=RegData)	#, reshID=reshID)
       }
 
-
-      #     "%i%" <- intersect
       #--------------- Definere variable ------------------------------
 
       NIRVarSpes <- NIRVarTilretteleggPaaror(RegData=RegData, valgtVar=valgtVar, figurtype='andeler')
@@ -67,12 +65,6 @@ NIRFigPrePostPaaror  <- function(
       Ngr$Post <- table(RegData$VariabelGr[ind$Post])
       N$Post <- sum(Ngr$Post)
       AggVerdier$Post <- 100*Ngr$Post/N$Post
-      #Gjennomsnittsskårer
-      # varSkaar <- ifelse(grepl('Sum',valgtVar), valgtVar, paste0(valgtVar,'Skaaring'))
-      # TotSkaar$Pre <- sprintf('%.1f', mean(RegData[ind$Pre, varSkaar], na.rm = T))
-      # TotSkaar$Post <- sprintf('%.1f', mean(RegData[ind$Post, varSkaar], na.rm = T))
-
-
 
       grtxt <- NIRVarSpes$grtxt
       grtxt2 <- paste0(sprintf('%.1f',AggVerdier$Pre),' / ', sprintf('%.1f',AggVerdier$Post),'%')
@@ -90,32 +82,32 @@ NIRFigPrePostPaaror  <- function(
       #Plottspesifikke parametre:
       FigTypUt <- rapFigurer::figtype(outfile, fargepalett='BlaaOff')
       NutvTxt <- length(utvalgTxt)
-      vmarg <- 0 #switch(retn, V=0, H=max(0, strwidth(grtxt, units='figure', cex=cexgr)*0.7))
+      vmarg <- 0
       par('fig'=c(vmarg, 1, 0, 1-0.02*(NutvTxt-1+length(tittel)-1)))	#Har alltid datoutvalg med
 
       farger <- FigTypUt$farger
       antGr <- length(grtxt)
       lwdPost <- 3	#tykkelse på linja som repr. landet
-      cexleg <- 0.9	#Størrelse på legendtekst
+      cexleg <- 1	#Størrelse på legendtekst
       cexpt <- 2	#Størrelse på punkter (resten av landet)
 
       #Vertikale søyler eller linje
       ymax <- min(max(AndelerPP,na.rm=T)*1.25, 110)
       pos <- barplot(t(AndelerPP), beside=TRUE, las=1, ylab="Andel pårørende (%)",
-                     cex.names=0.9, col=farger[c(3,1)],
-                     names.arg=rep('', length(grtxt)), border='white', ylim=c(0, ymax))	# names.arg=grtxt,
-     mtext(at=pos[1,], grtxt2, side=1, las=1, cex=0.8, adj=0.2, line=0)
+                     cex.names=1, col=farger[c(3,1)],
+                     names.arg=rep('', length(grtxt)), border='white', ylim=c(0, ymax))
+     mtext(at=pos[1,], grtxt2, side=1, las=1, cex=1, adj=0.2, line=0)
       grtxt <- delTekst(grtxt, 15)
-      mtext(at=pos[1,], grtxt, side=1, las=1, cex=0.8, adj=0.2, line=2)
-      legend('top', c(paste0('Før intervensjon, N=', NPre), #paste0('Gj.sn. skår: ',TotSkaar$Pre),
-                      paste0('Etter intervensjon, N=', NPost) #paste0('Gj.sn. skår: ',TotSkaar$Post)
+      mtext(at=pos[1,], grtxt, side=1, las=1, cex=1, adj=0.2, line=2)
+      legend('top', c(paste0('Før intervensjon, N=', NPre),
+                      paste0('Etter intervensjon, N=', NPost)
                       ),
-             bty='n', fill=farger[c(3,1)], border=NA, ncol=2, cex=cexleg) #farger[c(3,NA,1,NA)]
+             bty='n', fill=farger[c(3,1)], border=NA, ncol=2, cex=cexleg)
 
       #Tekst som angir hvilket utvalg som er gjort
       mtext(utvalgTxt, side=3, las=1, cex=0.9, adj=0, col=farger[1], line=c(3+0.8*((NutvTxt-1):0)))
 
-      title(tittel, font.main=1, sub=NIRUtvalg$hovedgrTxt, col.sub= farger[2])	#line=0.5,
+      title(tittel, font.main=1.1, sub=NIRUtvalg$hovedgrTxt, col.sub= farger[2])
 
       par('fig'=c(0, 1, 0, 1))
       if ( outfile != '') {dev.off()}

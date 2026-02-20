@@ -162,8 +162,6 @@ NIRFigAndeler  <- function(RegData=0, valgtVar='alder', datoFra='2011-01-01', da
             Nfig <- N}
       grtxt2 <- paste0(sprintf('%.1f',AggVerdier$Hoved), '%') #paste0('(', sprintf('%.1f',AggVerdier$Hoved), '%)')
 
-      # grtxt2 <- paste0(paste0('(', sprintf('%.1f',Utdata$AggVerdier$Hoved), '%)'),
-#                       paste0('\n(', sprintf('%.1f',Utdata$AggVerdier$Rest), '%)'))
       xAkseTxt <- NIRVarSpes$xAkseTxt
       yAkseTxt <- 'Andel opphold (%)'
       retn <- NIRVarSpes$retn
@@ -202,7 +200,6 @@ NIRFigAndeler  <- function(RegData=0, valgtVar='alder', datoFra='2011-01-01', da
 
             if ((Nfig$Hoved < 5) | (dim(RegData)[1]<5))
                   #| ((enhetsUtvalg %in% c(1,3)) & length(which(RegData$ReshId == reshID))<5)) #(dim(RegData)[1]-N$Hoved <5) )
-                  #       if (dim(RegData)[1] < 10 | ((enhetsUtvalg %in% c(1,3)) & length(which(RegData$ReshId == reshID))<5) )
                   #|(grVar=='' & length(which(RegData$ReshId == reshID))<5 & enhetsUtvalg %in% c(1,3)))
             {
                   #-----------Figur---------------------------------------
@@ -235,7 +232,7 @@ NIRFigAndeler  <- function(RegData=0, valgtVar='alder', datoFra='2011-01-01', da
                   graa <- c('#4D4D4D','#737373','#A6A6A6','#DADADA')  #Mørk til lys          																# Fire graatoner
                   antGr <- length(grtxt)
                   lwdRest <- 3	#tykkelse på linja som repr. landet
-                  cexleg <- 0.9	#Størrelse på legendtekst
+                  cexleg <- 1	#Størrelse på legendtekst
 
 
 
@@ -289,15 +286,15 @@ NIRFigAndeler  <- function(RegData=0, valgtVar='alder', datoFra='2011-01-01', da
                   ymax <- min(max(c(AggVerdier$Hoved, AggVerdier$Rest),na.rm=T)*1.25, 115)
                   pos <- barplot(as.numeric(AggVerdier$Hoved), beside=TRUE, las=1, ylab=yAkseTxt,
                                  sub=xAkseTxt,	col=fargeHoved, border='white', ylim=c(0, ymax))
-                  mtext(at=pos, grtxt, side=1, las=1, cex=0.95*cexgr, adj=0.5, line=0.5)
-                  mtext(at=pos, grtxt2, side=1, las=1, cex=0.8*cexgr, adj=0.5, line=1.5, col=graa[2])
-                  mtext(at=0,  paste0(hovedgrTxt,': '), side=1, cex=0.8*cexgr, adj=0.9, line=1.5, col=graa[2])
+                  mtext(at=pos, grtxt, side=1, las=1, cex=cexgr, adj=0.5, line=0.5)
+                  mtext(at=pos, grtxt2, side=1, las=1, cex=0.9*cexgr, adj=0.5, line=1.5, col=graa[2])
+                  mtext(at=0,  paste0(hovedgrTxt,': '), side=1, cex=0.9*cexgr, adj=0.9, line=1.5, col=graa[2])
                   #legend(x=0, y=-0.05*ymax, legend=paste0(hovedgrTxt,':'), col=fargeRest,pch=18,bty="n",ncol=2, cex=0.9*cexgr, xpd=TRUE) #pt.cex=0.7,
 
                   if (medSml == 1) {
                         grtxt3 <- paste0(sprintf('%.1f',AggVerdier$Rest), '%') #paste0('(', sprintf('%.1f',AggVerdier$Rest), '%)')
-                        mtext(at=pos, grtxt3, side=1, las=1, cex=0.8*cexgr, adj=0.5, line=2.5, col=graa[2])
-                        mtext(at=0,  paste0(smltxt,': '), side=1, cex=0.8*cexgr, adj=0.9, line=2.5, col=graa[2])
+                        mtext(at=pos, grtxt3, side=1, las=1, cex=0.9*cexgr, adj=0.5, line=2.5, col=graa[2])
+                        mtext(at=0,  paste0(smltxt,': '), side=1, cex=0.9*cexgr, adj=0.9, line=2.5, col=graa[2])
                         points(pos, as.numeric(AggVerdier$Rest), col=fargeRest,  cex=2, pch=18) #c("p","b","o"),
                         legend('top', legend=c(paste0(hovedgrTxt, ' (N=', Nfig$Hoved,')'), paste0(smltxt, ' (N=', Nfig$Rest,')')),
                                border=c(fargeHoved,NA), col=c(fargeHoved,fargeRest), bty='n', pch=c(15,18), pt.cex=2, lty=c(NA,NA),
@@ -311,7 +308,7 @@ NIRFigAndeler  <- function(RegData=0, valgtVar='alder', datoFra='2011-01-01', da
             title(tittel, line=1.5) #cex.main=1.3)
 
             #Tekst som angir hvilket utvalg som er gjort
-            mtext(utvalgTxt, side=3, las=1, cex=0.9, adj=0, col=farger[1], line=c(3+0.8*((NutvTxt-1):0)))
+            mtext(utvalgTxt, side=3, las=1, cex=1, adj=0, col=farger[1], line=c(3+0.8*((NutvTxt-1):0)))
 
             par('fig'=c(0, 1, 0, 1))
             if ( outfile != '') {dev.off()}
