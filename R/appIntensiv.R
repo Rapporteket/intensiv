@@ -972,8 +972,8 @@ server_intensiv <- function(input, output, session) { #
 
     output$lastNed_dataDump <- downloadHandler(
       filename = function(){'dataDumpNIR.csv'},
-      content = function(file, filename){write.csv2(tabDataDump, file, row.names = F, na = '')
-      rapbase::repLogger(session = session, msg = txtLog)
+      content = function(file, filename){write.csv2(tabDataDump, file, row.names = F, na = '', fileEncoding = 'latin1')
+      rapbase::repLogger2(user = user, msg = txtLog)
       })
   })
 
@@ -1074,7 +1074,7 @@ observe({
                               luftvei = as.numeric(input$luftveiValgNok),
                               sykehus=input$enhetNok,
                               utvidTab=1))
-       write.csv2(tab, file, row.names = T, na = '')
+       write.csv2(tab, file, row.names = T, na = '', fileEncoding = 'latin1')
      })
 
       output$tabAntOpphSh <- renderTable({
@@ -1263,7 +1263,7 @@ observe({
                 paste0(input$valgtVar, '_fordeling.csv')
               },
               content = function(file, filename){
-                write.csv2(tab, file, row.names = T, na = '')
+                write.csv2(tab, file, row.names = T, na = '', fileEncoding = 'latin1')
               })
             }) #observe
 
@@ -1354,7 +1354,7 @@ observe({
                       paste0(input$valgtVarAndel, '_andelTid.csv')
                     },
                     content = function(file, filename){
-                      write.csv2(tabAndelTid, file, row.names = T, na = '')
+                      write.csv2(tabAndelTid, file, row.names = T, na = '', fileEncoding = 'latin1')
                     })
 
 
@@ -1383,7 +1383,7 @@ observe({
                       paste0(input$valgtVarAndel, '_andelGrVar.csv')
                     },
                     content = function(file, filename){
-                      write.csv2(tabAndelerShus, file, row.names = T, na = '')
+                      write.csv2(tabAndelerShus, file, row.names = T, na = '', fileEncoding = 'latin1')
                     })
 
                   output$tittelAndelGrVar <- renderUI({
@@ -1477,7 +1477,7 @@ observe({
             paste0(input$valgtVarGjsn, '_gjsnGrVar.csv')
           },
           content = function(file, filename){
-            write.csv2(tabGjsnGrVar, file, row.names = T, na = '')
+            write.csv2(tabGjsnGrVar, file, row.names = T, na = '', fileEncoding = 'latin1')
           })
 
         output$tittelGjsn <- renderUI(
@@ -1527,7 +1527,7 @@ observe({
             paste0(input$valgtVarGjsn, '_gjsnTid.csv')
           },
           content = function(file, filename){
-            write.csv2(tabGjsnTid, file, row.names = T, na = '')
+            write.csv2(tabGjsnTid, file, row.names = T, na = '', fileEncoding = 'latin1')
           })
 
       })
@@ -1677,7 +1677,8 @@ observe({
             paste0(input$valgtVarPaarorFord, '_PrePostPaaror.csv')
           },
           content = function(file, filename){
-            write.csv2(tab, file, row.names = T, na = '')
+            rapbase::repLogger2(user, msg = paste0("TabPrePostPaaror: ", input$valgtVarPaarorFord))
+            write.csv2(tab, file, row.names = T, na = '', fileEncoding = 'latin1')
           })
       }) #observe
 
