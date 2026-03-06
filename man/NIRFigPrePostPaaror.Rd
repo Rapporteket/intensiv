@@ -7,22 +7,22 @@
 NIRFigPrePostPaaror(
   RegData = 0,
   valgtVar,
-  datoFra = "2011-01-01",
-  datoTil = "3000-12-31",
+  preprosess = 1,
+  hentData = 0,
+  reshID = 0,
+  enhetsUtvalg = 0,
+  datoFra = "2023-11-07",
+  datoTil = Sys.Date(),
   aar = 0,
-  startDatoIntervensjon = "2016-10-01",
+  startDatoIntervensjon = "2025-01-01",
   sluttDatoIntervensjon = Sys.Date(),
   minald = 0,
   maxald = 110,
   erMann = "",
   InnMaate = "",
   dodInt = "",
-  outfile = "",
   nivaa = 0,
-  preprosess = 1,
-  hentData = 0,
-  reshID = 0,
-  enhetsUtvalg = 0,
+  outfile = "",
   lagFig = 1,
   ...
 )
@@ -31,6 +31,19 @@ NIRFigPrePostPaaror(
 \item{RegData}{En dataramme med alle nødvendige variabler fra registeret}
 
 \item{valgtVar}{Hvilken variabel som skal visualiseres. Se \strong{Details} for oversikt.}
+
+\item{preprosess}{Preprosesser data
+FALSE: Nei
+TRUE: Ja (Standard)}
+
+\item{hentData}{Gjør spørring mot database
+0: Nei, RegData gis som input til funksjonen (Standard)
+1: Ja}
+
+\item{reshID}{Parameter følger fra innlogging helseregister.no og angir
+hvilken enhet i spesialisthelsetjenesten brukeren tilhører}
+
+\item{enhetsUtvalg}{Gjør gruppeutvalg med eller uten sammenlikning. Se \strong{Details} for oversikt.}
 
 \item{datoFra}{Tidligste dato i utvalget (vises alltid i figuren). Standard 2019-01-01.
 Registeret inneholder registreringer f.o.m. 2011}
@@ -55,36 +68,18 @@ standard: alle (alt unntatt 0,6,8 / ikke spesifisert)}
 1: død,
 alle: standard (alle andre verdier)}
 
-\item{outfile}{Navn på fil figuren skrives til. Standard: '' (Figur skrives
-til systemets standard utdataenhet (som regel skjerm))}
-
 \item{nivaa}{Intensivavdelingens "nivå": 1-5: 'Overvåk', 'Postop', 'Gen<50%','Gen>50%', 'Barn'
 Flervalgsparameter}
 
-\item{preprosess}{Preprosesser data
-FALSE: Nei
-TRUE: Ja (Standard)}
-
-\item{hentData}{Gjør spørring mot database
-0: Nei, RegData gis som input til funksjonen (Standard)
-1: Ja}
-
-\item{reshID}{Parameter følger fra innlogging helseregister.no og angir
-hvilken enhet i spesialisthelsetjenesten brukeren tilhører}
-
-\item{enhetsUtvalg}{Gjør gruppeutvalg med eller uten sammenlikning. Se \strong{Details} for oversikt.}
+\item{outfile}{Navn på fil figuren skrives til. Standard: '' (Figur skrives
+til systemets standard utdataenhet (som regel skjerm))}
 
 \item{lagFig}{Angir om figur skal lages eller ikke 0-ikke lag, 1-lag}
 
 \item{valgtMaal}{'Med' = median. Alt annet gir gjennomsnitt
 
-Argumentet \emph{valgtVar} har følgende valgmuligheter:
-   \itemize{
-    \item alder: Pasientens alders
-    \item SAPSII: Skår for alvorlighetsgrad av sykdom.  (Simplified Acute Physiology Score II)
-   }
-
-Detajer: Her bør man liste opp hvilke variable funksjonen benytter.}
+Nytt skjema tatt i bruk 7.nov 2023
+Detajer: Her bør man liste opp hvilke variabler funksjonen benytter.}
 }
 \value{
 Søylediagram med fordeling før og ved intervensjon

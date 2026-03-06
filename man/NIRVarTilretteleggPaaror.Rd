@@ -16,16 +16,16 @@ NIRVarTilretteleggPaaror(
 
 \item{valgtVar}{Hvilken variabel som skal visualiseres. Se \strong{Details} for oversikt.}
 
-\item{figurtype}{Hvilken figurtype det skal tilrettelegges variable for: 
+\item{figurtype}{Hvilken figurtype det skal tilrettelegges variable for:
 'andeler', 'andelGrVar', 'andelTid', 'gjsnGrVar', 'gjsnTid'}
 }
 \value{
 Definisjon av valgt variabel.
 }
 \description{
-Denne funksjonen gjør utvalg og tilrettelegger variable (gitt ved valgtVar) til videre bruk. 
-Videre bruk kan eksempelvis være beregning av AggVerdier eller gjennomsnitt. 
+Denne funksjonen gjør utvalg og tilrettelegger variable (gitt ved valgtVar) til videre bruk.
+Videre bruk kan eksempelvis være beregning av AggVerdier eller gjennomsnitt.
 Funksjonen gjør også filtreringer som å fjerne ugyldige verdier for den valgte variabelen, samt ta høyde for avhengigheter med
-andre variable. Det er også her man angir aksetekster og titler for den valgte variabelen. 
+andre variable. Det er også her man angir aksetekster og titler for den valgte variabelen.
 Her kan mye hentes til analysebok
 }

@@ -4,7 +4,7 @@
 \alias{KobleMedHoved}
 \title{Koble et annet skjema til hovedskjema}
 \usage{
-KobleMedHoved(HovedSkjema, Skjema2, alleHovedskjema = F, alleSkjema2 = F)
+KobleMedHoved(HovedSkjema, Skjema2, alleHovedskjema = F, alleSkjema2 = T)
 }
 \arguments{
 \item{HovedSkjema}{Registerets hovedskjma (Main..)}
