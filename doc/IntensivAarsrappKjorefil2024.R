@@ -520,8 +520,7 @@ names(table(TidligereKvalIndReg$ind_id))
 names(KvalIndManuellNy)
 KvalIndManuellNy$year <- 2024
 RegData <- KvalIndManuellNy[, c("resh_id", "tverrfagleg_gjennomgang", "rutinenotat", "primarvakt", "data_nir", "year")]
-RegData$primarvakt <- dplyr::recode(RegData$primarvakt, '2' = 1, '3' = 0, .default = RegData$primarvakt) #1-ja, 2-nei Innh: -1,1,2,3
-#RegData$primarvakt <- dplyr::case_match(RegData$primarvakt, 2 ~ 1, 3 ~ 0) #1-ja, 2-nei Innh: -1,1,2,3
+RegData$primarvakt <- dplyr::replace_values(RegData$primarvakt, '2' = 1, '3' = 0, .default = RegData$primarvakt) #1-ja, 2-nei Innh: -1,1,2,3
 variabler <- c( "tverrfagleg_gjennomgang", "rutinenotat",  "data_nir")
 RegData[ , variabler][RegData[,variabler] == 2] <- 0
 RegData$orgnr <- as.character(nyID[as.character(RegData$resh_id)])
