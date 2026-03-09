@@ -22,15 +22,14 @@ NIRFigPrePostPaaror  <- function(
     minald=0, maxald=110, erMann='',InnMaate='', dodInt='',nivaa = 0,
     outfile='', lagFig=1,...){ #overfPas=0,
 
-  # if ("session" %in% names(list(...))) {
-   #    rapbase::repLogger(session = list(...)[["session"]], msg = paste0("FigPrePostPaaror: ", valgtVar))
-   # }
-      if (hentData == 1) {
+   #    rapbase::repLogger2(user, msg = paste0("FigPrePostPaaror: ", valgtVar))
+
+       if (hentData == 1) {
             RegData <- NIRRegDataSQL(datoFra, datoTil) #minald=0, maxald=110, erMann='',InnMaate='', dodInt=''
       }
 
       if (preprosess){
-            RegData <- NIRPreprosess(RegData=RegData)	#, reshID=reshID)
+            RegData <- NIRPreprosess(RegData=RegData)
       }
 
       #--------------- Definere variable ------------------------------
@@ -72,13 +71,24 @@ NIRFigPrePostPaaror  <- function(
       tittel <- NIRVarSpes$tittel
 
 
-     # AndelerPP <- list(Pre=0, Post=0)
       NPre <- N$Pre
       NPost <- N$Post
       AndelerPP <- cbind(AggVerdier$Pre, AggVerdier$Post)
 
-      #-----------Figur---------------------------------------
+      names(AggVerdier) <- c('Hoved', 'Rest')
+      names(Ngr) <- c('Hoved', 'Rest')
 
+      FigDataParam <- list(AggVerdier=AggVerdier,
+                           N = N,
+                           Ngr = Ngr,
+                           grtxt2=grtxt2,
+                           grtxt=grtxt,
+                           tittel=tittel,
+                           utvalgTxt=utvalgTxt,
+                           fargepalett=NIRUtvalg$fargepalett,
+                           hovedgrTxt=NIRUtvalg$hovedgrTxt)
+      #-----------Figur---------------------------------------
+      if (lagFig == 1) {
       #Plottspesifikke parametre:
       FigTypUt <- rapFigurer::figtype(outfile, fargepalett='BlaaOff')
       NutvTxt <- length(utvalgTxt)
@@ -111,5 +121,8 @@ NIRFigPrePostPaaror  <- function(
 
       par('fig'=c(0, 1, 0, 1))
       if ( outfile != '') {dev.off()}
+      }
+
+      return(invisible(FigDataParam))
 }
 

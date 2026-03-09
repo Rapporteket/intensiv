@@ -5,7 +5,7 @@
 \title{Henter data fra pårørendeskjema registrert for Intensiv og kobler til
 noen variabler fra hovedskjema.}
 \usage{
-NIRpaarorDataSQL(datoFra = "2015-12-01", datoTil = Sys.Date(), medH = 0)
+NIRpaarorDataSQL(datoFra = "2023-10-01", datoTil = Sys.Date(), medH = 0)
 }
 \arguments{
 \item{datoFra}{Tidligste dato i utvalget (vises alltid i figuren). Standard 2019-01-01.

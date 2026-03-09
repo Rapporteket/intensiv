@@ -99,7 +99,7 @@ NIRVarTilretteleggPaaror  <- function(RegData, valgtVar, grVar='ShNavn', figurty
                    BehandlingSamarbeid_2	= 'Samarbeidet mellom alt intensivpersonale som tok hand om pasienten',
                    DeltagelseIOmsorg	= 'Hvor fornøyd pårørende var med sin deltakelse i omsorgen for pasienten',
                    ForklaringForstaaelse_2	= 'Hvor godt intensivpersonalet ga pårørende forklaringer de forsto',
-                   InformasjonOmForloep_2 = 'Informasjon fra personalet om hva som hendte med pasienten?',
+                   InformasjonOmForloep_2 = 'Hvor godt pårørende ble informert om pasientens tilstand og behandling',
                    InformasjonsAerlighet_2 = 'Ærligheten i informasjon som ble gitt pårørede om tilstanden til pasienten',
                    InformasjonsOverensstemmelse_2 = 'Konsistensen i informasjonen som ble gitt pårørende om tilstanden til pasienten',
                    LegeBehandling_2 = 'Hvor godt legene ivaretok pasienten',
@@ -123,7 +123,7 @@ NIRVarTilretteleggPaaror  <- function(RegData, valgtVar, grVar='ShNavn', figurty
   } else {
 
     if (valgtVar == 'LivssluttKomfor_2') {
-      tittel <- 'Pårørendes opplevelse av pasientens komfort på livetsslutt'
+      tittel <- 'Pårørendes opplevelse av pasientens komfort på livets slutt'
       grtxt <- c('Svært ukomfortabelt', 'Noe ukomfortabelt',
                  'For det meste komfortabelt', 'Svært komfortabelt',
                  'Fullkomment komfortabelt')
@@ -170,47 +170,47 @@ NIRVarTilretteleggPaaror  <- function(RegData, valgtVar, grVar='ShNavn', figurty
 
      if (valgtVar == 'PasientRelasjon') {
        #-1:Velg verdi, 1:Kone, 2:Ektemann, 3:Samboer, 4:Mor, 5:Far, 6:Søster, 7:Bror, 8:Datter, 9:Sønn, 10:Annet
+       #Slå sm. til: 1: Ektefelle, 3:Samboer, 5:Forelder, 7:Søsken, 9:Sønn/Datter, 11:Ikke besvart/annet,
        tittel <- 'Relasjon til pasienten'
-       gr <- c(-1, 1:10)
-       grtxt <- c('Ikke besvart',
-                  'Kone', 'Ektemann', 'Samboer', 'Mor', 'Far',
-                  'Søster', 'Bror', 'Datter', 'Sønn', 'Annet')
+       RegData$PasientRelasjon <- dplyr::replace_values(RegData$PasientRelasjon,
+                             from = c(2, 4, 6, 8, 10, -1),
+                             to =   c(1, 5, 7, 9, 11, 11))
+       gr <- c(1,3,5,7,9,11)  #c(-1, 1:10)
+       grtxt <- c('Ektefelle', 'Samboer', 'Forelder', 'Søsken', 'Sønn/Datter', 'Ikke besvart/annet')
      }
 
     if (valgtVar == 'HoeyesteFullfoerteUtdannelse') {
       #-1:5         -1 = Velg verdi,
       tittel <- 'Høyeste nivå av fullført utdannelse'
       gr <- -1:4
-      grtxt <- c('Ikke besvart',
-                 'Ikke fullført grunnskole/vgs',
-                 'Fullført grunnskole og vgs',
-                 'Fullført yrkesutdanning',
-                 'Universitetsgrad tilsv. bachelor',
+      grtxt <- c('Ikke svart',
+                 'Ikke fullf. gr.skole/vgs',
+                 'Fullført gr.skole/vgs',
+                 'Fullført yrkesutd.',
+                 'Univ. tilsv. bachelor',
                  'Master eller Doktorgrad')
     }
   }
 
 
 
-
   RegData$VariabelGr <- RegData[ ,valgtVar]
-  #RegData$VariabelGr[RegData$VariabelGr %in% c(-1,6)] <- 9
-  RegData$VariabelGr <- factor(RegData$VariabelGr, levels = gr) #c(1:(length(grtxt)-2),8:9))
+  RegData$VariabelGr <- factor(RegData$VariabelGr, levels = gr)
 
 
-  if (valgtVar %in% c('SumScoreSatisfactionCare', 'SumScoreSatisfactionDecision', 'SumScoreAllQuestions')) {  #gjsnGrVar
-    RegData <- RegData[which(RegData[,valgtVar] >= 0), ]    #Tar bort alder<0
-    if (figurtype == 'andeler') {	#Fordelingsfigur
-      RegData$Variabel  <- RegData[,valgtVar]
-      gr <- c(seq(0, 90, 10),100)
-      RegData$VariabelGr <- cut(RegData$Variabel, breaks=gr, include.lowest=TRUE, right=FALSE)
-      grtxt <- c('0-9','10-19','20-29','30-39','40-49','50-59','60-69','70-79','80-89','90-100')
-      xAkseTxt <- 'sumskår'}
-    tittel <- switch (valgtVar,
-                      SumScoreSatisfactionCare  = 'Totalskår, omsorg',
-                      SumScoreSatisfactionDecision = 'Totalskår, beslutningsmedvirkning',
-                      SumScoreAllQuestions = 'Totalskår')
-  }
+  # if (valgtVar %in% c('SumScoreSatisfactionCare', 'SumScoreSatisfactionDecision', 'SumScoreAllQuestions')) {  #gjsnGrVar
+  #   RegData <- RegData[which(RegData[,valgtVar] >= 0), ]    #Tar bort alder<0
+  #   if (figurtype == 'andeler') {	#Fordelingsfigur
+  #     RegData$Variabel  <- RegData[,valgtVar]
+  #     gr <- c(seq(0, 90, 10),100)
+  #     RegData$VariabelGr <- cut(RegData$Variabel, breaks=gr, include.lowest=TRUE, right=FALSE)
+  #     grtxt <- c('0-9','10-19','20-29','30-39','40-49','50-59','60-69','70-79','80-89','90-100')
+  #     xAkseTxt <- 'sumskår'}
+  #   tittel <- switch (valgtVar,
+  #                     SumScoreSatisfactionCare  = 'Totalskår, omsorg',
+  #                     SumScoreSatisfactionDecision = 'Totalskår, beslutningsmedvirkning',
+  #                     SumScoreAllQuestions = 'Totalskår')
+  # }
 
 
 

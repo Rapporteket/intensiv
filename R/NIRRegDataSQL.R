@@ -11,19 +11,10 @@
 #'
 NIRRegDataSQL <- function(datoFra = '2011-01-01', datoTil = Sys.Date()) { #,session='') {
 
-  if (Sys.getenv("R_RAP_INSTANCE") %in% c("QAC", "PRODUCTIONC")){
-    registryName <- "data"
-  } else {
-    registryName <- "intensiv"
-  }
-
-
-  registryName <- 'data' #"nir"
-
   query <- paste0('SELECT
-  Age,
-  AgeAdmitted,
-	Bilirubin,
+      Age,
+      AgeAdmitted,
+	    Bilirubin,
       BrainDamage,
       Bukleie,
       CerebralCirculationAbolished,
@@ -139,10 +130,10 @@ FROM
 WHERE cast(DateAdmittedIntensive as date) BETWEEN \'', datoFra, '\' AND \'', datoTil, '\'')
 
 
-   # query <- paste0('select * from intensivopphold_1
-   # WHERE cast(DateAdmittedIntensive as date) BETWEEN \'', '2020-01-01', '\' AND \'', Sys.Date(), '\'')
+  # query <- paste0('select * from intensivopphold_1
+  # WHERE cast(DateAdmittedIntensive as date) BETWEEN \'', '2020-01-01', '\' AND \'', Sys.Date(), '\'')
 
-  RegData <- rapbase::loadRegData(registryName = registryName, query=query, dbType="mysql")
+  RegData <- rapbase::loadRegData(query=query, dbType="mysql")
 
   LogVar <- c("Kontinuerlig", "Intermitterende",  "Peritonealdialyse", "SpecialMeasures",
               "TerapetiskHypotermi",  "EcmoEcla",  "Iabp",  "Impella",   "Icp",   "Oscillator",
@@ -156,5 +147,5 @@ WHERE cast(DateAdmittedIntensive as date) BETWEEN \'', datoFra, '\' AND \'', dat
 
 
 
-    return(RegData)
+  return(RegData)
 }

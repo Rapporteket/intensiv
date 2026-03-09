@@ -10,7 +10,6 @@ options(knitr.table.format = "html")
 
 #-----Definere utvalgsinnhold og evt. parametre som er statiske i appen----------
 
-#idag <- Sys.Date() #as.Date('2018-11-30') #
 startDato <- paste0(as.numeric(format(Sys.Date()-90, "%Y")), '-01-01')
 
 enhetsUtvalg <- c("Egen mot resten av landet"=1,
@@ -129,8 +128,8 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                     h4(tags$b('SMR '), 'viser SMR per sykehus. Dette er faktisk dødelighet
                        delt på estimert dødelighet ut fra SAPS-skår.'),
                     h4(tags$b('Type opphold'), 'viser en figur med fordeling av oppholdstyper.'),
-                    # h4(tags$b('PREM-skjema'), 'viser resultater fra pårørendeundersøkelser
-                    #    registrert i skjemaet FS-ICU.'),
+                    h4(tags$b('PREM-skjema'), 'viser resultater fra pårørendeundersøkelser
+                        registrert i skjemaet FS-ICU.'),
                     br(),
                     h4('Gi gjerne innspill til registerledelsen om det er resultater/tabeller/figurer du savner
                             på Rapporteket-Intensiv.')
@@ -623,7 +622,7 @@ tabPanel("Luftveisinfeksjon",
   ), #tab
 
   #-------Pårørendeskjema----------
-#DENNE SKAL OPPDATERES TIL Å GJELDE NY VERSJON AV SKJEMAET
+
   tabPanel(p("PREM-skjema", title='Enkeltspørsmål fra FS-ICU, samt totalskårer'),
            value = "PREM-skjema",
            h2('Resultater fra Pårørendeskjema (FS-ICU)', align = 'center'),
@@ -648,7 +647,7 @@ tabPanel("Luftveisinfeksjon",
                   'AtmosfaerenPaaroerenderom' = 'AtmosfaerenPaaroerenderom_2',
                   'AtmosfaerenIntensivAvd' = 'AtmosfaerenIntensivAvd_2',
                   'OmfangetAvBehandlingen' = 'OmfangetAvBehandlingen_2',
-                  'DeltagelseIOmsorg?' = 'DeltagelseIOmsorg',
+                  'DeltagelseIOmsorg' = 'DeltagelseIOmsorg',
                   'MengdenAvHelsetjenester' = 'MengdenAvHelsetjenester',
                   'LegeInformasjonFrekvens' = 'LegeInformasjonFrekvens_2',
                   'SvarPaaSpoersmaal' = 'SvarPaaSpoersmaal_2',
@@ -684,22 +683,26 @@ tabPanel("Luftveisinfeksjon",
              h5('(NB: Hvis din avdeling ikke har registreringer, vises hele landet uansett valg)'),
              selectInput(inputId = "erMannPaarorFord",
                          label="Kjønn, pasient",
-                         choices = c("Begge"=2, "Menn"=1, "Kvinner"=0))
+                         choices = c("Begge"=2, "Menn"=1, "Kvinner"=0)),
+             selectInput(inputId = "bildeformatPaarorFord",
+                         label = "Velg format for nedlasting av figur",
+                         choices = c('pdf', 'png', 'jpg', 'bmp', 'tif', 'svg')),
+             downloadButton('LastNedFigPaarorFord', label='Velg format og last ned figur')
            ),
 
            mainPanel(
              tabsetPanel(
                tabPanel(
                  'Figur',
-                 plotOutput('paarorFord')) # ,
-               # tabPanel(
-               #   'Tabell',
-               #   h3('Her kommer en tabell')
-               #   #uiOutput("tittelFord"),
-               #   #tableOutput('fordelingTabPaaror')
-               # )
-             )
-           )
+                 plotOutput('paarorFord')
+                )  ,
+               tabPanel(
+                 'Tabell',
+                 uiOutput("tittelFordPaaror"),
+                 tableOutput('fordelingTabPaaror'),
+                 downloadButton(outputId = 'lastNed_tabFordPaaror', label='Last ned tabell')
+               )
+             ))
   ), #tab Pårørende
 
 
@@ -862,14 +865,14 @@ server_intensiv <- function(input, output, session) { #
       shinyjs::show(id = 'velgReshOverf')
       shinyjs::show(id = 'velgReshData')
       shinyjs::show(id = 'velgReshDbl')
-      showTab(inputId = "hovedark", target = "PREM-skjema")
+      # showTab(inputId = "hovedark", target = "PREM-skjema")
       showTab(inputId = "hovedark", target = "Registeradministrasjon")
     } else {
       shinyjs::hide(id = 'velgResh')
       shinyjs::hide(id = 'velgReshOverf')
       shinyjs::hide(id = 'velgReshData')
       shinyjs::hide(id = 'velgReshDbl')
-      hideTab(inputId = "hovedark", target = "PREM-skjema")
+      # hideTab(inputId = "hovedark", target = "PREM-skjema")
       hideTab(inputId = "hovedark", target = "Registeradministrasjon")
     }
   })
@@ -969,8 +972,8 @@ server_intensiv <- function(input, output, session) { #
 
     output$lastNed_dataDump <- downloadHandler(
       filename = function(){'dataDumpNIR.csv'},
-      content = function(file, filename){write.csv2(tabDataDump, file, row.names = F, na = '')
-      rapbase::repLogger(session = session, msg = txtLog)
+      content = function(file, filename){write.csv2(tabDataDump, file, row.names = F, na = '', fileEncoding = 'latin1')
+      rapbase::repLogger2(user = user, msg = txtLog)
       })
   })
 
@@ -1071,7 +1074,7 @@ observe({
                               luftvei = as.numeric(input$luftveiValgNok),
                               sykehus=input$enhetNok,
                               utvidTab=1))
-       write.csv2(tab, file, row.names = T, na = '')
+       write.csv2(tab, file, row.names = T, na = '', fileEncoding = 'latin1')
      })
 
       output$tabAntOpphSh <- renderTable({
@@ -1260,7 +1263,7 @@ observe({
                 paste0(input$valgtVar, '_fordeling.csv')
               },
               content = function(file, filename){
-                write.csv2(tab, file, row.names = F, na = '')
+                write.csv2(tab, file, row.names = T, na = '', fileEncoding = 'latin1')
               })
             }) #observe
 
@@ -1351,7 +1354,7 @@ observe({
                       paste0(input$valgtVarAndel, '_andelTid.csv')
                     },
                     content = function(file, filename){
-                      write.csv2(tabAndelTid, file, row.names = T, na = '')
+                      write.csv2(tabAndelTid, file, row.names = T, na = '', fileEncoding = 'latin1')
                     })
 
 
@@ -1380,7 +1383,7 @@ observe({
                       paste0(input$valgtVarAndel, '_andelGrVar.csv')
                     },
                     content = function(file, filename){
-                      write.csv2(tabAndelerShus, file, row.names = T, na = '')
+                      write.csv2(tabAndelerShus, file, row.names = T, na = '', fileEncoding = 'latin1')
                     })
 
                   output$tittelAndelGrVar <- renderUI({
@@ -1474,7 +1477,7 @@ observe({
             paste0(input$valgtVarGjsn, '_gjsnGrVar.csv')
           },
           content = function(file, filename){
-            write.csv2(tabGjsnGrVar, file, row.names = T, na = '')
+            write.csv2(tabGjsnGrVar, file, row.names = T, na = '', fileEncoding = 'latin1')
           })
 
         output$tittelGjsn <- renderUI(
@@ -1524,7 +1527,7 @@ observe({
             paste0(input$valgtVarGjsn, '_gjsnTid.csv')
           },
           content = function(file, filename){
-            write.csv2(tabGjsnTid, file, row.names = T, na = '')
+            write.csv2(tabGjsnTid, file, row.names = T, na = '', fileEncoding = 'latin1')
           })
 
       })
@@ -1612,7 +1615,6 @@ observe({
       )
 #------------Pårørende-------------------
 
-    #  if (antPaaror>0){
       output$paarorFord <- renderPlot(
         NIRFigPrePostPaaror(RegData=PaarorDataH, preprosess = 0, valgtVar=input$valgtVarPaarorFord,
                             startDatoIntervensjon = input$startDatoIntervensjon,
@@ -1621,9 +1623,65 @@ observe({
                             enhetsUtvalg = input$enhetsUtvalgPaarorFord,
                             erMann=as.numeric(input$erMannPaarorFord,
                                               session=session)
-        ), width=900, height = 900 #execOnResize=TRUE,
+        ), width=900, height = 900)
+
+      output$LastNedFigPaarorFord <- downloadHandler(
+        filename = function(){
+          paste0('FigurPaarorFord_', input$valgtVarPaarorFord, Sys.Date(), '.', input$bildeformatPaarorFord)
+        },
+        content = function(file){
+          NIRFigPrePostPaaror(RegData=PaarorDataH, preprosess = 0, valgtVar=input$valgtVarPaarorFord,
+                              startDatoIntervensjon = input$startDatoIntervensjon,
+                              datoFra=input$datovalgPaarorFord[1], datoTil=input$datovalgPaarorFord[2],
+                              reshID = user$org(),
+                              enhetsUtvalg = input$enhetsUtvalgPaarorFord,
+                              erMann=as.numeric(input$erMannPaarorFord),
+                              outfile = file)
+        }
       )
-      #}
+
+      observe({
+        UtDataFordPaaror <- NIRFigPrePostPaaror(
+          RegData=PaarorDataH, preprosess = 0, valgtVar=input$valgtVarPaarorFord,
+          startDatoIntervensjon = input$startDatoIntervensjon,
+          datoFra=input$datovalgPaarorFord[1], datoTil=input$datovalgPaarorFord[2],
+          reshID = user$org(),
+          enhetsUtvalg = input$enhetsUtvalgPaarorFord,
+          erMann=as.numeric(input$erMannPaarorFord),
+          lagFig = 0, session = session)
+
+        tab <- lagTabavFig(UtDataFraFig = UtDataFordPaaror)
+
+        output$tittelFordPaaror <- renderUI({
+          tagList(
+            h3(HTML(paste(UtDataFordPaaror$tittel, sep='<br />'))),
+            h5(HTML(paste0(UtDataFordPaaror$utvalgTxt, '<br />')))
+          )})
+
+        output$fordelingTabPaaror <- function() {
+          #       kableExtra::kable_styling("hover", full_width = F)
+          antKol <- ncol(tab)
+          kableExtra::kable(tab, format = 'html'
+                            , full_width=F
+                            , digits = c(0,1,0,1)[1:antKol]
+          ) %>%
+            kableExtra::add_header_above(
+              c(" "=1, 'Før intervensjon' = 2, 'Etter intervensjon' = 2)[1:(antKol/2+1)]) %>%
+            kableExtra::column_spec(column = 1, width_min = '7em') %>%
+            kableExtra::column_spec(column = 2:(ncol(tab)+1), width = '7em') %>%
+            kableExtra::row_spec(0, bold = T)
+        }
+
+        output$lastNed_tabFordPaaror <- downloadHandler(
+          filename = function(){
+            paste0(input$valgtVarPaarorFord, '_PrePostPaaror.csv')
+          },
+          content = function(file, filename){
+            rapbase::repLogger2(user, msg = paste0("TabPrePostPaaror: ", input$valgtVarPaarorFord))
+            write.csv2(tab, file, row.names = T, na = '', fileEncoding = 'latin1')
+          })
+      }) #observe
+
 
 #------------------ Abonnement ----------------------------------------------
       orgs <- as.list(sykehusValg[-1])

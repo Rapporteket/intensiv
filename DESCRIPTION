@@ -1,8 +1,8 @@
 Package: intensiv
 Type: Package
 Title: Resultatrapporter for Intensivregisteret
-Version: 3.3.8
-Date: 2026-01-21
+Version: 3.6.0
+Date: 2026-03-06
 Author: Authors@R: c(person("Olsen", "Lena", email =
     "Lena.Ringstad.Olsen@unn.no", role = c("cre", "aut")))
 Maintainer: Lena Ringstad Olsen <lena.olsen@skde.no>
@@ -34,4 +34,4 @@ Imports:
     tidyr,
     xtable,
     zoo
-RoxygenNote: 7.3.2
+RoxygenNote: 7.3.3

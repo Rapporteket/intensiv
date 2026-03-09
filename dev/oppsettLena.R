@@ -6,17 +6,18 @@ devtools::install_github('Rapporteket/intensiv', ref = 'main_dev', )
 remotes::install_github('Rapporteket/rapbase', ref = 'forenkl_take2')
 
 setwd('../data')
-sship::dec('intensiv15c2d417d.sql.gz__20260108_155644.tar.gz',
+sship::dec('intensiv1647f8f75.sql.gz__20260306_103240.tar.gz',
            keyfile = "c://Users/lro2402unn/.ssh/id_rsa")
 setwd('c://Users/lro2402unn/RegistreGIT/intensiv')
-
+# source c://Users/lro2402unn/RegistreGIT/data/intensiv1647f8f75.sql; (hentet i QA 6.mars)
+# source c://Users/lro2402unn/RegistreGIT/data/intensiv1137e9a52.sql; (prod tom 4.mars)
+setwd('../intensiv')
 
 source("dev/sysSetenv.R")
 intensiv::kjorIntensivApp(browser = TRUE)
 
 library(intensiv)
-reshID <- 705577 #103948 #4205969
-
+reshID <- 102026 #705577 #103948 #4205969 Med PREM: 102026
 
 dum <- intensiv::NIRRegDataSQL(datoFra = '2023-11-01')
 RegData <- intensiv::NIRPreprosess(RegData = dum)
@@ -27,14 +28,14 @@ PaarorDataH <- merge(PaarorData, RegData,
                      by.y = 'SkjemaGUID',
                      all.x = TRUE,
                      suffixes = c('_paaror',''))
-SymptomUro_2
 
-NIRFigPrePostPaaror(RegData=PaarorDataH, preprosess = 0, valgtVar='PasientRelasjon',
+dataPP <- NIRFigPrePostPaaror(RegData=PaarorDataH, preprosess = 0, valgtVar='HoeyesteFullfoerteUtdannelse',
                   startDatoIntervensjon = '2024-05-02',
-                  #datoFra=input$datovalgPaarorFord[1], datoTil=input$datovalgPaarorFord[2],
-                  # reshID = 705577,
-                    enhetsUtvalg = 0,
+                   reshID = 0, enhetsUtvalg = 2,
                 outfile = 'test.png')
+
+lagTabavFig(dataPP)
+
 RegData <- RegData[RegData$ReshId==reshID,]
 
 dataMRS <-   readxl::read_excel('../data/NIRdata_2025-11-25_1035.xlsx')
