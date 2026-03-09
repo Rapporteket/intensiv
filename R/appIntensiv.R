@@ -1302,7 +1302,7 @@ observe({
                                  luftvei = as.numeric(input$luftveiValgAndel),
                                  tidsenhet = input$tidsenhetAndelTid,
                                  enhetsUtvalg = input$enhetsUtvalgAndelTid,
-                                 session=session)
+                                 user = user)
             }, height = 300, width = 1000
             )
 
@@ -1319,13 +1319,13 @@ observe({
                                    luftvei = as.numeric(input$luftveiValgAndel),
                                    tidsenhet = input$tidsenhetAndelTid,
                                    enhetsUtvalg = input$enhetsUtvalgAndelTid,
-                                   session=session,
+                                   user = user,
                                    outfile = file)
               }
             )
             observe({
                   #AndelTid
-
+print(class(user))
                   AndelerTid <- NIRFigAndelTid(RegData=RegData, preprosess = 0, valgtVar=input$valgtVarAndel,
                                                reshID = user$org(),
                                                datoFra=input$datovalgAndel[1], datoTil=input$datovalgAndel[2],
@@ -1334,7 +1334,7 @@ observe({
                                                luftvei = as.numeric(input$luftveiValgAndel),
                                                tidsenhet = input$tidsenhetAndelTid,
                                                enhetsUtvalg = input$enhetsUtvalgAndelTid,
-                                               lagFig=0, session=session)
+                                               lagFig=0, user = user)
                   tabAndelTid <- lagTabavFig(UtDataFraFig = AndelerTid)
 
 

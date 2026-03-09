@@ -33,8 +33,9 @@ NIRFigAndelTid <- function(RegData, valgtVar='alder_u18', datoFra='2011-01-01', 
                         reshID=0, outfile='',
                         enhetsUtvalg=0, preprosess=1, hentData=0, lagFig=1, ...) {
 
-   # if ("session" %in% names(list(...))) {
-   #    rapbase::repLogger(session = list(...)[["session"]], msg = paste0("AndelTid: ", valgtVar))
+   # if ("user" %in% names(list(...))) {
+   #   print('User funnet')
+   #   rapbase::repLogger2(user = user, msg = paste0("AndelTid: ", valgtVar))
    # }
    if (hentData == 1) {
             RegData <- NIRRegDataSQL(datoFra, datoTil)
