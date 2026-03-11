@@ -136,11 +136,9 @@ SorterOgNavngiTidsEnhet <- function(RegData, tidsenhet='Aar', tab=0) {
 #'
 #' @export
 lageTulleData <- function(RegData, varBort='', antSh=26, antObs=20000) {
-      library(synthpop)
-      library(dplyr)
       #ForlopsID <- RegData$ForlopsID
       RegData <- RegData[,-which(names(RegData) %in% varBort)]
-      RegData <- RegData[sample(1:dim(RegData)[1], antObs, replace = T),]
+      RegData <- RegData[sample(1:dim(RegData)[1], antObs, replace = TRUE),]
       sykehus <- paste('Sykehus', LETTERS[1:antSh])
       fordelingPasienter <- sample(1:10,antSh, replace = TRUE)
       RegData$ShNavn <- sample(sykehus, prob=fordelingPasienter/sum(fordelingPasienter), size=dim(RegData)[1], replace = TRUE)

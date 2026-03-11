@@ -458,7 +458,6 @@ for (overfPas in 1:2) {
 source("dev/sysSetenv.R")
 setwd('../Aarsrapp')
 library(intensiv)
-library(magrittr)
 NIRData <- NIRPreprosess(RegData = NIRRegDataSQL(datoFra = '2016-01-01'))
 
 indUShNavn <- which(NIRData$ShNavn =='')
