@@ -21,6 +21,7 @@ Imports:
     digest,
     dplyr,
     DT,
+    jsonlite,
     kableExtra,
     knitr,
     lifecycle,
@@ -35,4 +36,6 @@ Imports:
     tidyr,
     xtable,
     zoo
+Suggests:
+    synthpop
 RoxygenNote: 7.3.3
