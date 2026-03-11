@@ -19,6 +19,7 @@ Remotes:
 Imports:
     bookdown,
     digest,
+    dplyr,
     DT,
     kableExtra,
     knitr,
