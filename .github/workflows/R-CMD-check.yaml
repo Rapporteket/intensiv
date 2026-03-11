@@ -29,7 +29,6 @@ jobs:
     env:
       R_REMOTES_NO_ERRORS_FROM_WARNINGS: true
       GITHUB_PAT: ${{ secrets.GH_TOKEN }}
-      _R_CHECK_ASCII_CODE_: false
       R_COMPILE_AND_INSTALL_PACKAGES: never
 
     steps:
