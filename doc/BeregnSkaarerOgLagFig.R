@@ -115,7 +115,6 @@ Del2 <- c('LegeInformasjonFrekvens',
 
 
 
-library(plyr)
 Del1Skaar <- paste0(Del1,'Skaar')
 Del2Skaar <- paste0(Del2,'Skaar')
 RegData[,c(Del1Skaar,Del2Skaar)] <- NA
