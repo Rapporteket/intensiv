@@ -2,3 +2,4 @@
 ^\.Rproj\.user$
 ^docker-compose\.yml$
 ^\.github$
+^data$
