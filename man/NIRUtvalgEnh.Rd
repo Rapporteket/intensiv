@@ -31,6 +31,8 @@ Registeret inneholder registreringer f.o.m. 2011}
 
 \item{datoTil}{Seneste dato i utvalget (vises alltid i figuren).}
 
+\item{aar}{Vis registreringer for opphold som startet i dette året}
+
 \item{minald}{Alder, fra og med (Standardverdi: 0)}
 
 \item{maxald}{Alder, til og med (Standardverdi: 110)}
@@ -64,6 +66,8 @@ Flervalgsparameter}
 
 \item{reshID}{Parameter følger fra innlogging helseregister.no og angir
 hvilken enhet i spesialisthelsetjenesten brukeren tilhører}
+
+\item{velgAvd}{Vis kun registreringer for denne avdelingen (reshID)}
 
 \item{fargepalett}{Hvilken fargepalett skal brukes i figurer (Standard: BlaaRapp)}
 

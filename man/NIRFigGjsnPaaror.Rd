@@ -23,6 +23,8 @@ NIRFigGjsnPaaror(
 
 \item{outfile}{Navn på fil figuren skrives til. Standard: '' (Figur skrives
 til systemets standard utdataenhet (som regel skjerm))}
+
+\item{...}{Ytterligere argumenter, for eksempel user for logging. Se detaljer i NIRUtvalgEnh og NIRVarTilrettelegg.}
 }
 \value{
 Definisjon av valgt variabel.

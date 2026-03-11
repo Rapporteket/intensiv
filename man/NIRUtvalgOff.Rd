@@ -26,6 +26,8 @@ NIRUtvalgOff(
 8: Akutt kirurgisk,
 standard: alle (alt unntatt 0,6,8 / ikke spesifisert)}
 
+\item{aar}{Vis registreringer for opphold som startet i dette året}
+
 \item{fargepalett}{Hvilken fargepalett skal brukes i figurer (Standard: BlaaRapp)}
 }
 \value{

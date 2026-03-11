@@ -38,6 +38,8 @@ Registeret inneholder registreringer f.o.m. 2011}
 
 \item{datoTil}{Seneste dato i utvalget (vises alltid i figuren).}
 
+\item{aar}{Vis registreringer for opphold som startet i dette året}
+
 \item{overfPas}{Overført under pågående intensivbehandling?
 1 = Pasienten er ikke overført
 2 = Pasienten er overført}
@@ -81,17 +83,13 @@ TRUE: Ja (Standard)}
 \item{reshID}{Parameter følger fra innlogging helseregister.no og angir
 hvilken enhet i spesialisthelsetjenesten brukeren tilhører}
 
+\item{velgAvd}{Vis kun registreringer for denne avdelingen (reshID)}
+
 \item{enhetsUtvalg}{Gjør gruppeutvalg med eller uten sammenlikning. Se \strong{Details} for oversikt.}
 
 \item{lagFig}{Angir om figur skal lages eller ikke 0-ikke lag, 1-lag}
 
-\item{figurtype}{Hvilken figurtype som ønskes ut:
-andel (fordelingsfigurer),
-andelGrVar (andel i hver kategori av grupperingsvariabel, eks. sykehus),
-andelTid (andel per tidsenhet, eks. år, måned),
-andelPP (andel før og etter),
-gjsnGrVar (sentralmål i hver kategori av grupperingsvariabel, eks. sykehus),
-gjsnTid (sentralmål per tidsenhet, eks. år, måned)}
+\item{...}{Ytterligere argumenter, for eksempel user for logging. Se detaljer i NIRUtvalgEnh og NIRVarTilrettelegg.}
 }
 \value{
 Søylediagram (fordeling) av valgt variabel. De enkelte verdiene kan også sendes med.

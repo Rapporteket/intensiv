@@ -37,6 +37,8 @@ alle: standard (alle andre verdier)}
 0: Kvinner
 1: Menn}
 
+\item{grvar}{Grupperingsvariabel for figuren. F.eks. 'Kjonn' eller 'RHF'}
+
 \item{outfile}{Navn på fil figuren skrives til. Standard: '' (Figur skrives
 til systemets standard utdataenhet (som regel skjerm))}
 }

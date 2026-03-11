@@ -286,7 +286,11 @@ return(invisible(UtData <-
 }
 
 #' Avdelingar som enno har ikkje-ferdigstilte NIR-skjema for ferdigstilte beredskapsskjema
+#'
+#' @param datoFra Vis registreringer fra og med dato
+#' @param datoTil Vis registreringer til og med dato
 #' @param reshID Avdelingas resh-id
+#'
 #' @return datakvalitet, mangler ferdigstilt inteneivskjema
 #' @export
 ManglerIntSkjema <- function(reshID=0, datoFra='2020-03-01', datoTil=Sys.Date()){

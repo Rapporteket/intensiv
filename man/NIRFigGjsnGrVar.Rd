@@ -70,6 +70,8 @@ Registeret inneholder registreringer f.o.m. 2011}
 
 \item{datoTil}{Seneste dato i utvalget (vises alltid i figuren).}
 
+\item{aar}{Vis registreringer for opphold som startet i dette året}
+
 \item{nivaa}{Intensivavdelingens "nivå": 1-5: 'Overvåk', 'Postop', 'Gen<50%','Gen>50%', 'Barn'
 Flervalgsparameter}
 
@@ -99,6 +101,8 @@ alle: standard (alle andre verdier)}
 
 \item{outfile}{Navn på fil figuren skrives til. Standard: '' (Figur skrives
 til systemets standard utdataenhet (som regel skjerm))}
+
+\item{...}{Ytterligere argumenter, for eksempel user for logging. Se detaljer i NIRUtvalgEnh og NIRVarTilrettelegg.}
 }
 \value{
 Søylediagram med gjennomsnitt/median av valgt variabel for hvert sykehus

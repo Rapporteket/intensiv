@@ -76,6 +76,8 @@ TRUE: Ja (Standard)}
 1: Ja}
 
 \item{lagFig}{Angir om figur skal lages eller ikke 0-ikke lag, 1-lag}
+
+\item{...}{Ytterligere argumenter, for eksempel user for logging. Se detaljer i NIRFigAndeler.}
 }
 \value{
 Figur som viser tidstrend, dvs. andel av valgt variabel for hvert år.

@@ -4,9 +4,8 @@
 #'
 #' Mer info?
 #'
-#'  @param id namespace for this module
-#'  @param inputId id for brukervalget til den aktuelle figur/tabelltypen
-#'  @param label Label for this module
+#' @noRd
+#' 
 #' @return Visning av brukervalg
 #'
 #' @export

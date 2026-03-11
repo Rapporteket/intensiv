@@ -32,6 +32,8 @@ TabTidEnhet(
 1: død,
 alle: standard (alle andre verdier)}
 
+\item{velgAvd}{Vis kun registreringer for denne avdelingen (reshID)}
+
 \item{enhetsNivaa}{'RHF', 'HF', 'ShNavn'}
 }
 \value{

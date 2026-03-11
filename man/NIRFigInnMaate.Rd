@@ -37,6 +37,8 @@ Registeret inneholder registreringer f.o.m. 2011}
 
 \item{datoTil}{Seneste dato i utvalget (vises alltid i figuren).}
 
+\item{aar}{Vis registreringer for opphold som startet i dette året}
+
 \item{minald}{Alder, fra og med (Standardverdi: 0)}
 
 \item{maxald}{Alder, til og med (Standardverdi: 110)}
@@ -72,6 +74,8 @@ TRUE: Ja (Standard)}
 
 \item{outfile}{Navn på fil figuren skrives til. Standard: '' (Figur skrives
 til systemets standard utdataenhet (som regel skjerm))}
+
+\item{...}{Ytterligere argumenter, for eksempel user for logging. Se detaljer i NIRUtvalgEnh og NIRVarTilrettelegg.}
 
 \item{tittel:}{Hvis vil angi tittel direkte}
 

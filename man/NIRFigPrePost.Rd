@@ -60,6 +60,8 @@ TRUE: Ja (Standard)}
 \item{hentData}{Gjør spørring mot database
 0: Nei, RegData gis som input til funksjonen (Standard)
 1: Ja}
+
+\item{...}{Ytterligere argumenter, for eksempel user for logging. Se detaljer i NIRUtvalgEnh og NIRVarTilrettelegg.}
 }
 \value{
 Søylediagram som fordeling av valgt variabel, målt både før og etter hjerneslaget

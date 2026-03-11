@@ -50,6 +50,8 @@ Registeret inneholder registreringer f.o.m. 2011}
 
 \item{datoTil}{Seneste dato i utvalget (vises alltid i figuren).}
 
+\item{aar}{Vis registreringer for opphold som startet i dette året}
+
 \item{minald}{Alder, fra og med (Standardverdi: 0)}
 
 \item{maxald}{Alder, til og med (Standardverdi: 110)}
@@ -75,6 +77,8 @@ Flervalgsparameter}
 til systemets standard utdataenhet (som regel skjerm))}
 
 \item{lagFig}{Angir om figur skal lages eller ikke 0-ikke lag, 1-lag}
+
+\item{...}{Ytterligere argumenter, for eksempel user for logging. Se detaljer i NIRUtvalgEnh og NIRVarTilrettelegg.}
 
 \item{valgtMaal}{'Med' = median. Alt annet gir gjennomsnitt
 
