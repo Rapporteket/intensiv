@@ -17,25 +17,22 @@ Remotes:
       Rapporteket/rapbase@main,
       Rapporteket/rapFigurer,
 Imports:
-    bookdown,
     digest,
     dplyr,
-    DT,
     jsonlite,
     kableExtra,
     knitr,
-    lifecycle,
     lubridate,
     magrittr,
     plyr,
+    rapbase,
     rapFigurer,
     rlang,
     shiny,
     shinyalert,
     shinyjs,
     tidyr,
-    xtable,
-    zoo
+    xtable
 Suggests:
     synthpop
 RoxygenNote: 7.3.3
