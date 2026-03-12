@@ -4,8 +4,9 @@
 #'
 #' Mer info?
 #'
-#' @noRd
-#' 
+#'
+#' @param ark Hvilken side i appen skal vises? (fordelinger eller andeler)
+#'
 #' @return Visning av brukervalg
 #'
 #' @export
