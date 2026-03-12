@@ -19,6 +19,8 @@ NIRFigGjsnPaaror(
 
 \item{valgtVar}{Hvilken variabel som skal visualiseres}
 
+\item{valgtMaal}{description}
+
 \item{prePost}{Før (1) eller etter (2) intervensjon}
 
 \item{grVar}{Grupperingsvariabel}

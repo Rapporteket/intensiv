@@ -11,6 +11,7 @@
 #' @inheritParams NIRUtvalgEnh
 #' @param figurtype Hvilken figurtype det skal tilrettelegges variable for:
 #'                'andeler', 'andelGrVar', 'andelTid', 'gjsnGrVar', 'gjsnTid'
+#' @param grVar Grupperingsvariabel
 #'
 #' @return Definisjon av valgt variabel.
 #'

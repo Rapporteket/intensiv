@@ -52,6 +52,10 @@ Registeret inneholder registreringer f.o.m. 2011}
 
 \item{aar}{Vis registreringer for opphold som startet i dette året}
 
+\item{startDatoIntervensjon}{startDatoIntervensjon}
+
+\item{sluttDatoIntervensjon}{sluttDatoIntervensjon}
+
 \item{minald}{Alder, fra og med (Standardverdi: 0)}
 
 \item{maxald}{Alder, til og med (Standardverdi: 110)}

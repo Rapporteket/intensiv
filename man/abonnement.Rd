@@ -12,7 +12,7 @@ abonnement(rnwFil, brukernavn = "tullebukk", reshID = 0)
 \arguments{
 \item{rnwFil}{Navn på fila som skal kjøres. Angis MED filending (\emph{dvs "filnavn.Rnw"})}
 
-\item{brukernavn}{}
+\item{brukernavn}{Brukernavn}
 
 \item{reshID}{Aktuell reshid}
 }

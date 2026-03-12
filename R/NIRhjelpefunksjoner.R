@@ -242,7 +242,7 @@ henteSamlerapporter <- function(filnavn, rnwFil, reshID=0,
 #'
 #' @param rnwFil Navn på fila som skal kjøres. Angis MED filending (\emph{dvs "filnavn.Rnw"})
 #' @param reshID Aktuell reshid
-#' @param brukernavn
+#' @param brukernavn Brukernavn
 #'
 #' @return Full path of file produced
 #' @export

@@ -25,12 +25,18 @@ TabTidEnhet(
 0: Kvinner
 1: Menn}
 
+\item{resp}{Respirator}
+
 \item{datoFra}{Vis hendelser fra og med dato}
+
+\item{skjemastatus}{skjemastatus}
 
 \item{dodInt}{Levende/død ut fra intensiv.
 0: i live,
 1: død,
 alle: standard (alle andre verdier)}
+
+\item{valgtRHF}{valgtRHF}
 
 \item{velgAvd}{Vis kun registreringer for denne avdelingen (reshID)}
 }

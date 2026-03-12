@@ -54,6 +54,8 @@ FigTidEnhet <- function(AntTab, outfile=''){
 #'
 #' @param minN Maskerer verdier under <3
 #' @param grvar Grupperingsvariabel for figuren. F.eks. 'Kjonn' eller 'RHF'
+#' @param valgtVar valgVar
+#' @param outfile Outfile
 #'
 #' @inheritParams NIRUtvalgEnh
 #'

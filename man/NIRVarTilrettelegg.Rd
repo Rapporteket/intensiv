@@ -11,6 +11,8 @@ NIRVarTilrettelegg(RegData, valgtVar, grVar = "ShNavn", figurtype = "andeler")
 
 \item{valgtVar}{Hvilken variabel som skal visualiseres}
 
+\item{grVar}{grVar}
+
 \item{figurtype}{Hvilken figurtype det skal tilrettelegges variable for:
 'andeler', 'andelGrVar', 'andelTid', 'gjsnGrVar', 'gjsnTid'}
 }

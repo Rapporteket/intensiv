@@ -5,6 +5,9 @@
 #' @param RegData dataramme med preprossesserte data
 #' @param tidsenhet 'dag' (standard), 'uke', 'maaned'
 #' @param datoFra Vis hendelser fra og med dato
+#' @param resp Respirator
+#' @param skjemastatus skjemastatus
+#' @param valgtRHF valgtRHF
 #' @inheritParams NIRUtvalgEnh
 #'
 #' @return Tabell med antall for hver tidsenhet og enhet MÅ OPPDATERES!

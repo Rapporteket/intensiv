@@ -16,6 +16,8 @@ NIRVarTilretteleggPaaror(
 
 \item{valgtVar}{Hvilken variabel som skal visualiseres}
 
+\item{grVar}{Grupperingsvariabel}
+
 \item{figurtype}{Hvilken figurtype det skal tilrettelegges variable for:
 'andeler', 'andelGrVar', 'andelTid', 'gjsnGrVar', 'gjsnTid'}
 }

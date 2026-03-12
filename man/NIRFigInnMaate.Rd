@@ -77,10 +77,6 @@ TRUE: Ja (Standard)}
 \item{outfile}{Filbane for lagring av figur.}
 
 \item{...}{Ytterligere argumenter, for eksempel user for logging. Se detaljer i NIRUtvalgEnh og NIRVarTilrettelegg.}
-
-\item{tittel:}{Hvis vil angi tittel direkte}
-
-\item{utvalgsInfo:}{Hvis datafil lagret med utvalgsinfo}
 }
 \value{
 Søylediagram med AggVerdier av valgt variabel for hvert sykehus

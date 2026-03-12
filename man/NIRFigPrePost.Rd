@@ -45,6 +45,12 @@ Registeret inneholder registreringer f.o.m. 2011}
 0: Kvinner
 1: Menn}
 
+\item{diagnose}{description}
+
+\item{innl4t}{description}
+
+\item{NIHSSinn}{description}
+
 \item{outfile}{Filbane for lagring av figur.}
 
 \item{reshID}{Parameter følger fra innlogging helseregister.no og angir

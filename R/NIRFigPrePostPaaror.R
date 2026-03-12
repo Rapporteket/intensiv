@@ -7,6 +7,8 @@
 #'
 #' @inheritParams NIRFigAndeler
 #' @inheritParams NIRFigAndelerGrVar
+#' @param startDatoIntervensjon startDatoIntervensjon
+#' @param sluttDatoIntervensjon sluttDatoIntervensjon
 #'
 #' @return Søylediagram med fordeling før og ved intervensjon
 #'

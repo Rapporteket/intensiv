@@ -451,7 +451,7 @@ TabAlder <- function(RegData, reshID=0, enhetsNivaa='Alle',
 #' Oppsummeringer, luftveisinfeksjonspasienter
 #'
 #' @param RegData RegData it is
-#' @param pgaLuftvei
+#' @param pgaLuftvei På grunn av luftvei
 #'
 #' @return oppsummering i tabellform
 #' @export

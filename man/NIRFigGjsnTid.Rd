@@ -36,6 +36,8 @@ Registeret inneholder registreringer f.o.m. 2011}
 
 \item{datoTil}{Seneste dato i utvalget (vises alltid i figuren).}
 
+\item{tidsenhet}{description}
+
 \item{minald}{Alder, fra og med (Standardverdi: 0)}
 
 \item{maxald}{Alder, til og med (Standardverdi: 110)}
@@ -60,6 +62,8 @@ alle: standard (alle andre verdier)}
 \item{luftvei}{Luftveisinfeksjon? 'Alle pasienter' = 0, 'Luftveisinfeksjon' = 1,
 'Covid19' = 2, 'InfluensaA' = 3, 'InfluensaB' = 4, 'RS-virus' = 5, 'Kikhoste' = 6,
 'Annet luftveisvirus' = 7, 'Annen_luftveisbakterie' = 8}
+
+\item{tittel}{Tittel}
 
 \item{outfile}{Filbane for lagring av figur.}
 

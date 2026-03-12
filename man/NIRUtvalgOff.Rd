@@ -17,6 +17,8 @@ NIRUtvalgOff(
 \arguments{
 \item{RegData}{En dataramme med alle nødvendige variabler fra registeret}
 
+\item{aldGr}{aldGr}
+
 \item{erMann}{Kjønn, standard: alt annet enn 0/1 gir begge kjønn
 0: Kvinner
 1: Menn}
@@ -27,6 +29,8 @@ NIRUtvalgOff(
 standard: alle (alt unntatt 0,6,8 / ikke spesifisert)}
 
 \item{aar}{Vis registreringer for opphold som startet i dette året}
+
+\item{grType}{grType}
 
 \item{fargepalett}{Hvilken fargepalett skal brukes i figurer (Standard: BlaaRapp)}
 }

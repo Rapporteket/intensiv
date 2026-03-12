@@ -19,6 +19,8 @@ FigFordelingKjonnsdelt(
 \arguments{
 \item{RegData}{En dataramme med alle nødvendige variabler fra registeret}
 
+\item{valgtVar}{valgVar}
+
 \item{minN}{Maskerer verdier under <3}
 
 \item{datoFra}{Tidligste dato i utvalget (vises alltid i figuren). Standard 2019-01-01.
@@ -36,6 +38,8 @@ alle: standard (alle andre verdier)}
 1: Menn}
 
 \item{grvar}{Grupperingsvariabel for figuren. F.eks. 'Kjonn' eller 'RHF'}
+
+\item{outfile}{Outfile}
 }
 \value{
 alders og kjønnsfordelnig
