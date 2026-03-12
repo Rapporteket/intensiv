@@ -281,6 +281,7 @@ Resultater basert på pasienter.
 Har beregnet total eksponeringstid i studien for pasienter som har overlevd. Dette basert på differansen mellom operasjonsdato og uttrekksdato (14.09.2023).
 
 ```{r Overlevelse, echo=FALSE}
+#library("magrittr")
 
 # time - The follow up time for right censored data.
 # status - The status indicator, normally 1=event, 0=alive or right censored.
@@ -372,6 +373,7 @@ Inngr$Pri5gr <- factor(Inngr$Pri5gr, levels= c('0-1t', '1-6t', '6-24t', '24-72t'
 library(ggplot2)
 # ggplot2::ggplot(data = Inngr, mapping = ggplot2::aes(x=Pri5gr, fill=Gruppe)) + 
 #   ggplot2::geom_bar(position = 'identity', alpha=0.5)
+library(magrittr)
        Inngr %>%
          dplyr::filter(!is.na(Pri5gr)) %>%
       ggplot(aes(x=Pri5gr, fill=Gruppe)) + 

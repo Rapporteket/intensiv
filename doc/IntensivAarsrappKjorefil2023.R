@@ -504,6 +504,7 @@ for (nivaa in 1:3) {
 #--------------------------------------Data til offentlig visning (SKDE, Behandlingskvalitet)-------------------------------------
 setwd('~/Aarsrappresultater/NETTsider/')
 library(intensiv)
+library(magrittr)
 NIRData <- NIRPreprosess(RegData = NIRRegDataSQL(datoFra = '2016-01-01'))
 indUShNavn <- which(NIRData$ShNavn =='')
 NIRData$ReshId[indUShNavn]
