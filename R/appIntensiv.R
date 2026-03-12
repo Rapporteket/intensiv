@@ -728,6 +728,10 @@ tabPanel(p("Abonnement",
 
 #' Serverdek til Intensiv-appen
 #'
+#' @param input Shiny input-objekt
+#' @param output Shiny output-objekt
+#' @param session Shiny session-objekt
+#'
 #' @return Brukergrensesnittet (ui) til intensiv-appen
 #' @export
 server_intensiv <- function(input, output, session) { #

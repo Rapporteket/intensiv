@@ -20,6 +20,8 @@ henteSamlerapporter(
 \item{reshID}{Aktuell reshid}
 
 \item{datoFra}{dato}
+
+\item{datoTil}{dato}
 }
 \value{
 Full path of file produced

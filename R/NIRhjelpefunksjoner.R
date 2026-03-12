@@ -215,6 +215,7 @@ WHERE cast(DateAdmittedIntensive as date) BETWEEN \'', datoFra, '\' AND \'', dat
 #' @param reshID Aktuell reshid
 #' @param filnavn sdf
 #' @param datoFra dato
+#' @param datoTil dato
 #'
 #' @return Full path of file produced
 #' @export
@@ -241,6 +242,7 @@ henteSamlerapporter <- function(filnavn, rnwFil, reshID=0,
 #'
 #' @param rnwFil Navn på fila som skal kjøres. Angis MED filending (\emph{dvs "filnavn.Rnw"})
 #' @param reshID Aktuell reshid
+#' @param brukernavn
 #'
 #' @return Full path of file produced
 #' @export

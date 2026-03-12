@@ -4,6 +4,7 @@
 #' Siste inntil 5 år eller siste inntil 12 måneder/kvartal/halvår
 #' @param RegData data
 #' @param datoTil sluttdato. Brukes i tabellene AntOpph per 12 mnd og Belegg
+#' @param tidsenhet Tidsenhet
 #' @inheritParams NIRFigAndeler
 #' @export
 tabBelegg <- function(RegData, tidsenhet='Aar', datoTil, enhetsUtvalg=0, reshID=0) {
@@ -143,13 +144,19 @@ finnDblReg <- function(RegData, datoTil=Sys.Date(), reshID=0, pasientID = 'Pasie
 
 #'  Nøkkeltall (antall opph., pasienter,  intensivdøgn, samt div oversiktstall)
 #' 20.okt 2025: Endrer fra å bare gruppere på tidsenhet til å kunne gruppere på andre variabler.
+#'
 #' @param RegData dataramme
 #' @param tidsenhet velg: Aar, Halvaar, Kvartal, Mnd (standard)
 #' @param datoTil sluttdato, format: 'yyyy-mm-dd'
 #' @param enhetsUtvalg enhetsutvalg
 #' @param reshID enhetens resh-id
 #' @param sykehus HelseenhetKortnavn eller HF-navn
+#' @param grVar Grupperingsvariabel.
+#' @param datoFra startdato.
+#' @param luftvei luftveisvariabel
+#' @param utvidTab 0: standardtabell
 #' @param respirator respirator/invasiv/non-inv 0:ikke respirator, 1:respirator, 2:invasiv, 3:non-invasiv
+#'
 #' @export
 tabNokkeltall <- function(RegData, tidsenhet='Mnd', grVar = '',
                           datoFra='2014-01-01', datoTil=Sys.Date(),
@@ -444,6 +451,7 @@ TabAlder <- function(RegData, reshID=0, enhetsNivaa='Alle',
 #' Oppsummeringer, luftveisinfeksjonspasienter
 #'
 #' @param RegData RegData it is
+#' @param pgaLuftvei
 #'
 #' @return oppsummering i tabellform
 #' @export

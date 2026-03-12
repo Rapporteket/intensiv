@@ -73,6 +73,9 @@ TabTidEnhet <- function(RegData, tidsenhet='dag', erMann=9, resp=9, datoFra=0,
 #' Antall som er  i ECMO/respirator MANGE ELEMENTER SOM IKKE KAN BENYTTES FOR INTENSIVSKJEMA
 #'
 #' @param RegData beredskapsskjema
+#' @param valgtRHF Valgt RHF, eller 'Alle' for hele landet
+#' @param erMann 0-kvinner, 1-menn, 9-begge
+#' @param luftvei Luftvei
 #'
 #' @return statustabell
 #' @export
@@ -131,6 +134,8 @@ statusECMOrespTab <- function(RegData, valgtRHF='Alle', erMann=9, luftvei=0){
 #' Ferdigstilte registreringer
 #'
 #' @param RegData beredskapsskjema
+#' @param valgtRHF description
+#' @param resp Respirator
 #' @inheritParams NIRUtvalgEnh
 #'
 #' @return nøkkeltalltabell for ferdigstilte registreringer

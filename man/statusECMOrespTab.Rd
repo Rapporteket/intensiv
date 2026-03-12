@@ -8,6 +8,12 @@ statusECMOrespTab(RegData, valgtRHF = "Alle", erMann = 9, luftvei = 0)
 }
 \arguments{
 \item{RegData}{beredskapsskjema}
+
+\item{valgtRHF}{Valgt RHF, eller 'Alle' for hele landet}
+
+\item{erMann}{0-kvinner, 1-menn, 9-begge}
+
+\item{luftvei}{Luftvei}
 }
 \value{
 statustabell
