@@ -45,9 +45,6 @@ Registeret inneholder registreringer f.o.m. 2011}
 0: Kvinner
 1: Menn}
 
-\item{outfile}{Navn på fil figuren skrives til. Standard: '' (Figur skrives
-til systemets standard utdataenhet (som regel skjerm))}
-
 \item{reshID}{Parameter følger fra innlogging helseregister.no og angir
 hvilken enhet i spesialisthelsetjenesten brukeren tilhører}
 

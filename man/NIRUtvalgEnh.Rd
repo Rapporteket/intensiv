@@ -70,17 +70,6 @@ hvilken enhet i spesialisthelsetjenesten brukeren tilhører}
 \item{velgAvd}{Vis kun registreringer for denne avdelingen (reshID)}
 
 \item{fargepalett}{Hvilken fargepalett skal brukes i figurer (Standard: BlaaRapp)}
-
-\item{valgtVar}{Hvilken variabel som skal visualiseres. Se \strong{Details} for oversikt.}
-
-\item{outfile}{Navn på fil figuren skrives til. Standard: '' (Figur skrives
-til systemets standard utdataenhet (som regel skjerm))}
-
-\item{grType}{Gjør gruppeutvalg på sykehustype - endres til nivå.
-1: lokal-/sentralsykehus
-2: lokal-/sentralsykehus
-3: regionsykehus
-99: alle (standard)}
 }
 \value{
 UtData En liste bestående av det filtrerte datasettet, utvalgstekst for figur og tekststreng som angir fargepalett

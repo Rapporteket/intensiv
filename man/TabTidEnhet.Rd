@@ -33,8 +33,6 @@ TabTidEnhet(
 alle: standard (alle andre verdier)}
 
 \item{velgAvd}{Vis kun registreringer for denne avdelingen (reshID)}
-
-\item{enhetsNivaa}{'RHF', 'HF', 'ShNavn'}
 }
 \value{
 Tabell med antall for hver tidsenhet og enhet MÅ OPPDATERES!

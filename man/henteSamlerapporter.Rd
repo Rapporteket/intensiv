@@ -20,8 +20,6 @@ henteSamlerapporter(
 \item{reshID}{Aktuell reshid}
 
 \item{datoFra}{dato}
-
-\item{parametre}{Liste med valgfrie parametre, avhengig av type rapport}
 }
 \value{
 Full path of file produced

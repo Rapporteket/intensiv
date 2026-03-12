@@ -12,6 +12,7 @@
 #' @inheritParams NIRFigAndeler
 #' @param tittel: Hvis vil angi tittel direkte
 #' @param utvalgsInfo: Hvis datafil lagret med utvalgsinfo
+#' @param grVar Grupperingsvariabel
 #'
 #' @return Søylediagram med AggVerdier av valgt variabel for hvert sykehus
 #'

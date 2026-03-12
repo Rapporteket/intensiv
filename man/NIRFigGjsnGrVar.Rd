@@ -31,8 +31,6 @@ NIRFigGjsnGrVar(
 \arguments{
 \item{RegData}{En dataramme med alle nødvendige variabler fra registeret}
 
-\item{valgtVar}{Hvilken variabel som skal visualiseres. Se \strong{Details} for oversikt.}
-
 \item{preprosess}{Preprosesser data
 FALSE: Nei
 TRUE: Ja (Standard)}
@@ -89,6 +87,10 @@ alle: standard (alle andre verdier)}
 0: Kvinner
 1: Menn}
 
+\item{grVar}{Grupperingsvariabel}
+
+\item{medKI}{Om det skal beregnes og vises konfidensintervall}
+
 \item{overfPas}{Overført under pågående intensivbehandling?
 1 = Pasienten er ikke overført
 2 = Pasienten er overført}
@@ -98,9 +100,6 @@ alle: standard (alle andre verdier)}
 'Annet luftveisvirus' = 7, 'Annen_luftveisbakterie' = 8}
 
 \item{lagFig}{Angir om figur skal lages eller ikke 0-ikke lag, 1-lag}
-
-\item{outfile}{Navn på fil figuren skrives til. Standard: '' (Figur skrives
-til systemets standard utdataenhet (som regel skjerm))}
 
 \item{...}{Ytterligere argumenter, for eksempel user for logging. Se detaljer i NIRUtvalgEnh og NIRVarTilrettelegg.}
 }

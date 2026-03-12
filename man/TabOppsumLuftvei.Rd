@@ -7,7 +7,7 @@
 TabOppsumLuftvei(RegData, pgaLuftvei = 0)
 }
 \arguments{
-\item{RegData}{}
+\item{RegData}{RegData it is}
 }
 \value{
 oppsummering i tabellform

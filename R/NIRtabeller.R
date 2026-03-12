@@ -3,7 +3,6 @@
 #' Belegg (antall opphold, pasienter og intensivdøgn)
 #' Siste inntil 5 år eller siste inntil 12 måneder/kvartal/halvår
 #' @param RegData data
-#' @param personIDvar Variabelen som angir pasientidentifikasjon
 #' @param datoTil sluttdato. Brukes i tabellene AntOpph per 12 mnd og Belegg
 #' @inheritParams NIRFigAndeler
 #' @export
@@ -444,7 +443,7 @@ TabAlder <- function(RegData, reshID=0, enhetsNivaa='Alle',
 
 #' Oppsummeringer, luftveisinfeksjonspasienter
 #'
-#' @param RegData
+#' @param RegData RegData it is
 #'
 #' @return oppsummering i tabellform
 #' @export

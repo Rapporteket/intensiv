@@ -3,9 +3,6 @@
 \name{\%m-\%}
 \alias{\%m-\%}
 \title{Subtract months to a date without exceeding the last day of the new month}
-\usage{
-e1 \%m-\% e2 e1
-}
 \description{
 Subtract months to a date without exceeding the last day of the new month
 }

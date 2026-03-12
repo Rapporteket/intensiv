@@ -4,7 +4,6 @@
 #'
 #' @param RegData dataramme med preprossesserte data
 #' @param tidsenhet 'dag' (standard), 'uke', 'maaned'
-#' @param enhetsNivaa 'RHF', 'HF', 'ShNavn'
 #' @param datoFra Vis hendelser fra og med dato
 #' @inheritParams NIRUtvalgEnh
 #'

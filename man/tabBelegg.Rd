@@ -15,8 +15,6 @@ tabBelegg(RegData, tidsenhet = "Aar", datoTil, enhetsUtvalg = 0, reshID = 0)
 
 \item{reshID}{Parameter følger fra innlogging helseregister.no og angir
 hvilken enhet i spesialisthelsetjenesten brukeren tilhører}
-
-\item{personIDvar}{Variabelen som angir pasientidentifikasjon}
 }
 \description{
 Belegg (antall opphold, pasienter og intensivdøgn)

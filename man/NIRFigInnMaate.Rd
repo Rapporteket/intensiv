@@ -30,8 +30,6 @@ NIRFigInnMaate(
 \arguments{
 \item{RegData}{En dataramme med alle nødvendige variabler fra registeret}
 
-\item{valgtVar}{Hvilken variabel som skal visualiseres. Se \strong{Details} for oversikt.}
-
 \item{datoFra}{Tidligste dato i utvalget (vises alltid i figuren). Standard 2019-01-01.
 Registeret inneholder registreringer f.o.m. 2011}
 
@@ -49,6 +47,8 @@ Registeret inneholder registreringer f.o.m. 2011}
 
 \item{nivaa}{Intensivavdelingens "nivå": 1-5: 'Overvåk', 'Postop', 'Gen<50%','Gen>50%', 'Barn'
 Flervalgsparameter}
+
+\item{grVar}{Grupperingsvariabel}
 
 \item{InnMaate}{0: Elektivt,
 6: Akutt medisinsk,
@@ -71,9 +71,6 @@ alle: standard (alle andre verdier)}
 \item{preprosess}{Preprosesser data
 FALSE: Nei
 TRUE: Ja (Standard)}
-
-\item{outfile}{Navn på fil figuren skrives til. Standard: '' (Figur skrives
-til systemets standard utdataenhet (som regel skjerm))}
 
 \item{...}{Ytterligere argumenter, for eksempel user for logging. Se detaljer i NIRUtvalgEnh og NIRVarTilrettelegg.}
 

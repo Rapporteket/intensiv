@@ -65,5 +65,4 @@ NULL
 #' @keywords internal
 #' @export
 #' @importFrom lubridate %m-%
-#' @usage e1 \%m-\% e2 e1
 NULL
