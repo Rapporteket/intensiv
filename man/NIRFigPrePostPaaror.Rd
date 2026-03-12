@@ -30,6 +30,8 @@ NIRFigPrePostPaaror(
 \arguments{
 \item{RegData}{En dataramme med alle nødvendige variabler fra registeret}
 
+\item{valgtVar}{Hvilken variabel som skal visualiseres}
+
 \item{preprosess}{Preprosesser data
 FALSE: Nei
 TRUE: Ja (Standard)}
@@ -70,6 +72,8 @@ alle: standard (alle andre verdier)}
 
 \item{nivaa}{Intensivavdelingens "nivå": 1-5: 'Overvåk', 'Postop', 'Gen<50%','Gen>50%', 'Barn'
 Flervalgsparameter}
+
+\item{outfile}{Filbane for lagring av figur.}
 
 \item{lagFig}{Angir om figur skal lages eller ikke 0-ikke lag, 1-lag}
 

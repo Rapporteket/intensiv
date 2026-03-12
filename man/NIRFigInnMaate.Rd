@@ -30,6 +30,8 @@ NIRFigInnMaate(
 \arguments{
 \item{RegData}{En dataramme med alle nødvendige variabler fra registeret}
 
+\item{valgtVar}{Hvilken variabel som skal visualiseres}
+
 \item{datoFra}{Tidligste dato i utvalget (vises alltid i figuren). Standard 2019-01-01.
 Registeret inneholder registreringer f.o.m. 2011}
 
@@ -71,6 +73,8 @@ alle: standard (alle andre verdier)}
 \item{preprosess}{Preprosesser data
 FALSE: Nei
 TRUE: Ja (Standard)}
+
+\item{outfile}{Filbane for lagring av figur.}
 
 \item{...}{Ytterligere argumenter, for eksempel user for logging. Se detaljer i NIRUtvalgEnh og NIRVarTilrettelegg.}
 

@@ -61,6 +61,8 @@ alle: standard (alle andre verdier)}
 'Covid19' = 2, 'InfluensaA' = 3, 'InfluensaB' = 4, 'RS-virus' = 5, 'Kikhoste' = 6,
 'Annet luftveisvirus' = 7, 'Annen_luftveisbakterie' = 8}
 
+\item{outfile}{Filbane for lagring av figur.}
+
 \item{enhetsUtvalg}{Gjør gruppeutvalg med eller uten sammenlikning. Se \strong{Details} for oversikt.}
 
 \item{valgtMaal}{'Gjsn': gir middelverdi (standard)

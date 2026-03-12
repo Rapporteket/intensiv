@@ -17,9 +17,13 @@ NIRFigGjsnPaaror(
 \arguments{
 \item{RegData}{En dataramme med alle nødvendige variabler fra registeret}
 
+\item{valgtVar}{Hvilken variabel som skal visualiseres}
+
 \item{prePost}{Før (1) eller etter (2) intervensjon}
 
 \item{grVar}{Grupperingsvariabel}
+
+\item{outfile}{Filbane for lagring av figur.}
 
 \item{...}{Ytterligere argumenter, for eksempel user for logging. Se detaljer i NIRUtvalgEnh og NIRVarTilrettelegg.}
 }

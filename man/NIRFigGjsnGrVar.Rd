@@ -31,6 +31,8 @@ NIRFigGjsnGrVar(
 \arguments{
 \item{RegData}{En dataramme med alle nødvendige variabler fra registeret}
 
+\item{valgtVar}{Hvilken variabel som skal visualiseres}
+
 \item{preprosess}{Preprosesser data
 FALSE: Nei
 TRUE: Ja (Standard)}
@@ -100,6 +102,8 @@ alle: standard (alle andre verdier)}
 'Annet luftveisvirus' = 7, 'Annen_luftveisbakterie' = 8}
 
 \item{lagFig}{Angir om figur skal lages eller ikke 0-ikke lag, 1-lag}
+
+\item{outfile}{Filbane for lagring av figur.}
 
 \item{...}{Ytterligere argumenter, for eksempel user for logging. Se detaljer i NIRUtvalgEnh og NIRVarTilrettelegg.}
 }
