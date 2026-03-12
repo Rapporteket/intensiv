@@ -1,3 +1,15 @@
+# luftveiValg og velgLuftveiTxt brukes også i server-delen, så må legges utenfor begge to
+luftveiValg <- c('Alle pasienter' = 0,
+                 'Luftveisinfeksjon' = 1,
+                 'Covid19' = 2,
+                 'InfluensaA' = 3,
+                 'InfluensaB' = 4,
+                 'RS-virus' = 5,
+                 'Kikhoste' = 6,
+                 'Annet luftveisvirus' = 7,
+                 'Annen_luftveisbakterie' = 8)
+velgLuftveiTxt <- 'Luftveisinfeksjoner'
+
 #' Brukergrensesnitt (ui) til Intensiv-appen
 #'
 #' @return Brukergrensesnittet (ui) til intensiv-appen
@@ -22,16 +34,6 @@ enhetsUtvalg <- c("Egen mot resten av landet"=1,
                   "Egen region" = 7,
                   "Egen region mot resten" = 8)
 
-luftveiValg <- c('Alle pasienter' = 0,
-                 'Luftveisinfeksjon' = 1,
-                 'Covid19' = 2,
-                 'InfluensaA' = 3,
-                 'InfluensaB' = 4,
-                 'RS-virus' = 5,
-                 'Kikhoste' = 6,
-                 'Annet luftveisvirus' = 7,
-                 'Annen_luftveisbakterie' = 8)
-velgLuftveiTxt <- 'Luftveisinfeksjoner'
 
 regTittel <- 'NORSK INTENSIVREGISTER'
 
@@ -721,91 +723,6 @@ tabPanel(p("Abonnement",
            )
          )
 ), #tab abonnement
-
-
-#-------Registeradministrasjon----------
-
-tabPanel(p("Registeradministrasjon", title='Registeradministrasjonens side'),
-         value = "Registeradministrasjon",
-         h3('Bare synlig for SC-bruker'),
-
-         tabsetPanel(
-           tabPanel(
-             h4("Utsendinger"),
-                    #title = "Utsending av rapporter",
-                    sidebarLayout(
-                      sidebarPanel(
-                        rapbase::autoReportOrgInput("NIRuts"),
-                        rapbase::autoReportInput("NIRuts"),
-                        # For tørrkjøring
-                        br(),
-                        br(),
-                        br(),
-                        h4('Hvis man ønsker å teste autorapporter uten å vente til neste dag.
-                           NB: Rapportene sendes ut til alle registrerte mottagere.'),
-                        shiny::actionButton(inputId = "run_autoreport",
-                                            label = "Kjør autorapporter"),
-                        shiny::dateInput(inputId = "rapportdato",
-                                         label = "Kjør rapporter med dato:",
-                                         value = Sys.Date()+1,
-                                         min = Sys.Date(),
-                                         max = Sys.Date() + 366
-                        ),
-                        shiny::checkboxInput(inputId = "dryRun", label = "Send e-post")
-
-
-                      ),
-                      mainPanel(
-                        rapbase::autoReportUI("NIRuts"),
-
-                        #For tørrkjøring:
-                        br(),
-                        p(em("System message:")),
-                        verbatimTextOutput("sysMessage"),
-                        p(em("Function message:")),
-                        verbatimTextOutput("funMessage")
-
-                      )
-                    )
-           ),
-
-
-           tabPanel(
-             h4("Eksport av krypterte data"),
-           sidebarLayout(
-             sidebarPanel(
-               rapbase::exportUCInput("intensivExport")
-             ),
-             shiny::mainPanel(
-               rapbase::exportGuideUI("intensivExportGuide")
-             )
-           )
-         ),
-         tabPanel(h4('Nøkkeltall'),
-                 h2('Nøkkeltall, for valgt HF/RHF', align='center'),
-                 h4('Gjør utvalg'),
-                 dateRangeInput(inputId = 'datoValgNok', label = 'Tidsperiode',
-                              start = as.Date('2018-01-01'), end = Sys.Date(),
-                              separator="t.o.m.", language="nb"),
-                    selectInput(inputId = "luftveiValgNok", label= velgLuftveiTxt,
-                                           choices = luftveiValg),
-                 uiOutput('enhetNok'),
-                    # selectInput(inputId = "enhetNok", label= 'Velg enhet',
-                    #             choices =   c('Alle',
-                    #                           unique(RegData$RHF),
-                    #                           unique(RegData$HF),
-                    #                           unique(RegData$HelseenhetKortnavn))),
-                  br(),
-                 h4('Andel opphold med *komplikasjon*, er definert som et opphold hvor det har
-                    oppstått minst én av følgende komplikasjoner:
-                    Alvorlig hypoglykemi, pneumotoraks, luftveisproblem, trakealtube/kanyle, dekubitus'),
-                  tableOutput('tabNokkeltallUtvidet'),
-                 downloadButton(outputId = 'lastNed_tabNokkelSC', label='Last ned tabell')
-                  )
-#         ),
-         ) #tabset
-) #tab SC
-
 )  #navbarPage
 }
 
@@ -865,15 +782,11 @@ server_intensiv <- function(input, output, session) { #
       shinyjs::show(id = 'velgReshOverf')
       shinyjs::show(id = 'velgReshData')
       shinyjs::show(id = 'velgReshDbl')
-      # showTab(inputId = "hovedark", target = "PREM-skjema")
-      showTab(inputId = "hovedark", target = "Registeradministrasjon")
     } else {
       shinyjs::hide(id = 'velgResh')
       shinyjs::hide(id = 'velgReshOverf')
       shinyjs::hide(id = 'velgReshData')
       shinyjs::hide(id = 'velgReshDbl')
-      # hideTab(inputId = "hovedark", target = "PREM-skjema")
-      hideTab(inputId = "hovedark", target = "Registeradministrasjon")
     }
   })
 
@@ -1713,6 +1626,92 @@ print(class(user))
       )
 
 #-------------Registeradministrasjon -----------------
+
+  observeEvent(user$role(), {
+    if (user$role() == 'SC') {
+      message("Adding Registeradministrasjon tab for user with role ", user$role())
+      shiny::appendTab(
+        inputId = "hovedark",
+        tabPanel(
+          p("Registeradministrasjon", title='Registeradministrasjonens side'),
+          value = "Registeradministrasjon",
+          h3('Bare synlig for SC-bruker'),
+          tabsetPanel(
+            tabPanel(
+              h4("Utsendinger"),
+              sidebarLayout(
+                sidebarPanel(
+                  rapbase::autoReportOrgInput("NIRuts"),
+                  rapbase::autoReportInput("NIRuts"),
+                  br(),
+                  br(),
+                  br(),
+                  h4('Hvis man ønsker å teste autorapporter uten å vente til neste dag.
+                           NB: Rapportene sendes ut til alle registrerte mottagere.'),
+                  shiny::actionButton(inputId = "run_autoreport",
+                    label = "Kjør autorapporter"),
+                  shiny::dateInput(inputId = "rapportdato",
+                    label = "Kjør rapporter med dato:",
+                    value = Sys.Date()+1,
+                    min = Sys.Date(),
+                    max = Sys.Date() + 366
+                  ),
+                  shiny::checkboxInput(inputId = "dryRun", label = "Send e-post")
+
+
+                ),
+                mainPanel(
+                  rapbase::autoReportUI("NIRuts"),
+
+                  #For tørrkjøring:
+                  br(),
+                  p(em("System message:")),
+                  verbatimTextOutput("sysMessage"),
+                  p(em("Function message:")),
+                  verbatimTextOutput("funMessage")
+
+                )
+              )
+            ),
+
+
+            tabPanel(
+              h4("Eksport av krypterte data"),
+              sidebarLayout(
+                sidebarPanel(
+                  rapbase::exportUCInput("intensivExport")
+                ),
+                shiny::mainPanel(
+                  rapbase::exportGuideUI("intensivExportGuide")
+                )
+              )
+            ),
+            tabPanel(h4('Nøkkeltall'),
+              h2('Nøkkeltall, for valgt HF/RHF', align='center'),
+              h4('Gjør utvalg'),
+              dateRangeInput(inputId = 'datoValgNok', label = 'Tidsperiode',
+                start = as.Date('2018-01-01'), end = Sys.Date(),
+                separator="t.o.m.", language="nb"),
+              selectInput(inputId = "luftveiValgNok", label= velgLuftveiTxt,
+                choices = luftveiValg),
+              uiOutput('enhetNok'),
+              br(),
+              h4('Andel opphold med *komplikasjon*, er definert som et opphold hvor det har
+                    oppstått minst én av følgende komplikasjoner:
+                    Alvorlig hypoglykemi, pneumotoraks, luftveisproblem, trakealtube/kanyle, dekubitus'),
+              tableOutput('tabNokkeltallUtvidet'),
+              downloadButton(outputId = 'lastNed_tabNokkelSC', label='Last ned tabell')
+            )
+            #         ),
+          ) #tabset
+        ) #tab SC
+      )
+    } else {
+      message("Removing Registeradministrasjon tab for user with role ", user$role())
+      shiny::removeTab(inputId = "hovedark", target = "Registeradministrasjon")
+    }
+  })
+
      # observeEvent(user$role(), {
       # if (user$role() == 'SC') {
 
