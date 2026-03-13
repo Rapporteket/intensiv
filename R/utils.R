@@ -60,12 +60,9 @@ NULL
 
 #' Subtract months to a date without exceeding the last day of the new month
 #'
-#' See \code{lubridate::\link[lubridate:subtract_month]{\%m-\%}} for details.
-#'
 #' @name %m-%
 #' @rdname subtract_month
 #' @keywords internal
 #' @export
 #' @importFrom lubridate %m-%
-#' @usage e1 \%m-\% e2 e1
 NULL

@@ -28,6 +28,9 @@
 #'
 #' Detajer: Her bør man liste opp hvilke variable funksjonen benytter.
 #'
+#' @param medKI Om det skal beregnes og vises konfidensintervall
+#' @param grVar Grupperingsvariabel
+#'
 #' @return Søylediagram med gjennomsnitt/median av valgt variabel for hvert sykehus
 #'
 #' @export

@@ -2,14 +2,13 @@
 #'
 #' Funksjon som genererer en fordelingsfigur for to tidsperioder som skal sammenlignes
 #'
+#' Nytt skjema tatt i bruk 7.nov 2023
 #' Detajer: Her bør man liste opp hvilke variable funksjonen benytter...
 #'
 #' @inheritParams NIRFigAndeler
 #' @inheritParams NIRFigAndelerGrVar
-#' @param valgtMaal 'Med' = median. Alt annet gir gjennomsnitt
-#'
-#' Nytt skjema tatt i bruk 7.nov 2023
-#' Detajer: Her bør man liste opp hvilke variabler funksjonen benytter.
+#' @param startDatoIntervensjon startDatoIntervensjon
+#' @param sluttDatoIntervensjon sluttDatoIntervensjon
 #'
 #' @return Søylediagram med fordeling før og ved intervensjon
 #'

@@ -8,7 +8,6 @@
 #' @export
 
 beregneSkaarer <- function(RegData){
-  library(plyr)
   
   Del1 <- c('BehandlingHoeflighetRespektMedfoelelse',
             'SymptomSmerte',

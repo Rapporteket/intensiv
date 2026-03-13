@@ -11,6 +11,7 @@
 #' @inheritParams NIRUtvalgEnh
 #' @param figurtype Hvilken figurtype det skal tilrettelegges variable for:
 #'                'andeler', 'andelGrVar', 'andelTid', 'gjsnGrVar', 'gjsnTid'
+#' @param grVar Grupperingsvariabel
 #'
 #' @return Definisjon av valgt variabel.
 #'
@@ -45,8 +46,6 @@ NIRVarTilretteleggPaaror  <- function(RegData, valgtVar, grVar='ShNavn', figurty
 
   tittel <- '' #I AndelerGrVar og GjsnGrVar genereres tittel i beregningsfunksjonen
   verdiTom <- -1
-
-  library(magrittr)
 
   #AUTOMATISK TILRETTELEGGING AV VARIABLE VHA KODEBOK
   #       indKodebok <- which(KodebokPaarorende$Variabelnavn == valgtVar):(

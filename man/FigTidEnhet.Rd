@@ -8,6 +8,8 @@ FigTidEnhet(AntTab, outfile = "")
 }
 \arguments{
 \item{AntTab}{Dataramme med nødvendige figurparametre}
+
+\item{outfile}{Filbane for lagring av figur. Hvis '' (default) vises figuren i R.}
 }
 \value{
 opphold per tid og enhet

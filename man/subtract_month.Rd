@@ -3,10 +3,7 @@
 \name{\%m-\%}
 \alias{\%m-\%}
 \title{Subtract months to a date without exceeding the last day of the new month}
-\usage{
-e1 \%m-\% e2 e1
-}
 \description{
-See \code{lubridate::\link[lubridate:subtract_month]{\%m-\%}} for details.
+Subtract months to a date without exceeding the last day of the new month
 }
 \keyword{internal}

@@ -36,6 +36,8 @@ Registeret inneholder registreringer f.o.m. 2011}
 
 \item{datoTil}{Seneste dato i utvalget (vises alltid i figuren).}
 
+\item{tidsenhet}{description}
+
 \item{minald}{Alder, fra og med (Standardverdi: 0)}
 
 \item{maxald}{Alder, til og med (Standardverdi: 110)}
@@ -61,8 +63,9 @@ alle: standard (alle andre verdier)}
 'Covid19' = 2, 'InfluensaA' = 3, 'InfluensaB' = 4, 'RS-virus' = 5, 'Kikhoste' = 6,
 'Annet luftveisvirus' = 7, 'Annen_luftveisbakterie' = 8}
 
-\item{outfile}{Navn på fil figuren skrives til. Standard: '' (Figur skrives
-til systemets standard utdataenhet (som regel skjerm))}
+\item{tittel}{Tittel}
+
+\item{outfile}{Filbane for lagring av figur.}
 
 \item{enhetsUtvalg}{Gjør gruppeutvalg med eller uten sammenlikning. Se \strong{Details} for oversikt.}
 
@@ -76,6 +79,8 @@ TRUE: Ja (Standard)}
 \item{hentData}{Gjør spørring mot database
 0: Nei, RegData gis som input til funksjonen (Standard)
 1: Ja}
+
+\item{...}{Ytterligere argumenter, for eksempel user for logging. Se detaljer i NIRUtvalgEnh og NIRVarTilrettelegg.}
 }
 \value{
 Linjediagram som viser utvikling over tid for valgt variabel

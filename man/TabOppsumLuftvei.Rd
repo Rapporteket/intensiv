@@ -7,7 +7,9 @@
 TabOppsumLuftvei(RegData, pgaLuftvei = 0)
 }
 \arguments{
-\item{RegData}{}
+\item{RegData}{RegData it is}
+
+\item{pgaLuftvei}{På grunn av luftvei}
 }
 \value{
 oppsummering i tabellform

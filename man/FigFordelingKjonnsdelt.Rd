@@ -19,7 +19,7 @@ FigFordelingKjonnsdelt(
 \arguments{
 \item{RegData}{En dataramme med alle nødvendige variabler fra registeret}
 
-\item{valgtVar}{Hvilken variabel som skal visualiseres. Se \strong{Details} for oversikt.}
+\item{valgtVar}{valgVar}
 
 \item{minN}{Maskerer verdier under <3}
 
@@ -37,8 +37,9 @@ alle: standard (alle andre verdier)}
 0: Kvinner
 1: Menn}
 
-\item{outfile}{Navn på fil figuren skrives til. Standard: '' (Figur skrives
-til systemets standard utdataenhet (som regel skjerm))}
+\item{grvar}{Grupperingsvariabel for figuren. F.eks. 'Kjonn' eller 'RHF'}
+
+\item{outfile}{Outfile}
 }
 \value{
 alders og kjønnsfordelnig

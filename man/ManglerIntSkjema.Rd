@@ -8,6 +8,10 @@ ManglerIntSkjema(reshID = 0, datoFra = "2020-03-01", datoTil = Sys.Date())
 }
 \arguments{
 \item{reshID}{Avdelingas resh-id}
+
+\item{datoFra}{Vis registreringer fra og med dato}
+
+\item{datoTil}{Vis registreringer til og med dato}
 }
 \value{
 datakvalitet, mangler ferdigstilt inteneivskjema

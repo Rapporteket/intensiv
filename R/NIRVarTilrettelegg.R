@@ -9,6 +9,7 @@
 #' @inheritParams NIRFigAndeler
 #' @param figurtype Hvilken figurtype det skal tilrettelegges variable for:
 #'                'andeler', 'andelGrVar', 'andelTid', 'gjsnGrVar', 'gjsnTid'
+#' @param grVar grVar
 #'
 #' @return Definisjon av valgt variabel, samt flere andre parametre som
 #' tittel, xAkseTxt, sortAvtagende (standard: TRUE)

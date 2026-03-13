@@ -18,6 +18,8 @@ oppsumFerdigeRegTab(
 \arguments{
 \item{RegData}{beredskapsskjema}
 
+\item{valgtRHF}{description}
+
 \item{datoFra}{Tidligste dato i utvalget (vises alltid i figuren). Standard 2019-01-01.
 Registeret inneholder registreringer f.o.m. 2011}
 
@@ -30,6 +32,8 @@ Registeret inneholder registreringer f.o.m. 2011}
 \item{erMann}{Kjønn, standard: alt annet enn 0/1 gir begge kjønn
 0: Kvinner
 1: Menn}
+
+\item{resp}{Respirator}
 
 \item{dodInt}{Levende/død ut fra intensiv.
 0: i live,

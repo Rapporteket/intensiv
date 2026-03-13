@@ -10,6 +10,9 @@
 #'          Bosituasjon: Bosituasjon ved innleggelse og 3 mnd etter slaget
 #'          Toalett: Toalettbesok før innleggelse og 3 mnd etter slaget
 #'          Forflytning: Evne til forflytning før innleggelse og 3 mnd etter slaget
+#' @param diagnose description
+#' @param innl4t description
+#' @param NIHSSinn description
 #'
 #' @return Søylediagram som fordeling av valgt variabel, målt både før og etter hjerneslaget
 #'
