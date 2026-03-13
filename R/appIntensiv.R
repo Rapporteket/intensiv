@@ -75,9 +75,6 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
              dateRangeInput(inputId = 'datovalgData', start = startDato, end = Sys.Date(),
                             label = "Tidsperiode", separator="t.o.m.", language="nb"),
              uiOutput('velgReshData'),
-             # selectInput(inputId = 'velgReshData', label='Velg sykehus',
-             #             selected = 0,
-             #             choices = sykehusValg_DataD),
              downloadButton(outputId = 'lastNed_dataDump', label='Last ned datadump')
 
 
@@ -351,9 +348,6 @@ tabPanel("Luftveisinfeksjon",
                              choices = enhetsUtvalg
                  ),
              uiOutput('velgResh'),
-             # selectInput(inputId = 'velgResh', label='Velg eget Sykehus',
-             #             #selected = 0,
-             #             choices = sykehusValg),
              actionButton("reset_fordValg", label="Tilbakestill valg"),
              br(),
              selectInput(inputId = "bildeformatFord",
@@ -778,22 +772,6 @@ server_intensiv <- function(input, output, session) { #
     caller = "intensiv"
   )
 
-
-  observeEvent(user$role(), {
-    message("User role changed to: ", user$role())
-    if (user$role() == 'SC') {
-      shinyjs::show(id = 'velgResh')
-      shinyjs::show(id = 'velgReshOverf')
-      shinyjs::show(id = 'velgReshData')
-      shinyjs::show(id = 'velgReshDbl')
-    } else {
-      shinyjs::hide(id = 'velgResh')
-      shinyjs::hide(id = 'velgReshOverf')
-      shinyjs::hide(id = 'velgReshData')
-      shinyjs::hide(id = 'velgReshDbl')
-    }
-  })
-
   observeEvent(input$reset_fordValg, shinyjs::reset("brukervalg_fordeling"))
   observeEvent(input$reset_andelValg, shinyjs::reset("brukervalg_andeler"))
   observeEvent(input$reset_gjsnValg, shinyjs::reset("brukervalg_gjsn"))
@@ -850,19 +828,25 @@ server_intensiv <- function(input, output, session) { #
   #Datadump
 
   output$velgReshData <- renderUI({
-    selectInput(inputId = 'velgReshData', label='Velg sykehus',
-                selected = 0,
-                choices = sykehusValg)
+    if (user$role() == 'SC') {
+      selectInput(inputId = 'velgReshData', label='Velg sykehus',
+                  selected = 0,
+                  choices = sykehusValg)
+    } else {NULL}
   })
 
   output$velgReshOverf  <- renderUI({
-    selectInput(inputId = 'velgReshOverf', label='Velg eget Sykehus',
-                                  choices = sykehusValg)
+    if (user$role() == 'SC') {
+      selectInput(inputId = 'velgReshOverf', label='Velg eget Sykehus',
+                  choices = sykehusValg)
+    } else {NULL}
     })
 
   output$velgResh  <- renderUI({
-    selectInput(inputId = 'velgResh', label='Velg eget Sykehus',
-                choices = sykehusValg)
+    if (user$role() == 'SC') {
+      selectInput(inputId = 'velgResh', label='Velg eget Sykehus',
+                  choices = sykehusValg)
+    } else {NULL}
   })
 
 
@@ -1023,8 +1007,10 @@ observe({
       }, rownames = F, colnames = T, align = 'r')
 
       output$velgReshDbl  <- renderUI({
-        selectInput(inputId = 'velgReshDbl', label='Velg eget Sykehus',
-                    choices = sykehusValg)
+        if (user$role() == 'SC') {
+          selectInput(inputId = 'velgReshDbl', label='Velg eget Sykehus',
+                      choices = sykehusValg)
+        } else {NULL}
       })
 
       output$tabDblReg <- renderTable({
