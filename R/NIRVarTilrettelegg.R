@@ -558,18 +558,7 @@ if (valgtVar %in% c('regForsinkelseInn', 'regForsinkelse')) {  #Fordeling, Andel
             KImaaltxt <- '< 0.7'
 
       }
-      if (valgtVar == 'trakeostomiGml') { #andelGrVar
-            #-1: Velg verdi, 1 = Nei, 2 = Ja – perkutan teknikk på intensiv/oppv., 3 = Ja – åpen teknikk (operativ)
-
-            RegData <- RegData[which(RegData$Trakeostomi %in% 1:3)
-                                     %i% which(RegData$InnDato >= as.Date('2016-01-01', tz='UTC')), ] #Innført ila 2015
-            retn <- 'H'
-            tittel <- 'Trakeostomi utført ved invasiv ventilasjon'
-            RegData$Variabel[which(RegData$Trakeostomi %in% 2:3)] <- 1
-            cexgr <- 0.9
-      }
-      #Test
-      if (valgtVar == 'trakeostomiNy') { #andelGrVar
+        if (valgtVar == 'trakeostomi') { #andelGrVar
         #-1: Velg verdi, 1 = Nei, 2 = Ja – perkutan teknikk på intensiv/oppv., 3 = Ja – åpen teknikk (operativ)
         RegData <-  RegData[which(RegData$Trakeostomi %in% 1:3)
                                      %i% which(RegData$InnDato >= as.Date('2016-01-01', tz='UTC')), ]
@@ -585,10 +574,9 @@ if (valgtVar %in% c('regForsinkelseInn', 'regForsinkelse')) {  #Fordeling, Andel
       if (valgtVar == 'trakAapen') { #andelGrVar
             RegData <- RegData[which(RegData$Trakeostomi %in% 2:3)
                                      %i%  which(RegData$InnDato >= as.Date('2016-01-01', tz='UTC')), ] #Innført ila 2015
-            #RegData <- RegData[which(RegData$MechanicalRespirator == 1 & RegData$InvasivVentilation > 0), ]
+            RegData <- RegData[which(RegData$MechanicalRespirator == 1 & RegData$InvasivVentilation > 0), ]
             retn <- 'H'
             tittel <- 'Andel trakeostomier gjort åpent/operativt'
-            #tittel <- 'Åpne/operativt utførte trakeostomier ved invasiv ventilasjon'
             RegData$Variabel[which(RegData$Trakeostomi == 3)] <- 1
             cexgr <- 0.9
       }
