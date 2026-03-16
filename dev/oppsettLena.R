@@ -19,7 +19,7 @@ intensiv::kjorIntensivApp(browser = TRUE)
 library(intensiv)
 reshID <- 102026 #705577 #103948 #4205969 Med PREM: 102026
 
-dum <- intensiv::NIRRegDataSQL(datoFra = '2016-01-01')
+dum <- intensiv::NIRRegDataSQL(datoFra = '2022-01-01')
 RegData <- intensiv::NIRPreprosess(RegData = dum)
 PaarorData <- NIRpaarorDataSQL(medH = 0)
 

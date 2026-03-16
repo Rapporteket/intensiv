@@ -165,7 +165,7 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='an
                              'Dråpesmitte (01.02.2020)', 'Beskyttende isolasjon (01.02.2020')
             }
         if (figurtype=='andelGrVar'){
-                  RegData <- RegData[ which(RegData$Isolation %in% 1:5), ]
+                 # RegData <- RegData[ which(RegData$Isolation %in% 1:5), ]
                   RegData$Variabel[which(RegData$Isolation %in% 2:5)] <- 1
                   }
       }
