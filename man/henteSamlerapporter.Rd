@@ -21,7 +21,7 @@ henteSamlerapporter(
 
 \item{datoFra}{dato}
 
-\item{parametre}{Liste med valgfrie parametre, avhengig av type rapport}
+\item{datoTil}{dato}
 }
 \value{
 Full path of file produced

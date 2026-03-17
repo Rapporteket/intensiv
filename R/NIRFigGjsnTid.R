@@ -36,6 +36,8 @@
 #'        'Gjsn': gir middelverdi (standard)
 #'        'Med': gir median
 #' @param valgtVar Hvilken variabel som skal visualiseres
+#' @param tidsenhet description
+#' @param tittel Tittel
 #'
 #' @return Linjediagram som viser utvikling over tid for valgt variabel
 #'

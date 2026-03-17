@@ -28,7 +28,7 @@ NIRFigAndelTid(
 \arguments{
 \item{RegData}{En dataramme med alle nødvendige variabler fra registeret}
 
-\item{valgtVar}{Hvilken variabel som skal visualiseres. Se \strong{Details} for oversikt.}
+\item{valgtVar}{Hvilken variabel som skal visualiseres}
 
 \item{datoFra}{Tidligste dato i utvalget (vises alltid i figuren). Standard 2019-01-01.
 Registeret inneholder registreringer f.o.m. 2011}
@@ -62,8 +62,7 @@ alle: standard (alle andre verdier)}
 \item{reshID}{Parameter følger fra innlogging helseregister.no og angir
 hvilken enhet i spesialisthelsetjenesten brukeren tilhører}
 
-\item{outfile}{Navn på fil figuren skrives til. Standard: '' (Figur skrives
-til systemets standard utdataenhet (som regel skjerm))}
+\item{outfile}{Filbane for lagring av figur.}
 
 \item{enhetsUtvalg}{Gjør gruppeutvalg med eller uten sammenlikning. Se \strong{Details} for oversikt.}
 
@@ -76,6 +75,8 @@ TRUE: Ja (Standard)}
 1: Ja}
 
 \item{lagFig}{Angir om figur skal lages eller ikke 0-ikke lag, 1-lag}
+
+\item{...}{Ytterligere argumenter, for eksempel user for logging. Se detaljer i NIRFigAndeler.}
 }
 \value{
 Figur som viser tidstrend, dvs. andel av valgt variabel for hvert år.

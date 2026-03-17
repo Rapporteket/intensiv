@@ -31,10 +31,10 @@
 #'     \item trakAapen: Trakeostomi, åpen
 #'    }
 #' @inheritParams NIRFigAndeler
-#' @param aldGr: Aldersgrupper. Brukes i offentliggjøringsfigurer
-#' @param tittel: Hvis vil angi tittel direkte
-#' @param utvalgsInfo: Hvis datafil lagret med utvalgsinfo
-#' @param sortAvtagende: sortere søylene i figuren avtagende eller stigende.
+#' @param aldGr Aldersgrupper. Brukes i offentliggjøringsfigurer
+#' @param medKI Om det skal beregnes og vises konfidensintervall
+#' @param Ngrense Minimum antall observasjoner i hver gruppe/sykehus for at det skal vises AggVerdier.
+#' @param grVar Grupperingsvariabel
 #'
 #' @return Søylediagram med AggVerdier av valgt variabel for hvert sykehus
 #'

@@ -3,6 +3,8 @@
 #'
 #' @inheritParams NIRFigAndeler
 #' @param prePost Før (1) eller etter (2) intervensjon
+#' @param grVar Grupperingsvariabel
+#' @param valgtMaal description
 #'
 #' @return Definisjon av valgt variabel.
 #'

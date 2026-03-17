@@ -2,14 +2,13 @@
 #'
 #' Funksjon som genererer en fordelingsfigur for to tidsperioder som skal sammenlignes
 #'
+#' Nytt skjema tatt i bruk 7.nov 2023
 #' Detajer: Her bør man liste opp hvilke variable funksjonen benytter...
 #'
 #' @inheritParams NIRFigAndeler
 #' @inheritParams NIRFigAndelerGrVar
-#' @param valgtMaal 'Med' = median. Alt annet gir gjennomsnitt
-#'
-#' Nytt skjema tatt i bruk 7.nov 2023
-#' Detajer: Her bør man liste opp hvilke variabler funksjonen benytter.
+#' @param startDatoIntervensjon startDatoIntervensjon
+#' @param sluttDatoIntervensjon sluttDatoIntervensjon
 #'
 #' @return Søylediagram med fordeling før og ved intervensjon
 #'
@@ -22,9 +21,11 @@ NIRFigPrePostPaaror  <- function(
     minald=0, maxald=110, erMann='',InnMaate='', dodInt='',nivaa = 0,
     outfile='', lagFig=1,...){ #overfPas=0,
 
-   #    rapbase::repLogger2(user, msg = paste0("FigPrePostPaaror: ", valgtVar))
-
-       if (hentData == 1) {
+      optionalArgs <- list(...)
+      if ("user" %in% names(optionalArgs)) {
+      rapbase::repLogger2(user = optionalArgs$user, msg = paste0("FigPrePostPaaror: ", valgtVar))
+      }
+      if (hentData == 1) {
             RegData <- NIRRegDataSQL(datoFra, datoTil) #minald=0, maxald=110, erMann='',InnMaate='', dodInt=''
       }
 

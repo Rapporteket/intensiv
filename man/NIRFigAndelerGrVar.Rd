@@ -31,16 +31,24 @@ NIRFigAndelerGrVar(
 \arguments{
 \item{RegData}{En dataramme med alle nødvendige variabler fra registeret}
 
-\item{valgtVar}{Hvilken variabel som skal visualiseres. Se \strong{Details} for oversikt.}
+\item{valgtVar}{Hvilken variabel som skal visualiseres}
 
 \item{datoFra}{Tidligste dato i utvalget (vises alltid i figuren). Standard 2019-01-01.
 Registeret inneholder registreringer f.o.m. 2011}
 
 \item{datoTil}{Seneste dato i utvalget (vises alltid i figuren).}
 
+\item{aar}{Vis registreringer for opphold som startet i dette året}
+
 \item{minald}{Alder, fra og med (Standardverdi: 0)}
 
 \item{maxald}{Alder, til og med (Standardverdi: 110)}
+
+\item{aldGr}{Aldersgrupper. Brukes i offentliggjøringsfigurer}
+
+\item{medKI}{Om det skal beregnes og vises konfidensintervall}
+
+\item{Ngrense}{Minimum antall observasjoner i hver gruppe/sykehus for at det skal vises AggVerdier.}
 
 \item{luftvei}{Luftveisinfeksjon? 'Alle pasienter' = 0, 'Luftveisinfeksjon' = 1,
 'Covid19' = 2, 'InfluensaA' = 3, 'InfluensaB' = 4, 'RS-virus' = 5, 'Kikhoste' = 6,
@@ -48,6 +56,8 @@ Registeret inneholder registreringer f.o.m. 2011}
 
 \item{nivaa}{Intensivavdelingens "nivå": 1-5: 'Overvåk', 'Postop', 'Gen<50%','Gen>50%', 'Barn'
 Flervalgsparameter}
+
+\item{grVar}{Grupperingsvariabel}
 
 \item{InnMaate}{0: Elektivt,
 6: Akutt medisinsk,
@@ -71,18 +81,11 @@ alle: standard (alle andre verdier)}
 FALSE: Nei
 TRUE: Ja (Standard)}
 
-\item{outfile}{Navn på fil figuren skrives til. Standard: '' (Figur skrives
-til systemets standard utdataenhet (som regel skjerm))}
+\item{outfile}{Filbane for lagring av figur.}
 
 \item{lagFig}{Angir om figur skal lages eller ikke 0-ikke lag, 1-lag}
 
-\item{aldGr:}{Aldersgrupper. Brukes i offentliggjøringsfigurer}
-
-\item{tittel:}{Hvis vil angi tittel direkte}
-
-\item{utvalgsInfo:}{Hvis datafil lagret med utvalgsinfo}
-
-\item{sortAvtagende:}{sortere søylene i figuren avtagende eller stigende.}
+\item{...}{Ytterligere argumenter, for eksempel user for logging. Se detaljer i NIRUtvalgEnh og NIRVarTilrettelegg.}
 }
 \value{
 Søylediagram med AggVerdier av valgt variabel for hvert sykehus

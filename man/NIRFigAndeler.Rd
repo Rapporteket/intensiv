@@ -31,12 +31,14 @@ NIRFigAndeler(
 \arguments{
 \item{RegData}{En dataramme med alle nødvendige variabler fra registeret}
 
-\item{valgtVar}{Hvilken variabel som skal visualiseres. Se \strong{Details} for oversikt.}
+\item{valgtVar}{Hvilken variabel som skal visualiseres}
 
 \item{datoFra}{Tidligste dato i utvalget (vises alltid i figuren). Standard 2019-01-01.
 Registeret inneholder registreringer f.o.m. 2011}
 
 \item{datoTil}{Seneste dato i utvalget (vises alltid i figuren).}
+
+\item{aar}{Vis registreringer for opphold som startet i dette året}
 
 \item{overfPas}{Overført under pågående intensivbehandling?
 1 = Pasienten er ikke overført
@@ -64,8 +66,7 @@ alle: standard (alle andre verdier)}
 'Covid19' = 2, 'InfluensaA' = 3, 'InfluensaB' = 4, 'RS-virus' = 5, 'Kikhoste' = 6,
 'Annet luftveisvirus' = 7, 'Annen_luftveisbakterie' = 8}
 
-\item{outfile}{Navn på fil figuren skrives til. Standard: '' (Figur skrives
-til systemets standard utdataenhet (som regel skjerm))}
+\item{outfile}{Filbane for lagring av figur.}
 
 \item{nivaa}{Intensivavdelingens "nivå": 1-5: 'Overvåk', 'Postop', 'Gen<50%','Gen>50%', 'Barn'
 Flervalgsparameter}
@@ -81,17 +82,13 @@ TRUE: Ja (Standard)}
 \item{reshID}{Parameter følger fra innlogging helseregister.no og angir
 hvilken enhet i spesialisthelsetjenesten brukeren tilhører}
 
+\item{velgAvd}{Vis kun registreringer for denne avdelingen (reshID)}
+
 \item{enhetsUtvalg}{Gjør gruppeutvalg med eller uten sammenlikning. Se \strong{Details} for oversikt.}
 
 \item{lagFig}{Angir om figur skal lages eller ikke 0-ikke lag, 1-lag}
 
-\item{figurtype}{Hvilken figurtype som ønskes ut:
-andel (fordelingsfigurer),
-andelGrVar (andel i hver kategori av grupperingsvariabel, eks. sykehus),
-andelTid (andel per tidsenhet, eks. år, måned),
-andelPP (andel før og etter),
-gjsnGrVar (sentralmål i hver kategori av grupperingsvariabel, eks. sykehus),
-gjsnTid (sentralmål per tidsenhet, eks. år, måned)}
+\item{...}{Ytterligere argumenter, for eksempel user for logging. Se detaljer i NIRUtvalgEnh og NIRVarTilrettelegg.}
 }
 \value{
 Søylediagram (fordeling) av valgt variabel. De enkelte verdiene kan også sendes med.

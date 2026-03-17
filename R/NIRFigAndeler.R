@@ -45,13 +45,6 @@
 #' @param RegData En dataramme med alle nødvendige variabler fra registeret
 #' @inheritParams NIRUtvalgEnh
 #' @inheritParams NIRVarTilrettelegg
-#' @param figurtype Hvilken figurtype som ønskes ut:
-#'                 andel (fordelingsfigurer),
-#'                 andelGrVar (andel i hver kategori av grupperingsvariabel, eks. sykehus),
-#'                 andelTid (andel per tidsenhet, eks. år, måned),
-#'                 andelPP (andel før og etter),
-#'                 gjsnGrVar (sentralmål i hver kategori av grupperingsvariabel, eks. sykehus),
-#'                 gjsnTid (sentralmål per tidsenhet, eks. år, måned)
 #' @param preprosess Preprosesser data
 #'                 FALSE: Nei
 #'                 TRUE: Ja (Standard)
@@ -59,6 +52,11 @@
 #'                 0: Nei, RegData gis som input til funksjonen (Standard)
 #'                 1: Ja
 #' @param lagFig Angir om figur skal lages eller ikke 0-ikke lag, 1-lag
+#' @param aar Vis registreringer for opphold som startet i dette året
+#' @param velgAvd Vis kun registreringer for denne avdelingen (reshID)
+#' @param valgtVar Hvilken variabel som skal visualiseres
+#' @param outfile Filbane for lagring av figur.
+#' @param ... Ytterligere argumenter, for eksempel user for logging. Se detaljer i NIRUtvalgEnh og NIRVarTilrettelegg.
 #'
 #' @return Søylediagram (fordeling) av valgt variabel. De enkelte verdiene kan også sendes med.
 #'

@@ -24,6 +24,7 @@
 #'
 #' @inheritParams NIRFigAndeler
 #' @param tidsenhet Oppløsning på tidsaksen. Verdier: 'Aar' (standard), 'Halvaar', 'Kvartal','Mnd'
+#' @param ... Ytterligere argumenter, for eksempel user for logging. Se detaljer i NIRFigAndeler.
 #'
 #' @return Figur som viser tidstrend, dvs. andel av valgt variabel for hvert år.
 #'
@@ -32,11 +33,10 @@ NIRFigAndelTid <- function(RegData, valgtVar='alder_u18', datoFra='2011-01-01', 
                         minald=0, maxald=110, erMann='', InnMaate='', dodInt='', luftvei=0,
                         reshID=0, outfile='',
                         enhetsUtvalg=0, preprosess=1, hentData=0, lagFig=1, ...) {
-
-   # if ("user" %in% names(list(...))) {
-   #   print('User funnet')
-   #   rapbase::repLogger2(user = user, msg = paste0("AndelTid: ", valgtVar))
-   # }
+	 optionalArgs <- list(...)
+   if ("user" %in% names(optionalArgs)) {
+     rapbase::repLogger2(user = optionalArgs$user, msg = paste0("AndelTid: ", valgtVar))
+   }
    if (hentData == 1) {
             RegData <- NIRRegDataSQL(datoFra, datoTil)
       }
