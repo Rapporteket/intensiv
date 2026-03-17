@@ -38,6 +38,7 @@ regTittel <- 'NORSK INTENSIVREGISTER'
 pdf(file = NULL)
 ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
   id = 'hovedark',
+  header = yearControlUI("year-ctrl"),
   title = rapbase::title(regTittel),
   windowTitle = regTittel,
   theme = rapbase::theme(),
@@ -819,10 +820,22 @@ server_intensiv <- function(input, output, session) { #
  # context <- Sys.getenv("R_RAP_INSTANCE") #Blir tom hvis jobber lokalt
   # paaServer <- (context %in% c("DEV", "TEST", "QA","QAC", "PRODUCTION", "PRODUCTIONC")) #rapbase::isRapContext()
  # message("Intensivapp server started in context: ", context)
+  yearControlServer("year-ctrl")
+  observeEvent(shiny::getQueryString(session), once = TRUE, {
 
+    qs <- shiny::getQueryString(session)
+    since_date <- if (!is.null(qs$since)) qs$since 
+      else paste0(as.numeric(format(Sys.Date()-90, "%Y")), "-01-01")
+    shiny::updateSelectInput(
+      session,
+      "since_year",
+      selected = since_date |> as.Date() |> format("%Y")
+    )
+    
   #---------Hente data------------
   message("Getting IntData")
-  IntDataRaa <- NIRRegDataSQL(datoFra = '2014-01-01')
+  print(since_date)
+  IntDataRaa <- NIRRegDataSQL(datoFra = since_date)
   RegData <- NIRPreprosess(RegData = IntDataRaa)
 
   LuftData <- NIRUtvalgEnh(RegData=RegData, luftvei = 1, datoFra = Sys.Date()-7*40)$RegData
@@ -1774,6 +1787,7 @@ print(class(user))
 
  #        } #SC
 #     })
+  })
 } #serverdel
 
 # Run the application
