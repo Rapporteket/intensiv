@@ -477,7 +477,10 @@ tabPanel("Luftveisinfeksjon",
 
   #------- Gjennomsnitt ----------
   tabPanel(p("Gjennomsnitt", title = 'Alder, Liggetid, Nas, NEMS, Respiratortid, SAPSII'),
-           h2("Sykehusvise gjennomsnitt/median og utvikling over tid for valgt variabel", align='center'),
+           h2(
+              "Sykehusvise gjennomsnitt/median og utvikling", shiny::br(), 
+              "over tid for valgt variabel", align='center'
+           ),
            h5("Hvilken variabel man ønsker å se resultater for, velges fra rullegardinmenyen
                   til venstre. (Man kan også gjøre ulike filtreringer.)", align='center'),
            sidebarPanel(
@@ -669,7 +672,7 @@ tabPanel("Luftveisinfeksjon",
                  )
              ),
              dateRangeInput(inputId = 'datovalgPaarorFord',
-                            start = as.Date("2023-11-07"), end = Sys.Date(),
+                            start = as.Date("2025-11-07"), end = Sys.Date(),
                             label = "Tidsperiode", separator="t.o.m.", language="nb"),
              dateInput(inputId = 'startDatoIntervensjon',
                        label = 'Startdato, intervensjon', language="nb",
@@ -739,18 +742,74 @@ server_intensiv <- function(input, output, session) { #
   observeEvent(shiny::getQueryString(session), once = TRUE, {
 
     qs <- shiny::getQueryString(session)
-    since_date <- if (!is.null(qs$since)) qs$since 
+    sinceDate <- if (!is.null(qs$since)) qs$since 
       else paste0(as.numeric(format(Sys.Date()-90, "%Y")), "-01-01")
     shiny::updateSelectInput(
       session,
-      "since_year",
-      selected = since_date |> as.Date() |> format("%Y")
+      "sinceYear",
+      selected = sinceDate |> as.Date() |> format("%Y")
     )
+  
+  #---------Oppdater dato input --------
+  # PREM-skjema
+  updateDateInput(
+    session,
+    "startDatoIntervensjon",
+    value = as.Date("2025-01-01"),
+    min = sinceDate
+  )
+
+  range_inputs <- c(
+    "datovalgReg", #Aktivitet - Overføringer
+    "datovalgData", #Datadump
+    "datovalg", #Fordelinger
+    "datovalgAndel", #Andeler
+    "datovalgGjsn", #Gjennomsnitt
+    "datovalgPaarorFord", #Pårørendeskjema - Fordelinger
+    "datovalgSMR", # Standardisert mortalitetsratio
+    "datovalgInnMaate", # Type opphold
+    "datoValgNok" #Nøkkeltall
+  )
+
+  # update range inputs
+  for (id in range_inputs) {
+    updateDateRangeInput(session, id, min = sinceDate)
+  }
+  
+  # Datadump
+  updateDateRangeInput(
+    session,
+    "datovalgData",
+    min = sinceDate
+  )
+  # Aktivitet - Overføringer
+  updateDateRangeInput(
+    session,
+    "datovalgReg",
+    min = sinceDate
+  )
+  # Fordelinger
+  updateDateRangeInput(
+    session,
+    "datovalg",
+    min = sinceDate
+  )
+  # Andeler
+  updateDateRangeInput(
+    session,
+    "datovalgAndel",
+    min = sinceDate
+  )
+  # Gjennomsnitt
+  updateDateRangeInput(
+    session,
+    "datovalgGjsn",
+    min = sinceDate
+  )
     
   #---------Hente data------------
   message("Getting IntData")
-  print(since_date)
-  IntDataRaa <- NIRRegDataSQL(datoFra = since_date)
+  IntDataRaa <- NIRRegDataSQL(datoFra = sinceDate)
   RegData <- NIRPreprosess(RegData = IntDataRaa)
 
   LuftData <- NIRUtvalgEnh(RegData=RegData, luftvei = 1, datoFra = Sys.Date()-7*40)$RegData
@@ -1530,7 +1589,7 @@ print(class(user))
         }
       )
 #------------Pårørende-------------------
-
+ 
       output$paarorFord <- renderPlot(
         NIRFigPrePostPaaror(RegData=PaarorDataH, preprosess = 0, valgtVar=input$valgtVarPaarorFord,
                             startDatoIntervensjon = input$startDatoIntervensjon,

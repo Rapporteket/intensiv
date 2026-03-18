@@ -3,34 +3,34 @@ yearControlUI <- function(id) {
 
   shiny::div(
     style = "position: relative; height: 0px;",
+
     shiny::div(
       style = "
         position: absolute;
         right: 15px;
         top: 6px;
-        display: flex;
-        align-items: center;
-        gap: 6px;
-        background: white;
-        padding: 2px 6px;
-        border-radius: 4px;
-        z-index: 1000;
       ",
-      shiny::tags$small("Viser data siden:"),
-      shiny::selectInput(
-        ns("since_year"),
-        NULL,
-        choices = rev(1990:as.integer(format(Sys.Date(), "%Y"))),
-        selected = paste0(as.numeric(format(Sys.Date()-90, "%Y"))),
-        width = "80px"
-      ),
-      shiny::actionButton(
-        ns("refresh"),
-        label = NULL,
-        icon = shiny::icon("rotate-right"),
-        class = "btn btn-default btn-sm",
-        style = "height: 30px; padding: 2px 6px;",
-        title = "Oppdater"
+
+      shiny::tags$small("Tilgjengelige data f.o.m.:"),
+
+      shiny::div(
+        style = "display: flex; gap: 4px; align-items: center;",
+
+        shiny::selectInput(
+          ns("since_year"),
+          NULL,
+          choices = rev(2014:as.integer(format(Sys.Date(), "%Y"))),
+          selected = as.character(as.integer(format(Sys.Date(), "%Y")) - 1),
+          width = "90px"
+        ) |> 
+            shiny::tagAppendAttributes(style = "margin-bottom: 0;"),
+
+        shiny::actionButton(
+          ns("refresh"),
+          NULL,
+          icon = shiny::icon("rotate-right"),
+          class = "btn btn-default btn-sm",
+        )
       )
     )
   )
@@ -48,7 +48,6 @@ yearControlServer <- function(id) {
     })
 
     observeEvent(input$refresh, {
-      print('boi')
       shiny::updateQueryString(
         paste0("?since=", input$since_year, "-01-01"),
         mode = "replace",
