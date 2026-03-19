@@ -19,10 +19,10 @@ yearControlUI <- function(id) {
         shiny::selectInput(
           ns("since_year"),
           NULL,
-          choices = rev(2014:as.integer(format(Sys.Date(), "%Y"))),
+          choices = rev(2014:as.integer(format(Sys.Date()-100, "%Y"))),
           selected = as.character(as.integer(format(Sys.Date(), "%Y")) - 1),
           width = "90px"
-        ) |> 
+        ) |>
             shiny::tagAppendAttributes(style = "margin-bottom: 0;"),
 
         shiny::actionButton(
@@ -31,7 +31,10 @@ yearControlUI <- function(id) {
           icon = shiny::icon("rotate-right"),
           class = "btn btn-default btn-sm",
         )
-      )
+      ),
+      shiny::tags$small('Når du trykker på knappen,'),
+      br(),
+      shiny::tags$small('startes Rapporteket på nytt')
     )
   )
 }
@@ -41,7 +44,7 @@ yearControlServer <- function(id) {
 
     observeEvent(shiny::getQueryString(session), once = TRUE, {
       qs <- shiny::getQueryString(session)
-      year <- if (!is.null(qs$since)) substr(qs$since, 1, 4) 
+      year <- if (!is.null(qs$since)) substr(qs$since, 1, 4)
         else paste0(as.numeric(format(Sys.Date()-90, "%Y")))
 
       shiny::updateSelectInput(session, "since_year", selected = year)

@@ -9,6 +9,8 @@ luftveiValg <- c('Alle pasienter' = 0,
                  'Annet luftveisvirus' = 7,
                  'Annen_luftveisbakterie' = 8)
 velgLuftveiTxt <- 'Luftveisinfeksjoner'
+startDato <- paste0(as.numeric(format(Sys.Date()-90, "%Y")), '-01-01')
+
 
 #' Brukergrensesnitt (ui) til Intensiv-appen
 #'
@@ -22,7 +24,6 @@ options(knitr.table.format = "html")
 
 #-----Definere utvalgsinnhold og evt. parametre som er statiske i appen----------
 
-startDato <- paste0(as.numeric(format(Sys.Date()-90, "%Y")), '-01-01')
 
 enhetsUtvalg <- c("Egen mot resten av landet"=1,
                   "Hele landet"=0,
@@ -147,7 +148,8 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                         conditionalPanel(condition = "input.ark == 'Nøkkeltall' || input.ark == 'Ant. opphold'
                                              || input.ark == 'Pasientar per år og avd.' ",
                                          dateInput(inputId = 'sluttDatoReg', label = 'Velg sluttdato', language="nb",
-                                                   value = format.Date(Sys.Date(),'%Y-%m' ), max = Sys.Date()),
+                                                   value = Sys.Date() , max = Sys.Date()),
+                                         #        value = format.Date(Sys.Date(),'%Y-%m' ), max = Sys.Date()),
                                          selectInput(inputId = "luftveiValgReg", label= velgLuftveiTxt,
                                                      choices = luftveiValg)
                         ),
@@ -249,10 +251,10 @@ tabPanel("Luftveisinfeksjon",
          mainPanel(width = 10,
                    h1('Pasienter med luftveisinfeksjoner'),
                   # h2('Denne siden er under utvikling! ', style = "color:red"),
-                   h4(em(strong('Tallene er basert på ferdigstilte registreringer.
-                      Mer detaljerte resultater for luftveisinfeksjoner kan man finne
-                      ved å filtrere på (ulike typer) luftveisinfeksjoner i andre
-                      faner på Rapporteket.'))),
+                   h4('Tallene er basert på ferdigstilte registreringer.'),
+                   h4(strong('Mer detaljerte resultater for luftveisinfeksjoner finner
+                      du ved å filtrere på ulike typer luftveisinfeksjoner i andre
+                      faner på Rapporteket.')),
                    br(),
                    fluidRow(
                    # splitLayout(cellWidths = c("50%", "50%"),
@@ -478,7 +480,7 @@ tabPanel("Luftveisinfeksjon",
   #------- Gjennomsnitt ----------
   tabPanel(p("Gjennomsnitt", title = 'Alder, Liggetid, Nas, NEMS, Respiratortid, SAPSII'),
            h2(
-              "Sykehusvise gjennomsnitt/median og utvikling", shiny::br(), 
+              "Sykehusvise gjennomsnitt/median og utvikling", shiny::br(),
               "over tid for valgt variabel", align='center'
            ),
            h5("Hvilken variabel man ønsker å se resultater for, velges fra rullegardinmenyen
@@ -664,19 +666,15 @@ tabPanel("Luftveisinfeksjon",
                   'LivssluttStoette' = 'LivssluttStoette_2',
                   'PasientRelasjon' = 'PasientRelasjon',
                   'HoeyesteFullfoerteUtdannelse' = 'HoeyesteFullfoerteUtdannelse'
-
-                 # 'S2.13 Involvering ved livsslutt' = 'LivssluttStoette',
-                 # 'Totalskår, omsorg (skjema 1)' = 'SumScoreSatisfactionCare',
-                 # 'Totalskår, beslutning (skjema 2)' = 'SumScoreSatisfactionDecision',
-                 # 'Totalskår, alle spørsmål' = 'SumScoreAllQuestions'
                  )
              ),
              dateRangeInput(inputId = 'datovalgPaarorFord',
-                            start = as.Date("2025-11-07"), end = Sys.Date(),
+                            start = startDato, end = Sys.Date(),
                             label = "Tidsperiode", separator="t.o.m.", language="nb"),
              dateInput(inputId = 'startDatoIntervensjon',
                        label = 'Startdato, intervensjon', language="nb",
-                       value = '2024-10-01', max = Sys.Date()),
+                       value = Sys.Date(), max = Sys.Date()),
+             #        value = '2024-10-01', max = Sys.Date()),
              selectInput(inputId = 'enhetsUtvalgPaarorFord',
                          label='Egen enhet / hele landet',
                          choices =  c("Hele landet"=0, "Egen enhet"=2)),
@@ -742,20 +740,20 @@ server_intensiv <- function(input, output, session) { #
   observeEvent(shiny::getQueryString(session), once = TRUE, {
 
     qs <- shiny::getQueryString(session)
-    sinceDate <- if (!is.null(qs$since)) qs$since 
+    sinceDate <- if (!is.null(qs$since)) qs$since
       else paste0(as.numeric(format(Sys.Date()-90, "%Y")), "-01-01")
     shiny::updateSelectInput(
       session,
       "sinceYear",
       selected = sinceDate |> as.Date() |> format("%Y")
     )
-  
+
   #---------Oppdater dato input --------
   # PREM-skjema
   updateDateInput(
     session,
     "startDatoIntervensjon",
-    value = as.Date("2025-01-01"),
+    value = startDato, #as.Date("2025-01-01"),
     min = sinceDate
   )
 
@@ -775,7 +773,7 @@ server_intensiv <- function(input, output, session) { #
   for (id in range_inputs) {
     updateDateRangeInput(session, id, min = sinceDate)
   }
-  
+
   # Datadump
   updateDateRangeInput(
     session,
@@ -806,7 +804,7 @@ server_intensiv <- function(input, output, session) { #
     "datovalgGjsn",
     min = sinceDate
   )
-    
+
   #---------Hente data------------
   message("Getting IntData")
   IntDataRaa <- NIRRegDataSQL(datoFra = sinceDate)
@@ -1299,8 +1297,6 @@ observe({
               }
             )
             observe({
-                  #AndelTid
-print(class(user))
                   AndelerTid <- NIRFigAndelTid(RegData=RegData, preprosess = 0, valgtVar=input$valgtVarAndel,
                                                reshID = user$org(),
                                                datoFra=input$datovalgAndel[1], datoTil=input$datovalgAndel[2],
@@ -1589,7 +1585,7 @@ print(class(user))
         }
       )
 #------------Pårørende-------------------
- 
+
       output$paarorFord <- renderPlot(
         NIRFigPrePostPaaror(RegData=PaarorDataH, preprosess = 0, valgtVar=input$valgtVarPaarorFord,
                             startDatoIntervensjon = input$startDatoIntervensjon,
