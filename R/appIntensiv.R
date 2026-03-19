@@ -1228,7 +1228,6 @@ observe({
             )
             observe({
                   #AndelTid
-print(class(user))
                   AndelerTid <- NIRFigAndelTid(RegData=RegData, preprosess = 0, valgtVar=input$valgtVarAndel,
                                                reshID = user$org(),
                                                datoFra=input$datovalgAndel[1], datoTil=input$datovalgAndel[2],
