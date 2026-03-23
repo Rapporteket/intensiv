@@ -66,11 +66,11 @@ NIRFigAndeler  <- function(RegData=0, valgtVar='alder', datoFra='2011-01-01', da
                            overfPas=0, minald=0, maxald=110, erMann='',InnMaate='', dodInt='', luftvei=0, outfile='',
                            nivaa = 0, # grType=99,
                            preprosess=1, hentData=0, reshID=0, velgAvd=0, enhetsUtvalg=0, lagFig=1, ...) { #, session='')	{
-
-   # if ("session" %in% names(list(...))) {
-   #   rapbase::repLogger(session = list(...)[["session"]], msg = paste0('Fordelingsfigur: ',valgtVar))
-   # }
-   if (hentData == 1) {
+      optionalArgs <- list(...)
+      if ("user" %in% names(optionalArgs)) {
+      rapbase::repLogger2(user = optionalArgs$user, msg = paste0("Fordelingsfigur: ", valgtVar))
+      }
+      if (hentData == 1) {
             RegData <- NIRRegDataSQL(datoFra, datoTil) #minald=0, maxald=110, erMann='',InnMaate='', dodInt=''
       }
 

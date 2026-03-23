@@ -6,7 +6,8 @@
 #'
 #' @inheritParams NIRFigAndeler
 #' @inheritParams NIRFigAndelerGrVar
-#' @param valgtMaal 'Med' = median. Alt annet gir gjennomsnitt
+#' @param startDatoIntervensjon Dato for når intervensjonen starter. Format: '2023-11-07'
+#' @param sluttDatoIntervensjon Dato for når intervensjonen slutter. Format: '2023-11-07'
 #'
 #' Nytt skjema tatt i bruk 7.nov 2023
 #' Detajer: Her bør man liste opp hvilke variabler funksjonen benytter.
@@ -22,8 +23,10 @@ NIRFigPrePostPaaror  <- function(
     minald=0, maxald=110, erMann='',InnMaate='', dodInt='',nivaa = 0,
     outfile='', lagFig=1,...){ #overfPas=0,
 
-   #    rapbase::repLogger2(user, msg = paste0("FigPrePostPaaror: ", valgtVar))
-
+      optionalArgs <- list(...)
+	if ("user" %in% names(optionalArgs)) {
+		rapbase::repLogger2(user = optionalArgs$user, msg = paste0("FigPrePostPaaror: ", valgtVar))
+	}
        if (hentData == 1) {
             RegData <- NIRRegDataSQL(datoFra, datoTil) #minald=0, maxald=110, erMann='',InnMaate='', dodInt=''
       }

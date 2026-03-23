@@ -41,10 +41,10 @@ NIRFigGjsnGrVar <- function(RegData, valgtVar, preprosess=1, hentData=0, valgtMa
                             nivaa = 0, #grType=99,
                             InnMaate=99, dodInt='', erMann='', grVar='ShNavn', medKI=1,
                             overfPas=99, luftvei=0, lagFig=1, outfile='',...) {
-
-  # if ("session" %in% names(list(...))) {
-  #   rapbase::repLogger(session = list(...)[["session"]], msg = paste0("AndelGrVar: ", valgtVar))
-  # }
+  optionalArgs <- list(...)
+  if ("user" %in% names(optionalArgs)) {
+    rapbase::repLogger2(user = optionalArgs$user, msg = paste0("AndelGrVar: ", valgtVar))
+  }
   if (hentData == 1) {
     RegData <- NIRRegDataSQL(datoFra, datoTil)
   }
