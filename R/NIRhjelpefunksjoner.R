@@ -154,9 +154,9 @@ lageTulleData <- function(RegData, varBort='', antSh=26, antObs=20000) {
 #' @param sluttDatoIntervensjon sluttdato for
 #' @export
 leggTilIntervensjon <- function(RegData,
-                                 startDatoIntervensjon='2024-01-01',
+                                 startDatoIntervensjon='2025-01-01',
                                 sluttDatoIntervensjon=Sys.Date()){
-      RegData$Intervensjon <- 0
+      RegData$Intervensjon <- rep(0, nrow(RegData))
       RegData$Intervensjon[intersect(which(RegData$InnDato >= as.Date(startDatoIntervensjon)),
                                      which(RegData$InnDato <= as.Date(sluttDatoIntervensjon)))] <- 1
       return(RegData)
