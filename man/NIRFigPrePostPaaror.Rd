@@ -52,10 +52,6 @@ Registeret inneholder registreringer f.o.m. 2011}
 
 \item{aar}{Vis registreringer for opphold som startet i dette året}
 
-\item{startDatoIntervensjon}{startDatoIntervensjon}
-
-\item{sluttDatoIntervensjon}{sluttDatoIntervensjon}
-
 \item{minald}{Alder, fra og med (Standardverdi: 0)}
 
 \item{maxald}{Alder, til og med (Standardverdi: 110)}
@@ -82,6 +78,11 @@ Flervalgsparameter}
 \item{lagFig}{Angir om figur skal lages eller ikke 0-ikke lag, 1-lag}
 
 \item{...}{Ytterligere argumenter, for eksempel user for logging. Se detaljer i NIRUtvalgEnh og NIRVarTilrettelegg.}
+
+\item{valgtMaal}{'Med' = median. Alt annet gir gjennomsnitt
+
+Nytt skjema tatt i bruk 7.nov 2023
+Detajer: Her bør man liste opp hvilke variabler funksjonen benytter.}
 }
 \value{
 Søylediagram med fordeling før og ved intervensjon
@@ -90,6 +91,5 @@ Søylediagram med fordeling før og ved intervensjon
 Funksjon som genererer en fordelingsfigur for to tidsperioder som skal sammenlignes
 }
 \details{
-Nytt skjema tatt i bruk 7.nov 2023
 Detajer: Her bør man liste opp hvilke variable funksjonen benytter...
 }
