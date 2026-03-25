@@ -611,8 +611,10 @@ if (valgtVar %in% c('regForsinkelseInn', 'regForsinkelse')) {  #Fordeling, Andel
         RegData <- RegData[which(RegData$DischargedIntensiveStatus == 1),] #Døde
         #Ble det påvist opphevet intrakraniell sirkulasjon?	CerebralCirculationAbolished
             #1:ja, 2:nei, -1: tom
-            #OrganDonationCompletedStatus - Ble organdonasjon gjennomført?
-            #1:ja, 2:nei, -1: tom
+        #CerebralCirculationAbolished_v2	-1 = Velg verdi, 1 = Ja, radiologisk påvist opphevet intrakraniell sirkulasjon,
+          # 2 = Ja, varig hjerte- og ånderettsstans etter cDcD-protokoll, 3 = Nei
+        #OrganDonationCompletedStatus - Ble organdonasjon gjennomført?
+        #1:ja, 2:nei, -1: tom
             RegData <- RegData[which(RegData$CerebralCirculationAbolished == 1),] #Opphevet sirkulasjon
             retn <- 'H'
             tittel <- 'Andel donorer av de med opphevet intrakraniell sirkulajon'
@@ -672,9 +674,6 @@ if (valgtVar %in% c('regForsinkelseInn', 'regForsinkelse')) {  #Fordeling, Andel
             cexgr <- 0.9
       }
       if (valgtVar == 'potDonor') { #andelGrVar, andelTid
-        #Ble det påvist opphevet intrakraniell sirkulasjon?	CerebralCirculationAbolished
-        #1:ja, 2:nei, -1: tom
-       # RegData <- RegData[which(RegData$CerebralCirculationAbolished == 1),] #Opphevet sirkulasjon
         RegData <- RegData[which(RegData$DischargedIntensiveStatus == 1),] #Døde
         retn <- 'H'
         tittel <- 'Potensielle donorer'
@@ -738,12 +737,11 @@ if (valgtVar %in% c('regForsinkelseInn', 'regForsinkelse')) {  #Fordeling, Andel
        tittel <- 'Registrert komplikasjoner'
        RegData$Variabel[RegData$KompUtfylt] <- 1
       }
+
       if (valgtVar=='komplikasjoner') { #Andeler
         #Avkrysningsvariabler. Fra 2020
         #KomIngen - ingen av nevnte kompliksjoner. Bare 2,8% har true på denne.
-        #RegData <- NIRPreprosess(NIRRegDataSQL(datoFra = '2020-01-01'))
         RegData <- RegData[which(RegData$InnDato >= '2020-01-01'), ] #
-        #RegData <- RegData[RegData$KompIkkeUtfylt==FALSE,] #Bare de som har tatt stilling til komplikasjoner. Ikke obligatorisk...
         RegData$KompUtfylt <- rowSums(RegData[ ,c('KompHypoglykemi',	'KompPneumotoraks',	'KompLuftveisproblem',
                                                'KompDekubitus', "KomIngen")])>0
         RegData <- RegData[RegData$KompUtfylt,]
