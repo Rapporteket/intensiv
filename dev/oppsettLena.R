@@ -17,10 +17,18 @@ intensiv::kjorIntensivApp(browser = TRUE)
 library(intensiv)
 reshID <- 102026 #705577 #103948 #4205969 Med PREM: 102026
 
-dum <- intensiv::NIRRegDataSQL(datoFra = '2022-01-01')
-RegData <- intensiv::NIRPreprosess(RegData = dum)
+RegData <- intensiv::NIRRegDataSQL(datoFra = '2025-01-01')
+RegData <- intensiv::NIRPreprosess(RegData = RegData)
 
+    NIRFigAndeler(RegData = RegData, preprosess = 0, valgtVar = 'trakeostomi'
+                  ,outfile = 'trakeostomiFordeling.pdf')
+    NIRFigAndeler(RegData = RegData, preprosess = 0, valgtVar = 'komplikasjoner',
+              outfile = 'komplFordeling.pdf')
 
+NIRFigAndelerGrVar(RegData = RegData, preprosess = 0, valgtVar = 'komplReg'
+                   ,outfile = 'kompl_perEnhet.pdf')
+NIRFigAndelTid(RegData = RegData, preprosess = 0, valgtVar = 'komplReg',
+               tidsenhet = 'Halvaar', outfile = 'kompl_perHalvaar.pdf')
 
 RegData <- RegData[RegData$ReshId==reshID,]
 
