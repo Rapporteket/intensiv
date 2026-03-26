@@ -123,19 +123,12 @@ NIRPreprosess <- function(RegData=RegData, skjema=1)	#, reshID=reshID)
       RegData$Dod365 <- 0
       RegData$Dod365[which(difftime(as.Date(RegData$Morsdato, format="%Y-%m-%d"), # %H:%M:%S
                                    as.Date(RegData$InnDato), units='days')< 365)] <- 1
-
       }
 
 # Angi om Covid-pasient før luftveisvariabel ble innført (okt -2025)
       qCovid <- paste0('SELECT UPPER(HovedskjemaGUID) AS HovedskjemaGUID, Diagnosis
                 FROM beredskap_4')
       CovidData <- rapbase::loadRegData(registryName= "data", query=qCovid, dbType="mysql")
-      # CovidData$Bekreftet <- 0
-      # CovidData$Bekreftet[which(CovidData$Diagnosis %in% 100:103)] <- 1
-      # RegData <- merge(RegData, CovidData[ ,-which(names(CovidData) == 'Diagnosis')], suffixes = c('','Cov'),
-      #                by.x = 'SkjemaGUID', by.y = 'HovedskjemaGUID', all.x = T, all.y=F)
-      # match(c(9,4,7), c(10,2, 0, 3, 2, 5, 9, 7))
-
       indCov <- match(CovidData$HovedskjemaGUID, RegData$SkjemaGUID, nomatch = NA)
       RegData$SARS_CoV2[indCov] <- 1
 
