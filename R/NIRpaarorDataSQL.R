@@ -123,7 +123,7 @@ SumScoreAllQuestions_2'
   queryP <- paste0('SELECT ',
                    varPaaror,
                    # ' FROM sporreskjema_om_paarorendes_tilfredshet_med_behandlingen_2
-                   ' FROM sporreskjemaompaarorendestilfredshetmedbehandlingen_2
+                   ' FROM sprreskjemaomprrendestilfredshetmedbehandlingen_2
                    WHERE FormVersionNumber > 13')
   # WHERE cast(FormDate as date) BETWEEN \'', datoFraP, '\' AND \'', datoTil, '\'')
 
