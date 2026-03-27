@@ -565,10 +565,10 @@ if (valgtVar %in% c('regForsinkelseInn', 'regForsinkelse')) {  #Fordeling, Andel
 
         RegData <- RegData[which(RegData$MechanicalRespirator == 1 & RegData$InvasivVentilation > 0), ]
         retn <- 'H'
-        tittel <- 'Trakeostomi ved invasiv ventilasjon'
+        tittel <- 'Trakeostomi (kirurgisk + perkutan) ved invasiv ventilasjon'
         RegData$Variabel[which(RegData$Trakeostomi %in% 2:3)] <- 1
-        RegData$VariabelGr <- factor(RegData$Trakeostomi, levels = 1:3)
-        grtxt <- c('Nei', 'Ja, perkutan teknikk', 'Ja, kirurgisk')
+        RegData$VariabelGr <- factor(RegData$Trakeostomi, levels = 3:1)
+        grtxt <- rev(c('Nei', 'Ja, perkutan teknikk', 'Ja, kirurgisk'))
         cexgr <- 0.9
       }
 
