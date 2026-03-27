@@ -732,7 +732,7 @@ if (valgtVar %in% c('regForsinkelseInn', 'regForsinkelse')) {  #Fordeling, Andel
         #Verdier: -1 = Velg verdi, 1 = Ja, 2 = Nei, 3 = Ukjent
         # RegData$KompUtfylt <- rowSums(RegData[ ,c('KompHypoglykemi',	'KompPneumotoraks',	'KompLuftveisproblem',
         #                                           'KompDekubitus', "KomIngen")])>0
-        komplVar <- c('KompHypoglykemi_v2',	'KompPneumotoraks_v2',	'KompLuftveisproblem_v2')
+        komplVar <- c('KompHypoglykemi_v2',	'KompPneumotoraks_v2',	'KompLuftveisproblem_v2', 'KompTrykksar')
         # Alle som svart ja el nei
         RegData <- RegData[apply(RegData[, komplVar], MARGIN =  1,
                                  function(r) all(r %in% 1:2)), ]
@@ -747,7 +747,7 @@ if (valgtVar %in% c('regForsinkelseInn', 'regForsinkelse')) {  #Fordeling, Andel
         # RegData$KompUtfylt <- rowSums(RegData[ ,c('KompHypoglykemi',	'KompPneumotoraks',	'KompLuftveisproblem',
         #                                        'KompDekubitus', "KomIngen")])>0
         # Alle som svart ja el nei
-        komplVar <- c('KompHypoglykemi_v2',	'KompPneumotoraks_v2',	'KompLuftveisproblem_v2')
+        komplVar <- c('KompHypoglykemi_v2',	'KompPneumotoraks_v2',	'KompLuftveisproblem_v2', 'KompTrykksar')
         RegData <- RegData[apply(RegData[, komplVar], MARGIN =  1,
                                  function(r) all(r %in% 1:2)), ]
        #RegData$KompTot <- (rowSums(RegData[ ,c('KompHypoglykemi',	'KompPneumotoraks_v2',	'KompLuftveisproblem',
@@ -756,7 +756,7 @@ if (valgtVar %in% c('regForsinkelseInn', 'regForsinkelse')) {  #Fordeling, Andel
         RegData$Variabel[apply(RegData[, komplVar], MARGIN=1, function(r) all(1 %in% r))] <- 1
 
         grtxt <- c('Alvorlig hypoglykemi',	'Pneumotoraks',	'Luftveisproblem, \ntrakealtube/kanyle',
-                    'Minst én kompl.')
+                   'Trykksår', 'Minst én kompl.')
         variable <- c(komplVar, 'Variabel')
         ind1 <- which(RegData[ ,variable] == TRUE, arr.ind=T) #Ja i alle variable
         RegData[ ,variable] <- 0

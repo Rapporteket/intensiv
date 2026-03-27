@@ -56,8 +56,8 @@ NIRRegDataSQL <- function(datoFra = '2011-01-01', datoTil = Sys.Date()) { #,sess
       KompHypoglykemi_v2, --KompHypoglykemi,
       KompPneumotoraks_v2, --KompPneumotoraks,
       KompLuftveisproblem_v2, --KompLuftveisproblem,
-      -- KompDekubitus, -- faset ut?
-      -- KomIngen, -- faset ut?
+      KompTrykksar, -- KompDekubitus, -- faset ut
+      -- KomIngen, -- faset ut
       KompIkkeUtfylt,
       Kontinuerlig,
       KontinuerligDays,
