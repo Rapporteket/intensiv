@@ -6,12 +6,10 @@ devtools::install_github('Rapporteket/intensiv', ref = 'main_dev', )
 remotes::install_github('Rapporteket/rapbase', ref = 'forenkl_take2')
 
 setwd('../data')
-sship::dec('intensiv1647f8f75.sql.gz__20260306_103240.tar.gz',
+sship::dec('intensiv12ac10e59.sql.gz__20260325_083639.tar.gz',
            keyfile = "c://Users/lro2402unn/.ssh/id_rsa")
+# source c://Users/lro2402unn/RegistreGIT/data/intensiv12ac10e59.sql;
 setwd('c://Users/lro2402unn/RegistreGIT/intensiv')
-# source c://Users/lro2402unn/RegistreGIT/data/intensiv1647f8f75.sql; (hentet i QA 6.mars)
-# source c://Users/lro2402unn/RegistreGIT/data/intensiv1137e9a52.sql; (prod tom 4.mars)
-setwd('../intensiv')
 
 source("dev/sysSetenv.R")
 intensiv::kjorIntensivApp(browser = TRUE)
@@ -19,22 +17,24 @@ intensiv::kjorIntensivApp(browser = TRUE)
 library(intensiv)
 reshID <- 102026 #705577 #103948 #4205969 Med PREM: 102026
 
-dum <- intensiv::NIRRegDataSQL(datoFra = '2022-01-01')
-RegData <- intensiv::NIRPreprosess(RegData = dum)
-PaarorData <- NIRpaarorDataSQL(medH = 0)
+RegData <- intensiv::NIRRegDataSQL(datoFra = '2025-01-01')
+RegData <- intensiv::NIRPreprosess(RegData = RegData)
 
-PaarorDataH <- merge(PaarorData, RegData,
-                     by.x = 'HovedskjemaGUID',
-                     by.y = 'SkjemaGUID',
-                     all.x = TRUE,
-                     suffixes = c('_paaror',''))
+    NIRFigAndeler(RegData = RegData, preprosess = 0, valgtVar = 'trakeostomi'
+                  ,outfile = 'trakeostomiFordeling.pdf')
+    NIRFigAndeler(RegData = RegData, preprosess = 0, valgtVar = 'komplikasjoner',
+              outfile = 'komplFordeling.pdf')
+test <- SorterOgNavngiTidsEnhet(RegData=RegData, tidsenhet='Halvaar')
+test$tidtxt
 
-dataPP <- NIRFigPrePostPaaror(RegData=PaarorDataH, preprosess = 0, valgtVar='HoeyesteFullfoerteUtdannelse',
-                  startDatoIntervensjon = '2024-05-02',
-                   reshID = 0, enhetsUtvalg = 2,
-                outfile = 'test.png')
+Kvartal = paste(substr(RegData$Aar[match(1:max(RegData$TidsEnhetSort), RegData$TidsEnhetSort)], 3,4),
+                sprintf('%01.0f', RegData$Kvartal[match(1:max(RegData$TidsEnhetSort), RegData$TidsEnhetSort)]), sep='-'),
 
-lagTabavFig(dataPP)
+
+NIRFigAndelerGrVar(RegData = RegData, preprosess = 0, valgtVar = 'komplReg'
+                   ,outfile = 'kompl_perEnhet.pdf')
+NIRFigAndelTid(RegData = RegData, preprosess = 0, valgtVar = 'komplReg',
+               tidsenhet = 'Halvaar', outfile = 'kompl_perHalvaar.pdf')
 
 RegData <- RegData[RegData$ReshId==reshID,]
 

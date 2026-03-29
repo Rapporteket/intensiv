@@ -9,7 +9,7 @@ luftveiValg <- c('Alle pasienter' = 0,
                  'Annet luftveisvirus' = 7,
                  'Annen_luftveisbakterie' = 8)
 velgLuftveiTxt <- 'Luftveisinfeksjoner'
-startDato <- paste0(as.numeric(format(Sys.Date()-90, "%Y")), '-01-01')
+startDato <- as.Date(paste0(as.numeric(format(Sys.Date()-90, "%Y")), '-01-01'))
 
 
 #' Brukergrensesnitt (ui) til Intensiv-appen
@@ -75,6 +75,7 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
              br(),
              h2('Hente datauttrekk'),
              dateRangeInput(inputId = 'datovalgData', start = startDato, end = Sys.Date(),
+                            min = startDato, max = Sys.Date(),
                             label = "Tidsperiode", separator="t.o.m.", language="nb"),
              uiOutput('velgReshData'),
              downloadButton(outputId = 'lastNed_dataDump', label='Last ned datadump')
@@ -169,6 +170,7 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                         conditionalPanel(
                           condition = "input.ark == 'Overføringer'",
                           dateRangeInput(inputId = 'datovalgReg', start = startDato, end = Sys.Date(),
+                                         min = startDato, max = Sys.Date(),
                                          label = "Tidsperiode", separator="t.o.m.", language="nb"),
                           uiOutput('velgReshOverf')
                          ),
@@ -330,12 +332,14 @@ tabPanel("Luftveisinfeksjon",
                            'SAPSII-skår (alvorlighet av sykd.)' = 'SAPSII',
                            'SAPSII-skår (uten alderspoeng)' = 'SAPSIIuAlder',
                            'Spesielle tiltak' = 'spesTiltak',
+                           'Trakeostomi' = 'trakeostomi',
                            'Type opphold' = 'InnMaate',
                            'Årsak, ikke donasjon ved opphevet intrakraniell sirk.' = 'OrganDonationCompletedReasonForNoStatus'
                )
              ),
 
                dateRangeInput(inputId = 'datovalg', start = startDato, end = Sys.Date(),
+                              min = startDato, max = Sys.Date(),
                               label = "Tidsperiode", separator="t.o.m.", language="nb" #)
                ),
                selectInput(inputId = "erMann", label="Kjønn",
@@ -402,7 +406,7 @@ tabPanel("Luftveisinfeksjon",
                            'Invasiv respiratortid < 2,5 døgn, u/overførte' = 'respiratortidInvUoverf',
                            'Isolasjon av pasient' = 'isolering',
                            'Invasiv ventilasjon' = 'invasivVent',
-                           'Komplikasjonsregistrering' = 'komplReg',
+                           'Komplikasjoner' = 'komplReg',
                            'Liggetid, døde' = 'liggetidDod',
                            'Menn' = 'erMann',
                            'Nyreerstattende behandling' = 'nyreBeh',
@@ -418,11 +422,12 @@ tabPanel("Luftveisinfeksjon",
                            'Utenfor vakttid, utskrevet' = 'utenforVakttidUt',
                            'Utvidet hemodyn. overvåkning' = 'ExtendedHemodynamicMonitoring',
                            'Trakeostomi' = 'trakeostomi',
-                           'Trakeostomi, åpen' = 'trakAapen'
+                           'Trakeostomi, kirurgisk' = 'trakAapen'
                            ),
                selected = 'regForsinkelseInn',
              ),
              dateRangeInput(inputId = 'datovalgAndel', start = startDato, end = Sys.Date(),
+                            min = startDato, max = Sys.Date(),
                             label = "Tidsperiode", separator="t.o.m.", language="nb"),
              selectInput(inputId = "erMannAndel", label="Kjønn",
                          choices = c("Begge"=2, "Menn"=1, "Kvinner"=0)),
@@ -503,6 +508,7 @@ tabPanel("Luftveisinfeksjon",
                          )
              ),
              dateRangeInput(inputId = 'datovalgGjsn', start = startDato, end = Sys.Date(),
+                            min = startDato, max = Sys.Date(),
                             label = "Tidsperiode", separator="t.o.m.", language="nb"),
              selectInput(inputId = "erMannGjsn", label="Kjønn",
                          choices = c("Begge"=2, "Menn"=1, "Kvinner"=0)
@@ -566,6 +572,7 @@ tabPanel("Luftveisinfeksjon",
              selectInput(inputId = "luftveiValgSMR", label= velgLuftveiTxt,
                          choices = luftveiValg),
              dateRangeInput(inputId = 'datovalgSMR', start = startDato, end = Sys.Date(),
+                            min = startDato, max = Sys.Date(),
                             label = "Tidsperiode", separator="t.o.m.", language="nb"),
              selectInput(inputId = "erMannSMR", label="Kjønn",
                          choices = c("Begge"=2, "Menn"=1, "Kvinner"=0)
@@ -603,6 +610,7 @@ tabPanel("Luftveisinfeksjon",
              width = 3,
              h4('Her kan man gjøre filtreringer.'),
              dateRangeInput(inputId = 'datovalgInnMaate', start = startDato, end = Sys.Date(),
+                            min = startDato, max = Sys.Date(),
                             label = "Tidsperiode", separator="t.o.m.", language="nb"),
              selectInput(inputId = "erMannInnMaate", label="Kjønn",
                          choices = c("Begge"=2, "Menn"=1, "Kvinner"=0)
@@ -670,6 +678,7 @@ tabPanel("Luftveisinfeksjon",
              ),
              dateRangeInput(inputId = 'datovalgPaarorFord',
                             start = startDato, end = Sys.Date(),
+                            min = startDato, max = Sys.Date(),
                             label = "Tidsperiode", separator="t.o.m.", language="nb"),
              dateInput(inputId = 'startDatoIntervensjon',
                        label = 'Startdato, intervensjon', language="nb",
@@ -1748,7 +1757,8 @@ observe({
               h2('Nøkkeltall, for valgt HF/RHF', align='center'),
               h4('Gjør utvalg'),
               dateRangeInput(inputId = 'datoValgNok', label = 'Tidsperiode',
-                start = as.Date('2018-01-01'), end = Sys.Date(),
+                start = startDato, end = Sys.Date(),
+                min = startDato, max = Sys.Date(),
                 separator="t.o.m.", language="nb"),
               selectInput(inputId = "luftveiValgNok", label= velgLuftveiTxt,
                 choices = luftveiValg),
