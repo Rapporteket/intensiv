@@ -258,9 +258,9 @@ tabNokkeltall <- function(RegData, tidsenhet='Mnd', grVar = '',
     }
 
     if (utvidTab==1) {
-      #Komplikasjoner:
-      RegData$KompTot <- (rowSums(RegData[ ,c('KompHypoglykemi',	'KompPneumotoraks',	'KompLuftveisproblem',
-                                              'KompDekubitus')])>0)
+      #Komplikasjoner: - variabler endret. Beregnger Komplikasjon i preprosess
+      # RegData$Komplikasjon <- (rowSums(RegData[ ,c('KompHypoglykemi',	'KompPneumotoraks',	'KompLuftveisproblem',
+      #                                         'KompDekubitus')])>0)
 
       tabNokkeltall <- rbind(
         tabNokkeltall,
@@ -276,8 +276,8 @@ tabNokkeltall <- function(RegData, tidsenhet='Mnd', grVar = '',
                                          FUN=function(x) sum(x, na.rm=T)/length(x)*100),
         'Menn (%)' = tapply((RegData$erMann==1), RegData$GrVar,
                             FUN=function(x) sum(x, na.rm=T)/length(x)*100),
-        'Komplikasjoner (%)' = tapply((RegData$KompTot==1), RegData$GrVar,
-                                      FUN=function(x) sum(x, na.rm=T)/length(x)*100)
+        'Komplikasjoner (%)' = tapply((RegData$Komplikasjon==1), RegData$GrVar,
+                                      FUN=function(x) sum(x, na.rm=T)/sum(x %in% 0:1)*100)
       )
     }
   } else {

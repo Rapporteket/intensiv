@@ -27,8 +27,8 @@ RegData <- intensiv::NIRPreprosess(RegData = RegData)
 test <- SorterOgNavngiTidsEnhet(RegData=RegData, tidsenhet='Halvaar')
 test$tidtxt
 
-Kvartal = paste(substr(RegData$Aar[match(1:max(RegData$TidsEnhetSort), RegData$TidsEnhetSort)], 3,4),
-                sprintf('%01.0f', RegData$Kvartal[match(1:max(RegData$TidsEnhetSort), RegData$TidsEnhetSort)]), sep='-'),
+# Kvartal = paste(substr(RegData$Aar[match(1:max(RegData$TidsEnhetSort), RegData$TidsEnhetSort)], 3,4),
+#                 sprintf('%01.0f', RegData$Kvartal[match(1:max(RegData$TidsEnhetSort), RegData$TidsEnhetSort)]), sep='-'),
 
 
 NIRFigAndelerGrVar(RegData = RegData, preprosess = 0, valgtVar = 'komplReg'
