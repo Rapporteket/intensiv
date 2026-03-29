@@ -729,15 +729,10 @@ if (valgtVar %in% c('regForsinkelseInn', 'regForsinkelse')) {  #Fordeling, Andel
       if (valgtVar == 'komplReg') {#AndelTid/GrVar
         RegData <- RegData[which(RegData$InnDato >= '2024-01-01'), ]
         tittel <- 'Komplikasjoner oppstått'  # 'Registrert komplikasjoner'
-        #Verdier: -1 = Velg verdi, 1 = Ja, 2 = Nei, 3 = Ukjent
-        # RegData$KompUtfylt <- rowSums(RegData[ ,c('KompHypoglykemi',	'KompPneumotoraks',	'KompLuftveisproblem',
-        #                                           'KompDekubitus', "KomIngen")])>0
-        komplVar <- c('KompHypoglykemi_v2',	'KompPneumotoraks_v2',	'KompLuftveisproblem_v2', 'KompTrykksar')
         # Alle som svart ja el nei
-        RegData <- RegData[apply(RegData[, komplVar], MARGIN =  1,
-                                 function(r) all(r %in% 1:2)), ]
-        ind <- apply(RegData[, komplVar], MARGIN =  1, function(r) all(1 %in% r))
-        RegData$Variabel[ind] <- 1
+        RegData <- RegData[RegData$Komplikasjon %in% 1:2, ]
+        #Komplikasjon definert i preprosess
+        RegData$Variabel <- RegData$Komplikasjon
         sortAvtagende <- F
       }
 
@@ -746,18 +741,15 @@ if (valgtVar %in% c('regForsinkelseInn', 'regForsinkelse')) {  #Fordeling, Andel
         tittel <- 'Komplikasjoner'
         # RegData$KompUtfylt <- rowSums(RegData[ ,c('KompHypoglykemi',	'KompPneumotoraks',	'KompLuftveisproblem',
         #                                        'KompDekubitus', "KomIngen")])>0
+        #Verdier: -1 = Velg verdi, 1 = Ja, 2 = Nei, 3 = Ukjent
         # Alle som svart ja el nei
         komplVar <- c('KompHypoglykemi_v2',	'KompPneumotoraks_v2',	'KompLuftveisproblem_v2', 'KompTrykksar')
-        RegData <- RegData[apply(RegData[, komplVar], MARGIN =  1,
-                                 function(r) all(r %in% 1:2)), ]
        #RegData$KompTot <- (rowSums(RegData[ ,c('KompHypoglykemi',	'KompPneumotoraks_v2',	'KompLuftveisproblem',
         #                         'KompDekubitus')])>0)
-        # Alle reg med minst en komplikasjon:
-        RegData$Variabel[apply(RegData[, komplVar], MARGIN=1, function(r) all(1 %in% r))] <- 1
-
+        RegData <- RegData[RegData$Komplikasjon %in% 1:2, ]
         grtxt <- c('Alvorlig hypoglykemi',	'Pneumotoraks',	'Luftveisproblem, \ntrakealtube/kanyle',
                    'Trykksår', 'Minst én kompl.')
-        variable <- c(komplVar, 'Variabel')
+        variable <- c(komplVar, Komplikasjon)
         ind1 <- which(RegData[ ,variable] == TRUE, arr.ind=T) #Ja i alle variable
         RegData[ ,variable] <- 0
         RegData[ ,variable][ind1] <- 1

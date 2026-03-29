@@ -1769,7 +1769,9 @@ observe({
               br(),
               h4('Andel opphold med *komplikasjon*, er definert som et opphold hvor det har
                     oppstått minst én av følgende komplikasjoner:
-                    Alvorlig hypoglykemi, pneumotoraks, luftveisproblem, trakealtube/kanyle, dekubitus'),
+                    Alvorlig hypoglykemi, pneumotoraks, luftveisproblem trakealtube/kanyle, trykksår'),
+              h4('Bare registreringer hvor det er registrert om det er komplikasjon eller ikke,
+                 er med i beregninga av komplikasjoner'),
               tableOutput('tabNokkeltallUtvidet'),
               downloadButton(outputId = 'lastNed_tabNokkelSC', label='Last ned tabell')
             )

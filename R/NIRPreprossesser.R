@@ -68,8 +68,9 @@ NIRPreprosess <- function(RegData=RegData, skjema=1)	#, reshID=reshID)
                                ReshId = ExternalId,
                                ShNavnReg = ShNavn,
                                ShNavn = Title) #newname = oldname
-      RegData$NivaaNum <- as.numeric(plyr::mapvalues(RegData$Nivaa, from=c('1a', '1b', '2b', '3', '3c'),
-                                          to = 1:5))
+
+      RegData$NivaaNum <- as.numeric(dplyr::recode_values(RegData$Nivaa, from=c('1a', '1b', '2b', '3', '3c'),
+                                                     to = 1:5))
 
       #Fjerner mellomrom (før) og etter navn
       RegData$ShNavn <- trimws(as.character(RegData$ShNavn))
@@ -100,8 +101,7 @@ NIRPreprosess <- function(RegData=RegData, skjema=1)	#, reshID=reshID)
       RegData$MndNum <- RegData$Innleggelsestidspunkt$mon +1
       RegData$MndAar <- format(RegData$Innleggelsestidspunkt, '%b%y')
      # RegData$UkeAar <- format(RegData$Innleggelsestidspunkt, 'uke%V.%g')
-      RegData$UkeAar <- format(RegData$Innleggelsestidspunkt, '%G.%V')
-      # %G -The week-based year, %V - Week of the year as decimal number (01–53)
+      RegData$UkeAar <- format(RegData$Innleggelsestidspunkt, '%G.%V') # %G -The week-based year, %V - Week of the year as decimal number (01–53)
       RegData$Kvartal <- ceiling(RegData$MndNum/3)
       RegData$Halvaar <- ceiling(RegData$MndNum/6)
       RegData$Aar <- as.numeric(format(RegData$InnDato, '%Y')) # 1900 + RegData$Innleggelsestidspunkt$year #strptime(RegData$Innleggelsestidspunkt, format="%Y")$year
@@ -112,6 +112,13 @@ NIRPreprosess <- function(RegData=RegData, skjema=1)	#, reshID=reshID)
                    which(RegData$ReshId == RegData$PatientTransferredToHospital))
       RegData$Overf[ind] <- 1
 
+      #Komplikasjoner?
+      komplVar <- c('KompHypoglykemi_v2',	'KompPneumotoraks_v2',	'KompLuftveisproblem_v2', 'KompTrykksar')
+      # Alle som svart ja el nei
+      RegData$Komplikasjon <- NA
+      ind <- apply(RegData[, komplVar], MARGIN =  1, function(r) all(r %in% 1:2))
+      RegData$Komplikasjon[ind] <- 0
+      RegData$Komplikasjon[ind][apply(RegData[ind, komplVar], 1, function(r) (1 %in% r))] <- 1
 
       #En "overlever": Person som er i live 30 dager etter innleggelse.
       if (skjema %in% c(1,3)){

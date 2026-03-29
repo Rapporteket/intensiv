@@ -85,11 +85,6 @@ Flervalgsparameter}
 \item{lagFig}{Angir om figur skal lages eller ikke 0-ikke lag, 1-lag}
 
 \item{...}{Ytterligere argumenter, for eksempel user for logging. Se detaljer i NIRUtvalgEnh og NIRVarTilrettelegg.}
-
-\item{valgtMaal}{'Med' = median. Alt annet gir gjennomsnitt
-
-Nytt skjema tatt i bruk 7.nov 2023
-Detajer: Her bør man liste opp hvilke variabler funksjonen benytter.}
 }
 \value{
 Søylediagram med fordeling før og ved intervensjon
