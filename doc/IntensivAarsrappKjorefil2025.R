@@ -33,6 +33,52 @@ RegData1aar <- NIRUtvalgEnh(RegData = RegData, datoFra = datoFra1aar)$RegData
 
 setwd('../Aarsrapp/Intensiv')
 
+#----------------Nye bestillinger for 2025------------------
+Endring av figurerer til årsrapport:
+
+Gruppe: Overvåkning:
+  - Må vise median NIV-tid
+
+Gruppe: Barn:
+  Må inkludere:
+  - PIM
+
+Organdonasjon:
+  Må inkludere:
+  Andel/Frekvens av gjennomførte organdonasjoner, fordelt på metode (cDCD og DBD)
+Oppdatere script på figur: Organdonerer av alle med opphevet intrakran. sirk.
+Ta bort fra rapporten: Fig 55. Andel med påvist opphevet intrakan. sirkulasjon
+
+
+Spørsmål om ny analyse:
+  Hvordan stiller du deg til for eksempel en tabell som fremstiller spesifikke behandlinger som gis på intensiv?
+  Her eksemplifisert med en tabell:
+
+  Variabel	Menn	Kvinner	Totalt
+  CRRT, % (n)
+Alder (median) (p25 -p75)
+Dager (median) (p25 - p75)
+Død på intensiv % (n)
+  ECMO, % (n)
+Alder (median) (p25 -p75)
+ECMO, dager, median (p25 -p75)
+Død på intensiv % (n)
+  ICP, % (n)
+Alder (median) (p25 -p75)
+ICP, dager, median  (p25 -p75)
+Død på intensiv % (n)
+  Impella, % (n)
+Alder (median) (p25 -p75)
+Impella, dager, median  (p25 -p75)
+Død på intensiv % (n)
+  IABP, % (n)
+Alder (median) (p25 -p75)
+IABP, dager, median  (p25 -p75)
+Død på intensiv % (n)
+
+
+
+
 # ------------------------- FIGURER UTEN inndeling I enhetsNIVÅ----------------------------------
 #--------------------------------------- Fordelinger
 variabler <- c('OrganDonationCompletedReasonForNoStatus',

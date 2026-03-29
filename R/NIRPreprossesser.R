@@ -100,7 +100,9 @@ NIRPreprosess <- function(RegData=RegData, skjema=1)	#, reshID=reshID)
       RegData$MndNum <- RegData$Innleggelsestidspunkt$mon +1
       RegData$MndAar <- format(RegData$Innleggelsestidspunkt, '%b%y')
      # RegData$UkeAar <- format(RegData$Innleggelsestidspunkt, 'uke%V.%g')
-      RegData$UkeAar <- format(RegData$Innleggelsestidspunkt, '%G.%V') #%G -The week-based year, %V - Week of the year as decimal number (01–53)RegData$Kvartal <- ceiling(RegData$MndNum/3)
+      RegData$UkeAar <- format(RegData$Innleggelsestidspunkt, '%G.%V')
+      # %G -The week-based year, %V - Week of the year as decimal number (01–53)
+      RegData$Kvartal <- ceiling(RegData$MndNum/3)
       RegData$Halvaar <- ceiling(RegData$MndNum/6)
       RegData$Aar <- as.numeric(format(RegData$InnDato, '%Y')) # 1900 + RegData$Innleggelsestidspunkt$year #strptime(RegData$Innleggelsestidspunkt, format="%Y")$year
 #
@@ -123,19 +125,12 @@ NIRPreprosess <- function(RegData=RegData, skjema=1)	#, reshID=reshID)
       RegData$Dod365 <- 0
       RegData$Dod365[which(difftime(as.Date(RegData$Morsdato, format="%Y-%m-%d"), # %H:%M:%S
                                    as.Date(RegData$InnDato), units='days')< 365)] <- 1
-
       }
 
 # Angi om Covid-pasient før luftveisvariabel ble innført (okt -2025)
       qCovid <- paste0('SELECT UPPER(HovedskjemaGUID) AS HovedskjemaGUID, Diagnosis
                 FROM beredskap_4')
       CovidData <- rapbase::loadRegData(registryName= "data", query=qCovid, dbType="mysql")
-      # CovidData$Bekreftet <- 0
-      # CovidData$Bekreftet[which(CovidData$Diagnosis %in% 100:103)] <- 1
-      # RegData <- merge(RegData, CovidData[ ,-which(names(CovidData) == 'Diagnosis')], suffixes = c('','Cov'),
-      #                by.x = 'SkjemaGUID', by.y = 'HovedskjemaGUID', all.x = T, all.y=F)
-      # match(c(9,4,7), c(10,2, 0, 3, 2, 5, 9, 7))
-
       indCov <- match(CovidData$HovedskjemaGUID, RegData$SkjemaGUID, nomatch = NA)
       RegData$SARS_CoV2[indCov] <- 1
 
