@@ -1113,7 +1113,7 @@ observe({
       output$inklKrit <- renderPlot({
         NIRFigAndeler(RegData=RegData, preprosess = 0, valgtVar='inklKrit',
                       reshID = user$org(), enhetsUtvalg=as.numeric(input$enhetsUtvalg),
-                      datoFra=input$datovalg[1], datoTil=input$datovalg[2], session=session)
+                      datoFra=input$datovalg[1], datoTil=input$datovalg[2], user = user)
       }, height=800, width=800 #height = function() {session$clientData$output_fordelinger_width}
       )
 
@@ -1186,7 +1186,7 @@ observe({
                           datoFra=input$datovalg[1], datoTil=input$datovalg[2],
                           minald=as.numeric(input$alder[1]), maxald=as.numeric(input$alder[2]),
                           erMann=as.numeric(input$erMann), luftvei = as.numeric(input$luftveiValg),
-                          session = session)
+                          user = user)
       }, height=800, width=800 #height = function() {session$clientData$output_fordelinger_width}
       )
 
@@ -1256,7 +1256,7 @@ observe({
                                minald=as.numeric(input$alderAndel[1]), maxald=as.numeric(input$alderAndel[2]),
                                erMann=as.numeric(input$erMannAndel),
                                luftvei = as.numeric(input$luftveiValgAndel),
-                               session=session)
+                               user = user)
       }, height = 800, width=700 #height = function() {session$clientData$output_andelerGrVarFig_width} #})
       )
 
@@ -1381,7 +1381,8 @@ observe({
                             minald=as.numeric(input$alderGjsn[1]), maxald=as.numeric(input$alderGjsn[2]),
                             erMann=as.numeric(input$erMannGjsn),
                             luftvei = as.numeric(input$luftveiValgGjsn),
-                            valgtMaal = input$sentralmaal)
+                            valgtMaal = input$sentralmaal,
+                            user = user)
       }, height=900, width=700
       )
             output$LastNedFigGjsnGrVar <- downloadHandler(
@@ -1409,7 +1410,8 @@ observe({
                           valgtMaal = input$sentralmaal,
                           tidsenhet = input$tidsenhetGjsn,
                           enhetsUtvalg = input$enhetsUtvalgGjsn,
-                          session=session)
+                          user = user
+                          )
       }, height=400, width = 1200
       )
 
@@ -1519,7 +1521,8 @@ observe({
                         datoFra=input$datovalgSMR[1], datoTil=input$datovalgSMR[2],
                         minald=as.numeric(input$alderSMR[1]), maxald=as.numeric(input$alderSMR[2]),
                         erMann=as.numeric(input$erMannSMR),
-                        luftvei = as.numeric(input$luftveiValgSMR)
+                        luftvei = as.numeric(input$luftveiValgSMR),
+                        user = user
                     )
       },# height=900, width=700 #heigth = 8000, width=800
        height = function() {3*session$clientData$output_SMRfig_height}, #
@@ -1574,7 +1577,7 @@ observe({
                        minald=as.numeric(input$alderInnMaate[1]), maxald=as.numeric(input$alderInnMaate[2]),
                        erMann=as.numeric(input$erMannInnMaate),
                        luftvei= as.numeric(input$luftveiValgInnMaate),
-                       session=session)
+                       user = user)
       }, height=900, width=700)
       # height = function() {2.2*session$clientData$output_innMaate_height},
       # width = function() {0.7*session$clientData$output_innMaate_width}) #)
@@ -1601,8 +1604,8 @@ observe({
                             datoFra=input$datovalgPaarorFord[1], datoTil=input$datovalgPaarorFord[2],
                             reshID = user$org(),
                             enhetsUtvalg = input$enhetsUtvalgPaarorFord,
-                            erMann=as.numeric(input$erMannPaarorFord,
-                                              session=session)
+                            erMann=as.numeric(input$erMannPaarorFord),
+                            user = user
         ), width=900, height = 900)
 
       output$LastNedFigPaarorFord <- downloadHandler(

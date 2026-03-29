@@ -52,6 +52,13 @@ Registeret inneholder registreringer f.o.m. 2011}
 
 \item{aar}{Vis registreringer for opphold som startet i dette året}
 
+\item{startDatoIntervensjon}{Dato for når intervensjonen starter. Format: '2023-11-07'}
+
+\item{sluttDatoIntervensjon}{Dato for når intervensjonen slutter. Format: '2023-11-07'
+
+Nytt skjema tatt i bruk 7.nov 2023
+Detajer: Her bør man liste opp hvilke variabler funksjonen benytter.}
+
 \item{minald}{Alder, fra og med (Standardverdi: 0)}
 
 \item{maxald}{Alder, til og med (Standardverdi: 110)}
