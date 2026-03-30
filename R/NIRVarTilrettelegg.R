@@ -730,7 +730,7 @@ if (valgtVar %in% c('regForsinkelseInn', 'regForsinkelse')) {  #Fordeling, Andel
         RegData <- RegData[which(RegData$InnDato >= '2024-01-01'), ]
         tittel <- 'Opphold med minst en komplikasjon registrert'  # 'Registrert komplikasjoner'
         # Alle som svart ja el nei
-        RegData <- RegData[RegData$Komplikasjon %in% 1:2, ]
+        RegData <- RegData[RegData$Komplikasjon %in% 0:1, ]
         #Komplikasjon definert i preprosess
         RegData$Variabel <- RegData$Komplikasjon
         sortAvtagende <- F
