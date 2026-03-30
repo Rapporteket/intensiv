@@ -746,7 +746,7 @@ if (valgtVar %in% c('regForsinkelseInn', 'regForsinkelse')) {  #Fordeling, Andel
         komplVar <- c('KompHypoglykemi_v2',	'KompPneumotoraks_v2',	'KompLuftveisproblem_v2', 'KompTrykksar')
        #RegData$KompTot <- (rowSums(RegData[ ,c('KompHypoglykemi',	'KompPneumotoraks_v2',	'KompLuftveisproblem',
         #                         'KompDekubitus')])>0)
-        RegData <- RegData[RegData$Komplikasjon %in% 1:2, ]
+        RegData <- RegData[RegData$Komplikasjon %in% 0:1, ]
         grtxt <- c('Alvorlig hypoglykemi',	'Pneumotoraks',	'Luftveisproblem, \ntrakealtube/kanyle',
                    'Trykksår', 'Minst én kompl.')
         variable <- c(komplVar, Komplikasjon)
