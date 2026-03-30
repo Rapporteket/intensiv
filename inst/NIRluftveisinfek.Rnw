@@ -138,12 +138,12 @@ print(xtable::xtable(RegHF, digits=0,
   TabUkeRHF <- as.matrix(TabUkeRHF)
   TabUkeRHF <- rbind( TabUkeRHF, Totalt = colSums(TabUkeRHF))
   TabUkeRHF <- cbind( TabUkeRHF, 'Hele landet' = rowSums(TabUkeRHF))
-skaler <- ifelse(dim(TabUkeRHF)[1]>25, 1- 0.006*dim(TabUkeRHF)[1] ,1)
+#skaler <- ifelse(dim(TabUkeRHF)[1]>25, 1- 0.006*dim(TabUkeRHF)[1] ,1)
 
   print(xtable::xtable(TabUkeRHF, digits=0,
                        caption='Luftveisinfeksjoner per uke og region siste 40 uker.'),
         sanitize.rownames.function = identity,
-        scale = skaler)
+        scale = 0.74)
 
   @
     \end{frame}
@@ -161,14 +161,14 @@ skaler <- ifelse(dim(TabUkeRHF)[1]>25, 1- 0.006*dim(TabUkeRHF)[1] ,1)
   RegSh <- rbind(as.data.frame(RegSh), Totalt)
   colnames(RegSh) <- c('RHF', 'Enhet', 'Ant. opph.')
 
-  skaler <- ifelse(dim(RegSh)[1]>25, 1- 0.005*dim(RegSh)[1] ,1)
+  skaler <- ifelse(dim(RegSh)[1]>25, 1- 0.007*dim(RegSh)[1] ,1)
   print(
     xtable::xtable(RegSh , digits=0,
                    align = c('l','l','l','r')
                    # ,caption='Totalt antall opphold med luftveissmitte siste 40 uker.'
                    )
     ,include.rownames = FALSE,
-    scale=0.74)
+    scale=skaler)
   @
     \end{frame}
 

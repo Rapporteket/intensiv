@@ -728,7 +728,7 @@ if (valgtVar %in% c('regForsinkelseInn', 'regForsinkelse')) {  #Fordeling, Andel
       }
       if (valgtVar == 'komplReg') {#AndelTid/GrVar
         RegData <- RegData[which(RegData$InnDato >= '2024-01-01'), ]
-        tittel <- 'Komplikasjoner oppstått'  # 'Registrert komplikasjoner'
+        tittel <- 'Opphold med minst en komplikasjon registrert'  # 'Registrert komplikasjoner'
         # Alle som svart ja el nei
         RegData <- RegData[RegData$Komplikasjon %in% 1:2, ]
         #Komplikasjon definert i preprosess
@@ -746,10 +746,10 @@ if (valgtVar %in% c('regForsinkelseInn', 'regForsinkelse')) {  #Fordeling, Andel
         komplVar <- c('KompHypoglykemi_v2',	'KompPneumotoraks_v2',	'KompLuftveisproblem_v2', 'KompTrykksar')
        #RegData$KompTot <- (rowSums(RegData[ ,c('KompHypoglykemi',	'KompPneumotoraks_v2',	'KompLuftveisproblem',
         #                         'KompDekubitus')])>0)
-        RegData <- RegData[RegData$Komplikasjon %in% 1:2, ]
+        RegData <- RegData[RegData$Komplikasjon %in% 0:1, ]
         grtxt <- c('Alvorlig hypoglykemi',	'Pneumotoraks',	'Luftveisproblem, \ntrakealtube/kanyle',
                    'Trykksår', 'Minst én kompl.')
-        variable <- c(komplVar, Komplikasjon)
+        variable <- c(komplVar, 'Komplikasjon')
         ind1 <- which(RegData[ ,variable] == TRUE, arr.ind=T) #Ja i alle variable
         RegData[ ,variable] <- 0
         RegData[ ,variable][ind1] <- 1
