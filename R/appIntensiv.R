@@ -10,6 +10,7 @@ luftveiValg <- c('Alle pasienter' = 0,
                  'Annen_luftveisbakterie' = 8)
 velgLuftveiTxt <- 'Luftveisinfeksjoner'
 startDato <- as.Date(paste0(as.numeric(format(Sys.Date()-90, "%Y")), '-01-01'))
+startDato1 <- as.Date(paste0(as.numeric(format(Sys.Date()-365, "%Y")), '-01-01'))
 
 
 #' Brukergrensesnitt (ui) til Intensiv-appen
@@ -677,8 +678,9 @@ tabPanel("Luftveisinfeksjon",
                  )
              ),
              dateRangeInput(inputId = 'datovalgPaarorFord',
-                            start = startDato, end = Sys.Date(),
-                            min = startDato, max = Sys.Date(),
+                            start = paste0(as.numeric(format(Sys.Date()-365, "%Y")), '-01-01'),
+                            end = Sys.Date(),
+                            min = paste0(as.numeric(format(Sys.Date()-365, "%Y")), '-01-01'), max = Sys.Date(),
                             label = "Tidsperiode", separator="t.o.m.", language="nb"),
              dateInput(inputId = 'startDatoIntervensjon',
                        label = 'Startdato, intervensjon', language="nb",
@@ -750,7 +752,7 @@ server_intensiv <- function(input, output, session) { #
 
     qs <- shiny::getQueryString(session)
     sinceDate <- if (!is.null(qs$since)) qs$since
-      else paste0(as.numeric(format(Sys.Date()-90, "%Y")), "-01-01")
+      else paste0(as.numeric(format(Sys.Date()-365, "%Y")), "-01-01")
     shiny::updateSelectInput(
       session,
       "sinceYear",
