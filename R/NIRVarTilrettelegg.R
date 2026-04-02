@@ -252,6 +252,7 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='an
             RegData$VariabelGr <- cut(RegData$Variabel, breaks=gr, include.lowest=TRUE, right=FALSE)
             grtxt <- c('(0-20)','[20-40)','[40-60)','[60-80)','[80-100)','[100-120)','[120-140)','[140-160)',  '160+')
             xAkseTxt <- 'NAS-score/døgn'
+            cexgr <- 0.85
       }
       if (valgtVar=='NEMS') { #GjsnGrVar
             #Inkluderer: opphald lenger enn 24 timar og det faktisk er skåra NEMS-poeng.
@@ -618,7 +619,7 @@ if (valgtVar %in% c('regForsinkelseInn', 'regForsinkelse')) {  #Fordeling, Andel
         # -1 = Velg verdi, 1 = Ja, cDcD ble gjennomført, 2 = Ja, DBD ble gjenomført, 3 = Nei
         RegData <- RegData[which(RegData$CerebralCirculationAbolished_v2 %in% 1:2),] #Opphevet sirkulasjon
             retn <- 'H'
-            tittel <- 'Realiserte donorer blant pasienter som oppfyller kriteriet for donasjon'
+            tittel <- 'Realiserte donorer blant de som oppfyller kriteriet for donasjon'
             varTxt <- 'donorer'
             RegData$Variabel[which(RegData$OrganDonationCompletedStatus_v2 %in% 1:2)] <- 1
             cexgr <- 0.9

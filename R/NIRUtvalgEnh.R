@@ -123,7 +123,7 @@ NIRUtvalgEnh <- function(RegData, datoFra='2014-01-01', datoTil=Sys.Date(), aar=
       RegData <- RegData[indMed,]
 
       N <- dim(RegData)[1]	#N=0 gir feilmelding
-      if (nivaa %in% 1:5) {shNivaaTxt <- shNivaaTxt[nivaa]} else {shNivaaTxt <- 'alle '}
+      if (nivaa %in% 1:5) {shNivaaTxt <- nivaaTxt[nivaa]} else {shNivaaTxt <- 'alle '}
 
 
       utvalgTxt <- c(
