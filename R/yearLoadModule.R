@@ -45,7 +45,7 @@ yearControlServer <- function(id) {
     observeEvent(shiny::getQueryString(session), once = TRUE, {
       qs <- shiny::getQueryString(session)
       year <- if (!is.null(qs$since)) substr(qs$since, 1, 4)
-        else paste0(as.numeric(format(Sys.Date()-90, "%Y")))
+        else paste0(as.numeric(format(Sys.Date()-365, "%Y")))
 
       shiny::updateSelectInput(session, "since_year", selected = year)
     })

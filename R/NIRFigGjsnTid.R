@@ -46,10 +46,10 @@ NIRFigGjsnTid <- function(RegData, valgtVar='alder', datoFra='2011-01-01', datoT
                     minald=0, maxald=110, erMann='', reshID=0, InnMaate='', dodInt='', luftvei=0,
                     tittel=1, outfile='',enhetsUtvalg=0, valgtMaal='Gjsn', preprosess=1, hentData=0,...){
 
-
-  # if ("session" %in% names(list(...))) {
-  #   rapbase::repLogger(session = list(...)[["session"]], msg = paste0("GjsnTid: ", valgtVar))
-  # }
+  optionalArgs <- list(...)
+  if ("user" %in% names(optionalArgs)) {
+     rapbase::repLogger2(user = optionalArgs$user, msg = paste0("GjsnTid: ", valgtVar))
+  }
   if (hentData == 1) {
     RegData <- NIRRegDataSQL(datoFra, datoTil)
   }

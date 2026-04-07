@@ -23,17 +23,18 @@ NIRFigInnMaate <- function(RegData, valgtVar='InnMaate', datoFra='2010-01-01', d
                            grVar='ShNavn', InnMaate=99, dodInt='', erMann='', hentData=0,
                             preprosess=1, outfile='', ...)
 {
-  # if ("session" %in% names(list(...))) {
-  #   rapbase::repLogger(session = list(...)[["session"]], msg = paste0("FigInnMaate: ", valgtVar))
-  # }
-      if (hentData == 1) {
-            RegData <- NIRRegDataSQL(datoFra, datoTil)
-      }
+	optionalArgs <- list(...)
+	if ("user" %in% names(optionalArgs)) {
+		rapbase::repLogger2(user = optionalArgs$user, msg = paste0("FigInnMaate: ", valgtVar))
+	}
+	if (hentData == 1) {
+	RegData <- NIRRegDataSQL(datoFra, datoTil)
+	}
 
-      # Hvis RegData ikke har blitt preprosessert. (I samledokument gjøre dette i samledokumentet)
-      if (preprosess){
-            RegData <- NIRPreprosess(RegData=RegData) #, reshID=reshID)
-      }
+	# Hvis RegData ikke har blitt preprosessert. (I samledokument gjøre dette i samledokumentet)
+	if (preprosess){
+	RegData <- NIRPreprosess(RegData=RegData) #, reshID=reshID)
+	}
 
 #------- Tilrettelegge variable
   RegData <- RegData[which(RegData$InnMaate %in% c(0,6,8)), ]

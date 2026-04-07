@@ -3,42 +3,65 @@
 
 rm(list=ls())
 library(intensiv)
+setwd('../Aarsrapp/Intensiv')
 aarsrappAar <- 2025
-datoFra <- '2011-01-01'
+datoFra <- '2015-01-01'
 datoTil <- paste0(aarsrappAar, '-12-31')
 datoFra1aar <- paste0(aarsrappAar, '-01-01')
-RegDataRaa <- NIRPreprosess(NIRRegDataSQL(datoFra=datoFra, datoTil=datoTil))
-#Registrert på feil resh:
-RegDataRaa$ReshId[RegDataRaa$ReshId == 100132] <- 102026
+source("C:/Users/lro2402unn/RegistreGIT/intensiv/dev/sysSetenv.R")
+RegData <- NIRPreprosess(NIRRegDataSQL(datoFra=datoFra, datoTil=datoTil))
+shNivaaTxt <- c('Overvåk', 'Postop', '≤50% kat3','>50% kat3', 'Barn') #teksten kommer fra UtvEnh
+RegData$ShNivaa <- shNivaaTxt[RegData$NivaaNum]
 
-#Tabell med navn og nivåer
-  #EnhNivaa <- read.csv2(file = 'C:/Users/lro2402unn/RegistreGIT/intensiv/data/AlleReshShNavnNivaa.csv',
-  #                      encoding = 'latin1') #, sep = ';', row.names = FALSE)
-  #unique(EnhNivaa[,c('Nivaa', 'NivaaTxt')])
-  #ekstraResh <- setdiff( sort(unique(EnhNivaa$ReshId)), sort(unique(RegDataRaa$ReshId)))
-  #Bruke tilgangtre i stedet:
-Sys.setenv(MRS_ACCESS_HIERARCHY_URL="https://app.mrs.qa.nhn.no/intensivregisterservices/AccessHiearchyReport")
-TilgJsn <- Sys.getenv("MRS_ACCESS_HIERARCHY_URL")
-Tilgangstre <- jsonlite::fromJSON(test)$AccessUnits
-
-
-RegData <- merge(RegDataRaa, EnhNivaa[,-which(names(EnhNivaa)=='ShNavnInt')], by.x = 'ReshId', by.y = 'ReshId', suffixes = c('Int',''))
-#table(RegData$ShNavn, RegData$Aar)
-
-#Fjerner Helse Bergen HF og RH samlet - kodet med ShNavn "Fjernes":
-RegData <- RegData[-which(RegData$ShNavn == 'Fjernes'), ]
-
-RegData$EnhNivaa <- RegData$NivaaTxt
 RegData1aar <- NIRUtvalgEnh(RegData = RegData, datoFra = datoFra1aar)$RegData
 
-setwd('../Aarsrapp/Intensiv')
+#----------------Nye bestillinger for 2025------------------
+# Legg til figurer
+- median-tid for ikke-invasiv ventilasjon for kategori:  overvåkningsenh.
+
+Organdonasjon:
+  Må inkludere:
+  Andel/Frekvens av gjennomførte organdonasjoner, fordelt på metode (cDCD og DBD)
+
+
+Spørsmål om ny analyse:
+  Hvordan stiller du deg til for eksempel en tabell som fremstiller spesifikke behandlinger som gis på intensiv?
+  Her eksemplifisert med en tabell:
+
+  Variabel	Menn	Kvinner	Totalt
+  CRRT, % (n)
+Alder (median) (p25 -p75)
+Dager (median) (p25 - p75)
+Død på intensiv % (n)
+  ECMO, % (n)
+Alder (median) (p25 -p75)
+ECMO, dager, median (p25 -p75)
+Død på intensiv % (n)
+  ICP, % (n)
+Alder (median) (p25 -p75)
+ICP, dager, median  (p25 -p75)
+Død på intensiv % (n)
+  Impella, % (n)
+Alder (median) (p25 -p75)
+Impella, dager, median  (p25 -p75)
+Død på intensiv % (n)
+  IABP, % (n)
+Alder (median) (p25 -p75)
+IABP, dager, median  (p25 -p75)
+Død på intensiv % (n)
+
+
+
 
 # ------------------------- FIGURER UTEN inndeling I enhetsNIVÅ----------------------------------
+NIRFigInnMaate(RegData1aar, preprosess=0, outfile='TypeOpph.pdf')
+
 #--------------------------------------- Fordelinger
 variabler <- c('OrganDonationCompletedReasonForNoStatus',
                'CerebralCirculationAbolishedReasonForNo',
                'frailtyIndex', 'inklKrit','liggetid','InnMaate',
-              'NEMS24', 'NAS24', 'regForsinkelse', 'respiratortidNonInv',
+               'komplikasjoner',
+              'NEMS24', 'Nas24', 'regForsinkelse', 'respiratortidNonInv',
               'SAPSII', 'nyreBeh', 'nyreBehTid','spesTiltak')
 
 for (valgtVar in variabler) {
@@ -46,36 +69,47 @@ for (valgtVar in variabler) {
    NIRFigAndeler(RegData=RegData1aar, preprosess = 0, valgtVar=valgtVar,
                  outfile=outfile)
 }
-#NIRFigAndeler(RegData=RegData1aar, preprosess = 0, valgtVar='NAS24')
+
+#NIRFigAndeler(RegData=RegData1aar, preprosess = 0, valgtVar=PIMdod,
+
 
 #------------ Andelsh
-NIRFigAndelerGrVar(RegData=RegData1aar, preprosess = 0, valgtVar='OrganDonationCompletedCirc',
-                   Ngrense=10, outfile='OrganDonationCompletedCircPrSh.pdf')
+variabler <- c('komplReg', 'OrganDonationCompletedCirc', 'regForsinkelse', 'reinn')
+
+for (valgtVar in variabler) {
+  outfile <- paste0(valgtVar, '_PrSh.pdf')
+  NIRFigAndeler(RegData=RegData1aar, preprosess = 0, valgtVar=valgtVar,
+                outfile=outfile)
+}
 
 #---------------------GjsnTid
 variabler <- c('NEMS', 'respiratortid', 'alder', 'liggetid', 'SAPSII')
 
+variabler <- 'Nas24'  # 'respiratortidInvUoverf' # 'respiratortidInvMoverf'
 for (valgtVar in variabler) {
-  outfile <- paste0(valgtVar, 'MedTid.pdf')
+  outfile <- paste0(valgtVar, '_MedTid.pdf')
   NIRFigGjsnTid(RegData=RegData, preprosess = 0, valgtVar=valgtVar, datoFra=datoFra, datoTil=datoTil,
                 valgtMaal='Med', tidsenhet= 'Aar', outfile=outfile)
 }
 
-#KvalInd:
+#-------------GjsnGrVar
+
 NIRFigGjsnGrVar(RegData=RegData1aar, preprosess = 0, valgtVar='SMR'
                 ,outfile='SMR_PrSh.pdf')
 
-#KvalInd:
-#årsrapp 22: Etter litt fram og tilbake endte vi på 'respiratortidInvUoverf'.
-NIRFigGjsnGrVar(RegData=RegData1aar, preprosess = 0, valgtVar='respiratortidInvUoverf', valgtMaal='Med',
-                outfile='respiratortidInvUoverf_MedPrSh.pdf')
+NIRFigGjsnGrVar(RegData=RegData1aar, preprosess = 0, valgtVar='PIMdod',
+                outfile='PIMdod_PrSh.pdf')
 
-
-# Figurar for gjennomsnittleg og median respiratortid for non-invasiv og invasiv respiratorstøtte med overførte pasientar.
-NIRFigGjsnGrVar(RegData=RegData1aar, preprosess = 0, valgtVar='respiratortidNonInv', valgtMaal='Med',
-                outfile='respiratortidNonInv_MedPrSh.pdf')
 NIRFigGjsnGrVar(RegData=RegData1aar, preprosess = 0, valgtVar='respiratortidNonInv', valgtMaal='Gjsn',
                 outfile='respiratortidNonInv_GjsnPrSh.pdf')
+
+variabler <- c('Nas24', 'NEMS', 'respiratortidInvMoverf', 'respiratortidInvUoverf', 'respiratortidNonInv')
+for (valgtVar in variabler) {
+  outfile <- paste0(valgtVar, '_MedPrSh.pdf')
+  NIRFigGjsnGrVar(RegData=RegData1aar, preprosess = 0, valgtVar=valgtVar,
+                valgtMaal='Med', outfile=outfile)
+}
+
 
 
 # ------------------------- FIGURER som skiller på enhetsNIVÅ----------------------------------
@@ -84,17 +118,15 @@ NIRFigGjsnGrVar(RegData=RegData1aar, preprosess = 0, valgtVar='respiratortidNonI
 # Dvs. 3b -> 2b, nivå 6->5
 # 1. Overvakingseiningar
 # 2. Postoperative einingar
-# 3. Generelle intensiveiningar med < 50 % kategori 3-senger.
-# 4. Generelle intensiveiningar med ≥ 50 % kategori 3-senger
+# 3. Generelle intensiveiningar med ≤ 50 % kategori 3-senger.
+# 4. Generelle intensiveiningar med < 50 % kategori 3-senger
 # 5. Barneintensiv
 
+#Nivaa: 1a    1b    2b     3    3c
+#NivaaNum: 1:5
+#shNivaaTxt <- c('Overvåk', 'Postop', '≤50% kat3','>50% kat3', 'Barn') teksten kommer fra UtvEnh
 
-nivaa <- 1:5
-nivaaKort <- c('1a', '1b', '2b', '3', '3c')  #c('1a', '1b', '2b', '3', '3b', '3c')
-nivaaTxt <- c('Overvåk', 'Postop', 'Gen <50','Gen >50', 'Barn')
-
-test <- NIRUtvalgEnh(RegData1aar, nivaa = 4)$RegData
-
+nivaaKort <- c('1a', '1b' ,'2b' ,'3', '3c')
 #------------Fordelingsfigurer
 variabler <- c('komplikasjoner', 'frailtyIndex')
 for (nivaa in 1:5) {
@@ -104,7 +136,6 @@ for (nivaa in 1:5) {
                   Ngrense=10, nivaa=nivaa, outfile=outfile)
   }
 }
-
 
 variabler <- c('nyreBehTid','nyreBeh')
 for (nivaa in 3:4){
@@ -118,11 +149,10 @@ for (nivaa in 3:4){
 # #Organdonorer av døde: OrganDonationCompletedStatus
 # #Organdonorer, av alle med opphevet intrakran. sirk.': 'OrganDonationCompletedCirc',
 variabler <- c('dod30d', 'frailtyIndex', 'komplReg',
-               'OrganDonationCompletedCirc', 'OrganDonationCompletedStatus',
+               'OrganDonationCompletedCirc', 'OrganDonationCompletedStatus', # - bare 3:4 aktuell
                'potDonor', 'regForsinkelse', 'reinn', 'trakeostomi')
-
-variabler <- 'CerebralCirculationAbolished'
-for (nivaa in 1:5) {
+variabler <- 'OrganDonationCompletedStatus'
+for (nivaa in 3:4) {
       for (valgtVar in variabler) {
             outfile <-  paste0(valgtVar, '_',nivaaKort[nivaa], 'PrSh.pdf')
             NIRFigAndelerGrVar(RegData=RegData1aar, preprosess = 0, valgtVar=valgtVar,
@@ -202,9 +232,9 @@ for (nivaa in 1:5) {
 # Ønsket er at du kjører følgende figurer ut fra disse «kategoriene», altså nivåinndelingene.
 # 1a, 1b, 2a, 2b, 3
 
-#RegData$ShNavn <- GruppeDef$niva[match(RegData$ReshId, GruppeDef$resh_id)]
 #Endrer til Nivå:
-RegData1aar$ShNavn <- RegData1aar$NivaaTxt
+
+RegData1aar$ShNavn <- RegData1aar$ShNivaa
 
 # Skill på overførte og ikke overførte.
 variabler <- c( 'liggetid','NEMS','respiratortidInv','respiratortidNonInv','SAPSII',  'SMR')
@@ -213,33 +243,27 @@ for (valgtVar in variabler){ #
     overfTxt <- c('Uoverf','Overf')[overf]
     outfile <- paste0(valgtVar, overfTxt, '_MedNivaa.pdf')
     NIRFigGjsnGrVar(RegData=RegData1aar, preprosess = 0, valgtVar=valgtVar, valgtMaal='Med',
-                    overfPas = overf, outfile=outfile)
+                    grVar = 'ShNivaa', overfPas = overf, outfile=outfile)
   }
 }
-
-
 
 variabler <- c('dod30d', 'frailtyIndex', 'komplReg', #'komplikasjoner',
                'OrganDonationCompletedCirc', 'OrganDonationCompletedStatus',
                'potDonor', 'regForsinkelse', 'reinn', 'trakeostomi',
                'nyreBeh' )
-variabler <- 'OrganDonationCompletedCirc'
   for (valgtVar in variabler) {
     outfile <- paste0(valgtVar, '_PrNivaa.pdf')
     NIRFigAndelerGrVar(RegData=RegData1aar, preprosess = 0, valgtVar=valgtVar,
-                       Ngrense=10, outfile=outfile)
+                       grVar = 'ShNivaa', Ngrense=10, outfile=outfile)
   }
 
-variabler <- c('alder', 'frailtyIndex', 'NEMS24', 'NAS24',
+variabler <- c('alder', 'liggetid', 'frailtyIndex', 'NEMS24', 'NAS24',
                'respiratortidInvMoverf',  'respiratortidNonInv', 'SAPSII')
-variabler <- 'liggetid'
-
   for (valgtVar in variabler){ # variabler <- 'frailtyIndex'
     outfile <- paste0(valgtVar, '_MedPrNivaa.pdf')
     NIRFigGjsnGrVar(RegData=RegData1aar, preprosess = 0, valgtVar=valgtVar, valgtMaal='Med',
-                    outfile=outfile)
+                    grVar = 'ShNivaa', outfile=outfile)
   }
-
 
 
 #KvalInd:
@@ -264,12 +288,13 @@ library(xtable)
 library(lubridate)
 xtable::xtable(table(RegData1aar$ShNavn), align=c('l','r'), #row.names=F,
                caption = paste0('Intensivopphald per eining i ', aarsrappAar, '.'))
-
+# OK 2.apr  2026
 
 
 #Fordeling av kjønn per sykehustype og år
-tabShTypeAar <- table(RegData$Aar, RegData$EnhNivaa)
-tabKj <- table(RegData[RegData$erMann==1 , c('Aar', 'NivaaTxt')])
+#RegData$EhnNivaa <-
+tabShTypeAar <- table(RegData$Aar, RegData$ShNivaa)
+tabKj <- table(RegData[RegData$erMann==1 , c('Aar', 'ShNivaa')])
 kjLandet <- prop.table(table(RegData[ , c('Aar', "erMann")]),1)
 AndelMenn <- 100*cbind(tabKj/tabShTypeAar,
                        kjLandet[,'1'])
@@ -411,16 +436,11 @@ xtable::xtable(AndelMenn, digits=1, align=c('l', rep('r', ncol(AndelMenn))),
 
 
 #---------Barn <16 år ------------------------------
-#RegData <- NIRUtvalgEnh(RegData = RegData, datoFra = '2015-01-01')$RegData
-nivaa <- 1:6
-nivaaKort <- c('1a', '1b', '2b', '3', '3b', '3c')
-nivaaTxt <- c('Overvåk', 'Postop', 'Gen <50','Gen >50', 'Spesial',  'Barn')
 over <- c('IkkeOverf', 'Overf')
-
+nivaa <- 1
 for (overfPas in 1:2) {
-  nivaa <- 1:5
 
-  #Fordeling
+    #Fordeling
 
   for (valgtVar in c('PIMsanns', 'liggetid','InnMaate', 'inklKrit')) {
     outfile <- paste0(valgtVar,'_',paste0(nivaaKort[nivaa], collapse = ""), '_',over[overfPas], '_Ford0_15aar.pdf')

@@ -114,7 +114,7 @@ NIRUtvalgEnh <- function(RegData, datoFra='2014-01-01', datoTil=Sys.Date(), aar=
                '8' = which(RegData$Annen_luftveisbakterie == 1))
         } else {1:Ninn}
       nivaaKort <- c('1a', '1b', '2b', '3', '3c')
-      nivaaTxt <- c('Overvåk', 'Postop', 'Gen<50%','Gen>50%', 'Barn')
+      nivaaTxt <- c('Overvåk', 'Postop', '≤50% kat3','>50% kat3', 'Barn')
       indNivaa <- if (min(nivaa) > 0 ) {which(RegData$Nivaa %in% nivaaKort[nivaa])
       } else {1:Ninn}
       indOverf <- if (overfPas %in% 1:2) {which(RegData$Overf == overfPas)} else {1:Ninn}
@@ -123,7 +123,7 @@ NIRUtvalgEnh <- function(RegData, datoFra='2014-01-01', datoTil=Sys.Date(), aar=
       RegData <- RegData[indMed,]
 
       N <- dim(RegData)[1]	#N=0 gir feilmelding
-      if (nivaa %in% 1:5) {shNivaaTxt <- shNivaaTxt[nivaa]} else {shNivaaTxt <- 'alle '}
+      if (nivaa %in% 1:5) {shNivaaTxt <- nivaaTxt[nivaa]} else {shNivaaTxt <- 'alle '}
 
 
       utvalgTxt <- c(

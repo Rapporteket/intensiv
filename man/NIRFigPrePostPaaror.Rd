@@ -52,9 +52,12 @@ Registeret inneholder registreringer f.o.m. 2011}
 
 \item{aar}{Vis registreringer for opphold som startet i dette året}
 
-\item{startDatoIntervensjon}{startDatoIntervensjon}
+\item{startDatoIntervensjon}{Dato for når intervensjonen starter. Format: '2023-11-07'}
 
-\item{sluttDatoIntervensjon}{sluttDatoIntervensjon}
+\item{sluttDatoIntervensjon}{Dato for når intervensjonen slutter. Format: '2023-11-07'
+
+Nytt skjema tatt i bruk 7.nov 2023
+Detajer: Her bør man liste opp hvilke variabler funksjonen benytter.}
 
 \item{minald}{Alder, fra og med (Standardverdi: 0)}
 
@@ -90,6 +93,5 @@ Søylediagram med fordeling før og ved intervensjon
 Funksjon som genererer en fordelingsfigur for to tidsperioder som skal sammenlignes
 }
 \details{
-Nytt skjema tatt i bruk 7.nov 2023
 Detajer: Her bør man liste opp hvilke variable funksjonen benytter...
 }

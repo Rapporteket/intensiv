@@ -9,7 +9,8 @@ luftveiValg <- c('Alle pasienter' = 0,
                  'Annet luftveisvirus' = 7,
                  'Annen_luftveisbakterie' = 8)
 velgLuftveiTxt <- 'Luftveisinfeksjoner'
-startDato <- paste0(as.numeric(format(Sys.Date()-90, "%Y")), '-01-01')
+startDato <- as.Date(paste0(as.numeric(format(Sys.Date()-90, "%Y")), '-01-01'))
+startDato1 <- as.Date(paste0(as.numeric(format(Sys.Date()-365, "%Y")), '-01-01'))
 
 
 #' Brukergrensesnitt (ui) til Intensiv-appen
@@ -75,6 +76,7 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
              br(),
              h2('Hente datauttrekk'),
              dateRangeInput(inputId = 'datovalgData', start = startDato, end = Sys.Date(),
+                            min = startDato, max = Sys.Date(),
                             label = "Tidsperiode", separator="t.o.m.", language="nb"),
              uiOutput('velgReshData'),
              downloadButton(outputId = 'lastNed_dataDump', label='Last ned datadump')
@@ -169,6 +171,7 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                         conditionalPanel(
                           condition = "input.ark == 'Overføringer'",
                           dateRangeInput(inputId = 'datovalgReg', start = startDato, end = Sys.Date(),
+                                         min = startDato, max = Sys.Date(),
                                          label = "Tidsperiode", separator="t.o.m.", language="nb"),
                           uiOutput('velgReshOverf')
                          ),
@@ -330,12 +333,14 @@ tabPanel("Luftveisinfeksjon",
                            'SAPSII-skår (alvorlighet av sykd.)' = 'SAPSII',
                            'SAPSII-skår (uten alderspoeng)' = 'SAPSIIuAlder',
                            'Spesielle tiltak' = 'spesTiltak',
+                           'Trakeostomi' = 'trakeostomi',
                            'Type opphold' = 'InnMaate',
                            'Årsak, ikke donasjon ved opphevet intrakraniell sirk.' = 'OrganDonationCompletedReasonForNoStatus'
                )
              ),
 
                dateRangeInput(inputId = 'datovalg', start = startDato, end = Sys.Date(),
+                              min = startDato, max = Sys.Date(),
                               label = "Tidsperiode", separator="t.o.m.", language="nb" #)
                ),
                selectInput(inputId = "erMann", label="Kjønn",
@@ -402,7 +407,7 @@ tabPanel("Luftveisinfeksjon",
                            'Invasiv respiratortid < 2,5 døgn, u/overførte' = 'respiratortidInvUoverf',
                            'Isolasjon av pasient' = 'isolering',
                            'Invasiv ventilasjon' = 'invasivVent',
-                           'Komplikasjonsregistrering' = 'komplReg',
+                           'Komplikasjoner' = 'komplReg',
                            'Liggetid, døde' = 'liggetidDod',
                            'Menn' = 'erMann',
                            'Nyreerstattende behandling' = 'nyreBeh',
@@ -418,11 +423,12 @@ tabPanel("Luftveisinfeksjon",
                            'Utenfor vakttid, utskrevet' = 'utenforVakttidUt',
                            'Utvidet hemodyn. overvåkning' = 'ExtendedHemodynamicMonitoring',
                            'Trakeostomi' = 'trakeostomi',
-                           'Trakeostomi, åpen' = 'trakAapen'
+                           'Trakeostomi, kirurgisk' = 'trakAapen'
                            ),
                selected = 'regForsinkelseInn',
              ),
              dateRangeInput(inputId = 'datovalgAndel', start = startDato, end = Sys.Date(),
+                            min = startDato, max = Sys.Date(),
                             label = "Tidsperiode", separator="t.o.m.", language="nb"),
              selectInput(inputId = "erMannAndel", label="Kjønn",
                          choices = c("Begge"=2, "Menn"=1, "Kvinner"=0)),
@@ -503,6 +509,7 @@ tabPanel("Luftveisinfeksjon",
                          )
              ),
              dateRangeInput(inputId = 'datovalgGjsn', start = startDato, end = Sys.Date(),
+                            min = startDato, max = Sys.Date(),
                             label = "Tidsperiode", separator="t.o.m.", language="nb"),
              selectInput(inputId = "erMannGjsn", label="Kjønn",
                          choices = c("Begge"=2, "Menn"=1, "Kvinner"=0)
@@ -566,6 +573,7 @@ tabPanel("Luftveisinfeksjon",
              selectInput(inputId = "luftveiValgSMR", label= velgLuftveiTxt,
                          choices = luftveiValg),
              dateRangeInput(inputId = 'datovalgSMR', start = startDato, end = Sys.Date(),
+                            min = startDato, max = Sys.Date(),
                             label = "Tidsperiode", separator="t.o.m.", language="nb"),
              selectInput(inputId = "erMannSMR", label="Kjønn",
                          choices = c("Begge"=2, "Menn"=1, "Kvinner"=0)
@@ -603,6 +611,7 @@ tabPanel("Luftveisinfeksjon",
              width = 3,
              h4('Her kan man gjøre filtreringer.'),
              dateRangeInput(inputId = 'datovalgInnMaate', start = startDato, end = Sys.Date(),
+                            min = startDato, max = Sys.Date(),
                             label = "Tidsperiode", separator="t.o.m.", language="nb"),
              selectInput(inputId = "erMannInnMaate", label="Kjønn",
                          choices = c("Begge"=2, "Menn"=1, "Kvinner"=0)
@@ -669,7 +678,9 @@ tabPanel("Luftveisinfeksjon",
                  )
              ),
              dateRangeInput(inputId = 'datovalgPaarorFord',
-                            start = startDato, end = Sys.Date(),
+                            start = paste0(as.numeric(format(Sys.Date()-365, "%Y")), '-01-01'),
+                            end = Sys.Date(),
+                            min = paste0(as.numeric(format(Sys.Date()-365, "%Y")), '-01-01'), max = Sys.Date(),
                             label = "Tidsperiode", separator="t.o.m.", language="nb"),
              dateInput(inputId = 'startDatoIntervensjon',
                        label = 'Startdato, intervensjon', language="nb",
@@ -741,7 +752,7 @@ server_intensiv <- function(input, output, session) { #
 
     qs <- shiny::getQueryString(session)
     sinceDate <- if (!is.null(qs$since)) qs$since
-      else paste0(as.numeric(format(Sys.Date()-90, "%Y")), "-01-01")
+      else paste0(as.numeric(format(Sys.Date()-365, "%Y")), "-01-01")
     shiny::updateSelectInput(
       session,
       "sinceYear",
@@ -1104,7 +1115,7 @@ observe({
       output$inklKrit <- renderPlot({
         NIRFigAndeler(RegData=RegData, preprosess = 0, valgtVar='inklKrit',
                       reshID = user$org(), enhetsUtvalg=as.numeric(input$enhetsUtvalg),
-                      datoFra=input$datovalg[1], datoTil=input$datovalg[2], session=session)
+                      datoFra=input$datovalg[1], datoTil=input$datovalg[2], user = user)
       }, height=800, width=800 #height = function() {session$clientData$output_fordelinger_width}
       )
 
@@ -1177,7 +1188,7 @@ observe({
                           datoFra=input$datovalg[1], datoTil=input$datovalg[2],
                           minald=as.numeric(input$alder[1]), maxald=as.numeric(input$alder[2]),
                           erMann=as.numeric(input$erMann), luftvei = as.numeric(input$luftveiValg),
-                          session = session)
+                          user = user)
       }, height=800, width=800 #height = function() {session$clientData$output_fordelinger_width}
       )
 
@@ -1247,7 +1258,7 @@ observe({
                                minald=as.numeric(input$alderAndel[1]), maxald=as.numeric(input$alderAndel[2]),
                                erMann=as.numeric(input$erMannAndel),
                                luftvei = as.numeric(input$luftveiValgAndel),
-                               session=session)
+                               user = user)
       }, height = 800, width=700 #height = function() {session$clientData$output_andelerGrVarFig_width} #})
       )
 
@@ -1372,7 +1383,8 @@ observe({
                             minald=as.numeric(input$alderGjsn[1]), maxald=as.numeric(input$alderGjsn[2]),
                             erMann=as.numeric(input$erMannGjsn),
                             luftvei = as.numeric(input$luftveiValgGjsn),
-                            valgtMaal = input$sentralmaal)
+                            valgtMaal = input$sentralmaal,
+                            user = user)
       }, height=900, width=700
       )
             output$LastNedFigGjsnGrVar <- downloadHandler(
@@ -1400,7 +1412,8 @@ observe({
                           valgtMaal = input$sentralmaal,
                           tidsenhet = input$tidsenhetGjsn,
                           enhetsUtvalg = input$enhetsUtvalgGjsn,
-                          session=session)
+                          user = user
+                          )
       }, height=400, width = 1200
       )
 
@@ -1510,7 +1523,8 @@ observe({
                         datoFra=input$datovalgSMR[1], datoTil=input$datovalgSMR[2],
                         minald=as.numeric(input$alderSMR[1]), maxald=as.numeric(input$alderSMR[2]),
                         erMann=as.numeric(input$erMannSMR),
-                        luftvei = as.numeric(input$luftveiValgSMR)
+                        luftvei = as.numeric(input$luftveiValgSMR),
+                        user = user
                     )
       },# height=900, width=700 #heigth = 8000, width=800
        height = function() {3*session$clientData$output_SMRfig_height}, #
@@ -1565,7 +1579,7 @@ observe({
                        minald=as.numeric(input$alderInnMaate[1]), maxald=as.numeric(input$alderInnMaate[2]),
                        erMann=as.numeric(input$erMannInnMaate),
                        luftvei= as.numeric(input$luftveiValgInnMaate),
-                       session=session)
+                       user = user)
       }, height=900, width=700)
       # height = function() {2.2*session$clientData$output_innMaate_height},
       # width = function() {0.7*session$clientData$output_innMaate_width}) #)
@@ -1592,8 +1606,8 @@ observe({
                             datoFra=input$datovalgPaarorFord[1], datoTil=input$datovalgPaarorFord[2],
                             reshID = user$org(),
                             enhetsUtvalg = input$enhetsUtvalgPaarorFord,
-                            erMann=as.numeric(input$erMannPaarorFord,
-                                              session=session)
+                            erMann=as.numeric(input$erMannPaarorFord),
+                            user = user
         ), width=900, height = 900)
 
       output$LastNedFigPaarorFord <- downloadHandler(
@@ -1748,7 +1762,8 @@ observe({
               h2('Nøkkeltall, for valgt HF/RHF', align='center'),
               h4('Gjør utvalg'),
               dateRangeInput(inputId = 'datoValgNok', label = 'Tidsperiode',
-                start = as.Date('2018-01-01'), end = Sys.Date(),
+                start = startDato, end = Sys.Date(),
+                min = startDato, max = Sys.Date(),
                 separator="t.o.m.", language="nb"),
               selectInput(inputId = "luftveiValgNok", label= velgLuftveiTxt,
                 choices = luftveiValg),
@@ -1756,7 +1771,9 @@ observe({
               br(),
               h4('Andel opphold med *komplikasjon*, er definert som et opphold hvor det har
                     oppstått minst én av følgende komplikasjoner:
-                    Alvorlig hypoglykemi, pneumotoraks, luftveisproblem, trakealtube/kanyle, dekubitus'),
+                    Alvorlig hypoglykemi, pneumotoraks, luftveisproblem trakealtube/kanyle, trykksår'),
+              h4('Bare registreringer hvor det er registrert om det er komplikasjon eller ikke,
+                 er med i beregninga av komplikasjoner'),
               tableOutput('tabNokkeltallUtvidet'),
               downloadButton(outputId = 'lastNed_tabNokkelSC', label='Last ned tabell')
             )

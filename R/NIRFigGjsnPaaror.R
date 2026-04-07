@@ -13,9 +13,10 @@
 NIRFigGjsnPaaror  <- function(RegData, valgtVar, valgtMaal='Gjsn', prePost=2, grVar='ShNavn',outfile='',...)
 {
 
-   # if ("session" %in% names(list(...))) {
-   #   rapbase::repLogger(session = list(...)[["session"]], msg = paste0("GjsnPaaror: ", valgtVar))
-   # }
+      optionalArgs <- list(...)
+      if ("user" %in% names(optionalArgs)) {
+      rapbase::repLogger2(user = optionalArgs$user, msg = paste0("GjsnPaaror: ", valgtVar))
+      }
 
       #RegData <- NIRPreprosess(RegData=RegData) #Gjort tidl
       RegData <- RegData[RegData$PrePost==prePost,]

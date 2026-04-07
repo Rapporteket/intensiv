@@ -1,6 +1,5 @@
 
 Sys.setenv(FALK_EXTENDED_USER_RIGHTS= "[
-           {\"A\":106,\"R\":\"LU\",\"U\":112044},
            {\"A\":106,\"R\":\"SC\",\"U\":4201313},
            {\"A\":106,\"R\":\"LU\",\"U\":112044},
            {\"A\":106,\"R\":\"LU\",\"U\":102026},
@@ -26,4 +25,5 @@ Sys.setenv(R_RAP_INSTANCE="QAC")
 Sys.setenv(R_RAP_CONFIG_PATH=paste0(getwd(), "/data-raw/config"))
 #Sys.setenv(R_RAP_CONFIG_PATH="/home/rstudio/intensiv/data-raw/config")
 Sys.setenv(MRS_ACCESS_HIERARCHY_URL = "https://app.mrs.nhn.no/intensivregisterservices/AccessHiearchyReport")
+#Sys.setenv(MRS_ACCESS_HIERARCHY_URL = "https://app.mrs.qa.nhn.no/intensivregisterservices/AccessHiearchyReport")
 Sys.setlocale(locale = 'nb_NO.UTF-8')

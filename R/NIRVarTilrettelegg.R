@@ -155,7 +155,7 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='an
 
       if (valgtVar=='isolering') { #Andeler, andelerGrVar
             #-1 = Velg verdi, 1 = Ingen, 2 = Kontaktsmitte, 3 = Luftsmitte
-            tittel <- 'Andel av opphold med registrert isolasjon av pasient'
+            tittel <- 'Andel av opphold med isolasjon av pasient'
             retn <- 'H'
          if (figurtype=='andeler') {
                   gr <- c(-1,1:5)
@@ -179,8 +179,10 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='an
           RegData <- RegData[which((RegData$FrailtyIndex %in% gr)), ]  #Kun gyldige verdier
           RegData$Variabel  <- as.numeric(RegData$FrailtyIndex)
           RegData$VariabelGr <- factor(RegData$FrailtyIndex, levels=gr)
-          grtxt <- c('Veldig sprek', 'Sprek', 'Ok', 'Sårbar', 'Lett skrøpelig', 'Moderat skrøpelig',
-                     'Alvorlig skøpelig', 'Svært skrøpelig', 'Terminal')
+          # grtxt <- c('Veldig sprek', 'Sprek', 'Ok', 'Sårbar', 'Lett skrøpelig', 'Moderat skrøpelig',
+          #            'Alvorlig skøpelig', 'Svært skrøpelig', 'Terminal')
+          grtxt <- c('Veldig sprek', 'Sprek', 'Klarer seg bra', 'Svært mildt skrøpelig', 'Mildt skrøpelig',
+                     'Moderat skrøpelig', 'Alvorlig skrøpelig', 'Svært alvorlig skrøpelig', 'Terminal')
           retn <- 'H'}
         if (figurtype %in% 'gjsnGrVar') {
           RegData <- RegData[which((RegData$FrailtyIndex %in% gr)), ]
@@ -250,6 +252,7 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='an
             RegData$VariabelGr <- cut(RegData$Variabel, breaks=gr, include.lowest=TRUE, right=FALSE)
             grtxt <- c('(0-20)','[20-40)','[40-60)','[60-80)','[80-100)','[100-120)','[120-140)','[140-160)',  '160+')
             xAkseTxt <- 'NAS-score/døgn'
+            cexgr <- 0.85
       }
       if (valgtVar=='NEMS') { #GjsnGrVar
             #Inkluderer: opphald lenger enn 24 timar og det faktisk er skåra NEMS-poeng.
@@ -336,8 +339,6 @@ NIRVarTilrettelegg  <- function(RegData, valgtVar, grVar='ShNavn', figurtype='an
 
 if (valgtVar == 'PIMsanns'){ #
   tittel <- 'PIM, sannsynlighet'
-    # if (figurtype %in% c('gjsnGrVar', 'gjsnTid')) {
-    #   tittel <- 'SAPSII' }
   RegData <- RegData[RegData$PIM_Probability >= 0, ]
   RegData$Variabel <- 100*RegData$PIM_Probability
   gr <- c(seq(0, 90,10), 100)
@@ -558,15 +559,17 @@ if (valgtVar %in% c('regForsinkelseInn', 'regForsinkelse')) {  #Fordeling, Andel
             KImaaltxt <- '< 0.7'
 
       }
-        if (valgtVar == 'trakeostomi') { #andelGrVar
+        if (valgtVar == 'trakeostomi') { #andelGrVar, fordeling
         #-1: Velg verdi, 1 = Nei, 2 = Ja – perkutan teknikk på intensiv/oppv., 3 = Ja – åpen teknikk (operativ)
         RegData <-  RegData[which(RegData$Trakeostomi %in% 1:3)
                                      %i% which(RegData$InnDato >= as.Date('2016-01-01', tz='UTC')), ]
 
         RegData <- RegData[which(RegData$MechanicalRespirator == 1 & RegData$InvasivVentilation > 0), ]
         retn <- 'H'
-        tittel <- 'Trakeostomi ved invasiv ventilasjon'
+        tittel <- 'Trakeostomi (kirurgisk + perkutan) ved invasiv ventilasjon'
         RegData$Variabel[which(RegData$Trakeostomi %in% 2:3)] <- 1
+        RegData$VariabelGr <- factor(RegData$Trakeostomi, levels = 3:1)
+        grtxt <- rev(c('Nei', 'Ja, perkutan teknikk', 'Ja, kirurgisk'))
         cexgr <- 0.9
       }
 
@@ -576,7 +579,7 @@ if (valgtVar %in% c('regForsinkelseInn', 'regForsinkelse')) {  #Fordeling, Andel
                                      %i%  which(RegData$InnDato >= as.Date('2016-01-01', tz='UTC')), ] #Innført ila 2015
             RegData <- RegData[which(RegData$MechanicalRespirator == 1 & RegData$InvasivVentilation > 0), ]
             retn <- 'H'
-            tittel <- 'Andel trakeostomier gjort åpent/operativt'
+            tittel <- 'Andel trakeostomi utført kirurgisk'
             RegData$Variabel[which(RegData$Trakeostomi == 3)] <- 1
             cexgr <- 0.9
       }
@@ -597,27 +600,28 @@ if (valgtVar %in% c('regForsinkelseInn', 'regForsinkelse')) {  #Fordeling, Andel
       }
       # 1.	Andel donorar av alle daude på intensiv
       if (valgtVar == 'OrganDonationCompletedStatus') { #andelGrVar, andelTid
-            #OrganDonationCompletedStatus - Ble organdonasjon gjennomført?
-            #1:ja, 2:nei, -1: tom
+            #OrganDonationCompletedStatus_v2: - Ble organdonasjon gjennomført?
+            # -1 = Velg verdi, 1 = Ja, cDcD ble gjennomført, 2 = Ja, DBD ble gjenomført, 3 = Nei
             RegData <- RegData[which(RegData$DischargedIntensiveStatus == 1),] #Døde
             retn <- 'H'
             tittel <- 'Andel av de som døde som ble donorer'
             varTxt <- 'donorer'
-            RegData$Variabel[which(RegData$OrganDonationCompletedStatus == 1)] <- 1
+            RegData$Variabel[which(RegData$OrganDonationCompletedStatus_v2 %in% 1:2)] <- 1
             cexgr <- 0.9
       }
 # 2.	Andel donorar av pasientar med oppheva intrakraniell sirkulasjon
       if (valgtVar == 'OrganDonationCompletedCirc') { #andelGrVar, andelTid
         RegData <- RegData[which(RegData$DischargedIntensiveStatus == 1),] #Døde
-        #Ble det påvist opphevet intrakraniell sirkulasjon?	CerebralCirculationAbolished
-            #1:ja, 2:nei, -1: tom
-            #OrganDonationCompletedStatus - Ble organdonasjon gjennomført?
-            #1:ja, 2:nei, -1: tom
-            RegData <- RegData[which(RegData$CerebralCirculationAbolished == 1),] #Opphevet sirkulasjon
+        #Ble det påvist opphevet intrakraniell sirkulasjon?	CerebralCirculationAbolished_v2
+        # -1 = Velg verdi, 1 = Ja, radiologisk påvist opphevet intrakraniell sirkulasjon,
+          # 2 = Ja, varig hjerte- og ånderettsstans etter cDcD-protokoll, 3 = Nei
+        #OrganDonationCompletedStatus_v2: - Ble organdonasjon gjennomført?
+        # -1 = Velg verdi, 1 = Ja, cDcD ble gjennomført, 2 = Ja, DBD ble gjenomført, 3 = Nei
+        RegData <- RegData[which(RegData$CerebralCirculationAbolished_v2 %in% 1:2),] #Opphevet sirkulasjon
             retn <- 'H'
-            tittel <- 'Andel donorer av de med opphevet intrakraniell sirkulajon'
+            tittel <- 'Realiserte donorer blant de som oppfyller kriteriet for donasjon'
             varTxt <- 'donorer'
-            RegData$Variabel[which(RegData$OrganDonationCompletedStatus == 1)] <- 1
+            RegData$Variabel[which(RegData$OrganDonationCompletedStatus_v2 %in% 1:2)] <- 1
             cexgr <- 0.9
       }
 # 3.	Grunnar til ikkje påvist oppheva intrakraniell sirkulasjon blant daude
@@ -629,9 +633,6 @@ if (valgtVar %in% c('regForsinkelseInn', 'regForsinkelse')) {  #Fordeling, Andel
             #6 = Ikke tenkt på donasjon	7 = Uenighet i behandlingsteam
             #8 = Utført angiografi : Ikke opphevet intrakraniell sirkulasjon
             #9 = Temp
-
-            #OrganDonationCompletedStatus - Ble organdonasjon gjennomført?
-            #1:ja, 2:nei, -1: tom
             gr <- 0:8
             RegData <- RegData[which(RegData$CerebralCirculationAbolishedReasonForNo %in% gr),]
             grtxt <- c('Avslag fra RH',
@@ -656,8 +657,6 @@ if (valgtVar %in% c('regForsinkelseInn', 'regForsinkelse')) {  #Fordeling, Andel
             #Ble organdonasjon gjennomført? Årsak til nei
             #-1 = Velg verdi	0 = Pasient negativ til organdonasjon
             #1 = Pårørende negativ til donasjon	2 = Plutselig død/hjertestans	3 = Avslag fra RH	4 = Temp
-            #OrganDonationCompletedStatus - Ble organdonasjon gjennomført?
-            #1:ja, 2:nei, -1: tom
             gr <- c(0:3,5)
             RegData <- RegData[which(RegData$OrganDonationCompletedReasonForNoStatus %in% gr),]
             RegData$VariabelGr <- factor(RegData$OrganDonationCompletedReasonForNoStatus, levels=gr)
@@ -672,9 +671,6 @@ if (valgtVar %in% c('regForsinkelseInn', 'regForsinkelse')) {  #Fordeling, Andel
             cexgr <- 0.9
       }
       if (valgtVar == 'potDonor') { #andelGrVar, andelTid
-        #Ble det påvist opphevet intrakraniell sirkulasjon?	CerebralCirculationAbolished
-        #1:ja, 2:nei, -1: tom
-       # RegData <- RegData[which(RegData$CerebralCirculationAbolished == 1),] #Opphevet sirkulasjon
         RegData <- RegData[which(RegData$DischargedIntensiveStatus == 1),] #Døde
         retn <- 'H'
         tittel <- 'Potensielle donorer'
@@ -732,28 +728,29 @@ if (valgtVar %in% c('regForsinkelseInn', 'regForsinkelse')) {  #Fordeling, Andel
             #apply(RegData[,variable], MARGIN=2, FUN=function(x) sum(x %in% 0:1))
       }
       if (valgtVar == 'komplReg') {#AndelTid/GrVar
-        RegData <- RegData[which(RegData$InnDato >= '2020-01-01'), ] #
-        RegData$KompUtfylt <- rowSums(RegData[ ,c('KompHypoglykemi',	'KompPneumotoraks',	'KompLuftveisproblem',
-                                                  'KompDekubitus', "KomIngen")])>0
-       tittel <- 'Registrert komplikasjoner'
-       RegData$Variabel[RegData$KompUtfylt] <- 1
+        RegData <- RegData[which(RegData$InnDato >= '2024-01-01'), ]
+        tittel <- 'Opphold med minst en komplikasjon registrert'  # 'Registrert komplikasjoner'
+        # Alle som svart ja el nei
+        RegData <- RegData[RegData$Komplikasjon %in% 0:1, ]
+        #Komplikasjon definert i preprosess
+        RegData$Variabel <- RegData$Komplikasjon
+        sortAvtagende <- F
       }
+
       if (valgtVar=='komplikasjoner') { #Andeler
-        #Avkrysningsvariabler. Fra 2020
-        #KomIngen - ingen av nevnte kompliksjoner. Bare 2,8% har true på denne.
-        #RegData <- NIRPreprosess(NIRRegDataSQL(datoFra = '2020-01-01'))
-        RegData <- RegData[which(RegData$InnDato >= '2020-01-01'), ] #
-        #RegData <- RegData[RegData$KompIkkeUtfylt==FALSE,] #Bare de som har tatt stilling til komplikasjoner. Ikke obligatorisk...
-        RegData$KompUtfylt <- rowSums(RegData[ ,c('KompHypoglykemi',	'KompPneumotoraks',	'KompLuftveisproblem',
-                                               'KompDekubitus', "KomIngen")])>0
-        RegData <- RegData[RegData$KompUtfylt,]
+        RegData <- RegData[which(RegData$InnDato >= '2024-01-01'), ] #
         tittel <- 'Komplikasjoner'
-        RegData$KompTot <- (rowSums(RegData[ ,c('KompHypoglykemi',	'KompPneumotoraks',	'KompLuftveisproblem',
-                              'KompDekubitus')])>0)
+        # RegData$KompUtfylt <- rowSums(RegData[ ,c('KompHypoglykemi',	'KompPneumotoraks',	'KompLuftveisproblem',
+        #                                        'KompDekubitus', "KomIngen")])>0
+        #Verdier: -1 = Velg verdi, 1 = Ja, 2 = Nei, 3 = Ukjent
+        # Alle som svart ja el nei
+        komplVar <- c('KompHypoglykemi_v2',	'KompPneumotoraks_v2',	'KompLuftveisproblem_v2', 'KompTrykksar')
+       #RegData$KompTot <- (rowSums(RegData[ ,c('KompHypoglykemi',	'KompPneumotoraks_v2',	'KompLuftveisproblem',
+        #                         'KompDekubitus')])>0)
+        RegData <- RegData[RegData$Komplikasjon %in% 0:1, ]
         grtxt <- c('Alvorlig hypoglykemi',	'Pneumotoraks',	'Luftveisproblem, \ntrakealtube/kanyle',
-                   'Dekubitus', 'Minst én kompl.')
-        variable <- c('KompHypoglykemi',	'KompPneumotoraks',	'KompLuftveisproblem',
-                       'KompDekubitus',	'KompTot')
+                   'Trykksår', 'Minst én kompl.')
+        variable <- c(komplVar, 'Komplikasjon')
         ind1 <- which(RegData[ ,variable] == TRUE, arr.ind=T) #Ja i alle variable
         RegData[ ,variable] <- 0
         RegData[ ,variable][ind1] <- 1
