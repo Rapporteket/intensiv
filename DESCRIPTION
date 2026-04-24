@@ -24,7 +24,7 @@ Imports:
     knitr,
     lubridate,
     magrittr,
-    rapbase,
+    rapbase (>= 3.6.0),
     rapFigurer,
     rlang,
     shiny,
