@@ -43,9 +43,9 @@ pdf(file = NULL)
 ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
   id = 'hovedark',
   header = yearControlUI("year-ctrl"),
-  title = rapbase::title(regTittel),
+  title = rapbase::regTitle(regTittel),
   windowTitle = regTittel,
-  theme = rapbase::theme(),
+  theme = rapbase::rapTheme(),
 
 
 #--------------Startside------------------------------

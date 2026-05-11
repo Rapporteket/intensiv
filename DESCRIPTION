@@ -14,7 +14,7 @@ LazyData: false
 Depends:
     R (>= 4.1.0)
 Remotes: 
-      Rapporteket/rapbase@main,
+      Rapporteket/rapbase,
       Rapporteket/rapFigurer,
 Imports:
     digest,
@@ -24,7 +24,7 @@ Imports:
     knitr,
     lubridate,
     magrittr,
-    rapbase,
+    rapbase (>= 3.6.0),
     rapFigurer,
     rlang,
     shiny,
