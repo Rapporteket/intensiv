@@ -1842,9 +1842,9 @@ observe({
 
          #----------- Eksport ----------------
          ## brukerkontroller
-         rapbase::exportUCServer("intensivExport", "intensiv")
+         rapbase::exportUCServer("intensivExport", dbName = "data", teamName = "intensiv")
          ## veileding
-         rapbase::exportGuideServer("intensivExportGuide", "intensiv")
+         rapbase::exportGuideServer("intensivExportGuide", dbName = "data")
 
  #        } #SC
 #     })
