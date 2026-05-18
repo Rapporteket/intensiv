@@ -9,14 +9,14 @@ tabBelegg(RegData, tidsenhet = "Aar", datoTil, enhetsUtvalg = 0, reshID = 0)
 \arguments{
 \item{RegData}{data}
 
+\item{tidsenhet}{Tidsenhet}
+
 \item{datoTil}{sluttdato. Brukes i tabellene AntOpph per 12 mnd og Belegg}
 
 \item{enhetsUtvalg}{Gjør gruppeutvalg med eller uten sammenlikning. Se \strong{Details} for oversikt.}
 
 \item{reshID}{Parameter følger fra innlogging helseregister.no og angir
 hvilken enhet i spesialisthelsetjenesten brukeren tilhører}
-
-\item{personIDvar}{Variabelen som angir pasientidentifikasjon}
 }
 \description{
 Belegg (antall opphold, pasienter og intensivdøgn)

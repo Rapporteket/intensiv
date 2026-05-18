@@ -45,8 +45,13 @@ Registeret inneholder registreringer f.o.m. 2011}
 0: Kvinner
 1: Menn}
 
-\item{outfile}{Navn på fil figuren skrives til. Standard: '' (Figur skrives
-til systemets standard utdataenhet (som regel skjerm))}
+\item{diagnose}{description}
+
+\item{innl4t}{description}
+
+\item{NIHSSinn}{description}
+
+\item{outfile}{Filbane for lagring av figur.}
 
 \item{reshID}{Parameter følger fra innlogging helseregister.no og angir
 hvilken enhet i spesialisthelsetjenesten brukeren tilhører}
@@ -60,6 +65,8 @@ TRUE: Ja (Standard)}
 \item{hentData}{Gjør spørring mot database
 0: Nei, RegData gis som input til funksjonen (Standard)
 1: Ja}
+
+\item{...}{Ytterligere argumenter, for eksempel user for logging. Se detaljer i NIRUtvalgEnh og NIRVarTilrettelegg.}
 }
 \value{
 Søylediagram som fordeling av valgt variabel, målt både før og etter hjerneslaget

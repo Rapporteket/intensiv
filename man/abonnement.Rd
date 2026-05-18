@@ -12,11 +12,9 @@ abonnement(rnwFil, brukernavn = "tullebukk", reshID = 0)
 \arguments{
 \item{rnwFil}{Navn på fila som skal kjøres. Angis MED filending (\emph{dvs "filnavn.Rnw"})}
 
+\item{brukernavn}{Brukernavn}
+
 \item{reshID}{Aktuell reshid}
-
-\item{datoFra}{dato}
-
-\item{parametre}{Liste med valgfrie parametre, avhengig av type rapport}
 }
 \value{
 Full path of file produced

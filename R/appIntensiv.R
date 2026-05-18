@@ -1,3 +1,18 @@
+# luftveiValg og velgLuftveiTxt brukes også i server-delen, så må legges utenfor begge to
+luftveiValg <- c('Alle pasienter' = 0,
+                 'Luftveisinfeksjon' = 1,
+                 'Covid19' = 2,
+                 'InfluensaA' = 3,
+                 'InfluensaB' = 4,
+                 'RS-virus' = 5,
+                 'Kikhoste' = 6,
+                 'Annet luftveisvirus' = 7,
+                 'Annen_luftveisbakterie' = 8)
+velgLuftveiTxt <- 'Luftveisinfeksjoner'
+startDato <- as.Date(paste0(as.numeric(format(Sys.Date()-90, "%Y")), '-01-01'))
+startDato1 <- as.Date(paste0(as.numeric(format(Sys.Date()-365, "%Y")), '-01-01'))
+
+
 #' Brukergrensesnitt (ui) til Intensiv-appen
 #'
 #' @return Brukergrensesnittet (ui) til intensiv-appen
@@ -10,7 +25,6 @@ options(knitr.table.format = "html")
 
 #-----Definere utvalgsinnhold og evt. parametre som er statiske i appen----------
 
-startDato <- paste0(as.numeric(format(Sys.Date()-90, "%Y")), '-01-01')
 
 enhetsUtvalg <- c("Egen mot resten av landet"=1,
                   "Hele landet"=0,
@@ -22,25 +36,16 @@ enhetsUtvalg <- c("Egen mot resten av landet"=1,
                   "Egen region" = 7,
                   "Egen region mot resten" = 8)
 
-luftveiValg <- c('Alle pasienter' = 0,
-                 'Luftveisinfeksjon' = 1,
-                 'Covid19' = 2,
-                 'InfluensaA' = 3,
-                 'InfluensaB' = 4,
-                 'RS-virus' = 5,
-                 'Kikhoste' = 6,
-                 'Annet luftveisvirus' = 7,
-                 'Annen_luftveisbakterie' = 8)
-velgLuftveiTxt <- 'Luftveisinfeksjoner'
 
 regTittel <- 'NORSK INTENSIVREGISTER'
 
 pdf(file = NULL)
 ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
   id = 'hovedark',
-  title = rapbase::title(regTittel),
+  header = yearControlUI("year-ctrl"),
+  title = rapbase::regTitle(regTittel),
   windowTitle = regTittel,
-  theme = rapbase::theme(),
+  theme = rapbase::rapTheme(),
 
 
 #--------------Startside------------------------------
@@ -71,11 +76,9 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
              br(),
              h2('Hente datauttrekk'),
              dateRangeInput(inputId = 'datovalgData', start = startDato, end = Sys.Date(),
+                            min = startDato, max = Sys.Date(),
                             label = "Tidsperiode", separator="t.o.m.", language="nb"),
              uiOutput('velgReshData'),
-             # selectInput(inputId = 'velgReshData', label='Velg sykehus',
-             #             selected = 0,
-             #             choices = sykehusValg_DataD),
              downloadButton(outputId = 'lastNed_dataDump', label='Last ned datadump')
 
 
@@ -147,7 +150,8 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                         conditionalPanel(condition = "input.ark == 'Nøkkeltall' || input.ark == 'Ant. opphold'
                                              || input.ark == 'Pasientar per år og avd.' ",
                                          dateInput(inputId = 'sluttDatoReg', label = 'Velg sluttdato', language="nb",
-                                                   value = format.Date(Sys.Date(),'%Y-%m' ), max = Sys.Date()),
+                                                   value = Sys.Date() , max = Sys.Date()),
+                                         #        value = format.Date(Sys.Date(),'%Y-%m' ), max = Sys.Date()),
                                          selectInput(inputId = "luftveiValgReg", label= velgLuftveiTxt,
                                                      choices = luftveiValg)
                         ),
@@ -167,6 +171,7 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                         conditionalPanel(
                           condition = "input.ark == 'Overføringer'",
                           dateRangeInput(inputId = 'datovalgReg', start = startDato, end = Sys.Date(),
+                                         min = startDato, max = Sys.Date(),
                                          label = "Tidsperiode", separator="t.o.m.", language="nb"),
                           uiOutput('velgReshOverf')
                          ),
@@ -249,10 +254,10 @@ tabPanel("Luftveisinfeksjon",
          mainPanel(width = 10,
                    h1('Pasienter med luftveisinfeksjoner'),
                   # h2('Denne siden er under utvikling! ', style = "color:red"),
-                   h4(em(strong('Tallene er basert på ferdigstilte registreringer.
-                      Mer detaljerte resultater for luftveisinfeksjoner kan man finne
-                      ved å filtrere på (ulike typer) luftveisinfeksjoner i andre
-                      faner på Rapporteket.'))),
+                   h4('Tallene er basert på ferdigstilte registreringer.'),
+                   h4(strong('Mer detaljerte resultater for luftveisinfeksjoner finner
+                      du ved å filtrere på ulike typer luftveisinfeksjoner i andre
+                      faner på Rapporteket.')),
                    br(),
                    fluidRow(
                    # splitLayout(cellWidths = c("50%", "50%"),
@@ -328,12 +333,14 @@ tabPanel("Luftveisinfeksjon",
                            'SAPSII-skår (alvorlighet av sykd.)' = 'SAPSII',
                            'SAPSII-skår (uten alderspoeng)' = 'SAPSIIuAlder',
                            'Spesielle tiltak' = 'spesTiltak',
+                           'Trakeostomi' = 'trakeostomi',
                            'Type opphold' = 'InnMaate',
                            'Årsak, ikke donasjon ved opphevet intrakraniell sirk.' = 'OrganDonationCompletedReasonForNoStatus'
                )
              ),
 
                dateRangeInput(inputId = 'datovalg', start = startDato, end = Sys.Date(),
+                              min = startDato, max = Sys.Date(),
                               label = "Tidsperiode", separator="t.o.m.", language="nb" #)
                ),
                selectInput(inputId = "erMann", label="Kjønn",
@@ -349,9 +356,6 @@ tabPanel("Luftveisinfeksjon",
                              choices = enhetsUtvalg
                  ),
              uiOutput('velgResh'),
-             # selectInput(inputId = 'velgResh', label='Velg eget Sykehus',
-             #             #selected = 0,
-             #             choices = sykehusValg),
              actionButton("reset_fordValg", label="Tilbakestill valg"),
              br(),
              selectInput(inputId = "bildeformatFord",
@@ -403,7 +407,7 @@ tabPanel("Luftveisinfeksjon",
                            'Invasiv respiratortid < 2,5 døgn, u/overførte' = 'respiratortidInvUoverf',
                            'Isolasjon av pasient' = 'isolering',
                            'Invasiv ventilasjon' = 'invasivVent',
-                           'Komplikasjonsregistrering' = 'komplReg',
+                           'Komplikasjoner' = 'komplReg',
                            'Liggetid, døde' = 'liggetidDod',
                            'Menn' = 'erMann',
                            'Nyreerstattende behandling' = 'nyreBeh',
@@ -419,11 +423,12 @@ tabPanel("Luftveisinfeksjon",
                            'Utenfor vakttid, utskrevet' = 'utenforVakttidUt',
                            'Utvidet hemodyn. overvåkning' = 'ExtendedHemodynamicMonitoring',
                            'Trakeostomi' = 'trakeostomi',
-                           'Trakeostomi, åpen' = 'trakAapen'
+                           'Trakeostomi, kirurgisk' = 'trakAapen'
                            ),
                selected = 'regForsinkelseInn',
              ),
              dateRangeInput(inputId = 'datovalgAndel', start = startDato, end = Sys.Date(),
+                            min = startDato, max = Sys.Date(),
                             label = "Tidsperiode", separator="t.o.m.", language="nb"),
              selectInput(inputId = "erMannAndel", label="Kjønn",
                          choices = c("Begge"=2, "Menn"=1, "Kvinner"=0)),
@@ -480,7 +485,10 @@ tabPanel("Luftveisinfeksjon",
 
   #------- Gjennomsnitt ----------
   tabPanel(p("Gjennomsnitt", title = 'Alder, Liggetid, Nas, NEMS, Respiratortid, SAPSII'),
-           h2("Sykehusvise gjennomsnitt/median og utvikling over tid for valgt variabel", align='center'),
+           h2(
+              "Sykehusvise gjennomsnitt/median og utvikling", shiny::br(),
+              "over tid for valgt variabel", align='center'
+           ),
            h5("Hvilken variabel man ønsker å se resultater for, velges fra rullegardinmenyen
                   til venstre. (Man kan også gjøre ulike filtreringer.)", align='center'),
            sidebarPanel(
@@ -501,6 +509,7 @@ tabPanel("Luftveisinfeksjon",
                          )
              ),
              dateRangeInput(inputId = 'datovalgGjsn', start = startDato, end = Sys.Date(),
+                            min = startDato, max = Sys.Date(),
                             label = "Tidsperiode", separator="t.o.m.", language="nb"),
              selectInput(inputId = "erMannGjsn", label="Kjønn",
                          choices = c("Begge"=2, "Menn"=1, "Kvinner"=0)
@@ -564,6 +573,7 @@ tabPanel("Luftveisinfeksjon",
              selectInput(inputId = "luftveiValgSMR", label= velgLuftveiTxt,
                          choices = luftveiValg),
              dateRangeInput(inputId = 'datovalgSMR', start = startDato, end = Sys.Date(),
+                            min = startDato, max = Sys.Date(),
                             label = "Tidsperiode", separator="t.o.m.", language="nb"),
              selectInput(inputId = "erMannSMR", label="Kjønn",
                          choices = c("Begge"=2, "Menn"=1, "Kvinner"=0)
@@ -601,6 +611,7 @@ tabPanel("Luftveisinfeksjon",
              width = 3,
              h4('Her kan man gjøre filtreringer.'),
              dateRangeInput(inputId = 'datovalgInnMaate', start = startDato, end = Sys.Date(),
+                            min = startDato, max = Sys.Date(),
                             label = "Tidsperiode", separator="t.o.m.", language="nb"),
              selectInput(inputId = "erMannInnMaate", label="Kjønn",
                          choices = c("Begge"=2, "Menn"=1, "Kvinner"=0)
@@ -664,19 +675,17 @@ tabPanel("Luftveisinfeksjon",
                   'LivssluttStoette' = 'LivssluttStoette_2',
                   'PasientRelasjon' = 'PasientRelasjon',
                   'HoeyesteFullfoerteUtdannelse' = 'HoeyesteFullfoerteUtdannelse'
-
-                 # 'S2.13 Involvering ved livsslutt' = 'LivssluttStoette',
-                 # 'Totalskår, omsorg (skjema 1)' = 'SumScoreSatisfactionCare',
-                 # 'Totalskår, beslutning (skjema 2)' = 'SumScoreSatisfactionDecision',
-                 # 'Totalskår, alle spørsmål' = 'SumScoreAllQuestions'
                  )
              ),
              dateRangeInput(inputId = 'datovalgPaarorFord',
-                            start = as.Date("2023-11-07"), end = Sys.Date(),
+                            start = paste0(as.numeric(format(Sys.Date()-365, "%Y")), '-01-01'),
+                            end = Sys.Date(),
+                            min = paste0(as.numeric(format(Sys.Date()-365, "%Y")), '-01-01'), max = Sys.Date(),
                             label = "Tidsperiode", separator="t.o.m.", language="nb"),
              dateInput(inputId = 'startDatoIntervensjon',
                        label = 'Startdato, intervensjon', language="nb",
-                       value = '2024-10-01', max = Sys.Date()),
+                       value = Sys.Date(), max = Sys.Date()),
+             #        value = '2024-10-01', max = Sys.Date()),
              selectInput(inputId = 'enhetsUtvalgPaarorFord',
                          label='Egen enhet / hele landet',
                          choices =  c("Hele landet"=0, "Egen enhet"=2)),
@@ -721,95 +730,14 @@ tabPanel(p("Abonnement",
            )
          )
 ), #tab abonnement
-
-
-#-------Registeradministrasjon----------
-
-tabPanel(p("Registeradministrasjon", title='Registeradministrasjonens side'),
-         value = "Registeradministrasjon",
-         h3('Bare synlig for SC-bruker'),
-
-         tabsetPanel(
-           tabPanel(
-             h4("Utsendinger"),
-                    #title = "Utsending av rapporter",
-                    sidebarLayout(
-                      sidebarPanel(
-                        rapbase::autoReportOrgInput("NIRuts"),
-                        rapbase::autoReportInput("NIRuts"),
-                        # For tørrkjøring
-                        br(),
-                        br(),
-                        br(),
-                        h4('Hvis man ønsker å teste autorapporter uten å vente til neste dag.
-                           NB: Rapportene sendes ut til alle registrerte mottagere.'),
-                        shiny::actionButton(inputId = "run_autoreport",
-                                            label = "Kjør autorapporter"),
-                        shiny::dateInput(inputId = "rapportdato",
-                                         label = "Kjør rapporter med dato:",
-                                         value = Sys.Date()+1,
-                                         min = Sys.Date(),
-                                         max = Sys.Date() + 366
-                        ),
-                        shiny::checkboxInput(inputId = "dryRun", label = "Send e-post")
-
-
-                      ),
-                      mainPanel(
-                        rapbase::autoReportUI("NIRuts"),
-
-                        #For tørrkjøring:
-                        br(),
-                        p(em("System message:")),
-                        verbatimTextOutput("sysMessage"),
-                        p(em("Function message:")),
-                        verbatimTextOutput("funMessage")
-
-                      )
-                    )
-           ),
-
-
-           tabPanel(
-             h4("Eksport av krypterte data"),
-           sidebarLayout(
-             sidebarPanel(
-               rapbase::exportUCInput("intensivExport")
-             ),
-             shiny::mainPanel(
-               rapbase::exportGuideUI("intensivExportGuide")
-             )
-           )
-         ),
-         tabPanel(h4('Nøkkeltall'),
-                 h2('Nøkkeltall, for valgt HF/RHF', align='center'),
-                 h4('Gjør utvalg'),
-                 dateRangeInput(inputId = 'datoValgNok', label = 'Tidsperiode',
-                              start = as.Date('2018-01-01'), end = Sys.Date(),
-                              separator="t.o.m.", language="nb"),
-                    selectInput(inputId = "luftveiValgNok", label= velgLuftveiTxt,
-                                           choices = luftveiValg),
-                 uiOutput('enhetNok'),
-                    # selectInput(inputId = "enhetNok", label= 'Velg enhet',
-                    #             choices =   c('Alle',
-                    #                           unique(RegData$RHF),
-                    #                           unique(RegData$HF),
-                    #                           unique(RegData$HelseenhetKortnavn))),
-                  br(),
-                 h4('Andel opphold med *komplikasjon*, er definert som et opphold hvor det har
-                    oppstått minst én av følgende komplikasjoner:
-                    Alvorlig hypoglykemi, pneumotoraks, luftveisproblem, trakealtube/kanyle, dekubitus'),
-                  tableOutput('tabNokkeltallUtvidet'),
-                 downloadButton(outputId = 'lastNed_tabNokkelSC', label='Last ned tabell')
-                  )
-#         ),
-         ) #tabset
-) #tab SC
-
 )  #navbarPage
 }
 
 #' Serverdek til Intensiv-appen
+#'
+#' @param input Shiny input-objekt
+#' @param output Shiny output-objekt
+#' @param session Shiny session-objekt
 #'
 #' @return Brukergrensesnittet (ui) til intensiv-appen
 #' @export
@@ -819,10 +747,78 @@ server_intensiv <- function(input, output, session) { #
  # context <- Sys.getenv("R_RAP_INSTANCE") #Blir tom hvis jobber lokalt
   # paaServer <- (context %in% c("DEV", "TEST", "QA","QAC", "PRODUCTION", "PRODUCTIONC")) #rapbase::isRapContext()
  # message("Intensivapp server started in context: ", context)
+  yearControlServer("year-ctrl")
+  observeEvent(shiny::getQueryString(session), once = TRUE, {
+
+    qs <- shiny::getQueryString(session)
+    sinceDate <- if (!is.null(qs$since)) qs$since
+      else paste0(as.numeric(format(Sys.Date()-365, "%Y")), "-01-01")
+    shiny::updateSelectInput(
+      session,
+      "sinceYear",
+      selected = sinceDate |> as.Date() |> format("%Y")
+    )
+
+  #---------Oppdater dato input --------
+  # PREM-skjema
+  updateDateInput(
+    session,
+    "startDatoIntervensjon",
+    value = startDato, #as.Date("2025-01-01"),
+    min = sinceDate
+  )
+
+  range_inputs <- c(
+    "datovalgReg", #Aktivitet - Overføringer
+    "datovalgData", #Datadump
+    "datovalg", #Fordelinger
+    "datovalgAndel", #Andeler
+    "datovalgGjsn", #Gjennomsnitt
+    "datovalgPaarorFord", #Pårørendeskjema - Fordelinger
+    "datovalgSMR", # Standardisert mortalitetsratio
+    "datovalgInnMaate", # Type opphold
+    "datoValgNok" #Nøkkeltall
+  )
+
+  # update range inputs
+  for (id in range_inputs) {
+    updateDateRangeInput(session, id, min = sinceDate)
+  }
+
+  # Datadump
+  updateDateRangeInput(
+    session,
+    "datovalgData",
+    min = sinceDate
+  )
+  # Aktivitet - Overføringer
+  updateDateRangeInput(
+    session,
+    "datovalgReg",
+    min = sinceDate
+  )
+  # Fordelinger
+  updateDateRangeInput(
+    session,
+    "datovalg",
+    min = sinceDate
+  )
+  # Andeler
+  updateDateRangeInput(
+    session,
+    "datovalgAndel",
+    min = sinceDate
+  )
+  # Gjennomsnitt
+  updateDateRangeInput(
+    session,
+    "datovalgGjsn",
+    min = sinceDate
+  )
 
   #---------Hente data------------
   message("Getting IntData")
-  IntDataRaa <- NIRRegDataSQL(datoFra = '2014-01-01')
+  IntDataRaa <- NIRRegDataSQL(datoFra = sinceDate)
   RegData <- NIRPreprosess(RegData = IntDataRaa)
 
   LuftData <- NIRUtvalgEnh(RegData=RegData, luftvei = 1, datoFra = Sys.Date()-7*40)$RegData
@@ -856,26 +852,6 @@ server_intensiv <- function(input, output, session) { #
     map_orgname = shiny::req(map_avdeling),
     caller = "intensiv"
   )
-
-
-  observeEvent(user$role(), {
-    message("User role changed to: ", user$role())
-    if (user$role() == 'SC') {
-      shinyjs::show(id = 'velgResh')
-      shinyjs::show(id = 'velgReshOverf')
-      shinyjs::show(id = 'velgReshData')
-      shinyjs::show(id = 'velgReshDbl')
-      # showTab(inputId = "hovedark", target = "PREM-skjema")
-      showTab(inputId = "hovedark", target = "Registeradministrasjon")
-    } else {
-      shinyjs::hide(id = 'velgResh')
-      shinyjs::hide(id = 'velgReshOverf')
-      shinyjs::hide(id = 'velgReshData')
-      shinyjs::hide(id = 'velgReshDbl')
-      # hideTab(inputId = "hovedark", target = "PREM-skjema")
-      hideTab(inputId = "hovedark", target = "Registeradministrasjon")
-    }
-  })
 
   observeEvent(input$reset_fordValg, shinyjs::reset("brukervalg_fordeling"))
   observeEvent(input$reset_andelValg, shinyjs::reset("brukervalg_andeler"))
@@ -933,19 +909,25 @@ server_intensiv <- function(input, output, session) { #
   #Datadump
 
   output$velgReshData <- renderUI({
-    selectInput(inputId = 'velgReshData', label='Velg sykehus',
-                selected = 0,
-                choices = sykehusValg)
+    if (user$role() == 'SC') {
+      selectInput(inputId = 'velgReshData', label='Velg sykehus',
+                  selected = 0,
+                  choices = sykehusValg)
+    } else {NULL}
   })
 
   output$velgReshOverf  <- renderUI({
-    selectInput(inputId = 'velgReshOverf', label='Velg eget Sykehus',
-                                  choices = sykehusValg)
+    if (user$role() == 'SC') {
+      selectInput(inputId = 'velgReshOverf', label='Velg eget Sykehus',
+                  choices = sykehusValg)
+    } else {NULL}
     })
 
   output$velgResh  <- renderUI({
-    selectInput(inputId = 'velgResh', label='Velg eget Sykehus',
-                choices = sykehusValg)
+    if (user$role() == 'SC') {
+      selectInput(inputId = 'velgResh', label='Velg eget Sykehus',
+                  choices = sykehusValg)
+    } else {NULL}
   })
 
 
@@ -1106,8 +1088,10 @@ observe({
       }, rownames = F, colnames = T, align = 'r')
 
       output$velgReshDbl  <- renderUI({
-        selectInput(inputId = 'velgReshDbl', label='Velg eget Sykehus',
-                    choices = sykehusValg)
+        if (user$role() == 'SC') {
+          selectInput(inputId = 'velgReshDbl', label='Velg eget Sykehus',
+                      choices = sykehusValg)
+        } else {NULL}
       })
 
       output$tabDblReg <- renderTable({
@@ -1131,7 +1115,7 @@ observe({
       output$inklKrit <- renderPlot({
         NIRFigAndeler(RegData=RegData, preprosess = 0, valgtVar='inklKrit',
                       reshID = user$org(), enhetsUtvalg=as.numeric(input$enhetsUtvalg),
-                      datoFra=input$datovalg[1], datoTil=input$datovalg[2], session=session)
+                      datoFra=input$datovalg[1], datoTil=input$datovalg[2], user = user)
       }, height=800, width=800 #height = function() {session$clientData$output_fordelinger_width}
       )
 
@@ -1204,7 +1188,7 @@ observe({
                           datoFra=input$datovalg[1], datoTil=input$datovalg[2],
                           minald=as.numeric(input$alder[1]), maxald=as.numeric(input$alder[2]),
                           erMann=as.numeric(input$erMann), luftvei = as.numeric(input$luftveiValg),
-                          session = session)
+                          user = user)
       }, height=800, width=800 #height = function() {session$clientData$output_fordelinger_width}
       )
 
@@ -1274,7 +1258,7 @@ observe({
                                minald=as.numeric(input$alderAndel[1]), maxald=as.numeric(input$alderAndel[2]),
                                erMann=as.numeric(input$erMannAndel),
                                luftvei = as.numeric(input$luftveiValgAndel),
-                               session=session)
+                               user = user)
       }, height = 800, width=700 #height = function() {session$clientData$output_andelerGrVarFig_width} #})
       )
 
@@ -1324,8 +1308,6 @@ observe({
               }
             )
             observe({
-                  #AndelTid
-print(class(user))
                   AndelerTid <- NIRFigAndelTid(RegData=RegData, preprosess = 0, valgtVar=input$valgtVarAndel,
                                                reshID = user$org(),
                                                datoFra=input$datovalgAndel[1], datoTil=input$datovalgAndel[2],
@@ -1401,7 +1383,8 @@ print(class(user))
                             minald=as.numeric(input$alderGjsn[1]), maxald=as.numeric(input$alderGjsn[2]),
                             erMann=as.numeric(input$erMannGjsn),
                             luftvei = as.numeric(input$luftveiValgGjsn),
-                            valgtMaal = input$sentralmaal)
+                            valgtMaal = input$sentralmaal,
+                            user = user)
       }, height=900, width=700
       )
             output$LastNedFigGjsnGrVar <- downloadHandler(
@@ -1429,7 +1412,8 @@ print(class(user))
                           valgtMaal = input$sentralmaal,
                           tidsenhet = input$tidsenhetGjsn,
                           enhetsUtvalg = input$enhetsUtvalgGjsn,
-                          session=session)
+                          user = user
+                          )
       }, height=400, width = 1200
       )
 
@@ -1539,7 +1523,8 @@ print(class(user))
                         datoFra=input$datovalgSMR[1], datoTil=input$datovalgSMR[2],
                         minald=as.numeric(input$alderSMR[1]), maxald=as.numeric(input$alderSMR[2]),
                         erMann=as.numeric(input$erMannSMR),
-                        luftvei = as.numeric(input$luftveiValgSMR)
+                        luftvei = as.numeric(input$luftveiValgSMR),
+                        user = user
                     )
       },# height=900, width=700 #heigth = 8000, width=800
        height = function() {3*session$clientData$output_SMRfig_height}, #
@@ -1594,7 +1579,7 @@ print(class(user))
                        minald=as.numeric(input$alderInnMaate[1]), maxald=as.numeric(input$alderInnMaate[2]),
                        erMann=as.numeric(input$erMannInnMaate),
                        luftvei= as.numeric(input$luftveiValgInnMaate),
-                       session=session)
+                       user = user)
       }, height=900, width=700)
       # height = function() {2.2*session$clientData$output_innMaate_height},
       # width = function() {0.7*session$clientData$output_innMaate_width}) #)
@@ -1621,8 +1606,8 @@ print(class(user))
                             datoFra=input$datovalgPaarorFord[1], datoTil=input$datovalgPaarorFord[2],
                             reshID = user$org(),
                             enhetsUtvalg = input$enhetsUtvalgPaarorFord,
-                            erMann=as.numeric(input$erMannPaarorFord,
-                                              session=session)
+                            erMann=as.numeric(input$erMannPaarorFord),
+                            user = user
         ), width=900, height = 900)
 
       output$LastNedFigPaarorFord <- downloadHandler(
@@ -1713,6 +1698,95 @@ print(class(user))
       )
 
 #-------------Registeradministrasjon -----------------
+
+  observeEvent(user$role(), {
+    if (user$role() == 'SC') {
+      message("Adding Registeradministrasjon tab for user with role ", user$role())
+      shiny::appendTab(
+        inputId = "hovedark",
+        tabPanel(
+          p("Registeradministrasjon", title='Registeradministrasjonens side'),
+          value = "Registeradministrasjon",
+          h3('Bare synlig for SC-bruker'),
+          tabsetPanel(
+            tabPanel(
+              h4("Utsendinger"),
+              sidebarLayout(
+                sidebarPanel(
+                  rapbase::autoReportOrgInput("NIRuts"),
+                  rapbase::autoReportInput("NIRuts"),
+                  br(),
+                  br(),
+                  br(),
+                  h4('Hvis man ønsker å teste autorapporter uten å vente til neste dag.
+                           NB: Rapportene sendes ut til alle registrerte mottagere.'),
+                  shiny::actionButton(inputId = "run_autoreport",
+                    label = "Kjør autorapporter"),
+                  shiny::dateInput(inputId = "rapportdato",
+                    label = "Kjør rapporter med dato:",
+                    value = Sys.Date()+1,
+                    min = Sys.Date(),
+                    max = Sys.Date() + 366
+                  ),
+                  shiny::checkboxInput(inputId = "dryRun", label = "Send e-post")
+
+
+                ),
+                mainPanel(
+                  rapbase::autoReportUI("NIRuts"),
+
+                  #For tørrkjøring:
+                  br(),
+                  p(em("System message:")),
+                  verbatimTextOutput("sysMessage"),
+                  p(em("Function message:")),
+                  verbatimTextOutput("funMessage")
+
+                )
+              )
+            ),
+
+
+            tabPanel(
+              h4("Eksport av krypterte data"),
+              sidebarLayout(
+                sidebarPanel(
+                  rapbase::exportUCInput("intensivExport")
+                ),
+                shiny::mainPanel(
+                  rapbase::exportGuideUI("intensivExportGuide")
+                )
+              )
+            ),
+            tabPanel(h4('Nøkkeltall'),
+              h2('Nøkkeltall, for valgt HF/RHF', align='center'),
+              h4('Gjør utvalg'),
+              dateRangeInput(inputId = 'datoValgNok', label = 'Tidsperiode',
+                start = startDato, end = Sys.Date(),
+                min = startDato, max = Sys.Date(),
+                separator="t.o.m.", language="nb"),
+              selectInput(inputId = "luftveiValgNok", label= velgLuftveiTxt,
+                choices = luftveiValg),
+              uiOutput('enhetNok'),
+              br(),
+              h4('Andel opphold med *komplikasjon*, er definert som et opphold hvor det har
+                    oppstått minst én av følgende komplikasjoner:
+                    Alvorlig hypoglykemi, pneumotoraks, luftveisproblem trakealtube/kanyle, trykksår'),
+              h4('Bare registreringer hvor det er registrert om det er komplikasjon eller ikke,
+                 er med i beregninga av komplikasjoner'),
+              tableOutput('tabNokkeltallUtvidet'),
+              downloadButton(outputId = 'lastNed_tabNokkelSC', label='Last ned tabell')
+            )
+            #         ),
+          ) #tabset
+        ) #tab SC
+      )
+    } else {
+      message("Removing Registeradministrasjon tab for user with role ", user$role())
+      shiny::removeTab(inputId = "hovedark", target = "Registeradministrasjon")
+    }
+  })
+
      # observeEvent(user$role(), {
       # if (user$role() == 'SC') {
 
@@ -1768,12 +1842,13 @@ print(class(user))
 
          #----------- Eksport ----------------
          ## brukerkontroller
-         rapbase::exportUCServer("intensivExport", "intensiv")
+         rapbase::exportUCServer("intensivExport", dbName = "data", teamName = "intensiv")
          ## veileding
-         rapbase::exportGuideServer("intensivExportGuide", "intensiv")
+         rapbase::exportGuideServer("intensivExportGuide", dbName = "data")
 
  #        } #SC
 #     })
+  })
 } #serverdel
 
 # Run the application

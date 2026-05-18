@@ -4,8 +4,10 @@
 #'
 #' @param RegData dataramme med preprossesserte data
 #' @param tidsenhet 'dag' (standard), 'uke', 'maaned'
-#' @param enhetsNivaa 'RHF', 'HF', 'ShNavn'
 #' @param datoFra Vis hendelser fra og med dato
+#' @param resp Respirator
+#' @param skjemastatus skjemastatus
+#' @param valgtRHF valgtRHF
 #' @inheritParams NIRUtvalgEnh
 #'
 #' @return Tabell med antall for hver tidsenhet og enhet MÅ OPPDATERES!
@@ -74,6 +76,9 @@ TabTidEnhet <- function(RegData, tidsenhet='dag', erMann=9, resp=9, datoFra=0,
 #' Antall som er  i ECMO/respirator MANGE ELEMENTER SOM IKKE KAN BENYTTES FOR INTENSIVSKJEMA
 #'
 #' @param RegData beredskapsskjema
+#' @param valgtRHF Valgt RHF, eller 'Alle' for hele landet
+#' @param erMann 0-kvinner, 1-menn, 9-begge
+#' @param luftvei Luftvei
 #'
 #' @return statustabell
 #' @export
@@ -132,6 +137,8 @@ statusECMOrespTab <- function(RegData, valgtRHF='Alle', erMann=9, luftvei=0){
 #' Ferdigstilte registreringer
 #'
 #' @param RegData beredskapsskjema
+#' @param valgtRHF description
+#' @param resp Respirator
 #' @inheritParams NIRUtvalgEnh
 #'
 #' @return nøkkeltalltabell for ferdigstilte registreringer
@@ -286,7 +293,11 @@ return(invisible(UtData <-
 }
 
 #' Avdelingar som enno har ikkje-ferdigstilte NIR-skjema for ferdigstilte beredskapsskjema
+#'
+#' @param datoFra Vis registreringer fra og med dato
+#' @param datoTil Vis registreringer til og med dato
 #' @param reshID Avdelingas resh-id
+#'
 #' @return datakvalitet, mangler ferdigstilt inteneivskjema
 #' @export
 ManglerIntSkjema <- function(reshID=0, datoFra='2020-03-01', datoTil=Sys.Date()){

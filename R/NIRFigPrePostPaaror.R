@@ -6,7 +6,8 @@
 #'
 #' @inheritParams NIRFigAndeler
 #' @inheritParams NIRFigAndelerGrVar
-#' @param valgtMaal 'Med' = median. Alt annet gir gjennomsnitt
+#' @param startDatoIntervensjon Dato for når intervensjonen starter. Format: '2023-11-07'
+#' @param sluttDatoIntervensjon Dato for når intervensjonen slutter. Format: '2023-11-07'
 #'
 #' Nytt skjema tatt i bruk 7.nov 2023
 #' Detajer: Her bør man liste opp hvilke variabler funksjonen benytter.

@@ -15,7 +15,6 @@
 #'    	Hvis egen avdeling ikke har registreringer, vises hele landet.
 #'
 #' @inheritParams NIRFigAndeler
-#' @param valgtVar Hvilken variabel som skal visualiseres. Se \strong{Details} for oversikt.
 #' @param datoFra Tidligste dato i utvalget (vises alltid i figuren). Standard 2019-01-01.
 #' Registeret inneholder registreringer f.o.m. 2011
 #' @param datoTil Seneste dato i utvalget (vises alltid i figuren).
@@ -24,8 +23,6 @@
 #'          1: Menn
 #' @param minald Alder, fra og med (Standardverdi: 0)
 #' @param maxald Alder, til og med (Standardverdi: 110)
-#' @param outfile Navn på fil figuren skrives til. Standard: '' (Figur skrives
-#'    til systemets standard utdataenhet (som regel skjerm))
 #' @param InnMaate
 #'				0: Elektivt,
 #'				6: Akutt medisinsk,
@@ -43,11 +40,6 @@
 #'	'Annet luftveisvirus' = 7, 'Annen_luftveisbakterie' = 8
 #'	@param nivaa Intensivavdelingens "nivå": 1-5: 'Overvåk', 'Postop', 'Gen<50%','Gen>50%', 'Barn'
 #'	Flervalgsparameter
-#' @param grType Gjør gruppeutvalg på sykehustype - endres til nivå.
-#'                      1: lokal-/sentralsykehus
-#'                      2: lokal-/sentralsykehus
-#'                      3: regionsykehus
-#'                      99: alle (standard)
 #' @param reshID Parameter følger fra innlogging helseregister.no og angir
 #'    hvilken enhet i spesialisthelsetjenesten brukeren tilhører
 #' @param enhetsUtvalg Gjør gruppeutvalg med eller uten sammenlikning. Se \strong{Details} for oversikt.
@@ -122,7 +114,7 @@ NIRUtvalgEnh <- function(RegData, datoFra='2014-01-01', datoTil=Sys.Date(), aar=
                '8' = which(RegData$Annen_luftveisbakterie == 1))
         } else {1:Ninn}
       nivaaKort <- c('1a', '1b', '2b', '3', '3c')
-      nivaaTxt <- c('Overvåk', 'Postop', 'Gen<50%','Gen>50%', 'Barn')
+      nivaaTxt <- c('Overvåk', 'Postop', '≤50% kat3','>50% kat3', 'Barn')
       indNivaa <- if (min(nivaa) > 0 ) {which(RegData$Nivaa %in% nivaaKort[nivaa])
       } else {1:Ninn}
       indOverf <- if (overfPas %in% 1:2) {which(RegData$Overf == overfPas)} else {1:Ninn}
@@ -131,7 +123,7 @@ NIRUtvalgEnh <- function(RegData, datoFra='2014-01-01', datoTil=Sys.Date(), aar=
       RegData <- RegData[indMed,]
 
       N <- dim(RegData)[1]	#N=0 gir feilmelding
-      if (nivaa %in% 1:5) {shNivaaTxt <- shNivaaTxt[nivaa]} else {shNivaaTxt <- 'alle '}
+      if (nivaa %in% 1:5) {shNivaaTxt <- nivaaTxt[nivaa]} else {shNivaaTxt <- 'alle '}
 
 
       utvalgTxt <- c(

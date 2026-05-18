@@ -4,9 +4,9 @@
 #'
 #' Mer info?
 #'
-#'  @param id namespace for this module
-#'  @param inputId id for brukervalget til den aktuelle figur/tabelltypen
-#'  @param label Label for this module
+#'
+#' @param ark Hvilken side i appen skal vises? (fordelinger eller andeler)
+#'
 #' @return Visning av brukervalg
 #'
 #' @export

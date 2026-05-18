@@ -1,37 +1,37 @@
 Package: intensiv
 Type: Package
 Title: Resultatrapporter for Intensivregisteret
-Version: 3.6.0
-Date: 2026-03-06
+Version: 3.6.7
+Date: 2026-03-30
 Author: Authors@R: c(person("Olsen", "Lena", email =
     "Lena.Ringstad.Olsen@unn.no", role = c("cre", "aut")))
 Maintainer: Lena Ringstad Olsen <lena.olsen@skde.no>
 Description: Pakke for (automatisk) generering av resultater (figurer og
     samledokument) fra Norsk Intensivregister. 
-License: GPL2
+License: GPL-3
 Encoding: UTF-8
 LazyData: false
 Depends:
     R (>= 4.1.0)
 Remotes: 
-      Rapporteket/rapbase@main,
+      Rapporteket/rapbase,
       Rapporteket/rapFigurer,
 Imports:
-    bookdown,
     digest,
-    DT,
+    dplyr,
+    jsonlite,
     kableExtra,
     knitr,
-    lifecycle,
     lubridate,
     magrittr,
-    plyr,
+    rapbase (>= 3.6.0),
     rapFigurer,
     rlang,
     shiny,
     shinyalert,
     shinyjs,
     tidyr,
-    xtable,
-    zoo
+    xtable
+Suggests:
+    synthpop
 RoxygenNote: 7.3.3

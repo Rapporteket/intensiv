@@ -3,8 +3,8 @@
 #' Belegg (antall opphold, pasienter og intensivdøgn)
 #' Siste inntil 5 år eller siste inntil 12 måneder/kvartal/halvår
 #' @param RegData data
-#' @param personIDvar Variabelen som angir pasientidentifikasjon
 #' @param datoTil sluttdato. Brukes i tabellene AntOpph per 12 mnd og Belegg
+#' @param tidsenhet Tidsenhet
 #' @inheritParams NIRFigAndeler
 #' @export
 tabBelegg <- function(RegData, tidsenhet='Aar', datoTil, enhetsUtvalg=0, reshID=0) {
@@ -144,13 +144,19 @@ finnDblReg <- function(RegData, datoTil=Sys.Date(), reshID=0, pasientID = 'Pasie
 
 #'  Nøkkeltall (antall opph., pasienter,  intensivdøgn, samt div oversiktstall)
 #' 20.okt 2025: Endrer fra å bare gruppere på tidsenhet til å kunne gruppere på andre variabler.
+#'
 #' @param RegData dataramme
 #' @param tidsenhet velg: Aar, Halvaar, Kvartal, Mnd (standard)
 #' @param datoTil sluttdato, format: 'yyyy-mm-dd'
 #' @param enhetsUtvalg enhetsutvalg
 #' @param reshID enhetens resh-id
 #' @param sykehus HelseenhetKortnavn eller HF-navn
+#' @param grVar Grupperingsvariabel.
+#' @param datoFra startdato.
+#' @param luftvei luftveisvariabel
+#' @param utvidTab 0: standardtabell
 #' @param respirator respirator/invasiv/non-inv 0:ikke respirator, 1:respirator, 2:invasiv, 3:non-invasiv
+#'
 #' @export
 tabNokkeltall <- function(RegData, tidsenhet='Mnd', grVar = '',
                           datoFra='2014-01-01', datoTil=Sys.Date(),
@@ -252,9 +258,9 @@ tabNokkeltall <- function(RegData, tidsenhet='Mnd', grVar = '',
     }
 
     if (utvidTab==1) {
-      #Komplikasjoner:
-      RegData$KompTot <- (rowSums(RegData[ ,c('KompHypoglykemi',	'KompPneumotoraks',	'KompLuftveisproblem',
-                                              'KompDekubitus')])>0)
+      #Komplikasjoner: - variabler endret. Beregnger Komplikasjon i preprosess
+      # RegData$Komplikasjon <- (rowSums(RegData[ ,c('KompHypoglykemi',	'KompPneumotoraks',	'KompLuftveisproblem',
+      #                                         'KompDekubitus')])>0)
 
       tabNokkeltall <- rbind(
         tabNokkeltall,
@@ -270,8 +276,8 @@ tabNokkeltall <- function(RegData, tidsenhet='Mnd', grVar = '',
                                          FUN=function(x) sum(x, na.rm=T)/length(x)*100),
         'Menn (%)' = tapply((RegData$erMann==1), RegData$GrVar,
                             FUN=function(x) sum(x, na.rm=T)/length(x)*100),
-        'Komplikasjoner (%)' = tapply((RegData$KompTot==1), RegData$GrVar,
-                                      FUN=function(x) sum(x, na.rm=T)/length(x)*100)
+        'Komplikasjoner (%)' = tapply((RegData$Komplikasjon==1), RegData$GrVar,
+                                      FUN=function(x) sum(x, na.rm=T)/sum(x %in% 0:1)*100)
       )
     }
   } else {
@@ -444,7 +450,8 @@ TabAlder <- function(RegData, reshID=0, enhetsNivaa='Alle',
 
 #' Oppsummeringer, luftveisinfeksjonspasienter
 #'
-#' @param RegData
+#' @param RegData RegData it is
+#' @param pgaLuftvei På grunn av luftvei
 #'
 #' @return oppsummering i tabellform
 #' @export

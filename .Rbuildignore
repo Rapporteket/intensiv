@@ -1,3 +1,5 @@
-^.*\.Rproj$
+^\.*\.Rproj$
 ^\.Rproj\.user$
 ^docker-compose\.yml$
+^\.github$
+^data$

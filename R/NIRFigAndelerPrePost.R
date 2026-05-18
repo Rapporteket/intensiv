@@ -10,6 +10,9 @@
 #'          Bosituasjon: Bosituasjon ved innleggelse og 3 mnd etter slaget
 #'          Toalett: Toalettbesok før innleggelse og 3 mnd etter slaget
 #'          Forflytning: Evne til forflytning før innleggelse og 3 mnd etter slaget
+#' @param diagnose description
+#' @param innl4t description
+#' @param NIHSSinn description
 #'
 #' @return Søylediagram som fordeling av valgt variabel, målt både før og etter hjerneslaget
 #'
@@ -18,11 +21,10 @@ NIRFigPrePost  <- function(RegData, valgtVar, datoFra='2011-01-01', datoTil=Sys.
 		minald=0, maxald=110, erMann='', diagnose='', innl4t='', NIHSSinn='', outfile='',
 		reshID, enhetsUtvalg=1, preprosess=1, hentData=0,...)
 {
-
-  # if ("session" %in% names(list(...))) {
-  #   rapbase::repLogger(session = list(...)[["session"]], msg = paste0("NIRFigPrePost: ", valgtVar))
-  # }
-
+  optionalArgs <- list(...)
+  if ("user" %in% names(optionalArgs)) {
+    rapbase::repLogger2(user = optionalArgs$user, msg = paste0("NIRFigPrePost: ", valgtVar))
+  }
   if (hentData == 1) {
     RegData <- NIRRegDataSQL(datoFra, datoTil)
   }

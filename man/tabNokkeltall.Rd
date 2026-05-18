@@ -24,15 +24,23 @@ tabNokkeltall(
 
 \item{tidsenhet}{velg: Aar, Halvaar, Kvartal, Mnd (standard)}
 
+\item{grVar}{Grupperingsvariabel.}
+
+\item{datoFra}{startdato.}
+
 \item{datoTil}{sluttdato, format: 'yyyy-mm-dd'}
 
 \item{enhetsUtvalg}{enhetsutvalg}
 
 \item{respirator}{respirator/invasiv/non-inv 0:ikke respirator, 1:respirator, 2:invasiv, 3:non-invasiv}
 
+\item{luftvei}{luftveisvariabel}
+
 \item{reshID}{enhetens resh-id}
 
 \item{sykehus}{HelseenhetKortnavn eller HF-navn}
+
+\item{utvidTab}{0: standardtabell}
 }
 \description{
 Nøkkeltall (antall opph., pasienter,  intensivdøgn, samt div oversiktstall)

@@ -24,6 +24,7 @@
 #'
 #' @inheritParams NIRFigAndeler
 #' @param tidsenhet Oppløsning på tidsaksen. Verdier: 'Aar' (standard), 'Halvaar', 'Kvartal','Mnd'
+#' @param ... Ytterligere argumenter, for eksempel user for logging. Se detaljer i NIRFigAndeler.
 #'
 #' @return Figur som viser tidstrend, dvs. andel av valgt variabel for hvert år.
 #'

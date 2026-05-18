@@ -6,7 +6,7 @@
 \usage{
 leggTilIntervensjon(
   RegData,
-  startDatoIntervensjon = "2024-01-01",
+  startDatoIntervensjon = "2025-01-01",
   sluttDatoIntervensjon = Sys.Date()
 )
 }

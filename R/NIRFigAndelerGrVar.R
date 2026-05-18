@@ -31,10 +31,10 @@
 #'     \item trakAapen: Trakeostomi, åpen
 #'    }
 #' @inheritParams NIRFigAndeler
-#' @param aldGr: Aldersgrupper. Brukes i offentliggjøringsfigurer
-#' @param tittel: Hvis vil angi tittel direkte
-#' @param utvalgsInfo: Hvis datafil lagret med utvalgsinfo
-#' @param sortAvtagende: sortere søylene i figuren avtagende eller stigende.
+#' @param aldGr Aldersgrupper. Brukes i offentliggjøringsfigurer
+#' @param medKI Om det skal beregnes og vises konfidensintervall
+#' @param Ngrense Minimum antall observasjoner i hver gruppe/sykehus for at det skal vises AggVerdier.
+#' @param grVar Grupperingsvariabel
 #'
 #' @return Søylediagram med AggVerdier av valgt variabel for hvert sykehus
 #'
@@ -46,9 +46,10 @@ NIRFigAndelerGrVar <- function(RegData, valgtVar='dod30d', datoFra='2011-01-01',
                             preprosess=1, outfile='', lagFig=1, ...){
                             #KImaal = NA, utvalgsInfo = "", tittel = "", sortAvtagende=TRUE,)
 
-  # if ("session" %in% names(list(...))) {
-  #   rapbase::repLogger(session = list(...)[["session"]], msg = paste0("FigAndelerGrVar: ", valgtVar))
-  # }
+      optionalArgs <- list(...)
+      if ("user" %in% names(optionalArgs)) {
+      rapbase::repLogger2(user = optionalArgs$user, msg = paste0("FigAndelerGrVar: ", valgtVar))
+      }
 
 
       if (hentData == 1) {

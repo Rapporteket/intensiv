@@ -3,6 +3,7 @@
 #' Antall tilfeller for valgt tidsenhet og enhetsnivå. Filtreringer kan også gjøres.
 #'
 #' @param AntTab Dataramme med nødvendige figurparametre
+#' @param outfile Filbane for lagring av figur. Hvis '' (default) vises figuren i R.
 #'
 #' @return opphold per tid og enhet
 #' @export
@@ -52,6 +53,10 @@ FigTidEnhet <- function(AntTab, outfile=''){
 #' Kan gereraliseres til andre variabler og grupperingsvar.
 #'
 #' @param minN Maskerer verdier under <3
+#' @param grvar Grupperingsvariabel for figuren. F.eks. 'Kjonn' eller 'RHF'
+#' @param valgtVar valgVar
+#' @param outfile Outfile
+#'
 #' @inheritParams NIRUtvalgEnh
 #'
 #' @return alders og kjønnsfordelnig

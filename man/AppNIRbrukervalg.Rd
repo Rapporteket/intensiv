@@ -6,6 +6,9 @@
 \usage{
 AppNIRbrukervalg(ark = "angi sideID")
 }
+\arguments{
+\item{ark}{Hvilken side i appen skal vises? (fordelinger eller andeler)}
+}
 \value{
 Visning av brukervalg
 }
@@ -14,8 +17,4 @@ Denne funksjonen beregner ikke noe. :-|
 }
 \details{
 Mer info?
-
- @param id namespace for this module
- @param inputId id for brukervalget til den aktuelle figur/tabelltypen
- @param label Label for this module
 }

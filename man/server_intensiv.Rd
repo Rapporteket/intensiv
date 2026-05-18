@@ -6,6 +6,13 @@
 \usage{
 server_intensiv(input, output, session)
 }
+\arguments{
+\item{input}{Shiny input-objekt}
+
+\item{output}{Shiny output-objekt}
+
+\item{session}{Shiny session-objekt}
+}
 \value{
 Brukergrensesnittet (ui) til intensiv-appen
 }

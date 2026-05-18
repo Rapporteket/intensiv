@@ -17,6 +17,8 @@ dataTilOffVisning(
 
 \item{valgtVar}{- beinsmLavPre, peropKompDura, sympVarighUtstr, p.t. 10 kvalitetsind.}
 
+\item{aar}{Vis registreringer for opphold som startet i dette året}
+
 \item{indID}{indikator-id, eks. 'ind1', 'ind2', osv.}
 
 \item{filUt}{tilnavn for utdatatabell (fjern?)}
