@@ -43,9 +43,9 @@ pdf(file = NULL)
 ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
   id = 'hovedark',
   header = yearControlUI("year-ctrl"),
-  title = rapbase::title(regTittel),
+  title = rapbase::regTitle(regTittel),
   windowTitle = regTittel,
-  theme = rapbase::theme(),
+  theme = rapbase::rapTheme(),
 
 
 #--------------Startside------------------------------
@@ -1842,9 +1842,9 @@ observe({
 
          #----------- Eksport ----------------
          ## brukerkontroller
-         rapbase::exportUCServer("intensivExport", "intensiv")
+         rapbase::exportUCServer("intensivExport", dbName = "data", teamName = "intensiv")
          ## veileding
-         rapbase::exportGuideServer("intensivExportGuide", "intensiv")
+         rapbase::exportGuideServer("intensivExportGuide", dbName = "data")
 
  #        } #SC
 #     })

@@ -9,8 +9,7 @@ datoFra <- '2015-01-01'
 datoTil <- paste0(aarsrappAar, '-12-31')
 datoFra1aar <- paste0(aarsrappAar, '-01-01')
 source("C:/Users/lro2402unn/RegistreGIT/intensiv/dev/sysSetenv.R")
-RegData <- NIRPreprosess(NIRRegDataSQL(datoFra='2025-01-01', datoTil=datoTil))
-#RegData <- NIRPreprosess(NIRRegDataSQL(datoFra=datoFra, datoTil=datoTil))
+RegData <- NIRPreprosess(NIRRegDataSQL(datoFra=datoFra, datoTil=datoTil))
 shNivaaTxt <- c('Overvåk', 'Postop', '≤50% kat3','>50% kat3', 'Barn') #teksten kommer fra UtvEnh
 RegData$ShNivaa <- shNivaaTxt[RegData$NivaaNum]
 
