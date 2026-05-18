@@ -674,9 +674,12 @@ tabPanel("Luftveisinfeksjon",
                   'LivssluttKomfor' = 'LivssluttKomfor_2',
                   'LivssluttStoette' = 'LivssluttStoette_2',
                   'PasientRelasjon' = 'PasientRelasjon',
-                  'HoeyesteFullfoerteUtdannelse' = 'HoeyesteFullfoerteUtdannelse'
+                  'HoeyesteFullfoerteUtdannelse' = 'HoeyesteFullfoerteUtdannelse',
+                 'Totalskår, omsorg' = 'SumScoreSatisfactionCare_2',
+                 'Totalskår, beslutningsmedvirkning' = 'SumScoreSatisfactionDecision_2',
+                 'Totalskår, tilfredshet' = 'SumScoreAllQuestions_2'
                  )
-             ),
+              ),
              dateRangeInput(inputId = 'datovalgPaarorFord',
                             start = paste0(as.numeric(format(Sys.Date()-365, "%Y")), '-01-01'),
                             end = Sys.Date(),

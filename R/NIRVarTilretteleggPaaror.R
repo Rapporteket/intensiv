@@ -197,19 +197,20 @@ NIRVarTilretteleggPaaror  <- function(RegData, valgtVar, grVar='ShNavn', figurty
   RegData$VariabelGr <- factor(RegData$VariabelGr, levels = gr)
 
 
-  # if (valgtVar %in% c('SumScoreSatisfactionCare', 'SumScoreSatisfactionDecision', 'SumScoreAllQuestions')) {  #gjsnGrVar
-  #   RegData <- RegData[which(RegData[,valgtVar] >= 0), ]    #Tar bort alder<0
-  #   if (figurtype == 'andeler') {	#Fordelingsfigur
-  #     RegData$Variabel  <- RegData[,valgtVar]
-  #     gr <- c(seq(0, 90, 10),100)
-  #     RegData$VariabelGr <- cut(RegData$Variabel, breaks=gr, include.lowest=TRUE, right=FALSE)
-  #     grtxt <- c('0-9','10-19','20-29','30-39','40-49','50-59','60-69','70-79','80-89','90-100')
-  #     xAkseTxt <- 'sumskår'}
-  #   tittel <- switch (valgtVar,
-  #                     SumScoreSatisfactionCare  = 'Totalskår, omsorg',
-  #                     SumScoreSatisfactionDecision = 'Totalskår, beslutningsmedvirkning',
-  #                     SumScoreAllQuestions = 'Totalskår')
-  # }
+  if (valgtVar %in% c('SumScoreSatisfactionCare_2', 'SumScoreSatisfactionDecision_2', 'SumScoreAllQuestions_2')) {  #gjsnGrVar
+    RegData <- RegData[which(RegData[,valgtVar] >= 0), ]
+    if (figurtype == 'andeler') {	#Fordelingsfigur
+      RegData$Variabel  <- RegData[,valgtVar]
+      gr <-  c(0, seq(50, 90, 10),100) #c(seq(0, 90, 10),100)
+      RegData$VariabelGr <- cut(RegData$Variabel, breaks=gr, include.lowest=TRUE, right=FALSE)
+      # grtxt <- c('0-9','10-19','20-29','30-39','40-49','50-59','60-69','70-79','80-89','90-100')
+      grtxt <- levels(RegData$VariabelGr)
+      xAkseTxt <- 'sumskår'}
+    tittel <- switch (valgtVar,
+                      SumScoreSatisfactionCare_2  = 'Totalskår, omsorg',
+                      SumScoreSatisfactionDecision_2 = 'Totalskår, beslutningsmedvirkning',
+                      SumScoreAllQuestions_2 = 'Totalskår')
+  }
 
 
 

@@ -15,18 +15,24 @@ RegData$ShNivaa <- shNivaaTxt[RegData$NivaaNum]
 
 RegData1aar <- NIRUtvalgEnh(RegData = RegData, datoFra = datoFra1aar)$RegData
 
-#----------------Nye bestillinger for 2025------------------
-# Legg til figurer
-- median-tid for ikke-invasiv ventilasjon for kategori:  overvåkningsenh.
 
-Organdonasjon:
-  Må inkludere:
-  Andel/Frekvens av gjennomførte organdonasjoner, fordelt på metode (cDCD og DBD)
+# ------------------Pårørendetilfredshet-------------------
 
+PaarorData <- NIRpaarorDataSQL()
+PaarorDataH <- merge(PaarorData, RegData1aar,
+                     by.x = 'HovedskjemaGUID',
+                     by.y = 'SkjemaGUID',
+                     all.x = TRUE,
+                     suffixes = c('_paaror',''))
 
-Spørsmål om ny analyse:
-  Hvordan stiller du deg til for eksempel en tabell som fremstiller spesifikke behandlinger som gis på intensiv?
-  Her eksemplifisert med en tabell:
+variabler <- c('InformasjonsAerlighet_2', 'ForklaringForstaaelse_2', 'SumScoreAllQuestions_2')
+
+for (valgtVar in variabler) {
+  outfile <- paste0(valgtVar, '_Paaror.pdf')
+NIRFigPrePostPaaror(RegData=PaarorDataH, valgtVar=valgtVar, preprosess=0,
+                    startDatoIntervensjon='',nivaa = 0,
+                    outfile = outfile)
+}
 
 
 # ------------------------- FIGURER UTEN inndeling I enhetsNIVÅ----------------------------------

@@ -151,7 +151,7 @@ if (medH == 1){
   # varHoved <- '*'
   queryH <- paste0(
     'SELECT ', varHoved,
-    'FROM intensivopphold
+    'FROM intensivopphold_1
      WHERE cast(DateAdmittedIntensive as date) BETWEEN \'', datoFra, '\' AND \'', datoTil, '\'')
 
   HovedData <- rapbase::loadRegData(registryName="data", query=queryH)

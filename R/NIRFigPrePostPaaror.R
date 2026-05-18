@@ -71,6 +71,7 @@ NIRFigPrePostPaaror  <- function(
       grtxt <- NIRVarSpes$grtxt
       grtxt2 <- paste0(sprintf('%.1f',AggVerdier$Pre),' / ', sprintf('%.1f',AggVerdier$Post),'%')
       grtxt2[match('', grtxt)] <- ''
+      grtxt2 <- gsub("NaN%",'', grtxt2)
       tittel <- NIRVarSpes$tittel
 
 
@@ -101,7 +102,7 @@ NIRFigPrePostPaaror  <- function(
       farger <- FigTypUt$farger
       antGr <- length(grtxt)
       lwdPost <- 3	#tykkelse på linja som repr. landet
-      cexleg <- 1	#Størrelse på legendtekst
+      cexleg <- 0.9	#Størrelse på legendtekst
       cexpt <- 2	#Størrelse på punkter (resten av landet)
 
       #Vertikale søyler eller linje
@@ -110,7 +111,7 @@ NIRFigPrePostPaaror  <- function(
                      cex.names=1, col=farger[c(3,1)],
                      names.arg=rep('', length(grtxt)), border='white', ylim=c(0, ymax))
      mtext(at=pos[1,], grtxt2, side=1, las=1, cex=1, adj=0.2, line=0)
-      grtxt <- delTekst(grtxt, 15)
+      grtxt <- delTekst(grtxt, 14)
       mtext(at=pos[1,], grtxt, side=1, las=1, cex=1, adj=0.2, line=2)
       legend('top', c(paste0('Før intervensjon, N=', NPre),
                       paste0('Etter intervensjon, N=', NPost)
