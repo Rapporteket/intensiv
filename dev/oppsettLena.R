@@ -3,12 +3,13 @@
 ##############################
 
 devtools::install_github('Rapporteket/intensiv', ref = 'main_dev', )
-remotes::install_github('Rapporteket/rapbase', ref = 'forenkl_take2')
+remotes::install_github('Rapporteket/rapbase', ref = 'main')
+remotes::install_github('Rapporteket/intensiv', ref = 'v3.6.9')
 
 setwd('../data')
-sship::dec('intensiv12ac10e59.sql.gz__20260325_083639.tar.gz',
+sship::dec('intensiv1309d594a.sql.gz__20260520_084355.tar.gz',
            keyfile = "c://Users/lro2402unn/.ssh/id_rsa")
-# source c://Users/lro2402unn/RegistreGIT/data/intensiv12ac10e59.sql;
+# source c://Users/lro2402unn/RegistreGIT/data/intensiv1309d594a.sql;
 setwd('c://Users/lro2402unn/RegistreGIT/intensiv')
 
 source("dev/sysSetenv.R")
@@ -21,10 +22,7 @@ reshID <- 102026 #705577 #103948 #4205969 Med PREM: 102026
 RegData <- intensiv::NIRRegDataSQL(datoFra = '2025-01-01')
 RegData <- intensiv::NIRPreprosess(RegData = RegData)
 
-    NIRFigAndeler(RegData = RegData, preprosess = 0, valgtVar = 'trakeostomi'
-                  ,outfile = 'trakeostomiFordeling.pdf')
-    NIRFigAndeler(RegData = RegData, preprosess = 0, valgtVar = 'komplikasjoner',
-              outfile = 'komplFordeling.pdf')
+
 test <- SorterOgNavngiTidsEnhet(RegData=RegData, tidsenhet='Halvaar')
 test$tidtxt
 

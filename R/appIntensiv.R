@@ -750,6 +750,7 @@ server_intensiv <- function(input, output, session) { #
  # context <- Sys.getenv("R_RAP_INSTANCE") #Blir tom hvis jobber lokalt
   # paaServer <- (context %in% c("DEV", "TEST", "QA","QAC", "PRODUCTION", "PRODUCTIONC")) #rapbase::isRapContext()
  # message("Intensivapp server started in context: ", context)
+  rapbase::appLogger(session, msg = 'Starter Rapporteket-Intensiv')
   yearControlServer("year-ctrl")
   observeEvent(shiny::getQueryString(session), once = TRUE, {
 
