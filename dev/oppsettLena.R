@@ -12,7 +12,6 @@ sship::dec('intensiv1309d594a.sql.gz__20260520_084355.tar.gz',
 # source c://Users/lro2402unn/RegistreGIT/data/intensiv1309d594a.sql;
 setwd('c://Users/lro2402unn/RegistreGIT/intensiv')
 
-source("dev/sysSetenv.R")
 source("C:/Users/lro2402unn/RegistreGIT/intensiv/dev/sysSetenv.R")
 intensiv::kjorIntensivApp(browser = TRUE)
 
