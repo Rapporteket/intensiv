@@ -17,6 +17,7 @@ NIRFigGjsnTid(
   InnMaate = "",
   dodInt = "",
   luftvei = 0,
+  nivaa = 0,
   tittel = 1,
   outfile = "",
   enhetsUtvalg = 0,
@@ -62,6 +63,9 @@ alle: standard (alle andre verdier)}
 \item{luftvei}{Luftveisinfeksjon? 'Alle pasienter' = 0, 'Luftveisinfeksjon' = 1,
 'Covid19' = 2, 'InfluensaA' = 3, 'InfluensaB' = 4, 'RS-virus' = 5, 'Kikhoste' = 6,
 'Annet luftveisvirus' = 7, 'Annen_luftveisbakterie' = 8}
+
+\item{nivaa}{Intensivavdelingens "nivå": 1-5: 'Overvåk', 'Postop', 'Gen<50%','Gen>50%', 'Barn'
+Flervalgsparameter}
 
 \item{tittel}{Tittel}
 

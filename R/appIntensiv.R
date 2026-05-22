@@ -674,9 +674,12 @@ tabPanel("Luftveisinfeksjon",
                   'LivssluttKomfor' = 'LivssluttKomfor_2',
                   'LivssluttStoette' = 'LivssluttStoette_2',
                   'PasientRelasjon' = 'PasientRelasjon',
-                  'HoeyesteFullfoerteUtdannelse' = 'HoeyesteFullfoerteUtdannelse'
+                  'HoeyesteFullfoerteUtdannelse' = 'HoeyesteFullfoerteUtdannelse',
+                 'Totalskår, omsorg' = 'SumScoreSatisfactionCare_2',
+                 'Totalskår, beslutningsmedvirkning' = 'SumScoreSatisfactionDecision_2',
+                 'Totalskår, tilfredshet' = 'SumScoreAllQuestions_2'
                  )
-             ),
+              ),
              dateRangeInput(inputId = 'datovalgPaarorFord',
                             start = paste0(as.numeric(format(Sys.Date()-365, "%Y")), '-01-01'),
                             end = Sys.Date(),
@@ -747,6 +750,7 @@ server_intensiv <- function(input, output, session) { #
  # context <- Sys.getenv("R_RAP_INSTANCE") #Blir tom hvis jobber lokalt
   # paaServer <- (context %in% c("DEV", "TEST", "QA","QAC", "PRODUCTION", "PRODUCTIONC")) #rapbase::isRapContext()
  # message("Intensivapp server started in context: ", context)
+  rapbase::appLogger(session, msg = 'Starter Rapporteket-Intensiv')
   yearControlServer("year-ctrl")
   observeEvent(shiny::getQueryString(session), once = TRUE, {
 

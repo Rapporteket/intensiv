@@ -176,19 +176,14 @@ if (lagFig == 1) {
 
             #---------------------------------------FRA FIGANDELER, FigGjsnGrVar og FigAndelGrVar--------------------------
             #Hvis for få observasjoner..
-
-            if ((N$Hoved < 5) | (dim(RegData)[1]<5))
-                  #| ((enhetsUtvalg %in% c(1,3)) & length(which(RegData$ReshId == reshID))<5)) #(dim(RegData)[1]-N$Hoved <5) )
-                  #       if (dim(RegData)[1] < 10 | ((enhetsUtvalg %in% c(1,3)) & length(which(RegData$ReshId == reshID))<5) )
-                  #|(grVar=='' & length(which(RegData$ReshId == reshID))<5 & enhetsUtvalg %in% c(1,3)))
-            {
+            if ((N$Hoved < 5) | (dim(RegData)[1]<5)) {
                   #-----------Figur---------------------------------------
                   FigTypUt <-rapFigurer::figtype(outfile)  #FigTypUt <- figtype(outfile)
                   farger <- FigTypUt$farger
                   plot.new()
                   title(tittel)	#, line=-6)
                   legend('topleft',legend=utvalgTxt, bty='n', cex=0.9, text.col=farger[1])
-                  tekst <- 'For få registreringer i egen eller sammenligningsgruppe'
+                  tekst <- 'For få registreringer til å vise figur'
                   text(0.5, 0.6, tekst, cex=1.2)
                   if ( outfile != '') {dev.off()}
 

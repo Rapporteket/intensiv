@@ -1,1 +1,15 @@
 EksemplerOgGML
+*.sql*
+*.gz
+*.sql
+*.csv
+*.rds
+*.rda
+*.tsv
+*.xlsx
+*.xls
+*.sav
+*.dta
+*.sas
+*dat
+*.RData

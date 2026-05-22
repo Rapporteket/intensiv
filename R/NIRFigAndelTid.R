@@ -30,7 +30,7 @@
 #'
 #' @export
 NIRFigAndelTid <- function(RegData, valgtVar='alder_u18', datoFra='2011-01-01', datoTil=Sys.Date(), tidsenhet='Aar',
-                        minald=0, maxald=110, erMann='', InnMaate='', dodInt='', luftvei=0,
+                        minald=0, maxald=110, erMann='', InnMaate='', dodInt='', luftvei=0, nivaa = 0,
                         reshID=0, outfile='',
                         enhetsUtvalg=0, preprosess=1, hentData=0, lagFig=1, ...) {
 	 optionalArgs <- list(...)
@@ -63,7 +63,7 @@ NIRFigAndelTid <- function(RegData, valgtVar='alder_u18', datoFra='2011-01-01', 
 
             if (reshID==0) {enhetsUtvalg <- 0}
             NIRUtvalg <- NIRUtvalgEnh(RegData=RegData, reshID=reshID, datoFra=datoFra, datoTil=datoTil,
-                                      minald=minald, maxald=maxald, erMann=erMann, luftvei=luftvei, #aar=0,
+                                      minald=minald, maxald=maxald, erMann=erMann, luftvei=luftvei,nivaa = nivaa,
                                       InnMaate=InnMaate, dodInt=dodInt, enhetsUtvalg=enhetsUtvalg)
             medSml <- NIRUtvalg$medSml
             utvalgTxt <- NIRUtvalg$utvalgTxt
