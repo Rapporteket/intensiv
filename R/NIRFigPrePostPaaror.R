@@ -24,10 +24,10 @@ NIRFigPrePostPaaror  <- function(
     outfile='', lagFig=1,...){ #overfPas=0,
 
       optionalArgs <- list(...)
-	if ("user" %in% names(optionalArgs)) {
-		rapbase::repLogger2(user = optionalArgs$user, msg = paste0("FigPrePostPaaror: ", valgtVar))
-	}
-       if (hentData == 1) {
+      if ("user" %in% names(optionalArgs)) {
+      rapbase::repLogger2(user = optionalArgs$user, msg = paste0("FigPrePostPaaror: ", valgtVar))
+      }
+      if (hentData == 1) {
             RegData <- NIRRegDataSQL(datoFra, datoTil) #minald=0, maxald=110, erMann='',InnMaate='', dodInt=''
       }
 
