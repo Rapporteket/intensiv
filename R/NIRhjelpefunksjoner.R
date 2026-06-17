@@ -293,6 +293,7 @@ dataTilOffVisning <- function(RegData = RegData, valgtVar, #datoFra='2016-01-01'
 
     #Legge på orgID ("Sykehusviser")
     #ReshId	orgnr	RapporteketNavn	SKDEnavn
+
   nyID <- c('102090'='974706490', #AHUS - Intensiv
   '4215368' = '974706490', #AHUS - Kongsvinger
   '4207303' = '974706490', #AHUS - Med. Overvåkning
@@ -325,6 +326,7 @@ dataTilOffVisning <- function(RegData = RegData, valgtVar, #datoFra='2016-01-01'
   '107717'='974557746', #Haukel. ROE
   '106285'='974557746', #Haukel. TIO
   '100082'='983974724', #Helse Bergen HF  NB: HF-resh
+  '4208975'='974633752', # Kalnes/Overv, 2026.
   '4209889'='974633752', #KalnesØstf.
   '4208977'='974633752', #KalnesØstf. okt2024
   '4208976'='974633752', #KalnesØstf. okt 2024
@@ -363,6 +365,7 @@ dataTilOffVisning <- function(RegData = RegData, valgtVar, #datoFra='2016-01-01'
   '105790' = '974749025', #St. Olavs Nevrointensiv
   '706032' = '974749025', #St. Olavs  Thoraxkirurgisk intensivavdeling
   '114282'='974703300', #Stavanger
+  '4221942' = '974703300', # SUS, KIO
   '701785'='974703300', #Stavanger univ.sjukehus - Postop. 1G
   '4207985'='974742985', #Stord
   '100132'='983975267', #Sykehuset Telemark HF NB: HF-resh

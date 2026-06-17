@@ -531,7 +531,7 @@ nivaa <- 1
 
 
 #--------------------------------------Data til offentlig visning (SKDE, Behandlingskvalitet)-------------------------------------
-source("dev/sysSetenv.R")
+source("C:/Users/lro2402unn/RegistreGIT/intensiv/dev/sysSetenv.R")
 setwd('../Aarsrapp')
 library(intensiv)
 library(magrittr)
@@ -541,7 +541,6 @@ indUShNavn <- which(NIRData$ShNavn =='')
 NIRData$ReshId[indUShNavn]
 unique(NIRData$Aar[indUShNavn])
 
-
 tab <- unique(NIRData[order(NIRData$ShNavn) ,c("ShNavn", "ReshId")])
 indFlereResh <- which(NIRData$ShNavn %in% names(table(tab$ShNavn)[table(tab$ShNavn)>1]))
 sort(table(tab$ShNavn))
@@ -549,17 +548,8 @@ sort(table(tab$ShNavn))
 tab <- unique(NIRData[indFlereResh, c("ShNavn", "ReshId")])
 tab[order(tab$ShNavn),  c("ShNavn", "ReshId")]
 
-
 nyResh <- setdiff(unique(NIRData$ReshId), names(nyID))
 unique(NIRData[which(NIRData$ReshId %in% nyResh),c("ShNavn", "ReshId", "Aar")])
-
-# Juni 2025:
-# ShNavn  ReshId  Aar
-# Helse Førde HF  100085 2025
-# SNR Intensiv 4209729 2025
-
-# Fjerner nye resh i denne publiseringa (juli 2025):
-NIRData <- NIRData[-which(NIRData$ReshId %in% nyResh), ]
 
 
 max(NIRData$DateAdmittedIntensive) # "2025-06-21 23:32:00
@@ -581,10 +571,10 @@ write.table(NIRindFraReg, file = 'NIRindFraReg.csv', sep = ';', row.names = F)
 setwd('../Aarsrapp')
 # KvalIndManuellNy <- read.table(file = 'IntensivKvalIndManuell2024_RAA.csv', fileEncoding = 'UTF-8', sep = ';',
 #                               header = TRUE, row.names = FALSE)
-KvalIndManuellNy <- readxl::read_excel('IntensivKvalIndManuell2024_RAA.xlsx')
-TidligereKvalIndReg <- read.table(file = 'IntensivKvalIndPublManuell2017_23.csv', fileEncoding = 'UTF-8', sep = ';', header = TRUE)
+KvalIndManuellNy <- readxl::read_excel('IntensivKvalIndManuell2025.xlsx')
+#TidligereKvalIndReg <- read.table(file = 'IntensivKvalIndPublManuell2017_23.csv', fileEncoding = 'UTF-8', sep = ';', header = TRUE)
 #TidligereKvalIndReg <- readxl::read_excel('IntensivKvalIndPublManuell2017_23.xlsx')
-names(table(TidligereKvalIndReg$ind_id))
+#names(table(TidligereKvalIndReg$ind_id))
 
 # indKIfraReg <- which(TidligereKvalIndReg$ind_id %in% c('intensiv_innlegg_72t', 'intensiv_inv_vent', 'intensiv_dg') )
 # TidligereKvalIndReg <- TidligereKvalIndReg[-indKIfraReg, ]
@@ -594,20 +584,20 @@ names(table(TidligereKvalIndReg$ind_id))
 
 #Dataomorganisering
 names(KvalIndManuellNy)
-KvalIndManuellNy$year <- 2024
-RegData <- KvalIndManuellNy[, c("resh_id", "tverrfagleg_gjennomgang", "rutinenotat", "primarvakt", "data_nir", "year")]
-RegData$primarvakt <- dplyr::replace_values(RegData$primarvakt, '2' = 1, '3' = 0, .default = RegData$primarvakt) #1-ja, 2-nei Innh: -1,1,2,3
+KvalIndManuellNy$year <- 2025
+RegData <- KvalIndManuellNy[, c("ReshId", "tverrfagleg_gjennomgang", "rutinenotat", "primarvakt", "data_nir", "year")]
+RegData$primarvakt <- dplyr::replace_values(RegData$primarvakt, 2 ~ 1, 3 ~ 0) #1-ja, 2-nei Innh: -1,1,2,3
 variabler <- c( "tverrfagleg_gjennomgang", "rutinenotat",  "data_nir")
 RegData[ , variabler][RegData[,variabler] == 2] <- 0
-RegData$orgnr <- as.character(nyID[as.character(RegData$resh_id)])
+RegData$orgnr <- as.character(nyID[as.character(RegData$ReshId)])
 
 #Sjekk
-# table(RegData$orgnr, useNA = 'a')
-# resh <- RegData$resh_id[which(is.na(RegData$orgnr))]
-# tabSjekk <- KvalIndManuellNy[which(KvalIndManuellNy$resh_id %in% resh), ]
+ # table(RegData$orgnr, useNA = 'a')
+ # resh <- RegData$ReshId[which(is.na(RegData$orgnr))]
+ # tabSjekk <- KvalIndManuellNy[which(KvalIndManuellNy$resh_id %in% resh), ]
 
 RegDataUt <- tidyr::pivot_longer(
-  data = RegData[,-which(names(RegData)=='resh_id')],
+  data = RegData[,-which(names(RegData)=='ReshId')],
   cols = c("tverrfagleg_gjennomgang", "rutinenotat", "primarvakt", "data_nir"),
   names_to = 'ind_id'
   ,values_to = 'var'
@@ -619,7 +609,5 @@ RegDataUt$ind_id <- paste0('intensiv_', RegDataUt$ind_id)
 RegDataUt$denominator <- 1
 RegDataUt$context <- 'caregiver'
 head(RegDataUt)
-head(TidligereKvalIndReg)
-KvalIndManuellAlleAar <- rbind(RegDataUt, TidligereKvalIndReg[ ,names(RegDataUt)])
-write.table(KvalIndManuellAlleAar, file = 'IntensivKvalIndEnhNivaa.csv', sep = ';', row.names = F)
+write.table(RegDataUt, file = 'IntensivKvalIndEnhNivaa2025.csv', sep = ';', row.names = F)
 
