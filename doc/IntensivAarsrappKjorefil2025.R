@@ -301,6 +301,45 @@ xtable::xtable(AndelMenn, digits=1, align=c('l', rep('r', ncol(AndelMenn))),
        caption='Del (prosent) av intensivopphald som er menn.', label='tab:KjonnAar')
 
 
+# Skrøpelighet og dødelighet
+
+funPst <- function(x){paste0(sprintf('%.1f', 100*sum(x)/length(x)), '%') }
+tab <- cbind(
+  "Antall" = tapply(RegData1aar$Dod30, RegData1aar$FrailtyIndex, FUN = length ),
+  "Død på intensiv" = tapply(RegData1aar$DischargedIntensiveStatus, RegData1aar$FrailtyIndex, FUN = funPst),
+  "Død <30d" = tapply(RegData1aar$Dod30, RegData1aar$FrailtyIndex, FUN = funPst),
+  "Død <90d" = tapply(RegData1aar$Dod90, RegData1aar$FrailtyIndex, FUN = funPst),
+  "Død <1 år" = tapply(RegData1aar$Dod365, RegData1aar$FrailtyIndex, FUN = funPst)
+)
+row.names(tab) <- c('Ikke skåret', 'Veldig sprek', 'Sprek', 'Klarer seg bra', 'Svært mildt skrøpelig', 'Mildt skrøpelig',
+                             'Moderat skrøpelig', 'Alvorlig skrøpelig', 'Svært alvorlig skrøpelig', 'Terminal')
+
+xtable::xtable(tab,
+               align = c('l', rep('r',5)),
+               label = 'tab:FrailtyOverl',
+               caption = 'Fraility Scale og overleving intensiv, 30, 90 og ett år etter innlegging'
+)
+
+#Donorer
+  #OrganDonationCompletedStatus_v2: - Ble organdonasjon gjennomført?
+  # -1 = Velg verdi, 1 = Ja, cDcD ble gjennomført, 2 = Ja, DBD ble gjenomført, 3 = Nei
+  RegDataDod <- RegData1aar[which(RegData1aar$DischargedIntensiveStatus == 1),] #Døde
+  tittel <- 'Andel av de som døde som ble donorer'
+  RegData$Variabel[which(RegData$OrganDonationCompletedStatus_v2 %in% 1:2)] <- 1
+
+  tab <- cbind(
+    'Antall' = c(table(RegDataDod$OrganDonationCompletedStatus_v2), dim(RegDataDod)[1]),
+  'Andel' = c(paste0(round(100*prop.table(table(RegDataDod$OrganDonationCompletedStatus_v2)),1), '%'), '')
+)
+  tab <- tab[c(2:3,5), ]
+row.names(tab) <- c('cDCD', 'DBD', 'Døde')
+
+xtable::xtable(tab,
+               align = c('l', 'r','r'),
+               label = 'tab:donorer',
+               caption = 'Gjennomførte cDCD og DBD av døde'
+               )
+
 #Belegg
 tabBeleggN <- rbind(
   'Ferdigstilte intensivopphald' = tapply(RegData1aar$PasientID, RegData1aar$ShNavn, FUN=length),
