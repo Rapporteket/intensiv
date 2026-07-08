@@ -1,17 +1,10 @@
 FROM rapporteket/base-r:main
 
-LABEL maintainer="Arnfinn Hykkerud Steindal <arnfinn.hykkerud.steindal@helse-nord.no>"
-LABEL no.rapporteket.cd.enable="true"
-
-ARG GH_PAT
-ENV GITHUB_PAT=${GH_PAT}
-
 WORKDIR /app/R
 
-COPY *.tar.gz .
-
-RUN R -e "remotes::install_local(list.files(pattern = \"*.tar.gz\"))" \
-    && rm ./*.tar.gz \
+RUN --mount=type=secret,id=github_pat,env=GITHUB_PAT \
+    --mount=type=bind,source=.,target=/app/R/pkg \
+    R -e "remotes::install_local(path = './pkg')" \
     && R -e "remotes::install_github(\"Rapporteket/rapFigurer\")" \
     && R -e "remotes::install_github(\"Rapporteket/rapbase\", ref = \"main\")"
 
