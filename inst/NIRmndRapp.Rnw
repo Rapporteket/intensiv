@@ -12,6 +12,9 @@
 
 
 <<'initOpts',include=FALSE>>=
+if (!capabilities()["cairo"]) {
+  knitr::opts_chunk$set(dev = "svglite")
+}
 knitr::opts_chunk$set(warnings=FALSE,echo=FALSE)
 knitr::opts_knit$set(root.dir = './')
 library(xtable)
