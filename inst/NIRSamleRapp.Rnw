@@ -63,13 +63,14 @@
 \begin{document}
 
 <<setup, include=FALSE, cache=FALSE>>=
-knitr::opts_chunk$set(warnings=FALSE,echo=FALSE)
+knitr::opts_chunk$set(warnings=FALSE,echo=FALSE, dev = "svglite")
 if (!capabilities()["cairo"]) {
+  message("Cairo not available, using svglite for plots")
   knitr::opts_chunk$set(dev = "svglite")
 }
-knitr::opts_chunk$set()	#Settes også i rapbase
+knitr::opts_chunk$set(dev = "svglite")	#Settes også i rapbase
 knitr::opts_knit$set(root.dir = './')	#Settes også i rapbase
-knitr::opts_chunk$set(fig.align='center', fig.show='hold', out.width='.8\\textwidth', cache=FALSE)
+knitr::opts_chunk$set(fig.align='center', fig.show='hold', out.width='.8\\textwidth', cache=FALSE, dev = "svglite")
 options(replace.assign=TRUE, width=90) #, warnings=FALSE, echo=FALSE, fig.align='center', fig.show='hold', out.width='.8\\textwidth', cache=FALSE)
 @
 

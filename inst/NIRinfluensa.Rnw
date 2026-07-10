@@ -11,10 +11,12 @@
 
 
 <<'initOpts',include=FALSE>>=
-knitr::opts_chunk$set(warnings=FALSE,echo=FALSE)
+knitr::opts_chunk$set(warnings=FALSE,echo=FALSE, dev = "svglite")
 if (!capabilities()["cairo"]) {
+  message("Cairo not available, using svglite for plots")
   knitr::opts_chunk$set(dev = "svglite")
-}knitr::opts_knit$set(root.dir = './')
+}
+knitr::opts_knit$set(root.dir = './')
 library(intensivberedskap)
 @
 
