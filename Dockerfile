@@ -2,6 +2,8 @@ FROM rapporteket/base-r-alpine-latex:main
 
 WORKDIR /app/R
 
+ENV MARIADB_TLS_DISABLE_PEER_VERIFICATION=1
+
 RUN --mount=type=secret,id=github_pat,env=GITHUB_PAT \
     --mount=type=bind,source=.,target=/app/R/pkg \
     R -e "remotes::install_local(path = './pkg')" \
