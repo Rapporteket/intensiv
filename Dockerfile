@@ -6,7 +6,7 @@ RUN --mount=type=secret,id=github_pat,env=GITHUB_PAT \
     --mount=type=bind,source=.,target=/app/R/pkg \
     R -e "remotes::install_local(path = './pkg')" \
     && R -e "remotes::install_github(\"Rapporteket/rapFigurer\")" \
-    && R -e "remotes::install_github(\"Rapporteket/rapbase\", ref = \"main\")" \
+    && R -e "remotes::install_github(\"Rapporteket/rapbase\", ref = \"v3.7.0\")" \
     && R -e "library(intensiv)"
 
 EXPOSE 3838
