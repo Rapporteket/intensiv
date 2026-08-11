@@ -10,9 +10,9 @@ RUN --mount=type=secret,id=github_pat,env=GITHUB_PAT \
 
 EXPOSE 3838
 
-RUN adduser --uid "1000" --disabled-password rapporteket && \
+RUN adduser --uid 1000 --disabled-password rapporteket && \
     chown -R 1000:1000 /app/R && \
     chmod -R 755 /app/R
-USER rapporteket
+USER 1000:1000
 
 CMD ["R", "-e", "options(shiny.port = 3838, shiny.host = \"0.0.0.0\"); intensiv::kjorIntensivApp()"]
