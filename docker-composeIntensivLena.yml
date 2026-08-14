@@ -16,7 +16,7 @@ x-environment: &environment
 services:
 
   db:
-    image: mysql:8
+    image: mysql:26
     restart: "no"
     environment:
       MYSQL_ROOT_PASSWORD: root
