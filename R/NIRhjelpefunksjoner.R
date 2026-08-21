@@ -20,6 +20,10 @@ kjorIntensivApp <- function(browser = FALSE, logAsJson = FALSE) {
   if (browser) {
     options(shiny.launch.browser = TRUE)
   }
+  if (!capabilities()["cairo"]) {
+    message("Cairo not available, using svglite for plots")
+    knitr::opts_chunk$set(dev = "svglite")
+  }
   app <- shiny::shinyApp(
     ui = intensiv::ui_intensiv,
     server = intensiv::server_intensiv
