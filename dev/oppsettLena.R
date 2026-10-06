@@ -18,7 +18,7 @@ intensiv::kjorIntensivApp(browser = TRUE)
 library(intensiv)
 reshID <- 102026 #705577 #103948 #4205969 Med PREM: 102026
 
-RegData <- intensiv::NIRRegDataSQL(datoFra = '2025-01-01')
+RegData <- intensiv::NIRRegDataSQL(datoFra = '2026-01-01')
 RegData <- intensiv::NIRPreprosess(RegData = RegData)
 
 TilgJsn <- Sys.getenv("MRS_ACCESS_HIERARCHY_URL")
