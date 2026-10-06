@@ -42,18 +42,10 @@ kjorIntensivApp <- function(browser = FALSE, logAsJson = FALSE) {
 #' @export
 
 FinnReinnleggelser <- function(RegData, PasientID='PasientID'){
-      #RegData må inneholde DateAdmittedIntensive, DateDischargedIntensive og PasientID
-      #SJEKK Bare innleggelser fra 2016 som skal ha reinnleggelse??
-      #RegData <- RegData[
-      #     as.POSIXlt(RegData$DateAdmittedIntensive, format="%Y-%m-%d %H:%M:%S") >= as.POSIXlt('2016-01-01'), ]
       N <- dim(RegData)[1]
       RegData$PasientID <- RegData[ ,PasientID]
-      #TabAntOpph <- table(RegData$PasientID) #Tar relativt lang tid.
-      #TabFlereOpph <- TabAntOpph[TabAntOpph>1]
-      #indPasFlereOpph <- which(RegData$PasientID %in% names(TabFlereOpph))  #Tar relativt lang tid.
       RegDataSort <- RegData[order(RegData$PasientID, RegData$DateAdmittedIntensive,   #Denne tar mest tid
                                    RegData$DateDischargedIntensive), ]
-      #RegDataSort$AntOpph <- ave(RegDataSort$PasientID, RegDataSort$PasientID, FUN=length)
       RegDataSort$OpphNr <- ave(RegDataSort$PasientID, RegDataSort$PasientID, FUN=seq_along)
       indPasFlereOpph <- which(RegDataSort$OpphNr>1) #intersect(which(RegDataSort$AntOpph>1), which(RegDataSort$OpphNr>1))
       RegDataSort$TidUtInn <- NA
@@ -100,11 +92,6 @@ SorterOgNavngiTidsEnhet <- function(RegData, tidsenhet='Aar', tab=0) {
       #format.Date(seq(from=as.Date('2018-01-01'),
                      # to=as.Date('2018-09-01'), by='month'), format = '%b%y')
       tidtxt <- switch(tidsenhet,
-                       #Mnd = paste(substr(RegData$Aar[match(1:max(RegData$TidsEnhetSort), RegData$TidsEnhetSort)], 3,4),
-                        #          sprintf('%02.0f', RegData$Mnd[match(1:max(RegData$TidsEnhetSort), RegData$TidsEnhetSort)]), sep='.'),
-                       #Mnd = RegData$MndAar[match(1:max(RegData$TidsEnhetSort), RegData$TidsEnhetSort)],
-                       #Mnd = format.Date(seq(from=min(as.Date(RegData$InnDato), na.rm = T),
-                       #                      to=max(as.Date(RegData$InnDato), na.rm = T), by='month'), format = '%b%y'),
                        #Henter fullt månedsnavn og forkorter etterpå.
                        Mnd = format.Date(seq(from=lubridate::floor_date(as.Date(min(as.Date(RegData$InnDato), na.rm = T)), 'month'),
                                          to=max(as.Date(RegData$InnDato), na.rm = T), by='month'), format = '%B%y'), #Hele måneden
@@ -116,18 +103,8 @@ SorterOgNavngiTidsEnhet <- function(RegData, tidsenhet='Aar', tab=0) {
 
       substrRight <- function(x, n){substr(x, nchar(x)-n+1, nchar(x))}
       if (tidsenhet=='Mnd') {tidtxt <- paste0(substr(tidtxt, 1,3), ' '[tab], substrRight(tidtxt, 2))}
-      #RegData$TidsEnhetSort <- factor(RegData$TidsEnhetSort, levels=1:max(RegData$TidsEnhetSort), labels=tidtxt)
       RegData$TidsEnhet <- factor(RegData$TidsEnhetSort, levels=1:max(RegData$TidsEnhetSort), labels=tidtxt)
-      #RegData$TidsEnhet <- factor(RegData$TidsEnhetSort, ordered = TRUE, labels=tidtxt)
-      #a <- factor(c(1:10,3,2,4,3,7,9,4), levels=1:11, labels = letters[1:11])
-#table(a)
 
-#     måned og år som faktor i riktig rekkefølge og med alle måneder inkludert
-#     RegData$MndAar <- factor(format(RegData $HovedDato, format='%b-%y'),
-      #levels = format(seq(as.Date(datoFra),as.Date(datoTil), by="month"), "%b-%y"))
-
-      #RegData$TidsEnhet <- RegData$TidsEnhetSort
-      #levels(RegData$TidsEnhet) <- tidtxt
       UtData <- list('RegData'=RegData, 'tidtxt'=tidtxt)
       return(UtData)
 }
@@ -140,7 +117,6 @@ SorterOgNavngiTidsEnhet <- function(RegData, tidsenhet='Aar', tab=0) {
 #'
 #' @export
 lageTulleData <- function(RegData, varBort='', antSh=26, antObs=20000) {
-      #ForlopsID <- RegData$ForlopsID
       RegData <- RegData[,-which(names(RegData) %in% varBort)]
       RegData <- RegData[sample(1:dim(RegData)[1], antObs, replace = TRUE),]
       sykehus <- paste('Sykehus', LETTERS[1:antSh])

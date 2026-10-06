@@ -52,15 +52,17 @@ NIRPreprosess <- function(RegData=RegData, skjema=1)	#, reshID=reshID)
       names(RegData)[which(names(RegData) == 'TypeOfAdmission')] <- 'InnMaate'
 
 
-      #Henter tilgangstre og mapper om resh og ShNavn
-      message('Henter tilgangstre fra MRS og mapper om resh og ShNavn')
-      TilgJsn <- Sys.getenv("MRS_ACCESS_HIERARCHY_URL")
-      if (TilgJsn == "") {
-        stop("NIRPreprosess: Miljøvariabel MRS_ACCESS_HIERARCHY_URL er ikke satt")
-      }
-      Tilgangstre <- jsonlite::fromJSON(TilgJsn)$AccessUnits
-      varTilg <- c("UnitId", "ParentUnitId", "HasDatabase", "ExternalId", "Title", "TitleWithPath","ExtraData")
-      IntData <- merge(RegData, Tilgangstre[ ,varTilg],
+      message('Henter tilgangstre  og mapper om resh og ShNavn')
+      # TilgJsn <- Sys.getenv("MRS_ACCESS_HIERARCHY_URL")
+      # if (TilgJsn == "") {
+      #   stop("NIRPreprosess: Miljøvariabel MRS_ACCESS_HIERARCHY_URL er ikke satt")
+      # }
+      # Tilgangstre <- jsonlite::fromJSON(TilgJsn)$AccessUnits
+      # varTilg <- c("UnitId", "ParentUnitId", "HasDatabase", "ExternalId", "Title", "TitleWithPath","ExtraData")
+      Tilgangstre <- rapbase::loadRegData(
+        query='SELECT UnitId, ParentUnitId, ExternalId, Title, TitleWithPath,ExtraData
+        FROM accessunits')
+      IntData <- merge(RegData, Tilgangstre, # [ ,varTilg],
                        by.x = 'ReshId', by.y = 'UnitId', suffixes = c('Int','Tilg'))
       RegData <- dplyr::rename(IntData,
                                Nivaa = ExtraData,
@@ -71,7 +73,6 @@ NIRPreprosess <- function(RegData=RegData, skjema=1)	#, reshID=reshID)
 
       RegData$NivaaNum <- as.numeric(dplyr::recode_values(RegData$Nivaa, from=c('1a', '1b', '2b', '3', '3c'),
                                                      to = 1:5))
-
       #Fjerner mellomrom (før) og etter navn
       RegData$ShNavn <- trimws(as.character(RegData$ShNavn))
 

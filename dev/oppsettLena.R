@@ -21,6 +21,16 @@ reshID <- 102026 #705577 #103948 #4205969 Med PREM: 102026
 RegData <- intensiv::NIRRegDataSQL(datoFra = '2025-01-01')
 RegData <- intensiv::NIRPreprosess(RegData = RegData)
 
+TilgJsn <- Sys.getenv("MRS_ACCESS_HIERARCHY_URL")
+Tilgangstre <- jsonlite::fromJSON(TilgJsn)$AccessUnits
+TilgtreTab <- rapbase::loadRegData(query='SELECT * from accessunits')
+
+varTilg <- c("UnitId", "ParentUnitId", "HasDatabase", "ExternalId", "Title", "TitleWithPath","ExtraData")
+orig <- Tilgangstre[ ,varTilg]
+ny <- TilgtreTab[ ,varTilg]
+
+IntData <- merge(RegData, Tilgangstre[ ,varTilg],
+                 by.x = 'ReshId', by.y = 'UnitId', suffixes = c('Int','Tilg'))
 
 test <- SorterOgNavngiTidsEnhet(RegData=RegData, tidsenhet='Halvaar')
 test$tidtxt
