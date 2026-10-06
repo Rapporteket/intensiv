@@ -367,7 +367,7 @@ xtable(tabResp, align=c('l', 'r','r','c','c'), #digits=c(0,1,1,1,0),
 
 tabDbl <- if (dim(RegData)[1]>0) {
   finnDblReg(RegData=RegData, reshID=reshID)
-  } else {'Ingen registreringer'}
+  } else {'Ingen registreringar'}
 dblTab <- knitr::kable(tabDbl, format='latex', row.names = FALSE) #, caption='')
 @
 
