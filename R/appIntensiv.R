@@ -901,14 +901,6 @@ server_intensiv <- function(input, output, session) { #
     }
   )
 
-  # output$samleRapp.pdf <- downloadHandler(
-  #   filename = function(){ paste0('NIRsamleRapp', Sys.time(), '.pdf')},
-  #   content = function(file){
-  #     henteSamlerapporter(file, rnwFil="NIRSamleRapp.Rnw",
-  #                 reshID = user$org(), datoFra = startDato)
-  #   }
-  # )
-
   # test <- henteSamlerapporter('file.pdf', rnwFil="NIRluftveisinfek.Rnw")
   #Datadump
 
@@ -1185,9 +1177,14 @@ observe({
 #------------Fordelinger---------------------
 
       output$fordelinger <- renderPlot({
+        # shiny::req(user$role(), input$enhetsUtvalg)
+        if (user$role() == 'SC') {shiny::req(input$velgResh)}
+        print(user$org())
+        print(user$role())
+              print(input$velgResh)
             NIRFigAndeler(RegData=RegData, preprosess = 0, valgtVar=input$valgtVar,
                           reshID = user$org(),
-                          velgAvd = ifelse(is.null(input$velgResh), 0, as.numeric(input$velgResh)),
+                          velgAvd = ifelse(user$role() == 'SC', as.numeric(input$velgResh), 0),
                           enhetsUtvalg=as.numeric(input$enhetsUtvalg),
                           datoFra=input$datovalg[1], datoTil=input$datovalg[2],
                           minald=as.numeric(input$alder[1]), maxald=as.numeric(input$alder[2]),
@@ -1201,10 +1198,12 @@ observe({
           paste0('FigurFord_', input$valgtVar, Sys.Date(), '.', input$bildeformatFord)
         },
         content = function(file){
+          shiny::req(user$role(), input$enhetsUtvalg)
+          if (user$role() == 'SC') {shiny::req(input$velgResh)}
           NIRFigAndeler(RegData=RegData, preprosess = 0,
                         valgtVar=input$valgtVar,
                         reshID = user$org(),
-                        velgAvd = ifelse(is.null(input$velgResh), 0, as.numeric(input$velgResh)),
+                        velgAvd = ifelse(user$role() == 'SC', as.numeric(input$velgResh), 0),
                         enhetsUtvalg=as.numeric(input$enhetsUtvalg),
                         datoFra=input$datovalg[1], datoTil=input$datovalg[2],
                         minald=as.numeric(input$alder[1]), maxald=as.numeric(input$alder[2]),
@@ -1215,11 +1214,13 @@ observe({
       )
 
       observe({
+        shiny::req(user$role(), input$enhetsUtvalg)
+        if (user$role() == 'SC') {shiny::req(input$velgResh)}
         UtDataFord <- NIRFigAndeler(RegData=RegData, preprosess = 0,
                                         valgtVar=input$valgtVar,
                                         reshID = user$org(),
                                         enhetsUtvalg=as.numeric(input$enhetsUtvalg),
-                                        velgAvd = ifelse(is.null(input$velgResh), 0, as.numeric(input$velgResh)),
+                                        velgAvd = ifelse(user$role() == 'SC', as.numeric(input$velgResh), 0),
                                         datoFra=input$datovalg[1], datoTil=input$datovalg[2],
                                         minald=as.numeric(input$alder[1]), maxald=as.numeric(input$alder[2]),
                                         erMann=as.numeric(input$erMann),
@@ -1231,7 +1232,7 @@ observe({
                   tagList(
                         h3(HTML(paste(UtDataFord$tittel, sep='<br />'))),
                         h5(HTML(paste0(UtDataFord$utvalgTxt, '<br />')))
-                  )}) #, align='center'
+                  )})
             output$fordelingTab <- function() { #gr1=UtDataFord$hovedgrTxt, gr2=UtDataFord$smltxt renderTable(
 
                   #       kableExtra::kable_styling("hover", full_width = F)
